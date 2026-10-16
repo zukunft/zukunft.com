@@ -1,0 +1,422 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-15 12:00:00",
+  "user": "timon",
+  "selection": [
+    "the four views of a process catch"
+  ],
+  "description": "The start, main, detail and result page of a process catch, which guide the user of a question phrase e.g. the PV calculator from one easy question to the result; the fields of each page are defined by the field triples of the question phrase (process_catch_fields.json). This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "words": [
+    {
+      "name": "place"
+    },
+    {
+      "name": "user"
+    }
+  ],
+  "triples": [
+    {
+      "description": "the place that the user has entered in the geolocator e.g. to select the sun intensity of a PV calculator",
+      "from": "place",
+      "verb": "of",
+      "to": "user"
+    }
+  ],
+  "components": [
+    {
+      "name": "title process catch start",
+      "description": "the translated title of the start page of a process catch with the name of the question phrase",
+      "type": "system_title_for_phrase",
+      "ui_msg_code_id": "process_catch_title_start"
+    },
+    {
+      "name": "text explain process catch start",
+      "description": "the translated text that explains the start page of a process catch",
+      "type": "system_text_explain",
+      "ui_msg_code_id": "process_catch_explain_start"
+    },
+    {
+      "name": "process catch initial input fields",
+      "description": "the one easy to answer question of the start page, defined by the field triples of the question phrase",
+      "type": "process_catch_fields"
+    },
+    {
+      "name": "button next process catch start",
+      "description": "opens the main page of the process catch for the same question phrase",
+      "type": "process_catch_button_next"
+    },
+    {
+      "name": "title process catch main",
+      "description": "the translated title of the main page of a process catch with the name of the question phrase",
+      "type": "system_title_for_phrase",
+      "ui_msg_code_id": "process_catch_title_main"
+    },
+    {
+      "name": "text explain process catch main",
+      "description": "the translated text that explains the main page of a process catch",
+      "type": "system_text_explain",
+      "ui_msg_code_id": "process_catch_explain_main"
+    },
+    {
+      "name": "process catch main input fields",
+      "description": "the about three input fields that are most relevant for the result, defined by the field triples of the question phrase",
+      "type": "process_catch_fields"
+    },
+    {
+      "name": "button next process catch main",
+      "description": "opens the detail page of the process catch for the same question phrase",
+      "type": "process_catch_button_next"
+    },
+    {
+      "name": "title process catch detail",
+      "description": "the translated title of the detail page of a process catch with the name of the question phrase",
+      "type": "system_title_for_phrase",
+      "ui_msg_code_id": "process_catch_title_detail"
+    },
+    {
+      "name": "text explain process catch detail",
+      "description": "the translated text that explains the detail page of a process catch",
+      "type": "system_text_explain",
+      "ui_msg_code_id": "process_catch_explain_detail"
+    },
+    {
+      "name": "process catch detail tab one",
+      "description": "tab 1 of the detail page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_detail_tab_one"
+    },
+    {
+      "name": "process catch detail tab two",
+      "description": "tab 2 of the detail page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_detail_tab_two"
+    },
+    {
+      "name": "process catch detail tab three",
+      "description": "tab 3 of the detail page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_detail_tab_three"
+    },
+    {
+      "name": "process catch detail tab four",
+      "description": "tab 4 of the detail page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_detail_tab_four"
+    },
+    {
+      "name": "process catch detail tab five",
+      "description": "tab 5 of the detail page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_detail_tab_five"
+    },
+    {
+      "name": "process catch detail tab one fields",
+      "description": "the input fields of tab 1 of the detail page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_detail_tab_one_fields"
+    },
+    {
+      "name": "process catch detail tab two fields",
+      "description": "the input fields of tab 2 of the detail page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_detail_tab_two_fields"
+    },
+    {
+      "name": "process catch detail tab three fields",
+      "description": "the input fields of tab 3 of the detail page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_detail_tab_three_fields"
+    },
+    {
+      "name": "process catch detail tab four fields",
+      "description": "the input fields of tab 4 of the detail page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_detail_tab_four_fields"
+    },
+    {
+      "name": "process catch detail tab five fields",
+      "description": "the input fields of tab 5 of the detail page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_detail_tab_five_fields"
+    },
+    {
+      "name": "button next process catch detail",
+      "description": "opens the result page of the process catch for the same question phrase",
+      "type": "process_catch_button_next"
+    },
+    {
+      "name": "title process catch result",
+      "description": "the translated title of the result page of a process catch with the name of the question phrase",
+      "type": "system_title_for_phrase",
+      "ui_msg_code_id": "process_catch_title_result"
+    },
+    {
+      "name": "text explain process catch result",
+      "description": "the translated text that explains the result page of a process catch",
+      "type": "system_text_explain",
+      "ui_msg_code_id": "process_catch_explain_result"
+    },
+    {
+      "name": "process catch result tab one",
+      "description": "tab 1 of the result page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_result_tab_one"
+    },
+    {
+      "name": "process catch result tab two",
+      "description": "tab 2 of the result page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_result_tab_two"
+    },
+    {
+      "name": "process catch result tab three",
+      "description": "tab 3 of the result page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_result_tab_three"
+    },
+    {
+      "name": "process catch result tab four",
+      "description": "tab 4 of the result page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_result_tab_four"
+    },
+    {
+      "name": "process catch result tab five",
+      "description": "tab 5 of the result page of a process catch",
+      "type": "process_catch_tab",
+      "code_id": "process_catch_result_tab_five"
+    },
+    {
+      "name": "process catch result tab one fields",
+      "description": "the input fields of tab 1 of the result page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_result_tab_one_fields"
+    },
+    {
+      "name": "process catch result tab two fields",
+      "description": "the input fields of tab 2 of the result page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_result_tab_two_fields"
+    },
+    {
+      "name": "process catch result tab three fields",
+      "description": "the input fields of tab 3 of the result page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_result_tab_three_fields"
+    },
+    {
+      "name": "process catch result tab four fields",
+      "description": "the input fields of tab 4 of the result page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_result_tab_four_fields"
+    },
+    {
+      "name": "process catch result tab five fields",
+      "description": "the input fields of tab 5 of the result page of a process catch, shown if the tab is selected",
+      "type": "process_catch_fields",
+      "code_id": "process_catch_result_tab_five_fields"
+    },
+    {
+      "name": "button back process catch result",
+      "description": "opens the detail page of the process catch for the same question phrase",
+      "type": "process_catch_button_back"
+    },
+    {
+      "name": "button refresh process catch detail",
+      "description": "shows the detail page of the process catch again with the changed assumptions",
+      "type": "process_catch_button_refresh",
+      "ui_msg_code_id": "process_catch_button_refresh"
+    },
+    {
+      "name": "geolocator place of user",
+      "description": "the input of the place of the user by its name or postal code, e.g. for a location selector field of a process catch",
+      "type": "geolocator",
+      "ui_msg_code_id": "geolocator_label",
+      "row": "place of user"
+    }
+  ],
+  "views": [
+    {
+      "name": "process catch start page",
+      "description": "the first page of a process catch with one easy to answer question and a next button to the main page",
+      "code_id": "process_catch_start",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "title process catch start"
+        },
+        {
+          "position": "2",
+          "name": "text explain process catch start"
+        },
+        {
+          "position": "3",
+          "name": "process catch initial input fields"
+        },
+        {
+          "position": "4",
+          "name": "button next process catch start"
+        }
+      ]
+    },
+    {
+      "name": "process catch main page",
+      "description": "the page of a process catch with the about three inputs that are most relevant for the result, with pre-selection options for complex answers, and a next button to the detail page",
+      "code_id": "process_catch_main",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "title process catch main"
+        },
+        {
+          "position": "2",
+          "name": "text explain process catch main"
+        },
+        {
+          "position": "3",
+          "name": "process catch main input fields"
+        },
+        {
+          "position": "4",
+          "name": "button next process catch main"
+        }
+      ]
+    },
+    {
+      "name": "process catch detail page",
+      "description": "the page of a process catch with the fine tuning of the assumptions in up to five tabs and a next button to the result page",
+      "code_id": "process_catch_detail",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "title process catch detail"
+        },
+        {
+          "position": "2",
+          "name": "text explain process catch detail"
+        },
+        {
+          "position": "3",
+          "name": "process catch detail tab one"
+        },
+        {
+          "position": "4",
+          "name": "process catch detail tab two",
+          "position_type": "same_line"
+        },
+        {
+          "position": "5",
+          "name": "process catch detail tab three",
+          "position_type": "same_line"
+        },
+        {
+          "position": "6",
+          "name": "process catch detail tab four",
+          "position_type": "same_line"
+        },
+        {
+          "position": "7",
+          "name": "process catch detail tab five",
+          "position_type": "same_line"
+        },
+        {
+          "position": "8",
+          "name": "process catch detail tab one fields"
+        },
+        {
+          "position": "9",
+          "name": "process catch detail tab two fields"
+        },
+        {
+          "position": "10",
+          "name": "process catch detail tab three fields"
+        },
+        {
+          "position": "11",
+          "name": "process catch detail tab four fields"
+        },
+        {
+          "position": "12",
+          "name": "process catch detail tab five fields"
+        },
+        {
+          "position": "13",
+          "name": "button refresh process catch detail"
+        },
+        {
+          "position": "14",
+          "name": "button next process catch detail",
+          "position_type": "same_line"
+        }
+      ]
+    },
+    {
+      "name": "process catch result page",
+      "description": "the last page of a process catch with the result in up to five tabs and a back button to the detail page",
+      "code_id": "process_catch_result",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "title process catch result"
+        },
+        {
+          "position": "2",
+          "name": "text explain process catch result"
+        },
+        {
+          "position": "3",
+          "name": "process catch result tab one"
+        },
+        {
+          "position": "4",
+          "name": "process catch result tab two",
+          "position_type": "same_line"
+        },
+        {
+          "position": "5",
+          "name": "process catch result tab three",
+          "position_type": "same_line"
+        },
+        {
+          "position": "6",
+          "name": "process catch result tab four",
+          "position_type": "same_line"
+        },
+        {
+          "position": "7",
+          "name": "process catch result tab five",
+          "position_type": "same_line"
+        },
+        {
+          "position": "8",
+          "name": "process catch result tab one fields"
+        },
+        {
+          "position": "9",
+          "name": "process catch result tab two fields"
+        },
+        {
+          "position": "10",
+          "name": "process catch result tab three fields"
+        },
+        {
+          "position": "11",
+          "name": "process catch result tab four fields"
+        },
+        {
+          "position": "12",
+          "name": "process catch result tab five fields"
+        },
+        {
+          "position": "13",
+          "name": "button back process catch result"
+        }
+      ]
+    }
+  ]
+}

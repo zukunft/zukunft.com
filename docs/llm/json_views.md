@@ -78,7 +78,10 @@ json (e.g. `system_title` 66 times, `system_form_title` 52, `system_sub_title`
 16, `change_log` 13), from the top:
 
 1. **page titles** — the system titles and the `title_of_…_with_edit_link` types
-2. **form frame** — the hidden back stack and confirm status, the buttons, form end
+2. **form frame** — the hidden back stack and confirm status, the buttons, form end; a view
+   with a `form_end` opens its form with a `system_form_title` (never a plain `system_title`),
+   and a view whose component renders its own form (the file selector of the import) has no
+   `form_end`, because html forms cannot nest (`coding_rule_tests::html_form_balance_tests`)
 3. **layout rows** — row start, center, right, end
 4. **tabs and history** — view tab box, change log, usage, user overwrites
 5. **object names** — word, triple, verb, source, … names, aliases, symbols
@@ -191,6 +194,34 @@ A side-or-below group shows its columns next to each other on wide screens and
 wraps them onto fewer rows (down to one) as the screen narrows; build a multi-row
 column by giving its first component the `side_or_*` type and the rest `combine`.
 `style` is an optional Bootstrap column class (e.g. `col-md-4`).
+
+### The process catch views: four pages for one question phrase
+
+`process_catch_views.json` holds the start, main, detail and result page of a
+process catch (code ids `views::PROCESS_CATCH_START` … `_RESULT`), which guide
+the user of a question phrase e.g. the PV calculator from one easy question to
+the result. The id of each page is the phrase id of the question, so the same
+four views serve every question; the fields of a page come from the field
+triples of the question phrase (`process_catch_fields.json`, see
+`docs/llm/json_structure.md` "A system keyword with properties and types").
+
+| component type | what it shows |
+|---|---|
+| `system_title_for_phrase` | the translated page title with the name of the question phrase |
+| `system_text_explain` | the translated `ui_msg_code_id` of the component as a paragraph |
+| `process_catch_fields` | the input fields of the page or, with a tab code id, of one tab, shown only if that tab is selected |
+| `process_catch_tab` | one tab: the selected tab as text, every other tab as a link to the same page with the tab url var (`url_var::TAB`) |
+| `process_catch_button_next` | a link to the next page with the same question phrase (`views::PROCESS_CATCH_NEXT`) |
+| `process_catch_button_back` | a link to the page before with the same question phrase (`views::PROCESS_CATCH_BACK`) |
+| `process_catch_button_refresh` | a form with the page, the question phrase and the selected tab (only if the url selects one) as hidden fields and a submit with the `ui_msg_code_id` text, so the page is shown again with the entered values; the editors use it as the form of their phrase selector, whose selected name replaces the phrase of the page (`views::PHRASE_SELECT_VIEWS`) |
+| `geolocator` | a text input for a place name or postal code with the `ui_msg_code_id` as label and `url_var::PLACE` as name; it joins the refresh form by its `form` attribute, and the `row` phrase of the component is the value phrase of the place (`place of user`) |
+
+A tab and the fields of the tab are linked by the **`code_id`** of the
+component (`components::PROCESS_CATCH_TAB_NBR`), never by a shared
+`ui_msg_code_id`, because the ui message of a component is unique (see above);
+the tab label is the message of the tab number in the code
+(`system_page::PROCESS_CATCH_TABS`). Every link carries the whole page state,
+so the pages work without javascript.
 
 ## View relations
 

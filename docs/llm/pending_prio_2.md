@@ -15,6 +15,24 @@ the triple list (`ui_list::triples_of_types`) shows every triple of a type and n
 
 gap of the triple list: each list shows all its triples, because there is no view yet for the "… and n more" tail to link to, so the short, more and all versions of the list are still missing
 
+the form of the phrase selector of the editors reuses the component type `process_catch_button_refresh`, because it already shows a page again with the entered values; a generic name for the type (e.g. `button_refresh`) is the developer's decision; the unknown-name path of `frontend::url_with_selected_phrase` asks the backend and has no unit test yet
+
+### pinned views of the start page
+
+gaps of the pinned views (`html_base::start_page`, `config.yaml` startup): the links and the short urls are
+written from the config.yaml file by the test run, so a pinned view that an admin changes in the database is
+not shown until the file is changed and the tests are run again; the urls still point to the placeholder
+view `m=4&id=1954` except the global problems; the search field of `index.html` still sends `q`, which is
+the language url var and not a search
+
+### process catch geolocator and refresh
+
+gaps of the geolocator (`system_page::geolocator`): the input is a plain text field without the
+postal codes of the cache as datalist, the entered place is not yet saved as a value with the row
+phrase of the component (`place of user`), and the next and back links drop it, because only the
+refresh button submits the inputs; the refresh button shows the ui message of the component and not
+yet the `button refresh label` / `button refresh tooltip` of the question phrase
+
 ### leftovers
 
 1. Climate gas emissions leads the cell. Its value of 2.2 is still the biggest,

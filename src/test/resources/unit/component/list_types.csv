@@ -268,3 +268,10 @@ component_type_id,type_name,code_id,description
 267,system admin user load,system_admin_user_load,"the users with the most server time of the last days, the users over a threshold shown first"
 268,system title for phrase,system_title_for_phrase,"page title that shows the translated title of the component, a translated for and the name of the phrase of the page e.g. Table editor for populism solution"
 269,triple list,triple_list,"the name of each sub type of the column phrase, e.g. of each column tier, with the list of the triples that point to it and that are related to the phrase of the page"
+270,system text explain,system_text_explain,a paragraph with the translated text of the ui message of the component e.g. the explain text of a process catch page
+271,process catch fields,process_catch_fields,"the input fields of a process catch page or of one of its tabs, defined by the field triples of the question phrase"
+272,process catch tab,process_catch_tab,one tab of a process catch page as a link to the same page with the tab selected
+273,process catch button next,process_catch_button_next,the button that opens the next page of a process catch for the same question phrase
+274,process catch button back,process_catch_button_back,the button that opens the page before of a process catch for the same question phrase
+275,process catch button refresh,process_catch_button_refresh,the button that shows the process catch page again with the changed input e.g. to calculate
+276,geolocator by place name / post code,geolocator,"the input of a place by its name or postal code with the translated label of the component, saved with the row phrase of the component e.g. place of user"

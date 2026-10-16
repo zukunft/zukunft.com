@@ -4,7 +4,7 @@
 
     unit_read/system_view_read_tests.php - testing of the system views with direct data reload from the database
     ------------------------------------
-  
+
 
     This file is part of zukunft.com - calc with words
 
@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -84,41 +85,75 @@ class system_views_read_tests
 {
 
     /**
-     * get the api message and forward it to the ui
+     * render every system view with the data read from the database and compare it with the snapshot
      * TODO move all other HTML frontend tests here
      *
-     * @param test_cleanup $t
+     * @param test_cleanup $t the test environment with the test users
      * @return void
      */
     function run(test_cleanup $t): void
     {
-        // init
-        $t_frm = new test_formulas($t);
-        $t_log = new test_log($t);
-        $t_msk = new test_views($t);
-        $t_cmp = new test_components($t);
-        $msg = new user_message();
-
         // start the test section (ts)
         $ts = 'db read system view by object ';
         $t->header($ts);
 
-        // create the stable test context that is not based on the database so that the test results rarely change
-        // unlike ti horizontal system view test for this test the object can be filled with data for special cases
-        global $sys;
+        $cfg = $this->context($t);
+        $this->run_start($t);
+        $this->run_words($t, $cfg);
+        $this->run_verbs($t, $cfg);
+        $this->run_triples($t, $cfg);
+        $this->run_sources($t, $cfg);
+        $this->run_refs($t, $cfg);
+        $this->run_values($t, $cfg);
+        $this->run_formulas($t, $cfg);
+        $this->run_results($t, $cfg);
+        $this->run_views($t, $cfg);
+        $this->run_components($t, $cfg);
+        $this->run_users($t, $cfg);
+        $this->run_system_pages($t);
+        $this->run_use_cases($t, $cfg);
+        $this->run_pv_lifetime_balance($t, $cfg);
+
+        // remove test files not used any more e.g. the snapshot of an object id that has changed
+        $t->delete_unused_files(test_paths::VIEWS);
+
+        $this->run_web_frontend($t);
+    }
+
+    /**
+     * create the stable test context that is not based on the database so that the test results rarely change
+     * unlike the horizontal system view test for this test the object can be filled with data for special cases
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return data_object_ui the frontend type cache with the formulas, views and components of the test factories
+     */
+    function context(test_cleanup $t): data_object_ui
+    {
+        $t_frm = new test_formulas($t);
+        $t_msk = new test_views($t);
+        $t_cmp = new test_components($t);
+        $msg = new user_message();
+
         $ui = new frontend('system_views_read_tests');
         $ui->load_cache($msg);
         $cfg = new data_object_ui();
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
-        //$cfg = new data_object_ui();
         $cfg->set_formula_list($t_frm->formula_list_ui());
         $cfg->set_view_list($t_msk->view_list_ui());
         $cfg->set_component_list($t_cmp->component_list_ui());
-        // create the test pages
+        return $cfg;
+    }
 
-        // START: the entry view shows the global problems as a simple table with the short list,
-        // with the more list that a "... more" click requests with the next list size, and as the
-        // full table with every column and the ranges that the "..." header links to
+    /**
+     * the entry view shows the global problems as a simple table with the short list,
+     * with the more list that a "... more" click requests with the next list size, and as the
+     * full table with every column and the ranges that the "..." header links to
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_start(test_cleanup $t): void
+    {
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
@@ -147,7 +182,15 @@ class system_views_read_tests
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MARGINAL]);
+    }
 
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_words(test_cleanup $t, data_object_ui $cfg): void
+    {
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         // Zurich and CHF is the example for the page-title symbol-line layout
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::ZH_ID, $cfg);
@@ -159,10 +202,28 @@ class system_views_read_tests
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
         $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
         $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), word_names::MATH_ID, $cfg);
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_verbs(test_cleanup $t, data_object_ui $cfg): void
+    {
         $t->assert_view(views::VERB, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
         $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_DEL, $t->usr1, new verb(), 1, $cfg);
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_triples(test_cleanup $t, data_object_ui $cfg): void
+    {
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::MATH_CONST_ID, $cfg);
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::PI_ID, $cfg);
         $t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), triple_names::SPEED_OF_LIGHT_ID, $cfg);
@@ -170,18 +231,43 @@ class system_views_read_tests
         $t->assert_view(views::TRIPLE_ADD_DETAIL, $t->usr1, new triple($t->usr1));
         $t->assert_view(views::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1, $cfg);
         $t->assert_view(views::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1, $cfg);
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_sources(test_cleanup $t, data_object_ui $cfg): void
+    {
         //$t->assert_view(views::SOURCE, $t->usr1, new source($t->usr1), 1, $cfg);
         $t->assert_view(views::SOURCE_ADD, $t->usr1, new source($t->usr1));
         $t->assert_view(views::SOURCE_EDIT, $t->usr1, new source($t->usr1), 1, $cfg);
         $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1, $cfg);
-        // TODO add:
-        // REF
-        // the wikidata reference of the word "Pi" is the only seeded reference with an own url and
-        // one of the three with a source, so it is the example that fills every field of the
-        // reference page except the last update
+    }
+
+    /**
+     * the wikidata reference of the word "Pi" is the only seeded reference with an own url and
+     * one of the three with a source, so it is the example that fills every field of the
+     * reference page except the last update
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_refs(test_cleanup $t, data_object_ui $cfg): void
+    {
         $t->assert_view(views::REF, $t->usr1, new ref($t->usr1), refs::PI_ID, $cfg);
         $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
-        // VALUE
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_values(test_cleanup $t, data_object_ui $cfg): void
+    {
         // the pi number of units.json is the example for the related-phrase links and the grey value
         // of the "Value title" component and, because it names the "mathematical constant" source,
         // for the "system show field value source" component of the value default view; the pi value
@@ -216,7 +302,15 @@ class system_views_read_tests
         $t->assert_view_by_factory(views::VALUE_OVERWRITE, $t->usr1, $t_val->geo_value(), test_files::VIEW_CASE_GEO, $cfg, value::class);
         // GROUP
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
-        // FORMULA
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_formulas(test_cleanup $t, data_object_ui $cfg): void
+    {
         // increase is the example for the assigned-phrase subtitle of the "Formula title" component
         $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::INCREASE_ID, $cfg);
         $t->assert_view(views::FORMULA, $t->usr1, new formula($t->usr1), formula_names::CITY_POPULATION_ID, $cfg);
@@ -224,11 +318,20 @@ class system_views_read_tests
         $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1, $cfg);
         $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1, $cfg);
         // FORMULA TEST
-        // RESULT
-        // no seeded result id is known, so the result pages are rendered from the factory result;
-        // the default page shows beside the number the values, formulas and results that the
-        // calculation has used, which the api reads for the phrases of the result (see
-        // result::used_phrase_selection), so the page needs the database
+    }
+
+    /**
+     * no seeded result id is known, so the result pages are rendered from the factory result;
+     * the default page shows beside the number the values, formulas and results that the
+     * calculation has used, which the api reads for the phrases of the result (see
+     * result::used_phrase_selection), so the page needs the database
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_results(test_cleanup $t, data_object_ui $cfg): void
+    {
         $t_res = new test_results($t);
         $t->assert_view_by_factory(views::RESULT, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
         // the page of a result with used values, formulas and results, so that the three columns
@@ -247,27 +350,57 @@ class system_views_read_tests
         $t->assert_view_by_factory(views::RESULT, $t->usr1, $res_pop, test_files::VIEW_CASE_POPULISM_LOSS, $cfg, result::class);
         // the form that overwrites just the number of a result
         $t->assert_view_by_factory(views::RESULT_OVERWRITE, $t->usr1, $t_res->result_simple(), test_files::VIEW_CASE_SIMPLE, $cfg, result::class);
-        // VIEW
-        // the word default view is the example for the view default page, because it is the view
-        // that every word page opens with, so it is the view a user is most likely to look at
+    }
+
+    /**
+     * the word default view is the example for the view default page, because it is the view
+     * that every word page opens with, so it is the view a user is most likely to look at
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_views(test_cleanup $t, data_object_ui $cfg): void
+    {
         $t->assert_view(views::VIEW, $t->usr1, new view($t->usr1), views::WORD_ID, $cfg);
         $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
         $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
         $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);
-        // COMPONENT
-        // the solution priority title is the example of a component with a description and a type
-        // that is used by a view, so the views list of the page has an entry; the style, the
-        // formula and the linked component of this component are not set, so the page shows the
-        // three labels without a value
+    }
+
+    /**
+     * the solution priority title is the example of a component with a description and a type
+     * that is used by a view, so the views list of the page has an entry; the style, the
+     * formula and the linked component of this component are not set, so the page shows the
+     * three labels without a value
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_components(test_cleanup $t, data_object_ui $cfg): void
+    {
         $t->assert_view(views::COMPONENT, $t->usr1, new component($t->usr1), components::SOLUTION_PRIO_TITLE_ID, $cfg);
         $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
         $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
         $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);
-        // USER
-        // the user page lists the sandbox overwrites of the shown user in a fixed column, so the
-        // change log of the test context decides what the column shows; the overwrites of the
-        // test user are taken from a fixture, because the changes in the database grow with every
-        // test run, which would make the snapshot change without a code change
+        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
+        // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
+    }
+
+    /**
+     * the user page lists the sandbox overwrites of the shown user in a fixed column, so the
+     * change log of the test context decides what the column shows; the overwrites of the
+     * test user are taken from a fixture, because the changes in the database grow with every
+     * test run, which would make the snapshot change without a code change
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_users(test_cleanup $t, data_object_ui $cfg): void
+    {
+        $t_log = new test_log($t);
         $cfg_chg = clone $cfg;
         $cfg_chg->chg_log = $t_log->log_list_user_overwrites_ui();
         // the shown user has done the overwrites of the test context, so the column lists them
@@ -285,8 +418,17 @@ class system_views_read_tests
         $t->assert_view(views::ALL_QUARANTINE, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::USER_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::ALL_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
-        // the language, log, import, export, process, find and object list views below are skeletons that show
-        // only the not yet available hint until their data and actions are implemented
+    }
+
+    /**
+     * the language, log, import, export, process, find and object list views are skeletons that show
+     * only the not yet available hint until their data and actions are implemented
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_system_pages(test_cleanup $t): void
+    {
         // LANGUAGE
         $t->assert_view(views::PHRASE_TRANSLATIONS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::LANGUAGE_FORMS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
@@ -323,24 +465,58 @@ class system_views_read_tests
         $t->assert_view(views::LIST_FORMULAS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::LIST_VIEWS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::LIST_COMPONENTS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
-        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
-        // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
+    }
 
-        // USED CASES
-
+    /**
+     * the views of the use cases and the views appended to the seed views: a use case is user data,
+     * so the view and the triple are selected by their names and never by a code id or a database
+     * id (docs/llm/json_structure.md "Use case files")
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_use_cases(test_cleanup $t, data_object_ui $cfg): void
+    {
         // the calculator shows the values of a phrase with the defined columns: the use case
-        // "PV in Switzerland" is the sample with the avoided emission per reference mix; a use
-        // case is user data, so the view and the triple are selected by their names and never
-        // by a code id or a database id (docs/llm/json_structure.md "Use case files")
+        // "PV in Switzerland" is the sample with the avoided emission per reference mix
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
         // the editor placeholders show only their title and the phrase selector
         $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
         $t->assert_view_by_name(views::CALCULATION_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
-        // remove test files not used any more e.g. the snapshot of an object id that has changed
-        $t->delete_unused_files(test_paths::VIEWS);
+        // the process catch pages are appended to the seed views, so they are selected by name like the editors
+        $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        $t->assert_view_by_name(views::PROCESS_CATCH_MAIN_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        $t->assert_view_by_name(views::PROCESS_CATCH_DETAIL_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        $t->assert_view_by_name(views::PROCESS_CATCH_RESULT_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+    }
 
+    /**
+     * the PV lifetime balance use case brings its own view; the page is written to the use
+     * case folder next to the hand made sample page (pv_lifetime_balance_sample.html), so
+     * that the generated page can be compared with the target layout
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_pv_lifetime_balance(test_cleanup $t, data_object_ui $cfg): void
+    {
+        $t->assert_view_by_name(views::PV_LIFETIME_BALANCE_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PV_INSTALLATION, $cfg, test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
+    }
+
+    /**
+     * the pages of the frontend that are requested via http from the local pod
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_web_frontend(test_cleanup $t): void
+    {
+        $msg = new user_message();
 
         // start the test section (ts)
         $ts = 'unit web frontend ';
@@ -389,7 +565,6 @@ class system_views_read_tests
             . url_var::ADD . url_var::PATTERN_HUMAN . url_var::EQ . word_names::ABB,
             word_names::ABB,
             ', frontend view.php for the word find view contains at least', $is_connected, $t::TIMEOUT_LIMIT_LONG);
-
     }
 
 }

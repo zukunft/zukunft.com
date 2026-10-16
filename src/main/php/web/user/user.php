@@ -809,12 +809,12 @@ class user extends db_object
         global $mtr;
 
         $html = new html_base();
-        $form_str = $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL) . $html->br();
-        $form_str .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN) . $html->br2();
-        $form_str .= $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_str = $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN,
+                label: $mtr->txt(msg_id::FORM_NAME_USER_NAME_OR_EMAIL)) . $html->br2();
         // optional with show password toggle but without auto fill
         //$form_str .= $html->form_input_password(url_var::USER_PASSWORD_HUMAN, $mtr->txt(msg_id::FORM_SHOW_PASSWORD), html_base::AUTOCOMPLETE_CURRENT_PW) . $html->br2();
-        $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN) . $html->br2();
+        $form_str .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_HUMAN,
+                label: $mtr->txt(msg_id::FORM_NAME_PASSWORD)) . $html->br2();
         $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->form_submit($mtr->txt(msg_id::FORM_NAME_LOGIN)) . $html->br2();
@@ -839,22 +839,18 @@ class user extends db_object
         global $mtr;
 
         $html = new html_base();
-        $form_usr = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
-        $form_usr .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME, $usr_name);
-        $form_str = $html->p($form_usr);
-        $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
-        $form_mail .= $html->form_input(html_base::INPUT_TEXT, url_var::EMAIL, $email);
-        $form_str .= $html->p($form_mail);
-        $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
+        $form_str = $html->p($html->form_input(html_base::INPUT_TEXT, url_var::USERNAME, $usr_name,
+            $mtr->txt(msg_id::FORM_NAME_USER_NAME)));
+        $form_str .= $html->p($html->form_input(html_base::INPUT_TEXT, url_var::EMAIL, $email,
+            $mtr->txt(msg_id::FORM_NAME_USER_EMAIL)));
         // optional
         //$form_pw .= $html->form_input_password(url_var::USER_PASSWORD, $mtr->txt(msg_id::FORM_SHOW_PASSWORD), html_base::AUTOCOMPLETE_NEW_PW);
-        $form_pw .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD);
-        $form_str .= $html->p($form_pw);
-        $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
+        $form_str .= $html->p($html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD,
+            label: $mtr->txt(msg_id::FORM_NAME_PASSWORD)));
         // optional
         //$form_pwr .= $html->form_input_password(url_var::USER_PASSWORD_RETYPE, $mtr->txt(msg_id::FORM_SHOW_PASSWORD), html_base::AUTOCOMPLETE_NEW_PW);
-        $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
-        $form_str .= $html->p($form_pwr);
+        $form_str .= $html->p($html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE,
+            label: $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE)));
         $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::SIGN_UP));
@@ -881,21 +877,18 @@ class user extends db_object
         if ($key !== '') {
             $form_str .= $html->form_hidden(url_var::POST_KEY, $key);
         } else {
-            $form_key = $mtr->txt(msg_id::ACTIVATE_KEY_LABEL) . $html->br();
-            $form_key .= $html->form_input(html_base::INPUT_TEXT, url_var::POST_KEY);
-            $form_str .= $html->p($form_key);
+            $form_str .= $html->p($html->form_input(html_base::INPUT_TEXT, url_var::POST_KEY,
+                label: $mtr->txt(msg_id::ACTIVATE_KEY_LABEL)));
         }
         $form_str .= $html->p($mtr->txt(msg_id::ACTIVATE_PASSWORD_OPTIONAL));
-        $form_pw = $mtr->txt(msg_id::FORM_NAME_PASSWORD) . $html->br();
         // optional
         // $form_pw .= $html->form_input_password(url_var::USER_PASSWORD, $mtr->txt(msg_id::FORM_SHOW_PASSWORD), html_base::AUTOCOMPLETE_NEW_PW);
-        $form_pw .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD);
-        $form_str .= $html->p($form_pw);
-        $form_pwr = $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE) . $html->br();
+        $form_str .= $html->p($html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD,
+            label: $mtr->txt(msg_id::FORM_NAME_PASSWORD)));
         // optional
         // $form_pwr .= $html->form_input_password(url_var::USER_PASSWORD_RETYPE, $mtr->txt(msg_id::FORM_SHOW_PASSWORD), html_base::AUTOCOMPLETE_NEW_PW);
-        $form_pwr .= $html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE);
-        $form_str .= $html->p($form_pwr);
+        $form_str .= $html->p($html->form_input(html_base::INPUT_PASSWORD, url_var::USER_PASSWORD_RETYPE,
+            label: $mtr->txt(msg_id::FORM_NAME_PASSWORD_RE)));
         $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::ACTIVATE_SUBMIT));
@@ -915,12 +908,10 @@ class user extends db_object
         global $mtr;
 
         $html = new html_base();
-        $form_usr = $mtr->txt(msg_id::FORM_NAME_USER_NAME) . $html->br();
-        $form_usr .= $html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN);
-        $form_str = $html->p($form_usr);
-        $form_mail = $mtr->txt(msg_id::FORM_NAME_USER_EMAIL) . $html->br();
-        $form_mail .= $html->form_input(html_base::INPUT_EMAIL, url_var::EMAIL_HUMAN);
-        $form_str .= $html->p($form_mail);
+        $form_str = $html->p($html->form_input(html_base::INPUT_TEXT, url_var::USERNAME_HUMAN,
+            label: $mtr->txt(msg_id::FORM_NAME_USER_NAME)));
+        $form_str .= $html->p($html->form_input(html_base::INPUT_EMAIL, url_var::EMAIL_HUMAN,
+            label: $mtr->txt(msg_id::FORM_NAME_USER_EMAIL)));
         $form_str .= $html->form_session_token();
         $form_str .= $extra_hidden;
         $form_str .= $html->button_submit($mtr->txt(msg_id::RESET_SUBMIT));

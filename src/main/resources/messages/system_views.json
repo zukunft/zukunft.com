@@ -153,35 +153,35 @@
     {
       "name": "system title export",
       "description": "show the language specific title for the export page",
-      "type": "system_title",
+      "type": "system_form_title",
       "code_id": "system_title_export",
       "ui_msg_code_id": "system_title_export"
     },
     {
       "name": "system title export json",
       "description": "show the language specific title for the export json page",
-      "type": "system_title",
+      "type": "system_form_title",
       "code_id": "system_title_export_json",
       "ui_msg_code_id": "system_title_export_json"
     },
     {
       "name": "system title export xml",
       "description": "show the language specific title for the export xml page",
-      "type": "system_title",
+      "type": "system_form_title",
       "code_id": "system_title_export_xml",
       "ui_msg_code_id": "system_title_export_xml"
     },
     {
       "name": "system title export csv",
       "description": "show the language specific title for the export csv page",
-      "type": "system_title",
+      "type": "system_form_title",
       "code_id": "system_title_export_csv",
       "ui_msg_code_id": "system_title_export_csv"
     },
     {
       "name": "system title export ods",
       "description": "show the language specific title for the export ods page",
-      "type": "system_title",
+      "type": "system_form_title",
       "code_id": "system_title_export_ods",
       "ui_msg_code_id": "system_title_export_ods"
     },
@@ -10133,10 +10133,6 @@
         {
           "position": "6",
           "name": "system formatter row end"
-        },
-        {
-          "position": "7",
-          "name": "system form end"
         }
       ]
     },

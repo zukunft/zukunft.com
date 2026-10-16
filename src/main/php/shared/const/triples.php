@@ -106,6 +106,11 @@ class triples
     const string RESPONSE_TIME = 'response time';
     const string ROW_LIMIT = 'row limit';
     const string SIDE_WIDTH = 'side width';
+    // the views linked on the start page (config.yaml system view startup)
+    const string PINNED_VIEWS = 'pinned views';
+    // the config.yaml keys whose sub keys are names of the data e.g. the url name of a pinned view,
+    // which therefore need no word const (see coding_rule_tests::config_yaml_word_triple_tests)
+    const array CONFIG_DATA_KEYS = [self::PINNED_VIEWS];
     const string SOURCE_TABLE = 'source table';
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';
@@ -161,6 +166,147 @@ class triples
     const string SYSTEM_SORT_ORDER_CODE_ID = 'system_sort_order';
     const string SYSTEM_SORT_ORDER_DEFAULT = 'default sort order (system)';
     const string SYSTEM_SORT_ORDER_DEFAULT_CODE_ID = 'system_sort_order_default';
+    // an input field of the process catch views, defined in process_catch_fields.json like the
+    // column tiers: the field of a question phrase is a phrase of a use case file that gets its
+    // label, value phrases, unit and type by triples to these properties, and its limits, step and
+    // suggestion as values with the property; a field type is linked with "can be" to the field type
+    const string SYSTEM_PROCESS_CATCH_FIELD = 'process catch field (system)';
+    const string SYSTEM_PROCESS_CATCH_FIELD_CODE_ID = 'system_process_catch_field';
+    const string FIELD_LABEL = 'field label';
+    const string FIELD_LABEL_CODE_ID = 'system_field_label';
+    const string FIELD_VALUE_PHRASES = 'field value phrases';
+    const string FIELD_VALUE_PHRASES_CODE_ID = 'system_field_value_phrases';
+    const string FIELD_TYPE = 'field type';
+    const string FIELD_TYPE_CODE_ID = 'system_field_type';
+    const string FIELD_UNIT = 'field unit';
+    const string FIELD_UNIT_CODE_ID = 'system_field_unit';
+    const string FIELD_LIMIT_UP = 'field limit up';
+    const string FIELD_LIMIT_UP_CODE_ID = 'system_field_limit_up';
+    const string FIELD_LIMIT_DOWN = 'field limit down';
+    const string FIELD_LIMIT_DOWN_CODE_ID = 'system_field_limit_down';
+    const string FIELD_STEP = 'field step';
+    const string FIELD_STEP_CODE_ID = 'system_field_step';
+    const string FIELD_SUGGESTION = 'field suggestion';
+    const string FIELD_SUGGESTION_CODE_ID = 'system_field_suggestion';
+    const string FIELD_LOCATION_SELECTOR = 'location selector';
+    const string FIELD_LOCATION_SELECTOR_CODE_ID = 'system_field_location_selector';
+    const string FIELD_NUMBER_WITH_LIMITS = 'number with limits';
+    const string FIELD_NUMBER_WITH_LIMITS_CODE_ID = 'system_field_number_with_limits';
+    const string FIELD_PRE_SELECTION = 'pre-selection';
+    const string FIELD_PRE_SELECTION_CODE_ID = 'system_field_pre_selection';
+    const string FIELD_PHRASE_SELECTOR_TYPE = 'phrase selector';
+    const string FIELD_PHRASE_SELECTOR_TYPE_CODE_ID = 'system_field_phrase_selector_type';
+    const string FIELD_PHRASE_SELECTION_TYPE = 'phrase selection';
+    const string FIELD_PHRASE_SELECTION_TYPE_CODE_ID = 'system_field_phrase_selection_type';
+    // the phrases that a phrase selector field offers, with its own label, the parent of the
+    // phrases and the phrase whose values offer their phrases
+    const string FIELD_PHRASE_SELECTOR = 'field phrase selector';
+    const string FIELD_PHRASE_SELECTOR_CODE_ID = 'system_field_phrase_selector';
+    const string FIELD_PHRASE_SELECTOR_LABEL = 'field phrase selector label';
+    const string FIELD_PHRASE_SELECTOR_LABEL_CODE_ID = 'system_field_phrase_selector_label';
+    const string FIELD_PHRASE_SELECTOR_PARENT = 'field phrase selector parent';
+    const string FIELD_PHRASE_SELECTOR_PARENT_CODE_ID = 'system_field_phrase_selector_parent';
+    const string FIELD_PHRASE_SELECTOR_VALUE_BASED = 'field phrase selector value based';
+    const string FIELD_PHRASE_SELECTOR_VALUE_BASED_CODE_ID = 'system_field_phrase_selector_value_based';
+    // the sorted list of phrases that a phrase selection field shows, with its label and parent
+    const string FIELD_SELECTION = 'field selection';
+    const string FIELD_SELECTION_CODE_ID = 'system_field_selection';
+    const string FIELD_SELECTION_LABEL = 'field selection label';
+    const string FIELD_SELECTION_LABEL_CODE_ID = 'system_field_selection_label';
+    const string FIELD_SELECTION_PARENT = 'field selection parent';
+    const string FIELD_SELECTION_PARENT_CODE_ID = 'system_field_selection_parent';
+    // the process catch page that shows the field
+    const string FIELD_PAGE = 'field page';
+    const string FIELD_PAGE_CODE_ID = 'system_field_page';
+
+    // the properties of a process catch field by their code id
+    const array FIELD_PROPERTIES = [
+        self::FIELD_LABEL => self::FIELD_LABEL_CODE_ID,
+        self::FIELD_VALUE_PHRASES => self::FIELD_VALUE_PHRASES_CODE_ID,
+        self::FIELD_TYPE => self::FIELD_TYPE_CODE_ID,
+        self::FIELD_UNIT => self::FIELD_UNIT_CODE_ID,
+        self::FIELD_LIMIT_UP => self::FIELD_LIMIT_UP_CODE_ID,
+        self::FIELD_LIMIT_DOWN => self::FIELD_LIMIT_DOWN_CODE_ID,
+        self::FIELD_STEP => self::FIELD_STEP_CODE_ID,
+        self::FIELD_SUGGESTION => self::FIELD_SUGGESTION_CODE_ID,
+        self::FIELD_PHRASE_SELECTOR => self::FIELD_PHRASE_SELECTOR_CODE_ID,
+        self::FIELD_PHRASE_SELECTOR_LABEL => self::FIELD_PHRASE_SELECTOR_LABEL_CODE_ID,
+        self::FIELD_PHRASE_SELECTOR_PARENT => self::FIELD_PHRASE_SELECTOR_PARENT_CODE_ID,
+        self::FIELD_PHRASE_SELECTOR_VALUE_BASED => self::FIELD_PHRASE_SELECTOR_VALUE_BASED_CODE_ID,
+        self::FIELD_SELECTION => self::FIELD_SELECTION_CODE_ID,
+        self::FIELD_SELECTION_LABEL => self::FIELD_SELECTION_LABEL_CODE_ID,
+        self::FIELD_SELECTION_PARENT => self::FIELD_SELECTION_PARENT_CODE_ID,
+        self::FIELD_PAGE => self::FIELD_PAGE_CODE_ID,
+    ];
+    // the types of a process catch field by their code id
+    const array FIELD_TYPES = [
+        self::FIELD_LOCATION_SELECTOR => self::FIELD_LOCATION_SELECTOR_CODE_ID,
+        self::FIELD_NUMBER_WITH_LIMITS => self::FIELD_NUMBER_WITH_LIMITS_CODE_ID,
+        self::FIELD_PRE_SELECTION => self::FIELD_PRE_SELECTION_CODE_ID,
+        self::FIELD_PHRASE_SELECTOR_TYPE => self::FIELD_PHRASE_SELECTOR_TYPE_CODE_ID,
+        self::FIELD_PHRASE_SELECTION_TYPE => self::FIELD_PHRASE_SELECTION_TYPE_CODE_ID,
+    ];
+
+    // the four pages of a process catch, which the fields and the buttons are assigned to
+    const string SYSTEM_PROCESS_CATCH_PAGE = 'process catch page (system)';
+    const string SYSTEM_PROCESS_CATCH_PAGE_CODE_ID = 'system_process_catch_page';
+    const string PROCESS_CATCH_START_PAGE = 'process catch start page';
+    const string PROCESS_CATCH_START_PAGE_CODE_ID = 'system_process_catch_start_page';
+    const string PROCESS_CATCH_MAIN_PAGE = 'process catch main page';
+    const string PROCESS_CATCH_MAIN_PAGE_CODE_ID = 'system_process_catch_main_page';
+    const string PROCESS_CATCH_DETAIL_PAGE = 'process catch detail page';
+    const string PROCESS_CATCH_DETAIL_PAGE_CODE_ID = 'system_process_catch_detail_page';
+    const string PROCESS_CATCH_RESULT_PAGE = 'process catch result page';
+    const string PROCESS_CATCH_RESULT_PAGE_CODE_ID = 'system_process_catch_result_page';
+    // the pages of a process catch in the order the user walks through them
+    const array PROCESS_CATCH_PAGES = [
+        self::PROCESS_CATCH_START_PAGE => self::PROCESS_CATCH_START_PAGE_CODE_ID,
+        self::PROCESS_CATCH_MAIN_PAGE => self::PROCESS_CATCH_MAIN_PAGE_CODE_ID,
+        self::PROCESS_CATCH_DETAIL_PAGE => self::PROCESS_CATCH_DETAIL_PAGE_CODE_ID,
+        self::PROCESS_CATCH_RESULT_PAGE => self::PROCESS_CATCH_RESULT_PAGE_CODE_ID,
+    ];
+
+    // a button of a process catch page: the text in the button is defined by the component, the
+    // tooltip, the label of the refresh button and the page it opens by the properties of each button
+    // type, so a question phrase can give the next and the back button a different tooltip
+    const string SYSTEM_PROCESS_CATCH_BUTTON = 'process catch button (system)';
+    const string SYSTEM_PROCESS_CATCH_BUTTON_CODE_ID = 'system_process_catch_button';
+    const string BUTTON_NEXT = 'next button';
+    const string BUTTON_NEXT_CODE_ID = 'system_button_next';
+    const string BUTTON_REFRESH = 'refresh button';
+    const string BUTTON_REFRESH_CODE_ID = 'system_button_refresh';
+    const string BUTTON_BACK = 'back button';
+    const string BUTTON_BACK_CODE_ID = 'system_button_back';
+    const string BUTTON_NEXT_TOOLTIP = 'button next tooltip';
+    const string BUTTON_NEXT_TOOLTIP_CODE_ID = 'system_button_next_tooltip';
+    const string BUTTON_NEXT_VIEW = 'button next view';
+    const string BUTTON_NEXT_VIEW_CODE_ID = 'system_button_next_view';
+    const string BUTTON_REFRESH_TOOLTIP = 'button refresh tooltip';
+    const string BUTTON_REFRESH_TOOLTIP_CODE_ID = 'system_button_refresh_tooltip';
+    const string BUTTON_REFRESH_LABEL = 'button refresh label';
+    const string BUTTON_REFRESH_LABEL_CODE_ID = 'system_button_refresh_label';
+    const string BUTTON_REFRESH_VIEW = 'button refresh view';
+    const string BUTTON_REFRESH_VIEW_CODE_ID = 'system_button_refresh_view';
+    const string BUTTON_BACK_TOOLTIP = 'button back tooltip';
+    const string BUTTON_BACK_TOOLTIP_CODE_ID = 'system_button_back_tooltip';
+    const string BUTTON_BACK_VIEW = 'button back view';
+    const string BUTTON_BACK_VIEW_CODE_ID = 'system_button_back_view';
+    // the properties of the process catch buttons by their code id
+    const array BUTTON_PROPERTIES = [
+        self::BUTTON_NEXT_TOOLTIP => self::BUTTON_NEXT_TOOLTIP_CODE_ID,
+        self::BUTTON_NEXT_VIEW => self::BUTTON_NEXT_VIEW_CODE_ID,
+        self::BUTTON_REFRESH_TOOLTIP => self::BUTTON_REFRESH_TOOLTIP_CODE_ID,
+        self::BUTTON_REFRESH_LABEL => self::BUTTON_REFRESH_LABEL_CODE_ID,
+        self::BUTTON_REFRESH_VIEW => self::BUTTON_REFRESH_VIEW_CODE_ID,
+        self::BUTTON_BACK_TOOLTIP => self::BUTTON_BACK_TOOLTIP_CODE_ID,
+        self::BUTTON_BACK_VIEW => self::BUTTON_BACK_VIEW_CODE_ID,
+    ];
+    // the types of a process catch button by their code id
+    const array BUTTON_TYPES = [
+        self::BUTTON_NEXT => self::BUTTON_NEXT_CODE_ID,
+        self::BUTTON_REFRESH => self::BUTTON_REFRESH_CODE_ID,
+        self::BUTTON_BACK => self::BUTTON_BACK_CODE_ID,
+    ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';

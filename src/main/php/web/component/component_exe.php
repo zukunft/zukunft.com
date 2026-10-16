@@ -80,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -158,7 +159,7 @@ class component_exe extends component
                 $err_lst = $cfg->sys_log_list();
             }
         }
-        // the given data of the admin dashboard columns, which are empty without a context
+        // the given data of the admin dashboard columns and the views of the process catch, which are empty without a context
         $adm_dto = $cfg ?? new data_object();
 
         $form = new system_form();
@@ -369,6 +370,15 @@ class component_exe extends component
             component_types::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id, $url_arr),
             component_types::SYSTEM_TITLE_WITH_OBJECT_NAME => $page->title_with_object_name($this->ui_msg_code_id, $dbo),
             component_types::SYSTEM_TITLE_FOR_PHRASE => $page->title_for_phrase($this->ui_msg_code_id, $dbo),
+            component_types::SYSTEM_TEXT_EXPLAIN => $page->text_explain($this->ui_msg_code_id),
+            component_types::PROCESS_CATCH_FIELDS => $page->process_catch_fields($this->name(), $this->code_id, $url_arr),
+            // the process catch tabs and buttons link by the code id of the page that shows them
+            component_types::PROCESS_CATCH_TAB => $page->process_catch_tab($this->code_id, $adm_dto->view_code_id($msk_id), $dbo, $url_arr),
+            component_types::PROCESS_CATCH_BUTTON_NEXT => $page->process_catch_button_next($adm_dto->view_code_id($msk_id), $dbo),
+            component_types::PROCESS_CATCH_BUTTON_BACK => $page->process_catch_button_back($adm_dto->view_code_id($msk_id), $dbo),
+            component_types::PROCESS_CATCH_BUTTON_REFRESH => $page->process_catch_button_refresh(
+                $this->ui_msg_code_id ?? msg_id::PROCESS_CATCH_BUTTON_REFRESH, $form_name, $adm_dto->view_code_id($msk_id), $dbo, $url_arr),
+            component_types::GEOLOCATOR => $page->geolocator($this->ui_msg_code_id ?? msg_id::GEOLOCATOR_LABEL, $form_name, $url_arr),
             component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
@@ -511,7 +521,7 @@ class component_exe extends component
             component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg),
             component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns($dbo, $msg, $cfg, false, true, $url_arr),
-            component_types::TRIPLE_LIST => $list->triples_of_types($dbo, $this->col_phrase, $msg, $cfg),
+            component_types::TRIPLE_LIST => $list->triples_of_types($dbo, $this->col_phrase, $msg, $cfg, $url_arr),
             component_types::VALUE_CHART => $list->value_chart($dbo, $msg, $cfg),
             component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $msg, $test_mode, $url_arr),
             component_types::NUMERIC_VALUE => $list->num_list(),

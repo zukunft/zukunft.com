@@ -231,9 +231,13 @@ class triple_names
     const int SYSTEM_COLUMN_ID = 184;
     const string SYSTEM_COLUMN_MAYOR = 'mayor column (system)';
     const int SYSTEM_COLUMN_MAYOR_ID = 224;
+    // the building block of the process catch field keyword of process_catch_fields.json, which has no code id
+    const string PROCESS_CATCH_FIELD = 'process catch field';
+    // the value phrase of the geolocator component of process_catch_views.json, an unnamed "of" triple
+    const string PLACE_OF_USER = 'place of user';
     // the base phrase of the table editor example (problem_main_reasons.json)
     const string POPULISM_SOLUTION = 'populism solution';
-    const int POPULISM_SOLUTION_ID = 1189;
+    const int POPULISM_SOLUTION_ID = 1190;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 225;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking
@@ -248,13 +252,13 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2451;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2491;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 2452;
+    const int GAIN_AND_LOSS_ID = 2492;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2453;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2493;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2454;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2494;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort
@@ -355,26 +359,26 @@ class triple_names
     const int COLUMN_LOSS_OF_REASON_EXPLAINS_REASON_ID = 281;
     // the reasons of global warming of problem_global_warming_reasons.json, whose table page lists them
     const string GLOBAL_WARMING_REASON = 'global warming reason';
-    const int GLOBAL_WARMING_REASON_ID = 1631;
+    const int GLOBAL_WARMING_REASON_ID = 1636;
     const string HEAT_MORTALITY = 'heat mortality';
-    const int HEAT_MORTALITY_ID = 1113;
+    const int HEAT_MORTALITY_ID = 1115;
     const string HEAT_MORTALITY_REASON = 'heat mortality (reason)';
-    const int HEAT_MORTALITY_REASON_ID = 1633;
+    const int HEAT_MORTALITY_REASON_ID = 1638;
     const string CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON = 'climate gas emissions (global warming reason)';
-    const int CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID = 1652;
+    const int CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID = 1657;
     const string HEAT_MORTALITY_GLOBAL_WARMING_REASON = 'heat mortality (global warming reason)';
-    const int HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID = 1654;
+    const int HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID = 1659;
     // the solutions of global warming of problem_global_warming_reasons.json, whose table page lists them
     const string CLIMATE_ADAPTATION = 'climate adaptation';
-    const int CLIMATE_ADAPTATION_ID = 1635;
+    const int CLIMATE_ADAPTATION_ID = 1640;
     const string CLIMATE_ADAPTATION_SOLUTION = 'climate adaptation (solution)';
-    const int CLIMATE_ADAPTATION_SOLUTION_ID = 1656;
+    const int CLIMATE_ADAPTATION_SOLUTION_ID = 1661;
     const string GLOBAL_WARMING_SOLUTION = 'global warming solution';
-    const int GLOBAL_WARMING_SOLUTION_ID = 1636;
+    const int GLOBAL_WARMING_SOLUTION_ID = 1641;
     const string REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION = 'reduce climate gas emissions (global warming solution)';
-    const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1657;
+    const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1662;
     const string CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION = 'climate adaptation (global warming solution)';
-    const int CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID = 1658;
+    const int CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID = 1664;
     const string COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM = 'column potential loss is explaining column for column problem (high prio)';
     const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 274;
     const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
@@ -384,12 +388,14 @@ class triple_names
     // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
     // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 1955;
+    const int GRAM_PER_KWH_ID = 1961;
     // TODO use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id
     // (docs/llm/json_structure.md "Use case files"), which is why no id const exists
     const string PV_IN_SWITZERLAND = 'PV in Switzerland';
+    // the worked example of the use case pv_lifetime_balance.json, selected by the name only as well
+    const string EXAMPLE_PV_INSTALLATION = 'example PV installation';
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 612;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

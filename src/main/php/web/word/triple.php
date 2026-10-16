@@ -627,18 +627,7 @@ class triple extends sandbox_code_id
         $phr = null;
         if (!is_numeric($id)) {
             // resolve the phrase name from the request cache first to avoid a backend call
-            if ($dto != null) {
-                $phr = $dto->phr_lst->get_by_name($id, $msg);
-            }
-            if ($phr == null) {
-                $phr_loaded = new phrase();
-                if ($phr_loaded->load_by_name($id, $msg)) {
-                    $phr = $phr_loaded;
-                } else {
-                    // an unknown phrase name is a user input that the user can correct
-                    $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $id]);
-                }
-            }
+            $phr = ($dto?->phr_lst ?? new phrase_list())->load_or_get_by_name($id, $msg);
         } else {
             if ($dto != null) {
                 $phr_lst = $dto->phr_lst;

@@ -274,6 +274,7 @@ class words
     const string SOURCE = 'source';
     const string SOURCES = 'sources';
     const string START = 'start';
+    const string STARTUP = 'startup';
     const string STORAGE = 'storage';
     const string STORE = 'store';
     const string SUGGESTED = 'suggested';
@@ -286,6 +287,7 @@ class words
     const int TIME_ID = 99;
     const string TITLE = 'title';
     const string TOLERANCE = 'tolerance';
+    const string TOOLTIP = 'tooltip';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
     const int TOTAL_ID = 387;
@@ -301,7 +303,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 791;
+    const int VERBS_ID = 800;
     const string VERSION = 'version';
     const string VIEW = 'view';
     const string VIEWS = 'views';

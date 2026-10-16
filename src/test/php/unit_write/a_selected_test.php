@@ -62,12 +62,15 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\system_views_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -78,10 +81,12 @@ class a_selected_test extends all_unit_tests
     // the import json files to load for a fast single-file debugging cycle
     // comment out the entries that are not needed to import just one file at a time
     const array SELECTED_IMPORT_FILES = [
-        test_files::IMPORT_PRO_CONTRA_NPP_CH,
-        test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
-        test_files::IMPORT_COSTS_ELECTRICITY_WIKI_EN,
-        test_files::IMPORT_COSTS_ELECTRICITY_WIKI_DE,
+        // the use case is user data, so it is imported as the normal test user usr1 like the db setup does
+        cfg_files::PV_LIFETIME_BALANCE_FILE,
+        //test_files::IMPORT_PRO_CONTRA_NPP_CH,
+        //test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
+        //test_files::IMPORT_COSTS_ELECTRICITY_WIKI_EN,
+        //test_files::IMPORT_COSTS_ELECTRICITY_WIKI_DE,
         //files::EDUCATION_FILE,
         //files::POVERTY_FILE,
         //files::HEALTH_FILE,
@@ -226,12 +231,10 @@ class a_selected_test extends all_unit_tests
             */
             //new import_write_tests()->run($t);
             // import just the json files selected in SELECTED_IMPORT_FILES for a fast single-file cycle
-            /*
             $imf = new import_file();
             foreach (self::SELECTED_IMPORT_FILES as $import_file) {
                 $imf->json_file($import_file, $usr, false);
             }
-            */
 
 
             /*
@@ -261,6 +264,27 @@ class a_selected_test extends all_unit_tests
             //new word_list_read_tests()->run($this);
             //new triple_list_read_tests()->run($this);
             // run the selected db read tests
+            // the system view pages by section; only the view of the use case imported above is
+            // rendered into resources/web/html/use_cases/pv_lifetime_balance.html next to the
+            // hand made sample, the other sections are listed to be switched on when needed
+            $msk_tests = new system_views_read_tests();
+            $cfg = $msk_tests->context($this);
+            //$msk_tests->run_start($this);
+            //$msk_tests->run_words($this, $cfg);
+            //$msk_tests->run_verbs($this, $cfg);
+            //$msk_tests->run_triples($this, $cfg);
+            //$msk_tests->run_sources($this, $cfg);
+            //$msk_tests->run_refs($this, $cfg);
+            //$msk_tests->run_values($this, $cfg);
+            //$msk_tests->run_formulas($this, $cfg);
+            //$msk_tests->run_results($this, $cfg);
+            //$msk_tests->run_views($this, $cfg);
+            //$msk_tests->run_components($this, $cfg);
+            //$msk_tests->run_users($this, $cfg);
+            //$msk_tests->run_system_pages($this);
+            //$msk_tests->run_use_cases($this, $cfg);
+            $msk_tests->run_pv_lifetime_balance($this, $cfg);
+            //$msk_tests->run_web_frontend($this);
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);
             //new triple_read_tests()->run($this);
@@ -293,7 +317,7 @@ class a_selected_test extends all_unit_tests
             //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);
 
-            new word_write_tests()->run($this);
+            //new word_write_tests()->run($this);
             //new word_list_write_tests()->run($this);
             //new verb_write_tests()->run($t);
             //new triple_write_tests()->run($this);
@@ -329,9 +353,9 @@ class a_selected_test extends all_unit_tests
 
             // the only active main test: read each main object type via a REST api get call
             //new api_write_tests()->run($this);
-            new import_write_tests()->run($this);
-            new xbrl_write_tests()->run($this);
-            new wikidata_write_tests()->run($this);
+            //new import_write_tests()->run($this);
+            //new xbrl_write_tests()->run($this);
+            //new wikidata_write_tests()->run($this);
 
             //$import = new import_file();
             //$import->import_test_files($usr);
@@ -340,8 +364,8 @@ class a_selected_test extends all_unit_tests
              * url
              */
 
-            new word_url_tests()->run($this);
-            new word_write_url_tests()->run($this);
+            //new word_url_tests()->run($this);
+            //new word_write_url_tests()->run($this);
             //new triple_write_url_tests()->run($this);
             //new formula_write_url_tests()->run($this);
 

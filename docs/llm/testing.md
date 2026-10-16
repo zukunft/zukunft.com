@@ -736,7 +736,10 @@ load, and if a sample file mixes both, split the code-id part into the system da
 of the test phrases. Those ids come from the insert order of the import files, so
 **adding or removing a phrase in a seed import shifts every id after it** — a new
 word in `base_phrases.json`, a split of one multi-word word into a triple, an
-extra file in `files::BASE_DATA_PATH_FILES`, all of them.
+extra file in `files::BASE_DATA_PATH_FILES`, all of them. The default
+`config.yaml` is such a seed import too: it is fixed and part of the code, and
+each key becomes a word (and a multi-word key a triple), so a new or moved key
+in `config.yaml` (e.g. a pinned view) needs a re-pin as well.
 
 The cheapest re-baseline is the one that is not needed: a change to a seed
 import stays as small as the task asks for, so that the object count of every
@@ -755,6 +758,10 @@ The authority for the new ids is `src/test/resources/unit/<class>/list.csv`. Tha
 file is not hand-maintained: `test_db_load::csv_recreate()` dumps the whole table
 with `sql_db::csv_from_class()` after a database reset. So the sequence is
 **reset → regenerate the csv → read the new ids out of it → update the consts**.
+`test/test_re_pin.php` runs the first two steps as one fast cycle (the developer
+runs it, never an LLM): the unit tests upfront, the database recreation, the csv
+and api fixture refresh and the complete base and test data import, without the
+frontend, workflow and db write tests of `test.php`.
 Never derive an id by counting entries in the JSON or by assuming a shift of one.
 
 Two traps that make the drift look smaller than it is:
@@ -919,6 +926,18 @@ of silently masking a regression in an existing baseline.
   overwrite the stale snapshots, then committing the regenerated fixtures.
 - **Wrong**: hand-editing a `views_by_id/*.html` or `db/**/*.sql` fixture so the
   assertion passes again.
+
+### A use case page is generated next to its hand made sample
+
+`src/test/resources/web/html/use_cases/` (`test_paths::USE_CASES`) holds for a use case
+two pages with the same name: `<name>_sample.html` is the hand made target layout and
+`<name>.html` is the page that the view of the use case json renders, written by
+`assert_view_by_name` with the snapshot path given (e.g. `pv_lifetime_balance` from
+`files::PV_LIFETIME_BALANCE` in `system_views_read_tests`). The two are compared by the
+developer, not by a test: the generated page is the regression snapshot of the use case
+view, the sample is the goal the view and its components grow towards. The folder is not
+below `views_by_object`, because the view test deletes every snapshot there that it has
+not written, which would remove the sample.
 
 ### The page footer shows the minor version in a test run
 

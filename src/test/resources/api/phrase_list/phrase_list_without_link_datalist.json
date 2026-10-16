@@ -144,7 +144,7 @@
         "id": 102,
         "protection": 3,
         "name": "day",
-        "description": "A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",
+        "description": "here the hours with PV production",
         "type_id": 11,
         "class": "word"
     },

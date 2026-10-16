@@ -75,6 +75,13 @@ class files
         api::FIND_FORWARD => test_paths::DOCROOT . api::FIND_FORWARD,
         api::SETTINGS_REL => test_paths::DOCROOT . api::SETTINGS_REL,
     ];
+    // the folder of the static forward pages of the pinned views of config.yaml, each named by its
+    // url name, which the test run rewrites from the url of config.yaml (see base_ui_tests)
+    CONST string PINNED_PAGE_PATH = test_paths::DOCROOT . DIRECTORY_SEPARATOR;
+    // the static start page with the links to the pinned views, which the test run rewrites
+    CONST string START_PAGE = test_paths::DOCROOT . DIRECTORY_SEPARATOR . 'index' . self::HTML;
+    // the allow-list of the extensionless forward pages in the docroot
+    CONST string HTACCESS = test_paths::DOCROOT . DIRECTORY_SEPARATOR . '.htaccess';
 
     // the snapshots that no test of a run writes, but that must never be removed by the
     // cleanup of the unused test files e.g. the initial test page created before the

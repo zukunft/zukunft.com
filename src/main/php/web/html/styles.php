@@ -56,6 +56,8 @@ class styles
     const string STYLE_BORDERLESS_GREY = 'borderless_grey';
     const string TABLE_PUR = 'table';
     const string TEXT_RIGHT = 'text-right';
+    // a warning or error text shown inline to the user (see html_base::dsp_err)
+    const string TEXT_DANGER = 'text-danger';
     // a table column of the main tier is hidden on a small screen, one of the minor tier is
     // shown on a wide screen only and one of the marginal tier only on the widest screen
     // (see triples::SYSTEM_COLUMN_TIERS)
@@ -101,6 +103,16 @@ class styles
     // css class for an add or change icon link beside a form field e.g. behind the source selector:
     // the size of the field label, so the icon is easy to hit
     const string FORM_ICON_INLINE = 'form-icon-inline';
+
+    // css classes of the links that look like buttons or tabs on a process catch page: the next button
+    // continues, the back button returns, and the selected tab is shown without a link
+    const string PROCESS_CATCH_BUTTON_NEXT = 'btn btn-outline-success btn-space';
+    const string PROCESS_CATCH_BUTTON_BACK = 'btn btn-outline-secondary btn-space';
+    // the refresh is a submit button, which gets the btn class from html_base::button, but not the
+    // col-1 of html_base::button_bs, so it is as wide as its text like the next and the back button
+    const string PROCESS_CATCH_BUTTON_REFRESH = 'btn-outline-primary btn-space';
+    const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
+    const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
 
     // css class for a submit button that is shown like the plain text around it, e.g. the 'add'
     // of the component list of a view, which must be a submit to send the selected component

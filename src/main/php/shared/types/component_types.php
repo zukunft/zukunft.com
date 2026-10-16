@@ -386,7 +386,7 @@ class component_types
     const string SYSTEM_TITLE_WITH_OBJECT_NAME = "system_title_with_object_name";
     const int SYSTEM_TITLE_WITH_OBJECT_NAME_ID = 5;
     const string SYSTEM_TITLE_FOR_PHRASE = "system_title_for_phrase";
-    const int SYSTEM_TITLE_FOR_PHRASE_ID = 267;
+    const int SYSTEM_TITLE_FOR_PHRASE_ID = 268;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
     const int SYSTEM_SUB_TITLE_ID = 3;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
@@ -578,7 +578,31 @@ class component_types
     // the triples that point to the column phrase of the component and that are related to the
     // phrase of the page, e.g. the columns of the table editor (see ui_list::triples_of_types)
     const string TRIPLE_LIST = "triple_list";
-    const int TRIPLE_LIST_ID = 268;
+    const int TRIPLE_LIST_ID = 269;
+    // a paragraph with the translated text of the ui message of the component e.g. the explain
+    // text below the title of a process catch page
+    const string SYSTEM_TEXT_EXPLAIN = "system_text_explain";
+    const int SYSTEM_TEXT_EXPLAIN_ID = 270;
+    // the input fields of a process catch page or of one of its tabs, which the fields of the
+    // question phrase define (see triples::FIELD_PROPERTIES); a placeholder until the fields are read
+    const string PROCESS_CATCH_FIELDS = "process_catch_fields";
+    const int PROCESS_CATCH_FIELDS_ID = 271;
+    // one tab of a process catch page as a link to the same page with the tab selected
+    const string PROCESS_CATCH_TAB = "process_catch_tab";
+    const int PROCESS_CATCH_TAB_ID = 272;
+    // the button that opens the next page of a process catch (views::PROCESS_CATCH_NEXT)
+    const string PROCESS_CATCH_BUTTON_NEXT = "process_catch_button_next";
+    const int PROCESS_CATCH_BUTTON_NEXT_ID = 273;
+    // the button that opens the page before of a process catch (views::PROCESS_CATCH_BACK)
+    const string PROCESS_CATCH_BUTTON_BACK = "process_catch_button_back";
+    const int PROCESS_CATCH_BUTTON_BACK_ID = 274;
+    // the button that shows the process catch page again with the changed input e.g. to calculate
+    const string PROCESS_CATCH_BUTTON_REFRESH = "process_catch_button_refresh";
+    const int PROCESS_CATCH_BUTTON_REFRESH_ID = 275;
+    // the input of a place by its name or postal code with the translated label of the component;
+    // the row phrase of the component is the value phrase of the place e.g. place of user
+    const string GEOLOCATOR = "geolocator";
+    const int GEOLOCATOR_ID = 276;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -861,6 +885,13 @@ class component_types
         self::SYSTEM_ADMIN_JOBS_DELAYED,
         self::SYSTEM_ADMIN_SUBTITLE,
         self::SYSTEM_ADMIN_USER_LOAD,
+        self::SYSTEM_TEXT_EXPLAIN,
+        self::PROCESS_CATCH_FIELDS,
+        self::PROCESS_CATCH_TAB,
+        self::PROCESS_CATCH_BUTTON_NEXT,
+        self::PROCESS_CATCH_BUTTON_BACK,
+        self::PROCESS_CATCH_BUTTON_REFRESH,
+        self::GEOLOCATOR,
         self::SELECT_LIST,
         self::SHOW_NAME,
         self::SHOW_NAME_BIG,
@@ -1154,6 +1185,13 @@ class component_types
         [self::VALUES_IN_COLUMNS, self::VALUES_IN_COLUMNS_ID],
         [self::TABLE_WITH_RELATED_COLUMNS, self::TABLE_WITH_RELATED_COLUMNS_ID],
         [self::TRIPLE_LIST, self::TRIPLE_LIST_ID],
+        [self::SYSTEM_TEXT_EXPLAIN, self::SYSTEM_TEXT_EXPLAIN_ID],
+        [self::PROCESS_CATCH_FIELDS, self::PROCESS_CATCH_FIELDS_ID],
+        [self::PROCESS_CATCH_TAB, self::PROCESS_CATCH_TAB_ID],
+        [self::PROCESS_CATCH_BUTTON_NEXT, self::PROCESS_CATCH_BUTTON_NEXT_ID],
+        [self::PROCESS_CATCH_BUTTON_BACK, self::PROCESS_CATCH_BUTTON_BACK_ID],
+        [self::PROCESS_CATCH_BUTTON_REFRESH, self::PROCESS_CATCH_BUTTON_REFRESH_ID],
+        [self::GEOLOCATOR, self::GEOLOCATOR_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

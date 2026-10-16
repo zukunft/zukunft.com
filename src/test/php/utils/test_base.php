@@ -1264,6 +1264,10 @@ class test_base
      * @param string $obj_name the name of the database object that should be loaded and shown
      * @param data_object_ui|null $cfg the context that should be used to create the view
      *                              which can be fixed test data for stable test results
+     * @param string $file_path the snapshot path relative to the test resource path without the
+     *                          extension, if the snapshot is not named by the class and the names,
+     *                          e.g. the page of a use case next to its hand made sample page
+     *                          (test_paths::USE_CASES); '' for the default name
      * @return bool true if the generated view matches the expected
      */
     function assert_view_by_name(
@@ -1271,7 +1275,8 @@ class test_base
         user            $usr,
         db_object_seq_id $dbo,
         string          $obj_name,
-        ?data_object_ui $cfg = null
+        ?data_object_ui $cfg = null,
+        string          $file_path = ''
     ): bool
     {
         $msg = new user_message();
@@ -1279,8 +1284,10 @@ class test_base
 
         // the snapshot is named by the names too, so a re-baseline of the ids never renames it
         $class = $lib->class_to_name($dbo::class);
-        $file_path = test_paths::HTML . test_paths::VIEWS . $class . DIRECTORY_SEPARATOR
-            . $this->name_to_file($view_name) . '_' . $class . '_' . $this->name_to_file($obj_name);
+        if ($file_path == '') {
+            $file_path = test_paths::HTML . test_paths::VIEWS . $class . DIRECTORY_SEPARATOR
+                . $this->name_to_file($view_name) . '_' . $class . '_' . $this->name_to_file($obj_name);
+        }
 
         // load the view and the object by their names; the related objects are loaded by the id
         // that the name has resolved, which is the only place the id is used

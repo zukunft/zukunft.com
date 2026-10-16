@@ -43,6 +43,7 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -200,6 +202,103 @@ class import_tests
         $t->assert_text_contains($test_name, $msg->text(), views::TABLE_EDITOR_NAME);
         $test_name = '... and not added';
         $t->assert($test_name, $dto->view_relation_list()->count(), 0);
+
+        // the keyword, the properties and the types of an input field of the process catch views
+        // are system phrases, so the code reads them by their code id (triples::FIELD_PROPERTIES)
+        $json_array = json_decode(file_get_contents(cfg_files::PROCESS_CATCH_FIELDS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the process catch field system file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        $trp_lst = $dto->triple_list();
+        $keywords = [
+            triples::SYSTEM_PROCESS_CATCH_FIELD => triples::SYSTEM_PROCESS_CATCH_FIELD_CODE_ID,
+            triples::SYSTEM_PROCESS_CATCH_PAGE => triples::SYSTEM_PROCESS_CATCH_PAGE_CODE_ID,
+            triples::SYSTEM_PROCESS_CATCH_BUTTON => triples::SYSTEM_PROCESS_CATCH_BUTTON_CODE_ID,
+        ];
+        foreach ([...$keywords, ...triples::FIELD_PROPERTIES, ...triples::FIELD_TYPES, ...triples::PROCESS_CATCH_PAGES,
+                     ...triples::BUTTON_PROPERTIES, ...triples::BUTTON_TYPES] as $name => $code_id) {
+            $test_name = 'the import sets the code id of the process catch phrase ' . $name;
+            $t->assert($test_name, $trp_lst->get_by_name($name, $msg)?->get_code_id(), $code_id);
+        }
+        // a property belongs to its keyword and a type to its keyword or type property, like the column tiers
+        $test_name = 'a property of a process catch field is linked to the field keyword';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::FIELD_UNIT, $msg)?->get_from()?->name(),
+            triples::SYSTEM_PROCESS_CATCH_FIELD);
+        $test_name = 'a field type is linked to the field type property';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::FIELD_LOCATION_SELECTOR, $msg)?->get_from()?->name(),
+            triples::FIELD_TYPE);
+        $test_name = 'the label of a phrase selector is a property of the phrase selector and not of the field';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::FIELD_PHRASE_SELECTOR_LABEL, $msg)?->get_from()?->name(),
+            triples::FIELD_PHRASE_SELECTOR);
+        $test_name = 'a page of a process catch is linked to the page keyword';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::PROCESS_CATCH_MAIN_PAGE, $msg)?->get_from()?->name(),
+            triples::SYSTEM_PROCESS_CATCH_PAGE);
+        $test_name = 'a button type is linked to the button keyword';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::BUTTON_NEXT, $msg)?->get_from()?->name(),
+            triples::SYSTEM_PROCESS_CATCH_BUTTON);
+        // each button type has its own properties, so a question phrase can give each button its own tooltip
+        $test_name = 'a button property is linked to its button type';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::BUTTON_BACK_TOOLTIP, $msg)?->get_from()?->name(),
+            triples::BUTTON_BACK);
+        // the same property of another button type is a triple of its own and not shared with the back button
+        $test_name = '... so the next button has its own tooltip';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::BUTTON_NEXT_TOOLTIP, $msg)?->get_from()?->name(),
+            triples::BUTTON_NEXT);
+        // negative: the building blocks of the keywords are no system phrases, so they have no code id
+        // found first, because a missing triple would also return no code id
+        $test_name = 'the building block of the field keyword is imported';
+        $trp = $trp_lst->get_by_name(triple_names::PROCESS_CATCH_FIELD, $msg);
+        $t->assert($test_name, $trp?->name(), triple_names::PROCESS_CATCH_FIELD);
+        $test_name = '... without a code id';
+        $t->assert_null($test_name, $trp?->get_code_id());
+        // negative: only a system, system test or developer user may set a code id, so the import of
+        // the system file by a user with the normal profile is refused; the refused triple and every
+        // following one are not added to the data object, because the import mapper returns the
+        // verdict of the shared message (import::dto_get_triples)
+        $test_name = 'a normal user cannot import the code id of a process catch field phrase';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
+
+        // the four process catch pages are system views, which the next and the back button find by the code id
+        $json_array = json_decode(file_get_contents(cfg_files::PROCESS_CATCH_VIEWS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the process catch view file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        // the start and the main page have a title, an explain text, the fields and a button; the detail
+        // and the result page have five tabs and the fields of each tab instead of the fields and the
+        // detail page has the refresh button to calculate with the changed assumptions
+        $pages = [
+            views::PROCESS_CATCH_START_NAME => [views::PROCESS_CATCH_START, 4],
+            views::PROCESS_CATCH_MAIN_NAME => [views::PROCESS_CATCH_MAIN, 4],
+            views::PROCESS_CATCH_DETAIL_NAME => [views::PROCESS_CATCH_DETAIL, 14],
+            views::PROCESS_CATCH_RESULT_NAME => [views::PROCESS_CATCH_RESULT, 13],
+        ];
+        foreach ($pages as $name => [$code_id, $cmp_count]) {
+            $msk = $dto->get_view_by_name($name, $msg);
+            $test_name = 'the import sets the code id of the ' . $name;
+            $t->assert($test_name, $msk?->get_code_id(), $code_id);
+            $test_name = '... and links its components';
+            $t->assert($test_name, $msk?->component_links() ?? 0, $cmp_count);
+        }
+        // the geolocator keeps the entered place with its row phrase, which the system file defines
+        $cmp_geo = $dto->get_component_by_name(components::GEOLOCATOR_NAME, $msg);
+        $test_name = 'the geolocator component has the geolocator type';
+        $t->assert($test_name, $cmp_geo?->type_code_id(), component_types::GEOLOCATOR);
+        $test_name = '... and the place of the user as value phrase';
+        $t->assert($test_name, $cmp_geo?->row_phrase?->name(), triple_names::PLACE_OF_USER);
+        // negative: a component without a row in the json e.g. the refresh button has no value phrase
+        $test_name = 'the refresh button is imported';
+        $cmp_rfr = $dto->get_component_by_name(components::PROCESS_CATCH_REFRESH_NAME, $msg);
+        $t->assert($test_name, $cmp_rfr?->type_code_id(), component_types::PROCESS_CATCH_BUTTON_REFRESH);
+        $test_name = '... without a value phrase';
+        $t->assert_null($test_name, $cmp_rfr?->row_phrase?->name());
+        $test_name = 'a normal user cannot import the code id of a process catch view';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
 
         $test_name = 'JSON import source count';
         $msg = new user_message($t->usr_dev);
@@ -434,6 +533,18 @@ class import_tests
         }
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the PV lifetime balance use case chains its results: the production, the dispatch, the
+        // embodied emissions, the gross and net avoided emission and the payback, so every
+        // pre-calculated result of the file must be reproduced from its values and formulas
+        $test_name = 'the import of the PV lifetime balance use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PV_LIFETIME_BALANCE_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
 
         // the unique keys use case is user data as well, so a normal user must import it
         $test_name = 'the import of the unique keys use case reports no problem';
@@ -766,6 +877,49 @@ class import_tests
         $est = $imp->calc_total_time($base + $elapsed, 100);
         $test_name = 'import time estimate handles a zero original estimate';
         $t->assert_true($test_name, $est > 0);
+
+        // the factor compares the real time with the estimated time of the work done until now:
+        // half of a 10s estimate done after 10s means the rest also takes longer than estimated,
+        // which the factor based on the total estimate did not see
+        $imp->est_time_total = 10;
+        $imp->est_time_step = 0;
+        $imp->micro_steps = 0;
+        $imp->done_time_main_step = 5;
+        $imp->done_time_step = 0;
+        $test_name = 'import time estimate grows if the work done has taken longer than estimated';
+        $est = $imp->calc_total_time($base + 10, 0);
+        $t->assert_true($test_name, abs($est - 17.5) < 0.0001);
+        $test_name = '... but stays the original estimate if the work done has taken the estimated time';
+        $est = $imp->calc_total_time($base + 5, 0);
+        $t->assert_true($test_name, abs($est - 10) < 0.0001);
+
+        // the speeds of config.yaml are in MB per second, but the file size is in bytes
+        $test_name = 'the file size estimate converts the configured MB per second';
+        $t->assert_true($test_name, abs(import::est_time_by_size(2100000, 2.1) - 1) < 0.0001);
+        $test_name = '... so that a file of 300 kB is not expected to take more than a day';
+        $t->assert_true($test_name, import::est_time_by_size(310935, 2.1) < 1);
+        $test_name = '... and a speed of zero gives no estimate instead of a division by zero';
+        $t->assert_true($test_name, import::est_time_by_size(1000, 0) == 0);
+
+        // the direct import estimates the store time by the number of objects of each section
+        $imp_cnt = new import();
+        $test_name = 'the store time of an import is the sum of the store time of the sections';
+        $est_parts = $imp_cnt->est_time_save(json_fields::COMPONENTS, 100)
+            + $imp_cnt->est_time_save(json_fields::VIEWS, 10);
+        $est = $imp_cnt->est_time_put([
+            json_fields::VERSION => def::PRG_VERSION,
+            json_fields::COMPONENTS => array_fill(0, 100, []),
+            json_fields::VIEWS => array_fill(0, 10, [])
+        ]);
+        $t->assert_true($test_name, $est > 0 and abs($est - $est_parts) < 0.0001);
+        $test_name = '... and a section without objects to store adds no time';
+        $t->assert_true($test_name, $imp_cnt->est_time_put([json_fields::SELECTION => ['a', 'b']]) == 0);
+        $test_name = 'a view takes longer to store than a component, because it also links its components';
+        $t->assert_true($test_name,
+            $imp_cnt->est_time_save(json_fields::VIEWS, 1) > $imp_cnt->est_time_save(json_fields::COMPONENTS, 1));
+        $test_name = 'a section without a configured speed uses the fallback speed';
+        $t->assert_true($test_name,
+            abs($imp_cnt->est_time_save(json_fields::LIST_VERBS, def::FALLBACK_IMPORT_PER_SEC) - 1) < 0.0001);
 
 
         $t->subheader($ts . 'merge two import json');

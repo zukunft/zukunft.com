@@ -85,6 +85,56 @@ class components
     const string FORM_DESCRIPTION_NAME = 'system form field description';
     const string FORM_DESCRIPTION_COM = 'the description field in a form';
 
+    // the tabs of the process catch detail and result page and the input fields of each tab
+    // (process_catch_views.json); the code id names the tab number, because the ui message of a
+    // component is unique and therefore cannot link a tab to its fields
+    const string PROCESS_CATCH_DETAIL_TAB_ONE = 'process_catch_detail_tab_one';
+    const string PROCESS_CATCH_DETAIL_TAB_TWO = 'process_catch_detail_tab_two';
+    const string PROCESS_CATCH_DETAIL_TAB_THREE = 'process_catch_detail_tab_three';
+    const string PROCESS_CATCH_DETAIL_TAB_FOUR = 'process_catch_detail_tab_four';
+    const string PROCESS_CATCH_DETAIL_TAB_FIVE = 'process_catch_detail_tab_five';
+    const string PROCESS_CATCH_DETAIL_TAB_ONE_FIELDS = 'process_catch_detail_tab_one_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_TWO_FIELDS = 'process_catch_detail_tab_two_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_THREE_FIELDS = 'process_catch_detail_tab_three_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_FOUR_FIELDS = 'process_catch_detail_tab_four_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_FIVE_FIELDS = 'process_catch_detail_tab_five_fields';
+    const string PROCESS_CATCH_RESULT_TAB_ONE = 'process_catch_result_tab_one';
+    const string PROCESS_CATCH_RESULT_TAB_TWO = 'process_catch_result_tab_two';
+    const string PROCESS_CATCH_RESULT_TAB_THREE = 'process_catch_result_tab_three';
+    const string PROCESS_CATCH_RESULT_TAB_FOUR = 'process_catch_result_tab_four';
+    const string PROCESS_CATCH_RESULT_TAB_FIVE = 'process_catch_result_tab_five';
+    const string PROCESS_CATCH_RESULT_TAB_ONE_FIELDS = 'process_catch_result_tab_one_fields';
+    const string PROCESS_CATCH_RESULT_TAB_TWO_FIELDS = 'process_catch_result_tab_two_fields';
+    const string PROCESS_CATCH_RESULT_TAB_THREE_FIELDS = 'process_catch_result_tab_three_fields';
+    const string PROCESS_CATCH_RESULT_TAB_FOUR_FIELDS = 'process_catch_result_tab_four_fields';
+    const string PROCESS_CATCH_RESULT_TAB_FIVE_FIELDS = 'process_catch_result_tab_five_fields';
+    // the tab number of each tab component and of the fields of each tab, starting with 1
+    const array PROCESS_CATCH_TAB_NBR = [
+        self::PROCESS_CATCH_DETAIL_TAB_ONE => 1,
+        self::PROCESS_CATCH_DETAIL_TAB_TWO => 2,
+        self::PROCESS_CATCH_DETAIL_TAB_THREE => 3,
+        self::PROCESS_CATCH_DETAIL_TAB_FOUR => 4,
+        self::PROCESS_CATCH_DETAIL_TAB_FIVE => 5,
+        self::PROCESS_CATCH_DETAIL_TAB_ONE_FIELDS => 1,
+        self::PROCESS_CATCH_DETAIL_TAB_TWO_FIELDS => 2,
+        self::PROCESS_CATCH_DETAIL_TAB_THREE_FIELDS => 3,
+        self::PROCESS_CATCH_DETAIL_TAB_FOUR_FIELDS => 4,
+        self::PROCESS_CATCH_DETAIL_TAB_FIVE_FIELDS => 5,
+        self::PROCESS_CATCH_RESULT_TAB_ONE => 1,
+        self::PROCESS_CATCH_RESULT_TAB_TWO => 2,
+        self::PROCESS_CATCH_RESULT_TAB_THREE => 3,
+        self::PROCESS_CATCH_RESULT_TAB_FOUR => 4,
+        self::PROCESS_CATCH_RESULT_TAB_FIVE => 5,
+        self::PROCESS_CATCH_RESULT_TAB_ONE_FIELDS => 1,
+        self::PROCESS_CATCH_RESULT_TAB_TWO_FIELDS => 2,
+        self::PROCESS_CATCH_RESULT_TAB_THREE_FIELDS => 3,
+        self::PROCESS_CATCH_RESULT_TAB_FOUR_FIELDS => 4,
+        self::PROCESS_CATCH_RESULT_TAB_FIVE_FIELDS => 5,
+    ];
+    // the refresh button of the process catch detail page and the place input of process_catch_views.json
+    const string PROCESS_CATCH_REFRESH_NAME = 'button refresh process catch detail';
+    const string GEOLOCATOR_NAME = 'geolocator place of user';
+
     // select object types
     const string FORM_PHRASE_TYPE = 'form_field_phrase_type';
     const string FORM_PHRASE_TYPE_NAME = 'form field phrase type';

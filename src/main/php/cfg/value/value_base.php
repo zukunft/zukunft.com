@@ -2470,10 +2470,14 @@ class value_base extends sandbox_value
         $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         $lst = parent::db_fields_changed($sbx, $msg, $sc_par_lst);
+        $sbx_lst = $this->db_changed_sandbox_list($sbx, $sc_par_lst);
 
         // in the user table the source is part of the index to allow several sources for the same value
-        // so a source change (including a source-only change of an existing value) must be written too
-        if ($sbx->source_id() !== $this->source_id() or $sc_par_lst->is_usr_tbl()) {
+        // so a source change (including a source-only change of an existing value) must be written too,
+        // but a user row that already matches gets no source either, because the source alone is no
+        // change and an update of only the key fields is not a valid sql
+        $changed = !($lst->is_empty_except_internal_fields() and $sbx_lst->is_empty_except_internal_fields());
+        if ($sbx->source_id() !== $this->source_id() or ($sc_par_lst->is_usr_tbl() and $changed)) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_fields::FLD_ID,
@@ -2492,7 +2496,7 @@ class value_base extends sandbox_value
                 sql_field_type::INT
             );
         }
-        return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
+        return $lst->merge($sbx_lst);
     }
 
 }

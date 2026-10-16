@@ -113,6 +113,31 @@ class import
     // needs more cpu time but a hanging import should still be stopped
     const int MAX_IMPORT_TIME_SEC = 3600;
 
+    // the bytes speeds of config.yaml are in MB per second, but the file size is in bytes
+    const int BYTES_PER_MB = 1000000;
+
+    // the config.yaml name of the store speed of the objects of a section of the import json,
+    // so that the time of a direct import is estimated by the number of objects and not by the
+    // file size e.g. a view with its component links takes much longer than a word;
+    // null for a section without a configured speed and a section that is not listed has no objects to store
+    const array SAVE_SPEED_NAMES = [
+        json_fields::WORDS => words::WORDS,
+        json_fields::WORD_LIST => words::WORDS,
+        json_fields::LIST_VERBS => null,
+        json_fields::TRIPLES => words::TRIPLES,
+        json_fields::FORMULAS => words::FORMULAS,
+        json_fields::SOURCES => words::SOURCES,
+        json_fields::REFS => words::REFERENCES,
+        json_fields::PHRASE_VALUES => words::VALUES,
+        json_fields::VALUES => words::VALUES,
+        json_fields::VALUE_LIST => words::VALUES,
+        json_fields::VIEWS => words::VIEWS,
+        json_fields::COMPONENTS => words::COMPONENTS,
+        json_fields::CALC_VALIDATION => words::RESULTS,
+        json_fields::VIEW_VALIDATION => words::VIEWS,
+        json_fields::IP_BLACKLIST => words::IP_RANGES,
+    ];
+
     // the user who wants to import data
     public ?user $usr = null;
 
@@ -528,10 +553,21 @@ class import
         $res_to_validate = new result_list($usr_import);
         $frm_to_calc = new formula_list($usr_import);
         $dsp_to_validate = new view_list($usr_import);
+
+        // the number of objects of each section is known before the first save, so the store time
+        // replaces the estimate based on the file size, which is far off for e.g. the views
+        $est_save = $this->est_time_put($json_array);
+        $this->est_time_total = $this->done_time_main_step + $est_save;
+        $this->step_main_start(msg_id::SAVE, $est_save);
+
         $pos = 0;
         foreach ($json_array as $key => $json_obj) {
             $this->display_progress();
             $pos++;
+            // the objects of the section and the expected store time used by the step of the section
+            $sec_cnt = is_array($json_obj) ? count($json_obj) : 0;
+            $sec_per_sec = $this->save_per_sec($key);
+            $sec_est = $this->est_time_save($key, $sec_cnt);
             if ($key == json_fields::VERSION) {
                 if ($lib->prg_version_is_newer($json_obj)) {
                     $msg->add(msg_id::IMPORT_VERSION_NEWER, [
@@ -565,7 +601,7 @@ class import
                 // TODO import the users (but only by a user with the privileges)
                 log_warning('import of users not yet implemented');
             } elseif ($key == json_fields::LIST_VERBS) {
-                $this->step_start(msg_id::SAVE_LIST, verb::class);
+                $this->step_start(msg_id::SAVE_LIST, verb::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
                     $vrb->set_user($msg->usr);
@@ -577,9 +613,8 @@ class import
                     $this->display_progress($this->verbs_done);
                     $pos++;
                 }
-                $this->step_end($this->verbs_done);
             } elseif ($key == json_fields::WORDS) {
-                $this->step_start(msg_id::SAVE_SINGLE, word::class);
+                $this->step_start(msg_id::SAVE_SINGLE, word::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_wrd) {
                     $wrd = new word($this->usr);
                     if ($wrd->import_obj($json_wrd, $msg)) {
@@ -590,9 +625,8 @@ class import
                     $this->display_progress($this->words_done);
                     $pos++;
                 }
-                $this->step_end($this->words_done);
             } elseif ($key == json_fields::WORD_LIST) {
-                $this->step_start(msg_id::SAVE_LIST, word::class);
+                $this->step_start(msg_id::SAVE_LIST, word::class, $sec_cnt, $sec_est);
                 // a list of just the word names without further parameter
                 // phrase list because a word might also be a triple
                 $phr_lst = new phrase_list($this->usr);
@@ -609,7 +643,7 @@ class import
                 $this->display_progress($this->words_done);
                 $pos++;
             } elseif ($key == json_fields::TRIPLES) {
-                $this->step_start(msg_id::SAVE_SINGLE, triple::class);
+                $this->step_start(msg_id::SAVE_SINGLE, triple::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_trp) {
                     $wrd_lnk = new triple($this->usr);
                     if ($wrd_lnk->import_obj($json_trp, $msg)) {
@@ -621,7 +655,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::FORMULAS) {
-                $this->step_start(msg_id::SAVE_SINGLE, formula::class);
+                $this->step_start(msg_id::SAVE_SINGLE, formula::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_frm) {
                     $frm = new formula($this->usr);
                     if ($frm->import_obj($json_frm, $msg)) {
@@ -634,7 +668,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::SOURCES) {
-                $this->step_start(msg_id::SAVE_SINGLE, source::class);
+                $this->step_start(msg_id::SAVE_SINGLE, source::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_src) {
                     $src = new source($this->usr);
                     if ($src->import_obj($json_src, $msg)) {
@@ -647,7 +681,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::REFS) {
-                $this->step_start(msg_id::SAVE_SINGLE, ref::class);
+                $this->step_start(msg_id::SAVE_SINGLE, ref::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_ref) {
                     $ref = new ref($this->usr);
                     if ($ref->import_obj($json_ref, $msg)) {
@@ -659,7 +693,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::PHRASE_VALUES) {
-                $this->step_start(msg_id::SAVE_SINGLE, value::class);
+                $this->step_start(msg_id::SAVE_SINGLE, value::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $val_key => $number) {
                     $val = new value($this->usr);
                     $import_result = $val->import_phrase_value($val_key, $number);
@@ -673,7 +707,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::VALUES) {
-                $this->step_start(msg_id::SAVE_SINGLE, value::class);
+                $this->step_start(msg_id::SAVE_SINGLE, value::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_val) {
                     $val = new value($this->usr);
                     if ($val->import_obj($json_val, $msg, $dto)) {
@@ -685,7 +719,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::VALUE_LIST) {
-                $this->step_start(msg_id::SAVE_LIST, value::class);
+                $this->step_start(msg_id::SAVE_LIST, value::class, $sec_cnt, $sec_est);
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $val = new value_list($this->usr);
@@ -698,7 +732,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::VIEWS) {
-                $this->step_start(msg_id::SAVE_SINGLE, view::class);
+                $this->step_start(msg_id::SAVE_SINGLE, view::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_msk) {
                     $view_obj = new view($this->usr);
                     if ($view_obj->import_obj($json_msk, $msg, $dto)) {
@@ -710,7 +744,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::COMPONENTS) {
-                $this->step_start(msg_id::SAVE_SINGLE, component::class);
+                $this->step_start(msg_id::SAVE_SINGLE, component::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $json_cmp) {
                     $cmp_obj = new component($this->usr);
                     if ($cmp_obj->import_obj($json_cmp, $msg)) {
@@ -723,7 +757,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::CALC_VALIDATION) {
-                $this->step_start(msg_id::SAVE_SINGLE, result::class);
+                $this->step_start(msg_id::SAVE_SINGLE, result::class, $sec_cnt, $sec_est);
                 // TODO add a unit test
                 foreach ($json_obj as $json_res) {
                     $res = new result($this->usr);
@@ -737,7 +771,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::VIEW_VALIDATION) {
-                $this->step_start(msg_id::SAVE_SINGLE, view::class);
+                $this->step_start(msg_id::SAVE_SINGLE, view::class, $sec_cnt, $sec_est);
                 // TODO switch to view usr_msg
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
@@ -752,7 +786,7 @@ class import
                     $pos++;
                 }
             } elseif ($key == json_fields::IP_BLACKLIST) {
-                $this->step_start(msg_id::SAVE_SINGLE, ip_range::class);
+                $this->step_start(msg_id::SAVE_SINGLE, ip_range::class, $sec_cnt, $sec_est);
                 foreach ($json_obj as $ip_range) {
                     $ip_obj = new ip_range;
                     $ip_obj->set_user($this->usr);
@@ -767,7 +801,13 @@ class import
             } else {
                 $msg->add(msg_id::IMPORT_UNKNOWN_ELEMENT, [msg_id::VAR_NAME => $key]);
             }
+            // the real speed of each stored section is always shown next to the expected speed,
+            // because it is the base to adjust the store speeds of config.yaml
+            if ($sec_per_sec > 0) {
+                $this->step_end($sec_cnt, $sec_per_sec, true);
+            }
         }
+        $this->step_main_end();
 
         // show 90% before validation starts
         $this->step_start(msg_id::VALIDATE);
@@ -999,29 +1039,33 @@ class import
     /**
      * @param int $nbr the number of precessed objects e.g. count(word)
      * @param float $est_per_sec the expected number of objects that can be processed per second
+     * @param bool $show true to show the real speed of the step even if the last message is recent
      */
     function step_end(
         int   $nbr = 0,
-        float $est_per_sec = 0.0
+        float $est_per_sec = 0.0,
+        bool  $show = false
     ): void
     {
         $end_time = microtime(true);
+        // the step is done, so its estimate is counted as done and not as a part of the step
         $this->done_time_step = $this->done_time_step + $this->est_time_step;
         $this->est_time_step = 0;
+        $this->micro_steps = 0;
 
         if ($nbr > 0) {
             if ($this->step == msg_id::DECODED) {
-                $used_est_per_sec = $est_per_sec * 1000000;
+                $used_est_per_sec = $est_per_sec * self::BYTES_PER_MB;
             } elseif ($this->class == import_file::FILE) {
                 $this->step = msg_id::LOADED;
-                $used_est_per_sec = $est_per_sec * 1000000;
+                $used_est_per_sec = $est_per_sec * self::BYTES_PER_MB;
             } else {
                 $used_est_per_sec = $est_per_sec;
             }
             if ($used_est_per_sec != 0) {
                 $this->time_exp_act = $this->calc_total_time($end_time, $nbr);
             }
-            $this->display_progress($nbr, $est_per_sec);
+            $this->display_progress($nbr, $est_per_sec, '', $show);
         }
     }
 
@@ -1077,16 +1121,11 @@ class import
         // calc the remaining time in percent
         $pct_remaining = 1 - $pct_done;
 
-        // estimated time until now
-        $est_time_now = $original_time_expected * $pct_done;
-
-        // real time until now
-        $real_time_now = $time_already * $pct_done;
-
-        // calc the factor how much longer (or short) it takes relative to the original estimate
+        // calc the factor how much longer (or shorter) the work done until now has taken than estimated
+        // e.g. 2 if the views of the import are stored at half of the expected speed
         $factor = 1;
-        if ($est_time_now > 0) {
-            $factor = $real_time_now / $est_time_now;
+        if ($est_time_done > 0) {
+            $factor = $time_already / $est_time_done;
         }
 
         // calc the remaining time based on the original estimate
@@ -1106,6 +1145,74 @@ class import
         // calc the adjusted expected total execution time
         return $time_already + $est_time_remaining * $factor_used;
 
+    }
+
+    /**
+     * @param int $bytes the size of the import file
+     * @param float $mb_per_sec the expected speed in MB per second as configured in config.yaml
+     * @return float the expected seconds to process the file
+     */
+    static function est_time_by_size(int $bytes, float $mb_per_sec): float
+    {
+        $result = 0.0;
+        if ($mb_per_sec > 0) {
+            $result = $bytes / ($mb_per_sec * self::BYTES_PER_MB);
+        }
+        return $result;
+    }
+
+    /**
+     * the expected time to store all objects of an import json direct to the database
+     *
+     * @param array $json_array the zukunft.com JSON message to import as an array
+     * @return float the sum of the expected seconds to store the objects of each section
+     */
+    function est_time_put(array $json_array): float
+    {
+        $result = 0.0;
+        foreach ($json_array as $key => $json_obj) {
+            if (is_array($json_obj)) {
+                $result += $this->est_time_save($key, count($json_obj));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $key the json name of the section e.g. "views"
+     * @param int $count the number of objects of the section
+     * @return float the expected seconds to store the objects of the section; 0 for a section without objects to store
+     */
+    function est_time_save(string $key, int $count): float
+    {
+        $result = 0.0;
+        $per_sec = $this->save_per_sec($key);
+        if ($per_sec > 0) {
+            $result = $count / $per_sec;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $key the json name of the section e.g. "views"
+     * @return float the expected number of objects of the section that are stored per second;
+     *               0 for a section without objects to store e.g. the version
+     */
+    function save_per_sec(string $key): float
+    {
+        global $cfg;
+        $result = 0.0;
+        if (array_key_exists($key, self::SAVE_SPEED_NAMES)) {
+            $name = self::SAVE_SPEED_NAMES[$key];
+            if ($name == null) {
+                $result = def::FALLBACK_IMPORT_PER_SEC;
+            } else {
+                $result = (float)($cfg?->get_by([$name, words::STORE, triples::OBJECTS_PER_SECOND,
+                    triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC)
+                    ?? def::FALLBACK_IMPORT_PER_SEC);
+            }
+        }
+        return $result;
     }
 
     /**

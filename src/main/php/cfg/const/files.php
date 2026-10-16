@@ -159,6 +159,11 @@ class files
     const string PV_YIELD_SWITZERLAND_FILE = self::USE_CASE_PATH . 'pv_yield_switzerland' . self::JSON;
     // the sun intensity, the photovoltaic yield per kWp and the national electricity prices of the other countries
     const string PV_YIELD_BY_COUNTRY_FILE = self::USE_CASE_PATH . 'pv_yield_by_country' . self::JSON;
+    // the lifetime electricity and CO2-eq balance of a rooftop PV installation with battery in
+    // Switzerland; the name is also the name of the generated page snapshot next to the hand made
+    // sample page (src/test/resources/web/html/use_cases/)
+    const string PV_LIFETIME_BALANCE = 'pv_lifetime_balance';
+    const string PV_LIFETIME_BALANCE_FILE = self::USE_CASE_PATH . self::PV_LIFETIME_BALANCE . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -201,6 +206,11 @@ class files
     const string START_PAGE_CHARTS_FILE = self::MESSAGE_PATH . 'start_page_charts' . self::JSON;
     // the placeholder views of the table and the calculation editor (docs/table_creation.md)
     const string EDITOR_VIEWS_FILE = self::MESSAGE_PATH . 'editor_views' . self::JSON;
+    // the keyword, the properties and the types of an input field of the process catch views,
+    // so that the fields of a question phrase are defined by triples of a use case file
+    const string PROCESS_CATCH_FIELDS_FILE = self::MESSAGE_PATH . 'process_catch_fields' . self::JSON;
+    // the start, main, detail and result page of a process catch with the components of each page
+    const string PROCESS_CATCH_VIEWS_FILE = self::MESSAGE_PATH . 'process_catch_views' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -345,9 +355,12 @@ class files
         self::PV_YIELD_FILE,
         self::PV_YIELD_SWITZERLAND_FILE,
         self::PV_YIELD_BY_COUNTRY_FILE,
-        // start page data and no use case, but appended as the last file of the db setup, so
+        // start page data and no use case, but appended after the use cases above, so
         // that it shifts the database id of no phrase that a test pins
         self::PROBLEM_MAIN_REASONS_FILE,
+        // appended after the start page data for the same reason: a new use case file is always
+        // added at the end of this list, because its phrases get the next free ids
+        self::PV_LIFETIME_BALANCE_FILE,
     ];
 
     // system data with code ids added after the database ids of the tested phrases have been
@@ -356,6 +369,8 @@ class files
     const array SYSTEM_DATA_APPENDED_FILES = [
         self::START_PAGE_CHARTS_FILE,
         self::EDITOR_VIEWS_FILE,
+        self::PROCESS_CATCH_FIELDS_FILE,
+        self::PROCESS_CATCH_VIEWS_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

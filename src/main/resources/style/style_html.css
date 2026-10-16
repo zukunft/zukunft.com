@@ -235,6 +235,16 @@ body {
     width: 100%;
 }
 
+/* the links to the pinned views below the search field of the start page */
+.pinned-section {
+    width: 60%; /* As wide as the search section above */
+    display: flex;
+    flex-wrap: wrap; /* Moves a link to the next line if the screen is too narrow */
+    justify-content: center;
+    gap: 10px 20px;
+    margin: 1rem 0;
+}
+
 /* signup and login section */
 .cta-section {
     width: 50%; /* Sets the container for the logo to 60% of the screen width */
@@ -592,6 +602,12 @@ a:hover {
     height: 1px;
     margin: 0;
     opacity: 0;
+}
+/* the labels of the simple forms in the input section (login, signup, activation, reset) stay centered
+   above their field like the input itself; this overrides the generic ".main-container form label
+   { text-align: left }" rule, which is for the left aligned bootstrap forms */
+.main-container .search-section form label {
+    text-align: center;
 }
 /* the show-password label is an inline toggle, not a stacked field label, so keep it on the same line
    as the input; this overrides the generic ".main-container form label { display: block }" rule */

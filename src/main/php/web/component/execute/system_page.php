@@ -57,11 +57,14 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_log_sum_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'components.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
@@ -83,6 +86,9 @@ use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
@@ -102,6 +108,19 @@ class system_page extends component
         msg_id::VIEW_VERSION_RANGE,
         msg_id::VIEW_VERSION_DETAIL_RANGE,
     ];
+
+    // the labels of the tabs of a process catch page; the position in the list is the tab number - 1
+    // (components::PROCESS_CATCH_TAB_NBR), so the label is not a ui message of the tab component,
+    // which must be unique for each component
+    const array PROCESS_CATCH_TABS = [
+        msg_id::PROCESS_CATCH_TAB_ONE,
+        msg_id::PROCESS_CATCH_TAB_TWO,
+        msg_id::PROCESS_CATCH_TAB_THREE,
+        msg_id::PROCESS_CATCH_TAB_FOUR,
+        msg_id::PROCESS_CATCH_TAB_FIVE,
+    ];
+    // the tab that a process catch page shows if the url selects none
+    const int PROCESS_CATCH_TAB_DEFAULT = 1;
 
     /**
      * HTML for a page title
@@ -1110,6 +1129,227 @@ class system_page extends component
         $html = new html_base();
         // the column limits its tables to its width, so that e.g. a long url does not widen the column
         return $html->div($html->text_h4($mtr->txt($title)) . $body, styles::ADMIN_COLUMN);
+    }
+
+
+    /*
+     * process catch
+     */
+
+    /**
+     * @param msg_id|null $ui_msg_code_id the message id of the text e.g. the explain text of a process catch page
+     * @return string the translated text as a paragraph or an empty string if the component has no text
+     */
+    function text_explain(?msg_id $ui_msg_code_id): string
+    {
+        global $mtr;
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $result = new html_base()->p($mtr->txt($ui_msg_code_id));
+        }
+        return $result;
+    }
+
+    /**
+     * the input fields of a process catch page or of one of its tabs; a placeholder with the name of
+     * the component until the fields are read from the field triples of the question phrase
+     *
+     * @param string $cmp_name the name of the component that names the page or the tab of the fields
+     * @param string|null $cmp_code_id the code id of the component that names the tab of the fields
+     *                                 e.g. components::PROCESS_CATCH_DETAIL_TAB_TWO_FIELDS or null on a page without tabs
+     * @param array $url_arr the url vars of the page with the selected tab
+     * @return string the html code of the fields or an empty string if the fields belong to a tab that is not selected
+     */
+    function process_catch_fields(string $cmp_name, ?string $cmp_code_id, array $url_arr): string
+    {
+        global $mtr;
+        $result = '';
+        $nbr = $this->process_catch_tab_nbr($cmp_code_id);
+        // the fields of a tab are only shown if the tab is selected, so the page shows one tab at a time
+        if ($nbr == 0 or $nbr == $this->process_catch_tab_selected($url_arr)) {
+            $html = new html_base();
+            $result = $html->p($mtr->txt(msg_id::PROCESS_CATCH_FIELDS_PENDING) . ' ' . $html->esc($cmp_name));
+        }
+        return $result;
+    }
+
+    /**
+     * one tab of a process catch page: the selected tab as text and every other tab as a link to the
+     * same page and question phrase with the tab selected, so the page needs no javascript
+     *
+     * @param string|null $cmp_code_id the code id of the tab component e.g. components::PROCESS_CATCH_DETAIL_TAB_TWO
+     * @param string $msk_code_id the code id of the process catch page that shows the tab
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @param array $url_arr the url vars of the page with the selected tab
+     * @return string the html code of the tab or an empty string if the component names no tab
+     */
+    function process_catch_tab(
+        ?string                                               $cmp_code_id,
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        array                                                 $url_arr
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        $nbr = $this->process_catch_tab_nbr($cmp_code_id);
+        if ($nbr > 0) {
+            $html = new html_base();
+            $label = $mtr->txt(self::PROCESS_CATCH_TABS[$nbr - 1]);
+            if ($nbr == $this->process_catch_tab_selected($url_arr)) {
+                $result = $html->span($html->esc($label), styles::PROCESS_CATCH_TAB_SELECTED);
+            } else {
+                $url = $html->url_back($msk_code_id, $this->process_catch_phrase_id($dbo), [],
+                    url_var::TAB . url_var::EQ . $nbr);
+                $result = $html->ref($url, $label, '', styles::PROCESS_CATCH_TAB);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $msk_code_id the code id of the process catch page that shows the button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @return string the html code of the button that opens the next page or an empty string on the last page
+     */
+    function process_catch_button_next(
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        return $this->process_catch_button(views::PROCESS_CATCH_NEXT, msg_id::SYSTEM_BUTTON_NEXT,
+            styles::PROCESS_CATCH_BUTTON_NEXT, $msk_code_id, $dbo);
+    }
+
+    /**
+     * @param string $msk_code_id the code id of the process catch page that shows the button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @return string the html code of the button that opens the page before or an empty string on the first page
+     */
+    function process_catch_button_back(
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        return $this->process_catch_button(views::PROCESS_CATCH_BACK, msg_id::SYSTEM_BUTTON_BACK,
+            styles::PROCESS_CATCH_BUTTON_BACK, $msk_code_id, $dbo);
+    }
+
+    /**
+     * the button that shows the process catch page again with the entered values e.g. to calculate the
+     * result with the changed assumptions; a form submit, because only a submit sends the inputs
+     *
+     * @param msg_id $label the text of the button e.g. msg_id::PROCESS_CATCH_BUTTON_REFRESH
+     * @param string $form_name the id of the form that the inputs of the page join e.g. the code id of the page
+     * @param string $msk_code_id the code id of the process catch page that is shown again
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @param array $url_arr the url vars of the page with the selected tab, which the refresh keeps if the user has selected one
+     * @return string the html code of the button or an empty string if the component is shown on no page
+     */
+    function process_catch_button_refresh(
+        msg_id                                                $label,
+        string                                                $form_name,
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        array                                                 $url_arr
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        // e.g. a preview of the component has no page to show again
+        if ($msk_code_id != '') {
+            $html = new html_base();
+            $page_vars = $html->form_hidden(url_var::MASK, $msk_code_id);
+            $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
+            // the tab is only kept if the user has selected one, so a page without tabs gets no tab var
+            if (array_key_exists(url_var::TAB, $url_arr)) {
+                $page_vars .= $html->form_hidden(url_var::TAB, (string)$this->process_catch_tab_selected($url_arr));
+            }
+            $button = $html->button($html->esc($mtr->txt($label)), html_base::INPUT_SUBMIT,
+                styles::PROCESS_CATCH_BUTTON_REFRESH);
+            $result = $html->form_get($form_name, $page_vars . $button);
+        }
+        return $result;
+    }
+
+    /**
+     * the input of a place by its name or postal code; it joins the form of the refresh button by the
+     * form attribute, so the entered place is shown again after the refresh
+     *
+     * @param msg_id $label the label of the input e.g. msg_id::GEOLOCATOR_LABEL
+     * @param string $form_name the id of the form that sends the input e.g. the code id of the page
+     * @param array $url_arr the url vars of the page with the place entered before
+     * @return string the html code of the place input with its label
+     */
+    function geolocator(msg_id $label, string $form_name, array $url_arr): string
+    {
+        $place = $url_arr[url_var::PLACE] ?? '';
+        return new html_base()->form_field(url_var::PLACE, $label, $place, form_name: $form_name);
+    }
+
+    /**
+     * the button that opens the next or the page before of a process catch for the same question phrase
+     *
+     * @param array $targets the page that the button opens by the code id of the page e.g. views::PROCESS_CATCH_NEXT
+     * @param msg_id $label the text of the button e.g. msg_id::SYSTEM_BUTTON_NEXT
+     * @param string $style the css class of the button e.g. styles::PROCESS_CATCH_BUTTON_NEXT
+     * @param string $msk_code_id the code id of the process catch page that shows the button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @return string the html code of the button or an empty string if the page has no page to open
+     */
+    private function process_catch_button(
+        array                                                 $targets,
+        msg_id                                                $label,
+        string                                                $style,
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        // e.g. the result page has no next page, so a misplaced next button is not shown
+        if (array_key_exists($msk_code_id, $targets)) {
+            $html = new html_base();
+            $url = $html->url_back($targets[$msk_code_id], $this->process_catch_phrase_id($dbo));
+            $result = $html->ref($url, $mtr->txt($label), '', $style);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string|null $cmp_code_id the code id of a tab component or of the fields of a tab
+     * @return int the number of the tab starting with 1 or 0 if the component belongs to no tab
+     */
+    private function process_catch_tab_nbr(?string $cmp_code_id): int
+    {
+        return components::PROCESS_CATCH_TAB_NBR[$cmp_code_id ?? ''] ?? 0;
+    }
+
+    /**
+     * @param array $url_arr the url vars of the page
+     * @return int the number of the tab that the url selects or the first tab if the url selects none or an unknown tab
+     */
+    private function process_catch_tab_selected(array $url_arr): int
+    {
+        $result = (int)($url_arr[url_var::TAB] ?? self::PROCESS_CATCH_TAB_DEFAULT);
+        // e.g. an edited link with tab 9 would else hide the fields of every tab
+        if ($result < 1 or $result > count(self::PROCESS_CATCH_TABS)) {
+            $result = self::PROCESS_CATCH_TAB_DEFAULT;
+        }
+        return $result;
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of a process catch page
+     * @return int the phrase id that selects the question phrase in the url, which is negative for a triple
+     */
+    private function process_catch_phrase_id(db_object|type_object|combine_named|sandbox_list|null $dbo): int
+    {
+        $result = 0;
+        if ($dbo instanceof word or $dbo instanceof triple) {
+            $result = $dbo->phrase()->id();
+        }
+        return $result;
     }
 
 }

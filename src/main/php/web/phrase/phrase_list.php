@@ -163,6 +163,29 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
+     * the phrase with the given name from this list or else from the backend, e.g. the name that a
+     * datalist field submits instead of the phrase id
+     *
+     * @param string $name the name of the word or triple
+     * @param user_message $msg to report a phrase name that the user needs to correct
+     * @return phrase|null the phrase or null if no phrase has the name
+     */
+    function load_or_get_by_name(string $name, user_message $msg): ?phrase
+    {
+        $phr = $this->get_by_name($name, $msg);
+        if ($phr == null) {
+            $phr_loaded = new phrase();
+            if ($phr_loaded->load_by_name($name, $msg)) {
+                $phr = $phr_loaded;
+            } else {
+                // an unknown phrase name is a user input that the user can correct
+                $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $name]);
+            }
+        }
+        return $phr;
+    }
+
+    /**
      * add the phrases related to the given phrase to the list
      * @param phrase $phr
      * @param foaf_direction $direction
