@@ -69,12 +69,19 @@ class view_styles
     const string FIELDS_IN_LINE = 'fields-in-line';
     const string FIELDS_IN_LINE_NAME = 'fields in one line';
     const int FIELDS_IN_LINE_ID = 6;
+    // show every row of a table or list, e.g. the result chain of a use case page, which the
+    // author keeps short, instead of the short list with the more link (docs/llm/frontend.md)
+    const string ALL_ROWS_COM = 'show every row of a table or list instead of the short list with the more link';
+    const string ALL_ROWS = 'all-rows';
+    const string ALL_ROWS_NAME = 'all rows';
+    const int ALL_ROWS_ID = 7;
 
 
     // list of the styles used for unit testing
     const array TEST_TYPES = array(
         [view_styles::COL_SM_4, 1],
         [view_styles::COL_SM_8, 2],
+        [view_styles::ALL_ROWS, 7],
     );
 
 }

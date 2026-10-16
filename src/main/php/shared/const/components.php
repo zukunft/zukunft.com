@@ -212,6 +212,14 @@ class components
     const string TEST_RESULTS_NAME = 'System Test View Component Results';
     const string TEST_EXCLUDED_NAME = 'System Test View Component Excluded';
     const string TEST_TABLE_NAME = 'System Test View Component Table';
+    // the components of the use case page test (unit_ui/use_case_ui_tests.php), never saved
+    const string TEST_VIEW_TITLE_NAME = 'System Test View Component View Title';
+    const string TEST_SUB_TITLE_NAME = 'System Test View Component Sub Title';
+    const string TEST_NOTE_NAME = 'System Test View Component Note';
+    const string TEST_DETAILS_START_NAME = 'System Test View Component Details Start';
+    const string TEST_DETAILS_END_NAME = 'System Test View Component Details End';
+    const string TEST_INPUT_FIELDS_NAME = 'System Test View Component Input Fields';
+    const string TEST_SOURCES_NAME = 'System Test View Component Sources';
 
 
     // array of component names that used for testing and remove them after the test

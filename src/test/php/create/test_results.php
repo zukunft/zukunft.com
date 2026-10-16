@@ -349,6 +349,24 @@ class test_results
     }
 
     /**
+     * a calculated number of the page phrase of the triple table test, so that the table shows
+     * the result in the row of the remaining phrase next to the measured values of the page
+     *
+     * @return result_list_ui the frontend result of the city of Zurich for unit testing
+     */
+    function result_list_zh_city_ui(): result_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new result_list($this->env->usr1);
+        $lst->add($this->result_for_phrases([
+            $t_trp->zh_city()->phrase(),
+            $t_wrd->word_inhabitant()->phrase()
+        ], results::TV_PRIO_LOSS_HTP));
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the calculated numbers of the start page ranking, e.g. the happy time points that the
      * potential loss of a problem costs, which the table shows next to the measured numbers
      *

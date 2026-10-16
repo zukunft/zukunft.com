@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-703 of 6094 public functions have at least 2 unit test calls; the 5391 functions below do not
+704 of 6103 public functions have at least 2 unit test calls; the 5399 functions below do not
 
 ## main backend
 
@@ -4147,6 +4147,9 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- btn_unlink - 0 unit test calls shared by 2 classes
     \-- component_type_selector - 0 unit test calls shared by 2 classes
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
+    \-- description_text - 0 unit test calls
+    \-- details_end - 0 unit test calls shared by 2 classes
+    \-- details_start - 0 unit test calls shared by 2 classes
     \-- dsp_hist - 0 unit test calls shared by 5 classes
     \-- dsp_hist_links - 0 unit test calls shared by 5 classes
     \-- form_edit - 1 unit test calls shared by 2 classes
@@ -4159,6 +4162,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- log_debug - 0 unit test calls shared by 3 classes
     \-- log_err - 0 unit test calls shared by 5 classes
     \-- name_link - 8 unit test calls shared by 22 classes
+    \-- name_sub_title - 0 unit test calls
     \-- needs_row_components - 0 unit test calls
     \-- no_row_style - 0 unit test calls
     \-- phrase_selector - 0 unit test calls shared by 6 classes
@@ -4171,8 +4175,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- type_selector - 0 unit test calls shared by 2 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- word_name - 0 unit test calls
-\-- component_exe
-    \-- dsp_entries - 0 unit test calls
 \-- component_link
     \-- api_array - 11 unit test calls shared by 37 classes
     \-- api_mapper - 30 unit test calls shared by 104 classes
@@ -4483,6 +4485,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- concat_title_text - 0 unit test calls
     \-- definition - 0 unit test calls
     \-- details - 0 unit test calls
+    \-- details_end - 0 unit test calls shared by 2 classes
+    \-- details_start - 0 unit test calls shared by 2 classes
     \-- div - 0 unit test calls
     \-- div_bs - 0 unit test calls
     \-- div_center - 0 unit test calls
@@ -5161,6 +5165,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- user_jobs - 1 unit test calls
     \-- user_setting - 0 unit test calls
     \-- value_details - 0 unit test calls
+    \-- view_title - 0 unit test calls
 \-- system_time
     \-- api_mapper - 30 unit test calls shared by 104 classes
     \-- display - 9 unit test calls shared by 24 classes
@@ -5438,9 +5443,11 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- results_by_value - 1 unit test calls
     \-- results_by_word - 0 unit test calls
     \-- results_related - 0 unit test calls
+    \-- sources_used - 0 unit test calls
     \-- triple_list - 9 unit test calls shared by 5 classes
     \-- value_add_link - 1 unit test calls
     \-- value_chart - 0 unit test calls
+    \-- value_input_fields - 0 unit test calls
     \-- values_by_triple - 0 unit test calls
     \-- values_in_columns - 1 unit test calls
     \-- values_most_relevant - 0 unit test calls

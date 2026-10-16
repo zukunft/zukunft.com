@@ -5,3 +5,4 @@ view_style_id, view_style_name, description, code_id
 4, 'full width', 'use the full screen width (col-md-12)', 'col-md-12'
 5, 'left aligned', 'align the column content to the left instead of the inherited centre', 'text-left'
 6, 'fields in one line', 'show the fields of the row on one centred line', 'fields-in-line'
+7, 'all rows', 'show every row of a table or list instead of the short list with the more link', 'all-rows'

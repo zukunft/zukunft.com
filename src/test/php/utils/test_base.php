@@ -1450,10 +1450,11 @@ class test_base
         // return to the default section for the following tests
         $sys->times->switch(system_time_type::DEFAULT);
 
-        // check if the created view matches the expected view
+        // check if the created view matches the expected view; the page title is the one the
+        // live page shows (see frontend::url_to_html), the object name and the view name
         return $this->assert_html_body(
             $this->name . ' view ' . $view_key,
-            $actual, $file_path);
+            $actual, $file_path, self::TIMEOUT_LIMIT_PAGE_LONG, $dsp_html->title($dbo_dsp, $msg_ui));
     }
 
     /**
@@ -1665,12 +1666,20 @@ class test_base
      * @param string $test_name the description of the test
      * @param string $body the body of a html page
      * @param string $file_path the filename of the expected html page
+     * @param float $exe_max_time the seconds the check may take before a timeout is reported
+     * @param string $title the page title e.g. the object and view name of a view page; 'test' for a fragment page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_body(string $test_name, string $body, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
+    function assert_html_body(
+        string $test_name,
+        string $body,
+        string $file_path,
+        float  $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG,
+        string $title = 'test'
+    ): bool
     {
         $msg_ui = new user_message_ui();
-        $actual = $this->link_to_pod($this->html_page($body, $msg_ui), THIS_URL);
+        $actual = $this->link_to_pod($this->html_page($body, $msg_ui, THIS_URL, languages::DEFAULT, $title), THIS_URL);
         return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
     }
 
@@ -6080,14 +6089,15 @@ class test_base
         string          $body,
         user_message_ui $msg_ui,
         string          $base_url = '',
-        string          $lan = languages::DEFAULT
+        string          $lan = languages::DEFAULT,
+        string          $title = 'test'
     ): string
     {
         $html = new html_base();
         // a caller can set the pod url as the base url, so that its snapshot opened from the
         // file system or an ide preview server still finds the styles and the icon font;
         // the language is set once by the caller and only passed through, never overwritten
-        return $html->header('test', $msg_ui, '', $lan, $base_url)
+        return $html->header($title, $msg_ui, '', $lan, $base_url)
             . $html->navbar(views::START_ID)
             . $html->main($body)
             . $html->footer();

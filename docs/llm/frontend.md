@@ -163,6 +163,33 @@ config loads *after* the types, so the bootstrap calls
 needs guaranteed fresh types (e.g. `ui_config::reload`, the test bootstrap)
 keeps using `load_type_lists` / `type_lists::load`.
 
+## The frontend calculates, a save job verifies — the double calculation check
+
+A page with inputs, e.g. the PV lifetime balance use case, calculates its
+results **in the frontend** from the values and formulas it has loaded via the
+api, so the user sees the effect of a changed input at once and without a
+write. The frontend never stores a result.
+
+When the user presses **save**, the inputs are written as values and a
+**backend job** repeats the calculation on the complete database. The job may
+use data the frontend did not have, e.g. a value of a phrase the page never
+loaded, a user overwrite or a newer measured number, and may collect missing
+data on the way. The results of the job are the ones stored.
+
+The frontend then **compares** the job results with its own. Every difference
+is shown to the user as a message that names the result and both numbers,
+never swallowed: a silent difference would hide either a value the frontend
+load missed or a formula the two sides evaluate differently, and both are
+defects to fix, not to average out. The same comparison is what a test
+asserts: the frontend numbers of a use case page and the stored results of
+its import must agree.
+
+Until the frontend has its own formula evaluation, the page shows the stored
+results of the backend (`ui_list::add_phrase_results`), which the import
+calculation has already verified against the `calc-validation` of the use case
+file; the frontend calculation and the compare are the next steps
+(`docs/llm/pending.md` "PV lifetime balance page").
+
 ## `frontend.php` boots the html frontend, `application.php` the api backend
 
 The target is a frontend and a backend that are complete and independent of each
@@ -355,6 +382,11 @@ only the page as a whole.
   literal, so an admin can tune how much a page shows.
 - The same holds for a new list component: if it can grow with the data, it needs
   a limit and a tail, even when it sits next to lists that already have one.
+- The one exception is the component style `all-rows` (`view_styles::ALL_ROWS`):
+  the author of a view sets it on a component whose rows are the content of the
+  page and cannot grow with the data, e.g. the result chain of a use case table,
+  and takes the responsibility for the page length. The renderer passes the list
+  size "all" to the component unless the url names a size (`component_exe`).
 
 When you add or change a page renderer, ask what the page looks like for the
 object with the *most* data, not for the test fixture.

@@ -101,7 +101,6 @@
     },
     {
       "name": "kWp",
-      "description": "kilowatt peak: the rated power of a PV system under standard test conditions",
       "refs": [
         {
           "name": "Nominal power (photovoltaic)",
@@ -228,8 +227,7 @@
       "name": "horizontal"
     },
     {
-      "name": "day",
-      "description": "here the hours with PV production"
+      "name": "day"
     },
     {
       "name": "2018"
@@ -1987,9 +1985,9 @@
   ],
   "components": [
     {
-      "name": "Title example PV installation",
-      "type": "phrase_title",
-      "description": "page title: the phrase example PV installation with its from, verb and to"
+      "name": "PV lifetime CO2 balance view title",
+      "type": "view_title",
+      "description": "the name of the view as the page title and the description of the view as the lead text"
     },
     {
       "name": "description example PV installation",
@@ -1999,7 +1997,78 @@
     {
       "name": "table example PV installation lifetime balance",
       "type": "table_with_related_columns",
-      "description": "the values and results of the example PV installation as a table with one column per reference mix (consumption mix, PV-weighted consumption mix, residual mix) and one row per remaining phrase combination: the production, the dispatch, the embodied emissions, the gross and net avoided emission and the payback"
+      "style": "all-rows",
+      "description": "the values and results of the example PV installation as a table with one column per reference mix (consumption mix, PV-weighted consumption mix, residual mix) and one row per remaining phrase combination: the production, the dispatch, the embodied emissions, the gross and net avoided emission and the payback; every row is shown, because the chain of the results is the page"
+    },
+    {
+      "name": "Inputs",
+      "type": "name_sub_title",
+      "description": "the section title of the inputs that a user changes most"
+    },
+    {
+      "name": "inputs example PV installation",
+      "type": "value_input_fields",
+      "description": "the values of the example PV installation as number input fields, a first version until the fields come from the field triples of the page phrase"
+    },
+    {
+      "name": "save example PV installation",
+      "type": "system_button_save",
+      "description": "the save button of the inputs, which does nothing yet; later it writes the inputs and starts the backend calculation job"
+    },
+    {
+      "name": "Assumptions",
+      "type": "details_start",
+      "description": "the collapsed block of the assumptions below the inputs"
+    },
+    {
+      "name": "assumptions example PV installation",
+      "type": "description_text",
+      "description": "the assumptions of the calculation are the measured and the assumed values of the yield, the lifetime, the emission of the PV system, the reference mixes and the battery, which this block shows as input fields as soon as the fields come from the field triples"
+    },
+    {
+      "name": "Assumptions end",
+      "type": "details_end",
+      "description": "the end of the collapsed assumptions block"
+    },
+    {
+      "name": "Main results over the lifetime",
+      "type": "name_sub_title",
+      "description": "the section title of the results table"
+    },
+    {
+      "name": "Monthly details and sources",
+      "type": "details_start",
+      "description": "the collapsed block with the notes and the sources below the results, later also the monthly energy balance"
+    },
+    {
+      "name": "note how the CO2 saving is counted",
+      "type": "description_text",
+      "description": "How the CO2 saving is counted. Every PV kilowatt-hour that reaches a consumer, used at home or exported, is assumed to displace one kilowatt-hour of grid electricity. Production emissions of the modules and the battery are subtracted. Battery losses reduce the delivered energy."
+    },
+    {
+      "name": "note seasonal Swiss mix",
+      "type": "description_text",
+      "description": "Seasonal Swiss mix. PV produces mostly in summer, when the Swiss consumer mix is cleanest (about 70 to 90 g/kWh in May to August, 140 to 165 g/kWh in winter). Weighting each month's PV output by that month's mix gives a lower saving than the annual average."
+    },
+    {
+      "name": "note self-consumption model",
+      "type": "description_text",
+      "description": "Self-consumption model. Monthly resolution: direct use is capped at the load during PV hours, the battery does at most one full cycle per day and only covers the evening and night load. Real day-to-day weather swings lower the battery share somewhat. Monthly PV and load profiles are assumed typical values for the Zurich region (confidence 0.6)."
+    },
+    {
+      "name": "Sources",
+      "type": "name_sub_title",
+      "description": "the section title of the sources of the values on the page"
+    },
+    {
+      "name": "sources example PV installation",
+      "type": "sources_used",
+      "description": "the sources of the values of the example PV installation as a list with a link to the source"
+    },
+    {
+      "name": "Monthly details and sources end",
+      "type": "details_end",
+      "description": "the end of the collapsed block with the notes and the sources"
     }
   ],
   "views": [
@@ -2010,7 +2079,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Title example PV installation"
+          "name": "PV lifetime CO2 balance view title"
         },
         {
           "position": "2",
@@ -2018,7 +2087,78 @@
         },
         {
           "position": "3",
-          "name": "table example PV installation lifetime balance"
+          "name": "Inputs",
+          "position_type": "side_or_first_below"
+        },
+        {
+          "position": "4",
+          "name": "inputs example PV installation",
+          "position_type": "combine"
+        },
+        {
+          "position": "5",
+          "name": "save example PV installation",
+          "position_type": "combine"
+        },
+        {
+          "position": "6",
+          "name": "Assumptions",
+          "position_type": "combine"
+        },
+        {
+          "position": "7",
+          "name": "assumptions example PV installation",
+          "position_type": "combine"
+        },
+        {
+          "position": "8",
+          "name": "Assumptions end",
+          "position_type": "combine"
+        },
+        {
+          "position": "9",
+          "name": "Main results over the lifetime",
+          "position_type": "side_or_last_below"
+        },
+        {
+          "position": "10",
+          "name": "table example PV installation lifetime balance",
+          "position_type": "combine"
+        },
+        {
+          "position": "11",
+          "name": "Monthly details and sources",
+          "position_type": "combine"
+        },
+        {
+          "position": "12",
+          "name": "note how the CO2 saving is counted",
+          "position_type": "combine"
+        },
+        {
+          "position": "13",
+          "name": "note seasonal Swiss mix",
+          "position_type": "combine"
+        },
+        {
+          "position": "14",
+          "name": "note self-consumption model",
+          "position_type": "combine"
+        },
+        {
+          "position": "15",
+          "name": "Sources",
+          "position_type": "combine"
+        },
+        {
+          "position": "16",
+          "name": "sources example PV installation",
+          "position_type": "combine"
+        },
+        {
+          "position": "17",
+          "name": "Monthly details and sources end",
+          "position_type": "combine"
         }
       ]
     }
@@ -2026,7 +2166,7 @@
   "view-validation": [
     {
       "url": "mask=PV lifetime CO2 balance&words=example PV installation",
-      "result": "# example PV installation\n \n| | consumption mix | PV-weighted consumption mix | residual mix |\n| --- | ---: | ---: | ---: |\n| gross avoided emission in CO2-eq kg | 30424.88 | 25554.48 | 126287.4 |\n| net avoided emission in CO2-eq kg | 17942.68 | 13072.28 | 113805.2 |\n| emission payback in year | 12.31 | 14.65 | 2.97 |\n \nThe example installation of 10 kWp east-west with a 10 kWh battery and 4500 kWh household\nconsumption produces 8296 kWh a year and 248880 kWh over 30 years. The net\nsaving depends on the reference mix: with the annual Swiss consumption mix it is about\n18 t, with the monthly mix weighted by the PV delivery less, because PV produces in\nsummer when the Swiss mix is cleanest, and with the European residual mix about\n114 t.\n"
+      "result": "# example PV installation\n \nthe default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example\n \n## Electricity\n \n| | lifetime | annual |\n| --- | ---: | ---: |\n| PV production in kWh | 248880 | 8296 |\n| direct use in kWh | | 1575 |\n| battery discharge in kWh | | 2223.77 |\n| export in kWh | | 4250.14 |\n| grid import in kWh | | 701.23 |\n| delivered electricity in kWh | 241467.3 | 8048.91 |\n| self-consumption share in percent | | 49% |\n| autarky in percent | | 84% |\n \n## Production emissions\n \n| | lifetime | annual |\n| --- | ---: | ---: |\n| PV embodied emission in CO2-eq kg | 10482.2 | |\n| battery embodied emission in CO2-eq kg | 2000 | |\n \n## CO2-eq saved, net of production emissions\n \n| | lifetime | annual |\n| --- | ---: | ---: |\n| net avoided emission by consumption mix in CO2-eq kg | 17942.68 | |\n| net avoided emission by PV-weighted consumption mix in CO2-eq kg | 13072.28 | |\n| net avoided emission by residual mix in CO2-eq kg | 113805.2 | |\n| emission payback by consumption mix in year | 12.31 | |\n| emission payback by PV-weighted consumption mix in year | 14.65 | |\n| emission payback by residual mix in year | 2.97 | |\n"
     }
   ]
 }

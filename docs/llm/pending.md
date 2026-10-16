@@ -1,5 +1,53 @@
 # pending - list of planned llm prompts with prio 1
 
+## PV lifetime balance page
+
+the generated page `src/test/resources/web/html/use_cases/pv_lifetime_balance.html` should
+match the hand made sample `pv_lifetime_balance_sample.html` without hardcoding, generated
+from the database; the calculation follows the double calculation check of
+`docs/llm/frontend.md`: the frontend calculates from the loaded values, a save starts a
+backend job that recalculates on the complete database and every difference is shown as a
+message. done so far: the stored results are loaded into the related columns table and the
+snapshot shows every row; the frame of the sample (head, navbar, footer) is the one the
+renderer emits and a view snapshot carries the title of the live page; the view validation
+of the json shows the sample layout, three sections with one row per result and a lifetime
+and an annual column, with the numbers the formulas of the file produce; the table component
+of the use case has the style `all-rows`, so the live page shows every row of the chain like
+the snapshot; the page has the components of the sample as first versions (`view_title`,
+`name_sub_title`, `description_text`, `details_start`/`details_end`, `value_input_fields`,
+`sources_used`, see `docs/llm/json_views.md`), the input fields show the values of the page
+phrase and the assumptions block holds a note until the fields come from the field triples.
+the remaining steps:
+
+2. fill the lifetime column of the dispatch rows and the annual column of the emission rows:
+   today only the production and the delivered electricity have a lifetime result, so the
+   file needs a lifetime formula per dispatch row (or one formula with the row phrase as a
+   variable) and a per year formula for the embodied and the avoided emission, then the
+   view validation and the sample get these numbers
+4. define the columns and the row order in the json with the column tier triples like
+   `solution_prio.json` (`lifetime` and `annual` as columns) and sort definitions for the
+   three sections; let the offline test context load the column definitions
+5. the frontend calculation: evaluate the formulas of the page in `web/` from the loaded
+   values (the backend `expression` as the model), show the frontend results in the table
+   and compare them with the stored results; a difference is a message
+6. build the inputs from the field triples of `process_catch_fields.json`: label, unit,
+   minimum, maximum, step, suggestion and the orientation as a choice of the yield factor
+   phrases; a `process_catch_fields` component plus the refresh form; the sample adopts
+   the markup the field renderer emits and drops its script
+7. the save: write the inputs as values, start the backend calculation job, compare the
+   job results with the frontend results and show every difference as a message
+8. the assumptions as a second fields component in a collapsed block with the measured or
+   assumed tag and the hint from the source and the confidence values
+9. the monthly table: add the monthly formulas to the json so that the rows are results, or
+   reduce the sample to the twelve mix values
+10. notes and sources from the data: the notes as formula descriptions shown by a formula
+    list component, the sources as a component that lists the distinct sources of the
+    values and results of the page
+11. styles: move the two column grid and the panel of the sample into style_html.css under
+    one page class and drop the rest of the sample css
+12. when the two files match, let the use case test assert the generated page against the
+    sample
+
 ## pin pages
 
 add to the config.yaml below 'system' and 'view' the entry 'startup' and below that 'pinned views'. 

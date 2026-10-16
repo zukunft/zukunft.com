@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test - zukunft.com
+            example PV installation - PV lifetime CO2 balance - zukunft.com
         </title>
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
@@ -133,214 +133,416 @@
         </nav>
         <main class="main-container">
             <div class="row col-md-12">
-                <div class="row col-md-12">
-                    <div class="heading-line">
-                        <h4 class="heading-inline">
-                            example PV installation
-                        </h4>
-                        <a href="http://localhost/http/view.php?m=51&amp;id=2485" title="rename word" class="heading-icon-inline">
-                            <i class="fas fa-edit">
-                            </i>
-                        </a>
+                <h6>
+                    PV lifetime CO2 balance
+                </h6>
+                <p>
+                    the lifetime electricity and CO2-eq balance of a PV installation with battery, compared with the annual Swiss consumption mix, the PV-weighted monthly Swiss mix and the European residual mix
+                </p>
+            </div>
+            <div class="row ">
+                <div class="col" style="min-width: 700px">
+                    the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example
+                </div>
+                <div class="col" style="min-width: 700px">
+                    <h4>
+                        Inputs
+                    </h4>
+                    <div>
+                        <label for="2018_to_2022_co2-eq_gram_per_kwh_mean_modelled_pv-weighted_consumption_mix">
+                            2018 to 2022 CO2-eq gram per kWh mean modelled PV-weighted consumption mix
+                        </label>
+                        <br>
+                        <input type="text" name="nap-ao-aP-Sd-3B+PD+SE+" value="105.83" id="2018_to_2022_co2-eq_gram_per_kwh_mean_modelled_pv-weighted_consumption_mix" class="standard-input">
+                        <label for="annual_assumed_household_consumption_kwh">
+                            annual assumed household consumption kWh
+                        </label>
+                        <br>
+                        <input type="text" name="nap-ai-/u+2M+2v+" value="4500" id="annual_assumed_household_consumption_kwh" class="standard-input">
+                        <label for="annual_battery_charge_kwh_modelled">
+                            annual battery charge kWh modelled
+                        </label>
+                        <br>
+                        <input type="text" name="nap-ac-/u+2M+3B+" value="2470.86" id="annual_battery_charge_kwh_modelled" class="standard-input">
+                        <label for="annual_direct_use_kwh_modelled">
+                            annual direct use kWh modelled
+                        </label>
+                        <br>
+                        <input type="text" name="nap-aj-/u+2M+3B+" value="1575" id="annual_direct_use_kwh_modelled" class="standard-input">
+                        <label for="assumed_battery_capacity_kwh">
+                            assumed battery capacity kWh
+                        </label>
+                        <br>
+                        <input type="text" name="n88665143959325109" value="10" id="assumed_battery_capacity_kwh" class="standard-input">
+                        <label for="assumed_battery_count">
+                            assumed battery count
+                        </label>
+                        <br>
+                        <input type="text" name="n1355224418741" value="2" id="assumed_battery_count" class="standard-input">
+                        <label for="assumed_confidence_day_share_household_consumption_percent">
+                            assumed confidence day share household consumption percent
+                        </label>
+                        <br>
+                        <input type="text" name="nap-am-ai-0U+2v+2y+" value="0.6" id="assumed_confidence_day_share_household_consumption_percent" class="standard-input">
+                        <label for="assumed_day_share_household_consumption_percent">
+                            assumed day share household consumption percent
+                        </label>
+                        <br>
+                        <input type="text" name="nap-am-ai-0U+2v+" value="0.35" id="assumed_day_share_household_consumption_percent" class="standard-input">
+                        <label for="assumed_kwp_pv_capacity">
+                            assumed kWp PV capacity
+                        </label>
+                        <br>
+                        <input type="text" name="n497930589025175989" value="10" id="assumed_kwp_pv_capacity" class="standard-input">
                     </div>
-                    <div class="subtitle">
-                        (
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2457" title="a photovoltaic system on a building: the modules, the inverter and, if present, the battery">
-                            PV installation
-                        </a>
-                        <a href="http://localhost/http/view.php?m=10&amp;id=4" title="to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula">
-                            kind of
-                        </a>
-                        <a href="http://localhost/http/view.php?m=3&amp;id=1776">
-                            example
-                        </a>
-                        )
+                    <div>
+                        <button class="btn btn-space col-1 btn-outline-success" type="submit" name="submit">
+                            save
+                        </button>
+                    </div>
+                    <div>
+                        <details>
+                            <summary>
+                                Assumptions
+                            </summary>
+                        </div>
+                        <div>
+                            <p>
+                                the assumptions of the calculation are the measured and the assumed values of the yield, the lifetime, the emission of the PV system, the reference mixes and the battery, which this block shows as input fields as soon as the fields come from the field triples
+                            </p>
+                        </div>
+                        <div>
+                        </details>
+                    </div>
+                </div>
+                <div class="col" style="min-width: 700px">
+                    <div class="all-rows">
+                        <h4>
+                            Main results over the lifetime
+                        </h4>
+                        <div>
+                            <table class="table table-striped table-bordered">
+                                <tr>
+                                    <th>
+                                    </th>
+                                    <th>
+                                        <a href="http://localhost/http/view.php?m=3&amp;id=280" title="measured over one year">
+                                            annual
+                                        </a>
+                                        in
+                                        <a href="http://localhost/http/view.php?m=3&amp;id=122" title="A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.">
+                                            kWh
+                                        </a>
+                                        <a href="http://localhost/http/view.php?dls=0&amp;dlo=280.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                                            <i class="fas fa-sort-up">
+                                            </i>
+                                        </a>
+                                        <a href="http://localhost/http/view.php?dls=0&amp;dlo=280.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                                            <i class="fas fa-sort-down">
+                                            </i>
+                                        </a>
+                                    </th>
+                                    <th>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2482" title="the share of the household consumption that falls into the hours with PV production">
+                                            day share
+                                        </a>
+                                        in
+                                        <a href="http://localhost/http/view.php?m=3&amp;id=160" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">
+                                            percent
+                                        </a>
+                                        <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2482.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                                            <i class="fas fa-sort-up">
+                                            </i>
+                                        </a>
+                                        <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2482.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                                            <i class="fas fa-sort-down">
+                                            </i>
+                                        </a>
+                                    </th>
+                                    <th>
+                                        Values
+                                    </th>
+                                    <th>
+                                        <details class="column-menu">
+                                            <summary title="select the columns and the form to show">
+                                                ...
+                                            </summary>
+                                            <ul>
+                                                <li class="menu-header">
+                                                    columns and values
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=3&amp;dlr=0">
+                                                        mayor
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=3&amp;dlr=1">
+                                                        mayor + range
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=2&amp;dlr=0">
+                                                        main
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=2&amp;dlr=1">
+                                                        main + range
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=1&amp;dlr=0">
+                                                        minor
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=1&amp;dlr=1">
+                                                        minor + range
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=0&amp;dlr=0">
+                                                        all
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dlc=0&amp;dlr=1">
+                                                        all + range
+                                                    </a>
+                                                </li>
+                                                <li class="menu-header">
+                                                    as
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dla=chart">
+                                                        chart
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="http://localhost/http/view.php?dls=0&amp;dla=table_chart">
+                                                        table + chart
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </details>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
+                                            household consumption
+                                        </a>
+                                    </td>
+                                    <td title="assumed">
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ai-%2Fu_2M_2v_&amp;9dls=0">
+                                            4'500
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                                a
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td title="assumed, confidence 60%">
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-am-ai-0U_2v_&amp;9dls=0">
+                                            35%
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                                a
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2472" title="the PV surplus that goes into the battery">
+                                            battery charge
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ac-%2Fu_2M_3B_&amp;9dls=0">
+                                            2'471
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                                -
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
+                                            direct use
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-aj-%2Fu_2M_3B_&amp;9dls=0">
+                                            1'575
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                                -
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2484">
+                                            2018 to 2022
+                                        </a>
+                                        ,
+                                        <a href="http://localhost/http/view.php?m=3&amp;id=1743" title="carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released">
+                                            CO2-eq
+                                        </a>
+                                        ,
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2459" title="the Swiss consumption mix averaged over the twelve months with the PV electricity delivered in each month as the weight; lower than the annual mean, because PV produces most in summer when the Swiss mix is cleanest">
+                                            PV-weighted consumption mix
+                                        </a>
+                                        ,
+                                        <a href="http://localhost/http/view.php?m=3&amp;id=1936">
+                                            mean
+                                        </a>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ao-aP-Sd-3B_PD_SE_&amp;9dls=0">
+                                            105.83
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                                -
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2471" title="the usable storage capacity of the battery in kWh">
+                                            battery capacity
+                                        </a>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td title="assumed">
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=88665143959325109&amp;9dls=0">
+                                            10
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                                a
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2469" title="the rated power of the PV modules in kWp">
+                                            PV capacity
+                                        </a>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td title="assumed">
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=497930589025175989&amp;9dls=0">
+                                            10
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                                a
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="http://localhost/http/view.php?m=4&amp;id=2475" title="how many batteries are bought over the lifetime of the installation, the lifetime divided by the battery lifetime rounded up">
+                                            battery count
+                                        </a>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td title="assumed">
+                                        <a href="http://localhost/http/view.php?m=5&amp;id=1355224418741&amp;9dls=0">
+                                            2
+                                        </a>
+                                        <sup>
+                                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                                a
+                                            </span>
+                                        </sup>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div>
+                            <details>
+                                <summary>
+                                    Monthly details and sources
+                                </summary>
+                            </div>
+                            <div>
+                                <p>
+                                    How the CO2 saving is counted. Every PV kilowatt-hour that reaches a consumer, used at home or exported, is assumed to displace one kilowatt-hour of grid electricity. Production emissions of the modules and the battery are subtracted. Battery losses reduce the delivered energy.
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    Seasonal Swiss mix. PV produces mostly in summer, when the Swiss consumer mix is cleanest (about 70 to 90 g/kWh in May to August, 140 to 165 g/kWh in winter). Weighting each month's PV output by that month's mix gives a lower saving than the annual average.
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    Self-consumption model. Monthly resolution: direct use is capped at the load during PV hours, the battery does at most one full cycle per day and only covers the evening and night load. Real day-to-day weather swings lower the battery share somewhat. Monthly PV and load profiles are assumed typical values for the Zurich region (confidence 0.6).
+                                </p>
+                            </div>
+                            <div>
+                                <h4>
+                                    Sources
+                                </h4>
+                            </div>
+                            <div>
+                            </details>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row col-md-12">
-                the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example
-            </div>
-            <table class="table table-striped table-bordered">
-                <tr>
-                    <th>
-                    </th>
-                    <th>
-                        <a href="http://localhost/http/view.php?m=3&amp;id=280" title="measured over one year">
-                            annual
-                        </a>
-                        in
-                        <a href="http://localhost/http/view.php?m=3&amp;id=122" title="A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.">
-                            kWh
-                        </a>
-                    </th>
-                    <th>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2482" title="the share of the household consumption that falls into the hours with PV production">
-                            day share
-                        </a>
-                        in
-                        <a href="http://localhost/http/view.php?m=3&amp;id=160" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">
-                            percent
-                        </a>
-                    </th>
-                    <th>
-                        Values
-                    </th>
-                    <th>
-                        ...
-                    </th>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                            household consumption
-                        </a>
-                    </td>
-                    <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ai-%2Fu_2M_2v_">
-                            4'500
-                        </a>
-                        <sup>
-                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                a
-                            </span>
-                        </sup>
-                    </td>
-                    <td title="assumed, confidence 60%">
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-am-ai-0U_2v_">
-                            35%
-                        </a>
-                        <sup>
-                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                a
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2472" title="the PV surplus that goes into the battery">
-                            battery charge
-                        </a>
-                    </td>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ac-%2Fu_2M_3B_">
-                            2'471
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                            direct use
-                        </a>
-                    </td>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-aj-%2Fu_2M_3B_">
-                            1'575
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2484">
-                            2018 to 2022
-                        </a>
-                        ,
-                        <a href="http://localhost/http/view.php?m=3&amp;id=1743" title="carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released">
-                            CO2-eq
-                        </a>
-                        ,
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2459" title="the Swiss consumption mix averaged over the twelve months with the PV electricity delivered in each month as the weight; lower than the annual mean, because PV produces most in summer when the Swiss mix is cleanest">
-                            PV-weighted consumption mix
-                        </a>
-                        ,
-                        <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                            mean
-                        </a>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ao-aP-Sd-3B_PD_SE_">
-                            105.83
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2471" title="the usable storage capacity of the battery in kWh">
-                            battery capacity
-                        </a>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=5&amp;id=88665143959325109">
-                            10
-                        </a>
-                        <sup>
-                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                a
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=114&amp;id=-2485">
-                            ... and 2 more
-                        </a>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-            </table>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

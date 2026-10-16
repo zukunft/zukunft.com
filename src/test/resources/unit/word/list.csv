@@ -100,7 +100,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 99,1,time,,"Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future",11,,,,,time,,,3
 100,1,minute,,"A minute is a unit of time equal to 60 seconds, or one sixtieth of an hour.",11,,,,,,,,3
 101,1,hour,,"An hour is a unit of time equal to 60 minutes, or 3600 seconds.",2,,,,,,,,3
-102,1,day,days,here the hours with PV production,11,,,,,,,,3
+102,1,day,days,"A day is a unit of time equal to 24 hours, approximately the period of one rotation of the Earth about its own axis.",11,,,,,,,,3
 103,1,week,weeks,A week is a unit of time equal to 7 days.,11,,,,,,,,3
 104,1,month,months,"A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.",2,,,,,,,,3
 105,1,year,years,"A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.",11,,,,,year,,,3
@@ -1767,7 +1767,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1766,1,optimal,,,1,,,,,,,,
 1767,1,slope,,,1,,,,,,,,
 1768,1,postal,,,1,,,,,,,,
-1769,1,kWp,,kilowatt peak: the rated power of a PV system under standard test conditions,2,,,,,,,,
+1769,1,kWp,,"kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius",2,,,,,,,,
 1770,1,feed-in,,the delivery of self-produced electricity into the public grid,1,,,,,,,,
 1771,1,remuneration,,,1,,,,,,,,
 1772,1,self-consumption,,"the use of self-produced electricity in the own house, which saves the purchase of the same kWh from the grid",1,,,,,,,,

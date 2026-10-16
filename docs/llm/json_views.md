@@ -193,7 +193,11 @@ Optional, default `below`. The values that have coded layout behaviour:
 A side-or-below group shows its columns next to each other on wide screens and
 wraps them onto fewer rows (down to one) as the screen narrows; build a multi-row
 column by giving its first component the `side_or_*` type and the rest `combine`.
-`style` is an optional Bootstrap column class (e.g. `col-md-4`).
+`style` is an optional Bootstrap column class (e.g. `col-md-4`) or one of the
+coded styles of `view_styles.csv`: `text-left`, `fields-in-line` and `all-rows`,
+which shows every row of a list component instead of the short list with the
+more link, e.g. the result chain of a use case table (`docs/llm/frontend.md`
+"A page never fills the screen").
 
 ### The process catch views: four pages for one question phrase
 
@@ -222,6 +226,27 @@ component (`components::PROCESS_CATCH_TAB_NBR`), never by a shared
 the tab label is the message of the tab number in the code
 (`system_page::PROCESS_CATCH_TABS`). Every link carries the whole page state,
 so the pages work without javascript.
+
+### The components of a use case page
+
+A use case page like the PV lifetime balance (`pv_lifetime_balance.json`) is
+built from the related columns table and these component types, which take
+their text from the component itself, because a use case may carry no
+`ui_msg_code_id` (see "Use case files" in `docs/llm/json_structure.md`):
+
+| component type | what it shows |
+|---|---|
+| `view_title` | the name of the view as the page title and the description of the view as the lead text; the view of the page is put into the request cache by `view_exe::show` |
+| `name_sub_title` | the **name** of the component as a section heading, so the component is named like the heading e.g. `Inputs` |
+| `description_text` | the **description** of the component as a paragraph e.g. a note of the page |
+| `details_start` | the start of a collapsed block with the name of the component as the summary line; the block spans the components up to the `details_end`, like a `row_start` spans a row |
+| `details_end` | the end of the collapsed block |
+| `value_input_fields` | the values of the page phrase as number input fields, each labelled by the other phrases of the value and sorted by the label; a first version until the fields come from the field triples of the phrase like the process catch fields |
+| `sources_used` | the sources of the values of the page phrase as a list with a link to the source url, each source once, sorted by name |
+
+The save button of the inputs reuses `system_button_save` until the save
+starts the backend calculation (`docs/llm/frontend.md` "The frontend
+calculates, a save job verifies").
 
 ## View relations
 

@@ -227,6 +227,99 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component the value table of a phrase with one column per related phrase
+     */
+    function component_table(): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set_name(components::TEST_TABLE_NAME);
+        $cmp->set_type(component_types::TABLE_WITH_RELATED_COLUMNS, new user_message($this->env->usr1));
+        return $cmp;
+    }
+
+    /**
+     * @return component the value table of a use case page that shows every row, so that the
+     *                   chain of the results is never cut by the list size
+     */
+    function component_table_all_rows(): component
+    {
+        $cmp = $this->component_table();
+        $cmp->set_style(view_styles::ALL_ROWS);
+        return $cmp;
+    }
+
+    /**
+     * @return component the name of the view as the page title and its description as the lead text
+     */
+    function component_view_title(): component
+    {
+        return $this->component_use_case(components::TEST_VIEW_TITLE_NAME, component_types::VIEW_TITLE);
+    }
+
+    /**
+     * @return component the name of the component as a section title
+     */
+    function component_name_sub_title(): component
+    {
+        return $this->component_use_case(components::TEST_SUB_TITLE_NAME, component_types::NAME_SUB_TITLE);
+    }
+
+    /**
+     * @return component the description of the component as a note paragraph
+     */
+    function component_description_text(): component
+    {
+        $cmp = $this->component_use_case(components::TEST_NOTE_NAME, component_types::DESCRIPTION_TEXT);
+        $cmp->description = components::TEST_ADD_COM;
+        return $cmp;
+    }
+
+    /**
+     * @return component the start of a collapsed block named by the component
+     */
+    function component_details_start(): component
+    {
+        return $this->component_use_case(components::TEST_DETAILS_START_NAME, component_types::DETAILS_START);
+    }
+
+    /**
+     * @return component the end of a collapsed block
+     */
+    function component_details_end(): component
+    {
+        return $this->component_use_case(components::TEST_DETAILS_END_NAME, component_types::DETAILS_END);
+    }
+
+    /**
+     * @return component the values of the page phrase as number input fields
+     */
+    function component_value_input_fields(): component
+    {
+        return $this->component_use_case(components::TEST_INPUT_FIELDS_NAME, component_types::VALUE_INPUT_FIELDS);
+    }
+
+    /**
+     * @return component the sources of the values of the page phrase as a list
+     */
+    function component_sources_used(): component
+    {
+        return $this->component_use_case(components::TEST_SOURCES_NAME, component_types::SOURCES_USED);
+    }
+
+    /**
+     * @param string $name the name of the component, which some use case types show
+     * @param string $type the code id of the component type
+     * @return component a component of a use case page with the name and the type set
+     */
+    private function component_use_case(string $name, string $type): component
+    {
+        $cmp = new component($this->env->usr1);
+        $cmp->set_name($name);
+        $cmp->set_type($type, new user_message($this->env->usr1));
+        return $cmp;
+    }
+
+    /**
      * @return component with all fields set to check if the save and load process is complete
      */
     function component_filled(): component

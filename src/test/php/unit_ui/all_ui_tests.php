@@ -62,6 +62,7 @@ include_once test_paths::UNIT_UI . 'view_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'component_ui_tests.php';
 include_once test_paths::UNIT_UI . 'component_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'process_catch_ui_tests.php';
+include_once test_paths::UNIT_UI . 'use_case_ui_tests.php';
 include_once test_paths::UNIT_UI . 'source_ui_tests.php';
 include_once test_paths::UNIT_UI . 'reference_ui_tests.php';
 include_once test_paths::UNIT_UI . 'reference_list_ui_tests.php';
@@ -136,6 +137,7 @@ class all_ui_tests extends all_unit_tests
         new component_ui_tests()->run($t);
         new component_list_ui_tests()->run($t);
         new process_catch_ui_tests()->run($t);
+        new use_case_ui_tests()->run($t);
         new language_ui_tests()->run($t);
         new change_log_ui_tests()->run($t);
         new sys_log_ui_tests()->run($t);

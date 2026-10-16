@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'config_tree.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'term_list.php';
@@ -72,6 +73,7 @@ include_once html_paths::SHARED_HELPER . 'Translator.php';
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
@@ -1146,6 +1148,25 @@ class system_page extends component
         $result = '';
         if ($ui_msg_code_id != null) {
             $result = new html_base()->p($mtr->txt($ui_msg_code_id));
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the view as the page title and its description as the lead text, e.g. of a use
+     * case page; the view of the page is in the request cache (see view_exe::show)
+     *
+     * @param int $msk_id the database id of the view that shows the component
+     * @param data_object|null $cfg the request cache with the view of the page
+     * @return string the html code of the title and the lead text or an empty string if the view is unknown
+     */
+    function view_title(int $msk_id, ?data_object $cfg): string
+    {
+        $result = '';
+        $msk = $cfg?->get_view_by_id($msk_id);
+        if ($msk != null) {
+            $html = new html_base();
+            $result = $html->text_h4($msk->name()) . $html->p($msk->get_description());
         }
         return $result;
     }

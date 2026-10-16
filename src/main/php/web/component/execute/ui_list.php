@@ -1472,6 +1472,9 @@ class ui_list extends ui_base
                 // a calculated number of a row is a result and not a value, e.g. the reward ratio
                 // of a problem, and it is shown in the same table as the measured numbers; the
                 // results are added to a copy, so that the value cache of the page stays unchanged
+                if ($dto != null) {
+                    $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+                }
                 $tbl_lst = clone $val_lst;
                 $tbl_lst->add_results(
                     $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
@@ -1664,6 +1667,113 @@ class ui_list extends ui_base
             if ($val_lst->load_by_phr_lst($children, $msg)) {
                 $result = $val_lst;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * add the results of the page phrase to the request cache, e.g. the production and the
+     * avoided emission of a PV installation, so that the table shows the calculated numbers
+     * next to the measured ones; the stored results are shown until the frontend calculates
+     * them itself (docs/llm/frontend.md "The frontend calculates, a save job verifies")
+     *
+     * an offline cache is never filled from the api, like add_column_definitions, so a unit
+     * test shows only the results it has cached upfront
+     *
+     * @param data_object $dto the request cache to fill
+     * @param phrase $phr the phrase of the page
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_phrase_results(data_object $dto, phrase $phr, user_message $msg): void
+    {
+        if ($dto->online and $dto->res_lst->is_empty()) {
+            $phr_lst = new phrase_list();
+            $phr_lst->add_phrase($phr);
+            $res_lst = new result_list();
+            if ($res_lst->load_by_phrase_list($phr_lst, $msg)) {
+                $dto->set_result_list($res_lst);
+            }
+        }
+    }
+
+    /**
+     * the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
+     * other phrases of the value are the label, so the user sees which number is asked for, and the
+     * fields are sorted by the label, because the value list has no order of its own
+     *
+     * @param word|triple|db_object|type_object|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the value load
+     * @param data_object|null $dto the data cache of the page with the values
+     * @return string the html code of the input fields or an empty string if the phrase has no value
+     */
+    function value_input_fields(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto = null
+    ): string
+    {
+        $html = new html_base();
+        $fields = [];
+        foreach ($this->phrase_values($dbo, $msg, $dto) as $val) {
+            $label = implode(' ', array_diff($val->phr_lst()->names(), [$dbo->phrase()->name()]));
+            $fields[$label . $val->id()] = $html->form_input(
+                html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE . $val->id(), (string)$val->number(), $label);
+        }
+        ksort($fields);
+        return implode('', $fields);
+    }
+
+    /**
+     * the sources of the values of the page phrase as a list with a link to the source url, e.g. the
+     * sources of a use case page; each source once, sorted by name
+     *
+     * @param word|triple|db_object|type_object|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the value load
+     * @param data_object|null $dto the data cache of the page with the values
+     * @return string the html code of the source list or an empty string if no value has a source
+     */
+    function sources_used(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto = null
+    ): string
+    {
+        $html = new html_base();
+        $src_lst = [];
+        foreach ($this->phrase_values($dbo, $msg, $dto) as $val) {
+            if ($val->src != null) {
+                $src_lst[$val->src->name()] = $val->src;
+            }
+        }
+        ksort($src_lst);
+        $items = '';
+        foreach ($src_lst as $src) {
+            $link = $src->url() == null ? $src->name() : $html->ref($src->url(), $src->name());
+            $items .= $html->list_item($link);
+        }
+        $result = '';
+        if ($items != '') {
+            $result = $html->list_unsorted($items);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple|db_object|type_object|null $dbo the object of the page
+     * @param user_message $msg to report a problem of the value load
+     * @param data_object|null $dto the data cache of the page with the values
+     * @return array the values of the page phrase, which only a word or a triple has
+     */
+    private function phrase_values(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto
+    ): array
+    {
+        $result = [];
+        if ($dbo != null and ($dbo::class == word::class or $dbo::class == triple::class)) {
+            $result = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst)?->lst() ?? [];
         }
         return $result;
     }

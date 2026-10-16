@@ -165,6 +165,7 @@ detail file. Order is by how often they fire, not importance.
 ### Frontend (`web/`)
 - `web/` renders pure HTML + CSS, **no JavaScript**: interactivity uses native form posts, links and CSS state selectors (`:target`, `:checked`); never emit a `<script>` or inline handler. A separate JS frontend (Vue/React) may come later as its own app. → `docs/llm/frontend.md`
 - `web/` class properties are `public`; custom set/get uses PHP 8.4 inline property hooks, not `get_x()`/`set_x()` methods. → `docs/llm/frontend.md`
+- **Double calculation check**: a page with inputs calculates its results in the frontend from the loaded values and formulas and never stores a result; a save starts a backend job that recalculates on the complete database, and every difference between the two is shown to the user as a message, never swallowed. → `docs/llm/frontend.md`
 - Any function returning/operating on a frontend object ends in `_ui` (`_dsp` is the display-class suffix only). → `docs/llm/frontend.md`
 - Frontend config values always come from the request cache `$ui_sys->cfg`; never `new config()` in `web/`. → `docs/llm/frontend.md`
 - Configuration values are sandbox values that a normal user can change too (only pod-level keys are admin protected) — a config write takes the requesting user from the caller, never assumes e.g. the system user. → `docs/llm/architecture.md`

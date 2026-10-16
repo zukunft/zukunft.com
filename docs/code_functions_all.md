@@ -6336,6 +6336,14 @@
             ent.php
     \-- html - section for function html not yet defined that it should be to review in /component/component.php
     \-- text - section for function text not yet defined that it should be to review in /component/component.php
+    \-- name_sub_title - section for function name_sub_title not yet defined that it should be to review in /component/c
+            omponent.php
+    \-- description_text - section for function description_text not yet defined that it should be to review in /compone
+            nt/component.php
+    \-- details_start - section for function details_start not yet defined that it should be to review in /component/com
+            ponent.php
+    \-- details_end - section for function details_end not yet defined that it should be to review in /component/compone
+            nt.php
     \-- word_name - section for function word_name not yet defined that it should be to review in /component/component.p
             hp
     \-- btn_unlink - section for function btn_unlink not yet defined that it should be to review in /component/component
@@ -6695,6 +6703,8 @@
             n /component/execute/system_page.php
     \-- text_explain - section for function text_explain not yet defined that it should be process catch in /component/e
             xecute/system_page.php
+    \-- view_title - section for function view_title not yet defined that it should be process catch in /component/execu
+            te/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
              in /component/execute/system_page.php
     \-- process_catch_tab - section for function process_catch_tab not yet defined that it should be process catch in /c
@@ -6765,6 +6775,8 @@
     \-- values_in_columns - section for function values_in_columns missing in /component/execute/ui_list.php
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
+    \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
+    \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
     \-- results_by_value - section for function results_by_value missing in /component/execute/ui_list.php
@@ -7351,6 +7363,10 @@
              html elements used in zukunft.com in /html/html_base.php
     \-- row_end - section for function row_end not yet defined that it should be base elements - functions for all html 
             elements used in zukunft.com in /html/html_base.php
+    \-- details_start - section for function details_start not yet defined that it should be base elements - functions f
+            or all html elements used in zukunft.com in /html/html_base.php
+    \-- details_end - section for function details_end not yet defined that it should be base elements - functions for a
+            ll html elements used in zukunft.com in /html/html_base.php
     \-- br2 - section for function br2 not yet defined that it should be base in /html/html_base.php
     \-- br - section for function br not yet defined that it should be base in /html/html_base.php
     \-- echo_html - section for function echo_html not yet defined that it should be display interface in /html/html_bas
@@ -8586,9 +8602,9 @@
                  which become the back part of the links
         \-- list_named - @param user_message $msg to collect the error messages
     \-- br2
-        \-- html_base - @return string html code to end a row div
+        \-- html_base - @return string html code to end a collapsed block that details_start has opened
     \-- br
-        \-- html_base - @return string html code to end a row div
+        \-- html_base - @return string html code to end a collapsed block that details_start has opened
     \-- term_by_obj_id
         \-- term_list - get a term from the term list selected by the word, triple, formula or verb id
     \-- name_tip
@@ -8728,6 +8744,14 @@
         \-- component - @returns string the html code to display this view component
     \-- text
         \-- component - @return string a fixed text
+    \-- name_sub_title
+        \-- component - @return string the name of the component as a sub title e.g. a section of a use case page
+    \-- description_text
+        \-- component - @return string the description of the component as a paragraph e.g. a note of a use case page
+    \-- details_start
+        \-- component - @return string the start of a collapsed block with the name of the component as the summary line
+    \-- details_end
+        \-- component - @return string the end of the collapsed block that details_start has opened
     \-- word_name
         \-- component - @return string the name of a phrase and give the user the possibility to change the phrase name
     \-- btn_unlink
@@ -9311,6 +9335,10 @@
         \-- ui_list - show the values related to the given phrase in up to four columns that are shown side by side
     \-- table_with_related_columns
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
+    \-- value_input_fields
+        \-- ui_list - the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
+    \-- sources_used
+        \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
         \-- ui_list - show a list of values related to the given triple
     \-- values_similar
@@ -9778,6 +9806,8 @@
     \-- text_explain
         \-- system_page - @param msg_id|null $ui_msg_code_id the message id of the text e.g. the explain text of a proce
                 ss catch page
+    \-- view_title
+        \-- system_page - the name of the view as the page title and its description as the lead text, e.g. of a use
     \-- process_catch_fields
         \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
     \-- process_catch_tab
@@ -10305,6 +10335,10 @@
         \-- html_base - @return string html code to combine the next elements to one row and center them
     \-- row_end
         \-- html_base - @return string html code to end a row div
+    \-- details_start
+        \-- html_base - @param string $summary the text of the always shown summary line
+    \-- details_end
+        \-- html_base - @return string html code to end a collapsed block that details_start has opened
 \-- display interface
     \-- echo_html
         \-- html_base - display a html text immediately to the user

@@ -61,9 +61,12 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'component_types.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
@@ -81,9 +84,12 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
@@ -182,6 +188,11 @@ class component_exe extends component
         $tc_id = $this->type_code_id($cfg->typ_lst_cache, $msg);
         // get the style code id from the component
         $style = $this->style_code_id($cfg->typ_lst_cache, $msg);
+        // a component styled "all rows" shows every row of its list, e.g. the result chain of a
+        // use case page, unless the url of the page names a list size (docs/llm/frontend.md)
+        if ($style == view_styles::ALL_ROWS and !array_key_exists(url_var::DISPLAY_LIST_SIZE, $url_arr)) {
+            $url_arr[url_var::DISPLAY_LIST_SIZE] = value_list::LIMIT_ALL;
+        }
 
         // get the html code from the component
         $result .= match ($tc_id) {
@@ -379,6 +390,14 @@ class component_exe extends component
             component_types::PROCESS_CATCH_BUTTON_REFRESH => $page->process_catch_button_refresh(
                 $this->ui_msg_code_id ?? msg_id::PROCESS_CATCH_BUTTON_REFRESH, $form_name, $adm_dto->view_code_id($msk_id), $dbo, $url_arr),
             component_types::GEOLOCATOR => $page->geolocator($this->ui_msg_code_id ?? msg_id::GEOLOCATOR_LABEL, $form_name, $url_arr),
+            // use case page - the title, the sections, the notes, the inputs and the sources of a page like the PV lifetime balance
+            component_types::VIEW_TITLE => $page->view_title($msk_id, $cfg),
+            component_types::NAME_SUB_TITLE => $this->name_sub_title(),
+            component_types::DESCRIPTION_TEXT => $this->description_text(),
+            component_types::DETAILS_START => $this->details_start(),
+            component_types::DETAILS_END => $this->details_end(),
+            component_types::VALUE_INPUT_FIELDS => $list->value_input_fields($dbo, $msg, $cfg),
+            component_types::SOURCES_USED => $list->sources_used($dbo, $msg, $cfg),
             component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),

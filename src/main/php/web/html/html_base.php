@@ -3012,6 +3012,23 @@ class html_base
         return '</' . self::DIV . '>';
     }
 
+    /**
+     * @param string $summary the text of the always shown summary line
+     * @return string html code to start a collapsed block that details_end closes
+     */
+    function details_start(string $summary): string
+    {
+        return '<' . self::DETAILS . '><' . self::SUMMARY . '>' . $summary . '</' . self::SUMMARY . '>';
+    }
+
+    /**
+     * @return string html code to end a collapsed block that details_start has opened
+     */
+    function details_end(): string
+    {
+        return '</' . self::DETAILS . '>';
+    }
+
     /*
      * base
      */

@@ -275,3 +275,10 @@ component_type_id,type_name,code_id,description
 274,process catch button back,process_catch_button_back,the button that opens the page before of a process catch for the same question phrase
 275,process catch button refresh,process_catch_button_refresh,the button that shows the process catch page again with the changed input e.g. to calculate
 276,geolocator by place name / post code,geolocator,"the input of a place by its name or postal code with the translated label of the component, saved with the row phrase of the component e.g. place of user"
+277,view title,view_title,the name of the view as the page title and the description of the view as the lead text e.g. of a use case page
+278,name sub title,name_sub_title,the name of the component as a sub title e.g. a section of a use case page
+279,description text,description_text,the description of the component as a paragraph e.g. a note of a use case page
+280,details start,details_start,"the start of a collapsed block with the name of the component as the summary line, closed by a details end component"
+281,details end,details_end,the end of a collapsed block started by a details start component
+282,value input fields,value_input_fields,the values of the page phrase as number input fields with the other phrases of the value as the label e.g. the inputs of a use case page
+283,sources used,sources_used,the sources of the values of the page phrase as a list with a link to the source url

@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -48,8 +49,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -109,6 +112,34 @@ class phrase_ui_tests
                 $trp_problem, $msg, $dto_prio, true, false) . '<br>';
         $t->html_page_test($test_page, 'phrase', 'phrase', $msg);
 
+        $t->subheader($ts . 'all rows style');
+        // the ranking has as many rows as the unit config allows, so the cut is forced with the
+        // list size of the url; a table component cuts the rows with the more link, unless the
+        // component has the style "all rows", which a use case page sets, because the chain of
+        // its results is the page; a list size in the url still wins over the style
+        global $ui_sys;
+        $t_cmp = new test_components($t);
+        $dto_prio->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $cut_rows = 2;
+        $url_cut = [url_var::DISPLAY_LIST_SIZE => $cut_rows];
+        $cmp_tbl = new component_ui($t_cmp->component_table()->api_json());
+        $tbl_cut = $cmp_tbl->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_cut);
+        $test_name = 'a table component cuts the rows to the list size with the more link';
+        $t->assert_text_contains($test_name, $tbl_cut, msg_id::MORE->text());
+        $t->assert($test_name, substr_count($tbl_cut, '<' . html_base::TR . '>'), $cut_rows + 2);
+        $cmp_all = new component_ui($t_cmp->component_table_all_rows()->api_json());
+        $tbl_all = $cmp_all->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true);
+        $test_name = '... and with the all rows style it shows every row without a more row';
+        $t->assert_text_not_contains($test_name, $tbl_all, msg_id::MORE->text());
+        // the style stands for the list size "all" of the url, so both show the same rows
+        $url_all = [url_var::DISPLAY_LIST_SIZE => value_list_ui::LIMIT_ALL];
+        $tbl_url_all = $cmp_tbl->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_all);
+        $t->assert($test_name, substr_count($tbl_all, '<' . html_base::TR . '>'),
+            substr_count($tbl_url_all, '<' . html_base::TR . '>'));
+        $test_name = '... but the list size of the url still cuts the rows';
+        $t->assert_text_contains($test_name,
+            $cmp_all->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_cut), msg_id::MORE->text());
+
         $t->subheader($ts . 'table with related columns');
         $tbl_html = $list->table_with_related_columns($trp_zh_city, $msg, $dto);
         $test_name = 'the values of a triple are shown as a table';
@@ -158,6 +189,14 @@ class phrase_ui_tests
         $test_name = '... in the smaller label size';
         $t->assert_text_contains($test_name,
             $lib->str_left_of($tbl_header, '<table'), '<' . html_base::H5 . '>');
+
+        // a calculated number of the page phrase is shown in the same table as its values; the
+        // cache is offline, so the table shows the result it has and loads none from the api
+        $t_res = new test_results($t);
+        $dto->set_result_list($t_res->result_list_zh_city_ui());
+        $test_name = 'the result of the page phrase is shown as a row named by its other phrase';
+        $t->assert_text_contains($test_name,
+            $list->table_with_related_columns($trp_zh_city, $msg, $dto), '>' . word_names::INHABITANTS . '</a>');
 
         $t->subheader($ts . 'global issues table');
         // the "global problem" phrase is in no value group: the values of "global warming" and
