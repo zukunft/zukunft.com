@@ -978,6 +978,7 @@ class test_mappers
             case component_types::VALUES_MOST_RELEVANT:
             case component_types::VALUES_IN_COLUMNS:
             case component_types::TABLE_WITH_RELATED_COLUMNS:
+            case component_types::TABLE_WITH_OWN_COLUMNS:
             case component_types::NUMERIC_VALUE:
             case component_types::VALUES_ALL:
             case component_types::SYSTEM_BODY_VALUE_DETAIL:
