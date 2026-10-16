@@ -912,7 +912,8 @@ class component extends sandbox_code_id
      */
     function name_sub_title(): string
     {
-        return new html_base()->text_h2($this->name());
+        // one size below the page title (see system_page::view_title)
+        return new html_base()->text_h3($this->name());
     }
 
     /**

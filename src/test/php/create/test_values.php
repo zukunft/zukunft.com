@@ -1504,6 +1504,79 @@ class test_values extends test_objects
     }
 
     /**
+     * the values of the assumption test (test_results::result_zh_scaled_ui): the value of the page
+     * Zurich and the two values that the result uses without Zurich, the inhabitants without a
+     * source, so assumed, and Bern with a source, so measured
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_assumptions_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $t_src = new test_sources($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $t_trp->zh_city_low_impact()->phrase()]));
+        $lst->add($this->value_for_phrases([$t_wrd->word_inhabitant()->phrase()], values::SAMPLE_INT));
+        $bern = $this->value_for_phrases([$t_wrd->word_bern()->phrase()], values::SAMPLE_FLOAT);
+        $bern->set_source($t_src->source_reserved());
+        $lst->add($bern);
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the input field test (test_phrases::list_input_fields_ui): the inhabitants of
+     * Zurich as the number of the page, the limit and the step of the inhabitants field, and the
+     * values of the city with the cities that the city selector offers
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_input_fields_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $city = $t_wrd->word_city()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $inhab], values::CITY_ZH_INHABITANTS_2019));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_limit_down()->phrase()], 0));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_step()->phrase()], 100));
+        // the percent of the selector values is a unit and never an option of the selector
+        $pct = $t_wrd->word_percent()->phrase();
+        $lst->add($this->value_for_phrases([$city, $t_wrd->word_bern()->phrase(), $pct], 1));
+        $lst->add($this->value_for_phrases([$city, $t_wrd->word_zh()->phrase(), $pct], 2));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the inhabitants of Zurich in 2019 and 2020 with the same number of phrases, so that only the
+     * field value phrase 2019 decides which value the inhabitants field shows
+     * @param bool $year_2020_first true to add the 2020 value first, so that the test shows the
+     *                              choice does not depend on the order of the values
+     * @return value_list_ui the ui value list of the inhabitants of Zurich in two years
+     */
+    function value_list_input_field_value_phrases_ui(bool $year_2020_first): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $val_2019 = $this->value_for_phrases([$zh, $inhab, $t_wrd->word_2019()->phrase()], values::CITY_ZH_INHABITANTS_2019);
+        $val_2020 = $this->value_for_phrases([$zh, $inhab, $t_wrd->word_2020()->phrase()], values::SAMPLE_INT);
+        $lst = new value_list($this->env->usr1);
+        if ($year_2020_first) {
+            $lst->add($val_2020);
+            $lst->add($val_2019);
+        } else {
+            $lst->add($val_2019);
+            $lst->add($val_2020);
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * two values with the same (zero) impact and the same number but assigned to phrases with a
      * different name ("Zurich" and "city"), so that the deterministic tie break by the group name
      * can be tested independent of the volatile phrase group id (see value_list::sort_by_impact)

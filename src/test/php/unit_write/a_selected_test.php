@@ -41,6 +41,7 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL . 'application.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SERVICE . 'export' . DIRECTORY_SEPARATOR . 'json_io.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once test_paths::CONST . 'files.php';
@@ -64,6 +65,8 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
@@ -167,6 +170,14 @@ class a_selected_test extends all_unit_tests
 
         if ($usr->id > 0) {
 
+            // a code link csv row added since the last database setup (e.g. a new component type
+            // or view style) reaches the database only by the daily consistency check, so write
+            // the csv rows now as the system user and reload the types that the import resolves
+            global $sys;
+            $sys_msg = new user_message_cfg(user::system());
+            $db_con->db_fill_code_links($sys_msg);
+            $sys->load_type_lists($db_con, $sys_msg);
+
             /*
              * db read
              */
@@ -192,7 +203,6 @@ class a_selected_test extends all_unit_tests
             //$t_db->type_list_check($this, $this->usr1);
 
 
-            global $sys;
             $ui = new frontend('api based ui tests');
             $ui->load_cache($msg_ui);
             // the html renderers read the type cache from the global $ui_sys; point it at the just

@@ -136,6 +136,13 @@ class result extends sandbox_value
             $this->frm = $frm;
         }
 
+        // the phrases of the values used, so that the page can repeat the calculation (formula_calc)
+        if (array_key_exists(json_fields::CONTEXT, $json_array)) {
+            $grp = new group();
+            $grp->api_mapper($json_array[json_fields::CONTEXT], $msg);
+            $this->src_grp = $grp;
+        }
+
         // only the result page asks for the values, formulas and results used for the calculation,
         // so a missing list is not an empty list (see value::api_mapper for the same pattern)
         if (is_array($json_array[json_fields::VALUES] ?? null)) {

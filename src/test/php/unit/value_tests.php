@@ -303,6 +303,19 @@ class value_tests
         $test_name = '... and a changed user row still carries the source key field';
         $fvt_lst = $val_ex->db_fields_changed($val_db, $msg, new sql_type_list([sql_type::USER]));
         $t->assert_true($test_name, $fvt_lst->has_name(source_fields::FLD_ID));
+        // a user row of a value without source is stored with the placeholder source, so the
+        // update of a repeated import must use the placeholder too (sandbox_multi::save_fields_func)
+        $val_stored = $t_val->value_16();
+        $val_stored->set_source_id(sources::TRUST_ME_BRO_ID);
+        $val_no_src = $t_val->value_16();
+        $val_no_src->set_source(null);
+        $test_name = 'a value without source differs from the placeholder source of its stored user row';
+        $fvt_lst = $val_no_src->db_fields_changed($val_stored, $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->has_name(source_fields::FLD_ID));
+        $test_name = '... but with the placeholder source it matches, so no update without a set clause is created';
+        $val_no_src->set_source_id(sources::TRUST_ME_BRO_ID);
+        $fvt_lst = $val_no_src->db_fields_changed($val_stored, $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->is_empty_except_internal_fields());
 
         // step 5: the user row of the exclude is added only if the user has no overlay row yet
         $test_name = 'a value row with a user row reports a user overwrite, so that the exclude '

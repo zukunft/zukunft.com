@@ -762,6 +762,14 @@ with `sql_db::csv_from_class()` after a database reset. So the sequence is
 runs it, never an LLM): the unit tests upfront, the database recreation, the csv
 and api fixture refresh and the complete base and test data import, without the
 frontend, workflow and db write tests of `test.php`.
+A row added to a code link csv (`src/main/resources/db_code_links/`, e.g. a new
+component type or view style) is written to the database only by the setup, a
+version upgrade or the daily consistency check of `db_check`, so a partial run
+without the database recreation (`test/test_part.php`, `a_selected_test`) writes
+the csv rows and reloads the type lists upfront, or an import of a json that
+uses the new type fails with "not found". The csv load also removes the cached
+types api message (`db_cache` type `types`), because the frontend reads the
+types from that message and would miss the new rows until the cache age limit.
 Never derive an id by counting entries in the JSON or by assuming a shift of one.
 
 Two traps that make the drift look smaller than it is:

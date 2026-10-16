@@ -515,6 +515,14 @@ class phrase extends combine_named
         return $this->obj()->is_time($msg);
     }
 
+    /**
+     * @return bool true if the phrase says how a number has been found e.g. "assumed" or "modelled"
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->obj()->is_quality($msg);
+    }
+
     function is_info(user_message $msg): bool
     {
         return $this->obj()->is_info($msg);

@@ -1031,6 +1031,14 @@ class triple extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the triple says how a number has been found e.g. a named survey method
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
+    }
+
+    /**
      * @return bool true if the word has the type "information" (e.g. "1967 (year of definition)")
      * if used for a value these phrases are shown only as a tooltip
      */

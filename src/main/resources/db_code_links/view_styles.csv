@@ -6,3 +6,4 @@ view_style_id, view_style_name, description, code_id
 5, 'left aligned', 'align the column content to the left instead of the inherited centre', 'text-left'
 6, 'fields in one line', 'show the fields of the row on one centred line', 'fields-in-line'
 7, 'all rows', 'show every row of a table or list instead of the short list with the more link', 'all-rows'
+8, 'use case page', 'the title and the description on top, the inputs and the assumptions in a panel left of the results panel, stacked on phones', 'use-case'

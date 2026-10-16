@@ -184,10 +184,17 @@ defects to fix, not to average out. The same comparison is what a test
 asserts: the frontend numbers of a use case page and the stored results of
 its import must agree.
 
-Until the frontend has its own formula evaluation, the page shows the stored
-results of the backend (`ui_list::add_phrase_results`), which the import
-calculation has already verified against the `calc-validation` of the use case
-file; the frontend calculation and the compare are the next steps
+The first half is in place: a value table loads the stored results of its
+phrase with the formulas that made them (`ui_list::add_phrase_results`) and
+repeats every calculation with the values and results of the page
+(`ui_list::check_results`, `formula_calc`): the phrase names of the formula
+are replaced by the numbers of the page the way the import validation does,
+values before results, within the context phrases that the result carries
+(`json_fields::CONTEXT`), and the text is calculated by the shared
+`arithmetic`. A stored number that differs from the page calculation is
+replaced on the page and reported with `msg_id::RESULT_DIFFERS_FROM_PAGE`; a
+result whose formula or values the page does not have keeps its stored number.
+The save with the backend job and its compare is the next step
 (`docs/llm/pending.md` "PV lifetime balance page").
 
 ## `frontend.php` boots the html frontend, `application.php` the api backend

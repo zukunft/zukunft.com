@@ -585,6 +585,17 @@ class view_ui_tests
         $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
         $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
+        $t->subheader($ts . 'page class');
+        // the style of a view is the class of the div around its components e.g. the grid of a use case page
+        $test_name = 'the view style is the page class around the components';
+        $msk_plain->set_style_id(view_styles::USE_CASE_ID);
+        $t->assert_text_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
+            '<div class="' . view_styles::USE_CASE . '">', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $test_name = 'a view without a style adds no page class';
+        $msk_plain->set_style_id();
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
+            view_styles::USE_CASE, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+
 
         $t->subheader($ts . 'same line');
 

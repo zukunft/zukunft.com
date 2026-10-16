@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
+include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_RESULT . 'result.php';
@@ -346,6 +348,57 @@ class test_results
         $res->set_grp($lst->get_grp_id(false));
         $res->set_number($number);
         return $res;
+    }
+
+    /**
+     * a stored result of the word Zurich with the formula and the context the page needs to
+     * repeat its calculation (formula_calc): the sum of the two Zurich values of the test
+     * value list (test_values::value_list_zh_impact)
+     *
+     * @param float $number the stored number, which may differ from the sum on purpose
+     * @return result_ui the frontend result with the formula id and the context phrases
+     */
+    function result_zh_sum_ui(float $number): result_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $res = $this->result_for_phrases([$zh, $t_wrd->word_inhabitant()->phrase()], $number);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $res->set_formula($frm);
+        $ctx_lst = new phrase_list($this->env->usr1);
+        $ctx_lst->add($zh);
+        $ctx_lst->add($t_trp->zh_city_low_impact()->phrase());
+        $ctx_lst->add($t_trp->company_zurich_high_impact()->phrase());
+        $res->set_src_grp($ctx_lst->get_grp_id(false));
+        return new result_ui($res->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
+     * a stored result of the word Zurich whose calculation uses two values that Zurich does not
+     * carry, the inhabitants and Bern (test_values::value_list_assumptions_ui), so that the page
+     * shows them as its assumptions
+     *
+     * @param float $number the stored number
+     * @return result_ui the frontend result with the formula id and the context phrases
+     */
+    function result_zh_scaled_ui(float $number): result_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $res = $this->result_for_phrases([$zh, $t_wrd->word_city()->phrase()], $number);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::JOULE_DEF_ID, formula_names::JOULE_DEF);
+        $res->set_formula($frm);
+        $ctx_lst = new phrase_list($this->env->usr1);
+        $ctx_lst->add($zh);
+        $ctx_lst->add($t_trp->zh_city_low_impact()->phrase());
+        $ctx_lst->add($t_wrd->word_inhabitant()->phrase());
+        $ctx_lst->add($t_wrd->word_bern()->phrase());
+        $res->set_src_grp($ctx_lst->get_grp_id(false));
+        return new result_ui($res->api_json([api_types::INCL_PHRASES]));
     }
 
     /**

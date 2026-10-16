@@ -560,6 +560,8 @@ messages:
   cancel_and_go: "cancel and go"
   not_set: "not set"
   quality_mark_assumed: "assumed: an estimate without a direct observation"
+  field_tag_measured: "measured"
+  field_tag_assumed: "assumed"
   quality_mark_no_source: "the source of this number is missing"
   quality_mark_peer_reviewed: "taken from a peer reviewed study"
   signup: "signup"

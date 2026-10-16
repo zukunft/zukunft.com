@@ -275,7 +275,27 @@
       <div class="scroll">
         <table id="res">
           <thead><tr><th>Result</th><th class="n">Lifetime</th><th class="n">Per year</th></tr></thead>
-          <tbody></tbody>
+          <!-- the rows of the default inputs as the script below renders them, so that the page
+               is complete without the script and the generated page can be compared with it -->
+          <tbody>
+            <tr class="sec"><td colspan="3">Electricity</td></tr>
+            <tr class="key"><td>PV production<span class="sub">10.0 kWp × 976 kWh/kWp × factor 0.85</span></td><td class="n">248'880 kWh</td><td class="n">8'296 kWh</td></tr>
+            <tr><td>Used directly</td><td class="n">47'250 kWh</td><td class="n">1'575 kWh</td></tr>
+            <tr><td>Used via battery<span class="sub">after losses</span></td><td class="n">66'713 kWh</td><td class="n">2'224 kWh</td></tr>
+            <tr><td>Exported to grid</td><td class="n">127'504 kWh</td><td class="n">4'250 kWh</td></tr>
+            <tr><td>Battery losses</td><td class="n">7'413 kWh</td><td class="n">247 kWh</td></tr>
+            <tr><td>Grid import still needed</td><td class="n">21'037 kWh</td><td class="n">701 kWh</td></tr>
+            <tr><td>Self-consumption rate<span class="sub">share of PV used on site</span></td><td class="n"></td><td class="n">49 %</td></tr>
+            <tr class="key"><td>Autarky<span class="sub">share of load covered by PV</span></td><td class="n"></td><td class="n">84 %</td></tr>
+            <tr class="sec"><td colspan="3">Production emissions</td></tr>
+            <tr><td>PV system<span class="sub">1'048 kg CO₂-eq/kWp → 42.1 g/kWh at this site</span></td><td class="n">10.5 t</td><td class="n">349 kg</td></tr>
+            <tr><td>Battery<span class="sub">2 × 10 kWh × 100 kg/kWh</span></td><td class="n">2.0 t</td><td class="n">67 kg</td></tr>
+            <tr class="sec"><td colspan="3">CO₂-eq saved, net of production emissions</td></tr>
+            <tr class="key"><td>vs. Swiss consumer mix, annual (128 g/kWh)<span class="sub">payback 12.1 a</span></td><td class="n"><span class="pos">18.4 t</span></td><td class="n"><span class="pos">614 kg</span></td></tr>
+            <tr class="key"><td>vs. Swiss consumer mix, monthly (106 g/kWh PV-weighted)<span class="sub">payback 14.7 a</span></td><td class="n"><span class="pos">13.1 t</span></td><td class="n"><span class="pos">436 kg</span></td></tr>
+            <tr class="key"><td>vs. replacement mix (523 g/kWh)<span class="sub">payback 3.0 a</span></td><td class="n"><span class="pos">113.8 t</span></td><td class="n"><span class="pos">3'794 kg</span></td></tr>
+            <tr><td>Effect of the battery<span class="sub">vs. same PV without battery, annual Swiss mix</span></td><td class="n"><span class="neg">-2.9 t</span></td><td class="n"><span class="neg">-98 kg</span></td></tr>
+          </tbody>
         </table>
       </div>
 
@@ -287,7 +307,21 @@
       <div class="scroll">
         <table id="mon">
           <thead><tr><th>Month</th><th class="n">PV kWh</th><th class="n">Load kWh</th><th class="n">Direct</th><th class="n">Battery</th><th class="n">Export</th><th class="n">Grid import</th><th class="n">CH mix g/kWh</th></tr></thead>
-          <tbody></tbody>
+          <tbody>
+            <tr><td>Jan</td><td class="n">207</td><td class="n">450</td><td class="n">158</td><td class="n">45</td><td class="n">0</td><td class="n">248</td><td class="n">151</td></tr>
+            <tr><td>Feb</td><td class="n">373</td><td class="n">405</td><td class="n">142</td><td class="n">208</td><td class="n">0</td><td class="n">55</td><td class="n">147</td></tr>
+            <tr><td>Mar</td><td class="n">664</td><td class="n">405</td><td class="n">142</td><td class="n">263</td><td class="n">229</td><td class="n">0</td><td class="n">141</td></tr>
+            <tr><td>Apr</td><td class="n">913</td><td class="n">360</td><td class="n">126</td><td class="n">234</td><td class="n">527</td><td class="n">0</td><td class="n">100</td></tr>
+            <tr><td>May</td><td class="n">1'037</td><td class="n">338</td><td class="n">118</td><td class="n">219</td><td class="n">675</td><td class="n">0</td><td class="n">69</td></tr>
+            <tr><td>Jun</td><td class="n">1'078</td><td class="n">315</td><td class="n">110</td><td class="n">205</td><td class="n">741</td><td class="n">0</td><td class="n">80</td></tr>
+            <tr><td>Jul</td><td class="n">1'120</td><td class="n">315</td><td class="n">110</td><td class="n">205</td><td class="n">782</td><td class="n">0</td><td class="n">88</td></tr>
+            <tr><td>Aug</td><td class="n">996</td><td class="n">315</td><td class="n">110</td><td class="n">205</td><td class="n">658</td><td class="n">0</td><td class="n">89</td></tr>
+            <tr><td>Sep</td><td class="n">830</td><td class="n">338</td><td class="n">118</td><td class="n">219</td><td class="n">468</td><td class="n">0</td><td class="n">130</td></tr>
+            <tr><td>Oct</td><td class="n">581</td><td class="n">382</td><td class="n">134</td><td class="n">249</td><td class="n">171</td><td class="n">0</td><td class="n">135</td></tr>
+            <tr><td>Nov</td><td class="n">290</td><td class="n">428</td><td class="n">150</td><td class="n">127</td><td class="n">0</td><td class="n">151</td><td class="n">164</td></tr>
+            <tr><td>Dec</td><td class="n">207</td><td class="n">450</td><td class="n">158</td><td class="n">45</td><td class="n">0</td><td class="n">248</td><td class="n">153</td></tr>
+            <tr class="key"><td>Year</td><td class="n">8'296</td><td class="n">4'500</td><td class="n">1'575</td><td class="n">2'224</td><td class="n">4'250</td><td class="n">701</td><td class="n">106</td></tr>
+          </tbody>
         </table>
       </div>
 

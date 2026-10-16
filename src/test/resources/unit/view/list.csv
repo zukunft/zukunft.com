@@ -191,7 +191,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 190,1,company sheet,"The income statement, balance sheet or cash flow sheet of a big company",6,,,,,,
 191,1,company list with main ratios,list the most interesting companies with the main ratios,6,,,,,,
 192,1,PV in Switzerland emission comparison,the climate benefit of photovoltaic electricity in Switzerland with and without the displacement concept,13,,,,,,
-193,1,PV lifetime CO2 balance,"the lifetime electricity and CO2-eq balance of a PV installation with battery, compared with the annual Swiss consumption mix, the PV-weighted monthly Swiss mix and the European residual mix",13,,,,,,
+193,1,PV lifetime CO2 balance,Rooftop photovoltaic installation in the Swiss plateau: electricity produced over the lifetime and greenhouse-gas savings against the Swiss consumer mix and against a replacement (import) mix. Edit the four inputs; all assumptions are open below them.,13,8,,,,,
 194,1,Table editor,"placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",11,,,table_editor,,,
 195,1,Calculation editor,placeholder to define a calculation starting from a word or triple,11,,,calculation_editor,,,
 196,1,process catch start page,the first page of a process catch with one easy to answer question and a next button to the main page,11,,,process_catch_start,,,

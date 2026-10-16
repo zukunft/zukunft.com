@@ -259,6 +259,32 @@ class triple_names
     const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2493;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
     const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2494;
+    // the field types and properties of process_catch_fields.json, appended like the chart
+    // triples above, so they move with them; check them in the triple list.csv
+    const string FIELD_NUMBER_WITH_LIMITS = shared_triples::FIELD_NUMBER_WITH_LIMITS;
+    const int FIELD_NUMBER_WITH_LIMITS_ID = 2522;
+    const string FIELD_PHRASE_SELECTOR_TYPE = shared_triples::FIELD_PHRASE_SELECTOR_TYPE;
+    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2524;
+    const string FIELD_LIMIT_DOWN = shared_triples::FIELD_LIMIT_DOWN;
+    const int FIELD_LIMIT_DOWN_ID = 2508;
+    const string FIELD_STEP = shared_triples::FIELD_STEP;
+    const int FIELD_STEP_ID = 2509;
+    // the fields of the input field test (unit_ui/use_case_ui_tests.php), which exist in no
+    // database, so their ids are fixed like SYSTEM_TEST_ADD_ID
+    const string FIELD_INHABITANTS = 'field inhabitants';
+    const int FIELD_INHABITANTS_ID = 989;
+    const string FIELD_CITY = 'field city';
+    const int FIELD_CITY_ID = 988;
+    const string ZH_USES_BERN = 'Zurich uses Bern';
+    const int ZH_USES_BERN_ID = 987;
+    // the field value phrase 2019 of the inhabitants field, so that the field shows the 2019
+    // value and not the value of another year (like the annual household consumption of the PV page)
+    const string FIELD_VALUE_PHRASES = shared_triples::FIELD_VALUE_PHRASES;
+    const int FIELD_VALUE_PHRASES_ID = 986;
+    const string INHABITANTS_INPUT_YEAR = 'inhabitants input year';
+    const int INHABITANTS_INPUT_YEAR_ID = 985;
+    const string INHABITANTS_FIELD_VALUE_PHRASE = 'inhabitants field value phrase';
+    const int INHABITANTS_FIELD_VALUE_PHRASE_ID = 984;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort

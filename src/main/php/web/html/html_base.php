@@ -2792,6 +2792,41 @@ class html_base
         return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . $form . '>';
     }
 
+    /**
+     * a number input with the limits and the step that the browser enforces, e.g. an input field
+     * of a use case page; the id equals the name, so a label can point to it
+     *
+     * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
+     * @param float|null $value the number shown, null for an empty field
+     * @param float|null $min the lowest number accepted, null for no limit
+     * @param float|null $max the highest number accepted, null for no limit
+     * @param float|null $step the increment of the number, null for any number
+     * @param string $form_name the form that the input joins by its form attribute, '' for the surrounding form
+     * @return string the html code of the number input
+     */
+    function input_number(string $name, ?float $value, ?float $min, ?float $max, ?float $step, string $form_name = ''): string
+    {
+        $attr = ' ' . self::TYPE . '="number" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
+        foreach (['value' => $value, 'min' => $min, 'max' => $max, 'step' => $step] as $key => $num) {
+            if ($num !== null) {
+                $attr .= ' ' . $key . '="' . $this->number_attr($num) . '"';
+            }
+        }
+        if ($form_name != '') {
+            $attr .= ' ' . self::FORM . '="' . $form_name . '"';
+        }
+        return '<' . self::INPUT . $attr . '>';
+    }
+
+    /**
+     * @param float $num a number
+     * @return string the number without trailing zeros and with a point, as an html attribute needs it
+     */
+    private function number_attr(float $num): string
+    {
+        return rtrim(rtrim(sprintf('%.12F', $num), '0'), '.');
+    }
+
     function div_form(string $text, string $style = ''): string
     {
         return $this->div_bs($text, 'form-group ' . $style);

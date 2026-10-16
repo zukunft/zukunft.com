@@ -4,49 +4,133 @@
 
 the generated page `src/test/resources/web/html/use_cases/pv_lifetime_balance.html` should
 match the hand made sample `pv_lifetime_balance_sample.html` without hardcoding, generated
-from the database; the calculation follows the double calculation check of
-`docs/llm/frontend.md`: the frontend calculates from the loaded values, a save starts a
-backend job that recalculates on the complete database and every difference is shown as a
-message. done so far: the stored results are loaded into the related columns table and the
-snapshot shows every row; the frame of the sample (head, navbar, footer) is the one the
-renderer emits and a view snapshot carries the title of the live page; the view validation
-of the json shows the sample layout, three sections with one row per result and a lifetime
-and an annual column, with the numbers the formulas of the file produce; the table component
-of the use case has the style `all-rows`, so the live page shows every row of the chain like
-the snapshot; the page has the components of the sample as first versions (`view_title`,
-`name_sub_title`, `description_text`, `details_start`/`details_end`, `value_input_fields`,
-`sources_used`, see `docs/llm/json_views.md`), the input fields show the values of the page
-phrase and the assumptions block holds a note until the fields come from the field triples.
+from the database of the use case json; the calculation follows the double calculation check
+of `docs/llm/frontend.md`. the sample is the target and is never adapted to the renderer:
+its two tables hold the rows of the default inputs as its script renders them, so the file
+is complete without the script. done so far: frame and title, the view style `use-case`,
+the all-rows result table, the period words `lifetime` and `annual` as the own columns of
+the result table (`table_with_own_columns`) with the two general period formulas, the components of the page (`view_title`, `name_sub_title`,
+`description_text`, `details_start`/`details_end`, `process_catch_fields`,
+`assumption_fields`, `formula_notes`, `sources_used`), the input fields from the field
+triples, the frontend check of the results and the source names loaded by id.
+
+### review of the remaining differences (2026-10-16)
+
+the review compares the sample with the json and with the page of the last `test_part.php`
+run; a difference is either missing in the json (A), or in the json but not rendered as in
+the sample (B), or caused by the database of the run (C).
+
+A. the sample shows something the json does not have; added to the json except the last two
+- done: **annual Swiss mix** 128 g/kWh with the new source `BAFU Swiss electricity mixes
+  2018`, so the net avoided emission by consumption mix is 18'425.61 kg (614.19 a year) and
+  the payback 12.12 years like the sample
+- done: **battery losses** (formula, 247.09 kWh a year, 7'412.7 kWh lifetime) and the
+  **battery effect** (formula, -2'948.83 kg, -98.29 kg a year); the effect needs no second
+  dispatch, because without battery all production is delivered, so the effect is minus the
+  lifetime losses times the mix minus the battery embodied emission
+- done: **PV site intensity** of the sub line of the PV system (42.12 g/kWh)
+- done: **replacement mix**: the European production mix 2022 (395 g/kWh), its gross, net
+  and payback results, the triples `residual mix` and `production mix` is a `replacement
+  mix`, the field triple and the `uses residual mix` of the example; open (B): the phrase
+  selector takes its options from the values of the selector phrase, the replacement mix
+  needs options from the `is a` triples, and a gross formula that uses the selected mix
+- done: **monthly dispatch**: the monthly PV production, household consumption, direct use
+  and battery charge of the example as modelled values (exact, their sums are the annual
+  values), the monthly battery discharge, export and grid import as results of the existing
+  formulas with 36 calc validations, and the monthly table in the view validation; open: the
+  monthly results of the other dispatch formulas (delivered electricity, self-consumption
+  share, autarky) are calculated too and must not appear in the main table
+- done: the **header text** of the sample is the view description
+- open: **labels and sub lines**: the sample labels ("System size", "Used directly", "Grid
+  import still needed", "vs. Swiss consumer mix, annual (128 g/kWh)") and the formula sub
+  lines (e.g. "10.0 kWp × 976 kWh/kWp × factor 0.85") need a label property of a phrase on
+  a page, which the data model does not have yet
+- open: **numbered sources**: the sample cites the sources by number in the hints and
+  notes; the json has all seven with the full citation as the description, the numbering
+  is a renderer task
+
+B. in the json but rendered differently
+- **result table**: the columns of the page are `consumption mix`, `CO2-eq` and a values
+  column instead of lifetime and annual; the three net avoided emission rows all show
+  17'943, so the PV-weighted (13'072) and the residual mix (113'805) result are not the ones
+  shown; likely cause, fixed: the operand match of `formula_calc::value_of` lacked the
+  brackets around its `and`, so any gross avoided emission matched and the page check
+  replaced the stored numbers; to confirm with the next run; the rows are not grouped into the three sections (step 4); the numbers use kg in
+  both columns where the sample uses t for the lifetime and kg a year
+- **inputs**: the yield factor is not rendered as the orientation selector, the household
+  consumption field shows 0.6 percent (the confidence of the day share) instead of 4500 kWh,
+  the labels are the phrase names without the sample markup of the input row
+- **assumptions**: the block shows the field limit and step values, the monthly shares, a
+  PVGIS yield of 1287.13 kWh per kWp and a US GDP value, but not the PV life cycle emission
+  (35.8), the annual mix, the day share and the battery lifetime of the json; the cause is
+  the context load by any phrase of a result (step 8 open point) and the missing filter of
+  the field definition values
+- **monthly table**: the row phrase `consumption mix` also selects the gross and net
+  avoided emission, the payback and `PV in Switzerland avoided emission`; the months are
+  sorted by number, not by month
+- **notes**: the formula notes show all fourteen formulas with a description, the sample
+  only the three model notes; a note needs a marker so that only the formulas meant as a
+  note of the page are shown
+- **sources**: the list contains `PVGIS 5.3` and `BEA US GDP 2023` of other files, by the
+  same broad context load as the assumptions
+
+C. caused by the database of the partial run
+- the page still shows the results `lifetime production` and `lifetime delivered
+  electricity`, three text components with the old notes and the formula `lifetime
+  production formula`, which the json no longer has; `test_part.php` imports into the
+  existing database and never removes an object that a newer json left out, so the page
+  can only be judged after a database recreation (`test/test_re_pin.php`) or with a cleanup
+  of the objects of the previous import
+
 the remaining steps:
 
-2. fill the lifetime column of the dispatch rows and the annual column of the emission rows:
-   today only the production and the delivered electricity have a lifetime result, so the
-   file needs a lifetime formula per dispatch row (or one formula with the row phrase as a
-   variable) and a per year formula for the embodied and the avoided emission, then the
-   view validation and the sample get these numbers
-4. define the columns and the row order in the json with the column tier triples like
-   `solution_prio.json` (`lifetime` and `annual` as columns) and sort definitions for the
-   three sections; let the offline test context load the column definitions
-5. the frontend calculation: evaluate the formulas of the page in `web/` from the loaded
-   values (the backend `expression` as the model), show the frontend results in the table
-   and compare them with the stored results; a difference is a message
-6. build the inputs from the field triples of `process_catch_fields.json`: label, unit,
-   minimum, maximum, step, suggestion and the orientation as a choice of the yield factor
-   phrases; a `process_catch_fields` component plus the refresh form; the sample adopts
-   the markup the field renderer emits and drops its script
+4. the three sections of the sample as the row order: a sort by the parent of the row
+   phrase (`table_orders::ALPHA_PARENT_ASC` exists as a case, but has no implementation in
+   `table_model::sort_rows` and no condition word with a code id in the seed), plus the
+   triples that link each row phrase to its section (electricity, production emission,
+   avoided emission); an offline unit fixture of the lifetime and annual columns needs the
+   triple ids of the re-pin run
+5. done: the value table repeats the calculation of its results with the values of the page
+   (`formula_calc`, the shared `arithmetic`), shows the calculated number in place of a
+   differing stored one and reports the difference (`msg_id::RESULT_DIFFERS_FROM_PAGE`);
+   open: a result whose values the page has not loaded keeps its stored number, so the page
+   should load the values of the context phrases of its results as well
+6. done: the inputs come from the field triples (`ui_list::input_fields`): a phrase of the
+   values of the page with a field type is a number field with the limit and the step of
+   the field values and the number of the page, the yield factor a phrase selector of the
+   orientations with the one selected that the example installation `uses`; the fields join
+   the refresh form of the page and an entered number or phrase of the url is shown again;
+   open: the field markup of the sample (label, input row, unit, hint), a label and a
+   suggestion property of a field, the maximum of the three number fields, and the
+   entered numbers as the inputs of the page calculation (step 7)
 7. the save: write the inputs as values, start the backend calculation job, compare the
    job results with the frontend results and show every difference as a message
-8. the assumptions as a second fields component in a collapsed block with the measured or
-   assumed tag and the hint from the source and the confidence values
-9. the monthly table: add the monthly formulas to the json so that the rows are results, or
-   reduce the sample to the twelve mix values
-10. notes and sources from the data: the notes as formula descriptions shown by a formula
-    list component, the sources as a component that lists the distinct sources of the
-    values and results of the page
-11. styles: move the two column grid and the panel of the sample into style_html.css under
-    one page class and drop the rest of the sample css
+8. done: the assumptions are the values that the results of the page use and that the page
+   phrase does not carry (`assumption_fields`, found like the page calculation finds its
+   operands), each a number field with the measured or assumed tag, the confidence of an
+   assumed value and the source of a measured one as the hint; open: the values of a context
+   are loaded by any of its phrases, which can be many on a big pod, so an api that answers
+   with the values within a phrase set would be leaner
+9. done: the monthly table is the table of the consumption mix phrase, which the `row` phrase
+   of a table component names instead of the page phrase, which shows the twelve monthly
+   mix values and the annual mix; open: the sample shows the monthly dispatch of the example
+   (PV, load, direct use, battery, export, grid import per month), which needs monthly
+   formulas with the minimum of two numbers, which the arithmetic of the frontend does not
+   know yet
+10. done: the notes are the descriptions of the formulas of the page results shown by the
+    `formula_notes` component, and the sources used component lists the sources of the
+    values of the page and of the values its results use, loading the source names by id
+    when a value carries only the source id
+11. done: the grid and the panel of the sample are the rules of the page class `use-case`
+    in style_html.css, which is the view style `use case page` of the use case view that
+    the renderer puts on the div around the components; open: the sample keeps its own css
+    until the renderer emits the grid and the panels, and the input field classes
+    (`field`, `unit`, `tag`, `hint`) have no rules in style_html.css yet
 12. when the two files match, let the use case test assert the generated page against the
     sample
+13. close the differences of the review above: first rerun on a recreated database (C),
+    then the result columns and the context selection of the net avoided emission (B),
+    then the json decisions of the developer (A)
 
 ## pin pages
 

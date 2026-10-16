@@ -191,6 +191,10 @@ class data_object
         }
     }
     public view_list $msk_lst;
+    // the view of the page, set by view_exe::show, so that a component can show its name
+    // (system_page::view_title); kept out of the view list, which a filled list makes the
+    // view selectors take as the complete list of views (ui_select::view_list_for)
+    public ?view $msk = null;
     private component_list $cmp_lst;
     // TODO Prio 0 rename to $typ_lst
     public ?type_lists $typ_lst_cache = null;
@@ -268,6 +272,7 @@ class data_object
         $this->frm_lnk_lst = new formula_link_list();
         $this->res_lst = new result_list();
         $this->msk_lst = new view_list();
+        $this->msk = null;
         $this->cmp_lst = new component_list();
         $this->chg_log = new change_log_list();
         $this->sys_log = new sys_log_list();

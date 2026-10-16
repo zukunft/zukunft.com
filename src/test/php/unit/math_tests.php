@@ -34,15 +34,50 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_CALC . 'arithmetic.php';
+
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 global $db_con;
 
 class math_tests
 {
+
+    /**
+     * the shared calculation of a text with numbers, which the frontend uses to repeat the
+     * calculation of a result with the values of a page (formula_calc)
+     */
+    function run_arithmetic(test_cleanup $t): void
+    {
+        $ts = 'unit arithmetic ';
+        $t->header($ts);
+        $calc = new arithmetic();
+        $cases = [
+            ['2 + 3 * 4', 14.0],
+            ['( 2 + 3 ) * 4', 20.0],
+            ['-2 * 3', -6.0],
+            ['2 - -3', 5.0],
+            ['7 / 2', 3.5],
+            ['1575.000000000000 * 30', 47250.0],
+            ['( 1575 + 2223.77 ) / 4500', 0.84417111111111],
+        ];
+        foreach ($cases as [$txt, $expected]) {
+            $t->assert($ts . '"' . $txt . '"', round($calc->calc($txt) ?? 0, 10), round($expected, 10));
+        }
+        // negative: a text that is no calculation gives no number instead of a wrong one
+        $invalid = ['', '2 +', '2 x 3', '( 2 + 3', '1 / 0', '2 3'];
+        foreach ($invalid as $txt) {
+            $t->assert_null($ts . '"' . $txt . '" is no calculation', $calc->calc($txt));
+        }
+    }
     function run(test_cleanup $t): void
     {
+        $this->run_arithmetic($t);
+
         // start the test section (ts)
         $ts = 'unit math ';
         $t->header($ts);

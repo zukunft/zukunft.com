@@ -148,6 +148,12 @@ class styles
     // and the measure/scaling part that follows the number like on a price tag
     const string VALUE_ROW = 'value-row';
     const string VALUE_UNIT = 'value-unit';
+    // an input field of a use case page with its label and the unit behind the input (ui_list::input_fields)
+    const string INPUT_FIELD = 'field';
+    const string INPUT_UNIT = 'unit';
+    // the measured or assumed tag behind the label and the source hint below an assumption field
+    const string INPUT_TAG = 'tag';
+    const string INPUT_HINT = 'hint';
 
     // the not critical entries of an admin dashboard column, which open by a click on the +/- marker
     const string ADMIN_MORE = 'admin-more';

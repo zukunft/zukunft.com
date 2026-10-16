@@ -197,7 +197,10 @@ column by giving its first component the `side_or_*` type and the rest `combine`
 coded styles of `view_styles.csv`: `text-left`, `fields-in-line` and `all-rows`,
 which shows every row of a list component instead of the short list with the
 more link, e.g. the result chain of a use case table (`docs/llm/frontend.md`
-"A page never fills the screen").
+"A page never fills the screen"). A view has a `style` too, which is the page
+class of the div around its components: `use-case` puts the inputs and the
+assumptions in a panel left of the results panel with the grid and panel rules
+of `style_html.css`, stacked on phones.
 
 ### The process catch views: four pages for one question phrase
 
@@ -213,7 +216,7 @@ triples of the question phrase (`process_catch_fields.json`, see
 |---|---|
 | `system_title_for_phrase` | the translated page title with the name of the question phrase |
 | `system_text_explain` | the translated `ui_msg_code_id` of the component as a paragraph |
-| `process_catch_fields` | the input fields of the page or, with a tab code id, of one tab, shown only if that tab is selected |
+| `process_catch_fields` | the input fields of the page or, with a tab code id, of one tab, shown only if that tab is selected; a field is a phrase of the values of the page phrase that a use case assigns a field type (`<phrase> can be number with limits`), its limits and step are values with the field phrase and the property triple (`0.5` with `PV capacity` and `field step`), if the field phrase is in several values the field shows the one with all field value phrases (`household consumption has a annual`, that triple `can be field value phrases`) and the fewest phrases, and a `phrase selector` field offers the phrases of the values of the field phrase (`<phrase> can be field phrase selector value based`) with the one selected that the page phrase `uses`; the fields join the refresh form, and an entered number or phrase of the url is shown again (`ui_list::input_fields`) |
 | `process_catch_tab` | one tab: the selected tab as text, every other tab as a link to the same page with the tab url var (`url_var::TAB`) |
 | `process_catch_button_next` | a link to the next page with the same question phrase (`views::PROCESS_CATCH_NEXT`) |
 | `process_catch_button_back` | a link to the page before with the same question phrase (`views::PROCESS_CATCH_BACK`) |
@@ -236,17 +239,30 @@ their text from the component itself, because a use case may carry no
 
 | component type | what it shows |
 |---|---|
-| `view_title` | the name of the view as the page title and the description of the view as the lead text; the view of the page is put into the request cache by `view_exe::show` |
+| `view_title` | the name of the view as the page title and the description of the view as the lead text; the view of the page is the page view of the request cache (`data_object::$msk`), set by `view_exe::show` and kept out of the view list, because a filled view list is what the view selectors offer |
 | `name_sub_title` | the **name** of the component as a section heading, so the component is named like the heading e.g. `Inputs` |
 | `description_text` | the **description** of the component as a paragraph e.g. a note of the page |
 | `details_start` | the start of a collapsed block with the name of the component as the summary line; the block spans the components up to the `details_end`, like a `row_start` spans a row |
 | `details_end` | the end of the collapsed block |
 | `value_input_fields` | the values of the page phrase as number input fields, each labelled by the other phrases of the value and sorted by the label; a first version until the fields come from the field triples of the phrase like the process catch fields |
-| `sources_used` | the sources of the values of the page phrase as a list with a link to the source url, each source once, sorted by name |
+| `sources_used` | the sources of the values of the page phrase and of the values that its results use as a list with a link to the source url, each source once, sorted by name; a value that knows its source only by the id gets the name from the source cache of the page or from one load of all missing sources |
+| `formula_notes` | the descriptions of the formulas that calculate the results of the page as paragraphs with the formula name in front, sorted by name, so the notes of a page are the formula descriptions of the use case file and not a text of their own |
+| `assumption_fields` | the values that the calculation of the results of the page uses and that the page phrase does not carry, e.g. the yield and the reference mixes of the PV balance, each as a number field with the tag "measured" for a value with a source, with the source as the hint, or "assumed" with the confidence that a value with the same phrases and the word `confidence` states; the operands are found like the page calculation finds them (`formula_calc::operands`) and loaded by the phrases of the context of each result |
 
-The save button of the inputs reuses `system_button_save` until the save
-starts the backend calculation (`docs/llm/frontend.md` "The frontend
-calculates, a save job verifies").
+A `table_with_related_columns` component with a `row` phrase shows the table of
+that phrase instead of the page phrase, e.g. the monthly Swiss consumption mix
+on the PV balance page; the phrase comes from the request cache or is loaded
+with its values (`component_exe::table_phrase`).
+
+A `table_with_own_columns` component is the same table, but its `column` and
+`column2` phrases are its columns, e.g. `lifetime` and `annual` for the main
+results of the PV balance page. A use case never defines a column with a
+system column tier (`... can be mayor column (system)`), because the tiers are
+shared by all tables and would add the column e.g. to the start page.
+
+The refresh form of the inputs (`process_catch_button_refresh`) shows the page
+again with the entered inputs until the save starts the backend calculation
+(`docs/llm/frontend.md` "The frontend calculates, a save job verifies").
 
 ## View relations
 

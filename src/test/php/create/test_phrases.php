@@ -1753,6 +1753,48 @@ class test_phrases
      * @param phrase_list $lst tbe backend list to convert
      * @return phrase_list_ui the converted frontend list
      */
+    /**
+     * @return phrase_list_ui the field types of process_catch_fields.json with the inhabitants as a
+     *         number field and the city as a phrase selector of the page Zurich, which uses Bern
+     */
+    function list_input_fields_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_city()->phrase());
+        $lst->add($t_wrd->word_bern()->phrase());
+        $lst->add($t_trp->field_number_with_limits()->phrase());
+        $lst->add($t_trp->field_phrase_selector_type()->phrase());
+        $lst->add($t_trp->field_inhabitants()->phrase());
+        $lst->add($t_trp->field_city()->phrase());
+        $lst->add($t_trp->zh_uses_bern()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases of the input fields with the year 2019 as the field value phrase of the inhabitants
+     * @return phrase_list_ui the input field phrases with the field value phrase triples
+     */
+    function list_input_field_value_phrases_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_2019()->phrase());
+        $lst->add($t_wrd->word_2020()->phrase());
+        $lst->add($t_trp->field_number_with_limits()->phrase());
+        $lst->add($t_trp->field_inhabitants()->phrase());
+        $lst->add($t_trp->field_value_phrases()->phrase());
+        $lst->add($t_trp->inhabitants_input_year()->phrase());
+        $lst->add($t_trp->inhabitants_field_value_phrase()->phrase());
+        return $this->ui_list($lst);
+    }
+
     private function ui_list(phrase_list $lst): phrase_list_ui
     {
         return new phrase_list_ui($lst->api_json([api_types::INCL_PHRASES]));

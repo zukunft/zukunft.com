@@ -894,3 +894,37 @@ a:hover {
     border-radius: 2px;
     padding: 0 1px;
 }
+
+/* use case page (view style use-case): the title and the description on top, below them the */
+/* inputs and the assumptions in a panel on the left and the results in a panel on the right; */
+/* the two panels stack on phones; the colours are the zukunft.com blues and grey of this file */
+.use-case {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    display: grid;
+    gap: 24px;
+    text-align: left;
+    color: #274b8f;
+    line-height: 1.5;
+}
+.use-case .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+@media (max-width: 860px) {
+    .use-case .grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+.use-case .panel {
+    background: #f9fafb;
+    border: 1px solid #b9c6d6;
+    border-radius: 8px;
+    padding: 18px;
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+}

@@ -1163,10 +1163,11 @@ class system_page extends component
     function view_title(int $msk_id, ?data_object $cfg): string
     {
         $result = '';
-        $msk = $cfg?->get_view_by_id($msk_id);
-        if ($msk != null) {
+        $msk = $cfg?->msk;
+        if ($msk != null and $msk->id() == $msk_id) {
             $html = new html_base();
-            $result = $html->text_h4($msk->name()) . $html->p($msk->get_description());
+            // the same heading as the phrase title, so the page title is bigger than its sections
+            $result = $html->text_h2($msk->name()) . $html->p($msk->get_description());
         }
         return $result;
     }
@@ -1181,7 +1182,15 @@ class system_page extends component
      * @param array $url_arr the url vars of the page with the selected tab
      * @return string the html code of the fields or an empty string if the fields belong to a tab that is not selected
      */
-    function process_catch_fields(string $cmp_name, ?string $cmp_code_id, array $url_arr): string
+    function process_catch_fields(
+        string                                                $cmp_name,
+        ?string                                               $cmp_code_id,
+        array                                                 $url_arr,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        ?data_object                                          $dto = null,
+        string                                                $form_name = '',
+        user_message                                          $msg = new user_message()
+    ): string
     {
         global $mtr;
         $result = '';
@@ -1189,7 +1198,11 @@ class system_page extends component
         // the fields of a tab are only shown if the tab is selected, so the page shows one tab at a time
         if ($nbr == 0 or $nbr == $this->process_catch_tab_selected($url_arr)) {
             $html = new html_base();
-            $result = $html->p($mtr->txt(msg_id::PROCESS_CATCH_FIELDS_PENDING) . ' ' . $html->esc($cmp_name));
+            $result = new ui_list()->input_fields($dbo, $msg, $dto, $form_name, $url_arr);
+            // a page whose phrase has no field yet says so instead of showing nothing
+            if ($result == '') {
+                $result = $html->p($mtr->txt(msg_id::PROCESS_CATCH_FIELDS_PENDING) . ' ' . $html->esc($cmp_name));
+            }
         }
         return $result;
     }
@@ -1270,7 +1283,7 @@ class system_page extends component
     function process_catch_button_refresh(
         msg_id                                                $label,
         string                                                $form_name,
-        string                                                $msk_code_id,
+        string|int                                            $msk_key,
         db_object|type_object|combine_named|sandbox_list|null $dbo,
         array                                                 $url_arr
     ): string
@@ -1278,9 +1291,9 @@ class system_page extends component
         global $mtr;
         $result = '';
         // e.g. a preview of the component has no page to show again
-        if ($msk_code_id != '') {
+        if ($msk_key != '' and $msk_key != 0) {
             $html = new html_base();
-            $page_vars = $html->form_hidden(url_var::MASK, $msk_code_id);
+            $page_vars = $html->form_hidden(url_var::MASK, (string)$msk_key);
             $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
             // the tab is only kept if the user has selected one, so a page without tabs gets no tab var
             if (array_key_exists(url_var::TAB, $url_arr)) {

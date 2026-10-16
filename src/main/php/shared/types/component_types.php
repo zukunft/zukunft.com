@@ -624,6 +624,17 @@ class component_types
     // the sources of the values of the page phrase as a list with a link to the source url
     const string SOURCES_USED = "sources_used";
     const int SOURCES_USED_ID = 283;
+    // the values that the results of the page use and that the page phrase does not carry as
+    // number input fields with a measured or assumed tag and the source as the hint
+    const string ASSUMPTION_FIELDS = "assumption_fields";
+    const int ASSUMPTION_FIELDS_ID = 284;
+    // the descriptions of the formulas that calculate the results of the page as paragraphs
+    const string FORMULA_NOTES = "formula_notes";
+    const int FORMULA_NOTES_ID = 285;
+    // the table with related columns, but with the column phrases of the component as its own
+    // columns e.g. lifetime and annual, so that no system column tier changes other tables
+    const string TABLE_WITH_OWN_COLUMNS = "table_with_own_columns";
+    const int TABLE_WITH_OWN_COLUMNS_ID = 286;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -997,6 +1008,7 @@ class component_types
         self::VALUES_MOST_RELEVANT,
         self::VALUES_IN_COLUMNS,
         self::TABLE_WITH_RELATED_COLUMNS,
+        self::TABLE_WITH_OWN_COLUMNS,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -1223,6 +1235,9 @@ class component_types
         [self::DETAILS_END, self::DETAILS_END_ID],
         [self::VALUE_INPUT_FIELDS, self::VALUE_INPUT_FIELDS_ID],
         [self::SOURCES_USED, self::SOURCES_USED_ID],
+        [self::ASSUMPTION_FIELDS, self::ASSUMPTION_FIELDS_ID],
+        [self::FORMULA_NOTES, self::FORMULA_NOTES_ID],
+        [self::TABLE_WITH_OWN_COLUMNS, self::TABLE_WITH_OWN_COLUMNS_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

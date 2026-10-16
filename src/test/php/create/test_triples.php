@@ -1447,6 +1447,130 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "number with limits" - the field type of a number input (process_catch_fields.json)
+     */
+    function field_number_with_limits(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_NUMBER_WITH_LIMITS_ID, triple_names::FIELD_NUMBER_WITH_LIMITS);
+        return $trp;
+    }
+
+    /**
+     * @return triple "phrase selector" - the field type of a selection of one phrase
+     */
+    function field_phrase_selector_type(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_PHRASE_SELECTOR_TYPE_ID, triple_names::FIELD_PHRASE_SELECTOR_TYPE);
+        return $trp;
+    }
+
+    /**
+     * @return triple "field limit down" - the property phrase of the lowest number of a field
+     */
+    function field_limit_down(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_LIMIT_DOWN_ID, triple_names::FIELD_LIMIT_DOWN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "field step" - the property phrase of the increment of a field
+     */
+    function field_step(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_STEP_ID, triple_names::FIELD_STEP);
+        return $trp;
+    }
+
+    /**
+     * @return triple "inhabitant can be number with limits" - the inhabitants as a number input
+     */
+    function field_inhabitants(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_INHABITANTS_ID, triple_names::FIELD_INHABITANTS);
+        $trp->set_from($t_wrd->word_inhabitant()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->field_number_with_limits()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "city can be phrase selector" - the city as a selection of one of the cities with a value
+     */
+    function field_city(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_CITY_ID, triple_names::FIELD_CITY);
+        $trp->set_from($t_wrd->word_city()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->field_phrase_selector_type()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "field value phrases" - the property phrase of the phrases of the value of a field
+     */
+    function field_value_phrases(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_VALUE_PHRASES_ID, triple_names::FIELD_VALUE_PHRASES);
+        return $trp;
+    }
+
+    /**
+     * @return triple "inhabitants input year" - the inhabitants are entered for the year 2019
+     */
+    function inhabitants_input_year(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::INHABITANTS_INPUT_YEAR_ID, triple_names::INHABITANTS_INPUT_YEAR);
+        $trp->set_from($t_wrd->word_inhabitant()->phrase());
+        $trp->set_verb($t_vrb->verb_has());
+        $trp->set_to($t_wrd->word_2019()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "inhabitants field value phrase" - the year 2019 is a field value phrase of the inhabitants field
+     */
+    function inhabitants_field_value_phrase(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::INHABITANTS_FIELD_VALUE_PHRASE_ID, triple_names::INHABITANTS_FIELD_VALUE_PHRASE);
+        $trp->set_from($this->inhabitants_input_year()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->field_value_phrases()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich uses Bern" - the option of the city selector that the page phrase Zurich uses
+     */
+    function zh_uses_bern(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::ZH_USES_BERN_ID, triple_names::ZH_USES_BERN);
+        $trp->set_from($t_wrd->word_zh()->phrase());
+        $trp->set_verb($t_vrb->verb_uses());
+        $trp->set_to($t_wrd->word_bern()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "main column (system)" - the tier of the columns hidden on a small screen
      */
     function column_main(): triple

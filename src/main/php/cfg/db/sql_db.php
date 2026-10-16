@@ -297,6 +297,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -1500,6 +1501,14 @@ class sql_db
         // get the list of CSV and loop
         foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
             $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
+        }
+
+        // the cached types api message is the state before the csv load, so it is removed and
+        // the next types api call rebuilds it from the database (db_cache::is_outdated checks
+        // only the age), or a frontend misses a type added by the csv until the age limit
+        $cac = new db_cache(user::system());
+        if ($cac->load_by_type_id(db_cache_types::TYPES_ID, $msg) > 0) {
+            $cac->del($msg);
         }
 
         // set the seq number if needed

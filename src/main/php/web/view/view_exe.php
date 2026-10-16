@@ -128,7 +128,9 @@ class view_exe extends view_base
         if ($this->code_id != '') {
             $form_name = $this->code_id;
         } else {
-            $form_name = $this->name();
+            // a user view has no code id, so its name is the form name, without the chars that
+            // an html id may not contain, because the inputs of the page refer to the form by its id
+            $form_name = trim(preg_replace('/[^\p{L}\p{N}_-]+/u', '_', $this->name()), '_');
         }
 
         if ($this->id() <= 0) {
@@ -136,12 +138,14 @@ class view_exe extends view_base
         } else {
             // the view of the page is in the request cache, so that a component can show its name
             // and description (see system_page::view_title)
-            if ($cfg != null and !$cfg->msk_lst->has_id($this->id())) {
-                $cfg->msk_lst->add($this, $msg);
+            if ($cfg != null) {
+                $cfg->msk = $this;
             }
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open($msg);
-            $result .= $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
+            // the style of the view is the page class e.g. use-case for the grid of a use case page
+            $entries = $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
+            $result .= new html_base()->add_style($entries, $this->get_style_id());
             $result .= $this->dsp_type_close($msg);
         }
 

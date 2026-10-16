@@ -76,12 +76,20 @@ class view_styles
     const string ALL_ROWS_NAME = 'all rows';
     const int ALL_ROWS_ID = 7;
 
+    // the page class of a use case view: the grid and the panel rules of style_html.css
+    // put the inputs and the assumptions left of the results and stack them on phones
+    const string USE_CASE_COM = 'the title and the description on top, the inputs and the assumptions in a panel left of the results panel, stacked on phones';
+    const string USE_CASE = 'use-case';
+    const string USE_CASE_NAME = 'use case page';
+    const int USE_CASE_ID = 8;
+
 
     // list of the styles used for unit testing
     const array TEST_TYPES = array(
         [view_styles::COL_SM_4, 1],
         [view_styles::COL_SM_8, 2],
         [view_styles::ALL_ROWS, 7],
+        [view_styles::USE_CASE, 8],
     );
 
 }

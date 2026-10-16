@@ -6776,6 +6776,9 @@
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
+    \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
+    \-- formula_notes - section for function formula_notes missing in /component/execute/ui_list.php
+    \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -6908,6 +6911,9 @@
     \-- dsp_unlink_phr - section for function dsp_unlink_phr not yet defined that it should be to review in /formula/for
             mula.php
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
+\-- formula_calc
+    \-- result - section for function result missing in /formula/formula_calc.php
+    \-- operands - section for function operands missing in /formula/formula_calc.php
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
     \-- name_linked - section for function name_linked not yet defined that it should be object vars in /formula/formula
@@ -7334,6 +7340,8 @@
             or all html elements used in zukunft.com in /html/html_base.php
     \-- input - section for function input not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
+    \-- input_number - section for function input_number not yet defined that it should be base elements - functions for
+             all html elements used in zukunft.com in /html/html_base.php
     \-- div_form - section for function div_form not yet defined that it should be base elements - functions for all htm
             l elements used in zukunft.com in /html/html_base.php
     \-- div_row - section for function div_row not yet defined that it should be base elements - functions for all html 
@@ -7705,6 +7713,8 @@
     \-- source_type_selector - section for function source_type_selector not yet defined that it should be select in /re
             f/source.php
     \-- order error - order of section api has difference at api_mapper should be before load_by_id_with_related
+\-- source_list
+    \-- api_mapper - section for function api_mapper is expected to be construct and map in /ref/source_list.php
 \-- result
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /result/result.php
     \-- formula_id - section for function formula_id not yet defined that it should be set and get in /result/result.php
@@ -8429,6 +8439,7 @@
     \-- is_measure - section for function is_measure is expected to be info in /word/triple.php
     \-- is_scaling - section for function is_scaling is expected to be info in /word/triple.php
     \-- is_time - section for function is_time is expected to be info in /word/triple.php
+    \-- is_quality - section for function is_quality is expected to be info in /word/triple.php
     \-- is_info - section for function is_info is expected to be info in /word/triple.php
     \-- tr - section for function tr not yet defined that it should be table in /word/triple.php
     \-- td - section for function td not yet defined that it should be table in /word/triple.php
@@ -8499,6 +8510,7 @@
     \-- dsp_unlink - section for function dsp_unlink not yet defined that it should be change action in /word/word.php
     \-- is_type - section for function is_type is expected to be info in /word/word.php
     \-- is_time - section for function is_time is expected to be info in /word/word.php
+    \-- is_quality - section for function is_quality is expected to be info in /word/word.php
     \-- is_time_jump - section for function is_time_jump is expected to be info in /word/word.php
     \-- is_measure - section for function is_measure is expected to be info in /word/word.php
     \-- is_info - section for function is_info is expected to be info in /word/word.php
@@ -9107,6 +9119,8 @@
     \-- load_fallback
         \-- change_log_list - if the change log list is empty fill it with the last changes
         \-- phrase_list - if the phrase list is empty fill it with some general suggested phrases
+    \-- load_by_ids
+        \-- source_list - load the sources with the given ids from the backend via api, e.g. the sources of the
     \-- load_for_selector
         \-- source_list - fill the list for a source selector: the sources that match the typed chars,
                  or all sources of the
@@ -9337,6 +9351,12 @@
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
     \-- value_input_fields
         \-- ui_list - the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
+    \-- input_fields
+        \-- ui_list - the input fields of a page (process_catch_fields.json): a phrase of the values of the page
+    \-- formula_notes
+        \-- ui_list - the notes of a page: the descriptions of the formulas that calculate the results of the
+    \-- assumption_fields
+        \-- ui_list - the assumptions of a page: the values that the calculation of the results of the page uses
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
@@ -9423,6 +9443,10 @@
         \-- element_group - set the vars of this element_group list based on the given json
     \-- element_list
         \-- expression - get a list of all formula elements
+    \-- result
+        \-- formula_calc - repeat the calculation of a result with the values and results of the page, e.g. the
+    \-- operands
+        \-- formula_calc - the values and results that the calculation of a result uses, found the same way as the
     \-- send
         \-- mail_sender - send a plain text mail via the smtp account of the .env or, without a smtp host,
                  via php mail()
@@ -10305,10 +10329,12 @@
         \-- html_base - @param string $url_id the url id of the input field e.g. url_var::LATEX
     \-- input
         \-- html_base - create the HTML code for an input field
+    \-- input_number
+        \-- html_base - a number input with the limits and the step that the browser enforces, e.g. an input field
     \-- div_form
-        \-- html_base - create the HTML code for an input field
+        \-- html_base - @param float $num a number
     \-- div_row
-        \-- html_base - create the HTML code for an input field
+        \-- html_base - @param float $num a number
     \-- div_col_min_width
         \-- html_base - a column of a row that is moved below the previous column on small screens
     \-- div_row_wrapping_cols

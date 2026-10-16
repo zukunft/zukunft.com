@@ -282,3 +282,6 @@ component_type_id, type_name, description, code_id
 281, 'details end', 'the end of a collapsed block started by a details start component', 'details_end'
 282, 'value input fields', 'the values of the page phrase as number input fields with the other phrases of the value as the label e.g. the inputs of a use case page', 'value_input_fields'
 283, 'sources used', 'the sources of the values of the page phrase as a list with a link to the source url', 'sources_used'
+284, 'assumption fields', 'the values that the results of the page use and that the page phrase does not carry as number input fields with a measured or assumed tag and the source as the hint', 'assumption_fields'
+285, 'formula notes', 'the descriptions of the formulas that calculate the results of the page as paragraphs with the formula name in front', 'formula_notes'
+286, 'table with own columns', 'the values related to a phrase as a table with the column phrases of the component as its own columns e.g. lifetime and annual', 'table_with_own_columns'

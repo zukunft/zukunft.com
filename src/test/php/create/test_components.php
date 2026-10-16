@@ -238,6 +238,30 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component the value table of the city instead of the page phrase, named by the row
+     *                   phrase of the component e.g. for the monthly mix table of a use case page
+     */
+    function component_table_city(): component
+    {
+        $t_wrd = new test_words($this->env);
+        $cmp = $this->component_table();
+        $cmp->set_row_phrase($t_wrd->word_city()->phrase());
+        return $cmp;
+    }
+
+    /**
+     * @return component the value table with the inhabitants as its own column, like the lifetime
+     *                   and the annual column of the main results of a use case page
+     */
+    function component_table_own_columns(): component
+    {
+        $t_wrd = new test_words($this->env);
+        $cmp = $this->component_use_case(components::TEST_TABLE_NAME, component_types::TABLE_WITH_OWN_COLUMNS);
+        $cmp->set_col_phrase($t_wrd->word_inhabitant()->phrase());
+        return $cmp;
+    }
+
+    /**
      * @return component the value table of a use case page that shows every row, so that the
      *                   chain of the results is never cut by the list size
      */
@@ -304,6 +328,22 @@ class test_components extends test_objects
     function component_sources_used(): component
     {
         return $this->component_use_case(components::TEST_SOURCES_NAME, component_types::SOURCES_USED);
+    }
+
+    /**
+     * @return component the values used by the results of the page as fields with a measured or assumed tag
+     */
+    function component_assumption_fields(): component
+    {
+        return $this->component_use_case(components::TEST_ASSUMPTIONS_NAME, component_types::ASSUMPTION_FIELDS);
+    }
+
+    /**
+     * @return component the descriptions of the formulas of the page results as notes
+     */
+    function component_formula_notes(): component
+    {
+        return $this->component_use_case(components::TEST_NOTES_NAME, component_types::FORMULA_NOTES);
     }
 
     /**

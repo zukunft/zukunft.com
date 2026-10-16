@@ -8380,6 +8380,12 @@
                 "code_id": "all-rows",
                 "description": "show every row of a table or list instead of the short list with the more link",
                 "id": 7
+            },
+            {
+                "name": "use case page",
+                "code_id": "use-case",
+                "description": "the title and the description on top, the inputs and the assumptions in a panel left of the results panel, stacked on phones",
+                "id": 8
             }
         ],
         "view_link_types": [
@@ -10094,6 +10100,24 @@
                 "code_id": "sources_used",
                 "description": "the sources of the values of the page phrase as a list with a link to the source url",
                 "id": 283
+            },
+            {
+                "name": "assumption fields",
+                "code_id": "assumption_fields",
+                "description": "the values that the results of the page use and that the page phrase does not carry as number input fields with a measured or assumed tag and the source as the hint",
+                "id": 284
+            },
+            {
+                "name": "formula notes",
+                "code_id": "formula_notes",
+                "description": "the descriptions of the formulas that calculate the results of the page as paragraphs with the formula name in front",
+                "id": 285
+            },
+            {
+                "name": "table with own columns",
+                "code_id": "table_with_own_columns",
+                "description": "the values related to a phrase as a table with the column phrases of the component as its own columns e.g. lifetime and annual",
+                "id": 286
             }
         ],
         "component_link_types": [

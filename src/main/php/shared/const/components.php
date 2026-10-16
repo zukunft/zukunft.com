@@ -220,6 +220,8 @@ class components
     const string TEST_DETAILS_END_NAME = 'System Test View Component Details End';
     const string TEST_INPUT_FIELDS_NAME = 'System Test View Component Input Fields';
     const string TEST_SOURCES_NAME = 'System Test View Component Sources';
+    const string TEST_ASSUMPTIONS_NAME = 'System Test View Component Assumptions';
+    const string TEST_NOTES_NAME = 'System Test View Component Notes';
 
 
     // array of component names that used for testing and remove them after the test

@@ -26,6 +26,8 @@ messages:
   cancel_and_go: "abbrechen und zurück zu"
   not_set: "nicht gesetzt"
   quality_mark_assumed: "angenommen: eine Schätzung ohne direkte Beobachtung"
+  field_tag_measured: "gemessen"
+  field_tag_assumed: "angenommen"
   quality_mark_no_source: "die Quelle dieser Zahl fehlt"
   quality_mark_peer_reviewed: "aus einer begutachteten Studie (Peer-Review)"
   signup: "Registrieren"
