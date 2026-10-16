@@ -1,0 +1,3227 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-16 12:00:00",
+  "user": "timon",
+  "selection": [
+    "example CBAM import",
+    "example tube import"
+  ],
+  "description": "Use case: the numbers and formulas that a CBAM calculator needs to estimate the CBAM certificates and the cost of an import into the EU in the definitive period from 2026. The embedded emission of a good is its mass times its specific embedded emission (Regulation (EU) 2023/956, Article 7 and Annex IV); the CBAM obligation is the embedded emission minus the adjustment for the free allocation that EU producers of the same good still receive (Article 31, with the phase-out shares of the EU ETS Directive) and minus the carbon price effectively paid in the country of origin, converted to certificates by the CBAM certificate price (Article 9); the cost is the obligation times the certificate price, one certificate per tonne CO2-eq. The worked example is 1000 tonne of hot metal (pig iron) imported in 2026 with an assumed specific embedded emission of 2 tonne CO2-eq per tonne, an assumed carbon price of 10 EUR per tonne CO2-eq paid in the country of origin and an assumed CBAM certificate price of 80 EUR per tonne CO2-eq; the free allocation adjustment uses the EU ETS benchmark of hot metal for 2021 to 2025, because the CBAM benchmarks per good of the definitive period are set by a separate implementing act. The second worked example is the default model of the page 'CBAM Part Tree Calculator' (src/test/resources/web/html/use_cases/CBAM_tree_calculator_sample.html): 100 tonne of galvanised welded steel tubes (CN 7306) imported from Türkiye in 2026, made of hot-rolled coil and a zinc coating, the coil of BF-BOF crude steel and the crude steel of coke and sintered ore. Each part carries its own inputs per tonne of the part: the direct process emission, the electricity consumption with the grid emission intensity of the country, the transport legs with the transport intensity of the mode, the plant construction emission spread over the lifetime output of the plant and the end of life emission net of the recycling credit. The indirect, transport, capital good and end of life emission of each part are formulas of this file; the roll-up over the part tree (the own emission plus the quantity of each sub-part times its emission, to any depth) needs a sum over the sub-parts, so the specific embedded emission under the rules, the full chain emission and the weighted free allocation benchmark of each part are stored as modelled values, and the shipment chain from these values to the certificates and the cost is reproduced by the calc-validation. Under the rules only the direct emission of a good and of its precursors counts, plus the indirect emission for cement, fertilisers and electricity; the full chain adds the electricity outside the rules, the transport, the capital goods and the end of life. The page also offers the default values per good (with the mark-up of 10 percent in 2026, 20 in 2027 and 30 from 2028, 1 for fertilisers), the route benchmark of a good declared by default value and the presets of the grid emission intensity and the transport intensity; the cost path to 2034 is the same chain with the free allocation share of each year. Not covered by a formula: the floor of the certificates at zero and the cap of the carbon price deduction at the obligation, which need a minimum function, and the annual 50 tonne exemption check, which needs a comparison and is stated as a value only.",
+  "words": [
+    {
+      "name": "CBAM"
+    },
+    {
+      "name": "good"
+    },
+    {
+      "name": "import"
+    },
+    {
+      "name": "example"
+    },
+    {
+      "name": "emission"
+    },
+    {
+      "name": "embedded",
+      "description": "contained in a product as a consequence of its production, e.g. the climate gas emissions released to make a good"
+    },
+    {
+      "name": "specific"
+    },
+    {
+      "name": "mass"
+    },
+    {
+      "name": "tonne"
+    },
+    {
+      "name": "CO2-eq"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "carbon"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "country"
+    },
+    {
+      "name": "origin"
+    },
+    {
+      "name": "threshold"
+    },
+    {
+      "name": "primary"
+    },
+    {
+      "name": "acid"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "hydrogen"
+    },
+    {
+      "name": "allocation",
+      "description": "the distribution of a limited amount to the parties that receive it, e.g. of the emission allowances of an emissions trading system"
+    },
+    {
+      "name": "gratuitous",
+      "description": "given without charge; used for the free allocation of emission allowances, because the word free has the other meaning of free software"
+    },
+    {
+      "name": "benchmark",
+      "description": "a reference value that a measured value is compared with, e.g. the emission per tonne of the best installations of a sector"
+    },
+    {
+      "name": "adjustment"
+    },
+    {
+      "name": "certificate",
+      "description": "a document that confirms a right or a fact, e.g. the right to emit one tonne CO2-eq"
+    },
+    {
+      "name": "obligation",
+      "description": "what a party is bound to do or to pay by law or by a contract"
+    },
+    {
+      "name": "deduction",
+      "description": "an amount that is subtracted from a total"
+    },
+    {
+      "name": "exemption",
+      "description": "the release from an obligation that applies to others"
+    },
+    {
+      "name": "cement",
+      "description": "a binder that sets and hardens and binds other materials such as sand and gravel together to concrete",
+      "refs": [
+        {
+          "name": "Cement",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "clinker",
+      "description": "the nodules produced by heating limestone and clay in a cement kiln, which are ground to make cement",
+      "refs": [
+        {
+          "name": "Clinker_(cement)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "grey"
+    },
+    {
+      "name": "fertiliser",
+      "description": "a material of natural or synthetic origin that is applied to soil or to plant tissues to supply plant nutrients",
+      "refs": [
+        {
+          "name": "Fertilizer",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ammonia",
+      "description": "an inorganic compound of nitrogen and hydrogen, the base of most nitrogen fertilisers",
+      "refs": [
+        {
+          "name": "Ammonia",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "nitric"
+    },
+    {
+      "name": "iron",
+      "description": "a chemical element and the metal that is the main part of steel",
+      "refs": [
+        {
+          "name": "Iron",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "steel",
+      "description": "an alloy of iron and carbon with improved strength and fracture resistance compared with other forms of iron",
+      "refs": [
+        {
+          "name": "Steel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "aluminium",
+      "description": "a chemical element and a light metal, produced from bauxite by electrolysis or from scrap by remelting",
+      "refs": [
+        {
+          "name": "Aluminium",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "metal"
+    },
+    {
+      "name": "hot"
+    },
+    {
+      "name": "2021",
+      "type": "time"
+    },
+    {
+      "name": "2025",
+      "type": "time"
+    },
+    {
+      "name": "2026",
+      "type": "time"
+    },
+    {
+      "name": "2027",
+      "type": "time"
+    },
+    {
+      "name": "2028",
+      "type": "time"
+    },
+    {
+      "name": "2029",
+      "type": "time"
+    },
+    {
+      "name": "2030",
+      "type": "time"
+    },
+    {
+      "name": "2031",
+      "type": "time"
+    },
+    {
+      "name": "2032",
+      "type": "time"
+    },
+    {
+      "name": "2033",
+      "type": "time"
+    },
+    {
+      "name": "2034",
+      "type": "time"
+    },
+    {
+      "name": "Q1",
+      "description": "the first quarter of a year, January to March"
+    },
+    {
+      "name": "Q2",
+      "description": "the second quarter of a year, April to June"
+    },
+    {
+      "name": "Q3",
+      "description": "the third quarter of a year, July to September"
+    },
+    {
+      "name": "Türkiye"
+    },
+    {
+      "name": "China"
+    },
+    {
+      "name": "India"
+    },
+    {
+      "name": "Norway"
+    },
+    {
+      "name": "Kazakhstan"
+    },
+    {
+      "name": "European Union"
+    },
+    {
+      "name": "coal"
+    },
+    {
+      "name": "mix"
+    },
+    {
+      "name": "consumption"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "product"
+    },
+    {
+      "name": "gram"
+    },
+    {
+      "name": "kWh"
+    },
+    {
+      "name": "km"
+    },
+    {
+      "name": "quantity"
+    },
+    {
+      "name": "direct"
+    },
+    {
+      "name": "indirect",
+      "description": "caused by a step before, e.g. the emission of the power plant that generates the electricity used by an installation"
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "modelled"
+    },
+    {
+      "name": "default"
+    },
+    {
+      "name": "mark-up",
+      "description": "an amount added on top of a base value, e.g. the surcharge on a default value that makes verified actual data the cheaper option"
+    },
+    {
+      "name": "CN",
+      "description": "the Combined Nomenclature of the EU, the goods classification of the customs tariff based on the Harmonized System"
+    },
+    {
+      "name": "code"
+    },
+    {
+      "name": "7208",
+      "description": "the CN heading of flat-rolled products of iron or non-alloy steel, hot-rolled, not clad, plated or coated"
+    },
+    {
+      "name": "7604",
+      "description": "the CN heading of aluminium bars, rods and profiles"
+    },
+    {
+      "name": "route",
+      "description": "the sequence of process steps by which a good is produced, e.g. the blast furnace and basic oxygen furnace route of steel"
+    },
+    {
+      "name": "EAF",
+      "description": "electric arc furnace, the steel making route that melts mostly scrap with electricity"
+    },
+    {
+      "name": "crude"
+    },
+    {
+      "name": "flat-rolled"
+    },
+    {
+      "name": "unwrought"
+    },
+    {
+      "name": "tube"
+    },
+    {
+      "name": "galvanised",
+      "description": "coated with a protective layer of zinc against corrosion"
+    },
+    {
+      "name": "coil"
+    },
+    {
+      "name": "hot-rolled"
+    },
+    {
+      "name": "coke",
+      "description": "a fuel with a high carbon content made by heating coal without air, used as fuel and reducing agent in the blast furnace",
+      "refs": [
+        {
+          "name": "Coke_(fuel)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "ore"
+    },
+    {
+      "name": "sintered"
+    },
+    {
+      "name": "zinc",
+      "description": "a chemical element and a metal, mostly used to protect steel against corrosion",
+      "refs": [
+        {
+          "name": "Zinc",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "coating"
+    },
+    {
+      "name": "full"
+    },
+    {
+      "name": "chain"
+    },
+    {
+      "name": "transport"
+    },
+    {
+      "name": "distance"
+    },
+    {
+      "name": "intensity"
+    },
+    {
+      "name": "grid"
+    },
+    {
+      "name": "carriage"
+    },
+    {
+      "name": "pre-carriage",
+      "description": "the transport of a good from the producer to the port or the terminal of the main carriage"
+    },
+    {
+      "name": "on-carriage",
+      "description": "the transport of a good from the port or the terminal of the main carriage to the receiver"
+    },
+    {
+      "name": "main"
+    },
+    {
+      "name": "bulk"
+    },
+    {
+      "name": "carrier"
+    },
+    {
+      "name": "container"
+    },
+    {
+      "name": "ship"
+    },
+    {
+      "name": "inland"
+    },
+    {
+      "name": "waterway"
+    },
+    {
+      "name": "rail"
+    },
+    {
+      "name": "truck",
+      "description": "an articulated road vehicle for the transport of goods"
+    },
+    {
+      "name": "air"
+    },
+    {
+      "name": "freight"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "plant"
+    },
+    {
+      "name": "construction"
+    },
+    {
+      "name": "output"
+    },
+    {
+      "name": "lifetime"
+    },
+    {
+      "name": "end"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "disposal",
+      "description": "the landfill or the incineration of the part of a product that is not recycled"
+    },
+    {
+      "name": "recycling"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "credit"
+    },
+    {
+      "name": "coverage"
+    }
+  ],
+  "triples": [
+    {
+      "name": "CBAM good",
+      "from": "good",
+      "verb": "kind of",
+      "to": "CBAM",
+      "description": "a good listed in Annex I of the CBAM regulation, whose import into the EU needs CBAM certificates for its embedded emission"
+    },
+    {
+      "name": "CBAM import",
+      "from": "import",
+      "verb": "of",
+      "to": "CBAM good",
+      "description": "the import of a CBAM good into the customs territory of the EU"
+    },
+    {
+      "name": "example CBAM import",
+      "from": "CBAM import",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the default import of the calculator: 1000 tonne of hot metal (pig iron) imported in 2026 from a country with a carbon price of 10 EUR per tonne CO2-eq; every input can be changed, the numbers of this phrase are the worked example"
+    },
+    {
+      "from": "cement",
+      "verb": "is a",
+      "to": "CBAM good"
+    },
+    {
+      "from": "electricity",
+      "verb": "is a",
+      "to": "CBAM good"
+    },
+    {
+      "from": "fertiliser",
+      "verb": "is a",
+      "to": "CBAM good"
+    },
+    {
+      "from": "iron",
+      "verb": "is a",
+      "to": "CBAM good"
+    },
+    {
+      "from": "steel",
+      "verb": "is a",
+      "to": "CBAM good"
+    },
+    {
+      "from": "aluminium",
+      "verb": "is a",
+      "to": "CBAM good"
+    },
+    {
+      "from": "hydrogen",
+      "verb": "is a",
+      "to": "CBAM good"
+    },
+    {
+      "name": "hot metal",
+      "from": "metal",
+      "verb": "kind of",
+      "to": "hot",
+      "description": "the liquid iron from a blast furnace, which is cast to pig iron or refined to steel; the benchmark product of the EU ETS for iron",
+      "refs": [
+        {
+          "name": "Pig_iron",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cement clinker",
+      "from": "clinker",
+      "verb": "of",
+      "to": "cement"
+    },
+    {
+      "name": "grey cement clinker",
+      "from": "cement clinker",
+      "verb": "kind of",
+      "to": "grey",
+      "description": "the clinker of the usual grey Portland cement; the benchmark product of the EU ETS for cement"
+    },
+    {
+      "name": "primary aluminium",
+      "from": "aluminium",
+      "verb": "kind of",
+      "to": "primary",
+      "description": "aluminium produced from bauxite via the Hall-Heroult electrolysis process"
+    },
+    {
+      "name": "nitric acid",
+      "from": "acid",
+      "verb": "kind of",
+      "to": "nitric",
+      "refs": [
+        {
+          "name": "Nitric_acid",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "embedded emission",
+      "from": "emission",
+      "verb": "kind of",
+      "to": "embedded",
+      "description": "the direct and indirect climate gas emissions released during the production of a good including the embedded emission of its relevant precursors (Regulation (EU) 2023/956, Article 3)"
+    },
+    {
+      "name": "specific embedded emission",
+      "from": "embedded emission",
+      "verb": "kind of",
+      "to": "specific",
+      "description": "the embedded emission of one tonne of a good, determined from the actual data of the installation or by a default value (Annex IV)"
+    },
+    {
+      "name": "tonne CO2-eq",
+      "from": "tonne",
+      "verb": "of",
+      "to": "CO2-eq",
+      "type": "measure_unit",
+      "description": "the unit of the embedded emission and of the CBAM obligation; one CBAM certificate covers one tonne CO2-eq"
+    },
+    {
+      "from": "tonne CO2-eq",
+      "verb": "per",
+      "to": "tonne",
+      "type": "measure_unit",
+      "description": "the unit of the specific embedded emission and of the benchmark of a good"
+    },
+    {
+      "from": "EUR",
+      "verb": "per",
+      "to": "tonne CO2-eq",
+      "type": "measure_unit",
+      "description": "the unit of a carbon price and of the CBAM certificate price"
+    },
+    {
+      "from": "EUR",
+      "verb": "per",
+      "to": "tonne",
+      "type": "measure_unit",
+      "description": "the unit of the CBAM cost per tonne of the imported good"
+    },
+    {
+      "from": "tonne",
+      "verb": "per",
+      "to": "year",
+      "type": "measure_unit",
+      "description": "the unit of the annual import mass of an importer"
+    },
+    {
+      "name": "2021-2025",
+      "from": "2021",
+      "verb": "to",
+      "to": "2025",
+      "description": "the first allocation period of the fourth trading phase of the EU ETS"
+    },
+    {
+      "name": "free allocation",
+      "from": "allocation",
+      "verb": "kind of",
+      "to": "gratuitous",
+      "description": "the emission allowances that the EU ETS gives to the producers of goods at risk of carbon leakage without charge; replaced step by step by the CBAM from 2026 to 2034"
+    },
+    {
+      "name": "free allocation benchmark",
+      "from": "benchmark",
+      "verb": "of",
+      "to": "free allocation",
+      "description": "the emission per tonne of a product of the ten percent most efficient EU installations, which sets the free allocation per tonne produced"
+    },
+    {
+      "name": "free allocation share",
+      "from": "share",
+      "verb": "of",
+      "to": "free allocation",
+      "description": "the share of the benchmark based free allocation that the producers of a CBAM good still receive in a year (the CBAM factor); the CBAM obligation is reduced by the same share"
+    },
+    {
+      "name": "free allocation adjustment",
+      "from": "adjustment",
+      "verb": "of",
+      "to": "free allocation",
+      "description": "the part of the embedded emission of an import that is not charged, because EU producers of the same good still receive free allocation for it (Regulation (EU) 2023/956, Article 31)"
+    },
+    {
+      "name": "CBAM certificate",
+      "from": "certificate",
+      "verb": "of",
+      "to": "CBAM",
+      "description": "a certificate in electronic format corresponding to one tonne CO2-eq embedded in a good (Regulation (EU) 2023/956, Article 3)"
+    },
+    {
+      "name": "CBAM certificate price",
+      "from": "price",
+      "verb": "of",
+      "to": "CBAM certificate",
+      "description": "the price of one CBAM certificate: for 2026 the quarterly and from 2027 the weekly average of the auction clearing prices of the EU ETS allowances (Article 21)"
+    },
+    {
+      "name": "carbon price",
+      "from": "price",
+      "verb": "of",
+      "to": "carbon"
+    },
+    {
+      "name": "origin country",
+      "from": "country",
+      "verb": "kind of",
+      "to": "origin",
+      "description": "the country in which a good has been produced"
+    },
+    {
+      "name": "origin country carbon price",
+      "from": "carbon price",
+      "verb": "of",
+      "to": "origin country",
+      "description": "the carbon price effectively paid in the country of origin for the embedded emission, e.g. a carbon tax or the price of an emission allowance, net of any rebate or compensation"
+    },
+    {
+      "name": "carbon price deduction",
+      "from": "deduction",
+      "verb": "of",
+      "to": "carbon price",
+      "description": "the CBAM certificates that need not be surrendered, because a carbon price has already been paid in the country of origin (Regulation (EU) 2023/956, Article 9)"
+    },
+    {
+      "name": "CBAM obligation",
+      "from": "obligation",
+      "verb": "of",
+      "to": "CBAM",
+      "description": "the number of CBAM certificates that the declarant has to surrender for the goods imported in a year, in tonne CO2-eq"
+    },
+    {
+      "name": "CBAM cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "CBAM",
+      "description": "what the CBAM certificates of an import cost"
+    },
+    {
+      "name": "specific CBAM cost",
+      "from": "CBAM cost",
+      "verb": "kind of",
+      "to": "specific",
+      "description": "the CBAM cost per tonne of the imported good, which can be compared with the price of the good"
+    },
+    {
+      "name": "CBAM exemption",
+      "from": "exemption",
+      "verb": "of",
+      "to": "CBAM"
+    },
+    {
+      "name": "CBAM exemption threshold",
+      "from": "threshold",
+      "verb": "of",
+      "to": "CBAM exemption",
+      "description": "the annual import mass per importer below which no CBAM obligation applies"
+    },
+    {
+      "from": "free allocation adjustment",
+      "verb": "reduces",
+      "to": "CBAM obligation"
+    },
+    {
+      "from": "carbon price deduction",
+      "verb": "reduces",
+      "to": "CBAM obligation"
+    },
+    {
+      "name": "consumption mix",
+      "from": "mix",
+      "verb": "of",
+      "to": "consumption",
+      "description": "the average mix of the electricity consumed in a country including the imports; the reference of the classic comparison without the displacement concept"
+    },
+    {
+      "from": "gram",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure_unit",
+      "description": "the unit of the emission intensity of electricity"
+    },
+    {
+      "from": "kWh",
+      "verb": "per",
+      "to": "tonne",
+      "type": "measure_unit",
+      "description": "the unit of the electricity consumption per tonne of a part"
+    },
+    {
+      "from": "tonne",
+      "verb": "per",
+      "to": "tonne",
+      "type": "measure_unit",
+      "description": "the unit of the quantity of a sub-part per tonne of the part above it"
+    },
+    {
+      "name": "tonne km",
+      "from": "tonne",
+      "verb": "times",
+      "to": "km",
+      "type": "measure_unit",
+      "description": "the transport work of moving one tonne over one kilometre"
+    },
+    {
+      "from": "gram",
+      "verb": "per",
+      "to": "tonne km",
+      "type": "measure_unit",
+      "description": "the unit of the transport intensity of a transport mode"
+    },
+    {
+      "name": "coal electricity",
+      "from": "electricity",
+      "verb": "of",
+      "to": "coal",
+      "description": "electricity generated in coal power plants only, the upper bound of a grid emission intensity"
+    },
+    {
+      "name": "direct emission",
+      "from": "emission",
+      "verb": "kind of",
+      "to": "direct",
+      "description": "the fuel, process and fugitive emission of one production step itself, without the parts below and without the electricity"
+    },
+    {
+      "name": "indirect emission",
+      "from": "emission",
+      "verb": "kind of",
+      "to": "indirect",
+      "description": "the emission of generating the electricity that a production step consumes; counted under the CBAM rules for cement, fertilisers and electricity only"
+    },
+    {
+      "from": "cement",
+      "verb": "has a",
+      "to": "indirect emission",
+      "description": "the indirect emission of cement is part of its embedded emission under the CBAM rules (Regulation (EU) 2023/956, Annex II)"
+    },
+    {
+      "from": "fertiliser",
+      "verb": "has a",
+      "to": "indirect emission",
+      "description": "the indirect emission of fertilisers is part of their embedded emission under the CBAM rules (Regulation (EU) 2023/956, Annex II)"
+    },
+    {
+      "from": "electricity",
+      "verb": "has a",
+      "to": "indirect emission",
+      "description": "the emission of electricity is counted under the CBAM rules"
+    },
+    {
+      "name": "electricity consumption",
+      "from": "consumption",
+      "verb": "of",
+      "to": "electricity",
+      "description": "the electricity used by one production step per tonne of its output, without the parts below"
+    },
+    {
+      "name": "production route",
+      "from": "route",
+      "verb": "of",
+      "to": "production"
+    },
+    {
+      "name": "route benchmark",
+      "from": "free allocation benchmark",
+      "verb": "of",
+      "to": "production route",
+      "description": "the sum of the free allocation benchmarks of all steps of the production route of a good weighted by their quantity, used for a good that is declared by a default value"
+    },
+    {
+      "name": "default embedded emission",
+      "from": "specific embedded emission",
+      "verb": "kind of",
+      "to": "default",
+      "description": "the default value of the specific embedded emission of a good and its precursors that may be used instead of verified actual data"
+    },
+    {
+      "name": "default mark-up",
+      "from": "mark-up",
+      "verb": "of",
+      "to": "default embedded emission",
+      "description": "the share added to a default embedded emission, so that verified actual data is the cheaper option"
+    },
+    {
+      "name": "CN code",
+      "from": "code",
+      "verb": "of",
+      "to": "CN"
+    },
+    {
+      "from": "7208",
+      "verb": "is a",
+      "to": "CN code"
+    },
+    {
+      "from": "7604",
+      "verb": "is a",
+      "to": "CN code"
+    },
+    {
+      "name": "crude steel",
+      "from": "steel",
+      "verb": "kind of",
+      "to": "crude",
+      "description": "the liquid steel of the steel making step before casting and rolling"
+    },
+    {
+      "name": "carbon steel",
+      "from": "steel",
+      "verb": "kind of",
+      "to": "carbon"
+    },
+    {
+      "name": "EAF carbon steel",
+      "from": "carbon steel",
+      "verb": "kind of",
+      "to": "EAF",
+      "description": "carbon steel made in an electric arc furnace, the benchmark product of the EU ETS for the scrap based route"
+    },
+    {
+      "name": "flat-rolled steel",
+      "from": "steel",
+      "verb": "kind of",
+      "to": "flat-rolled",
+      "description": "the flat-rolled products and tubes of iron and steel of the CN headings 7208 to 7306"
+    },
+    {
+      "name": "steel tube",
+      "from": "tube",
+      "verb": "of",
+      "to": "steel"
+    },
+    {
+      "name": "galvanised steel tube",
+      "from": "steel tube",
+      "verb": "kind of",
+      "to": "galvanised",
+      "description": "a welded steel tube coated with zinc, CN 7306"
+    },
+    {
+      "name": "hot-rolled coil",
+      "from": "coil",
+      "verb": "kind of",
+      "to": "hot-rolled"
+    },
+    {
+      "name": "sintered ore",
+      "from": "ore",
+      "verb": "kind of",
+      "to": "sintered",
+      "description": "iron ore fines agglomerated by heating, the burden of the blast furnace next to coke"
+    },
+    {
+      "name": "zinc coating",
+      "from": "coating",
+      "verb": "of",
+      "to": "zinc"
+    },
+    {
+      "name": "unwrought aluminium",
+      "from": "aluminium",
+      "verb": "kind of",
+      "to": "unwrought",
+      "description": "aluminium as cast from the smelter before rolling or extrusion, CN 7601"
+    },
+    {
+      "name": "aluminium product",
+      "from": "product",
+      "verb": "of",
+      "to": "aluminium",
+      "description": "the bars, profiles, wires, plates and sheets of aluminium of the CN headings 7604 to 7608"
+    },
+    {
+      "name": "transport emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "transport",
+      "description": "the emission of moving a part from its production step to the next step up, or to the EU border for the imported good; not part of the CBAM obligation"
+    },
+    {
+      "name": "transport distance",
+      "from": "distance",
+      "verb": "of",
+      "to": "transport"
+    },
+    {
+      "name": "transport intensity",
+      "from": "intensity",
+      "verb": "of",
+      "to": "transport",
+      "description": "the well-to-wheel emission of a transport mode per tonne km"
+    },
+    {
+      "name": "main carriage",
+      "from": "carriage",
+      "verb": "kind of",
+      "to": "main",
+      "description": "the longest leg of a transport chain, e.g. the sea transport between two ports"
+    },
+    {
+      "name": "bulk carrier",
+      "from": "carrier",
+      "verb": "kind of",
+      "to": "bulk",
+      "description": "a ship that carries unpacked bulk cargo such as ore or coal"
+    },
+    {
+      "name": "container ship",
+      "from": "ship",
+      "verb": "kind of",
+      "to": "container"
+    },
+    {
+      "name": "inland waterway",
+      "from": "waterway",
+      "verb": "kind of",
+      "to": "inland"
+    },
+    {
+      "name": "air freight",
+      "from": "freight",
+      "verb": "kind of",
+      "to": "air"
+    },
+    {
+      "name": "capital good",
+      "from": "good",
+      "verb": "kind of",
+      "to": "capital",
+      "description": "the plant and equipment used to produce other goods"
+    },
+    {
+      "name": "capital good emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "capital good",
+      "description": "the emission of building the plant spread over all tonnes it produces during its life, a depreciation of the embodied carbon that the CBAM rules do not require"
+    },
+    {
+      "name": "plant construction",
+      "from": "construction",
+      "verb": "of",
+      "to": "plant"
+    },
+    {
+      "name": "plant construction emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "plant construction",
+      "description": "the emission of the steel, the concrete and the equipment of an installation"
+    },
+    {
+      "name": "lifetime output",
+      "from": "output",
+      "verb": "kind of",
+      "to": "lifetime"
+    },
+    {
+      "name": "plant lifetime output",
+      "from": "lifetime output",
+      "verb": "of",
+      "to": "plant",
+      "description": "the tonnes that a plant produces during its life, the annual capacity times the years of operation"
+    },
+    {
+      "from": "end",
+      "verb": "of",
+      "to": "life"
+    },
+    {
+      "name": "end of life emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "end of life",
+      "description": "the net emission at the end of the life of a product: the disposal emission of the share not recycled minus the avoided primary production of the share recycled; a negative value is a credit"
+    },
+    {
+      "name": "disposal emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "disposal"
+    },
+    {
+      "name": "recycling rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "recycling",
+      "description": "the share of the material that is collected and recycled at the end of life"
+    },
+    {
+      "name": "recycling credit",
+      "from": "credit",
+      "verb": "of",
+      "to": "recycling",
+      "description": "the emission of the primary material minus the emission of the recycling route per tonne recycled"
+    },
+    {
+      "name": "full chain",
+      "from": "chain",
+      "verb": "kind of",
+      "to": "full"
+    },
+    {
+      "name": "full chain emission",
+      "from": "emission",
+      "verb": "of",
+      "to": "full chain",
+      "description": "the specific embedded emission under the rules plus the electricity outside the rules, the transport, the capital goods and the end of life of a part and all its sub-parts"
+    },
+    {
+      "name": "full chain obligation",
+      "from": "CBAM obligation",
+      "verb": "of",
+      "to": "full chain",
+      "description": "the CBAM certificates that would be due if the full chain emission were counted"
+    },
+    {
+      "name": "full chain CBAM cost",
+      "from": "CBAM cost",
+      "verb": "of",
+      "to": "full chain",
+      "description": "what the CBAM certificates would cost if the full chain emission were counted"
+    },
+    {
+      "name": "origin carbon price coverage",
+      "from": "coverage",
+      "verb": "of",
+      "to": "origin country carbon price",
+      "description": "the share of the embedded emission that the carbon price of the country of origin covers: 1 if the whole chain was priced, less if only some installations fall under the foreign scheme"
+    },
+    {
+      "name": "example tube",
+      "from": "galvanised steel tube",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the imported good of the part tree example: a galvanised welded steel tube produced in Türkiye, made of 1.03 tonne hot-rolled coil and 0.02 tonne zinc coating per tonne"
+    },
+    {
+      "name": "example coil",
+      "from": "hot-rolled coil",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the hot-rolled coil of the part tree example, produced in Türkiye from 1.05 tonne crude steel per tonne"
+    },
+    {
+      "name": "example crude steel",
+      "from": "crude steel",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the BF-BOF crude steel of the part tree example, produced in Türkiye from 0.35 tonne coke and 1.2 tonne sintered ore per tonne"
+    },
+    {
+      "name": "example coke",
+      "from": "coke",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the coke of the part tree example, produced in Türkiye"
+    },
+    {
+      "name": "example sintered ore",
+      "from": "sintered ore",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the sintered ore of the part tree example, produced in Türkiye"
+    },
+    {
+      "name": "example zinc coating",
+      "from": "zinc coating",
+      "verb": "kind of",
+      "to": "example",
+      "description": "the zinc coating of the part tree example, produced in Kazakhstan; zinc is no CBAM good, so it has no benchmark"
+    },
+    {
+      "from": "example coil",
+      "verb": "is part of",
+      "to": "example tube"
+    },
+    {
+      "from": "example zinc coating",
+      "verb": "is part of",
+      "to": "example tube"
+    },
+    {
+      "from": "example crude steel",
+      "verb": "is part of",
+      "to": "example coil"
+    },
+    {
+      "from": "example coke",
+      "verb": "is part of",
+      "to": "example crude steel"
+    },
+    {
+      "from": "example sintered ore",
+      "verb": "is part of",
+      "to": "example crude steel"
+    },
+    {
+      "name": "example tube import",
+      "from": "import",
+      "verb": "of",
+      "to": "example tube",
+      "description": "the shipment of the part tree example: 100 tonne of galvanised welded steel tubes (CN 7306) imported from Türkiye in the third quarter of 2026"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "embedded emission formula",
+      "description": "the embedded emission of an import: the mass of the good times its specific embedded emission (Regulation (EU) 2023/956, Annex IV)",
+      "expression": "\"embedded emission\" = \"mass\" * \"specific embedded emission\"",
+      "assigned_word": "specific embedded emission"
+    },
+    {
+      "name": "free allocation adjustment formula",
+      "description": "the embedded emission that is not charged in a year: the mass of the good times the free allocation benchmark of the good times the free allocation share of the year (Article 31)",
+      "expression": "\"free allocation adjustment\" = \"mass\" * \"free allocation benchmark\" * \"free allocation share\"",
+      "assigned": [
+        "free allocation benchmark",
+        "free allocation share"
+      ]
+    },
+    {
+      "name": "carbon price deduction formula",
+      "description": "the certificates covered by the carbon price paid in the country of origin: the embedded emission times the share of it covered by the foreign carbon price times the carbon price paid there divided by the CBAM certificate price (Article 9)",
+      "expression": "\"carbon price deduction\" = \"embedded emission\" * \"origin carbon price coverage\" * \"origin country carbon price\" / \"CBAM certificate price\"",
+      "assigned": [
+        "origin country carbon price",
+        "origin carbon price coverage"
+      ]
+    },
+    {
+      "name": "CBAM obligation formula",
+      "description": "the CBAM certificates to surrender: the embedded emission minus the free allocation adjustment and minus the carbon price deduction",
+      "expression": "\"CBAM obligation\" = \"embedded emission\" - \"free allocation adjustment\" - \"carbon price deduction\"",
+      "assigned": [
+        "embedded emission",
+        "free allocation adjustment",
+        "carbon price deduction"
+      ]
+    },
+    {
+      "name": "CBAM cost formula",
+      "description": "the cost of the CBAM certificates: one certificate per tonne CO2-eq of the obligation times the CBAM certificate price",
+      "expression": "\"CBAM cost\" = \"CBAM obligation\" * \"CBAM certificate price\"",
+      "assigned_word": "CBAM obligation"
+    },
+    {
+      "name": "specific CBAM cost formula",
+      "description": "the CBAM cost per tonne of the imported good",
+      "expression": "\"specific CBAM cost\" = \"CBAM cost\" / \"mass\"",
+      "assigned_word": "CBAM cost"
+    },
+    {
+      "name": "indirect emission formula",
+      "description": "the indirect emission of a production step per tonne: its electricity consumption times the grid emission intensity of the country, converted from gram to tonne",
+      "expression": "\"indirect emission\" = \"electricity consumption\" * \"consumption mix\" / 1000000",
+      "assigned_word": "electricity consumption"
+    },
+    {
+      "name": "transport emission formula",
+      "description": "the emission of one transport leg per tonne of the part: the distance times the transport intensity of the mode, converted from gram to tonne",
+      "expression": "\"transport emission\" = \"transport distance\" * \"transport intensity\" / 1000000",
+      "assigned_word": "transport distance"
+    },
+    {
+      "name": "capital good emission formula",
+      "description": "the share of the plant construction emission carried by one tonne of output",
+      "expression": "\"capital good emission\" = \"plant construction emission\" / \"plant lifetime output\"",
+      "assigned_word": "plant construction emission"
+    },
+    {
+      "name": "end of life emission formula",
+      "description": "the net end of life emission per tonne: the disposal emission of the share not recycled minus the recycling credit of the share recycled",
+      "expression": "\"end of life emission\" = \"disposal emission\" * ( 1 - \"recycling rate\" ) - \"recycling credit\" * \"recycling rate\"",
+      "assigned": [
+        "disposal emission",
+        "recycling rate"
+      ]
+    },
+    {
+      "name": "full chain obligation formula",
+      "description": "the CBAM certificates if the full chain emission were counted: the mass times the full chain emission minus the same free allocation adjustment and carbon price deduction as under the rules",
+      "expression": "\"full chain obligation\" = \"mass\" * \"full chain emission\" - \"free allocation adjustment\" - \"carbon price deduction\"",
+      "assigned_word": "full chain emission"
+    },
+    {
+      "name": "full chain CBAM cost formula",
+      "description": "the cost of the CBAM certificates if the full chain emission were counted",
+      "expression": "\"full chain CBAM cost\" = \"full chain obligation\" * \"CBAM certificate price\"",
+      "assigned_word": "full chain obligation"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Regulation (EU) 2023/956",
+      "description": "Regulation (EU) 2023/956 of the European Parliament and of the Council of 10 May 2023 establishing a carbon border adjustment mechanism, OJ L 130, 16.5.2023. Article 3 defines the embedded emission and the CBAM certificate, Article 7 and Annex IV the calculation of the embedded emission, Article 9 the deduction of the carbon price paid in the country of origin, Article 21 the price of the certificates and Article 31 the adjustment for the free allocation; Annex I lists the goods: cement, electricity, fertilisers, iron and steel, aluminium and hydrogen.",
+      "url": "https://eur-lex.europa.eu/eli/reg/2023/956/oj"
+    },
+    {
+      "name": "Regulation (EU) 2025/2083",
+      "description": "Regulation (EU) 2025/2083 of the European Parliament and of the Council amending Regulation (EU) 2023/956 as regards simplifying and strengthening the carbon border adjustment mechanism (Omnibus simplification). Replaces the exemption of 150 EUR per consignment by an annual mass threshold of 50 tonne per importer for iron and steel, aluminium, cement and fertilisers, and sets the certificate price of 2026 as the quarterly average of the EU ETS auction prices.",
+      "url": "https://eur-lex.europa.eu/eli/reg/2025/2083/oj"
+    },
+    {
+      "name": "Directive (EU) 2023/959",
+      "description": "Directive (EU) 2023/959 of the European Parliament and of the Council of 10 May 2023 amending Directive 2003/87/EC establishing a system for greenhouse gas emission allowance trading within the Union. Article 10a(1a) phases out the free allocation for the CBAM sectors: the allocation is reduced by 2.5 percent in 2026, 5 in 2027, 10 in 2028, 22.5 in 2029, 48.5 in 2030, 61 in 2031, 73.5 in 2032, 86 in 2033 and ends in 2034.",
+      "url": "https://eur-lex.europa.eu/eli/dir/2023/959/oj"
+    },
+    {
+      "name": "Implementing Regulation (EU) 2021/447",
+      "description": "Commission Implementing Regulation (EU) 2021/447 of 12 March 2021 determining revised benchmark values for free allocation of emission allowances for the period from 2021 to 2025, Annex: the benchmark values in tonne CO2-eq per tonne of product.",
+      "url": "https://eur-lex.europa.eu/eli/reg_impl/2021/447/oj"
+    },
+    {
+      "name": "CBAM certificate price Q3 2026",
+      "description": "the CBAM certificate prices of 2026 published by the Commission: 75.36 EUR in the first, 75.28 EUR in the second and 82.32 EUR in the third quarter (published 5 October 2026); from 2027 the price is set weekly",
+      "url": "https://cbamguide.com/news/2026-10-05-q3-2026-cbam-certificate-price/"
+    },
+    {
+      "name": "Implementing Regulation (EU) 2025/2548",
+      "description": "the quarterly price mechanism of the CBAM certificates of 2026",
+      "url": "https://environnement.public.lu/fr/emweltprozeduren/Autorisations/cbam-en/cbam-certificated-and-price.html"
+    },
+    {
+      "name": "CBAM guidance documents 2026",
+      "description": "the guidance documents of the Commission on the CBAM of 14 August 2026; the CBAM benchmarks per CN code of the definitive period are set by Implementing Regulation (EU) 2025/2620 and can differ from the EU ETS benchmarks of 2021 to 2025",
+      "url": "https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/cbam-legislation-and-guidance_en"
+    },
+    {
+      "name": "CBAM guidance 4 free allocation adjustment",
+      "description": "Guidance No. 4: CBAM calculation of the free allocation adjustment to the number of CBAM certificates; the free allocation of a complex good is deducted for each step with an EU ETS product benchmark weighted by its quantity, while rolling, tube forming or cement grinding have no benchmark of their own and are covered by the hot metal or clinker benchmark of their precursors",
+      "url": "https://trungtamwto.vn/download/24372/guidance-no.-4--cbam-calculation-of-the-free-allocation-adjustment-to-the-number-of-cbam-certificate.pdf"
+    },
+    {
+      "name": "Implementing Regulation (EU) 2025/2621",
+      "description": "the default values of the definitive period per country of origin and CN code with a mark-up of 10 percent in 2026, 20 percent in 2027 and 30 percent from 2028 (1 percent for fertilisers), e.g. Türkiye CN 7208 2.428 and China CN 7604 4.881 tonne CO2-eq per tonne direct",
+      "url": "https://www.celna24.pl/en/articles/regulations/cbam-2026-cla-weglowe-ue-poradnik"
+    },
+    {
+      "name": "GLEC Framework",
+      "description": "the Global Logistics Emissions Council framework of the Smart Freight Centre for the calculation of the emissions of transport; the transport intensities by mode are an order of magnitude after it",
+      "url": "https://www.smartfreightcentre.org/en/our-programs/global-logistics-emissions-council/calculate-report-glec-framework/"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "CBAM certificate",
+        "tonne CO2-eq"
+      ],
+      "number": "1",
+      "source": "Regulation (EU) 2023/956",
+      "description": "one CBAM certificate corresponds to one tonne CO2-eq of embedded emission (Article 3)"
+    },
+    {
+      "words": [
+        "CBAM exemption threshold",
+        "tonne per year"
+      ],
+      "number": "50",
+      "source": "Regulation (EU) 2025/2083",
+      "description": "an importer whose imports of iron and steel, aluminium, cement and fertilisers stay below 50 tonne per year in total has no CBAM obligation; electricity and hydrogen are not covered by the threshold"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2026",
+        "percent"
+      ],
+      "number": "0.975",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2027",
+        "percent"
+      ],
+      "number": "0.95",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2028",
+        "percent"
+      ],
+      "number": "0.9",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2029",
+        "percent"
+      ],
+      "number": "0.775",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2030",
+        "percent"
+      ],
+      "number": "0.515",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2031",
+        "percent"
+      ],
+      "number": "0.39",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2032",
+        "percent"
+      ],
+      "number": "0.265",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2033",
+        "percent"
+      ],
+      "number": "0.14",
+      "source": "Directive (EU) 2023/959"
+    },
+    {
+      "words": [
+        "CBAM good",
+        "free allocation share",
+        "2034",
+        "percent"
+      ],
+      "number": "0",
+      "source": "Directive (EU) 2023/959",
+      "description": "from 2034 no free allocation is left, so the full embedded emission is charged"
+    },
+    {
+      "words": [
+        "hot metal",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "1.288",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "grey cement clinker",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "0.693",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "primary aluminium",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "1.464",
+      "source": "Implementing Regulation (EU) 2021/447",
+      "description": "direct emissions of the electrolysis only; the indirect emissions of the electricity are not part of the benchmark"
+    },
+    {
+      "words": [
+        "ammonia",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "1.57",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "nitric acid",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "0.23",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "hydrogen",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "6.84",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "example CBAM import",
+        "CBAM certificate price",
+        "2026",
+        "EUR per tonne CO2-eq",
+        "assumed"
+      ],
+      "number": "80",
+      "description": "the round certificate price of the first worked example, the order of magnitude of the EU ETS auction prices; the measured quarterly prices of 2026 are the values with Q1, Q2 and Q3"
+    },
+    {
+      "words": [
+        "example CBAM import",
+        "mass",
+        "tonne",
+        "assumed"
+      ],
+      "number": "1000",
+      "description": "the imported mass of hot metal (pig iron) of the worked example, above the exemption threshold of 50 tonne per year"
+    },
+    {
+      "words": [
+        "example CBAM import",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "2",
+      "description": "a typical direct and indirect emission of hot metal from a blast furnace including the precursors coke and sinter; replace it by the verified actual value of the installation or by the default value of the country of origin"
+    },
+    {
+      "words": [
+        "example CBAM import",
+        "origin country carbon price",
+        "EUR per tonne CO2-eq",
+        "assumed"
+      ],
+      "number": "10",
+      "description": "a carbon tax effectively paid in the country of origin for the embedded emission, after any rebate"
+    },
+    {
+      "words": [
+        "example CBAM import",
+        "origin carbon price coverage",
+        "percent",
+        "assumed"
+      ],
+      "number": "1",
+      "description": "the carbon tax of the country of origin covers the whole embedded emission"
+    },
+    {
+      "words": [
+        "CBAM certificate price",
+        "Q1",
+        "2026",
+        "EUR per tonne CO2-eq"
+      ],
+      "number": "75.36",
+      "source": "CBAM certificate price Q3 2026"
+    },
+    {
+      "words": [
+        "CBAM certificate price",
+        "Q2",
+        "2026",
+        "EUR per tonne CO2-eq"
+      ],
+      "number": "75.28",
+      "source": "CBAM certificate price Q3 2026"
+    },
+    {
+      "words": [
+        "CBAM certificate price",
+        "Q3",
+        "2026",
+        "EUR per tonne CO2-eq"
+      ],
+      "number": "82.32",
+      "source": "CBAM certificate price Q3 2026",
+      "description": "the average of the EU ETS auction clearing prices of the third quarter 2026, published on 5 October 2026"
+    },
+    {
+      "words": [
+        "EAF carbon steel",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "0.215",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "coke",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "0.217",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "sintered ore",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025"
+      ],
+      "number": "0.157",
+      "source": "Implementing Regulation (EU) 2021/447"
+    },
+    {
+      "words": [
+        "flat-rolled steel",
+        "route benchmark",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "1.55",
+      "source": "CBAM guidance 4 free allocation adjustment",
+      "description": "the hot metal, coke and sintered ore benchmarks weighted by the quantities of a BF-BOF route, used for a flat-rolled product or tube declared by default value"
+    },
+    {
+      "words": [
+        "crude steel",
+        "route benchmark",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "1.55",
+      "source": "CBAM guidance 4 free allocation adjustment",
+      "description": "the hot metal, coke and sintered ore benchmarks weighted by the quantities of a BF-BOF route, used for crude steel declared by default value"
+    },
+    {
+      "words": [
+        "aluminium product",
+        "route benchmark",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "1.464",
+      "source": "CBAM guidance 4 free allocation adjustment",
+      "description": "the primary aluminium benchmark, because the bars, profiles and sheets have no benchmark of their own"
+    },
+    {
+      "words": [
+        "cement",
+        "route benchmark",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.6",
+      "source": "CBAM guidance 4 free allocation adjustment",
+      "description": "the grey cement clinker benchmark times the usual clinker share of cement"
+    },
+    {
+      "words": [
+        "route benchmark",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the confidence of the assumed route benchmarks of a good declared by default value"
+    },
+    {
+      "words": [
+        "Türkiye",
+        "7208 (CN code)",
+        "default embedded emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "2.428",
+      "source": "Implementing Regulation (EU) 2025/2621",
+      "description": "the default value of hot-rolled flat products from Türkiye, before the mark-up"
+    },
+    {
+      "words": [
+        "China",
+        "7604 (CN code)",
+        "default embedded emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "4.881",
+      "source": "Implementing Regulation (EU) 2025/2621",
+      "description": "the default value of the direct emission of aluminium bars and profiles from China, before the mark-up"
+    },
+    {
+      "words": [
+        "crude steel",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "2.1",
+      "description": "the BF-BOF route of the other countries"
+    },
+    {
+      "words": [
+        "EAF carbon steel",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the scrap based route"
+    },
+    {
+      "words": [
+        "coke",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "sintered ore",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "unwrought aluminium",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "8",
+      "description": "the direct emission incl. the anode and the PFC emission of the other countries"
+    },
+    {
+      "words": [
+        "cement clinker",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.9"
+    },
+    {
+      "words": [
+        "cement",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.7"
+    },
+    {
+      "words": [
+        "ammonia",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "2.4"
+    },
+    {
+      "words": [
+        "nitric acid",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.4"
+    },
+    {
+      "words": [
+        "hydrogen",
+        "default embedded emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "10",
+      "description": "steam methane reforming"
+    },
+    {
+      "words": [
+        "default embedded emission",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the confidence of the assumed default embedded emissions; the values of Implementing Regulation (EU) 2025/2621 are measured"
+    },
+    {
+      "words": [
+        "default mark-up",
+        "2026",
+        "percent"
+      ],
+      "number": "0.1",
+      "source": "Implementing Regulation (EU) 2025/2621"
+    },
+    {
+      "words": [
+        "default mark-up",
+        "2027",
+        "percent"
+      ],
+      "number": "0.2",
+      "source": "Implementing Regulation (EU) 2025/2621"
+    },
+    {
+      "words": [
+        "default mark-up",
+        "2028",
+        "percent"
+      ],
+      "number": "0.3",
+      "source": "Implementing Regulation (EU) 2025/2621",
+      "description": "the mark-up from 2028 on"
+    },
+    {
+      "words": [
+        "default mark-up",
+        "fertiliser",
+        "percent"
+      ],
+      "number": "0.01",
+      "source": "Implementing Regulation (EU) 2025/2621",
+      "description": "the mark-up of the fertilisers in every year"
+    },
+    {
+      "words": [
+        "Türkiye",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh",
+        "assumed"
+      ],
+      "number": "440"
+    },
+    {
+      "words": [
+        "China",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh",
+        "assumed"
+      ],
+      "number": "580"
+    },
+    {
+      "words": [
+        "India",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh",
+        "assumed"
+      ],
+      "number": "700"
+    },
+    {
+      "words": [
+        "Kazakhstan",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh",
+        "assumed"
+      ],
+      "number": "700",
+      "description": "the grid emission intensity that the part tree example uses for the zinc coating from Kazakhstan"
+    },
+    {
+      "words": [
+        "European Union",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh",
+        "assumed"
+      ],
+      "number": "250",
+      "description": "the EU average"
+    },
+    {
+      "words": [
+        "Norway",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh",
+        "assumed"
+      ],
+      "number": "20"
+    },
+    {
+      "words": [
+        "coal electricity",
+        "CO2-eq",
+        "gram per kWh",
+        "assumed"
+      ],
+      "number": "950"
+    },
+    {
+      "words": [
+        "consumption mix",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the confidence of the assumed grid emission intensities of the CBAM calculator"
+    },
+    {
+      "words": [
+        "bulk carrier",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km",
+        "assumed"
+      ],
+      "number": "5",
+      "source": "GLEC Framework"
+    },
+    {
+      "words": [
+        "container ship",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km",
+        "assumed"
+      ],
+      "number": "14",
+      "source": "GLEC Framework"
+    },
+    {
+      "words": [
+        "inland waterway",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km",
+        "assumed"
+      ],
+      "number": "30",
+      "source": "GLEC Framework"
+    },
+    {
+      "words": [
+        "rail",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km",
+        "assumed"
+      ],
+      "number": "25",
+      "source": "GLEC Framework",
+      "description": "a mix of electric and diesel traction"
+    },
+    {
+      "words": [
+        "truck",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km",
+        "assumed"
+      ],
+      "number": "80",
+      "source": "GLEC Framework"
+    },
+    {
+      "words": [
+        "air freight",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km",
+        "assumed"
+      ],
+      "number": "800",
+      "source": "GLEC Framework"
+    },
+    {
+      "words": [
+        "transport intensity",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the confidence of the assumed transport intensities by mode"
+    },
+    {
+      "words": [
+        "example tube import",
+        "mass",
+        "tonne",
+        "assumed"
+      ],
+      "number": "100"
+    },
+    {
+      "words": [
+        "example tube import",
+        "origin country carbon price",
+        "EUR per tonne CO2-eq",
+        "assumed"
+      ],
+      "number": "0",
+      "description": "Türkiye runs a pilot emissions trading system from 2026 without a cash price yet"
+    },
+    {
+      "words": [
+        "example tube import",
+        "origin country carbon price",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6"
+    },
+    {
+      "words": [
+        "example tube import",
+        "origin carbon price coverage",
+        "percent",
+        "assumed"
+      ],
+      "number": "1"
+    },
+    {
+      "words": [
+        "example coil",
+        "quantity",
+        "tonne per tonne",
+        "assumed"
+      ],
+      "number": "1.03",
+      "description": "tonne of hot-rolled coil per tonne of the example tube"
+    },
+    {
+      "words": [
+        "example zinc coating",
+        "quantity",
+        "tonne per tonne",
+        "assumed"
+      ],
+      "number": "0.02",
+      "description": "tonne of zinc per tonne of the example tube"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "quantity",
+        "tonne per tonne",
+        "assumed"
+      ],
+      "number": "1.05",
+      "description": "tonne of crude steel per tonne of the example coil"
+    },
+    {
+      "words": [
+        "example coke",
+        "quantity",
+        "tonne per tonne",
+        "assumed"
+      ],
+      "number": "0.35",
+      "description": "tonne of coke per tonne of the example crude steel"
+    },
+    {
+      "words": [
+        "example sintered ore",
+        "quantity",
+        "tonne per tonne",
+        "assumed"
+      ],
+      "number": "1.2",
+      "description": "tonne of sintered ore per tonne of the example crude steel"
+    },
+    {
+      "words": [
+        "example tube",
+        "direct emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.05"
+    },
+    {
+      "words": [
+        "example coil",
+        "direct emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.1"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "direct emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "1.6"
+    },
+    {
+      "words": [
+        "example coke",
+        "direct emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "example sintered ore",
+        "direct emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.25"
+    },
+    {
+      "words": [
+        "example zinc coating",
+        "direct emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "3"
+    },
+    {
+      "words": [
+        "example tube",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed"
+      ],
+      "number": "150"
+    },
+    {
+      "words": [
+        "example coil",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed"
+      ],
+      "number": "100"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed"
+      ],
+      "number": "60"
+    },
+    {
+      "words": [
+        "example coke",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed"
+      ],
+      "number": "30"
+    },
+    {
+      "words": [
+        "example sintered ore",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed"
+      ],
+      "number": "40"
+    },
+    {
+      "words": [
+        "example zinc coating",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed"
+      ],
+      "number": "3800"
+    },
+    {
+      "words": [
+        "example tube",
+        "pre-carriage",
+        "truck",
+        "transport distance",
+        "km",
+        "assumed"
+      ],
+      "number": "300"
+    },
+    {
+      "words": [
+        "example tube",
+        "main carriage",
+        "container ship",
+        "transport distance",
+        "km",
+        "assumed"
+      ],
+      "number": "5500"
+    },
+    {
+      "words": [
+        "example tube",
+        "on-carriage",
+        "truck",
+        "transport distance",
+        "km",
+        "assumed"
+      ],
+      "number": "150"
+    },
+    {
+      "words": [
+        "example coil",
+        "main carriage",
+        "truck",
+        "transport distance",
+        "km",
+        "assumed"
+      ],
+      "number": "120"
+    },
+    {
+      "words": [
+        "example coke",
+        "main carriage",
+        "bulk carrier",
+        "transport distance",
+        "km",
+        "assumed"
+      ],
+      "number": "9000"
+    },
+    {
+      "words": [
+        "example sintered ore",
+        "main carriage",
+        "bulk carrier",
+        "transport distance",
+        "km",
+        "assumed"
+      ],
+      "number": "12000"
+    },
+    {
+      "words": [
+        "example zinc coating",
+        "main carriage",
+        "rail",
+        "transport distance",
+        "km",
+        "assumed"
+      ],
+      "number": "2500"
+    },
+    {
+      "words": [
+        "example tube",
+        "plant construction emission",
+        "tonne CO2-eq",
+        "assumed"
+      ],
+      "number": "80000"
+    },
+    {
+      "words": [
+        "example tube",
+        "plant lifetime output",
+        "tonne",
+        "assumed"
+      ],
+      "number": "4000000"
+    },
+    {
+      "words": [
+        "example coil",
+        "plant construction emission",
+        "tonne CO2-eq",
+        "assumed"
+      ],
+      "number": "300000"
+    },
+    {
+      "words": [
+        "example coil",
+        "plant lifetime output",
+        "tonne",
+        "assumed"
+      ],
+      "number": "30000000"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "plant construction emission",
+        "tonne CO2-eq",
+        "assumed"
+      ],
+      "number": "2000000"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "plant lifetime output",
+        "tonne",
+        "assumed"
+      ],
+      "number": "100000000"
+    },
+    {
+      "words": [
+        "plant construction emission",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "the confidence of the assumed plant construction emissions"
+    },
+    {
+      "words": [
+        "example tube",
+        "recycling rate",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.85"
+    },
+    {
+      "words": [
+        "example tube",
+        "recycling credit",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "example tube",
+        "disposal emission",
+        "tonne CO2-eq per tonne",
+        "assumed"
+      ],
+      "number": "0.01"
+    },
+    {
+      "words": [
+        "recycling rate",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "the confidence of the assumed recycling rates"
+    },
+    {
+      "words": [
+        "example tube",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "2.4571125",
+      "description": "the roll-up under the rules: 0.05 own direct emission + 1.03 x 2.27875 of the coil + 0.02 x 3 of the zinc coating; the indirect emission of steel is not in the rules"
+    },
+    {
+      "words": [
+        "example tube",
+        "full chain emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "2.525491535",
+      "description": "the roll-up of the full chain: 2.4571125 under the rules + the own electricity 0.066, transport 0.113, capital goods 0.02 and end of life -0.4235 + 1.03 x 0.2314845 of the coil + 0.02 x 2.7225 of the zinc coating outside the rules"
+    },
+    {
+      "words": [
+        "example tube",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "1.678866525",
+      "description": "the benchmarks of the precursors weighted by their quantity per tonne of the tube: 1.03 x 1.6299675 of the coil; tube forming and zinc have no benchmark"
+    },
+    {
+      "words": [
+        "example coil",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "2.27875",
+      "description": "0.1 own direct emission + 1.05 x 2.075 of the crude steel"
+    },
+    {
+      "words": [
+        "example coil",
+        "full chain emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "2.5102345",
+      "description": "2.27875 under the rules + the own electricity 0.044, transport 0.0096 and capital goods 0.01 + 1.05 x 0.15989 of the crude steel outside the rules"
+    },
+    {
+      "words": [
+        "example coil",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "1.6299675",
+      "description": "1.05 x 1.55235 of the crude steel; rolling has no benchmark of its own"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "2.075",
+      "description": "1.6 own direct emission + 0.35 x 0.5 of the coke + 1.2 x 0.25 of the sintered ore"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "full chain emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "2.23489",
+      "description": "2.075 under the rules + the own electricity 0.0264 and capital goods 0.02 + 0.35 x 0.0582 of the coke + 1.2 x 0.0776 of the sintered ore outside the rules"
+    },
+    {
+      "words": [
+        "example crude steel",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "1.55235",
+      "description": "the hot metal benchmark 1.288 + 0.35 x 0.217 of the coke + 1.2 x 0.157 of the sintered ore"
+    },
+    {
+      "words": [
+        "example coke",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "0.5",
+      "description": "the own direct emission, coke has no sub-parts"
+    },
+    {
+      "words": [
+        "example coke",
+        "full chain emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "0.5582",
+      "description": "0.5 under the rules + the electricity 0.0132 and the transport 0.045"
+    },
+    {
+      "words": [
+        "example sintered ore",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "0.25",
+      "description": "the own direct emission, the sintered ore has no sub-parts"
+    },
+    {
+      "words": [
+        "example sintered ore",
+        "full chain emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "0.3276",
+      "description": "0.25 under the rules + the electricity 0.0176 and the transport 0.06"
+    },
+    {
+      "words": [
+        "example zinc coating",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "3",
+      "description": "the own direct emission, which the page counts in the rules column although zinc is no CBAM good"
+    },
+    {
+      "words": [
+        "example zinc coating",
+        "full chain emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "number": "5.7225",
+      "description": "3 under the rules + the electricity 2.66 and the transport 0.0625"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "example CBAM import",
+        "mass",
+        "tonne",
+        "assumed",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "formula": "embedded emission formula",
+      "words": [
+        "example CBAM import",
+        "embedded emission",
+        "tonne CO2-eq"
+      ],
+      "number": "2000",
+      "note": "1000 tonne times 2 tonne CO2-eq per tonne"
+    },
+    {
+      "context": [
+        "example CBAM import",
+        "mass",
+        "tonne",
+        "assumed",
+        "hot metal",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "2021-2025",
+        "CBAM good",
+        "free allocation share",
+        "2026",
+        "percent"
+      ],
+      "formula": "free allocation adjustment formula",
+      "words": [
+        "example CBAM import",
+        "free allocation adjustment",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "number": "1255.8",
+      "note": "1000 tonne times the hot metal benchmark of 1.288 times the free allocation share of 0.975 in 2026"
+    },
+    {
+      "context": [
+        "example CBAM import",
+        "embedded emission",
+        "tonne CO2-eq",
+        "origin country carbon price",
+        "EUR per tonne CO2-eq",
+        "assumed",
+        "origin carbon price coverage",
+        "percent",
+        "CBAM certificate price",
+        "2026"
+      ],
+      "formula": "carbon price deduction formula",
+      "words": [
+        "example CBAM import",
+        "carbon price deduction",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "number": "250",
+      "note": "2000 tonne CO2-eq times the full coverage times 10 EUR divided by 80 EUR per tonne CO2-eq"
+    },
+    {
+      "context": [
+        "example CBAM import",
+        "embedded emission",
+        "free allocation adjustment",
+        "carbon price deduction",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "formula": "CBAM obligation formula",
+      "words": [
+        "example CBAM import",
+        "CBAM obligation",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "number": "494.2",
+      "note": "2000 - 1255.8 - 250 certificates"
+    },
+    {
+      "context": [
+        "example CBAM import",
+        "CBAM obligation",
+        "tonne CO2-eq",
+        "2026",
+        "CBAM certificate price",
+        "EUR per tonne CO2-eq",
+        "assumed"
+      ],
+      "formula": "CBAM cost formula",
+      "words": [
+        "example CBAM import",
+        "CBAM cost",
+        "EUR",
+        "2026"
+      ],
+      "number": "39536",
+      "note": "494.2 certificates times 80 EUR"
+    },
+    {
+      "context": [
+        "example CBAM import",
+        "CBAM cost",
+        "EUR",
+        "2026",
+        "mass",
+        "tonne",
+        "assumed"
+      ],
+      "formula": "specific CBAM cost formula",
+      "words": [
+        "example CBAM import",
+        "specific CBAM cost",
+        "EUR per tonne",
+        "2026"
+      ],
+      "number": "39.54",
+      "note": "39536 EUR divided by 1000 tonne"
+    },
+    {
+      "context": [
+        "example tube",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed",
+        "Türkiye",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "formula": "indirect emission formula",
+      "words": [
+        "example tube",
+        "indirect emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.066",
+      "note": "150 kWh times 440 gram per kWh"
+    },
+    {
+      "context": [
+        "example coil",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed",
+        "Türkiye",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "formula": "indirect emission formula",
+      "words": [
+        "example coil",
+        "indirect emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.044",
+      "note": "100 kWh times 440 gram per kWh"
+    },
+    {
+      "context": [
+        "example crude steel",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed",
+        "Türkiye",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "formula": "indirect emission formula",
+      "words": [
+        "example crude steel",
+        "indirect emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.0264",
+      "note": "60 kWh times 440 gram per kWh"
+    },
+    {
+      "context": [
+        "example coke",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed",
+        "Türkiye",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "formula": "indirect emission formula",
+      "words": [
+        "example coke",
+        "indirect emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.0132",
+      "note": "30 kWh times 440 gram per kWh"
+    },
+    {
+      "context": [
+        "example sintered ore",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed",
+        "Türkiye",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "formula": "indirect emission formula",
+      "words": [
+        "example sintered ore",
+        "indirect emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.0176",
+      "note": "40 kWh times 440 gram per kWh"
+    },
+    {
+      "context": [
+        "example zinc coating",
+        "electricity consumption",
+        "kWh per tonne",
+        "assumed",
+        "Kazakhstan",
+        "electricity",
+        "consumption mix",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "formula": "indirect emission formula",
+      "words": [
+        "example zinc coating",
+        "indirect emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "2.66",
+      "note": "3800 kWh times 700 gram per kWh"
+    },
+    {
+      "context": [
+        "example tube",
+        "pre-carriage",
+        "truck",
+        "transport distance",
+        "km",
+        "assumed",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km"
+      ],
+      "formula": "transport emission formula",
+      "words": [
+        "example tube",
+        "pre-carriage",
+        "transport emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.024",
+      "note": "300 km by truck at 80 gram per tonne km"
+    },
+    {
+      "context": [
+        "example tube",
+        "main carriage",
+        "container ship",
+        "transport distance",
+        "km",
+        "assumed",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km"
+      ],
+      "formula": "transport emission formula",
+      "words": [
+        "example tube",
+        "main carriage",
+        "transport emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.077",
+      "note": "5500 km by container ship at 14 gram per tonne km"
+    },
+    {
+      "context": [
+        "example tube",
+        "on-carriage",
+        "truck",
+        "transport distance",
+        "km",
+        "assumed",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km"
+      ],
+      "formula": "transport emission formula",
+      "words": [
+        "example tube",
+        "on-carriage",
+        "transport emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.012",
+      "note": "150 km by truck at 80 gram per tonne km"
+    },
+    {
+      "context": [
+        "example coil",
+        "main carriage",
+        "truck",
+        "transport distance",
+        "km",
+        "assumed",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km"
+      ],
+      "formula": "transport emission formula",
+      "words": [
+        "example coil",
+        "main carriage",
+        "transport emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.0096",
+      "note": "120 km by truck at 80 gram per tonne km"
+    },
+    {
+      "context": [
+        "example coke",
+        "main carriage",
+        "bulk carrier",
+        "transport distance",
+        "km",
+        "assumed",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km"
+      ],
+      "formula": "transport emission formula",
+      "words": [
+        "example coke",
+        "main carriage",
+        "transport emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.045",
+      "note": "9000 km by bulk carrier at 5 gram per tonne km"
+    },
+    {
+      "context": [
+        "example sintered ore",
+        "main carriage",
+        "bulk carrier",
+        "transport distance",
+        "km",
+        "assumed",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km"
+      ],
+      "formula": "transport emission formula",
+      "words": [
+        "example sintered ore",
+        "main carriage",
+        "transport emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.06",
+      "note": "12000 km by bulk carrier at 5 gram per tonne km"
+    },
+    {
+      "context": [
+        "example zinc coating",
+        "main carriage",
+        "rail",
+        "transport distance",
+        "km",
+        "assumed",
+        "transport intensity",
+        "CO2-eq",
+        "gram per tonne km"
+      ],
+      "formula": "transport emission formula",
+      "words": [
+        "example zinc coating",
+        "main carriage",
+        "transport emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.0625",
+      "note": "2500 km by rail at 25 gram per tonne km"
+    },
+    {
+      "context": [
+        "example tube",
+        "plant construction emission",
+        "tonne CO2-eq",
+        "assumed",
+        "plant lifetime output",
+        "tonne"
+      ],
+      "formula": "capital good emission formula",
+      "words": [
+        "example tube",
+        "capital good emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.02",
+      "note": "80000 tonne CO2-eq over 4000000 tonne"
+    },
+    {
+      "context": [
+        "example coil",
+        "plant construction emission",
+        "tonne CO2-eq",
+        "assumed",
+        "plant lifetime output",
+        "tonne"
+      ],
+      "formula": "capital good emission formula",
+      "words": [
+        "example coil",
+        "capital good emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.01",
+      "note": "300000 tonne CO2-eq over 30000000 tonne"
+    },
+    {
+      "context": [
+        "example crude steel",
+        "plant construction emission",
+        "tonne CO2-eq",
+        "assumed",
+        "plant lifetime output",
+        "tonne"
+      ],
+      "formula": "capital good emission formula",
+      "words": [
+        "example crude steel",
+        "capital good emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "0.02",
+      "note": "2000000 tonne CO2-eq over 100000000 tonne"
+    },
+    {
+      "context": [
+        "example tube",
+        "disposal emission",
+        "tonne CO2-eq per tonne",
+        "assumed",
+        "recycling rate",
+        "percent",
+        "recycling credit"
+      ],
+      "formula": "end of life emission formula",
+      "words": [
+        "example tube",
+        "end of life emission",
+        "tonne CO2-eq per tonne"
+      ],
+      "number": "-0.4235",
+      "note": "0.01 x (1 - 0.85) - 0.5 x 0.85, a credit"
+    },
+    {
+      "context": [
+        "example tube import",
+        "mass",
+        "tonne",
+        "assumed",
+        "example tube",
+        "specific embedded emission",
+        "tonne CO2-eq per tonne",
+        "modelled"
+      ],
+      "formula": "embedded emission formula",
+      "words": [
+        "example tube import",
+        "embedded emission",
+        "tonne CO2-eq"
+      ],
+      "number": "245.71125",
+      "note": "100 tonne times 2.4571125 tonne CO2-eq per tonne under the rules"
+    },
+    {
+      "context": [
+        "example tube import",
+        "mass",
+        "tonne",
+        "assumed",
+        "example tube",
+        "free allocation benchmark",
+        "tonne CO2-eq per tonne",
+        "modelled",
+        "CBAM good",
+        "free allocation share",
+        "2026",
+        "percent"
+      ],
+      "formula": "free allocation adjustment formula",
+      "words": [
+        "example tube import",
+        "free allocation adjustment",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "number": "163.6894861875",
+      "note": "100 tonne times the weighted benchmark of 1.678866525 times the free allocation share of 0.975 in 2026"
+    },
+    {
+      "context": [
+        "example tube import",
+        "embedded emission",
+        "tonne CO2-eq",
+        "origin country carbon price",
+        "EUR per tonne CO2-eq",
+        "assumed",
+        "origin carbon price coverage",
+        "percent",
+        "CBAM certificate price",
+        "Q3",
+        "2026"
+      ],
+      "formula": "carbon price deduction formula",
+      "words": [
+        "example tube import",
+        "carbon price deduction",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "number": "0",
+      "note": "no carbon price is paid in Türkiye yet"
+    },
+    {
+      "context": [
+        "example tube import",
+        "embedded emission",
+        "free allocation adjustment",
+        "carbon price deduction",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "formula": "CBAM obligation formula",
+      "words": [
+        "example tube import",
+        "CBAM obligation",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "number": "82.0217638125",
+      "note": "245.71125 - 163.6894861875 - 0 certificates"
+    },
+    {
+      "context": [
+        "example tube import",
+        "CBAM obligation",
+        "tonne CO2-eq",
+        "2026",
+        "CBAM certificate price",
+        "Q3",
+        "EUR per tonne CO2-eq"
+      ],
+      "formula": "CBAM cost formula",
+      "words": [
+        "example tube import",
+        "CBAM cost",
+        "EUR",
+        "2026"
+      ],
+      "number": "6752.031597045",
+      "note": "82.0217638125 certificates times 82.32 EUR, the price of the third quarter 2026"
+    },
+    {
+      "context": [
+        "example tube import",
+        "CBAM cost",
+        "EUR",
+        "2026",
+        "mass",
+        "tonne",
+        "assumed"
+      ],
+      "formula": "specific CBAM cost formula",
+      "words": [
+        "example tube import",
+        "specific CBAM cost",
+        "EUR per tonne",
+        "2026"
+      ],
+      "number": "67.52031597045",
+      "note": "6752.03 EUR divided by 100 tonne"
+    },
+    {
+      "context": [
+        "example tube import",
+        "mass",
+        "tonne",
+        "assumed",
+        "example tube",
+        "full chain emission",
+        "tonne CO2-eq per tonne",
+        "modelled",
+        "free allocation adjustment",
+        "carbon price deduction",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "formula": "full chain obligation formula",
+      "words": [
+        "example tube import",
+        "full chain obligation",
+        "tonne CO2-eq",
+        "2026"
+      ],
+      "number": "88.8596673125",
+      "note": "100 tonne times 2.525491535 full chain minus the same 163.6894861875 free allocation adjustment"
+    },
+    {
+      "context": [
+        "example tube import",
+        "full chain obligation",
+        "tonne CO2-eq",
+        "2026",
+        "CBAM certificate price",
+        "Q3",
+        "EUR per tonne CO2-eq"
+      ],
+      "formula": "full chain CBAM cost formula",
+      "words": [
+        "example tube import",
+        "full chain CBAM cost",
+        "EUR",
+        "2026"
+      ],
+      "number": "7314.927813165",
+      "note": "88.8596673125 certificates times 82.32 EUR"
+    }
+  ],
+  "components": [
+    {
+      "name": "Title example tube import",
+      "type": "phrase_title",
+      "description": "page title: the phrase example tube import with its from, verb and to"
+    },
+    {
+      "name": "description example tube import",
+      "type": "system_show_field_description",
+      "description": "the description of the phrase example tube import below the title, which explains the shipment of the part tree example like the lead text of the page"
+    },
+    {
+      "name": "table example tube import CBAM obligation",
+      "type": "table_with_related_columns",
+      "description": "the values and results of the example tube import as a table: the inputs of the shipment and the chain from the embedded emission over the free allocation adjustment and the carbon price deduction to the certificates and the cost, under the rules and for the full chain"
+    }
+  ],
+  "views": [
+    {
+      "name": "CBAM Part Tree Calculator",
+      "description": "the CBAM certificates and the cost of an imported good built from parts, under the EU rules and for the full emission chain",
+      "type": "triple",
+      "components": [
+        {
+          "position": "1",
+          "name": "Title example tube import"
+        },
+        {
+          "position": "2",
+          "name": "description example tube import"
+        },
+        {
+          "position": "3",
+          "name": "table example tube import CBAM obligation"
+        }
+      ]
+    }
+  ]
+}

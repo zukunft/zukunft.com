@@ -254,11 +254,11 @@ class triple_names
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
     const int SYSTEM_CHART_TYPE_MAYOR_ID = 2491;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 2492;
+    const int GAIN_AND_LOSS_ID = 2698;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2493;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2699;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2494;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2700;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort
@@ -396,6 +396,14 @@ class triple_names
     const string PV_IN_SWITZERLAND = 'PV in Switzerland';
     // the worked example of the use case pv_lifetime_balance.json, selected by the name only as well
     const string EXAMPLE_PV_INSTALLATION = 'example PV installation';
+    // the shipment of the part tree example of the use case cbam_calculator.json, selected by the name only
+    const string EXAMPLE_TUBE_IMPORT = 'example tube import';
+    // the worked example of the use case portfolio_split_calculator.json, selected by the name only
+    const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
+    // the beneficiary whose allocation the use case portfolio_split_calculator.json models
+    const string FIRST_CHILD_PORTFOLIO = 'first child portfolio';
+    // an input of the use case cbam_calculator.json that two results of its chain depend on
+    const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 612;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

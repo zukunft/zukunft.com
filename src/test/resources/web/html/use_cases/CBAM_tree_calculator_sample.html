@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBAM Part Tree Calculator - zukunft.com</title>
+    <!-- the same stylesheets as every page of the pod, so the navbar, the footer and the colors match -->
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/main/resources/style/style_html.css">
+    <style>
+/* Layout: four-step wizard; a part tree in step 2, each part opened in a dialog with tabs and a breadcrumb for nested parts.
+   The colors are the zukunft.com grey (#9ea09e) and blues (#385eb7 links, #274b8f dark,
+   #6b86c2 changed, #b9c6d6 lines) of style_html.css: the rules are the dark blue, the full chain
+   and the assumed values the changed blue; the only other color is the bootstrap danger red.
+   The rules are scoped to the page and its dialog, because bootstrap uses .btn, .nav and .row too */
+:root{
+  --bg:#ffffff; --panel:#f9fafb; --fg:#274b8f; --muted:#9ea09e; --line:#b9c6d6; --line-soft:#dee2e6;
+  --accent:#385eb7; --accent-soft:#dbe4f5; --sun:#6b86c2; --sun-soft:#eef1f8; --good:#274b8f; --bad:#dc3545;
+  --law:#274b8f; --law-soft:#e7edf8;
+}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 0 28px;display:grid;gap:22px;text-align:left;color:var(--fg);line-height:1.5}
+.wrap header h4{margin:0;color:var(--fg)}
+.wrap header p{margin:6px 0 0;color:var(--muted);max-width:72ch}
+.wrap h2,#dlg h2{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:600}
+.wrap h3,#dlg h3{font-size:1rem;font-weight:600;margin:0;color:var(--fg)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:14px;min-width:0}
+/* stepper */
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.steps button{font:inherit;font-size:.85rem;background:var(--bg);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:7px 14px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.steps button .no{font-size:.72rem;border:1px solid currentColor;border-radius:999px;width:1.5em;height:1.5em;display:grid;place-items:center}
+.steps button[aria-current="step"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.steps button.done{color:var(--accent)}
+.step{display:grid;gap:18px}
+.two{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.field{display:grid;gap:4px}
+.field label{font-size:.88rem;font-weight:500;color:var(--accent)}
+.field .hint{font-size:.76rem;color:var(--muted)}
+/* the input row keeps its own flex layout: the bootstrap .row rule would make every child full width */
+.wrap .row,#dlg .row{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;margin:0}
+.wrap .row > *,#dlg .row > *{width:auto;max-width:none;flex-shrink:1;padding:0}
+.wrap .row > input,#dlg .row > input{flex:1 1 auto}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.wrap input,.wrap select,.wrap textarea,#dlg input,#dlg select,#dlg textarea{font:inherit;font-size:.95rem;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+.wrap textarea{font-size:.8rem;min-height:160px;resize:vertical}
+.wrap input:focus-visible,.wrap select:focus-visible,.wrap button:focus-visible,.wrap summary:focus-visible,.wrap textarea:focus-visible,#dlg input:focus-visible,#dlg select:focus-visible,#dlg button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.unit{font-size:.8rem;color:var(--muted);white-space:nowrap;min-width:3.5em}
+.tag{font-size:.68rem;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);margin-left:6px;font-weight:400;white-space:nowrap}
+.tag.m{color:var(--accent);border-color:var(--accent)}
+.tag.a{color:var(--sun);border-color:var(--sun)}
+.tag.l{color:var(--law);border-color:var(--law)}
+.tag.x{color:var(--muted);border-style:dashed}
+/* the save button keeps the bootstrap outline style of the pod */
+.wrap .btn:not(.btn-outline-primary),#dlg .btn{font:inherit;font-size:.85rem;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px 12px;cursor:pointer;white-space:nowrap}
+.wrap .btn.primary,#dlg .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.wrap .btn.small,#dlg .btn.small{font-size:.76rem;padding:4px 9px}
+.wrap .btn.danger,#dlg .btn.danger{color:var(--bad)}
+.wrap .btn:disabled,#dlg .btn:disabled{opacity:.5;cursor:default}
+.wrap .nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+/* part tree */
+.tree{display:grid;gap:6px}
+.node{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:6px;padding:9px 12px;background:var(--bg)}
+.node .name{font-weight:500}
+.node .meta{font-size:.76rem;color:var(--muted)}
+.node .acts{display:flex;gap:6px;flex-wrap:wrap}
+.node.root{border-color:var(--accent)}
+.node.dflt{background:var(--sun-soft)}
+/* dialog */
+#dlg{border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--fg);padding:0;width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 40px);box-shadow:0 24px 60px rgba(0,0,0,.25);text-align:left}
+#dlg::backdrop{background:rgba(39,75,143,.45)}
+.dlg{display:grid;gap:0;max-height:calc(100vh - 42px);grid-template-rows:auto auto minmax(0,1fr) auto}
+.dlg-head{padding:14px 18px 10px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.crumbs{display:flex;flex-wrap:wrap;gap:4px;font-size:.78rem;color:var(--muted);align-items:center}
+.crumbs button{font:inherit;font-size:.78rem;background:none;border:0;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline}
+.crumbs .sep{opacity:.6}
+.dlg-head .sum{font-size:.8rem;color:var(--muted)}
+.tabs{display:flex;gap:2px;padding:8px 12px 0;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{font:inherit;font-size:.82rem;background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);padding:8px 10px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+.dlg-body{padding:16px 18px;overflow:auto;display:grid;gap:14px;align-content:start}
+.dlg-foot{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.scope{font-size:.78rem;padding:8px 10px;border-radius:6px;background:var(--law-soft);color:var(--law);max-width:70ch}
+.scope.out{background:var(--sun-soft);color:var(--sun)}
+.legs{display:grid;gap:8px}
+.leg{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;gap:8px;align-items:center}
+/* tables */
+.scroll{overflow-x:auto}
+.wrap table{border-collapse:collapse;width:100%;font-size:.9rem}
+.wrap th,.wrap td{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:baseline}
+.wrap th{font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.wrap td.n,.wrap th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wrap tr.sec td{background:var(--accent-soft);font-weight:600;font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;color:var(--fg)}
+.wrap tr.sec.law td{background:var(--law-soft);color:var(--law)}
+.wrap tr.key td{font-weight:600}
+.wrap td .sub{display:block;font-size:.76rem;color:var(--muted);font-weight:400}
+.wrap td.indent1{padding-left:28px} .wrap td.indent2{padding-left:46px} .wrap td.indent3{padding-left:64px} .wrap td.indent4{padding-left:82px}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:2px;background:var(--bg)}
+.kpi .v{font-size:1.35rem;font-weight:500;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:.76rem;color:var(--muted)}
+.kpi.law{border-color:var(--law)}
+.kpi.full{border-color:var(--sun)}
+.notes{font-size:.82rem;color:var(--muted);display:grid;gap:6px;max-width:80ch}
+.notes p{margin:0}
+.notes strong{color:var(--fg)}
+.src ol{margin:0;padding-left:20px;font-size:.82rem;display:grid;gap:4px}
+.src a{color:var(--accent)}
+.wrap details summary{cursor:pointer;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.wrap details[open] summary{margin-bottom:12px}
+.toast{font-size:.8rem;color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+    </style>
+</head>
+<body>
+
+<!-- the zukunft.com navbar as rendered by html_base::header: logo, search, language and user menu -->
+<nav class="navbar site-header fixed-top">
+    <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+        <img src="/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+    </a>
+    <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+        <input type="hidden" name="m" value="107">
+        <label for="kp" class="visually-hidden">Search</label>
+        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="lang-menu">
+                    <summary><i class="fas fa-globe"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?q=en">English</a></li>
+                        <li><a href="/http/view.php?q=en_us">US English</a></li>
+                        <li><a href="/http/view.php?q=de" title="German">Deutsch</a></li>
+                        <li><a href="/http/view.php?q=fr" title="French">Français</a></li>
+                        <li><a href="/http/view.php?q=es" title="Spanish">Español</a></li>
+                        <li><a href="/http/view.php?q=zh" title="Chinese">漢語</a></li>
+                        <li><a href="/http/view.php?q=ar" title="Arabic">العربية</a></li>
+                        <li><a href="/http/view.php?m=language_select">... more</a></li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary><i class="fas fa-user-circle"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?m=11">Log in</a></li>
+                        <li><a href="/http/view.php?m=13">Signup</a></li>
+                        <li><a href="/settings">Settings</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main class="main-container">
+<div class="wrap">
+  <header>
+    <h4>CBAM Part Tree Calculator</h4>
+    <p>Carbon border adjustment for an imported good built from parts, which are built from parts. Each part carries its own production emissions, electricity, transport, capital-goods share and end of life. The result shows the certificates due under the EU rules and, next to it, the full emission chain that the rules leave out.</p>
+  </header>
+
+  <nav class="steps" id="steps" aria-label="Steps"></nav>
+
+  <!-- Step 1 -->
+  <section class="step" id="step1">
+    <div class="two">
+      <div class="panel">
+        <h2>1 · Imported good</h2>
+        <div class="field">
+          <label for="sName">Good as declared</label>
+          <input id="sName" type="text">
+        </div>
+        <div class="cols">
+          <div class="field">
+            <label for="sQty">Quantity</label>
+            <div class="row"><input id="sQty" type="number" min="0" step="1"><span class="unit">t</span></div>
+          </div>
+          <div class="field">
+            <label for="sYear">Import year</label>
+            <select id="sYear"></select>
+            <span class="hint" id="yearHint"></span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="sCountry">Country of origin</label>
+          <input id="sCountry" type="text">
+        </div>
+        <div class="field">
+          <label for="sPrice">CBAM certificate price <span class="tag m">measured</span></label>
+          <div class="row"><input id="sPrice" type="number" min="0" step="0.01"><span class="unit">€/t CO₂</span></div>
+          <span class="hint">Q3 2026, published 5 Oct 2026: 82.32 [1]; Q1 75.36, Q2 75.28. From 2027 the price is set weekly.</span>
+        </div>
+        <!-- placement test only: the save does nothing yet -->
+        <button class="btn btn-outline-primary" type="button">Save</button>
+      </div>
+      <div class="panel">
+        <h2>How the obligation is built</h2>
+        <div class="notes">
+          <p><strong>Certificates per tonne of good</strong> = embedded emissions − benchmark × (1 − CBAM factor), floored at zero. The benchmark is the EU ETS product benchmark; the free-allocation share (1 − CBAM factor) falls from 97.5 % in 2026 to 0 % in 2034 [2][4].</p>
+          <p><strong>Embedded emissions</strong> under the rules are the direct process emissions of the good and of its CBAM precursors, plus indirect electricity emissions for cement, fertilisers and electricity only [3]. Transport, end of life and capital goods are not in the rules; this page counts them in a second column so the gap is visible.</p>
+          <p><strong>Default values</strong> may be used instead of verified data. They carry a mark-up of 10 % in 2026, 20 % in 2027 and 30 % from 2028 (1 % for fertilisers) [5]. A part declared with a default value counts the whole chain below it as settled.</p>
+        </div>
+        <div class="nav"><span></span><button class="btn primary" data-go="2">Next: parts</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2 -->
+  <section class="step" id="step2" hidden>
+    <div class="panel">
+      <h2>2 · Bill of parts</h2>
+      <p class="notes" style="margin:0"><span>Open a part to set its own emissions, electricity, transport, capital goods and end of life, and to add the parts it is made of. Quantities are tonnes of the part per tonne of the part above it. Values are per tonne of the part itself.</span></p>
+      <div class="tree" id="tree"></div>
+      <div class="nav"><button class="btn" data-go="1">Back</button><button class="btn primary" data-go="3">Next: carbon price paid abroad</button></div>
+    </div>
+  </section>
+
+  <!-- Step 3 -->
+  <section class="step" id="step3" hidden>
+    <div class="two">
+      <div class="panel">
+        <h2>3 · Carbon price paid in the country of origin</h2>
+        <div class="field">
+          <label for="sPaid">Effective carbon price paid</label>
+          <div class="row"><input id="sPaid" type="number" min="0" step="0.5"><span class="unit">€/t CO₂</span></div>
+          <span class="hint">Price actually paid per tonne of embedded emissions, after rebates. Türkiye runs a pilot ETS from 2026 without a cash price yet, so the example uses 0 <span class="tag a">assumed 0.6</span></span>
+        </div>
+        <div class="field">
+          <label for="sPaidShare">Share of embedded emissions covered</label>
+          <div class="row"><input id="sPaidShare" type="number" min="0" max="1" step="0.05"><span class="unit">share</span></div>
+          <span class="hint">1 if the whole chain was priced, less if only some installations fall under the foreign scheme</span>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>What it changes</h2>
+        <div class="notes">
+          <p>The certificates to surrender are reduced by the carbon price effectively paid abroad on the same emissions [3]. The deduction is capped at the obligation itself.</p>
+        </div>
+        <div class="nav"><button class="btn" data-go="2">Back</button><button class="btn primary" data-go="4">Next: result</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 4 -->
+  <section class="step" id="step4" hidden>
+    <div class="panel" style="gap:18px">
+      <h2>4 · Result</h2>
+      <div class="kpis" id="kpis"></div>
+
+      <h3>Obligation under the rules and full chain</h3>
+      <div class="scroll"><table id="res"><thead><tr><th>Result</th><th class="n">Per t of good</th><th class="n">Shipment</th></tr></thead><tbody></tbody></table></div>
+
+      <details>
+        <summary>Breakdown by part, t CO₂-eq per tonne of the imported good</summary>
+        <div class="scroll"><table id="parts"><thead><tr><th>Part</th><th class="n">t per t good</th><th class="n">Own process</th><th class="n">Electricity</th><th class="n">Transport</th><th class="n">Capital</th><th class="n">End of life</th><th class="n">In rules</th><th class="n">Full</th></tr></thead><tbody></tbody></table></div>
+      </details>
+
+      <details>
+        <summary>Cost path to 2034, same chain and certificate price</summary>
+        <div class="scroll"><table id="years"><thead><tr><th>Year</th><th class="n">CBAM factor</th><th class="n">Free share × benchmark</th><th class="n">Certificates / t</th><th class="n">€ / t good</th><th class="n">€ shipment</th><th class="n">€ / t if full chain counted</th></tr></thead><tbody></tbody></table></div>
+      </details>
+
+      <div class="nav"><button class="btn" data-go="3">Back</button><span></span></div>
+
+      <details>
+        <summary>Model as JSON</summary>
+        <div class="field">
+          <span class="hint">The whole model, editable. Paste a saved model and press Load.</span>
+          <textarea id="json" spellcheck="false"></textarea>
+          <div class="row"><button class="btn small" id="jsonCopy">Copy</button><button class="btn small" id="jsonLoad">Load</button><button class="btn small" id="jsonReset">Reset to example</button><span class="toast" id="toast"></span></div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Notes</summary>
+      <div class="notes">
+        <p><strong>Nesting.</strong> A part's emissions per tonne are its own process emissions plus the sum over its parts of quantity × that part's emissions, to any depth. A part declared by default value stops the recursion for the legal column; its parts still contribute transport, capital-goods and end-of-life emissions to the full column.</p>
+        <p><strong>Benchmark of a complex good.</strong> Free allocation is deducted for each step with an EU ETS product benchmark, weighted by quantity; rolling, tube forming or cement grinding have none of their own and are covered by the hot metal or clinker benchmark of their precursors. A good declared by default value gets the benchmark of its whole route. The definitive-period CBAM benchmarks per CN code (Reg. 2025/2620) can differ from the 2021–2025 ETS benchmark values used here as defaults [4].</p>
+        <p><strong>Capital goods.</strong> The emissions of building the plant are spread over the tonnes it produces during its life; this is the depreciation the rules do not require.</p>
+        <p><strong>End of life.</strong> Net = disposal emissions × (1 − recycling rate) − avoided primary production × recycling rate. A negative value is a credit.</p>
+      </div>
+      </details>
+
+      <details class="src">
+        <summary>Sources</summary>
+        <ol>
+          <li><a href="https://cbamguide.com/news/2026-10-05-q3-2026-cbam-certificate-price/" target="_blank" rel="noopener">CBAM certificate price Q3 2026: 82.32 €/t, Q1 75.36, Q2 75.28 (Commission, published 5 Oct 2026)</a>; <a href="https://environnement.public.lu/fr/emweltprozeduren/Autorisations/cbam-en/cbam-certificated-and-price.html" target="_blank" rel="noopener">quarterly price mechanism (Reg. 2025/2548)</a></li>
+          <li><a href="https://eur-lex.europa.eu/eli/dir/2023/959/oj" target="_blank" rel="noopener">Directive (EU) 2023/959, Art. 10a(1a): CBAM factor 2.5 % (2026), 5 %, 10 %, 22.5 %, 48.5 %, 61 %, 73.5 %, 86 %, 100 % (2034)</a></li>
+          <li><a href="https://eur-lex.europa.eu/eli/reg/2023/956/oj" target="_blank" rel="noopener">Regulation (EU) 2023/956 (CBAM): Annex I goods, Annex II goods with direct emissions only, Art. 9 carbon price paid abroad</a>; <a href="https://taxation-customs.ec.europa.eu/carbon-border-adjustment-mechanism/cbam-legislation-and-guidance_en" target="_blank" rel="noopener">Commission guidance documents of 14 Aug 2026</a></li>
+          <li><a href="https://eur-lex.europa.eu/eli/reg_impl/2021/447/oj" target="_blank" rel="noopener">Implementing Regulation (EU) 2021/447: product benchmark values 2021–2025 (hot metal 1.288, EAF carbon steel 0.215, coke 0.217, sintered ore 0.157, grey clinker 0.693, primary aluminium 1.464, ammonia 1.570, nitric acid 0.230, hydrogen 6.84 t CO₂/t)</a>; <a href="https://trungtamwto.vn/download/24372/guidance-no.-4--cbam-calculation-of-the-free-allocation-adjustment-to-the-number-of-cbam-certificate.pdf" target="_blank" rel="noopener">Guidance 4: free allocation adjustment</a></li>
+          <li><a href="https://www.celna24.pl/en/articles/regulations/cbam-2026-cla-weglowe-ue-poradnik" target="_blank" rel="noopener">Default values Reg. 2025/2621 with mark-ups 10/20/30 %: examples Türkiye CN 7208 2.428 t/t, China CN 7604 4.881 t/t direct</a></li>
+          <li><a href="https://www.smartfreightcentre.org/en/our-programs/global-logistics-emissions-council/calculate-report-glec-framework/" target="_blank" rel="noopener">GLEC Framework: transport intensities by mode (order of magnitude used for the mode presets)</a></li>
+        </ol>
+      </details>
+    </div>
+  </section>
+</div>
+</main>
+
+<!-- the zukunft.com footer as rendered by html_base::footer -->
+<footer class="site-footer">
+    <p>
+        <a href="/http/about.php">About</a>
+        &middot;
+        <a href="/http/privacy_policy.html">Privacy Policy</a>
+        &middot;
+        All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com">program code</a>
+        of this version 0.0.3 under the
+        <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a>
+        Licence.
+    </p>
+</footer>
+
+<dialog id="dlg"><div class="dlg" id="dlgInner"></div></dialog>
+
+<script>
+// ---------- reference data ----------
+const FACTOR_BY_YEAR = { 2026: 0.025, 2027: 0.05, 2028: 0.10, 2029: 0.225, 2030: 0.485, 2031: 0.61, 2032: 0.735, 2033: 0.86, 2034: 1.0 };
+const YEARS = Object.keys(FACTOR_BY_YEAR).map(Number);
+
+// Sector presets: benchmark t CO2/t (ETS 2021-2025 [4], measured), whether indirect emissions are in scope [3],
+// and a default value for the "default value" route (the two marked measured are from Reg. 2025/2621 [5], the rest assumed, confidence 0.4)
+// benchmark: the ETS product benchmark of this step itself (0 where the step is covered by its precursor's benchmark, e.g. rolling by hot metal)
+// dfltBench: the benchmark of the whole route behind the good, used when the good is declared by default value (route sums assumed, confidence 0.5)
+const SECTORS = {
+  steel_flat:   { label: "Iron & steel: flat-rolled / tubes (CN 7208–7306)", benchmark: 0, dfltBench: 1.55, indirect: false, dflt: 2.428, dfltTag: "m", dfltNote: "Türkiye × CN 7208, Reg. 2025/2621" },
+  steel_crude:  { label: "Iron & steel: hot metal / crude steel (CN 7206–7207)", benchmark: 1.288, dfltBench: 1.55, indirect: false, dflt: 2.1, dfltTag: "a", dfltNote: "BF-BOF route, other countries" },
+  steel_eaf:    { label: "Iron & steel: EAF carbon steel", benchmark: 0.215, dfltBench: 0.215, indirect: false, dflt: 0.6, dfltTag: "a", dfltNote: "scrap-based route" },
+  coke:         { label: "Coke (CN 2704)", benchmark: 0.217, dfltBench: 0.217, indirect: false, dflt: 0.5, dfltTag: "a", dfltNote: "" },
+  sinter:       { label: "Sintered ore (CN 2601 12)", benchmark: 0.157, dfltBench: 0.157, indirect: false, dflt: 0.3, dfltTag: "a", dfltNote: "" },
+  alu_primary:  { label: "Aluminium: unwrought (CN 7601)", benchmark: 1.464, dfltBench: 1.464, indirect: false, dflt: 8.0, dfltTag: "a", dfltNote: "direct incl. anode and PFC, other countries" },
+  alu_products: { label: "Aluminium: bars, profiles, sheets (CN 7604–7608)", benchmark: 0, dfltBench: 1.464, indirect: false, dflt: 4.881, dfltTag: "m", dfltNote: "China × CN 7604 direct, Reg. 2025/2621" },
+  clinker:      { label: "Cement clinker (CN 2523 10)", benchmark: 0.693, dfltBench: 0.693, indirect: true, dflt: 0.9, dfltTag: "a", dfltNote: "" },
+  cement:       { label: "Cement (CN 2523 21–90)", benchmark: 0, dfltBench: 0.60, indirect: true, dflt: 0.7, dfltTag: "a", dfltNote: "" },
+  ammonia:      { label: "Fertilisers: ammonia (CN 2814)", benchmark: 1.570, dfltBench: 1.570, indirect: true, dflt: 2.4, dfltTag: "a", dfltNote: "" },
+  nitric:       { label: "Fertilisers: nitric acid (CN 2808)", benchmark: 0.230, dfltBench: 0.230, indirect: true, dflt: 0.4, dfltTag: "a", dfltNote: "" },
+  hydrogen:     { label: "Hydrogen (CN 2804 10)", benchmark: 6.84, dfltBench: 6.84, indirect: false, dflt: 10.0, dfltTag: "a", dfltNote: "steam methane reforming" },
+  none:         { label: "Not a CBAM good (no benchmark, no obligation)", benchmark: 0, dfltBench: 0, indirect: false, dflt: 0, dfltTag: "x", dfltNote: "" }
+};
+
+// Transport intensities g CO2-eq per tonne-km, well-to-wheel order of magnitude after GLEC [6] (assumed, confidence 0.6)
+const TRANSPORT = {
+  sea_bulk: { label: "Sea, bulk carrier", g: 5 },
+  sea_container: { label: "Sea, container ship", g: 14 },
+  barge: { label: "Inland waterway", g: 30 },
+  rail: { label: "Rail, electric/diesel mix", g: 25 },
+  truck: { label: "Road, articulated truck", g: 80 },
+  air: { label: "Air freight", g: 800 }
+};
+
+// Grid intensity presets g CO2-eq per kWh (assumed, confidence 0.6)
+const GRID = [
+  { label: "Türkiye ~440", v: 440 }, { label: "China ~580", v: 580 }, { label: "India ~700", v: 700 },
+  { label: "EU average ~250", v: 250 }, { label: "Switzerland consumer mix 126", v: 126 }, { label: "Norway ~20", v: 20 }, { label: "Coal-only ~950", v: 950 }
+];
+
+let uid = 1;
+function nextId() {
+  const result = "p" + uid;
+  uid = uid + 1;
+  return result;
+}
+
+function newPart(name, sector) {
+  const result = {
+    id: nextId(), name: name, sector: sector, country: "", qty: 1,
+    mode: "actual", direct: 0, dflt: SECTORS[sector].dflt,
+    elecKwh: 0, grid: 440,
+    transport: [],
+    capitalCo2: 0, capitalOutput: 0,
+    recRate: 0, recCredit: 0, disposal: 0,
+    children: []
+  };
+  return result;
+}
+
+function exampleState() {
+  const tube = newPart("Welded steel tube, galvanised", "steel_flat");
+  tube.country = "Türkiye";
+  tube.direct = 0.05;
+  tube.elecKwh = 150;
+  tube.transport = [{ mode: "truck", km: 300 }, { mode: "sea_container", km: 5500 }, { mode: "truck", km: 150 }];
+  tube.capitalCo2 = 80000;
+  tube.capitalOutput = 4000000;
+  tube.recRate = 0.85;
+  tube.recCredit = 0.5;
+  tube.disposal = 0.01;
+
+  const coil = newPart("Hot-rolled coil", "steel_flat");
+  coil.country = "Türkiye";
+  coil.qty = 1.03;
+  coil.direct = 0.10;
+  coil.elecKwh = 100;
+  coil.transport = [{ mode: "truck", km: 120 }];
+  coil.capitalCo2 = 300000;
+  coil.capitalOutput = 30000000;
+
+  const crude = newPart("Crude steel, BF-BOF route", "steel_crude");
+  crude.country = "Türkiye";
+  crude.qty = 1.05;
+  crude.direct = 1.60;
+  crude.elecKwh = 60;
+  crude.capitalCo2 = 2000000;
+  crude.capitalOutput = 100000000;
+
+  const coke = newPart("Coke", "coke");
+  coke.country = "Türkiye";
+  coke.qty = 0.35;
+  coke.direct = 0.50;
+  coke.elecKwh = 30;
+  coke.transport = [{ mode: "sea_bulk", km: 9000 }];
+
+  const sinter = newPart("Sintered ore", "sinter");
+  sinter.country = "Türkiye";
+  sinter.qty = 1.20;
+  sinter.direct = 0.25;
+  sinter.elecKwh = 40;
+  sinter.transport = [{ mode: "sea_bulk", km: 12000 }];
+
+  const zinc = newPart("Zinc coating", "none");
+  zinc.country = "Kazakhstan";
+  zinc.qty = 0.02;
+  zinc.direct = 3.0;
+  zinc.elecKwh = 3800;
+  zinc.grid = 700;
+  zinc.transport = [{ mode: "rail", km: 2500 }];
+
+  crude.children = [coke, sinter];
+  coil.children = [crude];
+  tube.children = [coil, zinc];
+
+  const result = {
+    shipment: { name: "Welded steel tube, galvanised (CN 7306)", qty: 100, year: 2026, country: "Türkiye", price: 82.32, paid: 0, paidShare: 1 },
+    root: tube
+  };
+  return result;
+}
+
+let state = exampleState();
+let currentStep = 1;
+let dlgStack = [];
+let dlgTab = "prod";
+
+// ---------- helpers ----------
+function fmt(value, digits) {
+  const options = { minimumFractionDigits: digits, maximumFractionDigits: digits };
+  const result = value.toLocaleString("de-CH", options);
+  return result;
+}
+function euro(value) {
+  const result = fmt(value, 0) + " €";
+  return result;
+}
+function numOf(raw) {
+  const value = parseFloat(raw);
+  let result = 0;
+  if (Number.isFinite(value)) {
+    result = value;
+  }
+  return result;
+}
+function markup(year, sector) {
+  let result = 0.30;
+  if (year <= 2026) {
+    result = 0.10;
+  } else if (year === 2027) {
+    result = 0.20;
+  }
+  const isFert = sector === "ammonia" || sector === "nitric";
+  if (isFert) {
+    result = 0.01;
+  }
+  return result;
+}
+function esc(text) {
+  const div = document.createElement("div");
+  div.textContent = String(text);
+  const result = div.innerHTML;
+  return result;
+}
+function findPart(id, node) {
+  let result = null;
+  if (node.id === id) {
+    result = node;
+  } else {
+    for (const child of node.children) {
+      const hit = findPart(id, child);
+      if (hit !== null) {
+        result = hit;
+      }
+    }
+  }
+  return result;
+}
+function findParent(id, node) {
+  let result = null;
+  for (const child of node.children) {
+    if (child.id === id) {
+      result = node;
+    } else {
+      const hit = findParent(id, child);
+      if (hit !== null) {
+        result = hit;
+      }
+    }
+  }
+  return result;
+}
+function reindex(node) {
+  const n = parseInt(node.id.slice(1), 10);
+  if (Number.isFinite(n) && n >= uid) {
+    uid = n + 1;
+  }
+  for (const child of node.children) {
+    reindex(child);
+  }
+}
+
+// ---------- calculation, all per tonne of the part ----------
+function calcPart(part, year, settled) {
+  const sec = SECTORS[part.sector];
+  const useDefault = part.mode === "default";
+  const isSettled = settled === true;
+  let ownDirect = part.direct;
+  if (useDefault) {
+    ownDirect = part.dflt * (1 + markup(year, part.sector));
+  }
+  const indirectAll = part.elecKwh * part.grid / 1e6;
+  let indirectLegal = 0;
+  if (sec.indirect && !useDefault && !isSettled) {
+    indirectLegal = indirectAll;
+  }
+  let transport = 0;
+  for (const leg of part.transport) {
+    transport = transport + leg.km * TRANSPORT[leg.mode].g / 1e6;
+  }
+  let capital = 0;
+  if (part.capitalOutput > 0) {
+    capital = part.capitalCo2 / part.capitalOutput;
+  }
+  const eol = part.disposal * (1 - part.recRate) - part.recCredit * part.recRate;
+
+  let childrenLegal = 0;
+  let childrenExtra = 0;
+  let childrenBench = 0;
+  const kids = [];
+  for (const child of part.children) {
+    const c = calcPart(child, year, isSettled || useDefault);
+    kids.push(c);
+    childrenExtra = childrenExtra + child.qty * c.extra;
+    if (!useDefault) {
+      childrenLegal = childrenLegal + child.qty * c.legal;
+      childrenBench = childrenBench + child.qty * c.bench;
+    }
+  }
+  const legal = ownDirect + indirectLegal + childrenLegal;
+  const extraOwn = (indirectAll - indirectLegal) + transport + capital + eol;
+  const extra = extraOwn + childrenExtra;
+  let bench = sec.benchmark + childrenBench;
+  if (useDefault) {
+    bench = sec.dfltBench;
+  }
+  const result = {
+    part: part, useDefault: useDefault, ownDirect: ownDirect, indirectAll: indirectAll, indirectLegal: indirectLegal,
+    transport: transport, capital: capital, eol: eol,
+    childrenLegal: childrenLegal, childrenExtra: childrenExtra,
+    legal: legal, extra: extra, full: legal + extra,
+    bench: bench, kids: kids
+  };
+  return result;
+}
+
+function calcShipment(year) {
+  const s = state.shipment;
+  const r = calcPart(state.root, year);
+  const factor = FACTOR_BY_YEAR[year];
+  const freeShare = 1 - factor;
+  const fa = r.bench * freeShare;
+  const certPerT = Math.max(0, r.legal - fa);
+  const certFullPerT = Math.max(0, r.full - fa);
+  const certs = certPerT * s.qty;
+  const gross = certs * s.price;
+  const paidRaw = s.paid * s.paidShare * r.legal * s.qty;
+  const paid = Math.min(paidRaw, gross);
+  const cost = gross - paid;
+  let costPerT = 0;
+  if (s.qty > 0) {
+    costPerT = cost / s.qty;
+  }
+  const costFull = Math.max(0, certFullPerT * s.qty * s.price - paid);
+  const result = { tree: r, factor: factor, freeShare: freeShare, fa: fa, certPerT: certPerT, certFullPerT: certFullPerT, certs: certs, gross: gross, paid: paid, cost: cost, costPerT: costPerT, costFull: costFull };
+  return result;
+}
+
+// ---------- rendering: steps ----------
+const STEP_NAMES = ["Imported good", "Bill of parts", "Carbon price paid", "Result"];
+function renderSteps() {
+  const nav = document.getElementById("steps");
+  let html = "";
+  STEP_NAMES.forEach((name, i) => {
+    const n = i + 1;
+    let attrs = "";
+    if (n === currentStep) {
+      attrs = ' aria-current="step"';
+    } else if (n < currentStep) {
+      attrs = ' class="done"';
+    }
+    html = html + '<button type="button" data-go="' + n + '"' + attrs + '><span class="no">' + n + '</span>' + name + '</button>';
+  });
+  nav.innerHTML = html;
+}
+function goStep(n) {
+  currentStep = n;
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById("step" + i).hidden = i !== n;
+  }
+  renderSteps();
+  if (n === 2) {
+    renderTree();
+  }
+  if (n === 4) {
+    renderResults();
+  }
+  persist();
+}
+
+function renderShipmentInputs() {
+  const s = state.shipment;
+  document.getElementById("sName").value = s.name;
+  document.getElementById("sQty").value = s.qty;
+  document.getElementById("sCountry").value = s.country;
+  document.getElementById("sPrice").value = s.price;
+  document.getElementById("sPaid").value = s.paid;
+  document.getElementById("sPaidShare").value = s.paidShare;
+  const sel = document.getElementById("sYear");
+  sel.innerHTML = YEARS.map(y => '<option value="' + y + '">' + y + '</option>').join("");
+  sel.value = String(s.year);
+  renderYearHint();
+}
+function renderYearHint() {
+  const y = state.shipment.year;
+  const f = FACTOR_BY_YEAR[y];
+  document.getElementById("yearHint").textContent = "CBAM factor " + fmt(f * 100, 1) + " %, free allocation " + fmt((1 - f) * 100, 1) + " % of benchmark [2]";
+}
+
+// ---------- rendering: tree ----------
+function treeRows(part, depth, qtyOfGood, year, out) {
+  const r = calcPart(part, year);
+  out.push({ part: part, depth: depth, qtyOfGood: qtyOfGood, r: r });
+  for (const child of part.children) {
+    treeRows(child, depth + 1, qtyOfGood * child.qty, year, out);
+  }
+  return out;
+}
+function renderTree() {
+  const rows = treeRows(state.root, 0, 1, state.shipment.year, []);
+  let html = "";
+  for (const row of rows) {
+    const p = row.part;
+    const sec = SECTORS[p.sector];
+    let cls = "node";
+    if (row.depth === 0) {
+      cls = cls + " root";
+    }
+    if (p.mode === "default") {
+      cls = cls + " dflt";
+    }
+    let qtyText = "imported good";
+    if (row.depth > 0) {
+      qtyText = fmt(p.qty, 3) + " t per t of parent · " + fmt(row.qtyOfGood, 3) + " t per t of good";
+    }
+    let modeTag = '<span class="tag l">actual</span>';
+    if (p.mode === "default") {
+      modeTag = '<span class="tag a">default value</span>';
+    }
+    if (p.sector === "none") {
+      modeTag = '<span class="tag x">outside CBAM</span>';
+    }
+    let removeBtn = "";
+    if (row.depth > 0) {
+      removeBtn = '<button class="btn small danger" data-remove="' + p.id + '">Remove</button>';
+    }
+    html = html + '<div class="' + cls + '" style="margin-left:' + (row.depth * 22) + 'px">'
+      + '<div><div class="name">' + esc(p.name) + modeTag + '</div>'
+      + '<div class="meta">' + esc(sec.label) + ' · ' + qtyText + '</div>'
+      + '<div class="meta">in rules ' + fmt(row.r.legal, 3) + ' · full ' + fmt(row.r.full, 3) + ' t CO₂/t · ' + p.children.length + ' sub-part' + (p.children.length === 1 ? "" : "s") + '</div></div>'
+      + '<div class="acts"><button class="btn small" data-open="' + p.id + '">Open</button><button class="btn small" data-add="' + p.id + '">Add sub-part</button>' + removeBtn + '</div>'
+      + '</div>';
+  }
+  document.getElementById("tree").innerHTML = html;
+}
+
+// ---------- rendering: dialog ----------
+function openPart(id) {
+  dlgStack = [id];
+  dlgTab = "prod";
+  renderDialog();
+  const dlg = document.getElementById("dlg");
+  if (!dlg.open) {
+    dlg.showModal();
+  }
+}
+function pushPart(id) {
+  dlgStack.push(id);
+  dlgTab = "prod";
+  renderDialog();
+}
+function popTo(index) {
+  dlgStack = dlgStack.slice(0, index + 1);
+  dlgTab = "prod";
+  renderDialog();
+}
+function field(label, key, value, unit, step, hint, tag) {
+  let tagHtml = "";
+  if (tag) {
+    tagHtml = tag;
+  }
+  let hintHtml = "";
+  if (hint) {
+    hintHtml = '<span class="hint">' + hint + '</span>';
+  }
+  const result = '<div class="field"><label for="f_' + key + '">' + label + tagHtml + '</label><div class="row"><input id="f_' + key + '" data-key="' + key + '" type="number" step="' + step + '" value="' + value + '"><span class="unit">' + unit + '</span></div>' + hintHtml + '</div>';
+  return result;
+}
+function dialogSummary(part) {
+  const r = calcPart(part, state.shipment.year);
+  const result = "in rules " + fmt(r.legal, 3) + " · full " + fmt(r.full, 3) + " t CO₂-eq per t";
+  return result;
+}
+function renderDialog() {
+  const id = dlgStack[dlgStack.length - 1];
+  const part = findPart(id, state.root);
+  const sec = SECTORS[part.sector];
+  const year = state.shipment.year;
+  const isRoot = part.id === state.root.id;
+
+  let crumbs = "";
+  dlgStack.forEach((pid, i) => {
+    const p = findPart(pid, state.root);
+    if (i < dlgStack.length - 1) {
+      crumbs = crumbs + '<button type="button" data-crumb="' + i + '">' + esc(p.name) + '</button><span class="sep">›</span>';
+    } else {
+      crumbs = crumbs + '<span>' + esc(p.name) + '</span>';
+    }
+  });
+
+  const TABS = [["prod", "Production"], ["elec", "Electricity"], ["trans", "Transport"], ["cap", "Capital goods"], ["eol", "End of life"], ["sub", "Sub-parts (" + part.children.length + ")"]];
+  let tabs = "";
+  for (const t of TABS) {
+    tabs = tabs + '<button type="button" role="tab" data-tab="' + t[0] + '" aria-selected="' + (dlgTab === t[0]) + '">' + t[1] + '</button>';
+  }
+
+  let body = "";
+  if (dlgTab === "prod") {
+    let sectorOpts = "";
+    for (const k of Object.keys(SECTORS)) {
+      sectorOpts = sectorOpts + '<option value="' + k + '"' + (part.sector === k ? " selected" : "") + '>' + esc(SECTORS[k].label) + '</option>';
+    }
+    let qtyField = "";
+    if (!isRoot) {
+      qtyField = field("Quantity in the part above", "qty", part.qty, "t / t", "0.01", "Tonnes of this part per tonne of the parent part");
+    }
+    let dfltTag = '<span class="tag a">assumed 0.4</span>';
+    if (sec.dfltTag === "m") {
+      dfltTag = '<span class="tag m">measured</span>';
+    } else if (sec.dfltTag === "x") {
+      dfltTag = "";
+    }
+    const mk = markup(year, part.sector);
+    body = '<div class="field"><label for="f_name">Name</label><input id="f_name" data-key="name" type="text" value="' + esc(part.name) + '"></div>'
+      + '<div class="cols"><div class="field"><label for="f_sector">CBAM good / sector</label><select id="f_sector" data-key="sector">' + sectorOpts + '</select>'
+      + '<span class="hint">' + (sec.benchmark > 0 ? 'Benchmark of this step ' + fmt(sec.benchmark, 3) + ' t CO₂/t <span class="tag m">measured</span>' : 'No benchmark of its own: free allocation comes through the precursor parts (route benchmark ' + fmt(sec.dfltBench, 3) + ' if declared by default value) <span class="tag a">assumed 0.5</span>') + ' · indirect emissions ' + (sec.indirect ? "in scope" : "not in scope") + ' [3][4]</span></div>'
+      + '<div class="field"><label for="f_country">Country of production</label><input id="f_country" data-key="country" type="text" value="' + esc(part.country) + '"></div></div>'
+      + qtyField
+      + '<div class="field"><label for="f_mode">Emission data</label><select id="f_mode" data-key="mode"><option value="actual"' + (part.mode === "actual" ? " selected" : "") + '>Actual, verified: own process below plus sub-parts</option><option value="default"' + (part.mode === "default" ? " selected" : "") + '>Default value with ' + fmt(mk * 100, 0) + ' % mark-up; sub-parts settled</option></select></div>'
+      + field("Own direct process emissions", "direct", part.direct, "t CO₂/t", "0.01", "Fuel, process and fugitive emissions of this step only, without the parts below and without electricity")
+      + field("Default value for this good and its precursors", "dflt", part.dflt, "t CO₂/t", "0.001", esc(sec.dfltNote) + " · with mark-up " + fmt(part.dflt * (1 + mk), 3), dfltTag)
+      + '<div class="scope">Counted under the rules: direct emissions of this step and of its CBAM precursors, or the default value with mark-up.</div>';
+  } else if (dlgTab === "elec") {
+    let presets = "";
+    for (const g of GRID) {
+      presets = presets + '<button type="button" class="btn small" data-grid="' + g.v + '">' + esc(g.label) + '</button>';
+    }
+    let scope = '<div class="scope out">Electricity of ' + esc(sec.label) + ' is not counted under the rules [3]; it is shown in the full column.</div>';
+    if (sec.indirect) {
+      scope = '<div class="scope">Indirect emissions of this sector are counted under the rules [3].</div>';
+    }
+    body = field("Electricity used by this step", "elecKwh", part.elecKwh, "kWh/t", "10", "Own step only, without the parts below")
+      + field("Grid emission factor", "grid", part.grid, "g/kWh", "10", "Country mix of the installation, or the contracted supply", '<span class="tag a">assumed 0.6</span>')
+      + '<div class="row" style="flex-wrap:wrap">' + presets + '</div>'
+      + '<p class="notes" style="margin:0"><span>Indirect emissions: ' + fmt(part.elecKwh * part.grid / 1e6, 3) + ' t CO₂/t</span></p>'
+      + scope;
+  } else if (dlgTab === "trans") {
+    let legs = "";
+    part.transport.forEach((leg, i) => {
+      let opts = "";
+      for (const k of Object.keys(TRANSPORT)) {
+        opts = opts + '<option value="' + k + '"' + (leg.mode === k ? " selected" : "") + '>' + esc(TRANSPORT[k].label) + ' · ' + TRANSPORT[k].g + ' g/tkm</option>';
+      }
+      legs = legs + '<div class="leg"><select data-leg="' + i + '" data-legkey="mode">' + opts + '</select><div class="row"><input type="number" step="10" min="0" data-leg="' + i + '" data-legkey="km" value="' + leg.km + '"><span class="unit">km</span></div><button type="button" class="btn small danger" data-legremove="' + i + '">Remove</button></div>';
+    });
+    if (part.transport.length === 0) {
+      legs = '<p class="notes" style="margin:0"><span>No transport legs yet.</span></p>';
+    }
+    let total = 0;
+    for (const leg of part.transport) {
+      total = total + leg.km * TRANSPORT[leg.mode].g / 1e6;
+    }
+    body = '<p class="notes" style="margin:0"><span>Legs from this step to the next step up, or to the EU border for the imported good. Intensities after the GLEC framework <span class="tag a">assumed 0.6</span> [6]</span></p>'
+      + '<div class="legs">' + legs + '</div>'
+      + '<div class="row"><button type="button" class="btn small" id="legAdd">Add leg</button><span class="hint">Transport of this part: ' + fmt(total, 3) + ' t CO₂/t</span></div>'
+      + '<div class="scope out">Transport is not part of the CBAM obligation [3]; it is shown in the full column.</div>';
+  } else if (dlgTab === "cap") {
+    let perT = 0;
+    if (part.capitalOutput > 0) {
+      perT = part.capitalCo2 / part.capitalOutput;
+    }
+    body = '<p class="notes" style="margin:0"><span>Emissions of building the plant, spread over all tonnes it produces during its life: a depreciation of embodied carbon.</span></p>'
+      + field("Plant construction emissions", "capitalCo2", part.capitalCo2, "t CO₂", "1000", "Steel, concrete and equipment of the installation", '<span class="tag a">assumed 0.4</span>')
+      + field("Lifetime output of the plant", "capitalOutput", part.capitalOutput, "t", "100000", "Annual capacity × years of operation")
+      + '<p class="notes" style="margin:0"><span>Capital share: ' + fmt(perT, 4) + ' t CO₂/t</span></p>'
+      + '<div class="scope out">Capital goods are not part of the CBAM obligation; shown in the full column.</div>';
+  } else if (dlgTab === "eol") {
+    const net = part.disposal * (1 - part.recRate) - part.recCredit * part.recRate;
+    body = field("Recycling rate at end of life", "recRate", part.recRate, "share", "0.05", "Share of the material that is collected and recycled", '<span class="tag a">assumed 0.5</span>')
+      + field("Avoided primary production per tonne recycled", "recCredit", part.recCredit, "t CO₂/t", "0.1", "Credit: emissions of primary material minus those of the recycling route")
+      + field("Disposal emissions of the rest", "disposal", part.disposal, "t CO₂/t", "0.01", "Landfill or incineration of the non-recycled share")
+      + '<p class="notes" style="margin:0"><span>Net end of life: ' + fmt(net, 3) + ' t CO₂/t (negative is a credit)</span></p>'
+      + '<div class="scope out">End of life is not part of the CBAM obligation; shown in the full column.</div>';
+  } else {
+    let list = "";
+    for (const child of part.children) {
+      const cr = calcPart(child, year);
+      list = list + '<div class="node"><div><div class="name">' + esc(child.name) + '</div><div class="meta">' + fmt(child.qty, 3) + ' t per t · in rules ' + fmt(cr.legal, 3) + ' · full ' + fmt(cr.full, 3) + ' t CO₂/t · ' + child.children.length + ' sub-parts</div></div>'
+        + '<div class="acts"><button type="button" class="btn small" data-push="' + child.id + '">Open</button><button type="button" class="btn small danger" data-remove="' + child.id + '">Remove</button></div></div>';
+    }
+    if (part.children.length === 0) {
+      list = '<p class="notes" style="margin:0"><span>No sub-parts. Add the materials and precursors this step is made from.</span></p>';
+    }
+    let note = "";
+    if (part.mode === "default") {
+      note = '<div class="scope out">This part uses a default value, so its sub-parts are settled for the legal column. Their transport, capital and end-of-life still count in the full column.</div>';
+    }
+    body = note + '<div class="tree">' + list + '</div><div class="row"><button type="button" class="btn small" data-add="' + part.id + '">Add sub-part</button></div>';
+  }
+
+  const html = '<div class="dlg-head"><div class="crumbs">' + crumbs + '</div><h3 id="dlgTitle">' + esc(part.name) + '</h3><div class="sum" id="dlgSum">' + dialogSummary(part) + '</div></div>'
+    + '<div class="tabs" role="tablist">' + tabs + '</div>'
+    + '<div class="dlg-body">' + body + '</div>'
+    + '<div class="dlg-foot"><span class="hint">Changes apply at once.</span><div class="row">' + (dlgStack.length > 1 ? '<button type="button" class="btn" data-crumb="' + (dlgStack.length - 2) + '">Up one part</button>' : "") + '<button type="button" class="btn primary" id="dlgClose">Done</button></div></div>';
+  document.getElementById("dlgInner").innerHTML = html;
+}
+
+function updateDialogSummary() {
+  const id = dlgStack[dlgStack.length - 1];
+  const part = findPart(id, state.root);
+  document.getElementById("dlgSum").textContent = dialogSummary(part);
+  document.getElementById("dlgTitle").textContent = part.name;
+}
+
+// ---------- rendering: results ----------
+function td(text, cls) {
+  const result = '<td class="' + (cls || "") + '">' + text + '</td>';
+  return result;
+}
+function renderResults() {
+  const s = state.shipment;
+  const c = calcShipment(s.year);
+  const r = c.tree;
+
+  const kpis = [
+    { cls: "law", v: fmt(c.certs, 0), l: "certificates to surrender, " + s.year },
+    { cls: "law", v: euro(c.cost), l: "CBAM cost of the shipment" },
+    { cls: "law", v: fmt(c.costPerT, 2) + " €", l: "per tonne of good" },
+    { cls: "full", v: fmt(r.full, 3) + " t", l: "full chain CO₂-eq per tonne, of which " + fmt(r.legal, 3) + " t in the rules" },
+    { cls: "full", v: euro(c.costFull), l: "cost if the full chain were counted" }
+  ];
+  document.getElementById("kpis").innerHTML = kpis.map(k => '<div class="kpi ' + k.cls + '"><span class="v">' + k.v + '</span><span class="l">' + k.l + '</span></div>').join("");
+
+  const q = s.qty;
+  let rows = "";
+  rows = rows + '<tr class="sec law"><td colspan="3">Under the rules, ' + s.year + '</td></tr>';
+  rows = rows + '<tr>' + td("Embedded emissions counted <span class='sub'>direct process emissions of the good and its CBAM precursors" + (r.indirectLegal > 0 || r.useDefault ? ", indirect where in scope" : "") + "</span>") + td(fmt(r.legal, 3) + " t", "n") + td(fmt(r.legal * q, 1) + " t", "n") + '</tr>';
+  rows = rows + '<tr>' + td("Benchmark of good and precursors, weighted") + td(fmt(r.bench, 3) + " t", "n") + td(fmt(r.bench * q, 1) + " t", "n") + '</tr>';
+  rows = rows + '<tr>' + td("Free allocation deducted <span class='sub'>benchmark × " + fmt(c.freeShare * 100, 1) + " % (CBAM factor " + fmt(c.factor * 100, 1) + " %)</span>") + td("−" + fmt(c.fa, 3) + " t", "n") + td("−" + fmt(c.fa * q, 1) + " t", "n") + '</tr>';
+  rows = rows + '<tr class="key">' + td("Certificates") + td(fmt(c.certPerT, 3), "n") + td(fmt(c.certs, 1), "n") + '</tr>';
+  rows = rows + '<tr>' + td("At " + fmt(s.price, 2) + " €/certificate") + td(fmt(c.certPerT * s.price, 2) + " €", "n") + td(euro(c.gross), "n") + '</tr>';
+  rows = rows + '<tr>' + td("Carbon price paid abroad, deducted") + td("−" + fmt(q > 0 ? c.paid / q : 0, 2) + " €", "n") + td("−" + euro(c.paid), "n") + '</tr>';
+  rows = rows + '<tr class="key">' + td("CBAM cost") + td(fmt(c.costPerT, 2) + " €", "n") + td(euro(c.cost), "n") + '</tr>';
+
+  rows = rows + '<tr class="sec"><td colspan="3">Full chain, not required by the rules</td></tr>';
+  const comps = collectComponents(r, 1);
+  rows = rows + '<tr>' + td("Electricity outside the rules") + td(fmt(comps.indirectExtra, 3) + " t", "n") + td(fmt(comps.indirectExtra * q, 1) + " t", "n") + '</tr>';
+  rows = rows + '<tr>' + td("Transport, all legs") + td(fmt(comps.transport, 3) + " t", "n") + td(fmt(comps.transport * q, 1) + " t", "n") + '</tr>';
+  rows = rows + '<tr>' + td("Capital goods share") + td(fmt(comps.capital, 3) + " t", "n") + td(fmt(comps.capital * q, 1) + " t", "n") + '</tr>';
+  rows = rows + '<tr>' + td("End of life, net") + td(fmt(comps.eol, 3) + " t", "n") + td(fmt(comps.eol * q, 1) + " t", "n") + '</tr>';
+  rows = rows + '<tr class="key">' + td("Full chain CO₂-eq") + td(fmt(r.full, 3) + " t", "n") + td(fmt(r.full * q, 1) + " t", "n") + '</tr>';
+  const gapCls = r.full >= r.legal ? "neg" : "pos";
+  rows = rows + '<tr>' + td("Left out by the rules") + td('<span class="' + gapCls + '">' + fmt(r.full - r.legal, 3) + " t</span>", "n") + td('<span class="' + gapCls + '">' + fmt((r.full - r.legal) * q, 1) + " t</span>", "n") + '</tr>';
+  rows = rows + '<tr class="key">' + td("Cost if the full chain were counted") + td(fmt(q > 0 ? c.costFull / q : 0, 2) + " €", "n") + td(euro(c.costFull), "n") + '</tr>';
+  document.querySelector("#res tbody").innerHTML = rows;
+
+  // breakdown
+  let prow = "";
+  const flat = flatten(r, 0, 1, []);
+  for (const f of flat) {
+    const indentCls = "indent" + Math.min(4, f.depth);
+    let own = fmt(f.r.ownDirect * f.q, 3);
+    if (f.r.useDefault) {
+      own = own + ' <span class="tag a">default</span>';
+    }
+    if (f.settled) {
+      own = '<span class="tag x">settled</span>';
+    }
+    prow = prow + '<tr>' + td(esc(f.r.part.name), f.depth > 0 ? indentCls : "") + td(fmt(f.q, 3), "n") + td(own, "n")
+      + td(fmt(f.r.indirectAll * f.q, 3) + (f.r.indirectLegal > 0 ? ' <span class="tag l">in</span>' : ""), "n")
+      + td(fmt(f.r.transport * f.q, 3), "n") + td(fmt(f.r.capital * f.q, 4), "n") + td(fmt(f.r.eol * f.q, 3), "n")
+      + td(f.settled ? "–" : fmt(f.r.legal * f.q, 3), "n") + td(fmt((f.settled ? f.r.extra : f.r.full) * f.q, 3), "n") + '</tr>';
+  }
+  prow = prow + '<tr class="key">' + td("Imported good, total") + td("", "n") + td("", "n") + td("", "n") + td("", "n") + td("", "n") + td("", "n") + td(fmt(r.legal, 3), "n") + td(fmt(r.full, 3), "n") + '</tr>';
+  document.querySelector("#parts tbody").innerHTML = prow;
+
+  // years
+  let yrow = "";
+  for (const y of YEARS) {
+    const cy = calcShipment(y);
+    let cls = "";
+    if (y === s.year) {
+      cls = "key";
+    }
+    yrow = yrow + '<tr class="' + cls + '">' + td(String(y)) + td(fmt(cy.factor * 100, 1) + " %", "n") + td(fmt(cy.fa, 3) + " t", "n") + td(fmt(cy.certPerT, 3), "n") + td(fmt(cy.costPerT, 2), "n") + td(euro(cy.cost), "n") + td(fmt(q > 0 ? cy.costFull / q : 0, 2), "n") + '</tr>';
+  }
+  document.querySelector("#years tbody").innerHTML = yrow;
+
+  document.getElementById("json").value = JSON.stringify(state, null, 2);
+}
+function collectComponents(r, q) {
+  const acc = { indirectExtra: 0, transport: 0, capital: 0, eol: 0 };
+  walkComponents(r, q, acc);
+  return acc;
+}
+function walkComponents(r, q, acc) {
+  acc.indirectExtra = acc.indirectExtra + (r.indirectAll - r.indirectLegal) * q;
+  acc.transport = acc.transport + r.transport * q;
+  acc.capital = acc.capital + r.capital * q;
+  acc.eol = acc.eol + r.eol * q;
+  r.kids.forEach((k, i) => {
+    const child = r.part.children[i];
+    walkComponents(k, q * child.qty, acc);
+  });
+}
+function flatten(r, depth, q, out, settled) {
+  out.push({ r: r, depth: depth, q: q, settled: !!settled });
+  r.kids.forEach((k, i) => {
+    const child = r.part.children[i];
+    flatten(k, depth + 1, q * child.qty, out, settled || r.useDefault);
+  });
+  return out;
+}
+
+// ---------- persistence ----------
+function persist() {
+  try {
+    localStorage.setItem("cbam-tree-model", JSON.stringify(state));
+  } catch (e) {
+    // storage unavailable; the page works without it
+  }
+}
+function restore() {
+  let result = false;
+  try {
+    const raw = localStorage.getItem("cbam-tree-model");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.root && parsed.shipment) {
+        state = parsed;
+        reindex(state.root);
+        result = true;
+      }
+    }
+  } catch (e) {
+    result = false;
+  }
+  return result;
+}
+function toast(text) {
+  const el = document.getElementById("toast");
+  el.textContent = text;
+  setTimeout(() => { el.textContent = ""; }, 2500);
+}
+
+// ---------- events ----------
+document.addEventListener("click", (ev) => {
+  const t = ev.target.closest("button");
+  if (t) {
+    if (t.dataset.go) {
+      goStep(parseInt(t.dataset.go, 10));
+    } else if (t.dataset.open) {
+      openPart(t.dataset.open);
+    } else if (t.dataset.push) {
+      pushPart(t.dataset.push);
+    } else if (t.dataset.crumb !== undefined) {
+      popTo(parseInt(t.dataset.crumb, 10));
+    } else if (t.dataset.tab) {
+      dlgTab = t.dataset.tab;
+      renderDialog();
+    } else if (t.dataset.add) {
+      const parent = findPart(t.dataset.add, state.root);
+      const child = newPart("New part", "steel_crude");
+      child.country = parent.country;
+      parent.children.push(child);
+      persist();
+      if (document.getElementById("dlg").open) {
+        dlgStack.push(child.id);
+        dlgTab = "prod";
+        renderDialog();
+      } else {
+        renderTree();
+        openPart(child.id);
+      }
+    } else if (t.dataset.remove) {
+      const parent = findParent(t.dataset.remove, state.root);
+      if (parent) {
+        parent.children = parent.children.filter(ch => ch.id !== t.dataset.remove);
+        persist();
+        if (document.getElementById("dlg").open) {
+          renderDialog();
+        }
+        renderTree();
+      }
+    } else if (t.dataset.grid) {
+      const part = findPart(dlgStack[dlgStack.length - 1], state.root);
+      part.grid = numOf(t.dataset.grid);
+      persist();
+      renderDialog();
+    } else if (t.id === "legAdd") {
+      const part = findPart(dlgStack[dlgStack.length - 1], state.root);
+      part.transport.push({ mode: "sea_container", km: 1000 });
+      persist();
+      renderDialog();
+    } else if (t.dataset.legremove !== undefined) {
+      const part = findPart(dlgStack[dlgStack.length - 1], state.root);
+      part.transport.splice(parseInt(t.dataset.legremove, 10), 1);
+      persist();
+      renderDialog();
+    } else if (t.id === "dlgClose") {
+      document.getElementById("dlg").close();
+    } else if (t.id === "jsonCopy") {
+      const text = document.getElementById("json").value;
+      navigator.clipboard.writeText(text).then(() => { toast("Copied"); }).catch(() => {
+        document.getElementById("json").select();
+        toast("Select and copy manually");
+      });
+    } else if (t.id === "jsonLoad") {
+      try {
+        const parsed = JSON.parse(document.getElementById("json").value);
+        if (parsed && parsed.root && parsed.shipment) {
+          state = parsed;
+          reindex(state.root);
+          persist();
+          renderShipmentInputs();
+          renderResults();
+          toast("Loaded");
+        } else {
+          toast("Not a model: needs shipment and root");
+        }
+      } catch (e) {
+        toast("Invalid JSON: " + e.message);
+      }
+    } else if (t.id === "jsonReset") {
+      uid = 1;
+      state = exampleState();
+      persist();
+      renderShipmentInputs();
+      renderResults();
+      toast("Example restored");
+    }
+  }
+});
+
+document.getElementById("dlg").addEventListener("close", () => {
+  renderTree();
+  persist();
+});
+
+document.getElementById("dlgInner").addEventListener("input", (ev) => {
+  const el = ev.target;
+  const part = findPart(dlgStack[dlgStack.length - 1], state.root);
+  if (el.dataset.key) {
+    const key = el.dataset.key;
+    if (key === "name" || key === "country" || key === "sector" || key === "mode") {
+      part[key] = el.value;
+      if (key === "sector") {
+        part.dflt = SECTORS[el.value].dflt;
+        renderDialog();
+      }
+      if (key === "mode") {
+        renderDialog();
+      }
+    } else {
+      part[key] = numOf(el.value);
+    }
+  } else if (el.dataset.leg !== undefined) {
+    const leg = part.transport[parseInt(el.dataset.leg, 10)];
+    if (el.dataset.legkey === "mode") {
+      leg.mode = el.value;
+    } else {
+      leg.km = numOf(el.value);
+    }
+  }
+  updateDialogSummary();
+  persist();
+});
+
+function bindShipment(id, key, isText) {
+  document.getElementById(id).addEventListener("input", (ev) => {
+    if (isText) {
+      state.shipment[key] = ev.target.value;
+    } else {
+      state.shipment[key] = numOf(ev.target.value);
+    }
+    if (key === "year") {
+      state.shipment.year = parseInt(ev.target.value, 10);
+      renderYearHint();
+    }
+    persist();
+  });
+}
+bindShipment("sName", "name", true);
+bindShipment("sQty", "qty", false);
+bindShipment("sYear", "year", false);
+bindShipment("sCountry", "country", true);
+bindShipment("sPrice", "price", false);
+bindShipment("sPaid", "paid", false);
+bindShipment("sPaidShare", "paidShare", false);
+
+// ---------- boot ----------
+restore();
+renderShipmentInputs();
+renderSteps();
+goStep(1);
+</script>
+
+</body></html>

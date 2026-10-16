@@ -47,7 +47,7 @@ SELECT source_update_log_0022002020000
         195::smallint,
         'Federal Statistical Office'::text,
         'System Test Source Renamed'::text,
-        7::bigint,
+        9::bigint,
         196::smallint,
         'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.'::text,
         null::text,

@@ -105,9 +105,13 @@ class views
     // the view of the use case pv_lifetime_balance.json: a use case view is user data, so it is
     // selected by its name only and never by a code id (docs/llm/json_structure.md "Use case files")
     const string PV_LIFETIME_BALANCE_NAME = 'PV lifetime CO2 balance';
+    // the view of the use case cbam_calculator.json, selected by its name only as well
+    const string CBAM_TREE_CALCULATOR_NAME = 'CBAM Part Tree Calculator';
+    // the view of the use case portfolio_split_calculator.json, selected by its name only as well
+    const string PORTFOLIO_SPLIT_CALCULATOR_NAME = 'Portfolio Split Calculator';
     // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
     const string TABLE_EDITOR = 'table_editor';
-    const int TABLE_EDITOR_ID = 194;
+    const int TABLE_EDITOR_ID = 196;
     const string TABLE_EDITOR_NAME = 'Table editor';
     const string CALCULATION_EDITOR = 'calculation_editor';
     const string CALCULATION_EDITOR_NAME = 'Calculation editor';

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Split Calculator - zukunft.com</title>
+    <!-- the same stylesheets as every page of the pod, so the navbar, the footer and the colors match -->
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/main/resources/style/style_html.css">
+    <style>
+/* Layout: two-column tool like the PV calculator - inputs/assumptions left, results and walk right; stacks on phones.
+   The colors are the zukunft.com grey (#9ea09e) and blues (#385eb7 links, #274b8f dark,
+   #6b86c2 changed, #b9c6d6 lines) of style_html.css; the parent is the dark blue, the children cycle
+   through four blues and the only other color is the bootstrap danger red for a negative deviation or a failed check */
+:root{
+  --bg:#ffffff; --panel:#f9fafb; --fg:#274b8f; --muted:#9ea09e; --line:#b9c6d6; --line-soft:#dee2e6;
+  --accent:#385eb7; --accent-soft:#dbe4f5; --sun:#6b86c2; --good:#274b8f; --bad:#dc3545;
+  --parent:#274b8f; --child-1:#385eb7; --child-2:#6b86c2; --child-3:#5476c8; --child-4:#8ea3d3;
+}
+.wrap{width:100%;max-width:1240px;margin:0 auto;padding:0 0 28px;display:grid;gap:24px;text-align:left;color:var(--fg);line-height:1.5}
+.wrap header h4{margin:0;color:var(--fg)}
+.wrap header p{margin:6px 0 0;color:var(--muted);max-width:75ch}
+.grid{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px;display:grid;gap:14px;min-width:0}
+.wrap h2{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0;font-weight:600}
+.field{display:grid;gap:4px}
+.field label{font-size:.88rem;font-weight:500}
+.field .hint{font-size:.76rem;color:var(--muted)}
+/* the input row keeps its own flex layout: the bootstrap .row rule would make every child full width */
+.wrap .row{display:flex;flex-wrap:nowrap;gap:8px;align-items:center;margin:0}
+.wrap .row > *{width:auto;max-width:none;flex-shrink:1;padding:0}
+.wrap .row > input{flex:1 1 auto}
+/* the remove button of a child keeps the bootstrap button padding that the row rule above resets */
+.wrap .row > .btn{padding:2px 8px;flex-shrink:0}
+#children{display:grid;gap:14px}
+#addChild{justify-self:start}
+.wrap input,.wrap select{font:inherit;font-size:.95rem;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+.wrap input[type=checkbox]{width:auto;accent-color:var(--accent)}
+.wrap input:focus-visible,.wrap select:focus-visible,.wrap summary:focus-visible,.wrap button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.unit{font-size:.8rem;color:var(--muted);white-space:nowrap;min-width:3em}
+.inputs .field label{color:var(--accent)}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.88rem}
+.check span{display:grid}
+.ro{padding:7px 9px;border:1px dashed var(--line);border-radius:6px;width:100%;color:var(--muted)}
+.warn{font-size:.8rem;color:var(--bad)}
+.wrap details summary{cursor:pointer;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.wrap details[open] summary{margin-bottom:12px}
+/* the opened walk keeps the spacing of the panel between the table and the copy buttons */
+.wrap details .more{display:grid;gap:18px}
+.fx{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 10px;align-items:center;font-size:.85rem}
+.tag{font-size:.68rem;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);margin-left:6px;font-weight:400;white-space:nowrap}
+.tag.m{color:var(--accent);border-color:var(--accent)}
+.tag.a{color:var(--sun);border-color:var(--sun)}
+.scroll{overflow-x:auto}
+.wrap table{border-collapse:collapse;width:100%;font-size:.88rem}
+.wrap th,.wrap td{padding:7px 9px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:baseline}
+.wrap th{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;white-space:nowrap}
+.wrap td.n,.wrap th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wrap tr.sec td{background:var(--accent-soft);font-weight:600;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--fg)}
+.wrap tr.key td{font-weight:600}
+.wrap tr.tot td{font-weight:600;border-top:2px solid var(--line)}
+.wrap td .sub{display:block;font-size:.74rem;color:var(--muted);font-weight:400}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.b-parent{color:var(--parent)}
+.pill{display:inline-block;font-size:.72rem;padding:1px 7px;border-radius:10px;border:1px solid currentColor}
+.ok{color:var(--good)} .fail{color:var(--bad)}
+.hold input{padding:4px 6px;font-size:.85rem;text-align:right;max-width:9em}
+.chart svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.8rem;color:var(--muted);margin-top:6px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+/* only the copy buttons of the walk; the save button keeps the bootstrap outline style of the pod */
+.wrap .actions button{font:inherit;font-size:.86rem;font-weight:500;background:var(--accent);color:var(--bg);border:0;border-radius:6px;padding:7px 12px;cursor:pointer}
+.wrap .actions button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+#copyMsg{font-size:.8rem;color:var(--muted)}
+#copyOut{width:100%;min-height:8em;font-size:.78rem;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:8px}
+.notes{font-size:.82rem;color:var(--muted);display:grid;gap:6px;max-width:85ch}
+.notes p{margin:0}
+.notes strong{color:var(--fg)}
+.imports{display:flex;flex-wrap:wrap;gap:8px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+    </style>
+</head>
+<body>
+
+<!-- the zukunft.com navbar as rendered by html_base::header: logo, search, language and user menu -->
+<nav class="navbar site-header fixed-top">
+    <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+        <img src="/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+    </a>
+    <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+        <input type="hidden" name="m" value="107">
+        <label for="kp" class="visually-hidden">Search</label>
+        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">Get numbers</button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="lang-menu">
+                    <summary><i class="fas fa-globe"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?q=en">English</a></li>
+                        <li><a href="/http/view.php?q=en_us">US English</a></li>
+                        <li><a href="/http/view.php?q=de" title="German">Deutsch</a></li>
+                        <li><a href="/http/view.php?q=fr" title="French">Français</a></li>
+                        <li><a href="/http/view.php?q=es" title="Spanish">Español</a></li>
+                        <li><a href="/http/view.php?q=zh" title="Chinese">漢語</a></li>
+                        <li><a href="/http/view.php?q=ar" title="Arabic">العربية</a></li>
+                        <li><a href="/http/view.php?m=language_select">... more</a></li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary><i class="fas fa-user-circle"></i></summary>
+                    <ul>
+                        <li><a href="/http/view.php?m=11">Log in</a></li>
+                        <li><a href="/http/view.php?m=13">Signup</a></li>
+                        <li><a href="/settings">Settings</a></li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<main class="main-container">
+<div class="wrap">
+  <header>
+    <h4>Portfolio Split Calculator</h4>
+    <p>Inheritance split of a securities depot into the parent's portfolio and one portfolio per child, respecting round lots. Children can be added and removed. Positions are walked from the largest tradable unit to the smallest; each rounding error is carried into the next position, so the cash at the end absorbs what is left. Preloaded with the sample bank report and its two children.</p>
+  </header>
+
+  <div class="grid">
+    <aside class="panel">
+      <div class="inputs" style="display:grid;gap:14px">
+        <h2>Inputs</h2>
+        <!-- one target weight per child, rendered from CHILDREN by renderChildren -->
+        <div id="children"></div>
+        <button id="addChild" class="btn btn-outline-primary btn-sm" type="button"><i class="fas fa-plus"></i> Add child</button>
+        <div class="field">
+          <label>Target weight parent</label>
+          <div class="ro" id="wp">30 %</div>
+          <span class="hint">The parent keeps the remainder of every position</span>
+        </div>
+        <div class="warn" id="sumWarn" hidden>The weights of the children exceed 100 %.</div>
+        <label class="check"><input id="mirror" type="checkbox" checked><span>Mirror the children<span class="hint" style="font-size:.76rem;color:var(--muted)">Every child gets exactly the first child's share count; needs equal weights</span></span></label>
+        <div class="warn" id="mirrorWarn" hidden>Weights differ, so every child is rounded on its own deviation.</div>
+        <div class="field">
+          <label for="order">Walk order</label>
+          <select id="order">
+            <option value="lot" selected>Unit value × round lot, descending</option>
+            <option value="bank">Bank report order</option>
+          </select>
+          <span class="hint">Large lots first lets the smaller ones repair the error</span>
+        </div>
+        <label class="check"><input id="cashBal" type="checkbox" checked><span>Split cash<span class="hint" style="font-size:.76rem;color:var(--muted)">Cash is divisible to 0.01 and balances the remaining drift</span></span></label>
+        <!-- placement test only: the save does nothing yet -->
+        <button class="btn btn-outline-primary" type="button">Save</button>
+      </div>
+
+      <details>
+        <summary>Exchange rates</summary>
+        <div class="fx" id="fxBox"></div>
+        <p class="hint" style="font-size:.76rem;color:var(--muted);margin:8px 0 0">CHF per unit of currency, bank report <span class="tag m">measured</span></p>
+      </details>
+    </aside>
+
+    <section class="panel" style="gap:18px">
+      <h2>Result per beneficiary</h2>
+      <div class="scroll">
+        <table id="sum">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <details>
+        <summary>Check against the sample files</summary>
+        <div class="scroll">
+          <table id="chk">
+            <thead><tr><th>Value</th><th class="n">Expected</th><th class="n">Calculated</th><th class="n">Status</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint" style="font-size:.76rem;color:var(--muted)">The sample files split the depot between the parent and two children.</p>
+      </details>
+
+      <details>
+        <summary>Cumulative deviation of the children along the walk</summary>
+        <div class="chart" id="chart"></div>
+      </details>
+
+      <details>
+        <summary>Splitting walk</summary>
+        <!-- the copy buttons export the walk, so they are hidden together with it -->
+        <div class="more">
+          <div class="scroll">
+            <table id="walk">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="actions">
+            <button id="copyJson" type="button">Copy as zukunft.com JSON</button>
+            <button id="copyCsv" type="button" class="ghost">Copy as CSV</button>
+            <span id="copyMsg" aria-live="polite"></span>
+          </div>
+          <textarea id="copyOut" readonly hidden aria-label="Copied text"></textarea>
+        </div>
+      </details>
+
+      <details>
+        <summary>Holdings from the bank report</summary>
+        <div class="scroll">
+          <table class="hold" id="hold">
+            <thead><tr><th>Position</th><th>Ccy</th><th class="n">Quantity</th><th class="n">Price</th><th class="n">Round lot</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="hint" style="font-size:.76rem;color:var(--muted)">Stocks: shares and share price. Bonds: nominal value and price in % of par. Cash: amount in its currency, round lot 0.01.</p>
+      </details>
+
+      <details>
+        <summary>Notes</summary>
+      <div class="notes">
+        <p><strong>Rule per position.</strong> A child's target is its weight times the position value, minus the deviation carried in from earlier positions. That target in units is rounded to the nearest round lot. With mirroring on, every child receives the first child's count. If the rounded counts together exceed the position, every child gets at most an equal part in round lots. The parent gets the rest, so every original position is conserved exactly.</p>
+        <p><strong>Deviation.</strong> The carried deviation is the realised value minus the plain weighted value over all positions split so far, kept per child. It is subtracted once from the next target; it is not added again per step.</p>
+        <p><strong>Why the order matters.</strong> LISP has a single unit of CHF 117,000. Rounding 3.5 shares to 4 gives the first child CHF 58,500 too much; the next positions take that back. With the sample data the stocks and bonds bring the drift down to about CHF 13 per child; splitting the cash then closes the gap to below one centime.</p>
+      </div>
+      </details>
+
+      <details class="src">
+        <summary>Inputs from</summary>
+        <!-- placement test only: the imports do nothing yet -->
+        <div class="imports">
+          <button class="btn btn-outline-primary" type="button"><i class="fas fa-file-import"></i> Import portfolio</button>
+          <button class="btn btn-outline-primary" type="button"><i class="fas fa-file-import"></i> Import FX rates</button>
+        </div>
+      </details>
+    </section>
+  </div>
+</div>
+</main>
+
+<!-- the zukunft.com footer as rendered by html_base::footer -->
+<footer class="site-footer">
+    <p>
+        <a href="/http/about.php">About</a>
+        &middot;
+        <a href="/http/privacy_policy.html">Privacy Policy</a>
+        &middot;
+        All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">Creative Commons CC0</a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com">program code</a>
+        of this version 0.0.3 under the
+        <a href="https://www.gnu.org/licenses/agpl.html">AGPL3</a>
+        Licence.
+    </p>
+</footer>
+
+<script>
+const FX = { CHF: 1, EUR: 0.98, USD: 0.90, GBP: 1.13, JPY: 0.006, DKK: 0.1304, SEK: 0.0875 };
+const BANK_TOTAL = 19610900;
+// the allocation of the split agreement for the parent and its two children
+const EXPECTED = [
+  { id: "LISP", children: [4, 4], parent: 2 },
+  { id: "LISN", children: [9, 9], parent: 22 }
+];
+// the ordinal words name the children, so their number is also the maximum number of children
+const ORDINALS = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
+const MIN_CHILDREN = 1;
+// the children cycle through the colors --child-1 to --child-4
+const CHILD_COLOR_COUNT = 4;
+const PERCENT = 100;
+const SAME_WEIGHT_TOLERANCE = 1e-9;
+// the target weight in percent per child; preloaded with the 35 / 35 of the split agreement
+const CHILDREN = [{ w: 35 }, { w: 35 }];
+// [id, name, qty, price, lot]
+const STOCKS = [
+  ["LISP","Lindt & Sprüngli AG (PS)",10,117000,1],["LISN","Lindt & Sprüngli AG (registered)",40,11000,1],
+  ["GIVN","Givaudan SA",100,3700,1],["PGHN","Partners Group Holding AG",250,1200,1],
+  ["GEBN","Geberit AG",500,590,1],["LONN","Lonza Group AG",600,530,1],
+  ["ZURN","Zurich Insurance Group AG",600,530,1],["SCMN","Swisscom AG",600,530,1],
+  ["VACN","VAT Group AG",800,380,1],["ROG","Roche Holding AG",2000,240,1],
+  ["SOON","Sonova Holding AG",1200,240,1],["SCHP","Schindler Holding AG (PS)",1200,230,1],
+  ["SIKA","Sika AG",1300,220,1],["KNIN","Kuehne + Nagel International AG",1300,220,1],
+  ["UHR","The Swatch Group AG",1500,180,1],["CFR","Compagnie Financière Richemont SA",2000,130,1],
+  ["SREN","Swiss Re AG",2000,130,1],["STMN","Straumann Holding AG",2500,110,1],
+  ["LOGN","Logitech International SA",3000,90,1],["NOVN","Novartis AG",3000,90,1],
+  ["SGSN","SGS SA",3000,87,1],["HOLN","Holcim AG",3500,80,1],
+  ["NESN","Nestlé S.A.",3500,80,1],["ALC","Alcon AG",3500,75,1],
+  ["BAER","Julius Bär Group AG",4500,60,1],["BANB","Bachem Holding AG",4500,60,1],
+  ["ABBN","ABB Ltd",5500,50,1],["SDZ","Sandoz Group AG",7000,38,1],
+  ["ADEN","Adecco Group AG",9000,30,1],["UBSG","UBS Group AG",10000,28,1]
+];
+// [id, name, ccy, nominal, price %, lot]
+const BONDS = [
+  ["ConfedBond30","Swiss Confederation 1.25% 2030","CHF",1500000,100.5,5000],
+  ["NestleBond27","Nestlé Holdings 0.875% 2027","CHF",1500000,99.8,5000],
+  ["RocheBond28","Roche Holdings 1.0% 2028","CHF",1000000,99.0,5000],
+  ["BundDE30","Bund 0% 2030","EUR",1000000,96.0,1000],
+  ["TreasuryUS27","US Treasury 2.5% 2027","USD",1200000,99.0,1000]
+];
+const CASH = [["CHF",1000000],["EUR",1800000],["USD",500000],["GBP",200000],["JPY",30000000],["DKK",1000000],["SEK",1000000]];
+
+function buildPositions() {
+  const list = [];
+  for (const s of STOCKS) {
+    list.push({ id: s[0], name: s[1], type: "stock", ccy: "CHF", qty: s[2], price: s[3], lot: s[4] });
+  }
+  for (const b of BONDS) {
+    list.push({ id: b[0], name: b[1], type: "bond", ccy: b[2], qty: b[3], price: b[4], lot: b[5] });
+  }
+  for (const c of CASH) {
+    list.push({ id: "cash " + c[0], name: "Cash " + c[0], type: "cash", ccy: c[0], qty: c[1], price: 1, lot: 0.01 });
+  }
+  const result = list;
+  return result;
+}
+const POS = buildPositions();
+
+function num(id) {
+  const el = document.getElementById(id);
+  const value = parseFloat(el.value);
+  let result = 0;
+  if (Number.isFinite(value)) {
+    result = value;
+  }
+  return result;
+}
+
+function fmt(value, digits) {
+  const options = { minimumFractionDigits: digits, maximumFractionDigits: digits };
+  const result = value.toLocaleString("de-CH", options);
+  return result;
+}
+
+function pct(ratio, digits) {
+  const result = fmt(ratio * PERCENT, digits) + " %";
+  return result;
+}
+
+function fmtQty(p, value) {
+  let digits = 0;
+  if (p.type === "cash") {
+    digits = 2;
+  }
+  const result = fmt(value, digits);
+  return result;
+}
+
+function signed(value, digits) {
+  let cls = "";
+  if (value > 0.005) {
+    cls = "pos";
+  }
+  if (value < -0.005) {
+    cls = "neg";
+  }
+  let text = fmt(value, digits);
+  if (value > 0.005) {
+    text = "+" + text;
+  }
+  const result = '<span class="' + cls + '">' + text + "</span>";
+  return result;
+}
+
+function sumOf(list) {
+  const result = list.reduce((a, b) => a + b, 0);
+  return result;
+}
+
+// k is the zero based position of the child, e.g. 0 for "first child"
+function childName(k) {
+  const result = ORDINALS[k] + " child";
+  return result;
+}
+
+function capital(text) {
+  const result = text.charAt(0).toUpperCase() + text.slice(1);
+  return result;
+}
+
+function childColor(k) {
+  const result = "var(--child-" + (k % CHILD_COLOR_COUNT + 1) + ")";
+  return result;
+}
+
+function unitValue(p) {
+  const rate = FX[p.ccy];
+  let price = p.price;
+  if (p.type === "bond") {
+    price = p.price / 100;
+  }
+  const result = price * rate;
+  return result;
+}
+
+function roundToLot(units, lot) {
+  const steps = Math.round(units / lot);
+  const raw = steps * lot;
+  const result = Math.round(raw * 100) / 100;
+  return result;
+}
+
+function readParams() {
+  const weights = CHILDREN.map(c => c.w / PERCENT);
+  const sameWeight = weights.every(w => Math.abs(w - weights[0]) < SAME_WEIGHT_TOLERANCE);
+  const mirrorAsked = document.getElementById("mirror").checked;
+  const p = {
+    weights: weights,
+    wp: 1 - sumOf(weights),
+    mirror: mirrorAsked && sameWeight,
+    mirrorAsked: mirrorAsked,
+    order: document.getElementById("order").value,
+    cash: document.getElementById("cashBal").checked
+  };
+  const result = p;
+  return result;
+}
+
+function split(p) {
+  let positions = POS.filter(x => p.cash || x.type !== "cash");
+  if (p.order === "lot") {
+    positions = positions.slice().sort((a, b) => unitValue(b) * b.lot - unitValue(a) * a.lot);
+  }
+  const n = p.weights.length;
+  const rows = [];
+  const cum = p.weights.map(() => 0);
+  for (const pos of positions) {
+    const uv = unitValue(pos);
+    const posValue = pos.qty * uv;
+    const targets = p.weights.map((w, k) => (w * posValue - cum[k]) / uv);
+    let counts = targets.map(target => Math.min(Math.max(roundToLot(target, pos.lot), 0), pos.qty));
+    if (p.mirror) {
+      counts = counts.map(() => counts[0]);
+    }
+    if (sumOf(counts) > pos.qty) {
+      // rounded up beyond the position: every child gets at most an equal part in round lots
+      const part = Math.floor(pos.qty / n / pos.lot) * pos.lot;
+      counts = counts.map(c => Math.min(c, part));
+    }
+    const parent = Math.round((pos.qty - sumOf(counts)) * 100) / 100;
+    counts.forEach((c, k) => {
+      cum[k] = cum[k] + c * uv - p.weights[k] * posValue;
+    });
+    rows.push({ pos, uv, posValue, targets, counts, parent, cum: cum.slice() });
+  }
+  const result = rows;
+  return result;
+}
+
+function emptyTotal(n) {
+  const result = { total: 0, children: new Array(n).fill(0), parent: 0 };
+  return result;
+}
+
+function totals(p, rows) {
+  const n = p.weights.length;
+  const t = emptyTotal(n);
+  t.cls = {};
+  for (const r of rows) {
+    const type = r.pos.type;
+    if (!t.cls[type]) {
+      t.cls[type] = emptyTotal(n);
+    }
+    for (const c of [t.cls[type], t]) {
+      c.total += r.posValue;
+      r.counts.forEach((count, k) => {
+        c.children[k] += count * r.uv;
+      });
+      c.parent += r.parent * r.uv;
+    }
+  }
+  const result = t;
+  return result;
+}
+
+// cls is the html class attribute of the row, e.g. ' class="key"', or empty for a plain row
+function summaryRow(label, values, cls) {
+  const cells = values.map(v => "<td class=n>" + v + "</td>").join("");
+  const result = "<tr" + cls + "><td>" + label + "</td>" + cells + "</tr>";
+  return result;
+}
+
+function childHeads(p, title) {
+  const result = p.weights.map((w, k) => '<th class="n" style="color:' + childColor(k) + '">' + title(k) + "</th>").join("");
+  return result;
+}
+
+function renderSummary(p, t) {
+  const fmt0 = v => fmt(v, 0);
+  const tgtP = t.total * p.wp;
+  const tgt = p.weights.map(w => t.total * w);
+  const colspan = ' colspan="' + (p.weights.length + 3) + '"';
+  document.querySelector("#sum thead").innerHTML = '<tr><th>CHF</th><th class="n b-parent">Parent</th>'
+    + childHeads(p, k => capital(childName(k))) + '<th class="n">Total</th></tr>';
+  const html = [];
+  html.push('<tr class="sec"><td' + colspan + '>Target</td></tr>');
+  html.push(summaryRow("Target weight", [pct(p.wp, 1)].concat(p.weights.map(w => pct(w, 1)), [pct(1, 1)]), ""));
+  html.push(summaryRow("Target value", [fmt0(tgtP)].concat(tgt.map(fmt0), [fmt0(t.total)]), ""));
+  html.push('<tr class="sec"><td' + colspan + '>Realised</td></tr>');
+  const names = { stock: "Stocks", bond: "Bonds", cash: "Cash" };
+  for (const k of ["stock", "bond", "cash"]) {
+    const c = t.cls[k];
+    if (c) {
+      html.push(summaryRow(names[k], [fmt0(c.parent)].concat(c.children.map(fmt0), [fmt0(c.total)]), ""));
+    }
+  }
+  html.push(summaryRow("Portfolio value", [fmt0(t.parent)].concat(t.children.map(fmt0), [fmt0(t.total)]), ' class="key"'));
+  html.push(summaryRow("Realised weight", [pct(t.parent / t.total, 3)].concat(t.children.map(v => pct(v / t.total, 3)), [""]), ""));
+  const deviations = t.children.map((v, k) => signed(v - tgt[k], 2));
+  const balance = signed(t.parent + sumOf(t.children) - t.total, 2);
+  html.push(summaryRow('Deviation from target<span class="sub">realised minus target</span>', [signed(t.parent - tgtP, 2)].concat(deviations, [balance]), ' class="key"'));
+  document.querySelector("#sum tbody").innerHTML = html.join("");
+}
+
+function statusCell(ok) {
+  let result = '<span class="pill fail">differs</span>';
+  if (ok) {
+    result = '<span class="pill ok">match</span>';
+  }
+  return result;
+}
+
+function checkRow(label, expected, got) {
+  const ok = got === expected;
+  const result = "<tr><td>" + label + "<span class=sub>split agreement</span></td><td class=n>" + expected + "</td><td class=n>" + fmt(got, 0) + "</td><td class=n>" + statusCell(ok) + "</td></tr>";
+  return result;
+}
+
+function renderCheck(rows, t) {
+  const html = [];
+  const totalOk = Math.abs(t.total - BANK_TOTAL) < 1;
+  html.push("<tr><td>Portfolio value original<span class=sub>bank report</span></td><td class=n>" + fmt(BANK_TOTAL, 0) + "</td><td class=n>" + fmt(t.total, 0) + "</td><td class=n>" + statusCell(totalOk) + "</td></tr>");
+  for (const e of EXPECTED) {
+    const r = rows.find(x => x.pos.id === e.id);
+    e.children.forEach((expected, k) => {
+      let got = NaN;
+      if (r && k < r.counts.length) {
+        got = r.counts[k];
+      }
+      html.push(checkRow(e.id + " share, " + childName(k) + " portfolio", expected, got));
+    });
+    let gotParent = NaN;
+    if (r) {
+      gotParent = r.parent;
+    }
+    html.push(checkRow(e.id + " share, parent portfolio", e.parent, gotParent));
+  }
+  document.querySelector("#chk tbody").innerHTML = html.join("");
+}
+
+function renderWalk(p, rows) {
+  document.querySelector("#walk thead").innerHTML = '<tr><th class="n">#</th><th>Position</th><th class="n">Original</th><th class="n">Lot value CHF</th>'
+    + '<th class="n">Target ' + ORDINALS[0] + "</th>" + childHeads(p, k => capital(ORDINALS[k]))
+    + '<th class="n b-parent">Parent</th><th class="n">Cum. dev. ' + ORDINALS[0] + " CHF</th></tr>";
+  const html = [];
+  let i = 0;
+  for (const r of rows) {
+    i += 1;
+    const pos = r.pos;
+    const lotValue = r.uv * pos.lot;
+    let unit = pos.ccy;
+    if (pos.type === "stock") {
+      unit = "shares";
+    }
+    const counts = r.counts.map((c, k) => '<td class="n" style="color:' + childColor(k) + '">' + fmtQty(pos, c) + "</td>").join("");
+    html.push("<tr><td class=n>" + i + "</td><td>" + pos.id + '<span class="sub">' + pos.name + "</span></td>"
+      + "<td class=n>" + fmtQty(pos, pos.qty) + '<span class="sub">' + unit + "</span></td>"
+      + "<td class=n>" + fmt(lotValue, lotValue < 1 ? 4 : 2) + "</td>"
+      + "<td class=n>" + fmt(r.targets[0], pos.type === "cash" ? 2 : 3) + "</td>"
+      + counts
+      + '<td class="n b-parent">' + fmtQty(pos, r.parent) + "</td>"
+      + "<td class=n>" + signed(r.cum[0], 2) + "</td></tr>");
+  }
+  document.querySelector("#walk tbody").innerHTML = html.join("");
+}
+
+function renderChart(p, rows) {
+  const w = 760;
+  const h = 200;
+  const padL = 70;
+  const padR = 12;
+  const padT = 12;
+  const padB = 24;
+  let maxAbs = 1;
+  for (const r of rows) {
+    for (const c of r.cum) {
+      maxAbs = Math.max(maxAbs, Math.abs(c));
+    }
+  }
+  const n = rows.length;
+  const xOf = k => padL + (n <= 1 ? 0 : k * (w - padL - padR) / (n - 1));
+  const yOf = v => padT + (h - padT - padB) / 2 * (1 - v / maxAbs);
+  const last = rows[n - 1];
+  const svg = [];
+  svg.push('<svg viewBox="0 0 ' + w + " " + h + '" role="img" aria-label="Cumulative deviation of every child per position">');
+  svg.push('<line x1="' + padL + '" x2="' + (w - padR) + '" y1="' + yOf(0) + '" y2="' + yOf(0) + '" stroke="var(--line)" stroke-width="1"/>');
+  svg.push('<line x1="' + padL + '" x2="' + (w - padR) + '" y1="' + yOf(maxAbs) + '" y2="' + yOf(maxAbs) + '" stroke="var(--line)" stroke-dasharray="3 3"/>');
+  svg.push('<line x1="' + padL + '" x2="' + (w - padR) + '" y1="' + yOf(-maxAbs) + '" y2="' + yOf(-maxAbs) + '" stroke="var(--line)" stroke-dasharray="3 3"/>');
+  svg.push('<text x="' + (padL - 6) + '" y="' + (yOf(maxAbs) + 4) + '" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--muted)">+' + fmt(maxAbs, 0) + "</text>");
+  svg.push('<text x="' + (padL - 6) + '" y="' + (yOf(0) + 4) + '" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--muted)">0</text>');
+  svg.push('<text x="' + (padL - 6) + '" y="' + (yOf(-maxAbs) + 4) + '" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--muted)">−' + fmt(maxAbs, 0) + "</text>");
+  const legend = [];
+  p.weights.forEach((weight, c) => {
+    const color = childColor(c);
+    const pts = rows.map((r, k) => xOf(k).toFixed(1) + "," + yOf(r.cum[c]).toFixed(1)).join(" ");
+    svg.push('<polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="2" stroke-linejoin="round"/>');
+    for (let k = 0; k < n; k++) {
+      svg.push('<circle cx="' + xOf(k).toFixed(1) + '" cy="' + yOf(rows[k].cum[c]).toFixed(1) + '" r="2.4" fill="' + color + '"><title>' + childName(c) + ", " + rows[k].pos.id + ": " + fmt(rows[k].cum[c], 2) + " CHF</title></circle>");
+    }
+    legend.push('<span><span style="color:' + color + '">●</span> ' + capital(childName(c)) + " final " + fmt(last.cum[c], 2) + " CHF</span>");
+  });
+  svg.push('<text x="' + padL + '" y="' + (h - 6) + '" font-size="11" font-family="IBM Plex Sans, sans-serif" fill="var(--muted)">' + rows[0].pos.id + "</text>");
+  svg.push('<text x="' + (w - padR) + '" y="' + (h - 6) + '" text-anchor="end" font-size="11" font-family="IBM Plex Sans, sans-serif" fill="var(--muted)">' + last.pos.id + "</text>");
+  svg.push("</svg>");
+  document.getElementById("chart").innerHTML = svg.join("") + '<div class="legend">' + legend.join("") + "</div>";
+}
+
+function buildJson(p, rows) {
+  const n = p.weights.length;
+  // the beneficiaries in the order of the counts of a row, followed by the parent
+  const pf = p.weights.map((w, k) => childName(k) + " portfolio").concat(["parent portfolio"]);
+  const values = [];
+  for (const r of rows) {
+    const counts = r.counts.concat([r.parent]);
+    pf.forEach((name, k) => {
+      let words = [r.pos.id, "share", name];
+      if (r.pos.type === "bond") {
+        words = [r.pos.id, "nominal value", r.pos.ccy, name];
+      }
+      if (r.pos.type === "cash") {
+        words = ["cash", r.pos.ccy, name];
+      }
+      values.push({ words: words, number: String(counts[k]), source: "portfolio split calculator" });
+    });
+  }
+  const words = [{ name: "portfolio" }, { name: "parent" }, { name: "child" }, { name: "share" }, { name: "cash" }, { name: "value" }, { name: "nominal" }];
+  const triples = [];
+  // "second" is also a time unit, so the second child uses the ranking reading as in portfolio_split_calculator.json
+  const ordinal = k => ORDINALS[k] === "second" ? "second (ranking)" : ORDINALS[k];
+  if (n > 1) {
+    words.push({ name: "ranking" }, { name: "number" });
+    triples.push({ name: "ranking number", from: "ranking", verb: "with", to: "number" });
+    triples.push({ name: "second (ranking)", from: "second", verb: "must be one of", to: "ranking number" });
+  }
+  const weights = ["parent " + fmt(p.wp, 2)];
+  p.weights.forEach((w, k) => {
+    words.push({ name: ORDINALS[k] });
+    triples.push({ name: childName(k), from: "child", verb: "kind of", to: ordinal(k) });
+    triples.push({ name: childName(k) + " portfolio", from: "portfolio", verb: "of", to: childName(k) });
+    weights.push(childName(k) + " " + w);
+  });
+  triples.push({ name: "parent portfolio", from: "portfolio", verb: "of", to: "parent" });
+  triples.push({ name: "nominal value", from: "value", verb: "kind of", to: "nominal" });
+  const doc = {
+    version: "0.0.3",
+    data_version: "0.0.1",
+    time: new Date().toISOString().slice(0, 19).replace("T", " "),
+    user: "timon",
+    selection: ["portfolio split result"],
+    description: "Per-position allocation produced by the portfolio split calculator for target weights " + weights.join(", ") + ".",
+    words: words,
+    triples: triples,
+    sources: [{ name: "portfolio split calculator", description: "round-lot splitting walk with cumulative deviation carry, computed from the imported portfolio and FX rates" }],
+    values: values
+  };
+  const result = JSON.stringify(doc, null, 2);
+  return result;
+}
+
+function buildCsv(p, rows) {
+  const children = p.weights.map((w, k) => childName(k).replace(" ", "_"));
+  const lines = [["position", "type", "currency", "original"].concat(children, ["parent", "cum_deviation_" + children[0] + "_chf"]).join(";")];
+  for (const r of rows) {
+    lines.push([r.pos.id, r.pos.type, r.pos.ccy, r.pos.qty].concat(r.counts, [r.parent, r.cum[0].toFixed(2)]).join(";"));
+  }
+  const result = lines.join("\n");
+  return result;
+}
+
+let lastRows = [];
+let lastParams = null;
+
+function copyText(text, label) {
+  const out = document.getElementById("copyOut");
+  const msg = document.getElementById("copyMsg");
+  out.value = text;
+  const fallback = () => {
+    out.hidden = false;
+    out.focus();
+    out.select();
+    msg.textContent = "Copying is blocked here; the text is selected below.";
+  };
+  try {
+    navigator.clipboard.writeText(text).then(() => {
+      out.hidden = true;
+      msg.textContent = label + " copied.";
+    }, fallback);
+  } catch (e) {
+    fallback();
+  }
+}
+
+function renderChildren() {
+  const html = [];
+  CHILDREN.forEach((c, k) => {
+    const name = childName(k);
+    let remove = "";
+    if (CHILDREN.length > MIN_CHILDREN) {
+      remove = '<button class="btn btn-outline-secondary btn-sm" type="button" data-remove="' + k + '" title="Remove the ' + name + '" aria-label="Remove the ' + name + '"><i class="fas fa-times"></i></button>';
+    }
+    html.push('<div class="field"><label for="w' + k + '">Target weight ' + name + ' <span class="tag m">split agreement</span></label>'
+      + '<div class="row"><input id="w' + k + '" type="number" min="0" max="100" step="0.5" value="' + c.w + '"><span class="unit">%</span>' + remove + "</div></div>");
+  });
+  document.getElementById("children").innerHTML = html.join("");
+  document.getElementById("addChild").disabled = CHILDREN.length >= ORDINALS.length;
+}
+
+// a new child gets the weight of the first child if the parent can still give it, otherwise what the parent has left
+function addChild() {
+  const left = PERCENT - sumOf(CHILDREN.map(c => c.w));
+  CHILDREN.push({ w: Math.max(0, Math.min(CHILDREN[0].w, left)) });
+  renderChildren();
+  update();
+}
+
+function removeChild(event) {
+  const button = event.target.closest("[data-remove]");
+  if (button) {
+    CHILDREN.splice(Number(button.dataset.remove), 1);
+    renderChildren();
+    update();
+  }
+}
+
+function renderHoldings() {
+  const html = [];
+  POS.forEach((p, k) => {
+    const lotCell = p.type === "cash" ? '<td class=n>0.01</td>' : '<td class=n><input id="lot' + k + '" type="number" step="any" value="' + p.lot + '"></td>';
+    const priceCell = p.type === "cash" ? '<td class=n>—</td>' : '<td class=n><input id="price' + k + '" type="number" step="any" value="' + p.price + '"></td>';
+    html.push("<tr><td>" + p.id + "</td><td>" + p.ccy + '</td><td class=n><input id="qty' + k + '" type="number" step="any" value="' + p.qty + '"></td>' + priceCell + lotCell + "</tr>");
+  });
+  document.querySelector("#hold tbody").innerHTML = html.join("");
+  const fx = [];
+  for (const c of Object.keys(FX)) {
+    if (c !== "CHF") {
+      fx.push("<label for=\"fx" + c + "\">" + c + '</label><input id="fx' + c + '" type="number" step="any" value="' + FX[c] + '">');
+    }
+  }
+  document.getElementById("fxBox").innerHTML = fx.join("");
+}
+
+function syncInputs() {
+  CHILDREN.forEach((c, k) => {
+    c.w = num("w" + k);
+  });
+  POS.forEach((p, k) => {
+    p.qty = num("qty" + k);
+    if (p.type !== "cash") {
+      p.price = num("price" + k);
+      const lot = num("lot" + k);
+      p.lot = lot > 0 ? lot : 1;
+    }
+  });
+  for (const c of Object.keys(FX)) {
+    if (c !== "CHF") {
+      FX[c] = num("fx" + c);
+    }
+  }
+}
+
+function update() {
+  syncInputs();
+  const p = readParams();
+  document.getElementById("wp").textContent = pct(p.wp, 1);
+  document.getElementById("sumWarn").hidden = p.wp >= -SAME_WEIGHT_TOLERANCE;
+  document.getElementById("mirrorWarn").hidden = !(p.mirrorAsked && !p.mirror);
+  const rows = split(p);
+  const t = totals(p, rows);
+  renderSummary(p, t);
+  renderCheck(rows, t);
+  renderChart(p, rows);
+  renderWalk(p, rows);
+  lastRows = rows;
+  lastParams = p;
+}
+
+renderChildren();
+renderHoldings();
+document.addEventListener("input", update);
+document.addEventListener("change", update);
+document.getElementById("addChild").addEventListener("click", addChild);
+document.getElementById("children").addEventListener("click", removeChild);
+document.getElementById("copyJson").addEventListener("click", () => copyText(buildJson(lastParams, lastRows), "zukunft.com JSON"));
+document.getElementById("copyCsv").addEventListener("click", () => copyText(buildCsv(lastParams, lastRows), "CSV"));
+update();
+</script>
+
+</body></html>

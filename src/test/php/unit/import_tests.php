@@ -546,6 +546,50 @@ class import_tests
         $test_name = '... and its calc validation reproduces every result of the chain';
         $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
 
+        // the CBAM calculator use case chains the embedded emission, the free allocation
+        // adjustment, the carbon price deduction, the obligation and the cost of an import, so
+        // every pre-calculated result of the file must be reproduced from its values and formulas
+        $test_name = 'the import of the CBAM calculator use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::CBAM_CALCULATOR_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: a changed certificate price breaks the pre-calculated deduction and cost
+        $test_name = '... and a changed certificate price is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::CBAM_CERTIFICATE_PRICE, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '90';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the portfolio split use case stores the allocation of the split walk as modelled values,
+        // so the calc validation must reproduce the holding values, the remainder of the parent
+        // in every holding, the target values and the final split deviation
+        $test_name = 'the import of the portfolio split use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: an allocation of the first child that breaks the conservation of a holding
+        $test_name = '... and an allocation that does not conserve the holding is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::FIRST_CHILD_PORTFOLIO, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '1';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
         // the unique keys use case is user data as well, so a normal user must import it
         $test_name = 'the import of the unique keys use case reports no problem';
         $msg = new user_message($t->usr1);

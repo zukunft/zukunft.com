@@ -164,6 +164,16 @@ class files
     // sample page (src/test/resources/web/html/use_cases/)
     const string PV_LIFETIME_BALANCE = 'pv_lifetime_balance';
     const string PV_LIFETIME_BALANCE_FILE = self::USE_CASE_PATH . self::PV_LIFETIME_BALANCE . self::JSON;
+    // the embedded emission, the CBAM certificates and the CBAM cost of an import into the EU
+    const string CBAM_CALCULATOR_FILE = self::USE_CASE_PATH . 'cbam_calculator' . self::JSON;
+    // the name of the generated page snapshot of the view of cbam_calculator.json next to the
+    // hand made sample page (src/test/resources/web/html/use_cases/)
+    const string CBAM_TREE_CALCULATOR = 'CBAM_tree_calculator';
+    // the inheritance split of a securities depot into the parent portfolio and two child
+    // portfolios; the name is also the name of the generated page snapshot next to the hand made
+    // sample page (src/test/resources/web/html/use_cases/)
+    const string PORTFOLIO_SPLIT_CALCULATOR = 'portfolio_split_calculator';
+    const string PORTFOLIO_SPLIT_CALCULATOR_FILE = self::USE_CASE_PATH . self::PORTFOLIO_SPLIT_CALCULATOR . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -361,6 +371,8 @@ class files
         // appended after the start page data for the same reason: a new use case file is always
         // added at the end of this list, because its phrases get the next free ids
         self::PV_LIFETIME_BALANCE_FILE,
+        self::CBAM_CALCULATOR_FILE,
+        self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
     ];
 
     // system data with code ids added after the database ids of the tested phrases have been
