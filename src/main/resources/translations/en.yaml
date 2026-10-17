@@ -83,7 +83,7 @@ messages:
   system_title_about: "About"
   system_title_setup: "Setup"
   system_title_table_editor: "Table editor"
-  system_title_calculation_editor: "Calculation editor"
+  system_title_calculation_editor: "Calculator editor"
   editor_button_show: "show"
   process_catch_title_start: "Start"
   process_catch_title_main: "Main inputs"

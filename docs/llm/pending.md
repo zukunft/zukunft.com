@@ -40,13 +40,19 @@ the test run after each step (an llm never runs test/*, docs/llm/coding.md).
    for every step of the lookup, an item without order triple and a phrase without calculator
    triples (the title and the link to the editor)
 4. the view selection by the phrase: `phrase::name_link` uses the default view of the phrase
-   and `frontend::default_view_id` takes it for a url with `id` and without `m`
+   if it is a phrase view, and `frontend::phrase_view_id` takes it for a url with `id` and
+   without `m`
 5. the three renderers from the existing `ui_list` functions, including the steps marked ‡ in
-   the overview of the guide: the page title with the calculator label, the `use-case` frame
-   with header, grid, aside and section panel, the `scroll` and `tbody` frame of both tables,
-   the sources heading, the orientation hint written by the server and "Save" as the button
-   text; the views `Calculator` and `Calculator editor` with the view relation go to the
-   system data
+   the overview of the guide, in three commits:
+   - 5a the views `Calculator` (`calculator_views.json`) and `Calculator editor` (the
+     placeholder of `editor_views.json`) with the view relation in the system data, the
+     former system view `Calculator` renamed to `Comparison table`, and the `use-case`
+     frame with header, grid, aside and section panel
+   - 5b the `calculator input` renderer: the `inputs` frame, the input fields, the
+     orientation hint written by the server, "Save" as the button text and the assumptions
+   - 5c the `calculation result` renderer: the page title with the calculator label, the
+     `scroll` and `tbody` frame of both tables, the detail tables, the notes and the
+     sources with their heading
 6. replace the view part of `pv_lifetime_balance.json` with the data of the sample json: add
    the use case triples (the triples without a code id, incl. the general triples of the
    phrases), give `example PV installation` the `"view": "Calculator"`, remove the view
@@ -295,7 +301,6 @@ and check if some of the cache resets can be switched off to speed up
 
 3. Two steps in one commit. Steps 3 (calculator reader) and 4 (default view of a phrase) are uncommitted together, but pending.md asks for one commit per step. Splitting is possible because the step 4 changes are in separate files and hunks: cfg/word/triple.php, web/word/triple.php, web/phrase/phrase.php, frontend.php, horizontal_tests.php, triple_tests.php, phrase_ui_tests.php, system_view_ui_tests.php, the guide, the api fixtures and the snapshots.
 4. Unrelated pending.md section. The new "## speed up" section doesn't belong to either step; better as its own commit.
-5. Step 4 wording in pending.md. It still names frontend::default_view_id, but the code is frontend::phrase_view_id.
 6. Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
 7. Hard-to-read condition in dbo_for_url (frontend.php:2710). It reads the url id with ?? 0 and then also checks array_key_exists. It is correct, but a local $url_id would make it easier to read.
 

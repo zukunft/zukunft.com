@@ -39,6 +39,7 @@ include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::SHARED . 'library.php';
@@ -47,6 +48,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -69,12 +71,14 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_tests
@@ -321,6 +325,73 @@ class import_tests
         }
         // negative: only a system, system test or developer user may set a code id
         $test_name = 'a normal user cannot import the code id of a calculator keyword';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
+
+        // the calculator is a system view with the three components that are the same for every
+        // calculator page; the url selects it by its code id and the edit menu offers the editor
+        $json_array = json_decode(file_get_contents(cfg_files::CALCULATOR_VIEWS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the calculator view file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        // the import with a database refuses the file if a view links a component that the file
+        // does not define, which the import without a database does not report
+        $cmp_names = array_column($json_array[json_fields::COMPONENTS], json_fields::NAME);
+        $missing = [];
+        foreach ($json_array[json_fields::VIEWS] as $msk_json) {
+            foreach ($msk_json[json_fields::COMPONENTS] ?? [] as $lnk_json) {
+                if (!in_array($lnk_json[json_fields::NAME], $cmp_names)) {
+                    $missing[] = $lnk_json[json_fields::NAME];
+                }
+            }
+        }
+        $test_name = 'every component of the calculator views is defined in the same file';
+        $t->assert($test_name, implode(', ', $missing), '');
+        // a view or a component of system_views.json that this file repeats must be repeated
+        // unchanged, because the import refuses a divergent field e.g. another description;
+        // only the components of the calculator view are added here
+        $sys_json = json_decode(file_get_contents(files_shared::SYSTEM_VIEWS), true);
+        $diff = [];
+        foreach ([json_fields::VIEWS, json_fields::COMPONENTS] as $key) {
+            $sys_lst = array_column($sys_json[$key], null, json_fields::NAME);
+            foreach ($json_array[$key] as $obj_json) {
+                $sys_obj = $sys_lst[$obj_json[json_fields::NAME]] ?? null;
+                unset($obj_json[json_fields::COMPONENTS]);
+                if ($sys_obj !== null and $obj_json != $sys_obj) {
+                    $diff[] = $obj_json[json_fields::NAME];
+                }
+            }
+        }
+        $test_name = 'the views and components of system_views.json are repeated unchanged';
+        $t->assert($test_name, implode(', ', $diff), '');
+        $msk = $dto->get_view_by_name(views::CALCULATOR_NAME, $msg);
+        $test_name = 'the import sets the code id of the calculator view';
+        $t->assert($test_name, $msk?->get_code_id(), views::CALCULATOR);
+        $test_name = '... and links the title, the input and the result component';
+        $t->assert($test_name, $msk?->component_links() ?? 0, 3);
+        $test_name = '... and sets the use case style for the header and the grid of the page';
+        $t->assert($test_name, $msk?->get_style()?->get_code_id(), view_styles::USE_CASE);
+        foreach ([
+                     components::CALCULATOR_TITLE_NAME => [components::CALCULATOR_TITLE, component_types::CALCULATOR_TITLE],
+                     components::CALCULATOR_INPUT_NAME => [components::CALCULATOR_INPUT, component_types::CALCULATOR_INPUT],
+                     components::CALCULATION_RESULT_NAME => [components::CALCULATION_RESULT, component_types::CALCULATION_RESULT],
+                 ] as $name => [$code_id, $type_code_id]) {
+            $cmp = $dto->get_component_by_name($name, $msg);
+            $test_name = 'the import sets the code id of the component ' . $name;
+            $t->assert($test_name, $cmp?->get_code_id(), $code_id);
+            $test_name = '... and its type';
+            $t->assert($test_name, $cmp?->type_code_id(), $type_code_id);
+        }
+        // the comparison table is created by this file, so that the calculator keeps the id of the former view
+        $test_name = 'the import sets the code id of the comparison table';
+        $t->assert($test_name, $dto->get_view_by_name(views::COMPARISON_TABLE_NAME, $msg)?->get_code_id(), views::COMPARISON_TABLE);
+        $mrl = $dto->view_relation_list()->lst()[0] ?? null;
+        $test_name = 'the edit menu of the calculator offers the calculator editor';
+        $t->assert($test_name, $mrl?->get_predicate_code_id(), view_relation_types::EDITOR);
+        $t->assert($test_name, $mrl?->child()?->name(), views::CALCULATOR_EDITOR_NAME);
+        $test_name = 'a normal user cannot import the code id of the calculator view';
         $msg = new user_message($t->usr_normal);
         $imp->get_data_object($json_array, $msg);
         $t->assert_false($test_name, $msg->is_ok());

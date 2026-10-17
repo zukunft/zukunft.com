@@ -1255,10 +1255,10 @@ class test_base
      * test a view with a sample user object where both are selected by their name, never by the
      * database id or the code id: a use case (files::USE_CASE_FILES) is user data, which has no
      * code id and whose ids follow the import, so its view and its objects are named like a user
-     * names them e.g. the "Calculator" view with the triple "PV in Switzerland"
+     * names them e.g. the "Comparison table" view with the triple "PV in Switzerland"
      * (docs/llm/json_structure.md "Use case files")
      *
-     * @param string $view_name the name of the view that should be tested e.g. views::CALCULATOR_NAME
+     * @param string $view_name the name of the view that should be tested e.g. views::COMPARISON_TABLE_NAME
      * @param user $usr to define for which user the view should be created
      * @param db_object_seq_id $dbo the empty database object of the class that should be shown
      * @param string $obj_name the name of the database object that should be loaded and shown

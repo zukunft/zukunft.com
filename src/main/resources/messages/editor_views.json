@@ -4,9 +4,9 @@
   "time": "2026-10-13 12:00:00",
   "user": "timon",
   "selection": [
-    "the placeholder views of the table and the calculation editor"
+    "the placeholder views of the table and the calculator editor"
   ],
-  "description": "The table editor and the calculation editor as placeholder views with a title and a phrase selector, the table editor also with the related columns of each column tier, so that the steps of docs/table_creation.md can link to them before the editors are done. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "description": "The table editor and the calculator editor as placeholder views with a title and a phrase selector, the table editor also with the related columns of each column tier, so that the steps of docs/table_creation.md can link to them before the editors are done. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
   "words": [
     {
       "name": "column"
@@ -101,9 +101,9 @@
       ]
     },
     {
-      "name": "Calculation editor",
-      "description": "placeholder to define a calculation starting from a word or triple",
-      "code_id": "calculation_editor",
+      "name": "Calculator editor",
+      "description": "placeholder to define the calculator page of a word or triple",
+      "code_id": "calculator_editor",
       "type": "word",
       "components": [
         {

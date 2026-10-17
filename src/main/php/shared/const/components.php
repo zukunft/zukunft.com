@@ -134,6 +134,14 @@ class components
     // the refresh button of the process catch detail page and the place input of process_catch_views.json
     const string PROCESS_CATCH_REFRESH_NAME = 'button refresh process catch detail';
     const string GEOLOCATOR_NAME = 'geolocator place of user';
+    // the three components of the calculator view, which are the same for every calculator page
+    // (calculator_views.json)
+    const string CALCULATOR_TITLE = 'title_calculator';
+    const string CALCULATOR_TITLE_NAME = 'title calculator';
+    const string CALCULATOR_INPUT = 'calculator_input';
+    const string CALCULATOR_INPUT_NAME = 'calculator input';
+    const string CALCULATION_RESULT = 'calculation_result';
+    const string CALCULATION_RESULT_NAME = 'calculation result';
 
     // select object types
     const string FORM_PHRASE_TYPE = 'form_field_phrase_type';

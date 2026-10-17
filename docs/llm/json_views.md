@@ -309,13 +309,18 @@ Optional, default `below`. The values that have coded layout behaviour:
 |---|---|
 | `below` | start a new full-width row (the default) |
 | `combine` | stack below the previous component **within the same column** |
-| `side_or_first_below` | start the first column of a side-by-side group |
+| `side_or_first_below` | open a side-by-side group: the components since the last `below` row become its first column, and this component starts the second column |
 | `side_or_below` | start a following column of that group |
 | `side_or_last_below` | start the last column of that group |
 
 A side-or-below group shows its columns next to each other on wide screens and
-wraps them onto fewer rows (down to one) as the screen narrows; build a multi-row
-column by giving its first component the `side_or_*` type and the rest `combine`.
+wraps them onto fewer rows (down to one) as the screen narrows. Each `side_or_*`
+type closes the components collected before it as a column, so the first column
+needs no `side_or_*` type of its own, and a group of two columns needs only
+`side_or_last_below` on the first component of the second column, e.g. the
+`Calculator` view. Build a multi-row column by giving its first component the
+`side_or_*` type and the rest `combine`. The group ends with the next `below`
+component or the end of the view.
 `style` is an optional Bootstrap column class (e.g. `col-md-4`) or one of the
 coded styles of `view_styles.csv`: `text-left`, `fields-in-line` and `all-rows`,
 which shows every row of a list component instead of the short list with the

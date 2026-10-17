@@ -629,13 +629,38 @@ class test_components extends test_objects
      */
     function components_side_or_below(view $msk): component_link_list
     {
-        $lst = new component_link_list($this->env->usr1);
-        $cols = [
+        return $this->text_component_links($msk, [
             [components::COL_FIRST_ID, components::COL_FIRST_NAME, null],
             [components::COL_SECOND_ID, components::COL_SECOND_NAME, position_types::SIDE_OR_FIRST_BELOW],
             [components::COL_THIRD_ID, components::COL_THIRD_NAME, position_types::SIDE_OR_BELOW],
             [components::COL_FOURTH_ID, components::COL_FOURTH_NAME, position_types::SIDE_OR_LAST_BELOW],
-        ];
+        ]);
+    }
+
+    /**
+     * the components of a use case page like the calculator: a header row and a side-or-below
+     * group of the input column and the result column
+     *
+     * @param view $msk the view to link the components to
+     * @return component_link_list with the header, the input and the result component
+     */
+    function components_use_case(view $msk): component_link_list
+    {
+        return $this->text_component_links($msk, [
+            [components::COL_FIRST_ID, components::COL_FIRST_NAME, null],
+            [components::COL_SECOND_ID, components::COL_SECOND_NAME, null],
+            [components::COL_FOURTH_ID, components::COL_FOURTH_NAME, position_types::SIDE_OR_LAST_BELOW],
+        ]);
+    }
+
+    /**
+     * @param view $msk the view to link the components to
+     * @param array $cols the id, the name and the position type of each text component
+     * @return component_link_list with the text components in the given order
+     */
+    private function text_component_links(view $msk, array $cols): component_link_list
+    {
+        $lst = new component_link_list($this->env->usr1);
         $pos = 1;
         foreach ($cols as [$id, $name, $pos_type]) {
             $lnk = new component_link($this->env->usr1);

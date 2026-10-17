@@ -2707,9 +2707,10 @@ class frontend
         // of a view are typed (see system_form::title_phrase), so the phrase id of the url decides
         // the object: a negative phrase id is a triple, a positive one a word; a triple view
         // called with the phrase id e.g. by phrase::name_link gets the triple of the phrase id
-        if (($dbo instanceof phrase_ui or ($dbo instanceof triple_ui and (int)($url_array[url_var::ID] ?? 0) < 0))
-            and array_key_exists(url_var::ID, $url_array)) {
-            $dbo = $this->phrase_id_to_dbo_ui((int)$url_array[url_var::ID]);
+        $url_id = $url_array[url_var::ID] ?? null;
+        if ($url_id !== null
+            and ($dbo instanceof phrase_ui or ($dbo instanceof triple_ui and (int)$url_id < 0))) {
+            $dbo = $this->phrase_id_to_dbo_ui((int)$url_id);
         }
         return $dbo;
     }

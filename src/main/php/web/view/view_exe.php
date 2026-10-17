@@ -44,6 +44,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
@@ -196,6 +198,9 @@ class view_exe extends view_base
             $style_id = null;
             // the columns of a side-or-below group that are stacked on small screens
             $col_lst = [];
+            // a use case page e.g. the calculator shows its first row as the header and its
+            // side-or-below group as panels in one grid instead of the bootstrap rows and columns
+            $use_case = $html->get_style_code($this->get_style_id()) == view_styles::USE_CASE;
             foreach ($this->cmp_lst->lst() as $cmp) {
                 $pos_type = $cmp->pos_type_code_id($cfg->typ_lst_cache);
                 // add previous collected components to the final result
@@ -205,8 +210,11 @@ class view_exe extends view_base
                         if ($col_lst != []) {
                             // close the side-or-below group with the last collected column
                             $col_lst[] = $row;
-                            $result .= $this->dsp_side_or_below_row($col_lst, $msg);
+                            $result .= $this->dsp_side_or_below_row($col_lst, $msg, $use_case);
                             $col_lst = [];
+                            $style_id = null;
+                        } elseif ($use_case and $result == '') {
+                            $result .= $html->block(html_base::HEADER, $row);
                             $style_id = null;
                         } elseif ($auto_row) {
                             // the row uses the style of the component e.g. col-md-4 for a short line
@@ -285,7 +293,7 @@ class view_exe extends view_base
             if ($col_lst != []) {
                 // close a side-or-below group at the end of the view
                 $col_lst[] = $html->add_style($row, $style_id);
-                $result .= $this->dsp_side_or_below_row($col_lst, $msg);
+                $result .= $this->dsp_side_or_below_row($col_lst, $msg, $use_case);
             } elseif ($row != '') {
                 $result .= $row;
             }
@@ -301,11 +309,23 @@ class view_exe extends view_base
      * as the screen gets narrower than the configured side widths
      *
      * @param array $col_lst the html code of the columns
+     * @param bool $use_case true for a use case page, whose first column is the input panel and
+     *                       every following column a result panel in one grid
      * @return string the html code of the row with the wrapping columns
      */
-    private function dsp_side_or_below_row(array $col_lst, user_message $msg): string
+    private function dsp_side_or_below_row(array $col_lst, user_message $msg, bool $use_case = false): string
     {
-        return new html_base()->div_row_wrapping_cols($col_lst, $msg);
+        $html = new html_base();
+        if (!$use_case) {
+            return $html->div_row_wrapping_cols($col_lst, $msg);
+        }
+        // empty columns are skipped like in a bootstrap row, so the first panel shown is the input panel
+        $panels = '';
+        foreach (array_values(array_filter($col_lst, fn($col) => $col != '')) as $pos => $col) {
+            $tag = $pos == 0 ? html_base::ASIDE : html_base::SECTION;
+            $panels .= $html->block($tag, $col, styles::PANEL);
+        }
+        return $html->div($panels, styles::GRID);
     }
 
 

@@ -371,6 +371,18 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view with a header row and a side-or-below group of an input and a result column
+     *         to test the frame of a use case page like the calculator
+     */
+    function view_use_case(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_use_case($msk);
+        return $msk;
+    }
+
+    /**
      * @return view with two text fields that share one line like the last update and the
      *              source of the value default page
      */

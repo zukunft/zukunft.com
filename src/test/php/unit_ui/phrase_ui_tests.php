@@ -116,13 +116,19 @@ class phrase_ui_tests
         // a phrase with an own view e.g. the calculator of a PV installation is linked to that
         // view with the phrase id, which is negative for a triple (frontend::dbo_for_url)
         $trp_msk = $t_trp->triple_pi();
-        $trp_msk->set_view_id(views::MATH_CONST_ID);
+        $trp_msk->set_view_id(views::CALCULATOR_ID);
         $phr_msk = new phrase($trp_msk->phrase()->api_json());
-        $test_name = 'a phrase with a default view links to that view';
-        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::MATH_CONST_ID);
+        $test_name = 'a phrase with a default phrase view links to that view';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::CALCULATOR_ID);
         $test_name = '... with the phrase id';
         $t->assert_text_contains($test_name, $phr_msk->name_link(), 'id=' . $phr_msk->id());
         $t->assert_true($test_name, $phr_msk->id() < 0);
+        // negative: a default view that is not a phrase view cannot take the phrase id, so the
+        // phrase is linked to the triple view
+        $trp_msk->set_view_id(views::MATH_CONST_ID);
+        $phr_msk = new phrase($trp_msk->phrase()->api_json());
+        $test_name = 'a phrase with a default view that is no phrase view links to the triple view';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);
         // negative: a phrase without a default view links to the triple view
         $test_name = 'a phrase without a default view links to the triple view';
         $t->assert_text_contains($test_name, $trp->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);

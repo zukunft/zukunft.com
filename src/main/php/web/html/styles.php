@@ -75,6 +75,10 @@ class styles
     const string SORT_ACTIVE = 'sort-active';
     // the charts of a table beside each other, wrapping on a narrow screen (see style_html.css)
     const string CHART_ROW = 'chart-row';
+    // the input panel beside the result panels of a use case page, stacked on a phone, and the
+    // frame of each panel (see view_exe::dsp_entries and the .use-case rules of style_html.css)
+    const string GRID = 'grid';
+    const string PANEL = 'panel';
     // the line above the charts of a table shown without the table: the header of the table
     // centred and the "..." menu of the table in the top right corner (see style_html.css)
     const string CHART_HEAD = 'chart-head';

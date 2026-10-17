@@ -705,13 +705,15 @@ class phrase extends combine_named
 
     /**
      * the default view of the phrase e.g. the calculator of example PV installation, which a link
-     * calls with the phrase id, negative for a triple (see frontend::dbo_for_url)
+     * calls with the phrase id, negative for a triple (see frontend::dbo_for_url); only a phrase
+     * view takes a phrase id, so any other default view is not used
      *
-     * @return int the database id of the default view of the phrase or 0 if it has none
+     * @return int the database id of the default phrase view of the phrase or 0 if it has none
      */
     function own_view_id(): int
     {
-        return $this->obj()?->view_id() ?? 0;
+        $msk_id = $this->obj()?->view_id() ?? 0;
+        return in_array($msk_id, views::PHRASE_MASKS_IDS) ? $msk_id : 0;
     }
 
     /**

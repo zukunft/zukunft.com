@@ -214,6 +214,8 @@ class files
     // the keywords of the calculator view: the lists, the texts and the flags of a calculator page,
     // so that the page of a phrase is defined by triples of a use case file (docs/llm/new_view_sample_pv_balance.md)
     const string CALCULATOR_KEYWORDS_FILE = self::MESSAGE_PATH . 'calculator_keywords' . self::JSON;
+    // the calculator view with its title, input and result component and the editor relation
+    const string CALCULATOR_VIEWS_FILE = self::MESSAGE_PATH . 'calculator_views' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -375,6 +377,7 @@ class files
         self::PROCESS_CATCH_FIELDS_FILE,
         self::PROCESS_CATCH_VIEWS_FILE,
         self::CALCULATOR_KEYWORDS_FILE,
+        self::CALCULATOR_VIEWS_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

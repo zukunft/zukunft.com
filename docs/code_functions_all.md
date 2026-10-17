@@ -7406,6 +7406,7 @@
             _base.php
     \-- main - section for function main not yet defined that it should be internal in /html/html_base.php
     \-- div - section for function div not yet defined that it should be internal in /html/html_base.php
+    \-- block - section for function block not yet defined that it should be internal in /html/html_base.php
     \-- concat_text - section for function concat_text not yet defined that it should be internal in /html/html_base.php
     \-- concat_entry_text - section for function concat_entry_text not yet defined that it should be internal in /html/h
             tml_base.php
@@ -10427,6 +10428,8 @@
         \-- html_base - wrap the main tag around html body code
     \-- div
         \-- html_base - wrap the div tag around html code
+    \-- block
+        \-- html_base - wrap a block tag e.g. the header, aside or section of a use case page around html code
     \-- concat_text
         \-- html_base - concatenate two text snippets with the given separator if both are set
     \-- concat_entry_text

@@ -478,13 +478,13 @@ class system_views_read_tests
      */
     function run_use_cases(test_cleanup $t, data_object_ui $cfg): void
     {
-        // the calculator shows the values of a phrase with the defined columns: the use case
+        // the comparison table shows the values of a phrase with the defined columns: the use case
         // "PV in Switzerland" is the sample with the avoided emission per reference mix
-        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        $t->assert_view_by_name(views::COMPARISON_TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
         // the editor placeholders show only their title and the phrase selector
         $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
-        $t->assert_view_by_name(views::CALCULATION_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        $t->assert_view_by_name(views::CALCULATOR_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
         // the process catch pages are appended to the seed views, so they are selected by name like the editors
         $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);

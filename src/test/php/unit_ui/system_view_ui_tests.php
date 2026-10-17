@@ -1004,10 +1004,10 @@ class system_view_ui_tests
                 } else {
                     $msg->usr = null;
                 }
-                // the start page, the table and the calculator show the values of the global
-                // problems, so they render with the start page cache that carries them
+                // the start page, the table and the comparison table show the values of the
+                // global problems, so they render with the start page cache that carries them
                 $dto = $ui->dto;
-                if (in_array($id, [views::START_ID, views::TABLE_ID, views::CALCULATOR_ID])) {
+                if (in_array($id, [views::START_ID, views::TABLE_ID, views::COMPARISON_TABLE_ID])) {
                     $dto = $dto_start;
                 } elseif ($dbo instanceof value or $dbo instanceof result) {
                     $dto = $dto_smp;

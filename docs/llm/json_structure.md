@@ -164,10 +164,10 @@ any user may add. So it is user data, not system data:
   triple of the page, the values — and never by a code id or a database id: the
   code id does not exist, and the database id follows the import order, so it moves
   with every file imported before it. In the tests this means
-  `test_base::assert_view_by_name(views::CALCULATOR_NAME, $usr, new triple(),
+  `test_base::assert_view_by_name(views::COMPARISON_TABLE_NAME, $usr, new triple(),
   triple_names::PV_IN_SWITZERLAND, $cfg)` instead of `assert_view` with an id, a
   `triple_names::PV_IN_SWITZERLAND` name const **without** an `_ID` twin, and a
-  snapshot file named by the names (`calculator_triple_pv_in_switzerland.html`),
+  snapshot file named by the names (`comparison_table_triple_pv_in_switzerland.html`),
   so no re-baseline ever touches a use case test.
 - the unit test that runs the calc-validation of the file imports it as a **normal**
   user (`import_tests`), so a code id in the file fails the test — that is the

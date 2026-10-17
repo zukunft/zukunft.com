@@ -1141,10 +1141,10 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case phrase::class:
-                // the table and the calculator show the values of a phrase as a table, so their
-                // sample is the triple "global warming", which has the values of the start page
-                // fixture, instead of the filled test phrase that has none
-                if (in_array($msk_id, [views::TABLE_ID, views::CALCULATOR_ID])) {
+                // the table and the comparison table show the values of a phrase as a table, so
+                // their sample is the triple "global warming", which has the values of the start
+                // page fixture, instead of the filled test phrase that has none
+                if (in_array($msk_id, [views::TABLE_ID, views::COMPARISON_TABLE_ID])) {
                     $obj = $t_trp->global_warming()->phrase();
                 } else {
                     $obj = $t_phr->phrase_filled();

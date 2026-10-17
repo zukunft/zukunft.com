@@ -166,6 +166,10 @@ class html_base
     const string MIDDLE_DOT = ' &middot; ';
     const string P = 'p';
     const string DIV = 'div';
+    // the parts of a use case page: the title on top, the input panel and the result panels
+    const string HEADER = 'header';
+    const string ASIDE = 'aside';
+    const string SECTION = 'section';
     const string UL = 'ul';
     const string LI = 'li';
     const string BUTTON = 'button';
@@ -3183,6 +3187,19 @@ class html_base
      */
     function div(string $txt, string $style = '', string $id = ''): string
     {
+        return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * wrap a block tag e.g. the header, aside or section of a use case page around html code
+     * @param string $tag the html block tag e.g. self::SECTION
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @param string $id the html id
+     * @return string the wrapped html code
+     */
+    function block(string $tag, string $txt, string $style = '', string $id = ''): string
+    {
         $attr = '';
         if ($style != '') {
             $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
@@ -3190,7 +3207,7 @@ class html_base
         if ($id != '') {
             $attr .= ' ' . self::ID . '="' . $id . '"';
         }
-        return '<' . self::DIV . $attr . '>' . $txt . '</' . self::DIV . '>';
+        return '<' . $tag . $attr . '>' . $txt . '</' . $tag . '>';
     }
 
     /**

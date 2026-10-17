@@ -1,0 +1,94 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-17 12:00:00",
+  "user": "timon",
+  "selection": [
+    "the calculator view with its three components"
+  ],
+  "description": "The calculator page of a phrase (docs/llm/new_view_sample_pv_balance.md): the title, the inputs and the results are the same three components for every calculator, and what they show is selected by the calculator triples of the phrase (calculator_keywords.json). The view style use-case shows the title as the header and the inputs beside the results. The calculator view itself is created by system_views.json, so that it keeps its database id, and gets its components here; the comparison table, which shows the values of a phrase with the defined columns, is created here, and its two components of system_views.json are repeated unchanged, because the import links a view only to the components of its own file. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "components": [
+    {
+      "name": "phrase title",
+      "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
+      "type": "phrase_title",
+      "code_id": "phrase_title_phrase"
+    },
+    {
+      "name": "table with related columns",
+      "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
+      "type": "table_with_related_columns",
+      "code_id": "table_with_related_columns_phrase"
+    },
+    {
+      "name": "title calculator",
+      "description": "the calculator label of the phrase as the title, else the phrase name, and the calculator hint as the lead text",
+      "type": "calculator_title",
+      "code_id": "title_calculator"
+    },
+    {
+      "name": "calculator input",
+      "description": "the input fields and the assumptions that the calculator triples of the phrase select, in their order, with the save button",
+      "type": "calculator_input",
+      "code_id": "calculator_input"
+    },
+    {
+      "name": "calculation result",
+      "description": "the result table and the detail tables that the calculator triples of the phrase select, with the notes of the formulas and the sources of the values",
+      "type": "calculation_result",
+      "code_id": "calculation_result"
+    }
+  ],
+  "views": [
+    {
+      "name": "Comparison table",
+      "description": "the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",
+      "code_id": "comparison_table",
+      "type": "word",
+      "components": [
+        {
+          "position": "1",
+          "name": "phrase title"
+        },
+        {
+          "position": "2",
+          "name": "table with related columns",
+          "position_type": "combine"
+        }
+      ]
+    },
+    {
+      "name": "Calculator",
+      "description": "the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",
+      "code_id": "calculator",
+      "type": "triple",
+      "style": "use-case",
+      "components": [
+        {
+          "position": "1",
+          "name": "title calculator"
+        },
+        {
+          "position": "2",
+          "name": "calculator input"
+        },
+        {
+          "position": "3",
+          "name": "calculation result",
+          "position_type": "side_or_last_below"
+        }
+      ]
+    },
+    {
+      "name": "Calculator editor"
+    }
+  ],
+  "view_relations": [
+    {
+      "parent": "Calculator",
+      "child": "Calculator editor",
+      "type": "editor",
+      "description": "the edit menu of the calculator offers the calculator editor with the same phrase"
+    }
+  ]
+}

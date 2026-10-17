@@ -601,7 +601,7 @@ messages:
   system_title_about: "Über"
   system_title_setup: "Einrichtung"
   system_title_table_editor: "Tabelleneditor"
-  system_title_calculation_editor: "Berechnungseditor"
+  system_title_calculation_editor: "Rechnereditor"
   editor_button_show: "anzeigen"
   process_catch_title_start: "Start"
   process_catch_title_main: "Wichtigste Angaben"
