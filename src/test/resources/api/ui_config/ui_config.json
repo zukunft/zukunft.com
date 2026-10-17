@@ -7321,7 +7321,7 @@
             {
                 "name": "is follower of",
                 "code_id": "follow",
-                "description": "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'",
+                "description": "the order of two phrases: the time order e.g. 2025 is follower of 2024 or the order of the items of a list e.g. the inputs of a calculator page; for the table column order use 'is next main column after' or 'is explaining column for'",
                 "plural": "are followers of",
                 "reverse": "is followed by",
                 "rev_plural": "are followed by",

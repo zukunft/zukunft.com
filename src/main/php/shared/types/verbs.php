@@ -84,7 +84,7 @@ class verbs
     const string FOLLOW = "follow"; // to order two phrases in time e.g. 2025 is follower of 2024
     const string FOLLOW_NAME = "is follower of";
     const int FOLLOW_ID = 33;
-    const string FOLLOW_COM = "the time order of two phrases e.g. 2025 is follower of 2024; for the table column order use 'is next main column after' or 'is explaining column for'";
+    const string FOLLOW_COM = "the order of two phrases: the time order e.g. 2025 is follower of 2024 or the order of the items of a list e.g. the inputs of a calculator page; for the table column order use 'is next main column after' or 'is explaining column for'";
     const string MEASURE = "measure_type";
     const string MEASURE_NAME = "is measure type for";
     const int MEASURE_ID = 29;

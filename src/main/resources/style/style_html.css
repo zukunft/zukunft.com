@@ -928,3 +928,199 @@ a:hover {
     gap: 14px;
     min-width: 0;
 }
+/* the result panel keeps more space between the table, the details, the notes and the sources */
+.use-case section.panel {
+    gap: 18px;
+}
+.use-case header h4 {
+    margin: 0;
+    color: #274b8f;
+}
+.use-case header p {
+    margin: 6px 0 0;
+    color: #9ea09e;
+    max-width: 70ch;
+}
+/* the section headings of a panel e.g. inputs, main results and sources */
+.use-case h2 {
+    font-size: .78rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #9ea09e;
+    margin: 0;
+    font-weight: 600;
+}
+.use-case .inputs {
+    display: grid;
+    gap: 14px;
+}
+.use-case .field {
+    display: grid;
+    gap: 4px;
+}
+.use-case .field label {
+    font-size: .88rem;
+    font-weight: 500;
+}
+.use-case .inputs .field label {
+    color: #385eb7;
+}
+.use-case .field .hint {
+    font-size: .76rem;
+    color: #9ea09e;
+}
+/* the input and its unit in one line; only inside a field, because the layout of the page */
+/* uses the bootstrap row, whose rule would make every child of the field full width */
+.use-case .field .row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-items: center;
+    margin: 0;
+}
+.use-case .field .row > * {
+    width: auto;
+    max-width: none;
+    flex-shrink: 1;
+    padding: 0;
+}
+.use-case .field .row > input {
+    flex: 1 1 auto;
+}
+.use-case input,
+.use-case select {
+    font: inherit;
+    font-size: .95rem;
+    background: #ffffff;
+    color: #274b8f;
+    border: 1px solid #b9c6d6;
+    border-radius: 6px;
+    padding: 7px 9px;
+    width: 100%;
+    min-width: 0;
+}
+.use-case input:focus-visible,
+.use-case select:focus-visible,
+.use-case summary:focus-visible {
+    outline: 2px solid #385eb7;
+    outline-offset: 1px;
+}
+.use-case .unit {
+    font-size: .8rem;
+    color: #9ea09e;
+    white-space: nowrap;
+    min-width: 3.5em;
+}
+/* the tag behind a label: m for a measured value with a source, a for an assumed value */
+.use-case .tag {
+    font-size: .68rem;
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid #b9c6d6;
+    color: #9ea09e;
+    margin-left: 6px;
+    font-weight: 400;
+}
+.use-case .tag.m {
+    color: #385eb7;
+    border-color: #385eb7;
+}
+.use-case .tag.a {
+    color: #6b86c2;
+    border-color: #6b86c2;
+}
+/* the collapsed blocks e.g. the assumptions and the monthly details */
+.use-case details summary {
+    cursor: pointer;
+    font-size: .78rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #9ea09e;
+    font-weight: 600;
+}
+.use-case details[open] summary {
+    margin-bottom: 12px;
+}
+.use-case details .field {
+    margin-top: 10px;
+}
+.use-case details .more {
+    display: grid;
+    gap: 18px;
+}
+.use-case .scroll {
+    overflow-x: auto;
+}
+.use-case table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: .9rem;
+}
+.use-case th,
+.use-case td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #dee2e6;
+    text-align: left;
+    vertical-align: baseline;
+}
+.use-case th {
+    font-size: .74rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #9ea09e;
+    font-weight: 600;
+}
+.use-case td.n,
+.use-case th.n {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+/* the section row of a row group and the key row of a highlighted item */
+.use-case tr.sec td {
+    background: #dbe4f5;
+    font-weight: 600;
+    font-size: .8rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: #274b8f;
+}
+.use-case tr.key td {
+    font-weight: 600;
+}
+.use-case td .sub {
+    display: block;
+    font-size: .76rem;
+    color: #9ea09e;
+    font-weight: 400;
+}
+/* the sign of a number of a signed row group; red is the bootstrap danger colour */
+.use-case .pos {
+    color: #274b8f;
+}
+.use-case .neg {
+    color: #dc3545;
+}
+.use-case .notes {
+    font-size: .82rem;
+    color: #9ea09e;
+    display: grid;
+    gap: 6px;
+    max-width: 80ch;
+}
+.use-case .notes p {
+    margin: 0;
+}
+.use-case .notes strong {
+    color: #274b8f;
+}
+.use-case .src h2 {
+    margin-bottom: 8px;
+}
+.use-case .src ol {
+    margin: 0;
+    padding-left: 20px;
+    font-size: .82rem;
+    display: grid;
+    gap: 4px;
+}

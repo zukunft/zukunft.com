@@ -143,6 +143,126 @@ inserted, so the unique `ui_msg_code_id` is not duplicated.
 This mirrors the "define once, link many" pattern already used inside
 `system_views.json`.
 
+## Component or triple
+
+The first decision for a new view is which part of the page is a
+**component** and which part is a **triple**. The main criterion is whether
+the part **depends on the initial phrase** of the page: the same for every
+phrase → component, different per phrase → triple.
+
+### When and why a component
+
+Use a component for a part that is the **same for every phrase** of the view:
+
+- **It needs code.** A new kind of html, e.g. a number field, a selector, a
+  table with section rows or a collapsible block, is a component type, because
+  only code can create html (see `docs/llm/frontend.md`).
+- **It is layout.** Its place on the page (`position`, `position_type`,
+  `style`) belongs to the view, not to the data.
+- **It is a system text.** A heading like "Inputs" or a button like "Save" is the
+  translated `ui_msg_code_id` of the component and is the same for all phrases.
+
+Why: a component is code and layout. A developer changes it, a snapshot test
+checks it, and its `code_id` lets the code refer to it. Every phrase reuses
+the same few components, so a page has no lookups for its structure.
+
+Keep the components few and generic. A view has just the components of its
+first level, e.g. title, input and result. The pieces inside them (one field per
+input, one row per result) are created at runtime and are not linked in the
+view. A component that names a domain phrase (a `row` or `column` phrase) is a
+sign that the part should be a triple.
+
+### When and why a triple
+
+Use triples for everything that **differs from phrase to phrase**:
+
+- **What is shown:** which inputs, which assumptions, which columns, which rows,
+  which detail tables
+- **In which order:** an order triple per item: the item *is follower of* the
+  item before
+- **With which text:** labels and hints, as the description of a triple to
+  `calculator label` / `calculator hint`
+- **With which parameters:** the field type, the limits, the step and the
+  selector options of an input phrase
+
+Each of these triples links the phrase to a system keyword triple with a
+`code_id` (see `docs/llm/json_structure.md` "A system keyword with properties
+and types"). A number parameter is a value with the phrase and the keyword
+triple.
+
+Why: a triple is data, not code.
+- A page for a new phrase needs a json import and no developer.
+- Every user can change the triples in their own sandbox, e.g. in the editor
+  view, and the change is logged. The page of the other users stays the same
+  until they take over the change.
+- A triple about the phrase is used by every view of the phrase. `PV capacity
+  can be number with limits` defines the field on every page that has
+  PV capacity as an input.
+
+The cost is one lookup per kind of triple. Every triple therefore has a parent
+keyword triple that selects all triples of one kind in one load (see
+`docs/llm/new_view_sample_pv_balance.md`).
+
+### Neither: derive it
+
+What can be derived from the values, results, formulas and sources needs neither
+a component nor a triple:
+- the assumptions are the formula operands that the page phrase does not carry
+- the notes are the formula descriptions
+- the sources are the sources of the values used
+- the units are the unit phrases of the values
+- the tag "measured" / "assumed" comes from the source and the confidence of a value
+
+A triple for a derivable part would be a second truth that can contradict the
+first.
+
+### The decision in questions
+
+Ask these in order. The first yes decides:
+
+1. Can it be derived from the values, results, formulas or sources? → nothing to define
+2. Would another phrase show something else here? → triple
+3. Should a user be able to change it without a developer? → triple
+4. Does it need html that no component type creates yet? → a new component type
+5. Otherwise → an existing component in the view
+
+Then choose the level of a triple:
+- **On the phrase:** true for the phrase on every page, e.g. the field type of
+  `PV capacity`. Use the `process catch field (system)` keywords.
+- **For the page:** only true for this page of the phrase, e.g. that PV capacity
+  is the first input labelled "System size". Use the `calculator …` keywords.
+
+Follow "reduce to the max": no triple, component or layer that is not strictly
+needed.
+
+### Example: the calculator
+
+A `Calculator` view has three components: `title calculator`,
+`calculator input` and `calculation result`. For the phrase `PV installation`,
+everything else is triples:
+- the inputs: PV capacity, battery capacity, …
+- the result columns: lifetime, annual
+- the row groups and the detail tables, e.g. the monthly consumption mix
+
+They are triples from `PV installation` to the keywords `calculator input`,
+`calculator result column`, `calculator row group` and
+`calculator detail table`. The page phrase `example PV installation` finds them
+through the phrase it is built from, `PV installation`.
+
+Each input field is created at runtime with the page phrase and the input
+phrase as its context, e.g. `example PV installation` and `PV capacity`. From
+that context it takes:
+- its type from the field triple (`PV capacity can be number with limits`)
+- its limits and step from the values with the field phrase and the property
+  triple (`0.5` with `PV capacity` and `field step`)
+- the number it shows from the value with all context phrases
+
+How to create a new view on the "PV lifetime CO₂ balance" sample is described
+in `docs/llm/new_view_sample_pv_balance.md`. It covers the url, every component and
+triple, the `Calculator editor`, and the parent triple rule for the fast
+selection of all triples of one kind. Its machine readable form is
+`docs/llm/samples/new_view_sample_pv_balance.json`.
+
 ## Views
 
 A view is a named page layout that links an ordered list of components to a main
@@ -170,6 +290,9 @@ object type:
   component **by `name`** — defined in the `components` block above or re-declared
   canonically (see *Components*) — plus the link-only fields `position`,
   `position_type`, `style`.
+
+Which part of a page is a component and which part is a triple is decided first
+(see "Component or triple" above).
 
 ### Component positions are contiguous, starting at 1
 
