@@ -50,11 +50,10 @@
 2. **The link to the page** comes from the phrase. The page phrase has the
    `Calculator` view as its default view (the `view` field of the word or triple,
    `"view": "Calculator"` on `example PV installation` in the use case json), and
-   every link to the phrase uses it. A url with `id` and without `m` shows the
-   phrase with its default view. Both don't work yet: `phrase::name_link`
-   always uses the general word or triple view (`phrase::view_id`), and
-   `frontend::default_view_id` only fills a missing `m` if there is no `id`
-   either (see "Implementation steps").
+   every link to the phrase uses it (`phrase::name_link` with the phrase id,
+   negative for a triple). A url with `id` and without `m` shows the phrase
+   with its default view, else with the word or triple view
+   (`frontend::phrase_view_id`).
 3. **The view** is loaded by `url_to_html` with its three components. The
    triple with the id is the main object (`dbo`) and is given to every
    component.

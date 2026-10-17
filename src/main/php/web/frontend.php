@@ -987,6 +987,12 @@ class frontend
         // init the view
         $result = ''; // reset the html code var
 
+        // checked before the mapping, because the mapping sets the start view as the default view
+        // (a human or pod url is detected by its own view key)
+        $no_view = !array_key_exists(url_var::MASK_HUMAN, $url_array)
+            && !array_key_exists(url_var::MASK_POD, $url_array)
+            && in_array($url_array[url_var::MASK] ?? null, [null, '', 0, 'null']);
+
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
         $url_array = $url_map->url_to_standard($url_array, $msg_ui);
@@ -1006,6 +1012,13 @@ class frontend
         //$api_msg = $this->api_get(type_lists::class);
         //$frontend_cache = new type_lists($api_msg);
 
+        // a phrase url without a view shows the phrase with its default view e.g. the calculator
+        if ($no_view and is_numeric($id) and $id != 0) {
+            $view = $this->phrase_view_id((int)$id, $msg_ui, $test_mode);
+            // the links of the page e.g. the back links name the view that shows the phrase
+            // first, as in a url that names the view
+            $url_array = [url_var::MASK => $view] + $url_array;
+        }
         // use the default start view if neither a view nor an object is set
         $view = self::default_view_id($view, $id);
 
@@ -2692,8 +2705,10 @@ class frontend
         }
         // a phrase view (e.g. the calculator) shows a word or a triple, and the frontend objects
         // of a view are typed (see system_form::title_phrase), so the phrase id of the url decides
-        // the object: a negative phrase id is a triple, a positive one a word
-        if ($dbo instanceof phrase_ui and array_key_exists(url_var::ID, $url_array)) {
+        // the object: a negative phrase id is a triple, a positive one a word; a triple view
+        // called with the phrase id e.g. by phrase::name_link gets the triple of the phrase id
+        if (($dbo instanceof phrase_ui or ($dbo instanceof triple_ui and (int)($url_array[url_var::ID] ?? 0) < 0))
+            and array_key_exists(url_var::ID, $url_array)) {
             $dbo = $this->phrase_id_to_dbo_ui((int)$url_array[url_var::ID]);
         }
         return $dbo;
@@ -2714,6 +2729,29 @@ class frontend
         }
         $dbo->set_id(abs($phr_id));
         return $dbo;
+    }
+
+    /**
+     * the view of a url with a phrase id and without a view: the default view of the phrase e.g.
+     * the calculator of example PV installation, else the word or the triple view; a test render
+     * makes no backend call, so it always shows the word or the triple view
+     *
+     * @param int $phr_id the phrase id of the url, negative for a triple
+     * @param user_message_ui $msg to report a problem of the load and with the requesting user
+     * @param bool $test_mode true to render without backend calls
+     * @return int the database id of the view that shows the phrase
+     */
+    private function phrase_view_id(int $phr_id, user_message_ui $msg, bool $test_mode): int
+    {
+        $dbo = $this->phrase_id_to_dbo_ui($phr_id);
+        if (!$test_mode) {
+            $dbo->load_by_id(abs($phr_id), $msg, [], $msg->usr?->id() ?? 0);
+        }
+        $msk_id = $dbo->phrase()->own_view_id();
+        if ($msk_id <= 0) {
+            $msk_id = $phr_id < 0 ? views::TRIPLE_ID : views::WORD_ID;
+        }
+        return $msk_id;
     }
 
     private function exe_process_step(

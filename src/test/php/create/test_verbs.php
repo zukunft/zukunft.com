@@ -311,6 +311,14 @@ class test_verbs extends test_objects
         return new verb(verbs::KIND_OF_ID, verbs::KIND_OF_NAME, verbs::KIND_OF);
     }
 
+    /**
+     * @return verb "is follower of" that orders the items of a list e.g. the inputs of a calculator
+     */
+    function verb_follow(): verb
+    {
+        return new verb(verbs::FOLLOW_ID, verbs::FOLLOW_NAME, verbs::FOLLOW);
+    }
+
 
     /*
      * list

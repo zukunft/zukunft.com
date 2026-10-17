@@ -1795,6 +1795,23 @@ class test_phrases
         return $this->ui_list($lst);
     }
 
+    /**
+     * @return phrase_list_ui the request cache of the calculator reader test with the page phrase
+     *         Zurich (city), which is built from Zurich, the phrases of the calculator and Bern (city)
+     */
+    function list_calculator_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        foreach ([$t_wrd->word_zh(), $t_wrd->word_city(), $t_wrd->word_canton(), $t_wrd->word_bern(),
+                     $t_wrd->word_inhabitant(), $t_wrd->word_2019(), $t_wrd->word_2020(),
+                     $t_trp->zh_city(), $t_trp->triple_bern(), ...$t_trp->calculator_zh()] as $obj) {
+            $lst->add($obj->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
     private function ui_list(phrase_list $lst): phrase_list_ui
     {
         return new phrase_list_ui($lst->api_json([api_types::INCL_PHRASES]));

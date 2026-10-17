@@ -112,6 +112,21 @@ class phrase_ui_tests
                 $trp_problem, $msg, $dto_prio, true, false) . '<br>';
         $t->html_page_test($test_page, 'phrase', 'phrase', $msg);
 
+        $t->subheader($ts . 'default view');
+        // a phrase with an own view e.g. the calculator of a PV installation is linked to that
+        // view with the phrase id, which is negative for a triple (frontend::dbo_for_url)
+        $trp_msk = $t_trp->triple_pi();
+        $trp_msk->set_view_id(views::MATH_CONST_ID);
+        $phr_msk = new phrase($trp_msk->phrase()->api_json());
+        $test_name = 'a phrase with a default view links to that view';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::MATH_CONST_ID);
+        $test_name = '... with the phrase id';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), 'id=' . $phr_msk->id());
+        $t->assert_true($test_name, $phr_msk->id() < 0);
+        // negative: a phrase without a default view links to the triple view
+        $test_name = 'a phrase without a default view links to the triple view';
+        $t->assert_text_contains($test_name, $trp->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);
+
         $t->subheader($ts . 'all rows style');
         // the ranking has as many rows as the unit config allows, so the cut is forced with the
         // list size of the url; a table component cuts the rows with the more link, unless the

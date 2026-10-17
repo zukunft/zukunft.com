@@ -285,6 +285,21 @@ class triple_names
     const int INHABITANTS_INPUT_YEAR_ID = 985;
     const string INHABITANTS_FIELD_VALUE_PHRASE = 'inhabitants field value phrase';
     const int INHABITANTS_FIELD_VALUE_PHRASE_ID = 984;
+    // the calculator of the reader test (unit_ui/use_case_ui_tests.php), which exists in no
+    // database, so its triples count down from this fixed id
+    const int CALC_FIRST_ID = 983;
+    const string CALC_ZH_INPUTS = 'Zurich inputs';
+    const string CALC_ZH_INPUT_INHABITANTS = 'Zurich input inhabitants';
+    const string CALC_ZH_INPUT_CANTON = 'Zurich input canton';
+    const string CALC_ZH_INPUT_YEAR = 'Zurich input 2019';
+    const string CALC_ZH_ROW_BE = 'Zurich row Bern';
+    const string CALC_ZH_ROW_INHABITANTS = 'Zurich row inhabitants';
+    const string CALC_ZH_LABEL_COM = 'City calculator';
+    const string CALC_ZH_HINT_COM = 'The inhabitants of a city';
+    const string CALC_INHABITANTS_LABEL_COM = 'People';
+    const string CALC_INHABITANTS_HINT_COM = 'living in the city';
+    const string CALC_CANTON_LABEL_COM = 'Canton of the city';
+    const string CALC_ZH_INPUT_CANTON_LABEL_COM = 'Region';
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort

@@ -6389,6 +6389,26 @@
             t.php
     \-- sorted_by_position - section for function sorted_by_position not yet defined that it should be display in /compo
             nent/component_list.php
+\-- calculator
+    \-- __construct - section for function __construct is expected to be construct and map in /component/execute/calcula
+            tor.php
+    \-- is_calculator - section for function is_calculator is expected to be info in /component/execute/calculator.php
+    \-- title - section for function title not yet defined that it should be page in /component/execute/calculator.php
+    \-- lead - section for function lead not yet defined that it should be page in /component/execute/calculator.php
+    \-- group - section for function group not yet defined that it should be lists in /component/execute/calculator.php
+    \-- items - section for function items not yet defined that it should be lists in /component/execute/calculator.php
+    \-- sub_items - section for function sub_items not yet defined that it should be lists in /component/execute/calcula
+            tor.php
+    \-- filter - section for function filter not yet defined that it should be lists in /component/execute/calculator.ph
+            p
+    \-- label - section for function label not yet defined that it should be texts and flags in /component/execute/calcu
+            lator.php
+    \-- hint - section for function hint not yet defined that it should be texts and flags in /component/execute/calcula
+            tor.php
+    \-- has_flag - section for function has_flag not yet defined that it should be texts and flags in /component/execute
+            /calculator.php
+    \-- side_results - section for function side_results not yet defined that it should be texts and flags in /component
+            /execute/calculator.php
 \-- system_form
     \-- form_tile - section for function form_tile missing in /component/execute/system_form.php
     \-- title_named - section for function title_named missing in /component/execute/system_form.php
@@ -7502,6 +7522,7 @@
             e.php
     \-- name_link_with_tip - section for function name_link_with_tip not yet defined that it should be base in /phrase/p
             hrase.php
+    \-- own_view_id - section for function own_view_id not yet defined that it should be base in /phrase/phrase.php
     \-- dsp_tbl_cell - section for function dsp_tbl_cell not yet defined that it should be base in /phrase/phrase.php
     \-- is_or_can_be - section for function is_or_can_be is expected to be info in /phrase/phrase.php
     \-- dsp_graph - section for function dsp_graph not yet defined that it should be to review in /phrase/phrase.php
@@ -9150,6 +9171,12 @@
         \-- user_log_sum_list - @param array $json_body the api answer with the summed sessions or the message why they 
                 are not sent
 \-- 
+    \-- __construct
+        \-- calculator - @param phrase $phr the phrase of the page e.g. example PV installation
+        \-- table - 
+        \-- user_log_display - for a user log it is always needed to know who wants to seen the log
+        \-- sandbox_list_value - 
+        \-- table_model - 
     \-- form_tile
         \-- system_form - start an HTML form, show the title and set and set the unique form name
     \-- title_named
@@ -9496,11 +9523,6 @@
         \-- rest_call - execute an api call
     \-- calc_sheet
         \-- sheet - TODO fill it based on the parameters
-    \-- __construct
-        \-- table - 
-        \-- user_log_display - for a user log it is always needed to know who wants to seen the log
-        \-- sandbox_list_value - 
-        \-- table_model - 
     \-- reset
         \-- table - 
     \-- add_column
@@ -9552,6 +9574,39 @@
         \-- table_model - @param string $name the name of a column phrase e.g. "potential loss"
     \-- sort_rows
         \-- table_model - sort the shown rows by the orders of this model; the rows that every order leaves equal
+\-- page
+    \-- is_calculator
+        \-- calculator - @return bool true if the page phrase or the phrase it is built from has a calculator list
+    \-- title
+        \-- calculator - @return string the title of the page: the label of the page phrase, else of the phrase it
+    \-- lead
+        \-- calculator - @return string the lead text of the page: the hint of the page phrase, else of the phrase
+    \-- page_html
+        \-- html_base - create a simple html page based on header, body and footer html code
+    \-- forward_page
+        \-- html_base - @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
+    \-- forward_url_page
+        \-- html_base - @param string $url the complete url that the forward page opens e.g. the url of a pinned view
+    \-- start_page
+        \-- html_base - write the links to the pinned views between the markers of the static start page, so that
+\-- lists
+    \-- group
+        \-- calculator - the group triple of a list: the triple from the page phrase to the list keyword, else the
+    \-- items
+        \-- calculator - @param string $list the name of the list keyword e.g. triples::CALCULATOR_INPUT
+    \-- sub_items
+        \-- calculator - the triples from an item with the given verb, without its properties and its order
+    \-- filter
+        \-- calculator - @param phrase $item a row e.g. PV installation row saving consumption mix
+\-- texts and flags
+    \-- label
+        \-- calculator - the label of an item by rule 6: the label of the item, then of its phrase, then for a row
+    \-- hint
+        \-- calculator - @param phrase $item the item e.g. PV installation row battery discharge
+    \-- has_flag
+        \-- calculator - @param phrase $item the item e.g. a row or a row group
+    \-- side_results
+        \-- calculator - the candidates of the side results of a row: the phrases that the phrase or the filter
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -9835,7 +9890,7 @@
     \-- view_title
         \-- system_page - the name of the view as the page title and its description as the lead text, e.g. of a use
     \-- calculator_title
-        \-- system_page - the title of a calculator page: the name of the page phrase, which is the last fallback of the
+        \-- system_page - the title of a calculator page: the calculator label of the page phrase, or of the phrase it
     \-- process_catch_fields
         \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
     \-- process_catch_tab
@@ -10107,15 +10162,6 @@
         \-- button - display a button to exclude a value
     \-- btn_add_value_fast
         \-- button - display a button to exclude a value
-\-- page
-    \-- page_html
-        \-- html_base - create a simple html page based on header, body and footer html code
-    \-- forward_page
-        \-- html_base - @param int $msk_id the id of the view that the forward page opens e.g. views::SYSTEM_CONFIG_ID
-    \-- forward_url_page
-        \-- html_base - @param string $url the complete url that the forward page opens e.g. the url of a pinned view
-    \-- start_page
-        \-- html_base - write the links to the pinned views between the markers of the static start page, so that
 \-- header & footer
     \-- header_html
         \-- html_base - the page header for simple html pages like the login page

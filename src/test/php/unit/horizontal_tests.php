@@ -245,6 +245,7 @@ class horizontal_tests
             } elseif ($class == triple::class) {
                 $dto->add_phrase($filled_obj->get_from(), $msg);
                 $dto->add_phrase($filled_obj->get_to(), $msg);
+                $dto->add_view($filled_obj->get_view(), $msg);
             } elseif ($class == ref::class) {
                 $dto->add_phrase($filled_obj->phrase(), $msg);
                 $dto->add_source($filled_obj->get_source(), $msg);

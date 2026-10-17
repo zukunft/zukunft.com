@@ -402,6 +402,7 @@ the object structure is:
 ├── view_stylesShared - db based ENUM of the view and component styles
 ├── view_typesShared - db based ENUM of the view types
 ├── url_varShared - all names used for the url and the form field names
+├── calculatorUi - read the calculator triples of a page phrase
 ├── ui_baseUi
 │   ├── ui_im_exportUi - html user interface components for im- and export
 │   ├── ui_listUi - create the html for listed related to an object

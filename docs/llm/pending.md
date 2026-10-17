@@ -281,6 +281,24 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
 
 add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
 
+## speed up
+
+check if and where the url_to_html function reads from db or calls the api instead of using the given data cache
+
+guess which parts inside the url_to_html execution might take long 
+and create additional system_time_types to be able to identify execution time optimisation potentials
+
+check why the db_cache is reset during the test run /test/test.php 
+and check if some of the cache resets can be switched off to speed up 
+
+## to recheck
+
+3. Two steps in one commit. Steps 3 (calculator reader) and 4 (default view of a phrase) are uncommitted together, but pending.md asks for one commit per step. Splitting is possible because the step 4 changes are in separate files and hunks: cfg/word/triple.php, web/word/triple.php, web/phrase/phrase.php, frontend.php, horizontal_tests.php, triple_tests.php, phrase_ui_tests.php, system_view_ui_tests.php, the guide, the api fixtures and the snapshots.
+4. Unrelated pending.md section. The new "## speed up" section doesn't belong to either step; better as its own commit.
+5. Step 4 wording in pending.md. It still names frontend::default_view_id, but the code is frontend::phrase_view_id.
+6. Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
+7. Hard-to-read condition in dbo_for_url (frontend.php:2710). It reads the url id with ?? 0 and then also checks array_key_exists. It is correct, but a local $url_id would make it easier to read.
+
 ## job list
 
 add to the user submenu of the navbar an entry 'jobs' that links to a view that shows an overview of the jobs of an user

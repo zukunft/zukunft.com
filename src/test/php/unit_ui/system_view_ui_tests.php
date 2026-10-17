@@ -279,6 +279,19 @@ class system_view_ui_tests
         $ui->load_dummy_cache_from_test_resources($msg, file_get_contents(test_files::TYPE_LISTS_CACHE));
         $usr_sys_ui = $tl->cast_user($t->usr1);
 
+        $t->subheader($ts . 'phrase without a view');
+        // a url with a phrase id and without a view shows the phrase with its default view; a test
+        // render loads no phrase, so the word without an own view is shown with the word view
+        $test_name = 'a phrase url without a view shows the word with the word view';
+        $t->assert($test_name,
+            $ui->url_to_html([url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true),
+            $ui->url_to_html([url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true));
+        // negative: a url without a view and without an object still shows the start view
+        $test_name = 'a url without a view and without an object shows the start view';
+        $t->assert($test_name,
+            $ui->url_to_html([], new user_message(), $ui->dto, true),
+            $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true));
+
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
         // forged login/signup/import submit is rejected as well (see frontend::request_token_valid)
         $t->subheader($ts . 'anti-csrf token');

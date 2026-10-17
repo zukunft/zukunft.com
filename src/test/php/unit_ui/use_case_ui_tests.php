@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
@@ -48,10 +49,12 @@ use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -60,6 +63,7 @@ use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -344,6 +348,63 @@ class use_case_ui_tests
         $t->assert($test_name, $this->render($t_cmp->component_calculator_input(), $wrd, $msk, $dto, $msg), '');
         $test_name = 'the calculation result is a known component type';
         $t->assert($test_name, $this->render($t_cmp->component_calculation_result(), $wrd, $msk, $dto, $msg), '');
+
+        $t->subheader($ts . 'calculator reader');
+        // the page phrase Zurich (city) has no own calculator triples, so it gets the calculator
+        // of Zurich, the phrase it is built from (test_triples::calculator_zh)
+        $cac = $t_phr->list_calculator_ui();
+        $calc = new calculator($cac->get_by_name(triple_names::CITY_ZH_NAME, $msg), $cac);
+        $test_name = 'a page phrase built from a calculator phrase is a calculator';
+        $t->assert_true($test_name, $calc->is_calculator());
+        $test_name = '... with the label of the phrase it is built from as the title';
+        $t->assert($test_name, $calc->title(), triple_names::CALC_ZH_LABEL_COM);
+        $test_name = '... and its hint as the lead text';
+        $t->assert($test_name, $calc->lead(), triple_names::CALC_ZH_HINT_COM);
+        $inputs = $calc->items(triples::CALCULATOR_INPUT);
+        $test_name = 'the items follow the order chain and an item without order triple comes after it';
+        $t->assert($test_name, array_map(fn($item) => $item->name(), $inputs), [
+            triple_names::CALC_ZH_INPUT_INHABITANTS, triple_names::CALC_ZH_INPUT_CANTON, triple_names::CALC_ZH_INPUT_YEAR]);
+        $test_name = 'an item without a label shows the label of its phrase';
+        $t->assert($test_name, $calc->label($inputs[0]), triple_names::CALC_INHABITANTS_LABEL_COM);
+        $test_name = 'the label of the item wins over the label of its phrase';
+        $t->assert($test_name, $calc->label($inputs[1]), triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM);
+        $test_name = 'an item and a phrase without a label show the phrase name';
+        $t->assert($test_name, $calc->label($inputs[2]), word_names::YEAR_2019);
+        $test_name = 'an item without a hint shows the hint of its phrase';
+        $t->assert($test_name, $calc->hint($inputs[0]), triple_names::CALC_INHABITANTS_HINT_COM);
+        $test_name = '... and nothing if its phrase has none';
+        $t->assert($test_name, $calc->hint($inputs[1]), '');
+        $grp = $calc->items(triples::CALCULATOR_ROW_GROUP)[0];
+        $rows = $calc->sub_items($grp, verbs::HAS_ID);
+        $test_name = 'the rows of a row group follow the order chain';
+        $t->assert($test_name, array_map(fn($item) => $item->name(), $rows), [
+            triple_names::CALC_ZH_ROW_BE, triple_names::CALC_ZH_ROW_INHABITANTS]);
+        $test_name = 'a row built from the group phrase shows the other phrase';
+        $t->assert($test_name, $calc->label($rows[0], $grp), word_names::BE);
+        $test_name = 'a row shows the label of its phrase and never the label of its filter phrase';
+        $t->assert($test_name, $calc->label($rows[1], $grp), triple_names::CALC_INHABITANTS_LABEL_COM);
+        $test_name = 'a row has the highlight of its filter phrase';
+        $t->assert_true($test_name, $calc->has_flag($rows[1], triples::CALCULATOR_HIGHLIGHT));
+        $test_name = '... and a row without such a phrase has none';
+        $t->assert_false($test_name, $calc->has_flag($rows[0], triples::CALCULATOR_HIGHLIGHT));
+        $test_name = 'a row has the side results of its filter phrase without the calculator properties';
+        $t->assert($test_name, array_map(fn($phr) => $phr->name(), $calc->side_results($rows[1])), [word_names::YEAR_2020]);
+        $test_name = '... and a row without such a phrase has none';
+        $t->assert($test_name, $calc->side_results($rows[0]), []);
+        // negative: a phrase without calculator triples is no calculator and shows its name
+        $calc_be = new calculator($cac->get_by_name(triple_names::CITY_BE, $msg), $cac);
+        $test_name = 'a phrase without calculator triples is no calculator';
+        $t->assert_false($test_name, $calc_be->is_calculator());
+        $test_name = '... with its name as the title';
+        $t->assert($test_name, $calc_be->title(), triple_names::CITY_BE);
+        $test_name = '... and no lead text';
+        $t->assert($test_name, $calc_be->lead(), '');
+        $test_name = 'the calculator title shows the title and the lead text of the reader';
+        $dto_calc = new data_object();
+        $dto_calc->online = false;
+        $dto_calc->phr_lst = $cac;
+        $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $dto_calc),
+            $html->text_h4(triple_names::CALC_ZH_LABEL_COM) . $html->p(triple_names::CALC_ZH_HINT_COM));
     }
 
     /**

@@ -189,7 +189,8 @@ class triple_tests
         $t->subheader($ts . 'api');
         $trp = $t_trp->triple_filled_public();
         $t->assert_api_json($trp);
-        $t->assert_api($trp);
+        // own file like word_full, because triple.json is the db triple of the api get test
+        $t->assert_api($trp, 'triple_full');
 
         $t->subheader($ts . 'api mapping of an incomplete message');
         // an api message with only the id maps the id and does not fail

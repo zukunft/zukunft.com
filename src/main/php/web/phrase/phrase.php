@@ -657,7 +657,12 @@ class phrase extends combine_named
      */
     function name_link(): string
     {
-        return $this->obj()->name_link();
+        if ($this->own_view_id() > 0) {
+            $html = new html_base();
+            return $html->ref($html->url_back($this->own_view_id(), $this->id()), $this->name(), $this->get_description());
+        } else {
+            return $this->obj()->name_link();
+        }
     }
 
     /**
@@ -696,6 +701,17 @@ class phrase extends combine_named
         $html = new html_base();
         // the page of a word or a triple is called with the id of the word or the triple
         return $html->url_back($this->view_id(), $this->obj_id(), $url_arr);
+    }
+
+    /**
+     * the default view of the phrase e.g. the calculator of example PV installation, which a link
+     * calls with the phrase id, negative for a triple (see frontend::dbo_for_url)
+     *
+     * @return int the database id of the default view of the phrase or 0 if it has none
+     */
+    function own_view_id(): int
+    {
+        return $this->obj()?->view_id() ?? 0;
     }
 
     /**

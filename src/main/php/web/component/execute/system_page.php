@@ -40,11 +40,13 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -80,6 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
@@ -1173,21 +1176,28 @@ class system_page extends component
     }
 
     /**
-     * the title of a calculator page: the name of the page phrase, which is the last fallback of the
-     * calculator label (rule 6 of docs/llm/new_view_sample_pv_balance.md)
-     * TODO Prio 1 the calculator label and hint from the calculator reader (docs/llm/pending.md step 3)
+     * the title of a calculator page: the calculator label of the page phrase, or of the phrase it
+     * is built from, else the phrase name, and the calculator hint as the lead text
+     * (rule 6 of docs/llm/new_view_sample_pv_balance.md)
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param data_object|null $cfg the request cache with the calculator triples of the page
      * @return string the html code of the title or an empty string if the page has no phrase
      */
-    function calculator_title(db_object|type_object|combine_named|sandbox_list|null $dbo): string
+    function calculator_title(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        ?data_object                                          $cfg
+    ): string
     {
         $result = '';
-        $name = $dbo?->name() ?? '';
-        if ($name != '') {
+        if (($dbo instanceof word or $dbo instanceof triple) and $dbo->name() != '') {
             $html = new html_base();
-            // escape the user settable name, because the title is shown as raw html
-            $result = $html->text_h4($html->esc($name));
+            $calc = new calculator($dbo->phrase(), $cfg?->phr_lst ?? new phrase_list());
+            // escape the user settable texts, because the title is shown as raw html
+            $result = $html->text_h4($html->esc($calc->title()));
+            if ($calc->lead() != '') {
+                $result .= $html->p($html->esc($calc->lead()));
+            }
         }
         return $result;
     }

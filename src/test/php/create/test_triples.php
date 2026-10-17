@@ -202,7 +202,9 @@ class test_triples extends test_objects
         $trp = $this->triple();
         $trp->name_given = triple_names::MATH_CONST_GIVEN;
         $trp->weight = 0.5;
-        $trp->set_view_id(views::MATH_CONST_ID);
+        // the view with its name, because the export names the view
+        $t_msk = new test_views($this->env);
+        $trp->view = $t_msk->view_math();
         $trp->usage = triple_names::SYSTEM_TEST_ADD_USAGE;
         $trp->impact = impacts::MAX;
         $trp->exclude();
@@ -1567,6 +1569,70 @@ class test_triples extends test_objects
         $trp->set_from($t_wrd->word_zh()->phrase());
         $trp->set_verb($t_vrb->verb_uses());
         $trp->set_to($t_wrd->word_bern()->phrase());
+        return $trp;
+    }
+
+    /**
+     * the calculator of the reader test (docs/llm/new_view_sample_pv_balance.md rule 6 to 8):
+     * Zurich has the inputs inhabitants, canton (follower of inhabitants) and 2019 (no order) and
+     * the row group city with the rows Bern (city), built from the group phrase, and inhabitants
+     * (follower of Bern) filtered by canton, which is a highlight with the side result 2020;
+     * the inhabitants have a general label and hint, the canton a general and an item label
+     *
+     * @return triple[] the keywords and the calculator triples
+     */
+    function calculator_zh(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $zh = $t_wrd->word_zh()->phrase();
+        $inhabitant = $t_wrd->word_inhabitant()->phrase();
+        $canton = $t_wrd->word_canton()->phrase();
+        $id = triple_names::CALC_FIRST_ID;
+        $kw = [];
+        foreach ([triples::CALCULATOR_LABEL, triples::CALCULATOR_HINT, triples::CALCULATOR_INPUT,
+                     triples::CALCULATOR_ROW_GROUP, triples::CALCULATOR_HIGHLIGHT] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        $inputs = $this->calc_triple($id, triple_names::CALC_ZH_INPUTS, $zh, $has, $kw[triples::CALCULATOR_INPUT]);
+        $in_inh = $this->calc_triple($id, triple_names::CALC_ZH_INPUT_INHABITANTS, $inputs->phrase(), $has, $inhabitant);
+        $in_canton = $this->calc_triple($id, triple_names::CALC_ZH_INPUT_CANTON, $inputs->phrase(), $has, $canton);
+        $groups = $this->calc_triple($id, 'Zurich row groups', $zh, $has, $kw[triples::CALCULATOR_ROW_GROUP]);
+        $rows = $this->calc_triple($id, 'Zurich rows city', $groups->phrase(), $has, $t_wrd->word_city()->phrase());
+        $row_be = $this->calc_triple($id, triple_names::CALC_ZH_ROW_BE, $rows->phrase(), $has, $this->triple_bern()->phrase());
+        $row_inh = $this->calc_triple($id, triple_names::CALC_ZH_ROW_INHABITANTS, $rows->phrase(), $has, $inhabitant);
+        return [
+            ...array_values($kw), $inputs, $in_inh, $in_canton, $groups, $rows, $row_be, $row_inh,
+            $this->calc_triple($id, 'Zurich label', $zh, $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_LABEL_COM),
+            $this->calc_triple($id, 'Zurich hint', $zh, $has, $kw[triples::CALCULATOR_HINT], triple_names::CALC_ZH_HINT_COM),
+            $this->calc_triple($id, triple_names::CALC_ZH_INPUT_YEAR, $inputs->phrase(), $has, $t_wrd->word_2019()->phrase()),
+            $this->calc_triple($id, 'Zurich input canton order', $in_canton->phrase(), $t_vrb->verb_follow(), $in_inh->phrase()),
+            $this->calc_triple($id, 'Zurich input canton label', $in_canton->phrase(), $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM),
+            $this->calc_triple($id, 'inhabitants label', $inhabitant, $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_INHABITANTS_LABEL_COM),
+            $this->calc_triple($id, 'inhabitants hint', $inhabitant, $has, $kw[triples::CALCULATOR_HINT], triple_names::CALC_INHABITANTS_HINT_COM),
+            $this->calc_triple($id, 'canton label', $canton, $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_CANTON_LABEL_COM),
+            $this->calc_triple($id, 'canton highlight', $canton, $has, $kw[triples::CALCULATOR_HIGHLIGHT]),
+            $this->calc_triple($id, 'canton side result', $canton, $has, $t_wrd->word_2020()->phrase()),
+            $this->calc_triple($id, 'Zurich row inhabitants filter', $row_inh->phrase(), $t_vrb->verb_with(), $canton),
+            $this->calc_triple($id, 'Zurich row inhabitants order', $row_inh->phrase(), $t_vrb->verb_follow(), $row_be->phrase()),
+        ];
+    }
+
+    /**
+     * @param int $id the id of the triple, counted down for the next triple
+     * @return triple a triple of the calculator of the reader test
+     */
+    private function calc_triple(
+        int &$id, string $name, phrase $from, verb $vrb, triple|phrase $to, string $description = ''): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set($id--, $name);
+        $trp->set_from($from);
+        $trp->set_verb($vrb);
+        $trp->set_to($to instanceof triple ? $to->phrase() : $to);
+        $trp->set_description($description);
         return $trp;
     }
 
