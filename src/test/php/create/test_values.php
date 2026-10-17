@@ -1551,6 +1551,27 @@ class test_values extends test_objects
     }
 
     /**
+     * the values of the calculator input test (test_phrases::list_calculator_input_ui): the
+     * inhabitants of Zurich with the limit and the step of the inhabitants field, and the number
+     * of the option 2020 of the canton selector
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_input_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $inhab], values::CITY_ZH_INHABITANTS_2019));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_limit_down()->phrase()], 0));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_step()->phrase()], 100));
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $t_wrd->word_2020()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the inhabitants of Zurich in 2019 and 2020 with the same number of phrases, so that only the
      * field value phrase 2019 decides which value the inhabitants field shows
      * @param bool $year_2020_first true to add the 2020 value first, so that the test shows the

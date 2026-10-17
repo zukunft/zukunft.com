@@ -48,11 +48,12 @@ the test run after each step (an llm never runs test/*, docs/llm/coding.md).
      placeholder of `editor_views.json`) with the view relation in the system data, the
      former system view `Calculator` renamed to `Comparison table`, and the `use-case`
      frame with header, grid, aside and section panel
-   - 5b the `calculator input` renderer: the `inputs` frame, the input fields, the
-     orientation hint written by the server, "Save" as the button text and the assumptions
+   - 5b the `calculator input` renderer: the `inputs` frame, the input fields, "Save" as the
+     button text and the assumptions
    - 5c the `calculation result` renderer: the page title with the calculator label, the
      `scroll` and `tbody` frame of both tables, the detail tables, the notes and the
-     sources with their heading
+     sources with their heading, and the source numbers [n] in the hints of the inputs,
+     including the orientation hint with the value of the selected option
 6. replace the view part of `pv_lifetime_balance.json` with the data of the sample json: add
    the use case triples (the triples without a code id, incl. the general triples of the
    phrases), give `example PV installation` the `"view": "Calculator"`, remove the view

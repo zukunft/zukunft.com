@@ -999,6 +999,15 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "Bern (city)" triple for frontend unit testing e.g. as a page phrase
+     *         without calculator triples
+     */
+    function triple_bern_ui(): triple_ui
+    {
+        return $this->page_ui($this->triple_bern());
+    }
+
+    /**
      * @return triple_ui the "US dollar" triple for frontend unit testing
      */
     function us_dollar_ui(): triple_ui
@@ -1617,6 +1626,31 @@ class test_triples extends test_objects
             $this->calc_triple($id, 'canton side result', $canton, $has, $t_wrd->word_2020()->phrase()),
             $this->calc_triple($id, 'Zurich row inhabitants filter', $row_inh->phrase(), $t_vrb->verb_with(), $canton),
             $this->calc_triple($id, 'Zurich row inhabitants order', $row_inh->phrase(), $t_vrb->verb_follow(), $row_be->phrase()),
+        ];
+    }
+
+    /**
+     * the triples that the calculator input test adds to the reader test (calculator_zh): the
+     * canton is a phrase selector, whose only option is its side result 2020, which the page
+     * phrase Zurich (city) uses, and the inhabitants are also the only assumption of Zurich
+     *
+     * @return triple[] the field, the selection and the assumption triples
+     */
+    function calculator_zh_input(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $zh = $t_wrd->word_zh()->phrase();
+        $id = triple_names::CALC_INPUT_FIRST_ID;
+        $trp_kw = new triple($this->env->usr1);
+        $trp_kw->set($id--, triples::CALCULATOR_ASSUMPTION);
+        $assumptions = $this->calc_triple($id, 'Zurich assumptions', $zh, $has, $trp_kw);
+        return [
+            $trp_kw, $assumptions,
+            $this->calc_triple($id, 'Zurich assumption inhabitants', $assumptions->phrase(), $has, $t_wrd->word_inhabitant()->phrase()),
+            $this->calc_triple($id, 'field canton', $t_wrd->word_canton()->phrase(), $t_vrb->verb_can_be(), $this->field_phrase_selector_type()),
+            $this->calc_triple($id, 'Zurich (city) uses 2020', $this->zh_city()->phrase(), $t_vrb->verb_uses(), $t_wrd->word_2020()->phrase()),
         ];
     }
 

@@ -1844,6 +1844,10 @@ enum messages: string
     // the tag behind the label of an assumption field: a number with a source or an estimate
     case FIELD_TAG_MEASURED = 'field_tag_measured';
     case FIELD_TAG_ASSUMED = 'field_tag_assumed';
+    // the headings of the calculator input if the calculator triples name no label, and its button
+    case CALCULATOR_INPUTS = 'calculator_inputs';
+    case CALCULATOR_ASSUMPTIONS = 'calculator_assumptions';
+    case CALCULATOR_SAVE = 'calculator_save';
 
     // text to be shown in buttons
     case ADD = 'add';

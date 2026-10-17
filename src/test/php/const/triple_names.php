@@ -300,6 +300,8 @@ class triple_names
     const string CALC_INHABITANTS_HINT_COM = 'living in the city';
     const string CALC_CANTON_LABEL_COM = 'Canton of the city';
     const string CALC_ZH_INPUT_CANTON_LABEL_COM = 'Region';
+    // the triples of the calculator input test, which follow the 24 triples of the reader test
+    const int CALC_INPUT_FIRST_ID = 959;
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort

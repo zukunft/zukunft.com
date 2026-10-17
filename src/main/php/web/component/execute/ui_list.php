@@ -44,6 +44,7 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FORMULA . 'formula_calc.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -2235,6 +2236,8 @@ class ui_list extends ui_base
      * @param data_object|null $dto the data cache of the page with the values, the results and the formulas
      * @param string $form_name the name of the refresh form that the fields join
      * @param array $url_arr the url parameters of the page with the entered numbers
+     * @param array $skip the names of the phrases whose values are shown already e.g. the
+     *                    assumptions that the calculator lists
      * @return string the html code of the fields sorted by label or an empty string if the page has no assumption
      */
     function assumption_fields(
@@ -2242,7 +2245,8 @@ class ui_list extends ui_base
         user_message                           $msg,
         ?data_object                           $dto,
         string                                 $form_name,
-        array                                  $url_arr
+        array                                  $url_arr,
+        array                                  $skip = []
     ): string
     {
         $fields = [];
@@ -2250,7 +2254,9 @@ class ui_list extends ui_base
             $vals = $this->operand_values($dbo, $msg, $dto);
             $this->add_sources($vals, $dto, $msg);
             foreach ($vals as $val) {
-                if ($val instanceof value and !in_array($dbo->phrase()->name(), $val->phr_lst()->names())) {
+                $names = $val->phr_lst()->names();
+                if ($val instanceof value and !in_array($dbo->phrase()->name(), $names)
+                    and array_intersect($skip, $names) == []) {
                     $label = $this->assumption_label($val, $msg);
                     $fields[$label . $val->id()] = $this->assumption_field($val, $label, $dto, $form_name, $url_arr, $msg);
                 }
@@ -2382,6 +2388,194 @@ class ui_list extends ui_base
             }
         }
         return $result;
+    }
+
+    /**
+     * the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+     * field per item in the order of the calculator, a phrase selector if the phrase of the item
+     * is one, else a number field with the number of the item phrase; the label and the hint are
+     * the calculator texts of the item or of its phrase (rule 6) and an assumption gets the
+     * measured or assumed tag; an entered number of the url is shown again
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase[] $items the items of the list e.g. the inputs
+     * @param word|triple $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param string $form_name the refresh form that the fields join
+     * @param array $url_arr the url parameters with the entered numbers
+     * @param bool $assumption true for the assumptions, which show the measured or assumed tag
+     * @return string the html code of the fields
+     */
+    function calculator_fields(
+        calculator   $calc,
+        array        $items,
+        word|triple  $dbo,
+        user_message $msg,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        bool         $assumption = false
+    ): string
+    {
+        $result = '';
+        $this->add_field_definitions($dto, $msg);
+        foreach ($items as $item) {
+            $phr = $calc->item_phrase($item);
+            if ($phr != null) {
+                $this->add_field_links($phr, $dto, $msg);
+                $this->add_field_values($phr, $dto, $msg);
+                if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
+                    $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $msg);
+                } else {
+                    $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $msg);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a number field of a calculator with the input and its unit on one line
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. PV installation input PV capacity
+     * @param phrase $phr the phrase of the item e.g. PV capacity
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the input joins
+     * @param array $url_arr the url parameters with the entered number
+     * @param bool $assumption true to add the measured or assumed tag and the description of the value as the hint
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field
+     */
+    private function calculator_number(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        bool         $assumption,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $name = url_var::NUMERIC_VALUE . $phr->id();
+        $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val?->number();
+        $text = $html->esc($calc->label($item));
+        $hint = $calc->hint($item);
+        if ($assumption and $val instanceof value) {
+            $text .= ' ' . $html->span($this->assumption_tag($val, $dto), styles::INPUT_TAG);
+            if ($hint == '') {
+                $hint = $val->get_description();
+            }
+        }
+        $input = $html->input_number($name, $num,
+            $this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto),
+            $this->field_property($phr, triples::FIELD_LIMIT_UP, $dto),
+            $this->field_property($phr, triples::FIELD_STEP, $dto), $form_name);
+        $unit = $val == null ? '' : $this->unit_name($val, $msg);
+        if ($unit != '') {
+            $input .= $html->span($unit, styles::INPUT_UNIT);
+        }
+        return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW)
+            . $this->calculator_hint($hint), styles::INPUT_FIELD);
+    }
+
+    /**
+     * a phrase selector of a calculator: the options of the field phrase (calculator::options)
+     * with the number of each option as the value e.g. 0.85 for east-west, so the entered number
+     * is the input of the calculation, and the option that the page phrase uses is selected
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. PV installation input yield factor
+     * @param phrase $phr the field phrase e.g. yield factor
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values of the options
+     * @param string $form_name the refresh form that the selector joins
+     * @param array $url_arr the url parameters with the selected number
+     * @param user_message $msg to report a problem of the cache
+     * @return string the html code of the field
+     */
+    private function calculator_selector(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $opts = $calc->options($phr);
+        $used = $calc->used(array_column($opts, 0));
+        $sel = new html_selector();
+        $sel->name = url_var::NUMERIC_VALUE . $phr->id();
+        $sel->form = $form_name;
+        $sel->with_label = false;
+        $sel->lst = [];
+        foreach ($opts as [$opt, $opt_label]) {
+            // the number of the field phrase for the option e.g. (yield factor, south) = 1.00,
+            // else the number of the option itself e.g. (residual mix) = 523
+            $num = $dto->val_lst->get_by_names([$phr->name(), $opt->name()])?->number()
+                ?? $this->calculator_value($opt, $dbo, $dto, $msg)?->number();
+            if ($num !== null) {
+                $sel->lst[(string)$num] = $opt_label;
+                if ($used?->id() == $opt->id()) {
+                    $sel->selected = (string)$num;
+                }
+            }
+        }
+        $sel->selected = $url_arr[$sel->name] ?? $sel->selected;
+        // the label points to the id that the selector builds from its name and its label message
+        $dom_id = $sel->name . '_' . strtolower($sel->label_id->name);
+        return $html->div($html->label($html->esc($calc->label($item)), $dom_id) . $sel->display()
+            . $this->calculator_hint($calc->hint($item)), styles::INPUT_FIELD);
+    }
+
+    /**
+     * the value that a calculator field shows: a value of the item phrase with the field value
+     * phrases, the one with the page phrase first and else the one with the fewest phrases, but
+     * never a property of the field e.g. its step or the confidence of a value
+     *
+     * @param phrase $phr the phrase of the field e.g. PV capacity
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the cache
+     * @return sandbox_value|null the value or null if the cache has none
+     */
+    private function calculator_value(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
+    {
+        $properties = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE];
+        $result = null;
+        $best = null;
+        foreach ($dto->val_lst->lst() as $val) {
+            $names = $val->phr_lst()->names();
+            if ($val->has_phrase($phr, $msg) and array_intersect($names, $properties) == []
+                and $this->has_field_value_phrases($phr, $val, $dto, $msg)) {
+                $rank = [$val->has_phrase($dbo->phrase(), $msg) ? 0 : 1, count($names)];
+                if ($best == null or $rank < $best) {
+                    $result = $val;
+                    $best = $rank;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $hint the hint of a calculator field
+     * @return string the html code of the hint below the field or an empty string if there is none
+     */
+    private function calculator_hint(string $hint): string
+    {
+        $html = new html_base();
+        return $hint == '' ? '' : $html->span($html->esc($hint), styles::INPUT_HINT);
     }
 
     /**

@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-722 of 6129 public functions have at least 2 unit test calls; the 5407 functions below do not
+723 of 6136 public functions have at least 2 unit test calls; the 5413 functions below do not
 
 ## main backend
 
@@ -3381,7 +3381,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- set_symbol - 0 unit test calls shared by 3 classes
     \-- source_id - 0 unit test calls shared by 5 classes
     \-- source_name - 0 unit test calls shared by 4 classes
-    \-- used - 0 unit test calls
+    \-- used - 0 unit test calls shared by 2 classes
 \-- value_geo
     \-- api_json_array - 24 unit test calls shared by 60 classes
     \-- api_mapper - 30 unit test calls shared by 104 classes
@@ -4090,8 +4090,13 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- yes_no - 0 unit test calls
 \-- calculator
     \-- filter - 3 unit test calls shared by 5 classes
+    \-- item_phrase - 0 unit test calls
+    \-- options - 0 unit test calls
+    \-- own_label - 0 unit test calls
+    \-- phrase_label - 0 unit test calls
     \-- sub_items - 1 unit test calls
     \-- title - 2 unit test calls shared by 2 classes
+    \-- used - 0 unit test calls shared by 2 classes
 \-- change_log
     \-- api_mapper - 30 unit test calls shared by 104 classes
     \-- field_code_id - 0 unit test calls
@@ -4474,7 +4479,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- about_page - 0 unit test calls
     \-- add_style - 0 unit test calls
     \-- back_url_array - 1 unit test calls
-    \-- block - 0 unit test calls
+    \-- block - 1 unit test calls
     \-- bold - 0 unit test calls
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
@@ -4492,7 +4497,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- details - 0 unit test calls
     \-- details_end - 0 unit test calls shared by 2 classes
     \-- details_start - 0 unit test calls shared by 2 classes
-    \-- div - 0 unit test calls
     \-- div_bs - 0 unit test calls
     \-- div_center - 0 unit test calls
     \-- div_col_min_width - 0 unit test calls
@@ -4552,7 +4556,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- icon_link - 0 unit test calls
     \-- icon_with_title - 0 unit test calls
     \-- img - 0 unit test calls
-    \-- input_number - 0 unit test calls
+    \-- input_number - 1 unit test calls
     \-- input_password - 0 unit test calls
     \-- label_lan - 0 unit test calls
     \-- lf - 0 unit test calls
@@ -5150,6 +5154,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- admin_url_delay - 1 unit test calls
     \-- admin_user_load - 1 unit test calls
     \-- body_search_full - 0 unit test calls
+    \-- calculator_input - 1 unit test calls
     \-- calculator_title - 1 unit test calls
     \-- config_tree - 0 unit test calls
     \-- error_log - 0 unit test calls
@@ -5434,6 +5439,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- phrase_link - 0 unit test calls
 \-- ui_list
     \-- assumption_fields - 0 unit test calls
+    \-- calculator_fields - 0 unit test calls
     \-- component_views - 1 unit test calls
     \-- formula_add_link - 1 unit test calls
     \-- formula_list - 5 unit test calls shared by 4 classes

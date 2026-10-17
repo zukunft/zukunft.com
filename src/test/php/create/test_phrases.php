@@ -1812,6 +1812,25 @@ class test_phrases
         return $this->ui_list($lst);
     }
 
+    /**
+     * @return phrase_list_ui the request cache of the calculator input test: the reader test with
+     *         the inhabitants as a number field and the canton as a phrase selector
+     */
+    function list_calculator_input_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        foreach ([$t_wrd->word_zh(), $t_wrd->word_city(), $t_wrd->word_canton(), $t_wrd->word_bern(),
+                     $t_wrd->word_inhabitant(), $t_wrd->word_2019(), $t_wrd->word_2020(),
+                     $t_trp->zh_city(), $t_trp->triple_bern(), ...$t_trp->calculator_zh(),
+                     $t_trp->field_number_with_limits(), $t_trp->field_phrase_selector_type(),
+                     $t_trp->field_inhabitants(), ...$t_trp->calculator_zh_input()] as $obj) {
+            $lst->add($obj->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
     private function ui_list(phrase_list $lst): phrase_list_ui
     {
         return new phrase_list_ui($lst->api_json([api_types::INCL_PHRASES]));

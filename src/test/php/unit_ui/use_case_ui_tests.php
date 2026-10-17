@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -405,6 +406,47 @@ class use_case_ui_tests
         $dto_calc->phr_lst = $cac;
         $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $dto_calc),
             $html->text_h4(triple_names::CALC_ZH_LABEL_COM) . $html->p(triple_names::CALC_ZH_HINT_COM));
+
+        $t->subheader($ts . 'calculator input');
+        // the inputs of Zurich (city) are the inputs of Zurich, the phrase it is built from: the
+        // inhabitants as a number field, the canton as a phrase selector and 2019 without a field type
+        $dto_in = new data_object();
+        $dto_in->online = false;
+        $dto_in->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto_in->phr_lst = $t_phr->list_calculator_input_ui();
+        $dto_in->val_lst = $t_val->value_list_calculator_input_ui();
+        $zh_city = new test_triples($t)->zh_city_ui();
+        $form = views::CALCULATOR;
+        $in_html = $page->calculator_input($zh_city, $msg, $dto_in, $form, views::CALCULATOR, []);
+        $test_name = 'the calculator input starts with the default heading in the inputs frame';
+        $t->assert_text_contains($test_name, $in_html, '<div class="' . styles::INPUTS . '">'
+            . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_INPUTS)));
+        $inh_name = url_var::NUMERIC_VALUE . $dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
+        $test_name = 'a number field shows the label, the number, the limit, the step and the hint of the input';
+        $t->assert_text_contains($test_name, $in_html, $html->div(
+            $html->label(triple_names::CALC_INHABITANTS_LABEL_COM, $inh_name)
+            . $html->div($html->input_number($inh_name, values::CITY_ZH_INHABITANTS_2019, 0, null, 100, $form), styles::INPUT_ROW)
+            . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::INPUT_HINT),
+            styles::INPUT_FIELD));
+        $test_name = 'the inputs follow the order of the calculator';
+        $t->assert_text_order($test_name, $in_html, triple_names::CALC_INHABITANTS_LABEL_COM, triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM);
+        $t->assert_text_order($test_name, $in_html, triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM, '>' . word_names::YEAR_2019 . '<');
+        $test_name = 'a phrase selector offers the options of its phrase with their number';
+        $t->assert_text_contains($test_name, $in_html, 'value="' . values::SAMPLE_FLOAT . '"');
+        $test_name = '... and selects the option that the page phrase uses';
+        $t->assert_text_contains($test_name, $in_html, ' selected >' . word_names::YEAR_2020 . '</option>');
+        $test_name = 'the save button shows the page again with the entered inputs';
+        $t->assert_text_contains($test_name, $in_html, '>' . $mtr->txt(msg_id::CALCULATOR_SAVE) . '</button>');
+        $t->assert_text_contains($test_name, $in_html, $html->form_hidden(url_var::MASK, views::CALCULATOR));
+        $test_name = 'the assumptions follow the inputs in a collapsed block with the default heading';
+        $t->assert_text_order($test_name, $in_html, '</button>',
+            '<summary>' . $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS) . '</summary>');
+        $test_name = '... and an assumption without a source is tagged as assumed';
+        $t->assert_text_contains($test_name, $in_html,
+            $html->span($mtr->txt(msg_id::FIELD_TAG_ASSUMED), styles::INPUT_TAG));
+        // negative: a phrase without calculator triples has no inputs
+        $test_name = 'a phrase without calculator triples shows no calculator input';
+        $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
     }
 
     /**

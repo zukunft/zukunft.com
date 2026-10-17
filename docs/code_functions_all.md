@@ -6409,6 +6409,16 @@
             /calculator.php
     \-- side_results - section for function side_results not yet defined that it should be texts and flags in /component
             /execute/calculator.php
+    \-- item_phrase - section for function item_phrase not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
+    \-- own_label - section for function own_label not yet defined that it should be texts and flags in /component/execu
+            te/calculator.php
+    \-- phrase_label - section for function phrase_label not yet defined that it should be texts and flags in /component
+            /execute/calculator.php
+    \-- options - section for function options not yet defined that it should be texts and flags in /component/execute/c
+            alculator.php
+    \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
+            tor.php
 \-- system_form
     \-- form_tile - section for function form_tile missing in /component/execute/system_form.php
     \-- title_named - section for function title_named missing in /component/execute/system_form.php
@@ -6727,6 +6737,8 @@
             te/system_page.php
     \-- calculator_title - section for function calculator_title not yet defined that it should be process catch in /com
             ponent/execute/system_page.php
+    \-- calculator_input - section for function calculator_input not yet defined that it should be process catch in /com
+            ponent/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
              in /component/execute/system_page.php
     \-- process_catch_tab - section for function process_catch_tab not yet defined that it should be process catch in /c
@@ -6801,6 +6813,7 @@
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
     \-- formula_notes - section for function formula_notes missing in /component/execute/ui_list.php
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
+    \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -9387,6 +9400,8 @@
         \-- ui_list - the notes of a page: the descriptions of the formulas that calculate the results of the
     \-- assumption_fields
         \-- ui_list - the assumptions of a page: the values that the calculation of the results of the page uses
+    \-- calculator_fields
+        \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
@@ -9608,6 +9623,17 @@
         \-- calculator - @param phrase $item the item e.g. a row or a row group
     \-- side_results
         \-- calculator - the candidates of the side results of a row: the phrases that the phrase or the filter
+    \-- item_phrase
+        \-- calculator - @param phrase|null $item a list item e.g. PV installation input yield factor
+    \-- own_label
+        \-- calculator - @param phrase|null $phr e.g. the group of the inputs
+    \-- phrase_label
+        \-- calculator - @param phrase $phr a phrase that is no item e.g. an option of a selector that is a kind of the 
+                field phrase
+    \-- options
+        \-- calculator - the options of a phrase selector (rule 6): the "has a" triples of the field phrase in their
+    \-- used
+        \-- calculator - @param phrase[] $phr_lst e.g. the option phrases of a selector
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -9892,6 +9918,8 @@
         \-- system_page - the name of the view as the page title and its description as the lead text, e.g. of a use
     \-- calculator_title
         \-- system_page - the title of a calculator page: the calculator label of the page phrase, or of the phrase it
+    \-- calculator_input
+        \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- process_catch_fields
         \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
     \-- process_catch_tab

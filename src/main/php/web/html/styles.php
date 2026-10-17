@@ -158,6 +158,10 @@ class styles
     // the measured or assumed tag behind the label and the source hint below an assumption field
     const string INPUT_TAG = 'tag';
     const string INPUT_HINT = 'hint';
+    // the input and its unit on one line of a calculator field, and the frame of the inputs and
+    // the save button of the calculator input (ui_list::calculator_fields)
+    const string INPUT_ROW = 'row';
+    const string INPUTS = 'inputs';
 
     // the not critical entries of an admin dashboard column, which open by a click on the +/- marker
     const string ADMIN_MORE = 'admin-more';

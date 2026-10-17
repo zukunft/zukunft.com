@@ -252,19 +252,81 @@ class calculator
     }
 
 
-    /*
-     * internal
-     */
-
     /**
      * @param phrase|null $item a list item e.g. PV installation input yield factor
      * @return phrase|null the phrase that the item lists e.g. yield factor
      */
-    private function item_phrase(?phrase $item): ?phrase
+    function item_phrase(?phrase $item): ?phrase
     {
         $to = $item?->get_to();
         return $to == null ? null : $this->cached($to);
     }
+
+    /**
+     * @param phrase|null $phr e.g. the group of the inputs
+     * @return string the own label of the phrase without a fallback, e.g. so that a group without
+     *                a label gets the translated default heading, or an empty string
+     */
+    function own_label(?phrase $phr): string
+    {
+        return $this->own_text($phr, triples::CALCULATOR_LABEL) ?? '';
+    }
+
+    /**
+     * @param phrase $phr a phrase that is no item e.g. an option of a selector that is a kind of the field phrase
+     * @return string the label of the phrase, else its name with a capital first letter
+     */
+    function phrase_label(phrase $phr): string
+    {
+        return $this->own_text($this->cached($phr), triples::CALCULATOR_LABEL) ?? $this->capital($phr->name());
+    }
+
+    /**
+     * the options of a phrase selector (rule 6): the "has a" triples of the field phrase in their
+     * order e.g. yield factor has a south, else the phrases that are a field phrase e.g. residual
+     * mix is a replacement mix
+     *
+     * @param phrase $phr the field phrase e.g. yield factor
+     * @return array the option phrase and its label for each option in the order of the selector
+     */
+    function options(phrase $phr): array
+    {
+        $result = [];
+        foreach ($this->sub_items($phr, verbs::HAS_ID) as $opt) {
+            $result[] = [$this->item_phrase($opt), $this->label($opt)];
+        }
+        if ($result == []) {
+            foreach ($this->cac->lst() as $trp) {
+                if ($trp->is_triple() and $trp->get_verb()?->id() == verbs::IS_ID
+                    and $trp->get_to()?->id() == $phr->id()) {
+                    $opt = $this->cached($trp->get_from());
+                    $result[] = [$opt, $this->phrase_label($opt)];
+                }
+            }
+            usort($result, fn($a, $b) => strcmp($a[1], $b[1]));
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase[] $phr_lst e.g. the option phrases of a selector
+     * @return phrase|null the phrase of the list that the page phrase uses e.g. east-west or null if it uses none
+     */
+    function used(array $phr_lst): ?phrase
+    {
+        $ids = array_map(fn($opt) => $opt->id(), $phr_lst);
+        foreach ($this->triples_from($this->phr) as $trp) {
+            if ($trp->get_verb()?->id() == verbs::USES_ID and in_array($trp->get_to()?->id(), $ids)) {
+                return $this->cached($trp->get_to());
+            }
+        }
+        return null;
+    }
+
+
+    /*
+     * internal
+     */
 
     /**
      * @param phrase|null $phr the phrase of a row e.g. PV embodied emission = embodied emission of PV
@@ -335,7 +397,7 @@ class calculator
      */
     private function triples_from(phrase $phr): array
     {
-        return $this->cac->children($phr, new user_message())->lst();
+        return $this->cac->children($phr, new user_message())->lst(); // not reported: the triples are only read from the request cache
     }
 
     /**

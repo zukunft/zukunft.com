@@ -68,6 +68,7 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'components.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
@@ -94,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
@@ -1197,6 +1199,57 @@ class system_page extends component
             $result = $html->text_h4($html->esc($calc->title()));
             if ($calc->lead() != '') {
                 $result .= $html->p($html->esc($calc->lead()));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+     * the heading, the input fields and the save button in the inputs frame, then a collapsed
+     * block with the assumptions that the calculator lists and after them the other values that
+     * the results of the page use; the headings are the labels of the groups, else the default text
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $cfg the request cache with the calculator triples and the values of the page
+     * @param string $form_name the name of the save form that the fields join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @param array $url_arr the url parameters of the page with the entered numbers
+     * @return string the html code of the inputs or an empty string if the calculator has no input and no assumption
+     */
+    function calculator_input(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg,
+        string                                                $form_name,
+        string|int                                            $msk_key,
+        array                                                 $url_arr
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $html = new html_base();
+            $list = new ui_list();
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+            $inputs = $calc->items(triples::CALCULATOR_INPUT);
+            $assumptions = $calc->items(triples::CALCULATOR_ASSUMPTION);
+            if ($inputs != [] or $assumptions != []) {
+                $heading = $calc->own_label($calc->group(triples::CALCULATOR_INPUT))
+                    ?: $mtr->txt(msg_id::CALCULATOR_INPUTS);
+                $result = $html->div($html->block(html_base::H2, $html->esc($heading))
+                    . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
+                    . $this->process_catch_button_refresh(msg_id::CALCULATOR_SAVE, $form_name, $msk_key, $dbo, $url_arr),
+                    styles::INPUTS);
+                $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
+                $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
+                    . $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr, $listed);
+                if ($fields != '') {
+                    $summary = $calc->own_label($calc->group(triples::CALCULATOR_ASSUMPTION))
+                        ?: $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS);
+                    $result .= $html->details($html->esc($summary), $fields);
+                }
             }
         }
         return $result;
