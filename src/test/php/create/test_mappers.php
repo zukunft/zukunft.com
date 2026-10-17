@@ -910,6 +910,9 @@ class test_mappers
             case component_types::PROCESS_CATCH_BUTTON_BACK:
             case component_types::PROCESS_CATCH_BUTTON_REFRESH:
             case component_types::GEOLOCATOR:
+            case component_types::CALCULATOR_TITLE:
+            case component_types::CALCULATOR_INPUT:
+            case component_types::CALCULATION_RESULT:
             case component_types::USED_IN_AS_TEXT:
             case component_types::USED_IN_AS_TEXT_WITH_LINK:
             case component_types::FORM_CLASS:

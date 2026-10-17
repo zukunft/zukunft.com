@@ -329,6 +329,21 @@ class use_case_ui_tests
         $test_name = 'a formula without a description adds no note';
         $frm_scaled->set_description('');
         $t->assert($test_name, $this->render($t_cmp->component_formula_notes(), $wrd, $msk, $dto_as, $msg), '');
+
+        $t->subheader($ts . 'calculator');
+        // a phrase without calculator triples shows its name as the title (rule 6 of
+        // docs/llm/new_view_sample_pv_balance.md), so every phrase can be shown as a calculator
+        $test_name = 'the calculator title of a phrase without a calculator label is the phrase name';
+        $t->assert($test_name, $this->render($t_cmp->component_calculator_title(), $wrd, $msk, $dto, $msg),
+            $html->text_h4($wrd->name()));
+        // negative: a component without a page phrase e.g. in a preview has no title to show
+        $test_name = '... and nothing for a component without a phrase';
+        $t->assert($test_name, $this->render($t_cmp->component_calculator_title(), new word_ui(), $msk, $dto, $msg), '');
+        // the inputs and the results are dispatched, so they never report missing program code
+        $test_name = 'the calculator input is a known component type';
+        $t->assert($test_name, $this->render($t_cmp->component_calculator_input(), $wrd, $msk, $dto, $msg), '');
+        $test_name = 'the calculation result is a known component type';
+        $t->assert($test_name, $this->render($t_cmp->component_calculation_result(), $wrd, $msk, $dto, $msg), '');
     }
 
     /**

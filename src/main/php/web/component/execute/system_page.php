@@ -1173,6 +1173,26 @@ class system_page extends component
     }
 
     /**
+     * the title of a calculator page: the name of the page phrase, which is the last fallback of the
+     * calculator label (rule 6 of docs/llm/new_view_sample_pv_balance.md)
+     * TODO Prio 1 the calculator label and hint from the calculator reader (docs/llm/pending.md step 3)
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @return string the html code of the title or an empty string if the page has no phrase
+     */
+    function calculator_title(db_object|type_object|combine_named|sandbox_list|null $dbo): string
+    {
+        $result = '';
+        $name = $dbo?->name() ?? '';
+        if ($name != '') {
+            $html = new html_base();
+            // escape the user settable name, because the title is shown as raw html
+            $result = $html->text_h4($html->esc($name));
+        }
+        return $result;
+    }
+
+    /**
      * the input fields of a process catch page or of one of its tabs; a placeholder with the name of
      * the component until the fields are read from the field triples of the question phrase
      *

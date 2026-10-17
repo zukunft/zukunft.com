@@ -347,6 +347,30 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component the title of a calculator page by the calculator label of the page phrase
+     */
+    function component_calculator_title(): component
+    {
+        return $this->component_use_case(components::TEST_CALCULATOR_TITLE_NAME, component_types::CALCULATOR_TITLE);
+    }
+
+    /**
+     * @return component the inputs of a calculator page by the calculator input items of the page phrase
+     */
+    function component_calculator_input(): component
+    {
+        return $this->component_use_case(components::TEST_CALCULATOR_INPUT_NAME, component_types::CALCULATOR_INPUT);
+    }
+
+    /**
+     * @return component the results of a calculator page by the calculator column and row group items
+     */
+    function component_calculation_result(): component
+    {
+        return $this->component_use_case(components::TEST_CALCULATION_RESULT_NAME, component_types::CALCULATION_RESULT);
+    }
+
+    /**
      * @param string $name the name of the component, which some use case types show
      * @param string $type the code id of the component type
      * @return component a component of a use case page with the name and the type set

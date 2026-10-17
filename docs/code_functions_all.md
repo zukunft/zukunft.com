@@ -6705,6 +6705,8 @@
             xecute/system_page.php
     \-- view_title - section for function view_title not yet defined that it should be process catch in /component/execu
             te/system_page.php
+    \-- calculator_title - section for function calculator_title not yet defined that it should be process catch in /com
+            ponent/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
              in /component/execute/system_page.php
     \-- process_catch_tab - section for function process_catch_tab not yet defined that it should be process catch in /c
@@ -9832,6 +9834,8 @@
                 ss catch page
     \-- view_title
         \-- system_page - the name of the view as the page title and its description as the lead text, e.g. of a use
+    \-- calculator_title
+        \-- system_page - the title of a calculator page: the name of the page phrase, which is the last fallback of the
     \-- process_catch_fields
         \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
     \-- process_catch_tab

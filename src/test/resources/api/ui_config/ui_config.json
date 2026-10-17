@@ -10118,6 +10118,24 @@
                 "code_id": "table_with_own_columns",
                 "description": "the values related to a phrase as a table with the column phrases of the component as its own columns e.g. lifetime and annual",
                 "id": 286
+            },
+            {
+                "name": "calculator title",
+                "code_id": "calculator_title",
+                "description": "the calculator label of the page phrase as the page title and its calculator hint as the lead text",
+                "id": 287
+            },
+            {
+                "name": "calculator input",
+                "code_id": "calculator_input",
+                "description": "the input fields of the calculator input items of the page phrase, the refresh button and the assumptions in a collapsed block",
+                "id": 288
+            },
+            {
+                "name": "calculation result",
+                "code_id": "calculation_result",
+                "description": "the main result table by the calculator column and row group items of the page phrase, then the detail tables, the formula notes and the sources in a collapsed block",
+                "id": 289
             }
         ],
         "component_link_types": [

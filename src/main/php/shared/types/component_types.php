@@ -635,6 +635,14 @@ class component_types
     // columns e.g. lifetime and annual, so that no system column tier changes other tables
     const string TABLE_WITH_OWN_COLUMNS = "table_with_own_columns";
     const int TABLE_WITH_OWN_COLUMNS_ID = 286;
+    // the three components of the calculator view, filled by the calculator triples of the page
+    // phrase (docs/llm/new_view_sample_pv_balance.md): the title, the inputs and the results
+    const string CALCULATOR_TITLE = "calculator_title";
+    const int CALCULATOR_TITLE_ID = 287;
+    const string CALCULATOR_INPUT = "calculator_input";
+    const int CALCULATOR_INPUT_ID = 288;
+    const string CALCULATION_RESULT = "calculation_result";
+    const int CALCULATION_RESULT_ID = 289;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -1238,6 +1246,9 @@ class component_types
         [self::ASSUMPTION_FIELDS, self::ASSUMPTION_FIELDS_ID],
         [self::FORMULA_NOTES, self::FORMULA_NOTES_ID],
         [self::TABLE_WITH_OWN_COLUMNS, self::TABLE_WITH_OWN_COLUMNS_ID],
+        [self::CALCULATOR_TITLE, self::CALCULATOR_TITLE_ID],
+        [self::CALCULATOR_INPUT, self::CALCULATOR_INPUT_ID],
+        [self::CALCULATION_RESULT, self::CALCULATION_RESULT_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

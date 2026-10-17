@@ -222,6 +222,9 @@ class components
     const string TEST_SOURCES_NAME = 'System Test View Component Sources';
     const string TEST_ASSUMPTIONS_NAME = 'System Test View Component Assumptions';
     const string TEST_NOTES_NAME = 'System Test View Component Notes';
+    const string TEST_CALCULATOR_TITLE_NAME = 'System Test View Component Calculator Title';
+    const string TEST_CALCULATOR_INPUT_NAME = 'System Test View Component Calculator Input';
+    const string TEST_CALCULATION_RESULT_NAME = 'System Test View Component Calculation Result';
 
 
     // array of component names that used for testing and remove them after the test

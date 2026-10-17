@@ -407,6 +407,10 @@ class component_exe extends component
             component_types::SOURCES_USED => $list->sources_used($dbo, $msg, $cfg),
             component_types::ASSUMPTION_FIELDS => $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr),
             component_types::FORMULA_NOTES => $list->formula_notes($dbo, $msg, $cfg),
+            // calculator page - the parts are selected by the calculator triples of the page phrase
+            component_types::CALCULATOR_TITLE => $page->calculator_title($dbo),
+            // TODO Prio 1 the inputs and the results from the calculator reader (docs/llm/pending.md step 5)
+            component_types::CALCULATOR_INPUT, component_types::CALCULATION_RESULT => '',
             component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),

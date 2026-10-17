@@ -89,57 +89,6 @@ open from the old setup, still needed for the calculator page:
   a `calculator note` list or notes as descriptions of the row groups)
 - sources: numbered in the order of the first use and cited as [n] in the hints and notes
 
-## pin pages
-
-add to the config.yaml below 'system' and 'view' the entry 'startup' and below that 'pinned views'. 
-
-the 'pinned views' are a list and each entry has these fields:
-
-- url: the url of the view including all parameters but excluding the user and session token e.g. http://localhost/http/view.php?m=4&id=1954
-- url_name: the shortcut for direkt url typing e.g. if it is 'pv' and the pod url is zukunft.com than the user typed url zukunft.com/pv should lead to the url e.g. http://localhost/http/view.php?m=4&id=1954 
-- name: the name that is should be shown in the search start page (http://localhost/index.html) below the search field with the url as a link and a tooltip e.g. 'PV Installation'
-- tooltip: the tooltip that should be shown in the search start page if the mouse stays on one of the links
-
-add these 'pinned views' values to the config.yaml:
-
-url: http://localhost/http/view.php?m=1
-url_name: problems
-name: Global problems
-tooltip: the global issues that are expected to cause the damage with the suggested solution to solve the problem
-
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: pv
-name: Photovoltaic calculator
-tooltip: calculate the effects of photovoltaic
-
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: panels
-name: PV panels installation
-tooltip: step by step process to calculate the installation of PV panels
-
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: cbam
-name: CBAM Calculator
-tooltip: step by step process to calculate the carbon border adjustment
-
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: portfolio_split
-name: Portfolio split
-tooltip: step by step process to calculate the splitting of an investment portfolio taking the round lots into account
-
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: company_sheet
-name: Company sheet
-tooltip: compare two or more key figure sheets related to a company 
-
-the frontend forward page e.g. /settings with '<!DOCTYPE html>
-<script>const p = new URLSearchParams(location.search); p.set('m', '126'); location.replace('/http/view.php?' + p);</script>
-<noscript><meta http-equiv="refresh" content="0; url=/http/view.php?m=126"></noscript>
-</html>
-' are checked and if needed updated. Near that check add the creation of the pinned views and after the creation try to remove forward pages that should not be used any more, so that are not a fixed forward page nor a pinned one.
-
-
-
 ## import / export
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)

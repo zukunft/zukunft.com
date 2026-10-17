@@ -285,3 +285,6 @@ component_type_id, type_name, description, code_id
 284, 'assumption fields', 'the values that the results of the page use and that the page phrase does not carry as number input fields with a measured or assumed tag and the source as the hint', 'assumption_fields'
 285, 'formula notes', 'the descriptions of the formulas that calculate the results of the page as paragraphs with the formula name in front', 'formula_notes'
 286, 'table with own columns', 'the values related to a phrase as a table with the column phrases of the component as its own columns e.g. lifetime and annual', 'table_with_own_columns'
+287, 'calculator title', 'the calculator label of the page phrase as the page title and its calculator hint as the lead text', 'calculator_title'
+288, 'calculator input', 'the input fields of the calculator input items of the page phrase, the refresh button and the assumptions in a collapsed block', 'calculator_input'
+289, 'calculation result', 'the main result table by the calculator column and row group items of the page phrase, then the detail tables, the formula notes and the sources in a collapsed block', 'calculation_result'
