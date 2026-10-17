@@ -307,6 +307,46 @@ class triples
         self::BUTTON_REFRESH => self::BUTTON_REFRESH_CODE_ID,
         self::BUTTON_BACK => self::BUTTON_BACK_CODE_ID,
     ];
+
+    // the keywords of the calculator view, defined in calculator_keywords.json like the process
+    // catch fields: a list is a group triple from the page phrase to a list keyword whose items
+    // are the triples from the group, and a label, a hint or a flag is a triple from an item or
+    // from a phrase to the property keyword (docs/llm/new_view_sample_pv_balance.md)
+    const string SYSTEM_CALCULATOR = 'calculator (system)';
+    const string SYSTEM_CALCULATOR_CODE_ID = 'system_calculator';
+    const string CALCULATOR_LABEL = 'calculator label';
+    const string CALCULATOR_LABEL_CODE_ID = 'system_calculator_label';
+    const string CALCULATOR_HINT = 'calculator hint';
+    const string CALCULATOR_HINT_CODE_ID = 'system_calculator_hint';
+    const string CALCULATOR_INPUT = 'calculator input';
+    const string CALCULATOR_INPUT_CODE_ID = 'system_calculator_input';
+    const string CALCULATOR_ASSUMPTION = 'calculator assumption';
+    const string CALCULATOR_ASSUMPTION_CODE_ID = 'system_calculator_assumption';
+    const string CALCULATOR_RESULT_COLUMN = 'calculator result column';
+    const string CALCULATOR_RESULT_COLUMN_CODE_ID = 'system_calculator_result_column';
+    const string CALCULATOR_ROW_GROUP = 'calculator row group';
+    const string CALCULATOR_ROW_GROUP_CODE_ID = 'system_calculator_row_group';
+    const string CALCULATOR_DETAIL_TABLE = 'calculator detail table';
+    const string CALCULATOR_DETAIL_TABLE_CODE_ID = 'system_calculator_detail_table';
+    const string CALCULATOR_HIGHLIGHT = 'calculator highlight';
+    const string CALCULATOR_HIGHLIGHT_CODE_ID = 'system_calculator_highlight';
+    const string CALCULATOR_SIGNED = 'calculator signed';
+    const string CALCULATOR_SIGNED_CODE_ID = 'system_calculator_signed';
+    // the lists of a calculator page by their code id
+    const array CALCULATOR_LISTS = [
+        self::CALCULATOR_INPUT => self::CALCULATOR_INPUT_CODE_ID,
+        self::CALCULATOR_ASSUMPTION => self::CALCULATOR_ASSUMPTION_CODE_ID,
+        self::CALCULATOR_RESULT_COLUMN => self::CALCULATOR_RESULT_COLUMN_CODE_ID,
+        self::CALCULATOR_ROW_GROUP => self::CALCULATOR_ROW_GROUP_CODE_ID,
+        self::CALCULATOR_DETAIL_TABLE => self::CALCULATOR_DETAIL_TABLE_CODE_ID,
+    ];
+    // the texts and the flags of an item or a phrase of a calculator page by their code id
+    const array CALCULATOR_PROPERTIES = [
+        self::CALCULATOR_LABEL => self::CALCULATOR_LABEL_CODE_ID,
+        self::CALCULATOR_HINT => self::CALCULATOR_HINT_CODE_ID,
+        self::CALCULATOR_HIGHLIGHT => self::CALCULATOR_HIGHLIGHT_CODE_ID,
+        self::CALCULATOR_SIGNED => self::CALCULATOR_SIGNED_CODE_ID,
+    ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';

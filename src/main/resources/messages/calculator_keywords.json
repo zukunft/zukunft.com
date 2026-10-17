@@ -1,0 +1,142 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-17 12:00:00",
+  "user": "timon",
+  "selection": [
+    "the system phrases that define the parts of a calculator page"
+  ],
+  "description": "The keywords of the calculator view (docs/llm/new_view_sample_pv_balance.md), so that the inputs, the assumptions, the result columns, the row groups, the detail tables and the labels and hints of a calculator page are defined by the triples of a use case file and not by code. A list is a group triple from the phrase to a list keyword, whose items are the triples from the group; a label, a hint or a flag is a triple from an item or from a phrase to the property keyword. This file is imported as the last step of the db setup, so that no database id of a tested phrase moves.",
+  "words": [
+    {
+      "name": "calculator",
+      "description": "a page that calculates results from the inputs of the user for one initial phrase e.g. a PV installation"
+    },
+    {
+      "name": "hint",
+      "description": "a short help text shown next to or below a label"
+    },
+    {
+      "name": "highlight",
+      "description": "a mark that makes an item stand out e.g. a key row of a result table"
+    },
+    {
+      "name": "sign",
+      "description": "whether a number is positive or negative"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "label"
+    },
+    {
+      "name": "input"
+    },
+    {
+      "name": "assumption"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "table"
+    }
+  ],
+  "triples": [
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "calculator (system)",
+      "description": "keyword of the calculator view; a phrase gets its calculator page by the triples to the keywords below",
+      "from": "calculator",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_calculator"
+    },
+    {
+      "name": "calculator label",
+      "description": "text property: the description of a triple from an item or from a phrase to this keyword is the label of the item e.g. the page title, a heading, a field label, a column header or a row label; the label of the item wins over the label of its phrase",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "label",
+      "code_id": "system_calculator_label"
+    },
+    {
+      "name": "calculator hint",
+      "description": "text property: the description of a triple from an item or from a phrase to this keyword is the hint of the item e.g. the lead text or the sub text of a row; the hint of the item wins over the hint of its phrase",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "hint",
+      "code_id": "system_calculator_hint"
+    },
+    {
+      "name": "calculator input",
+      "description": "list: the items of the group triple to this keyword are the input fields",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "input",
+      "code_id": "system_calculator_input"
+    },
+    {
+      "name": "calculator assumption",
+      "description": "list: the assumptions shown first and with a label; the other operands follow sorted by label",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "assumption",
+      "code_id": "system_calculator_assumption"
+    },
+    {
+      "name": "calculator result column",
+      "description": "list: the column phrases of the main result table",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "column",
+      "code_id": "system_calculator_result_column"
+    },
+    {
+      "name": "calculator row group",
+      "description": "list of lists: the row groups of the main result table, each with its rows; a row has with filters, and its side results are the has a triples of the row phrase or the filter phrase",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "group",
+      "code_id": "system_calculator_row_group"
+    },
+    {
+      "name": "calculator detail table",
+      "description": "list: the detail tables, each with its columns (has a) and its extra rows (with)",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "table",
+      "code_id": "system_calculator_detail_table"
+    },
+    {
+      "name": "calculator highlight",
+      "description": "flag: an item, or a phrase on every page, with a triple to this keyword is shown as a key row",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "highlight",
+      "code_id": "system_calculator_highlight"
+    },
+    {
+      "name": "calculator signed",
+      "description": "flag: the cells of a row group with a triple to this keyword show the sign of the number",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "sign",
+      "code_id": "system_calculator_signed"
+    }
+  ]
+}

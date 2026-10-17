@@ -300,6 +300,31 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_false($test_name, $msg->is_ok());
 
+        // the keywords of the calculator view are system phrases, so the calculator reader finds the
+        // lists, the texts and the flags of a page by the code id (triples::CALCULATOR_LISTS)
+        $json_array = json_decode(file_get_contents(cfg_files::CALCULATOR_KEYWORDS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the calculator keyword system file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        $trp_lst = $dto->triple_list();
+        $keywords = [triples::SYSTEM_CALCULATOR => triples::SYSTEM_CALCULATOR_CODE_ID];
+        foreach ([...$keywords, ...triples::CALCULATOR_LISTS, ...triples::CALCULATOR_PROPERTIES] as $name => $code_id) {
+            $test_name = 'the import sets the code id of the calculator keyword ' . $name;
+            $t->assert($test_name, $trp_lst->get_by_name($name, $msg)?->get_code_id(), $code_id);
+            // every list and property hangs from the root, so one load of the root gives all keywords
+            if ($name != triples::SYSTEM_CALCULATOR) {
+                $test_name = '... and links it to the calculator keyword';
+                $t->assert($test_name, $trp_lst->get_by_name($name, $msg)?->get_from()?->name(),
+                    triples::SYSTEM_CALCULATOR);
+            }
+        }
+        // negative: only a system, system test or developer user may set a code id
+        $test_name = 'a normal user cannot import the code id of a calculator keyword';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
+
         $test_name = 'JSON import source count';
         $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);

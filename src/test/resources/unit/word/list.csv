@@ -720,7 +720,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 719,1,size,,,1,,,,,size,,,3
 720,1,start,,the first step of a process,1,,,,,start,,,3
 721,1,sys-conf-value,,keyword to read the numeric value from the config.yaml,,,,,,sys-conf-value,,,3
-722,1,table,,,,,,,,table,,,3
+722,1,table,,,1,,,,,table,,,3
 723,1,triple,,,,,,,,triple,,,3
 724,1,type,,,1,,,,,type,,,3
 725,1,update,,,,,,,,update,,,3
@@ -1985,3 +1985,8 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1984,1,proceed,,to continue with the step that follows the current one,1,,,,,,,,
 1985,1,refresh,,to show the page again with the changed input,1,,,,,,,,
 1986,1,back,,the step before the current one,1,,,,,,,,
+1987,1,calculator,,a page that calculates results from the inputs of the user for one initial phrase e.g. a PV installation,1,,,,,,,,
+1988,1,hint,,a short help text shown next to or below a label,1,,,,,,,,
+1989,1,highlight,,a mark that makes an item stand out e.g. a key row of a result table,1,,,,,,,,
+1990,1,sign,,whether a number is positive or negative,1,,,,,,,,
+1991,1,assumption,,,1,,,,,,,,
