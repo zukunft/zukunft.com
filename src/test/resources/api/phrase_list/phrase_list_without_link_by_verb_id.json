@@ -312,7 +312,7 @@
         "class": "word"
     },
     {
-        "id": 2488,
+        "id": 2544,
         "name": "replacement mix",
         "description": "the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix",
         "class": "triple"

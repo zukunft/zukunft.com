@@ -59,6 +59,7 @@ class calculator
     // the phrase of the page e.g. example PV installation
     private phrase $phr;
     // the phrase that the page phrase is built from e.g. PV installation or null for a word
+    // TODO Prio 1 create a sample for a calculator with a word as base phrase
     private ?phrase $base;
 
     /**
@@ -343,6 +344,34 @@ class calculator
             }
         }
         return null;
+    }
+
+    /**
+     * the phrases whose general triples the page reads by rule 6 and 8: the phrase of each item,
+     * of each row, detail column and extra row, the filter phrase of a row and the other phrase
+     * of a row built from the phrase of its group; so that the request cache can be filled with
+     * the labels, hints, flags, side results and options of all of them with one load
+     *
+     * @return phrase[] the phrases in the order of the lists, each once
+     */
+    function phrases(): array
+    {
+        $result = [];
+        foreach (array_keys(triples::CALCULATOR_LISTS) as $list) {
+            foreach ($this->items($list) as $item) {
+                $phr = $this->item_phrase($item);
+                $result[] = $phr;
+                foreach ([...$this->sub_items($item, verbs::HAS_ID), ...$this->sub_items($item, verbs::WITH_ID)] as $sub) {
+                    $sub_phr = $this->item_phrase($sub);
+                    array_push($result, $sub_phr, $this->filter($sub), $this->other_phrase($sub_phr, $phr));
+                }
+            }
+        }
+        $by_id = [];
+        foreach (array_filter($result) as $phr) {
+            $by_id[$phr->id()] ??= $phr;
+        }
+        return array_values($by_id);
     }
 
 

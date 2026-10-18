@@ -363,9 +363,6 @@ class files
         // start page data and no use case, but appended after the use cases above, so
         // that it shifts the database id of no phrase that a test pins
         self::PROBLEM_MAIN_REASONS_FILE,
-        // appended after the start page data for the same reason: a new use case file is always
-        // added at the end of this list, because its phrases get the next free ids
-        self::PV_LIFETIME_BALANCE_FILE,
     ];
 
     // system data with code ids added after the database ids of the tested phrases have been
@@ -378,6 +375,13 @@ class files
         self::PROCESS_CATCH_VIEWS_FILE,
         self::CALCULATOR_KEYWORDS_FILE,
         self::CALCULATOR_VIEWS_FILE,
+    ];
+
+    // the use case files that build on the appended system data e.g. the page of a phrase defined
+    // by the calculator keywords, imported after it; a new use case file is always added at the
+    // end of this list, because its phrases get the next free ids
+    const array USE_CASE_FILES_APPENDED = [
+        self::PV_LIFETIME_BALANCE_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

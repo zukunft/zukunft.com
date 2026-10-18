@@ -641,6 +641,27 @@ class import_tests
         $t->assert($test_name, $msg->all_message_text(), '');
         $test_name = '... and its calc validation reproduces every result of the chain';
         $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // the page is the system view Calculator, so the use case brings no view and no component
+        $test_name = '... and brings no view of its own';
+        $t->assert($test_name, $dto->view_list()->count(), 0);
+        $test_name = '... but shows the worked example with the calculator view';
+        $trp = $dto->get_triple_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
+        $t->assert($test_name, $trp?->get_view()?->name(), views::CALCULATOR_NAME);
+        // every installation built from PV installation gets the page, so the lists are triples of PV installation
+        $test_name = '... and PV installation has every list of the calculator';
+        $lists = [];
+        foreach ($dto->triple_list()->lst() as $trp) {
+            if ($trp->from_name() == triple_names::PV_INSTALLATION
+                and array_key_exists($trp->to_name(), triples::CALCULATOR_LISTS)) {
+                $lists[] = $trp->to_name();
+            }
+        }
+        $t->assert($test_name, $lists, array_keys(triples::CALCULATOR_LISTS));
+        // the import of a normal user finds a phrase only by the names of the file, so the file repeats the keywords
+        $test_name = '... and repeats every calculator keyword without its code id';
+        $keywords = [...array_keys(triples::CALCULATOR_LISTS), ...array_keys(triples::CALCULATOR_PROPERTIES)];
+        $repeated = array_values(array_intersect($keywords, array_column($json_array[json_fields::TRIPLES], json_fields::NAME)));
+        $t->assert($test_name, $repeated, $keywords);
 
         // the unique keys use case is user data as well, so a normal user must import it
         $test_name = 'the import of the unique keys use case reports no problem';

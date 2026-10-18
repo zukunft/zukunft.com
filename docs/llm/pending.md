@@ -98,6 +98,20 @@ open from the old setup, still needed for the calculator page:
   a `calculator note` list or notes as descriptions of the row groups)
 - sources: numbered in the order of the first use and cited as [n] in the hints and notes
 
+### to check 
+
+1. The page renders, but without numbers.
+    - Every cell of the main result table is empty, apart from the 4'500 load in the monthly table.
+    - "PV life-cycle emissions" has no value.
+    - The replacement mix selector offers only "please select ...". The triples residual mix (replacement mix) and production mix (replacement mix) exist now, so the DOWN load in add_calculator_triples should find them as options.
+    - The snapshot saves this state as the expected page.
+    - The step's goal, the cache filled before render, is reached for labels, hints and order. The values, results and options aren't. This needs a follow-up.
+2. ui_list::context_count has no unit test (coding.md: tests first). Only the run_pv_lifetime_balance snapshot covers the new ranking. A small case in use_case_ui_tests would make it explicit: a general value against a value with a place phrase.
+3. Repeated loads. add_page_cache runs twice per request, in frontend and in show(). The is_calculator() guard only stops the second run if the first run found calculator triples. For a phrase without them that is opened with the Calculator view, all the api loads run twice. This is minor, but it adds to the timing problem in your pending.md notes.
+4. Several changes in one commit. The commit holds step 6 plus three fixes it needed: the import order (USE_CASE_FILES_APPENDED), the repeated keywords and the value ranking. pending.md asks for one commit per step. One commit is defensible, since step 6 fails without those fixes, but the message should name them.
+5. The new TODO Prio 1 / TODO Prio 2 comments in calculator.php and system_views_read_tests.php are yours, and they're fine to commit.
+6. Generated files: the docs/code_*.md files, the api fixtures and about 140 html snapshots are regenerated output from the id shift. Nothing in them needs a manual review.
+
 ## import / export
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
@@ -299,6 +313,67 @@ and create additional system_time_types to be able to identify execution time op
 
 check why the db_cache is reset during the test run /test/test.php 
 and check if some of the cache resets can be switched off to speed up 
+
+Guess based on this log entries programm parts can be changed to reduce the execution time or suggest additional time categories for better localisation of critical parts: 
+
+068.8832 timeout: system read db-> view entry_view section not_specified: 0.0408 sec, load_frontend: 1.745 sec, db_read: 0.0926 sec, map_json: 0.3017 sec, url to html: 12.8321 sec, test diff: 0 sec, took 15.0123 seconds
+073.2490 timeout: system read db-> view entry_view section not_specified: 0.0078 sec, db_read: 0.0609 sec, map_json: 0.3011 sec, load_frontend: 0.8802 sec, url to html: 3.115 sec, test diff: 0 sec, took 4.3658 seconds
+078.3079 timeout: system read db-> view entry_view section not_specified: 0.0097 sec, db_read: 0.0551 sec, map_json: 0.2922 sec, load_frontend: 0.8647 sec, url to html: 3.8364 sec, test diff: 0 sec, took 5.0589 seconds
+082.6177 timeout: system read db-> view entry_view section not_specified: 0.0084 sec, db_read: 0.0499 sec, map_json: 0.2852 sec, load_frontend: 0.8839 sec, url to html: 3.0818 sec, test diff: 0 sec, took 4.3098 seconds
+086.9242 timeout: system read db-> view entry_view section not_specified: 0.0081 sec, db_read: 0.0539 sec, map_json: 0.2842 sec, load_frontend: 0.8818 sec, url to html: 3.0779 sec, test diff: 0 sec, took 4.3065 seconds
+091.2654 timeout: system read db-> view entry_view section not_specified: 0.0095 sec, db_read: 0.0614 sec, map_json: 0.3339 sec, load_frontend: 0.8685 sec, url to html: 3.067 sec, test diff: 0 sec, took 4.3411 seconds
+095.5964 timeout: system read db-> view entry_view section not_specified: 0.0091 sec, db_read: 0.0523 sec, map_json: 0.2959 sec, load_frontend: 0.8849 sec, url to html: 3.0882 sec, test diff: 0 sec, took 4.3311 seconds
+100.2396 timeout: system read db-> view entry_view section not_specified: 0.0092 sec, db_read: 0.0598 sec, map_json: 0.317 sec, load_frontend: 0.8808 sec, url to html: 3.3756 sec, test diff: 0 sec, took 4.6431 seconds
+102.3304 timeout: system read db-> view word_default section not_specified: 0.9471 sec, db_read: 0.3066 sec, map_json: 0.2051 sec, url to html: 0.3103 sec, test diff: 0 sec, took 1.7748 seconds
+104.7359 timeout: system read db-> view word_add section not_specified: 0.0553 sec, db_read: 0.018 sec, map_json: 0.0482 sec, load_frontend: 0.9045 sec, url to html: 0.3131 sec, test diff: 0 sec, took 1.3394 seconds
+112.3493 timeout: system read db-> view triple_default section not_specified: 0.0102 sec, db_read: 0.5121 sec, map_json: 1.9589 sec, url to html: 0.1635 sec, test diff: 0 sec, took 2.6534 seconds
+113.6377 timeout: system read db-> view triple_add section not_specified: 0.0131 sec, db_read: 0.0013 sec, map_json: 0.0022 sec, load_frontend: 0.8976 sec, url to html: 0.3741 sec, test diff: 0 sec, took 1.2884 seconds
+116.2853 timeout: system read db-> view source_add section not_specified: 0.0107 sec, db_read: 0.005 sec, map_json: 0.0042 sec, load_frontend: 0.9601 sec, url to html: 0.3251 sec, test diff: 0 sec, took 1.3053 seconds
+123.7197 timeout: system read db-> view value_default section not_specified: 0.0169 sec, db_read: 0.6317 sec, map_json: 3.2173 sec, url to html: 0.0718 sec, test diff: 0 sec, took 3.9442 seconds
+127.6917 timeout: system read db-> view value_default section not_specified: 0.0181 sec, db_read: 0.6056 sec, map_json: 3.2606 sec, url to html: 0.0809 sec, test diff: 0 sec, took 3.9719 seconds
+132.3817 timeout: system read db-> view value_default section not_specified: 0.0086 sec, db_read: 0.7395 sec, map_json: 3.8496 sec, url to html: 0.0793 sec, test diff: 0 sec -> measured 4.6769, took 4.69 seconds
+137.0285 timeout: system read db-> view value_default section not_specified: 0.011 sec, db_read: 0.7644 sec, map_json: 3.7962 sec, url to html: 0.0619 sec, test diff: 0 sec -> measured 4.6335, took 4.6468 seconds
+143.9706 timeout: system read db-> view value_overwrite section not_specified: 0.0051 sec, db_read: 0.7271 sec, map_json: 3.7424 sec, url to html: 0.0202 sec, test diff: 0 sec -> measured 4.4948, took 4.5079 seconds
+148.7059 timeout: system read db-> view value_overwrite section not_specified: 0.0077 sec, db_read: 0.7533 sec, map_json: 3.9399 sec, url to html: 0.0207 sec, test diff: 0 sec -> measured 4.7216, took 4.7353 seconds
+153.5003 timeout: system read db-> view value_overwrite section not_specified: 0.0076 sec, db_read: 0.793 sec, map_json: 3.9592 sec, url to html: 0.0205 sec, test diff: 0 sec -> measured 4.7804, took 4.7944 seconds
+155.1563 timeout: system read db-> view formula_add section not_specified: 0.01 sec, db_read: 0.0014 sec, map_json: 0.0019 sec, load_frontend: 0.9623 sec, url to html: 0.3186 sec, test diff: 0 sec, took 1.2942 seconds
+165.9820 timeout: system read db-> view result_default section not_specified: 0.0659 sec, db_read: 1.7268 sec, map_json: 8.313 sec, url to html: 0.0691 sec, test diff: 0 sec -> measured 10.1748, took 10.2075 seconds
+204.9093 timeout: system read db-> view result_default section not_specified: 0.038 sec, db_read: 7.1487 sec, map_json: 31.5163 sec, url to html: 0.0811 sec, test diff: 0 sec -> measured 38.7841 / unmeasured 0.1431, took 38.9273 seconds
+208.2249 timeout: system read db-> view component_add section not_specified: 0.0131 sec, db_read: 0.0042 sec, map_json: 0.0032 sec, load_frontend: 0.9957 sec, url to html: 0.5536 sec, test diff: 0 sec, took 1.57 seconds
+
+## clean up
+
+db row identification should not be based on the database id instead the code_id should be used. *_ID pinned db rows e.g. words should only be used for tests.
+
+## unlink import chain time measurement
+
+If more than one json is imported make it optional either to count the percent load of all import files or per json file.
+As the log below shown it seems that at the moment the elapse time is nor resetted for each import json. In a first step reset all count parameters for each json import file so that the percent ist always the person of load per json file.
+
+455.2125 import time_definition.json (5 kBytes)
+455.7386 import time_definition.json 100% 18.77s / 18.77s  check 4739 formulas (42975.6 formulas per sec vs. 5)
+455.7386 import time_definition.json done: 4739 byte
+455.7397 import base_phrases.json (6 kBytes)
+456.1197 import base_phrases.json done: 6144 byte
+456.1209 import base_views.json (10 kBytes)
+456.4491 import base_views.json done: 9884 byte
+456.4501 import solution_prio.json (105 kBytes)
+456.9500 import solution_prio.json 54.6% 19.981s / 36.629s  count 9 results (665.8 results per sec vs. 480) e.g. poverty,reward ratio,trillion,EUR per person year,high: 0.025 (group_id ) for user 1 (zukunft.com system)
+457.7437 import solution_prio.json 60.3% 20.775s / 34.426s  Add 155 words (324.2 words per sec vs. 340)
+458.3303 import solution_prio.json 64.2% 21.361s / 33.279s  Add 68 triples (240.9 triples per sec vs. 300)
+458.8901 import solution_prio.json 67.7% 21.921s / 32.383s  Add 20 triples (314.7 triples per sec vs. 300)
+459.4951 import solution_prio.json 70% 22.526s / 32.192s  check 176 triples (38451.8 triples per sec)
+460.0975 import solution_prio.json 77.6% 23.129s / 29.795s  save 1 values (100.3 values per sec vs. 300) e.g. global,human,population,billion: 8.5 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 273,198,159,14) for user 1 (zukunft.com system)
+460.6002 import solution_prio.json 79.5% 23.631s / 29.709s  Add 4 words (429.6 words per sec vs. 340)
+461.1050 import solution_prio.json 79.6% 24.136s / 30.306s  save 33 results (214.1 results per sec vs. 210) e.g. citizen participation,reward ratio,trillion,EUR per person year,high: 0.225 (group_id 10-0M-06-2H+32+) for user 1 (zukunft.com system)
+461.1681 import solution_prio.json done: 104746 byte
+461.1695 import country.json (9 kBytes)
+461.8019 import country.json 100% 24.833s / 24.833s  load 9 formulas (2744 formulas per sec vs. 4000)
+462.3377 import country.json 100% 25.369s / 25.369s  load 1 components (1149.4 components per sec vs. 4000)
+462.3548 import country.json done: 8542 byte
+
+
+
 
 ## to recheck
 

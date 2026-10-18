@@ -104,14 +104,11 @@ class views
     // column tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with
     // the avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
     const string COMPARISON_TABLE = 'comparison_table';
-    const int COMPARISON_TABLE_ID = 200;
+    const int COMPARISON_TABLE_ID = 199;
     const string COMPARISON_TABLE_NAME = 'Comparison table';
-    // the view of the use case pv_lifetime_balance.json: a use case view is user data, so it is
-    // selected by its name only and never by a code id (docs/llm/json_structure.md "Use case files")
-    const string PV_LIFETIME_BALANCE_NAME = 'PV lifetime CO2 balance';
     // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
     const string TABLE_EDITOR = 'table_editor';
-    const int TABLE_EDITOR_ID = 194;
+    const int TABLE_EDITOR_ID = 193;
     const string TABLE_EDITOR_NAME = 'Table editor';
     const string CALCULATOR_EDITOR = 'calculator_editor';
     const string CALCULATOR_EDITOR_NAME = 'Calculator editor';

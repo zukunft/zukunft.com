@@ -1171,6 +1171,8 @@ class frontend
                 $result .= log_err('No view for "' . $view_id . '" found.',
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
+                // the title of a calculator reads the calculator triples of the request cache
+                $msk_ui->add_page_cache($dbo, $msg_ui, $dto);
                 $title = $msk_ui->title($dbo, $msg_ui, $dto);
                 $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 

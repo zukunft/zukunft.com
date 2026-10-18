@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            example PV installation - PV lifetime CO2 balance - zukunft.com
+            example PV installation - Calculator - zukunft.com
         </title>
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
@@ -134,2157 +134,471 @@
         <main class="main-container">
             <div class="use-case">
                 <header>
-                    <h4>
-                        PV lifetime CO2 balance
-                    </h4>
+                    <h6>
+                        PV lifetime CO₂ balance
+                    </h6>
                     <p>
                         Rooftop photovoltaic installation in the Swiss plateau: electricity produced over the lifetime and greenhouse-gas savings against the Swiss consumer mix and against a replacement (import) mix. Edit the four inputs; all assumptions are open below them.
                     </p>
                 </header>
                 <div class="grid">
                     <aside class="panel">
-                        the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example
-                    </aside>
-                    <section class="panel">
-                        <h5>
-                            Inputs
-                        </h5>
-                        <div>
+                        <div class="inputs">
+                            <h2>
+                                Inputs
+                            </h2>
                             <div class="field">
-                                <label for="n-2469">
-                                    PV capacity
+                                <label for="n-2526">
+                                    System size
                                 </label>
-                                <input type="number" name="n-2469" id="n-2469" value="10" min="0.5" step="0.5" form="PV_lifetime_CO2_balance">
-                                <span class="unit">
-                                    kWp
+                                <div class="row">
+                                    <input type="number" name="n-2526" id="n-2526" value="10" min="0.5" step="0.5" form="calculator">
+                                    <span class="unit">
+                                        kWp
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2524_form_select">
+                                    Orientation
+                                </label>
+                                <div class="form-group ">
+                                    <select class="form-control" name="n-2524" form="calculator" id="n-2524_form_select" >
+                                        <option value="1"  >
+                                            South, ~30° tilt
+                                        </option>
+                                        <option value="0.95"  >
+                                            South-east / south-west, ~30°
+                                        </option>
+                                        <option value="0.85"  selected >
+                                            East-west split, flat tilt
+                                        </option>
+                                        <option value="0.82"  >
+                                            East or west only, ~30°
+                                        </option>
+                                        <option value="0.88"  >
+                                            Flat (0°)
+                                        </option>
+                                        <option value="0.59"  >
+                                            North, ~30°
+                                        </option>
+                                    </select>
+                                </div>
+                                <span class="hint">
+                                    Yield factor relative to south 30° [1]
                                 </span>
                             </div>
                             <div class="field">
-                                <label for="n-2471">
-                                    battery capacity
+                                <label for="n-2528">
+                                    Battery capacity (usable)
                                 </label>
-                                <input type="number" name="n-2471" id="n-2471" value="10" min="0" step="1" form="PV_lifetime_CO2_balance">
-                                <span class="unit">
-                                    kWh
-                                </span>
+                                <div class="row">
+                                    <input type="number" name="n-2528" id="n-2528" value="10" min="0" step="1" form="calculator">
+                                    <span class="unit">
+                                        kWh
+                                    </span>
+                                </div>
                             </div>
                             <div class="field">
-                                <label for="n-2478">
-                                    household consumption
+                                <label for="n-2535">
+                                    Local electricity consumption
                                 </label>
-                                <input type="number" name="n-2478" id="n-2478" value="4500" min="0" step="100" form="PV_lifetime_CO2_balance">
-                                <span class="unit">
-                                    kWh
-                                </span>
+                                <div class="row">
+                                    <input type="number" name="n-2535" id="n-2535" value="4500" min="0" step="100" form="calculator">
+                                    <span class="unit">
+                                        kWh
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                        <div>
-                            <form action="http://localhost/http/view.php" id="PV_lifetime_CO2_balance">
-                                <input type="hidden" name="m" value="193">
-                                <input type="hidden" name="id" value="-2489">
+                            <form action="http://localhost/http/view.php" id="calculator">
+                                <input type="hidden" name="m" value="calculator">
+                                <input type="hidden" name="id" value="-2551">
                                 <button type="submit" class="btn btn-outline-primary btn-space">
-                                    calculate
+                                    Save
                                 </button>
                             </form>
                         </div>
-                        <div>
-                            <details>
-                                <summary>
-                                    Assumptions
-                                </summary>
+                        <details>
+                            <summary>
+                                Assumptions
+                            </summary>
+                            <div class="field">
+                                <label for="n-1981">
+                                    Specific yield, south 30°
+                                    <span class="tag m">
+                                        measured
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-1981" id="n-1981" value="976" form="calculator">
+                                    <span class="unit">
+                                        kWh per kWp
+                                    </span>
+                                </div>
+                                <span class="hint">
+                                    [2]
+                                </span>
                             </div>
-                            <div>
-                            </details>
-                        </div>
-                    </section>
+                            <div class="field">
+                                <label for="n801">
+                                    Lifetime
+                                    <span class="tag m">
+                                        measured
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n801" id="n801" value="30" form="calculator">
+                                </div>
+                                <span class="hint">
+                                    [2]
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="n-2553">
+                                    PV life-cycle emissions
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2553" id="n-2553" form="calculator">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-1956">
+                                    Swiss consumer mix, annual
+                                    <span class="tag a">
+                                        assumed
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-1956" id="n-1956" value="79.2" form="calculator">
+                                    <span class="unit">
+                                        gram per kWh
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2544_form_select">
+                                    Replacement mix
+                                </label>
+                                <div class="form-group ">
+                                    <select class="form-control" name="n-2544" form="calculator" id="n-2544_form_select" >
+                                        <option value="0" selected>
+                                            please select ...
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2539">
+                                    Load share during PV hours
+                                    <span class="tag a">
+                                        assumed 0.6
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2539" id="n-2539" value="0.35" form="calculator">
+                                    <span class="unit">
+                                        percent
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2531">
+                                    Battery round-trip efficiency
+                                    <span class="tag a">
+                                        assumed 0.7
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2531" id="n-2531" value="0.9" form="calculator">
+                                    <span class="unit">
+                                        percent
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2534">
+                                    Battery production emissions
+                                    <span class="tag a">
+                                        assumed
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2534" id="n-2534" value="100" form="calculator">
+                                    <span class="unit">
+                                        kg per kWh
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2533">
+                                    Battery lifetime
+                                    <span class="tag a">
+                                        assumed
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2533" id="n-2533" value="15" form="calculator">
+                                </div>
+                            </div>
+                        </details>
+                    </aside>
                     <section class="panel">
-                        <div class="all-rows">
-                            <h5>
-                                Main results over the lifetime
-                            </h5>
-                            <div>
-                                <table class="table table-striped table-bordered">
+                        <h2>
+                            Main results over the lifetime
+                        </h2>
+                        <div class="scroll">
+                            <table>
+                                <thead>
                                     <tr>
                                         <th>
+                                            Result
                                         </th>
-                                        <th>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2470" title="the electricity the PV modules generate">
-                                                PV production
-                                            </a>
-                                            in
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=122" title="A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.">
-                                                kWh
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2470.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
-                                                <i class="fas fa-sort-up">
-                                                </i>
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2470.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
-                                                <i class="fas fa-sort-down">
-                                                </i>
-                                            </a>
+                                        <th class="n">
+                                            Lifetime
                                         </th>
-                                        <th>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=280" title="measured over one year">
-                                                annual
-                                            </a>
-                                            in
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=122" title="A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.">
-                                                kWh
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=280.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
-                                                <i class="fas fa-sort-up">
-                                                </i>
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=280.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
-                                                <i class="fas fa-sort-down">
-                                                </i>
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2472" title="the PV surplus that goes into the battery">
-                                                battery charge
-                                            </a>
-                                            in
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=122" title="A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.">
-                                                kWh
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2472.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
-                                                <i class="fas fa-sort-up">
-                                                </i>
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2472.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
-                                                <i class="fas fa-sort-down">
-                                                </i>
-                                            </a>
-                                        </th>
-                                        <th>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2482" title="the share of the household consumption that falls into the hours with PV production">
-                                                day share
-                                            </a>
-                                            in
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=160" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">
-                                                percent
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2482.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
-                                                <i class="fas fa-sort-up">
-                                                </i>
-                                            </a>
-                                            <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2482.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
-                                                <i class="fas fa-sort-down">
-                                                </i>
-                                            </a>
-                                        </th>
-                                        <th>
-                                            Values
-                                        </th>
-                                        <th>
-                                            <details class="column-menu">
-                                                <summary title="select the columns and the form to show">
-                                                    ...
-                                                </summary>
-                                                <ul>
-                                                    <li class="menu-header">
-                                                        columns and values
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=3&amp;dlr=0">
-                                                            mayor
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=3&amp;dlr=1">
-                                                            mayor + range
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=2&amp;dlr=0">
-                                                            main
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=2&amp;dlr=1">
-                                                            main + range
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=1&amp;dlr=0">
-                                                            minor
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=1&amp;dlr=1">
-                                                            minor + range
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=0&amp;dlr=0">
-                                                            all
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dlc=0&amp;dlr=1">
-                                                            all + range
-                                                        </a>
-                                                    </li>
-                                                    <li class="menu-header">
-                                                        as
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dla=chart">
-                                                            chart
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="http://localhost/http/view.php?dls=0&amp;dla=table_chart">
-                                                            table + chart
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </details>
+                                        <th class="n">
+                                            Per year
                                         </th>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=280" title="measured over one year">
-                                                annual
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
+                                </thead>
+                                <tbody>
+                                    <tr class="sec">
+                                        <td colspan="3">
+                                            Electricity
                                         </td>
+                                    </tr>
+                                    <tr class="key">
                                         <td>
+                                            PV production
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td title="assumed">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_2M_2v_&amp;9dls=0">
-                                                4'500
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                                    a
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2472" title="the PV surplus that goes into the battery">
-                                                battery charge
-                                            </a>
+                                            Used directly
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_2M_3B_&amp;9dls=0">
-                                                2'471
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
+                                            Used via battery
+                                            <span class="sub">
+                                                after losses
+                                            </span>
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_2M_3B_&amp;9dls=0">
-                                                1'575
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=176">
-                                                July
-                                            </a>
+                                            Exported to grid
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0k_3B_&amp;9dls=0">
-                                                1'120
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0k_3B_&amp;9dls=0">
-                                                227.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=175">
-                                                June
-                                            </a>
+                                            Battery losses
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0j_3B_&amp;9dls=0">
-                                                1'078
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0j_3B_&amp;9dls=0">
-                                                227.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=174">
-                                                May
-                                            </a>
+                                            Grid import still needed
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0i_3B_&amp;9dls=0">
-                                                1'037
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0i_3B_&amp;9dls=0">
-                                                243.75
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=177">
-                                                August
-                                            </a>
+                                            Self-consumption rate
+                                            <span class="sub">
+                                                share of PV used on site
+                                            </span>
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0l_3B_&amp;9dls=0">
-                                                995.52
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                        <td class="n">
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
+                                    </tr>
+                                    <tr class="key">
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0l_3B_&amp;9dls=0">
-                                                227.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                            Autarky
+                                            <span class="sub">
+                                                share of load covered by PV
+                                            </span>
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
-                                        <td>
+                                    </tr>
+                                    <tr class="sec">
+                                        <td colspan="3">
+                                            Production emissions
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=173">
-                                                April
-                                            </a>
+                                            PV system
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0h_3B_&amp;9dls=0">
-                                                912.56
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0h_3B_&amp;9dls=0">
-                                                260
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=178">
-                                                September
-                                            </a>
+                                            Battery
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0m_3B_&amp;9dls=0">
-                                                829.6
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                        <td class="n">
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0m_3B_&amp;9dls=0">
-                                                243.75
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                    </tr>
+                                    <tr class="sec">
+                                        <td colspan="3">
+                                            CO₂-eq saved, net of production emissions
                                         </td>
+                                    </tr>
+                                    <tr class="key">
                                         <td>
+                                            vs. Swiss consumer mix, annual
                                         </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
+                                        <td class="n">
+                                        </td>
+                                    </tr>
+                                    <tr class="key">
                                         <td>
+                                            vs. Swiss consumer mix, monthly
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                    </tr>
+                                    <tr class="key">
+                                        <td>
+                                            vs. replacement mix
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                        <td class="n">
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=172">
-                                                March
-                                            </a>
+                                            Effect of the battery
+                                            <span class="sub">
+                                                vs. same PV without battery, annual Swiss mix
+                                            </span>
                                         </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0g_3B_&amp;9dls=0">
-                                                663.68
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
+                                        <td class="n">
                                         </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0g_3B_&amp;9dls=0">
-                                                292.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
+                                        <td class="n">
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=179">
-                                                October
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0n_3B_&amp;9dls=0">
-                                                580.72
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0n_3B_&amp;9dls=0">
-                                                276.25
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=181">
-                                                December
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0p_3B_&amp;9dls=0">
-                                                450
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=170">
-                                                January
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0e_3B_&amp;9dls=0">
-                                                450
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=180">
-                                                November
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0o_3B_&amp;9dls=0">
-                                                427.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=171">
-                                                February
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0f_3B_&amp;9dls=0">
-                                                405
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=172">
-                                                March
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0g_3B_&amp;9dls=0">
-                                                405
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=179">
-                                                October
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0n_3B_&amp;9dls=0">
-                                                382.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=171">
-                                                February
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0f_3B_&amp;9dls=0">
-                                                373.32
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0f_3B_&amp;9dls=0">
-                                                231.57
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=173">
-                                                April
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0h_3B_&amp;9dls=0">
-                                                360
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=174">
-                                                May
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0i_3B_&amp;9dls=0">
-                                                337.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=178">
-                                                September
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0m_3B_&amp;9dls=0">
-                                                337.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=177">
-                                                August
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0l_3B_&amp;9dls=0">
-                                                315
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=176">
-                                                July
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0k_3B_&amp;9dls=0">
-                                                315
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=175">
-                                                June
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ai-%2Fu_0j_3B_&amp;9dls=0">
-                                                315
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=180">
-                                                November
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0o_3B_&amp;9dls=0">
-                                                290.36
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0o_3B_&amp;9dls=0">
-                                                140.74
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=181">
-                                                December
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0p_3B_&amp;9dls=0">
-                                                207.4
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0p_3B_&amp;9dls=0">
-                                                49.9
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=170">
-                                                January
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aa-%2Fu_0e_3B_&amp;9dls=0">
-                                                207.4
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ac-%2Fu_0e_3B_&amp;9dls=0">
-                                                49.9
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=181">
-                                                December
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0p_3B_&amp;9dls=0">
-                                                157.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=170">
-                                                January
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0e_3B_&amp;9dls=0">
-                                                157.5
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=180">
-                                                November
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0o_3B_&amp;9dls=0">
-                                                149.63
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=171">
-                                                February
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0f_3B_&amp;9dls=0">
-                                                141.75
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=172">
-                                                March
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0g_3B_&amp;9dls=0">
-                                                141.75
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=179">
-                                                October
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0n_3B_&amp;9dls=0">
-                                                133.88
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=173">
-                                                April
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0h_3B_&amp;9dls=0">
-                                                126
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=174">
-                                                May
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0i_3B_&amp;9dls=0">
-                                                118.13
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=178">
-                                                September
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0m_3B_&amp;9dls=0">
-                                                118.13
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=177">
-                                                August
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0l_3B_&amp;9dls=0">
-                                                110.25
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=176">
-                                                July
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0k_3B_&amp;9dls=0">
-                                                110.25
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=175">
-                                                June
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                                                direct use
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-aj-%2Fu_0j_3B_&amp;9dls=0">
-                                                110.25
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2484">
-                                                2018 to 2022
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=1743" title="carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released">
-                                                CO2-eq
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2459" title="the Swiss consumption mix averaged over the twelve months with the PV electricity delivered in each month as the weight; lower than the annual mean, because PV produces most in summer when the Swiss mix is cleanest">
-                                                PV-weighted consumption mix
-                                            </a>
-                                            ,
-                                            <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                mean
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-ao-aP-Sd-3B_PD_SE_&amp;9dls=0">
-                                                105.83
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                    -
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2471" title="the usable storage capacity of the battery in kWh">
-                                                battery capacity
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td title="assumed">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=88665143959325113&amp;9dls=0">
-                                                10
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                                    a
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2469" title="the rated power of the PV modules in kWp">
-                                                PV capacity
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td title="assumed">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=497930589025175993&amp;9dls=0">
-                                                10
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                                    a
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2475" title="how many batteries are bought over the lifetime of the installation, the lifetime divided by the battery lifetime rounded up">
-                                                battery count
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td title="assumed">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=1355224418745&amp;9dls=0">
-                                                2
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                                    a
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                                                household consumption
-                                            </a>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td title="assumed, confidence 60%">
-                                            <a href="http://localhost/http/view.php?m=5&amp;id=at-am-ai-0U_2v_&amp;9dls=0">
-                                                35%
-                                            </a>
-                                            <sup>
-                                                <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                                    a
-                                                </span>
-                                            </sup>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div>
-                                <details>
-                                    <summary>
-                                        Monthly details and sources
-                                    </summary>
-                                </div>
-                                <div>
-                                    <h5>
-                                        Monthly Swiss consumption mix
-                                    </h5>
-                                </div>
-                                <div>
-                                    <table class="table table-striped table-bordered">
-                                        <tr>
-                                            <th>
-                                            </th>
-                                            <th>
-                                                <a href="http://localhost/http/view.php?m=4&amp;id=2484">
-                                                    2018 to 2022
-                                                </a>
-                                                in
-                                                <a href="http://localhost/http/view.php?m=4&amp;id=1961" title="the unit of the emission intensity of electricity">
-                                                    gram per kWh
-                                                </a>
-                                                <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2484.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
-                                                    <i class="fas fa-sort-up">
-                                                    </i>
-                                                </a>
-                                                <a href="http://localhost/http/view.php?dls=0&amp;dlo=-2484.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
-                                                    <i class="fas fa-sort-down">
-                                                    </i>
-                                                </a>
-                                            </th>
-                                            <th>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                in
-                                                <a href="http://localhost/http/view.php?m=4&amp;id=1961" title="the unit of the emission intensity of electricity">
-                                                    gram per kWh
-                                                </a>
-                                                <a href="http://localhost/http/view.php?dls=0&amp;dlo=210.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
-                                                    <i class="fas fa-sort-up">
-                                                    </i>
-                                                </a>
-                                                <a href="http://localhost/http/view.php?dls=0&amp;dlo=210.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
-                                                    <i class="fas fa-sort-down">
-                                                    </i>
-                                                </a>
-                                            </th>
-                                            <th>
-                                                Values
-                                            </th>
-                                            <th>
-                                                <details class="column-menu">
-                                                    <summary title="select the columns and the form to show">
-                                                        ...
-                                                    </summary>
-                                                    <ul>
-                                                        <li class="menu-header">
-                                                            columns and values
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=3&amp;dlr=0">
-                                                                mayor
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=3&amp;dlr=1">
-                                                                mayor + range
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=2&amp;dlr=0">
-                                                                main
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=2&amp;dlr=1">
-                                                                main + range
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=1&amp;dlr=0">
-                                                                minor
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=1&amp;dlr=1">
-                                                                minor + range
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=0&amp;dlr=0">
-                                                                all
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dlc=0&amp;dlr=1">
-                                                                all + range
-                                                            </a>
-                                                        </li>
-                                                        <li class="menu-header">
-                                                            as
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dla=chart">
-                                                                chart
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="http://localhost/http/view.php?dls=0&amp;dla=table_chart">
-                                                                table + chart
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </details>
-                                            </th>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=180">
-                                                    November
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0o_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    163.7
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=181">
-                                                    December
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0p_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    152.8
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=170">
-                                                    January
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0e_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    150.8
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=171">
-                                                    February
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0f_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    146.9
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=172">
-                                                    March
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0g_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    141.4
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=179">
-                                                    October
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0n_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    134.6
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=178">
-                                                    September
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0m_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    129.6
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=384">
-                                                    2018
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=4&amp;id=1960" title="the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment">
-                                                    life cycle
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=Sd-Sc-SY-1G_4._Cf_PD_&amp;9dls=0">
-                                                    128
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=173">
-                                                    April
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0h_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    100
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=177">
-                                                    August
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0l_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    88.8
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=176">
-                                                    July
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0k_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    87.7
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=175">
-                                                    June
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0j_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    79.5
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=4&amp;id=1955" title="photovoltaic electricity generated in Switzerland, the subject of this use case; the table of this phrase compares its climate benefit with and without the displacement concept">
-                                                    PV in Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=4&amp;id=1959" title="the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source">
-                                                    avoided emission
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=Sd-Sb-SY-SX-PD_&amp;9dls=0">
-                                                    79.2
-                                                </a>
-                                                <sup>
-                                                    <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                                        -
-                                                    </span>
-                                                </sup>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=174">
-                                                    May
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                                                    Switzerland
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=939" title="energy from the flow of electric charge">
-                                                    electricity
-                                                </a>
-                                                ,
-                                                <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                                                    mean
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="http://localhost/http/view.php?m=5&amp;id=ao-Sd-SY-0i_1G_Cf_PD_SE_&amp;9dls=0">
-                                                    69.1
-                                                </a>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                            <td>
-                                            </td>
-                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <details>
+                            <summary>
+                                Monthly details and sources
+                            </summary>
+                            <div class="more">
+                                <h2>
+                                    Monthly energy balance, average year
+                                </h2>
+                                <div class="scroll">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Month
+                                                </th>
+                                                <th class="n">
+                                                    PV kWh
+                                                </th>
+                                                <th class="n">
+                                                    Load kWh
+                                                </th>
+                                                <th class="n">
+                                                    Direct
+                                                </th>
+                                                <th class="n">
+                                                    Battery
+                                                </th>
+                                                <th class="n">
+                                                    Export
+                                                </th>
+                                                <th class="n">
+                                                    Grid import
+                                                </th>
+                                                <th class="n">
+                                                    CH mix g/kWh
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="key">
+                                                <td>
+                                                    Year
+                                                </td>
+                                                <td class="n">
+                                                </td>
+                                                <td class="n">
+                                                    4'500
+                                                </td>
+                                                <td class="n">
+                                                </td>
+                                                <td class="n">
+                                                </td>
+                                                <td class="n">
+                                                </td>
+                                                <td class="n">
+                                                </td>
+                                                <td class="n">
+                                                </td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
-                                <div>
-                                    <h5>
+                                <div class="src">
+                                    <h2>
                                         Sources
-                                    </h5>
+                                    </h2>
+                                    <ol>
+                                        <li>
+                                            <a href="https://gruenes.haus/?p=485">
+                                                gruenes.haus tilt and orientation table
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://iea-pvps.org/wp-content/uploads/2024/09/Task-12-Fact-Sheet-Stucki.pdf">
+                                                IEA PVPS Task 12 fact sheet 2023
+                                            </a>
+                                        </li>
+                                    </ol>
                                 </div>
-                                <div>
-                                </details>
                             </div>
-                        </div>
+                        </details>
                     </section>
                 </div>
             </div>

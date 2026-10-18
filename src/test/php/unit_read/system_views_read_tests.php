@@ -112,6 +112,7 @@ class system_views_read_tests
         $this->run_users($t, $cfg);
         $this->run_system_pages($t);
         $this->run_use_cases($t, $cfg);
+        // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t, $cfg);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
@@ -494,9 +495,11 @@ class system_views_read_tests
     }
 
     /**
-     * the PV lifetime balance use case brings its own view; the page is written to the use
-     * case folder next to the hand made sample page (pv_lifetime_balance_sample.html), so
-     * that the generated page can be compared with the target layout
+     * the PV lifetime balance use case has no view of its own: the system view Calculator shows
+     * the example PV installation by the calculator triples of PV installation, which the view
+     * loads into the request cache before the components render; the page is written to the use
+     * case folder next to the hand made sample page (pv_lifetime_balance_sample.html), so that
+     * the generated page can be compared with the target layout
      *
      * @param test_cleanup $t the test environment with the test users
      * @param data_object_ui $cfg the stable test context of context()
@@ -504,7 +507,7 @@ class system_views_read_tests
      */
     function run_pv_lifetime_balance(test_cleanup $t, data_object_ui $cfg): void
     {
-        $t->assert_view_by_name(views::PV_LIFETIME_BALANCE_NAME, $t->usr1, new triple($t->usr1),
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $cfg, test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
     }
 

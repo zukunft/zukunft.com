@@ -40,12 +40,15 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -54,6 +57,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'components.php';
 include_once html_paths::SHARED_CONST . 'def.php';
@@ -61,6 +65,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -69,24 +74,29 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -95,6 +105,13 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_exe extends view_base
 {
+
+    // the triples in a row from the page phrase of a calculator to the label or the order of a
+    // row or a detail column: list, group item, row and its property
+    const int CALCULATOR_LEVELS = 4;
+    // the triples in a row from a listed phrase to the label or the order of a selector option
+    const int CALCULATOR_PHRASE_LEVELS = 2;
+
 
     /*
      * execute
@@ -143,6 +160,7 @@ class view_exe extends view_base
             if ($cfg != null) {
                 $cfg->msk = $this;
             }
+            $this->add_page_cache($dbo, $msg, $cfg);
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open($msg);
             // the style of the view is the page class e.g. use-case for the grid of a use case page
@@ -329,9 +347,114 @@ class view_exe extends view_base
     }
 
 
+    /**
+     * fill the request cache with the phrases that the components of this view read only from
+     * the cache, before the title and the components are created; for the calculator these are
+     * the calculator triples of the page phrase (docs/llm/new_view_sample_pv_balance.md)
+     *
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the object of the page
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param data_object|null $dto the request cache to fill
+     * @return void
+     */
+    function add_page_cache(
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        user_message                                     $msg,
+        ?data_object                                     $dto
+    ): void
+    {
+        if ($this->code_id == views::CALCULATOR and $dto != null and $dto->online
+            and ($dbo instanceof word or $dbo instanceof triple)) {
+            $this->add_calculator_triples($dbo->phrase(), $dto, $msg);
+        }
+    }
+
+
     /*
      * internal execute
      */
+
+    /**
+     * add the calculator triples of a page phrase to the request cache, once per page: the tree
+     * of the page phrase and of the phrase it is built from with the lists, the items, the rows,
+     * the detail columns and their labels, hints, flags, filters and order triples; then the
+     * general triples of the listed phrases with the side results and the selector options;
+     * and last the phrases that are a listed phrase e.g. the rows of a detail table or the
+     * options of a selector without option triples
+     *
+     * @param phrase $phr the phrase of the page e.g. example PV installation
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_calculator_triples(phrase $phr, data_object $dto, user_message $msg): void
+    {
+        if (!new calculator($phr, $dto->phr_lst)->is_calculator()) {
+            $tree = new phrase_list();
+            $tree->add_phrase($phr);
+            if ($phr->is_triple() and $phr->get_from() != null) {
+                $tree->add_phrase($phr->get_from());
+            }
+            $this->add_triples_from($tree, self::CALCULATOR_LEVELS, false, $dto, $msg);
+            $calc = new calculator($phr, $dto->phr_lst);
+            $listed = new phrase_list();
+            foreach ($calc->phrases() as $lst_phr) {
+                $listed->add_phrase($lst_phr);
+            }
+            $this->add_triples_from($listed, self::CALCULATOR_PHRASE_LEVELS, true, $dto, $msg);
+            $kinds = new phrase_list();
+            foreach ([triples::CALCULATOR_INPUT, triples::CALCULATOR_ASSUMPTION, triples::CALCULATOR_DETAIL_TABLE] as $list) {
+                foreach ($calc->items($list) as $item) {
+                    $item_phr = $calc->item_phrase($item);
+                    if ($item_phr != null) {
+                        $kinds->add_phrase($item_phr);
+                    }
+                }
+            }
+            $lst = new phrase_list();
+            if (!$kinds->is_empty() and $lst->load_related_by_ids($kinds, foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the triples from the given phrases to the request cache and follow the added triples,
+     * one api call per level
+     *
+     * @param phrase_list $phr_lst the phrases to start from
+     * @param int $levels the number of triples in a row from a start phrase
+     * @param bool $with_to true to follow also the phrase that an added triple points to e.g.
+     *                      the side result of a row, whose label is a triple of the phrase
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_triples_from(
+        phrase_list  $phr_lst,
+        int          $levels,
+        bool         $with_to,
+        data_object  $dto,
+        user_message $msg
+    ): void
+    {
+        $done = [];
+        $next = $phr_lst;
+        for ($i = 0; $i < $levels and !$next->is_empty(); $i++) {
+            $done = array_merge($done, $next->ids());
+            $lst = new phrase_list();
+            $lst->load_related_by_ids($next, foaf_direction::UP, $msg);
+            $dto->add_phrases($lst, $msg);
+            $next = new phrase_list();
+            foreach ($lst->lst() as $trp) {
+                foreach ([$trp, $with_to ? $trp->get_to() : null] as $nxt_phr) {
+                    if ($nxt_phr != null and !in_array($nxt_phr->id(), $done)) {
+                        $next->add_phrase($nxt_phr);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * return the beginning html code for the view_type;

@@ -392,6 +392,11 @@ class use_case_ui_tests
         $t->assert($test_name, array_map(fn($phr) => $phr->name(), $calc->side_results($rows[1])), [word_names::YEAR_2020]);
         $test_name = '... and a row without such a phrase has none';
         $t->assert($test_name, $calc->side_results($rows[0]), []);
+        // the view fills the request cache with the general triples of these phrases (view_exe::add_page_cache)
+        $test_name = 'the phrases of the general triples are the item, row and filter phrases and the other phrase of a row, each once';
+        $t->assert($test_name, array_map(fn($phr) => $phr->name(), $calc->phrases()), [
+            word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019, word_names::CITY,
+            triple_names::CITY_BE, word_names::BE]);
         // negative: a phrase without calculator triples is no calculator and shows its name
         $calc_be = new calculator($cac->get_by_name(triple_names::CITY_BE, $msg), $cac);
         $test_name = 'a phrase without calculator triples is no calculator';

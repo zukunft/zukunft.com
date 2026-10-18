@@ -6423,6 +6423,8 @@
             lator.php
     \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
             tor.php
+    \-- phrases - section for function phrases not yet defined that it should be texts and flags in /component/execute/c
+            alculator.php
 \-- system_form
     \-- form_tile - section for function form_tile missing in /component/execute/system_form.php
     \-- title_named - section for function title_named missing in /component/execute/system_form.php
@@ -8423,6 +8425,8 @@
     \-- order error - order of section construct and map has difference at url_mapper should be before __construct
 \-- view_exe
     \-- show - section for function show not yet defined that it should be execute in /view/view_exe.php
+    \-- add_page_cache - section for function add_page_cache not yet defined that it should be execute in /view/view_exe
+            .php
     \-- dsp_edit - section for function dsp_edit not yet defined that it should be to review in /view/view_exe.php
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /view/view_exe.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /view/view_e
@@ -9657,6 +9661,8 @@
         \-- calculator - @param phrase $phr e.g. month or replacement mix
     \-- used
         \-- calculator - @param phrase[] $phr_lst e.g. the option phrases of a selector
+    \-- phrases
+        \-- calculator - the phrases whose general triples the page reads by rule 6 and 8: the phrase of each item,
 \-- optional with show password but without auto fill
     \-- admin_form_user_uses_sandbox
         \-- system_form - @return string the html code so that an admin user can switch if the pages
@@ -10129,6 +10135,8 @@
         \-- frontend - the url with the phrase id of the word or triple that the user has selected by its name in the
     \-- show
         \-- view_exe - create the html code to view a sandbox object
+    \-- add_page_cache
+        \-- view_exe - fill the request cache with the phrases that the components of this view read only from
 \-- view
     \-- url_to_html
         \-- frontend - create the HTML code based on the given url

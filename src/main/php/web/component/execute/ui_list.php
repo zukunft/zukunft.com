@@ -2622,8 +2622,10 @@ class ui_list extends ui_base
 
     /**
      * the value that a calculator field shows: a value of the item phrase with the field value
-     * phrases, the one with the page phrase first and else the one with the fewest phrases, but
-     * never a property of the field e.g. its step or the confidence of a value
+     * phrases, the one with the page phrase first, else the one with the fewest context phrases,
+     * so the general value of a use case wins over the value of a place e.g. PV yield of Switzerland
+     * over the PV yield of a municipality, and else the one with the fewest phrases, but never a
+     * property of the field e.g. its step or the confidence of a value
      *
      * @param phrase $phr the phrase of the field e.g. PV capacity
      * @param word|triple $dbo the phrase of the page
@@ -2640,11 +2642,30 @@ class ui_list extends ui_base
             $names = $val->phr_lst()->names();
             if ($val->has_phrase($phr, $msg) and array_intersect($names, $properties) == []
                 and $this->has_field_value_phrases($phr, $val, $dto, $msg)) {
-                $rank = [$val->has_phrase($dbo->phrase(), $msg) ? 0 : 1, count($names)];
+                $rank = [$val->has_phrase($dbo->phrase(), $msg) ? 0 : 1, $this->context_count($phr, $val, $msg), count($names)];
                 if ($best == null or $rank < $best) {
                     $result = $val;
                     $best = $rank;
                 }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase of the field e.g. PV yield
+     * @param sandbox_value $val a value of the field phrase
+     * @param user_message $msg to report a problem of the phrase types
+     * @return int the number of phrases of the value that narrow its context e.g. a municipality,
+     *             so not the field phrase and no unit, percent, scaling or time phrase
+     */
+    private function context_count(phrase $phr, sandbox_value $val, user_message $msg): int
+    {
+        $result = 0;
+        foreach ($val->phr_lst()->lst() as $val_phr) {
+            if ($val_phr->id() != $phr->id() and !$val_phr->is_measure($msg) and !$val_phr->is_percent($msg)
+                and !$val_phr->is_scaling($msg) and !$val_phr->is_time($msg)) {
+                $result++;
             }
         }
         return $result;

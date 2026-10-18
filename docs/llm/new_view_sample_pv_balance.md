@@ -823,7 +823,14 @@ The label list loads all labels with one load by `to`.
    section 3.2. The fine-grained component types stay for other views.
 5. The use case triples of section 5 in
    `pv_lifetime_balance.json`, which then has no components and no view of
-   its own.
+   its own. The `Calculator` view fills the request cache before the title
+   and the components are created (`view_exe::add_page_cache`): the tree of
+   the page phrase and of the phrase it is built from (the triples *from* a
+   phrase, four levels, one api call per level), then the general triples of
+   the phrases that the reader lists (`calculator::phrases`, two levels incl.
+   the phrase a triple points to, for the option labels and the side result
+   labels), and last the triples *to* the input, assumption and detail table
+   phrases for the options and rows that *is a* the phrase.
 6. Tests: `use_case_ui_tests.php` per renderer with a fixed `data_object`.
    `run_pv_lifetime_balance` renders the `Calculator` view for
    `example PV installation` and compares with `pv_lifetime_balance.html`.
@@ -852,6 +859,9 @@ The label list loads all labels with one load by `to`.
   "Export" and "Grid import" get a unit too and the mock up changes.
 - The detail table shows "Jan" for `January`. That needs a short name of the
   phrase, e.g. a `calculator label` per month or a symbol triple.
+- The rows of the monthly table are the phrases that *is a* `month`, but no
+  json has the triples `January` *is a* `month` … `December` *is a* `month`
+  with their order yet, so the table shows only the year row.
 - The sources show a long citation as the link text, but the json has short
   source names. Should the citation be the description of the source?
 - The `field step` values of the assumptions (marked † in the overview) are

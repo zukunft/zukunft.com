@@ -1269,6 +1269,8 @@ class sql_db
             $import->import_use_case_data($usr);
             // followed only by the system data added after the test ids have been pinned
             $import->import_system_data_appended($usr);
+            // and the use cases that build on the appended system data e.g. the calculator keywords
+            $import->import_use_case_data($usr, false, files::USE_CASE_FILES_APPENDED);
 
             // add the admin users if defined in the env file
             $this->add_admin_users_from_env($sys_msg, $usr);

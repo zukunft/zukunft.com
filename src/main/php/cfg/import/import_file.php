@@ -413,9 +413,10 @@ class import_file
      * phrases of the start page e.g. the column tiers of solution_prio.json
      * @param user $usr the owner of the use case data
      * @param bool $direct true if the data_object based loading cannot yet be used (to be dismissed)
+     * @param array $filenames the use case files with the full path in the order of the import
      * @return string any error or warning message during import
      */
-    function import_use_case_data(user $usr, bool $direct = false): string
+    function import_use_case_data(user $usr, bool $direct = false, array $filenames = files::USE_CASE_FILES): string
     {
         $result = '';
         log_info('use case data setup',
@@ -426,7 +427,7 @@ class import_file
         );
 
         // the file names already carry the full path, so no message path is prepended
-        foreach (files::USE_CASE_FILES as $filename) {
+        foreach ($filenames as $filename) {
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 
