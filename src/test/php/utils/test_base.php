@@ -1241,6 +1241,29 @@ class test_base
 
 
     /**
+     * an empty request cache with the frontend types to render a view (see assert_view), e.g. to
+     * render several variants of one view with one cache, so that only the first loads the data
+     *
+     * @param user_message_ui $msg_ui to report a problem of loading the frontend types
+     * @return data_object_ui the request cache with the frontend types and no data
+     */
+    function view_context(user_message_ui $msg_ui = new user_message_ui()): data_object_ui
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_FRONTEND);
+        if ($this->typ_lst_cache_ui == null) {
+            $ui = new frontend('');
+            $ui->load_cache($msg_ui);
+            $this->typ_lst_cache_ui = $ui->dto->typ_lst_cache;
+        }
+        $cfg = new data_object_ui();
+        $cfg->typ_lst_cache = $this->typ_lst_cache_ui;
+        $sys->times->switch();
+        return $cfg;
+    }
+
+    /**
      * test a system view with a sample user object
      *
      * @param string $dsp_code_id the code id of the view that should be tested
@@ -1480,18 +1503,9 @@ class test_base
         $dsp_html->set_from_json($api_msg, $msg_ui);
         $sys->times->switch();
 
-        // load the frontend configuration cache if the caller has not provided it
+        // a new context for each view, because the rendering fills e.g. the phrases of the page into it
         if ($cfg == null) {
-            $sys->times->switch(system_time_type::LOAD_FRONTEND);
-            if ($this->typ_lst_cache_ui == null) {
-                $ui = new frontend('');
-                $ui->load_cache($msg_ui);
-                $this->typ_lst_cache_ui = $ui->dto->typ_lst_cache;
-            }
-            // a new context for each view, because the rendering fills e.g. the phrases of the page into it
-            $cfg = new data_object_ui();
-            $cfg->typ_lst_cache = $this->typ_lst_cache_ui;
-            $sys->times->switch();
+            $cfg = $this->view_context($msg_ui);
         }
         if ($cfg->usr->id() == 0) {
             $map_ui = new MapObject();

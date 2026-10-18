@@ -155,33 +155,36 @@ class system_views_read_tests
      */
     function run_start(test_cleanup $t): void
     {
-        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID);
+        // the variants differ only by the display parameters of the url, so they share one
+        // request cache and only the first loads the data of the table
+        $cfg = $t->view_context();
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID, $cfg);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         // the full table with the short list, and the two switches on their own: the mayor
         // columns with the ranges, and the mayor columns explicitly without the ranges
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
+            $cfg, [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::FALSE]);
         // the steps between the mayor columns and the full table, which the "..." clicks
         // request: one tier is added per step, but still one unit per column and no range
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MINOR]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MARGINAL]);
     }
 

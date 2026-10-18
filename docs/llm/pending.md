@@ -350,30 +350,24 @@ Task:
 
 ### 2. frontend work of the start page
 
-Every render of the start page takes 1.3 to 2.2 s "url to html" without the api wait: the 8
-start page views of system_views_read_tests and the "back" step of every read-only and write
-workflow (e.g. "add_triple_wf4/wf4_edit_back: url to html 1.39 sec"), together about 40
-renders.
+The start page is rendered about 40 times per run: the 8 start page views of
+system_views_read_tests and the "back" step of every read-only and write workflow.
 
 url_to_html() loads the data of the page before the html is created: the object of the page
 and the page cache of the view (view_exe::add_page_cache with component_exe::add_page_cache
 of each component, e.g. ui_list::add_start_page_data for the start page table) are counted as
 load page, their backend wait as api wait. A render of the start page with a filled request
-cache makes no api call (load page 0.05 s), so its url to html time (about 0.9 s) is frontend
-work: the start page table computes the ranking table from about 300 values, 289 results and
-some thousand cached phrases for each render; value_list::table_model() is about two thirds of
-it (xdebug profile).
+cache makes no api call (load page below 0.001 s), so its url to html time (0.7 to 0.8 s in
+the workflow back steps) is frontend work: the start page table computes the ranking table
+from about 300 values, 289 results and some thousand cached phrases for each render. The 8
+start page variants of system_views_read_tests::run_start() share one request cache
+(test_base::view_context), so only the first loads the data of the table.
 
 Task:
-1. phrase_list::linked_names() scans the whole request cache for each of about 50
-   child_names() calls per render; an index of the triple links would also need to follow
-   triple sides that are filled after the phrase is cached (e.g. load_triple_sides).
-2. Then value_list::split_by_unit().
-3. Move the api calls of the other components into their page cache step in the same way,
+1. Move the api calls of the other components into their page cache step in the same way,
    e.g. the calculator fields (see step 6).
-4. The start page snapshots must not change.
-5. Then check if the 8 start page variants of system_views_read_tests::run_start() that
-   differ only by the display parameters of the url can share one api answer of the table.
+2. Profile the remaining frontend work of value_list::table_model() again; the start page
+   snapshots must not change.
 
 ### 3. seed import of the database recreation
 
@@ -445,8 +439,6 @@ These tests render without url_to_html, so their time is not_specified.
   sandbox_value_list::load_sql_by_phr_lst_multi() never puts them into the sql, so
   value_list::read_limit() limits nothing; add ORDER BY and LIMIT to the union with an own
   query name and new sql fixtures for both database types.
-- system_views_read_tests::run_start() calls assert_view() without the context of context();
-  pass it if the start page snapshots stay identical.
 
 ## clean up
 
