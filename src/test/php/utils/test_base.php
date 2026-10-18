@@ -116,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -188,6 +189,7 @@ include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'source_type.php';
@@ -589,6 +591,7 @@ class test_base
     function header(string $header_text, string $base_url = ''): void
     {
         global $log_txt;
+        $this->check_time_section($header_text);
         $log_txt->header($header_text, $base_url);
 
         // reset the test timer to avoid timeouts due to a delay in previous tests
@@ -698,7 +701,43 @@ class test_base
     function subheader(string $header_text): void
     {
         global $log_txt;
+        $this->check_time_section($header_text);
         $log_txt->header($header_text);
+    }
+
+    /**
+     * report a time section that the tests before the given header have left open, because
+     * it would count the time of all following tests e.g. a switch(X) without its switch()
+     *
+     * @param string $header_text the header of the following tests to name where it has been found
+     * @return void
+     */
+    private function check_time_section(string $header_text): void
+    {
+        global $sys;
+        $problem = self::time_section_problem($sys->times);
+        if ($problem != '') {
+            $this->assert('the time sections are ended before ' . $header_text, $problem, '');
+            // continue with the base section, so that only the tests that left it open are reported
+            $sys->times->switch(system_time_type::DEFAULT);
+        }
+    }
+
+    /**
+     * @param system_time_list $times the time sections of the test run
+     * @return string the problem if not the base section of the test run is counted, otherwise
+     *                an empty string
+     */
+    static function time_section_problem(system_time_list $times): string
+    {
+        $result = '';
+        $cur = $times->current();
+        if ($cur == '') {
+            $result = 'no time section is counted, because a section has been ended once too often';
+        } elseif ($cur != system_time_type::DEFAULT) {
+            $result = 'the time section ' . $cur . ' has not been ended';
+        }
+        return $result;
     }
 
 
@@ -1431,6 +1470,7 @@ class test_base
         $dbo_api_msg = $dbo->api_json(
             [api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg, $usr);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
+        $sys->times->switch();
         $sys->times->switch(system_time_type::UI_MAP);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($with_obj) {

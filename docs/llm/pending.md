@@ -383,11 +383,22 @@ workflow (e.g. "add_word_wf1/wf1_edit_back: url to html 1.73 sec"), together abo
 or 80 s. The first start page of a run waits 0.9 s more for the backend.
 
 Task:
-1. Find the slow part of the start page render with additional time sections inside
-   url to html, e.g. one around the table of the global problems (value_list_ui) and one
-   around the charts, so that the next timing report shows where the 2 s go.
-2. Speed up the slowest part; the start page snapshots must not change.
-3. Then check if the 8 start page variants of system_views_read_tests::run_start() that
+1. Find the slow part of the start page render. An xdebug profile of the render shows that two
+   thirds of it is value_list::table_model_of_columns(), mainly quadratic loops over the
+   phrases of the values: group::phr_lst() created a new list for each call, so each has_id()
+   on it rebuilt the id index (48000 rebuilds for 3 renders), triple_parts_of_all() created
+   the triple parts of every value once per part of the first value, and sort_by_impact()
+   created the impact and the name of a value in each compare.
+2. Speed up the slowest part; the start page snapshots must not change. group::phr_lst() keeps
+   the list with its index until the phrases change and returns a copy, triple_parts_of_all()
+   creates the parts of each value once and sort_by_impact() creates the sort keys once: a
+   render of the start page takes 1.25 s instead of 2.05 s with the same html.
+3. Next parts of the render, by profile share: phrase_list::linked_names() scans the whole
+   request cache for each of about 50 child_names() calls per render; an index of the triple
+   links would also need to follow triple sides that are filled after the phrase is cached
+   (e.g. load_triple_sides). Then value_list::split_by_unit() and the api mapping of the
+   related phrases of start_page_children(), which is loaded again for each render.
+4. Then check if the 8 start page variants of system_views_read_tests::run_start() that
    differ only by the display parameters of the url can share one api answer of the table.
 
 ### 3. seed import of the database recreation

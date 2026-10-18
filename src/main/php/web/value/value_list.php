@@ -334,10 +334,17 @@ class value_list extends ListBase
         // number keep a deterministic order that does not depend on the value (group) id: a value's
         // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
         // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
-        // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
-        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $b->impact() <=> $a->impact()
+        // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md);
+        // the impact and the name of each value are created once and not in each compare
+        $impact = [];
+        $name = [];
+        foreach ($lst as $val) {
+            $impact[spl_object_id($val)] = $val->impact();
+            $name[spl_object_id($val)] = $val->name() ?? '';
+        }
+        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $impact[spl_object_id($b)] <=> $impact[spl_object_id($a)]
             ?: $b->number() <=> $a->number()
-                ?: strcmp($a->name() ?? '', $b->name() ?? ''));
+                ?: strcmp($name[spl_object_id($a)], $name[spl_object_id($b)]));
         $this->set_lst($lst);
     }
 
@@ -1527,10 +1534,12 @@ class value_list extends ListBase
         $val_lst = $this->lst();
         $first = array_shift($val_lst);
         if ($first != null) {
+            // the parts of each value are collected once and not once per part of the first value
+            $parts_of_vals = array_map(fn(sandbox_value $val) => $this->triple_parts($val, $shared), $val_lst);
             foreach ($this->triple_parts($first, $shared)->lst() as $part) {
                 $is_shared = true;
-                foreach ($val_lst as $val) {
-                    if (!$this->triple_parts($val, $shared)->has_id($part->id())) {
+                foreach ($parts_of_vals as $parts) {
+                    if (!$parts->has_id($part->id())) {
                         $is_shared = false;
                     }
                 }

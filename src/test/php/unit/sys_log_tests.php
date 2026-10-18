@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\test\php\create\test_sys_log;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 use DateTimeInterface;
@@ -231,6 +232,21 @@ class sys_log_tests
         $sys_tim_lst->switch();
         $test_name = '... and the end of the outermost section stops the counting';
         $t->assert($test_name, $sys_tim_lst->current(), '');
+
+        // each test header checks that the tests before have ended their sections, because a
+        // section left open counts the time of all following tests e.g. as map_json
+        $t->subheader($ts . 'open time section');
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->switch(system_time_type::DEFAULT);
+        $test_name = 'the base section of the test run is no problem';
+        $t->assert($test_name, test_base::time_section_problem($sys_tim_lst), '');
+        $sys_tim_lst->switch(system_time_type::MAP_JSON);
+        $test_name = 'a section left open is reported with its name';
+        $t->assert_text_contains($test_name, test_base::time_section_problem($sys_tim_lst), system_time_type::MAP_JSON);
+        $sys_tim_lst->switch();
+        $sys_tim_lst->switch();
+        $test_name = '... and also a section ended once too often';
+        $t->assert_true($test_name, test_base::time_section_problem($sys_tim_lst) != '');
         // the api wait that the frontend has measured is moved out of the url to html time
         $sys_tim_lst = $t_sys->system_time_steps();
         $sys_tim_lst->move(self::TV_STEP_LOAD_TYPES_SEC, system_time_type::DB_READ, system_time_type::API_WAIT);

@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -78,6 +79,23 @@ class group_ui_tests
         $grp_no_names = new group();
         $grp_no_names->add($phr_no_name);
         $t->assert($test_name, $grp_no_names->name(), '');
+
+        // the phrase list of a group is built once per change of the group, because a table
+        // asks each value for its phrases many times
+        $t->subheader($ts . 'phrase list');
+        $test_name = 'a phrase added to the group is in the next phrase list of the group';
+        $grp_lst = new group($t_grp->group_zh_2020()->api_json([api_types::INCL_PHRASES]));
+        $grp_lst->phr_lst();
+        $phr_add = new phrase();
+        $phr_add->set_id(word_names::TEST_ADD_ID);
+        $grp_lst->add($phr_add);
+        $t->assert_true($test_name, $grp_lst->phr_lst()->has_id(word_names::TEST_ADD_ID));
+        // negative: the caller gets a copy, so a phrase removed from it stays in the group
+        $test_name = 'a phrase removed from the phrase list of a group stays in the group';
+        $rm_lst = new phrase_list();
+        $rm_lst->add_phrase($phr_add);
+        $grp_lst->phr_lst()->remove($rm_lst);
+        $t->assert_true($test_name, $grp_lst->phr_lst()->has_id(word_names::TEST_ADD_ID));
     }
 
 }
