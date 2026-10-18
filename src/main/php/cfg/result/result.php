@@ -294,11 +294,28 @@ class result extends sandbox_value
             $this->set_owner_id($db_row[user_db::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]));
             $this->last_val_update = $lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]);
-
-            $this->load_phrases($msg, true);
         }
 
         return $msg->is_ok();
+    }
+
+    /**
+     * map a result row of a single result load and load the result and the source phrases,
+     * whereas a result list loads the phrases of all its results with one query (result_list::load)
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param user_message $msg to collect the mapping and loading problems
+     * @param string $ext the table type e.g. to indicate if the id is int
+     * @return bool true if the result has been mapped without problems
+     */
+    private function row_mapper_with_phrases(?array $db_row, user_message $msg, string $ext): bool
+    {
+        $result = $this->row_mapper_multi($db_row, $msg, $ext);
+        if ($result) {
+            // the mapper has just set the groups, so the phrases are reloaded for them
+            $this->load_phrases($msg, true);
+        }
+        return $result;
     }
 
     /**
@@ -994,7 +1011,7 @@ class result extends sandbox_value
         if ($qp->name != '') {
             $db_row = $db_con->get1($qp, $msg);
             if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                 $result = $this->id();
             }
         }
@@ -1057,7 +1074,7 @@ class result extends sandbox_value
                 $qp = $load_sql($db_con->sql_creator(), $tbl_typ);
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $loaded = true;
                 }
             }
@@ -1090,7 +1107,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1125,7 +1142,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1156,7 +1173,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1185,7 +1202,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1251,7 +1268,7 @@ class result extends sandbox_value
             if (count($val_rows) > 0) {
                 $val_row = $val_rows[0];
                 if ($val_row !== false and $val_row !== null and $val_row !== []) {
-                    $result = $this->row_mapper_multi($val_row, $msg, $qp->ext);
+                    $result = $this->row_mapper_with_phrases($val_row, $msg, $qp->ext);
                 }
             }
         }

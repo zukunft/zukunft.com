@@ -306,40 +306,145 @@ add CBAM calculation, portfolio split and company sheet use cases and pin them o
 
 ## speed up
 
-### speed up part 1
+### speed up part 2
 
-The result list load is slow because of per-row database reads inside the row mapper.
-Evidence: the system_views_read_tests log shows "result_default: sql_create 1.32 sec,
-db_read 6.75 sec, db_map 15.0 sec" — hundreds of tiny statements, not one slow query.
+Serializing a value list to the api json is slow because each value loads its phrases on its own.
+Evidence: "value_default: db_read 0.54 sec but map_json 3.1 sec" and "result_default:
+map_json 13.9 sec" in the system_views_read_tests log — the time is spent in api_json_array(),
+not in one big query.
 
-Cause: src/main/php/cfg/result/result.php, result::row_mapper_multi() (around line 296)
-calls $this->load_phrases($msg, true) for every mapped row. With force_reload = true that
-runs load_phr_lst_src() and load_phr_lst(), each doing group::load_by_id() and, because
-most groups have no database row, group::set_phrase_list_by_id() ->
-phrase_list::load_names_by_ids(). That is about 4 SQL round trips per result row.
+Causes:
+a) src/main/php/cfg/sandbox/sandbox_value.php, sandbox_value::api_json_array() (around line 1649):
+when INCL_PHRASES / INCL_RELATED is set and the group phrase list is not loaded(), it calls
+grp()->load_phrase_names() and phrase_list()->load_triple_sides() — per value, i.e. 2+
+queries per list entry inside the serialization.
+b) src/main/php/cfg/sandbox/sandbox_value_list.php, sandbox_value_list::load_phrases()
+(around line 626): loops $val->load_phrases() -> value_base::load_grp_by_id() ->
+group::load_by_id() + group::load_phrase_names(), again 2-3 queries per value. It is used by
+value_list::load_names_related(), which value::load_values_similar() calls.
 
 Task:
-1. Remove the load_phrases() call from result::row_mapper_multi(). The mapper must only
-   set the group ids (grp and src_grp) from the row, like value_base::row_mapper_sandbox_multi()
-   does for values.
-2. Add a batched loader result_list::load_phrases(user_message $msg): collect the phrase ids
-   of all grp() and src_grp() of the list (decode them with group_id::get_array()), load the
-   names of all of them with ONE phrase_list::load_names_by_ids() call, then one
-   phrase_list::load_triple_sides() for the from/to of the triples, and distribute the loaded
-   phrases to the groups of each result via set_phrase_list(). Follow the pattern already
-   sketched in sandbox_value_list::load_phrases() (src/main/php/cfg/sandbox/sandbox_value_list.php).
-3. Find every caller that relied on the phrases being loaded right after a result list load
-   (e.g. result::load_results_used(), value::load_results_related(), the result api endpoints,
-   the formula calculation) and call the new batched load_phrases() there once.
-   result::used_phrase_selection() must keep working for a single result (keep
-   result::load_phrases() for the single-object case, but without force_reload by default).
-4. Run the unit tests and the unit_read tests (src/test/php) and make sure the html
-   snapshots of the result views do not change.
+1. Rewrite sandbox_value_list::load_phrases() so it does ONE phrase_list::load_names_by_ids()
+   for the union of all phrase ids of all groups of the list (decoded with
+   group_id::get_array()), then ONE load_triple_sides(), and assigns the matching phrases to
+   each value's group via set_phrase_list(). No per-value group::load_by_id() — a group row
+   is only needed when a user has named the group, and the group name is not part of the
+   value api message.
+2. In sandbox_value_list::api_json_array() (or the value_list/result_list overrides), call the
+   batched load_phrases() once up front when the api type list includes phrases, so that the
+   per-value fallback in sandbox_value::api_json_array() is never hit for a list. Keep that
+   fallback for a single value.
+3. Make sure value::load_values_similar(), result::load_values_used(),
+   result::load_results_used() and the api/value and api/result list endpoints use the batched
+   path.
+4. Run the unit tests and unit_read tests; the json fixtures in src/test/resources and the
+   view html snapshots must stay identical.
 
-Coding style: single-exit functions (one return $result at the end), one logic step per line,
-no dense one-liners or nested ternaries. Keep PHPDoc comments in the existing style.
+Coding style: single-exit functions (one return $result at the end), one logic step per line.
 
-### speed up part 1
+### speed up part 3
+
+The second result_default view test took 38 seconds (first one 10.9 s), with
+"sql_create 1.32 sec, db_read 6.75 sec, db_map 15.0 sec, map_json 13.9 sec".
+
+Suspected cause: src/main/php/cfg/result/result.php, result::used_phrase_selection() falls
+back to grp()->phrase_list() with $any_phrase = true when the result has no saved source
+group. result::load_values_used() and result::load_results_used() then select with OR over
+every result phrase up to value_list::read_limit(), which pulls in a large list that is then
+mapped and serialized row by row.
+
+Task:
+1. Add a debug log line (log_debug) in used_phrase_selection() that states whether the
+   fallback is used and how many phrases it selects with, and check in the
+   system_views_read_tests result cases (src/test/php/unit_read/system_views_read_tests.php,
+   the result tests) which of the two tested results hits the fallback and why its
+   source_grp is empty. If the test data (src/test/php/create/test_results.php or the
+   import json under src/main/resources) can give that result a source group, fix the test
+   data.
+2. Independently of the data, limit the fallback: the result page only shows a short list of
+   "values used" and "results used", so use a dedicated small limit (e.g. a const
+   result::USED_FALLBACK_LIMIT, around 20) instead of value_list::read_limit() when
+   $any_phrase is true, and sort the fallback selection so the result is reproducible.
+3. used_phrase_selection() is called three times per page (load_values_used,
+   load_results_used, load_expression_parts) and load_formulas_used() can trigger
+   load_results_used() again: cache the selection result in a private property so the
+   phrase load and the fallback decision happen once per result object.
+4. Run the result unit_read tests and confirm the html snapshots are unchanged and the
+   measured time of the result_default section drops.
+
+Coding style: single-exit functions, one logic step per line, PHPDoc for new functions.
+
+### speed up part 4
+
+Every view test that passes no $cfg spends about 0.85 seconds in "load_frontend".
+Evidence: in the system_views_read_tests log even trivial add forms take 1.3 s
+("word_add: ... load_frontend: 0.89 sec", "triple_add: load_frontend: 0.87 sec",
+"component_add: load_frontend: 0.88 sec") and each of the 8 entry_view renders pays it too.
+
+Cause: src/test/php/utils/test_base.php, test_base::assert_view_html() (around line 1436):
+if ($cfg == null) it creates new frontend('') and calls load_cache(), which is a full HTTP
+round trip to the local api/type_lists endpoint (frontend::load_cache() ->
+frontend::api_get(type_lists::class) in src/main/php/web/frontend.php). The type lists do not
+change during a test run.
+
+Task:
+1. In test_base (or test_cleanup) add a lazily built, memoised frontend type cache: a private
+   property holding the data_object_ui with typ_lst_cache, created on first use by exactly
+   one load_cache() call, and reused for every later assert_view() without $cfg. Provide a
+   reset function for the few tests that change the types on purpose (grep the tests for
+   load_cache() and type changes to find them).
+2. Make assert_view_html() use the memoised cache when $cfg is null, and still copy the user
+   via MapObject::convertToUi() as it does today.
+3. Check src/test/php/unit_read/system_views_read_tests.php: run_start() calls assert_view()
+   eight times without $cfg although context() builds one — pass the context there too if
+   the snapshots stay identical.
+4. Run the full unit_read test group and verify the html snapshots are unchanged and that
+   "load_frontend" appears only once in the timing report.
+
+Coding style: single-exit functions, one logic step per line.
+
+### speed up part 5
+
+Rendering a page in the frontend makes many sequential HTTP calls to its own api; each one
+bootstraps PHP, opens the database and reads the type cache, roughly 150-300 ms per call.
+Evidence from the system_views_read_tests log:
+- "Calculator: url to html 8.33 sec, api_wait 11.43 sec"
+- "entry_view: url to html ~2.0 sec, api_wait ~0.87 sec" on every one of 8 renders
+  These are view tests run in test mode (view_ui::show(..., $test_mode = true)), which the
+  comment in test_base::assert_view_html() says should need no backend calls at all.
+
+Causes in src/main/php/web/component/execute/ui_list.php:
+a) ui_list::calculator_source_ids() (around line 2576) loops over every input and assumption
+field and calls add_field_links() and add_field_values() per field. add_field_links()
+(around line 1890) has NO "already in cache" guard, unlike add_field_values(), so it fires
+a load_related_by_name() HTTP call for every field on every walk. Check whether
+calculator_fields() repeats the same walk.
+b) ui_list::add_start_page_cache() / start_page_children() and view_exe::add_page_cache()
+issue 5-6 sequential calls for the start page.
+c) src/main/php/web/html/rest_call.php, rest_call::api_call() creates a new curl handle for
+every request (no keep-alive).
+
+Task:
+1. Add a cache guard to add_field_links(): skip the api call if the request cache
+   ($dto->phr_lst) already holds the links of that phrase (reuse the pattern of
+   add_field_values() and column_links_loaded()).
+2. Batch the per-field calls: collect the field phrases of all items first, then do ONE
+   phrase_list::load_related_by_ids() for the links and ONE value_list::load_by_phr_lst()
+   for the field values, and merge the results into $dto. Make sure the calculator walk
+   happens once per page render.
+3. In test mode set $dto->online = false before rendering (in view_exe::show() or in
+   test_base::assert_view_html()), so the request cache that the test fills upfront is
+   used and no backend call happens; if a view test then renders differently, the test
+   context in src/test/php/unit_read/system_views_read_tests.php::context() is missing data
+   — add it there rather than re-enabling the calls.
+4. In rest_call, keep one static curl handle per process (curl_init once, reuse with
+   CURLOPT_URL per call) so the connection stays open between the calls of one page.
+5. Run the unit_ui and unit_read tests; the html snapshots must not change, and the
+   "api_wait" of the Calculator and entry_view sections in the timing log should drop to
+   near zero in test mode.
+
+Coding style: single-exit functions (one return $result at the end), one logic step per
+line, no packed ternaries. Keep the existing PHPDoc style.
 
 ### speed up general
 

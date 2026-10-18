@@ -3065,7 +3065,7 @@
     \-- save - section for function save is expected to be save in /result/result_list.php
     \-- merge - section for function merge not yet defined that it should be get the result that needs to be recalculate
             d if one formula has been updated in /result/result_list.php
-    \-- order error - order of section load has difference at load_sql_by_ids should be before load
+    \-- order error - order of section load has difference at load_phrases should be before load
 \-- sandbox
     \-- row_mapper_usr - section for function row_mapper_usr not yet defined that it should be construct and map in /san
             dbox/sandbox.php
