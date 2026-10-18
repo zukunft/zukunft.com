@@ -171,6 +171,7 @@ class html_base
     const string ASIDE = 'aside';
     const string SECTION = 'section';
     const string UL = 'ul';
+    const string OL = 'ol';
     const string LI = 'li';
     const string BUTTON = 'button';
     const string HTML = 'html';

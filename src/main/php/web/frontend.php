@@ -1171,7 +1171,7 @@ class frontend
                 $result .= log_err('No view for "' . $view_id . '" found.',
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
-                $title = $msk_ui->title($dbo, $msg_ui);
+                $title = $msk_ui->title($dbo, $msg_ui, $dto);
                 $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty

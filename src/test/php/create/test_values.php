@@ -1559,15 +1559,41 @@ class test_values extends test_objects
      */
     function value_list_calculator_input_ui(): value_list_ui
     {
+        return $this->calculator_values_ui(false);
+    }
+
+    /**
+     * the values of the calculation result test: the values of the calculator input test and
+     * the inhabitants of the canton of Zurich in 2019 as the number of the row inhabitants with
+     * the filter canton in the column 2019
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_result_ui(): value_list_ui
+    {
+        return $this->calculator_values_ui(true);
+    }
+
+    /**
+     * @param bool $with_result true to add the number of the result table
+     * @return value_list_ui the values of the calculator tests
+     */
+    private function calculator_values_ui(bool $with_result): value_list_ui
+    {
         $tl = new test_lib();
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
         $inhab = $t_wrd->word_inhabitant()->phrase();
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $inhab], values::CITY_ZH_INHABITANTS_2019));
+        $lst->add($this->value_for_phrases([$zh, $inhab], values::CITY_ZH_INHABITANTS_2019));
         $lst->add($this->value_for_phrases([$inhab, $t_trp->field_limit_down()->phrase()], 0));
         $lst->add($this->value_for_phrases([$inhab, $t_trp->field_step()->phrase()], 100));
         $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $t_wrd->word_2020()->phrase()], values::SAMPLE_FLOAT));
+        if ($with_result) {
+            $lst->add($this->value_for_phrases([$zh, $inhab, $t_wrd->word_canton()->phrase(),
+                $t_wrd->word_2019()->phrase()], values::SAMPLE_INT));
+        }
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 

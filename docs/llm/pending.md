@@ -57,7 +57,9 @@ the test run after each step (an llm never runs test/*, docs/llm/coding.md).
 6. replace the view part of `pv_lifetime_balance.json` with the data of the sample json: add
    the use case triples (the triples without a code id, incl. the general triples of the
    phrases), give `example PV installation` the `"view": "Calculator"`, remove the view
-   `PV lifetime CO2 balance` and its 17 components, and let `run_pv_lifetime_balance` render
+   `PV lifetime CO2 balance` and its 17 components, load the calculator triples of the page
+   phrase and of the phrase it is built from into the request cache before the components
+   render (the reader reads the cache only), and let `run_pv_lifetime_balance` render
    the `Calculator` view; the view and component ids after the use case shift, so the
    developer recreates the database and re-pins (`test/test_re_pin.php`)
 7. delete `docs/llm/samples/new_view_sample_pv_balance.json` and point the links of the guide

@@ -411,8 +411,7 @@ class component_exe extends component
             component_types::CALCULATOR_TITLE => $page->calculator_title($dbo, $cfg),
             component_types::CALCULATOR_INPUT => $page->calculator_input(
                 $dbo, $msg, $cfg, $form_name, $adm_dto->view_code_id($msk_id) ?: $msk_id, $url_arr),
-            // TODO Prio 1 the results from the calculator reader (docs/llm/pending.md step 5c)
-            component_types::CALCULATION_RESULT => '',
+            component_types::CALCULATION_RESULT => $page->calculation_result($dbo, $msg, $cfg),
             component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),

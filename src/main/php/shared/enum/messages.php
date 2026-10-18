@@ -1848,6 +1848,10 @@ enum messages: string
     case CALCULATOR_INPUTS = 'calculator_inputs';
     case CALCULATOR_ASSUMPTIONS = 'calculator_assumptions';
     case CALCULATOR_SAVE = 'calculator_save';
+    // the first header of the result table, the default summary of the details and the sources heading
+    case CALCULATOR_RESULT = 'calculator_result';
+    case CALCULATOR_DETAILS = 'calculator_details';
+    case CALCULATOR_SOURCES = 'calculator_sources';
 
     // text to be shown in buttons
     case ADD = 'add';

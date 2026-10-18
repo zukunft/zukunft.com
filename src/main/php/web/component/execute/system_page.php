@@ -1256,6 +1256,52 @@ class system_page extends component
     }
 
     /**
+     * the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+     * the label of the result columns as the heading, the main table and then a collapsed block
+     * with the detail tables, the notes of the formulas and the numbered sources; the summary of
+     * the block is the label of the detail tables, else the default text
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load or a stored result that differs
+     * @param data_object|null $cfg the request cache with the calculator triples, the values and the results of the page
+     * @return string the html code of the results or an empty string if the calculator has no result
+     */
+    function calculation_result(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        $calc = null;
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+        }
+        // a phrase without calculator triples loads no result, because it shows none
+        if ($calc?->is_calculator()) {
+            $html = new html_base();
+            $list = new ui_list();
+            $lst = $list->calculator_numbers($dbo, $cfg, $msg);
+            $table = $list->calculation_table($calc, $dbo, $lst, $msg);
+            if ($table != '') {
+                $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
+                $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
+            }
+            $notes = $list->formula_notes($dbo, $msg, $cfg);
+            $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
+                . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))
+                . $list->calculator_sources($calc, $dbo, $msg, $cfg);
+            if ($more != '') {
+                $summary = $calc->own_label($calc->group(triples::CALCULATOR_DETAIL_TABLE))
+                    ?: $mtr->txt(msg_id::CALCULATOR_DETAILS);
+                $result .= $html->details($html->esc($summary), $html->div($more, styles::CALC_MORE));
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the input fields of a process catch page or of one of its tabs; a placeholder with the name of
      * the component until the fields are read from the field triples of the question phrase
      *

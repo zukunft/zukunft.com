@@ -98,9 +98,19 @@ class calculator
      */
     function title(): string
     {
+        $label = $this->page_label();
+        return $label != '' ? $label : $this->capital($this->phr->name());
+    }
+
+    /**
+     * @return string the label of the page phrase, else of the phrase it is built from, else an
+     *                empty string e.g. so that the page title falls back to the view name
+     */
+    function page_label(): string
+    {
         return $this->own_text($this->phr, triples::CALCULATOR_LABEL)
             ?? $this->own_text($this->base, triples::CALCULATOR_LABEL)
-            ?? $this->capital($this->phr->name());
+            ?? '';
     }
 
     /**
@@ -296,16 +306,28 @@ class calculator
             $result[] = [$this->item_phrase($opt), $this->label($opt)];
         }
         if ($result == []) {
-            foreach ($this->cac->lst() as $trp) {
-                if ($trp->is_triple() and $trp->get_verb()?->id() == verbs::IS_ID
-                    and $trp->get_to()?->id() == $phr->id()) {
-                    $opt = $this->cached($trp->get_from());
-                    $result[] = [$opt, $this->phrase_label($opt)];
-                }
+            foreach ($this->kinds($phr) as $opt) {
+                $result[] = [$opt, $this->phrase_label($opt)];
             }
-            usort($result, fn($a, $b) => strcmp($a[1], $b[1]));
         }
         return $result;
+    }
+
+    /**
+     * @param phrase $phr e.g. month or replacement mix
+     * @return phrase[] the phrases that are a phrase e.g. January to December, in the order of
+     *                  the follower chain and the others sorted by label
+     */
+    function kinds(phrase $phr): array
+    {
+        $result = [];
+        foreach ($this->cac->lst() as $trp) {
+            if ($trp->is_triple() and $trp->get_verb()?->id() == verbs::IS_ID
+                and $trp->get_to()?->id() == $phr->id() and $trp->get_from() != null) {
+                $result[] = $this->cached($trp->get_from());
+            }
+        }
+        return $this->sorted($result, false);
     }
 
     /**
@@ -405,9 +427,11 @@ class calculator
      * sorted by label; an item is in the chain if it is the follower of the item before
      *
      * @param phrase[] $items the items of one list
+     * @param bool $as_items false for phrases that are no list items e.g. the rows of a detail
+     *                       table, which are sorted by their own label
      * @return phrase[] the items in the order of the page
      */
-    private function sorted(array $items): array
+    private function sorted(array $items, bool $as_items = true): array
     {
         $ids = array_map(fn(phrase $item) => $item->id(), $items);
         $by_id = array_combine($ids, $items);
@@ -438,7 +462,8 @@ class calculator
         $rest = [];
         foreach ($items as $item) {
             if (!in_array($item->id(), $chain)) {
-                $rest[$this->label($item) . ' ' . $item->id()] = $item;
+                $label = $as_items ? $this->label($item) : $this->phrase_label($item);
+                $rest[$label . ' ' . $item->id()] = $item;
             }
         }
         ksort($rest);

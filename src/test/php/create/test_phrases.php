@@ -1818,6 +1818,24 @@ class test_phrases
      */
     function list_calculator_input_ui(): phrase_list_ui
     {
+        return $this->calculator_input_ui([]);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculation result test: the calculator
+     *         input test with the result column, the signed row group and the detail table
+     */
+    function list_calculator_result_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_result());
+    }
+
+    /**
+     * @param array $extra the triples that a test adds to the calculator input test
+     * @return phrase_list_ui the request cache of the calculator input test with the given triples
+     */
+    private function calculator_input_ui(array $extra): phrase_list_ui
+    {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $lst = new phrase_list($this->env->usr1);
@@ -1825,7 +1843,7 @@ class test_phrases
                      $t_wrd->word_inhabitant(), $t_wrd->word_2019(), $t_wrd->word_2020(),
                      $t_trp->zh_city(), $t_trp->triple_bern(), ...$t_trp->calculator_zh(),
                      $t_trp->field_number_with_limits(), $t_trp->field_phrase_selector_type(),
-                     $t_trp->field_inhabitants(), ...$t_trp->calculator_zh_input()] as $obj) {
+                     $t_trp->field_inhabitants(), ...$t_trp->calculator_zh_input(), ...$extra] as $obj) {
             $lst->add($obj->phrase());
         }
         return $this->ui_list($lst);

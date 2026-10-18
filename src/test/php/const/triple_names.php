@@ -302,6 +302,9 @@ class triple_names
     const string CALC_ZH_INPUT_CANTON_LABEL_COM = 'Region';
     // the triples of the calculator input test, which follow the 24 triples of the reader test
     const int CALC_INPUT_FIRST_ID = 959;
+    // the triples of the calculation result test, which follow the 5 triples of the input test
+    const int CALC_RESULT_FIRST_ID = 954;
+    const string CALC_ZH_COLUMNS_LABEL_COM = 'Main numbers';
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort

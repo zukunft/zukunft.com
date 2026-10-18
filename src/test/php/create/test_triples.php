@@ -1655,6 +1655,43 @@ class test_triples extends test_objects
     }
 
     /**
+     * the triples that the calculation result test adds to the reader test (calculator_zh): the
+     * result column 2019 with a label of the column group, the row group city signed, and the
+     * detail table city with the column inhabitants and the extra row 2019
+     *
+     * @return triple[] the keyword, the column, the sign and the detail table triples
+     */
+    function calculator_zh_result(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $zh = $t_wrd->word_zh()->phrase();
+        $calc = [];
+        foreach ($this->calculator_zh() as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        $id = triple_names::CALC_RESULT_FIRST_ID;
+        $kw = [];
+        foreach ([triples::CALCULATOR_RESULT_COLUMN, triples::CALCULATOR_DETAIL_TABLE, triples::CALCULATOR_SIGNED] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        $cols = $this->calc_triple($id, 'Zurich result columns', $zh, $has, $kw[triples::CALCULATOR_RESULT_COLUMN]);
+        $tbls = $this->calc_triple($id, 'Zurich detail tables', $zh, $has, $kw[triples::CALCULATOR_DETAIL_TABLE]);
+        $tbl = $this->calc_triple($id, 'Zurich detail city', $tbls->phrase(), $has, $t_wrd->word_city()->phrase());
+        return [
+            ...array_values($kw), $cols, $tbls, $tbl,
+            $this->calc_triple($id, 'Zurich column 2019', $cols->phrase(), $has, $t_wrd->word_2019()->phrase()),
+            $this->calc_triple($id, 'Zurich result columns label', $cols->phrase(), $has,
+                $calc[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_COLUMNS_LABEL_COM),
+            $this->calc_triple($id, 'Zurich rows city signed', $calc['Zurich rows city']->phrase(), $has, $kw[triples::CALCULATOR_SIGNED]),
+            $this->calc_triple($id, 'Zurich detail column inhabitants', $tbl->phrase(), $has, $t_wrd->word_inhabitant()->phrase()),
+            $this->calc_triple($id, 'Zurich detail total', $tbl->phrase(), $t_vrb->verb_with(), $t_wrd->word_2019()->phrase()),
+        ];
+    }
+
+    /**
      * @param int $id the id of the triple, counted down for the next triple
      * @return triple a triple of the calculator of the reader test
      */

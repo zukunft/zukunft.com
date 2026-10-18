@@ -443,10 +443,73 @@ class use_case_ui_tests
             '<summary>' . $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS) . '</summary>');
         $test_name = '... and an assumption without a source is tagged as assumed';
         $t->assert_text_contains($test_name, $in_html,
-            $html->span($mtr->txt(msg_id::FIELD_TAG_ASSUMED), styles::INPUT_TAG));
+            $html->span($mtr->txt(msg_id::FIELD_TAG_ASSUMED), styles::INPUT_TAG_ASSUMED));
         // negative: a phrase without calculator triples has no inputs
         $test_name = 'a phrase without calculator triples shows no calculator input';
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
+
+        $t->subheader($ts . 'calculation result');
+        // the page phrase Zurich has the result column 2019, the signed row group city with the rows
+        // Bern (city) and inhabitants filtered by canton, and the detail table city
+        $dto_res = new data_object();
+        $dto_res->online = false;
+        $dto_res->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto_res->phr_lst = $t_phr->list_calculator_result_ui();
+        $dto_res->val_lst = $t_val->value_list_calculator_result_ui();
+        $src = new source_ui($t_src->source_reserved()->api_json());
+        $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->src = $src;
+        $res_html = $page->calculation_result($wrd, $msg, $dto_res);
+        $test_name = 'the result starts with the label of the result columns as the heading';
+        $t->assert_text_contains($test_name, $res_html, $html->block(html_base::H2, triple_names::CALC_ZH_COLUMNS_LABEL_COM)
+            . '<div class="' . styles::CALC_SCROLL . '"><' . html_base::TABLE . '>');
+        $test_name = '... and the header with the default first header and the label of each column';
+        $t->assert_text_contains($test_name, $res_html, $html->block(html_base::TR,
+            $html->block(html_base::TH, $mtr->txt(msg_id::CALCULATOR_RESULT))
+            . $html->block(html_base::TH, word_names::YEAR_2019, styles::CALC_NUMBER)));
+        $test_name = 'a row group is a section row over all columns';
+        $t->assert_text_contains($test_name, $res_html, $html->block(html_base::TR,
+            '<' . html_base::TD . ' colspan="2">City</' . html_base::TD . '>', styles::CALC_SECTION));
+        $test_name = 'a row built from the group phrase shows the other phrase and an empty cell without a number';
+        $t->assert_text_contains($test_name, $res_html, $html->block(html_base::TR,
+            $html->block(html_base::TD, word_names::BE) . $html->block(html_base::TD, '', styles::CALC_NUMBER)));
+        $test_name = 'a highlighted row is a key row with the hint as sub text';
+        $t->assert_text_contains($test_name, $res_html, '<' . html_base::TR . ' class="' . styles::CALC_KEY . '">'
+            . $html->block(html_base::TD, triple_names::CALC_INHABITANTS_LABEL_COM
+                . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::CALC_SUB)));
+        $test_name = '... and the number of a signed group with its sign';
+        $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
+        $test_name = 'the details follow the main table in a collapsed block with the default summary';
+        $t->assert_text_order($test_name, $res_html, '</table>',
+            '<summary>' . $mtr->txt(msg_id::CALCULATOR_DETAILS) . '</summary><div class="' . styles::CALC_MORE . '">');
+        $test_name = 'a detail table has the table phrase as the first header and a row per phrase that is the table phrase';
+        $t->assert_text_contains($test_name, $res_html, $html->block(html_base::TH, 'City')
+            . $html->block(html_base::TH, triple_names::CALC_INHABITANTS_LABEL_COM, styles::CALC_NUMBER));
+        // the row Zurich shows the calculator label of Zurich (rule 6), which is also the title of
+        // this test page, because the page phrase is one of the cities
+        $zh_row = '<td>' . triple_names::CALC_ZH_LABEL_COM . '</td><td class';
+        $t->assert_text_order($test_name, $res_html, '<td>' . word_names::BE . '</td><td class', $zh_row);
+        $test_name = '... and an extra row per with sub-item';
+        $t->assert_text_order($test_name, $res_html, $zh_row, '<td>' . word_names::YEAR_2019 . '</td><td class');
+        $test_name = 'the sources are numbered in the order of the first use';
+        $t->assert_text_contains($test_name, $res_html, '<div class="' . styles::CALC_SOURCES . '">'
+            . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_SOURCES)) . '<' . html_base::OL . '>');
+        $t->assert_text_contains($test_name, $res_html, $src->name());
+        $test_name = '... and the hint of a field with a value of a source names its number';
+        $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_res, $form, views::CALCULATOR, []),
+            $html->span(triple_names::CALC_INHABITANTS_HINT_COM . ' [1]', styles::INPUT_HINT));
+        // negative: a phrase without calculator triples has no results
+        $test_name = 'a phrase without calculator triples shows no calculation result';
+        $t->assert($test_name, $page->calculation_result(new test_triples($t)->triple_bern_ui(), $msg, $dto_res), '');
+
+        $t->subheader($ts . 'calculator page title');
+        // the calculator page is named by the calculator label of the page phrase instead of the view name
+        $msk_calc = new view_ui($t_msk->view()->api_json());
+        $msk_calc->code_id = views::CALCULATOR;
+        $test_name = 'the page title of a calculator names the calculator label of the page phrase';
+        $t->assert_text_contains($test_name, $msk_calc->title($wrd, $msg, $dto_res), triple_names::CALC_ZH_LABEL_COM);
+        // negative: another view keeps its own name in the title
+        $test_name = '... and another view its own name';
+        $t->assert_text_contains($test_name, $msk->title($wrd, $msg, $dto_res), $msk->name());
     }
 
     /**

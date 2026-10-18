@@ -6394,6 +6394,8 @@
             tor.php
     \-- is_calculator - section for function is_calculator is expected to be info in /component/execute/calculator.php
     \-- title - section for function title not yet defined that it should be page in /component/execute/calculator.php
+    \-- page_label - section for function page_label not yet defined that it should be page in /component/execute/calcul
+            ator.php
     \-- lead - section for function lead not yet defined that it should be page in /component/execute/calculator.php
     \-- group - section for function group not yet defined that it should be lists in /component/execute/calculator.php
     \-- items - section for function items not yet defined that it should be lists in /component/execute/calculator.php
@@ -6417,6 +6419,8 @@
             /execute/calculator.php
     \-- options - section for function options not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
+    \-- kinds - section for function kinds not yet defined that it should be texts and flags in /component/execute/calcu
+            lator.php
     \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
             tor.php
 \-- system_form
@@ -6739,6 +6743,8 @@
             ponent/execute/system_page.php
     \-- calculator_input - section for function calculator_input not yet defined that it should be process catch in /com
             ponent/execute/system_page.php
+    \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
+            /component/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
              in /component/execute/system_page.php
     \-- process_catch_tab - section for function process_catch_tab not yet defined that it should be process catch in /c
@@ -6814,6 +6820,11 @@
     \-- formula_notes - section for function formula_notes missing in /component/execute/ui_list.php
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
+    \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
+    \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
+            .php
+    \-- calculator_sources - section for function calculator_sources missing in /component/execute/ui_list.php
+    \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -9402,6 +9413,14 @@
         \-- ui_list - the assumptions of a page: the values that the calculation of the results of the page uses
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+    \-- calculation_table
+        \-- ui_list - the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
+    \-- calculation_detail_tables
+        \-- ui_list - the detail tables of a calculation result: per table its label as the heading, the table
+    \-- calculator_sources
+        \-- ui_list - the sources of a calculator page as a numbered list in the order of their first use, so
+    \-- calculator_numbers
+        \-- ui_list - @param word|triple $dbo the phrase of the page
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
@@ -9595,6 +9614,8 @@
         \-- calculator - @return bool true if the page phrase or the phrase it is built from has a calculator list
     \-- title
         \-- calculator - @return string the title of the page: the label of the page phrase, else of the phrase it
+    \-- page_label
+        \-- calculator - @return string the label of the page phrase, else of the phrase it is built from, else an
     \-- lead
         \-- calculator - @return string the lead text of the page: the hint of the page phrase, else of the phrase
     \-- page_html
@@ -9632,6 +9653,8 @@
                 field phrase
     \-- options
         \-- calculator - the options of a phrase selector (rule 6): the "has a" triples of the field phrase in their
+    \-- kinds
+        \-- calculator - @param phrase $phr e.g. month or replacement mix
     \-- used
         \-- calculator - @param phrase[] $phr_lst e.g. the option phrases of a selector
 \-- optional with show password but without auto fill
@@ -9920,6 +9943,8 @@
         \-- system_page - the title of a calculator page: the calculator label of the page phrase, or of the phrase it
     \-- calculator_input
         \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+    \-- calculation_result
+        \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- process_catch_fields
         \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
     \-- process_catch_tab
