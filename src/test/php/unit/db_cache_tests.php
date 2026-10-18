@@ -44,6 +44,13 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
@@ -67,7 +74,14 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -287,6 +301,38 @@ class db_cache_tests
         $par[url_var::VERB] = '0';
         $cac_key_zero = db_cache_page::api_key(phrase_list::class, $par, $t->usr1->id());
         $t->assert_not($test_name, $cac_key_zero, $cac_key);
+
+
+        $t->subheader($ts . 'drop by api object type');
+
+        // a delete selects the cached rows that start with the pattern, like sql_par_type::LIKE_R
+        $starts_like = fn(string $pattern, string $key): bool
+            => preg_match('/^' . str_replace('%', '.*', preg_quote($pattern, '/')) . '/', $key) === 1;
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS];
+        $res_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $test_name = 'the cached result list of a user is dropped with the result lists of that user';
+        $t->assert_true($test_name, $starts_like(db_cache_page::api_key_pattern(result_list::class, $t->usr1->id()), $res_key));
+        $test_name = '... and with the result lists of all users';
+        $t->assert_true($test_name, $starts_like(db_cache_page::api_key_pattern(result_list::class), $res_key));
+        // negative: an outdated value list keeps the cached result lists
+        $test_name = '... but not with the value lists';
+        $t->assert_false($test_name, $starts_like(db_cache_page::api_key_pattern(value_list::class), $res_key));
+        $test_name = '... and not with the html pages';
+        $t->assert_false($test_name, $starts_like(db_cache_page::html_key_pattern(), $res_key));
+        $html_key = url_var::MASK . url_var::EQ . views::START_ID . url_var::ADD_ID . self::TV_LEVELS
+            . url_var::ADD . url_var::USER . url_var::EQ . $t->usr1->id();
+        $test_name = 'a cached html page of a user is dropped with the html pages of that user';
+        $t->assert_true($test_name, $starts_like(db_cache_page::html_key_pattern($t->usr1->id()), $html_key));
+
+        // a write outdates the cached api answers that can show the changed object
+        $test_name = 'a renamed word outdates the cached phrase, value and result lists';
+        $t->assert($test_name, frontend::api_lists_outdated_by(word_ui::class),
+            [phrase_list_ui::class, value_list_ui::class, result_list_ui::class]);
+        $test_name = 'a changed source outdates only the cached value lists';
+        $t->assert($test_name, frontend::api_lists_outdated_by(source_ui::class), [value_list_ui::class]);
+        // negative: the cached lists name no view, so a changed view keeps them
+        $test_name = 'a changed view keeps all cached api answers';
+        $t->assert($test_name, frontend::api_lists_outdated_by(view_ui::class), []);
 
 
         $t->subheader($ts . 'types message');

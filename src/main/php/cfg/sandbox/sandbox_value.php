@@ -342,15 +342,24 @@ class sandbox_value extends sandbox_multi
      * @param user_message $msg to report a key that cannot be decoded
      * @param string $id_fld the name of the text group key field
      * @param array $phr_id_flds the names of the phrase id fields of the prime and main tables
+     * @param bool $with_names false if the caller loads the phrase names of many rows with one query
      * @return bool true if the row carries the text group key
      */
-    function set_grp_by_row(array $db_row, user_message $msg, string $id_fld, array $phr_id_flds): bool
+    function set_grp_by_row(
+        array        $db_row,
+        user_message $msg,
+        string       $id_fld,
+        array        $phr_id_flds,
+        bool         $with_names = true
+    ): bool
     {
         $key = $db_row[$id_fld] ?? null;
         $has_key = ($key !== null and $key !== '' and $key !== 'null');
         $grp = new group($this->get_user());
         if ($has_key) {
-            $grp->set_phrase_list_by_id($key, $msg);
+            if ($with_names) {
+                $grp->set_phrase_list_by_id($key, $msg);
+            }
             $grp->set_id($key);
         } else {
             $phr_lst = new phrase_list($this->get_user());

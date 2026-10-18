@@ -629,8 +629,20 @@ class sandbox_value_list extends sandbox_list
      */
     function load_phrases(user_message $msg): void
     {
-        $all_phr = $this->set_phrases($this->lst(), $msg, true);
-        // the from and to of the triples of all values with one read, e.g. to head a column by one part
+        // the names that the list load has already set are not read again
+        $this->set_phrases($this->lst(), $msg, false);
+        // the from and to of the triples of all values with one read, e.g. to head a column by one part;
+        // each phrase object of each group, because a group that has been loaded before may hold its own objects
+        $phr_objects = [];
+        foreach ($this->lst() as $val) {
+            foreach ($this->groups_of($val) as $grp) {
+                if ($grp != null) {
+                    $phr_objects = array_merge($phr_objects, $grp->phrase_list()->lst());
+                }
+            }
+        }
+        $all_phr = new phrase_list($this->get_user());
+        $all_phr->set_lst($phr_objects);
         $all_phr->load_triple_sides($msg);
     }
 

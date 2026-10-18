@@ -306,164 +306,144 @@ add CBAM calculation, portfolio split and company sheet use cases and pin them o
 
 ## speed up
 
-based on the following log reorder and review this speed up tasks
+The steps are ordered by the time they cost in the full run of test/test.php (809 s, 9823
+test cases, 248 timeouts). Each step is one commit with the test first; the developer runs the
+tests after each step and compares the timing report with the one before.
 
-### speed up part 3
+Where the time of the run goes:
+- the write workflows (workflow start db write): 258 s
+- the database recreation with the seed import (db write database recreation): 168 s
+- the read-only workflows (workflow start): 92 s
+- the db write tests: 71 s
+- the html unit ui tests: 68 s, of which the start page selections take 32 s
+- the system view read tests: 66 s, of which the 8 start page views take 28 s and the
+  calculator 16 s
+- the unit tests: 36 s, of which the admin dashboard takes 14 s
+- the api tests: 18 s, the localhost views: 17 s
 
-The second result_default view test took 38 seconds (first one 10.9 s), with
-"sql_create 1.32 sec, db_read 6.75 sec, db_map 15.0 sec, map_json 13.9 sec".
+### 1. api wait of the write workflows
 
-Suspected cause: src/main/php/cfg/result/result.php, result::used_phrase_selection() falls
-back to grp()->phrase_list() with $any_phrase = true when the result has no saved source
-group. result::load_values_used() and result::load_results_used() then select with OR over
-every result phrase up to value_list::read_limit(), which pulls in a large list that is then
-mapped and serialized row by row.
+The first page of each write workflow waits 7 to 12 s for the backend ("add_triple_wf4/
+wf4_edit_back: api_wait 7.3 sec", "add_view_wf22/wf22_edit_back: api_wait 9.2 sec",
+"add_component_wf25: 9.4 sec", "signup_confirm_wf36: 7.7 sec", "... so it can be deleted:
+8.3 sec"), and every confirm step after a write waits 1.2 to 1.7 s. The same pages of the
+read-only workflows wait 0.12 to 0.89 s, so the wait is caused by the write: about 130 s.
 
-Task:
-1. Add a debug log line (log_debug) in used_phrase_selection() that states whether the
-   fallback is used and how many phrases it selects with, and check in the
-   system_views_read_tests result cases (src/test/php/unit_read/system_views_read_tests.php,
-   the result tests) which of the two tested results hits the fallback and why its
-   source_grp is empty. If the test data (src/test/php/create/test_results.php or the
-   import json under src/main/resources) can give that result a source group, fix the test
-   data.
-2. Independently of the data, limit the fallback: the result page only shows a short list of
-   "values used" and "results used", so use a dedicated small limit (e.g. a const
-   result::USED_FALLBACK_LIMIT, around 20) instead of value_list::read_limit() when
-   $any_phrase is true, and sort the fallback selection so the result is reproducible.
-3. used_phrase_selection() is called three times per page (load_values_used,
-   load_results_used, load_expression_parts) and load_formulas_used() can trigger
-   load_results_used() again: cache the selection result in a private property so the
-   phrase load and the fallback decision happen once per result object.
-4. Run the result unit_read tests and confirm the html snapshots are unchanged and the
-   measured time of the result_default section drops.
-
-Coding style: single-exit functions, one logic step per line, PHPDoc for new functions.
-
-### speed up part 4
-
-Every view test that passes no $cfg spends about 0.85 seconds in "load_frontend".
-Evidence: in the system_views_read_tests log even trivial add forms take 1.3 s
-("word_add: ... load_frontend: 0.89 sec", "triple_add: load_frontend: 0.87 sec",
-"component_add: load_frontend: 0.88 sec") and each of the 8 entry_view renders pays it too.
-
-Cause: src/test/php/utils/test_base.php, test_base::assert_view_html() (around line 1436):
-if ($cfg == null) it creates new frontend('') and calls load_cache(), which is a full HTTP
-round trip to the local api/type_lists endpoint (frontend::load_cache() ->
-frontend::api_get(type_lists::class) in src/main/php/web/frontend.php). The type lists do not
-change during a test run.
+The slow api requests of the run in the table system_times show that every api request of the
+frontend takes 1.2 to 1.7 s (e.g. /api/view, /api/source, /api/phraseList, /api/valueList)
+and /api/resultList of the start page 3 to 4 s; a confirm step makes about one request and the
+first page of a workflow about five (start page and object). The config cache is not missed:
+the config rebuild (load_sys_config) shows up only once in the whole run. But the same start
+page requests (/api/resultList, /api/valueList) are not slow in the read-only workflows, so
+something that only the write workflows do makes them slow, e.g. the login, the user of the
+session or the html page cache that drop_cached_pages() clears (the workflow tests call
+url_to_html() directly and do not read the page cache).
 
 Task:
-1. In test_base (or test_cleanup) add a lazily built, memoised frontend type cache: a private
-   property holding the data_object_ui with typ_lst_cache, created on first use by exactly
-   one load_cache() call, and reused for every later assert_view() without $cfg. Provide a
-   reset function for the few tests that change the types on purpose (grep the tests for
-   load_cache() and type changes to find them).
-2. Make assert_view_html() use the memoised cache when $cfg is null, and still copy the user
-   via MapObject::convertToUi() as it does today.
-3. Check src/test/php/unit_read/system_views_read_tests.php: run_start() calls assert_view()
-   eight times without $cfg although context() builds one — pass the context there too if
-   the snapshots stay identical.
-4. Run the full unit_read test group and verify the html snapshots are unchanged and that
-   "load_frontend" appears only once in the timing report.
+1. The sections of config_numbers::load_cfg() are ended, so that the rest of a request is no
+   longer counted as load_config_cache (it showed 2.2 to 2.9 s of each /api/resultList).
+2. With the corrected rows in system_times, find what the base 1.2 s of every api request is
+   and speed up that part. application::start_api() switched to no time section, so the time
+   outside the db and config sections was counted nowhere (2.4 of the 3.2 s of /api/resultList);
+   both api starts now count init, db open, the type load and then the api controller work.
+   Result: the start is cheap (init, db open and type load below 0.1 s); /api/resultList of the
+   start page spends 2.2 s in the controller for 289 results (1.6 MB json). The per-row phrase
+   name query of a result (sandbox_value::set_grp_by_row) and the second name load of
+   sandbox_value_list::load_phrases() are removed, which halves its controller time.
+3. The api answers are cached in db_cache_pages (db_cache_page::json_by_key() in e.g.
+   api/resultList), and frontend::drop_cached_pages() deletes all cached pages after a write of
+   a user that sees the standard data, so the next start page misses the cache for every api
+   call; this is why the first page of each write workflow waits 7 to 12 s and the read-only
+   workflows do not. drop_cached_pages() now drops the api answers by the type of the changed
+   object (frontend::api_lists_outdated_by), so e.g. the source, view, component and ref write
+   workflows keep the cached lists; a word, triple or formula write still drops all of them.
+4. controller::cache_header() is never called, so def::DEBUG_API_CACHE shows nothing; call it
+   where an api answer is read from or written to the cache, or remove it.
+5. The result list answer of the start page is 1.6 MB for 289 results, because every result
+   repeats the description of each of its phrases; check what the start page needs.
+6. The api wait of the first page and of the confirm steps of the write workflows drops to
+   the level of the read-only workflows.
 
-Coding style: single-exit functions, one logic step per line.
+### 2. frontend work of the start page
 
-### speed up part 5
-
-Rendering a page in the frontend makes many sequential HTTP calls to its own api; each one
-bootstraps PHP, opens the database and reads the type cache, roughly 150-300 ms per call.
-Evidence from the system_views_read_tests log:
-- "Calculator: url to html 8.33 sec, api_wait 11.43 sec"
-- "entry_view: url to html ~2.0 sec, api_wait ~0.87 sec" on every one of 8 renders
-  These are view tests run in test mode (view_ui::show(..., $test_mode = true)), which the
-  comment in test_base::assert_view_html() says should need no backend calls at all.
-
-Causes in src/main/php/web/component/execute/ui_list.php:
-a) ui_list::calculator_source_ids() (around line 2576) loops over every input and assumption
-field and calls add_field_links() and add_field_values() per field. add_field_links()
-(around line 1890) has NO "already in cache" guard, unlike add_field_values(), so it fires
-a load_related_by_name() HTTP call for every field on every walk. Check whether
-calculator_fields() repeats the same walk.
-b) ui_list::add_start_page_cache() / start_page_children() and view_exe::add_page_cache()
-issue 5-6 sequential calls for the start page.
-c) src/main/php/web/html/rest_call.php, rest_call::api_call() creates a new curl handle for
-every request (no keep-alive).
+Every render of the start page takes 1.7 to 2.8 s "url to html" without the api wait: the 8
+start page views of system_views_read_tests and the "back" step of every read-only and write
+workflow (e.g. "add_word_wf1/wf1_edit_back: url to html 1.73 sec"), together about 40 renders
+or 80 s. The first start page of a run waits 0.9 s more for the backend.
 
 Task:
-1. Add a cache guard to add_field_links(): skip the api call if the request cache
-   ($dto->phr_lst) already holds the links of that phrase (reuse the pattern of
-   add_field_values() and column_links_loaded()).
-2. Batch the per-field calls: collect the field phrases of all items first, then do ONE
-   phrase_list::load_related_by_ids() for the links and ONE value_list::load_by_phr_lst()
-   for the field values, and merge the results into $dto. Make sure the calculator walk
-   happens once per page render.
-3. In test mode set $dto->online = false before rendering (in view_exe::show() or in
-   test_base::assert_view_html()), so the request cache that the test fills upfront is
-   used and no backend call happens; if a view test then renders differently, the test
-   context in src/test/php/unit_read/system_views_read_tests.php::context() is missing data
-   — add it there rather than re-enabling the calls.
-4. In rest_call, keep one static curl handle per process (curl_init once, reuse with
-   CURLOPT_URL per call) so the connection stays open between the calls of one page.
-5. Run the unit_ui and unit_read tests; the html snapshots must not change, and the
-   "api_wait" of the Calculator and entry_view sections in the timing log should drop to
-   near zero in test mode.
+1. Find the slow part of the start page render with additional time sections inside
+   url to html, e.g. one around the table of the global problems (value_list_ui) and one
+   around the charts, so that the next timing report shows where the 2 s go.
+2. Speed up the slowest part; the start page snapshots must not change.
+3. Then check if the 8 start page variants of system_views_read_tests::run_start() that
+   differ only by the display parameters of the url can share one api answer of the table.
 
-Coding style: single-exit functions (one return $result at the end), one logic step per
-line, no packed ternaries. Keep the existing PHPDoc style.
+### 3. seed import of the database recreation
 
-### speed up general
+The recreation imports the system and sample data with about 250 rows per second, one insert
+per row ("Add 155 words (272 words per sec)", "save single 175 views (18.8 views per sec)",
+"save 408 results (202.1 results per sec)"): 168 s. The db write tests import system_views.json
+a second time ("in switch from previous test ... took 11.7 seconds").
 
-check if and where the url_to_html function reads from db or calls the api instead of using the given data cache
+Task:
+1. Measure with the time sections which part of one import level takes the time (sql_create,
+   db_read for the existence check, db_write, the change log).
+2. Insert the new rows of one import level with one statement per table and level instead of
+   one per row, with the change log rows in the same way.
+3. Check if the db write view test needs the second import of system_views.json.
 
-guess which parts inside the url_to_html execution might take long 
-and create additional system_time_types to be able to identify execution time optimisation potentials
+### 4. word url tests run twice
 
-check why the db_cache is reset during the test run /test/test.php 
-and check if some of the cache resets can be switched off to speed up 
+all_unit_write_tests runs word_url_tests a second time after the import write tests (the block
+"url word" at 773 s, about 30 s incl. "search words by pattern via url" with 10.9 s), although
+all_workflow_tests has run it already (387 s) and word_write_url_tests covers the write
+workflows. Remove the second run if it tests nothing in addition, else name what it adds.
 
-steps based on the timeout log of the system read db view tests, each step one commit with the
-test first, and the developer runs the tests after each step:
+### 5. search words by pattern via url
 
-1. time section stack: system_time_list::switch remembers only one previous section (pre_cat),
-   so after a nested section e.g. db_read inside load_related inside map_json the time can be
-   counted in the wrong section; replace pre_cat by a stack, so that switch() without a type
-   returns to the section that was active before; unit test in sys_log_tests with three nested
-   sections and the expected time of each section.
+"search words by pattern via url" takes 10.0 s in the workflow tests and 10.9 s in the second
+run. Find out if the time is the search query, the result page or an api timeout, and fix it.
 
-2. new time sections, so that the slow parts can be located:
-   - api_wait: the wait of the html frontend for the backend around curl_exec in
-     web/html/rest_call.php, measured in a frontend owned timing object on $ui_sys (the web part
-     must not use the backend $sys), so that url to html splits into frontend work and api wait
-   - load_related: the related loads of api_json_array e.g. result::load_values_used,
-     load_results_used and load_formulas_used, so that map_json is only the json building
-   - sql_create: the sql building of sql_creator before sql_db::fetch, today counted in the
-     section of the caller
-   - db_map: the row mappers after sql_db::fetch, today counted in the section of the caller
-   - load_view: view::load_components in test_base::assert_view_html, today not_specified
-   - ui_map: the set_from_json of the ui objects in test_base::assert_view_html, so that it is
-     not counted as map_json
-   add the consts to system_time_type and the rows to the system time type list; the developer
-   compares the next timeout log with the one before.
+### 6. calculator page
 
-3. frontend cache once per test run: test_base::assert_view_html creates a new frontend and
-   calls load_cache() for every view without a given context, which takes about 0.9 sec per
-   view (load_frontend of the start page and of every add view); keep the loaded type list
-   cache in test_base and reuse it, because it does not change during a test run.
+The calculator view takes 15.7 s ("url to html 6.99 sec, api_wait 7.91 sec").
 
-4. related loads of the result page: result_default takes up to 39 sec (map_json 31.5 sec,
-   db_read 7.1 sec); without a source group result::used_phrase_selection falls back to any
-   phrase of the result, so all results with e.g. Switzerland are loaded, and
-   load_results_used has no read limit like load_values_used; use value_list::read_limit()
-   also for the results used, load the phrase names of all groups of the list with one query
-   instead of one per value or result, and check if the any phrase fallback is wanted for a
-   page at all; then check value_default and value_overwrite (map_json up to 4 sec) for the
-   same pattern in the similar values and the results of the value.
+Causes in src/main/php/web/component/execute/ui_list.php and src/main/php/web/view/view_exe.php:
+a) ui_list::add_field_links() has no "already in cache" guard, unlike add_field_values(), so
+   it loads the links of a field phrase for every walk over the fields
+   (calculator_source_ids() and calculator_fields() both walk them).
+b) view_exe::add_page_cache() fills the request cache with one api call per tree level (4 +
+   2 levels and one DOWN load).
 
-5. start page api wait: the eight start page variants take 3 to 4 sec url to html each and the
-   first one 12.8 sec; with api_wait of step 2 check if the time is the backend answer of the
-   table, warm the backend cache with one request before the start page tests, and let the
-   variants that differ only by the url parameters of the display use one cached api answer.
+Task:
+1. Add the cache guard to add_field_links() like add_field_values().
+2. Load the links and the values of all field phrases with one call each instead of one per
+   field.
+3. Let the backend return the calculator tree of a phrase with one api call instead of one
+   call per level, e.g. with a levels parameter for api/phraseList.
+4. The calculator snapshot stays the same and its api wait drops below 1 s.
+
+### 7. slow html unit ui tests
+
+- "unit ui html start page selections" takes 32 s for the combinations of list size, column
+  tiers, range and form: check if each combination needs its own render or if the shared
+  parts can be rendered once.
+- "unit ui system views admin dashboard" takes 14 s.
+- "unit ui html view side or below columns" takes 9.2 s and "page class" 2 x 2.1 s.
+- "object_pages/all_component_types" takes 5.3 s.
+
+### 8. smaller items
+
+- The admin login of the web tests times out after 1 s five times per run; known, the api
+  auth tests tolerate a skip.
+- "... without the reason why only an admin can see it" takes 6.7 s in the api tests.
+- The phrase list loads of values and results ignore $limit and $page:
+  sandbox_value_list::load_sql_by_phr_lst_multi() never puts them into the sql, so
+  value_list::read_limit() limits nothing; add ORDER BY and LIMIT to the union with an own
+  query name and new sql fixtures for both database types.
+- system_views_read_tests::run_start() calls assert_view() without the context of context();
+  pass it if the start page snapshots stay identical.
 
 ## clean up
 

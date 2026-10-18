@@ -142,6 +142,7 @@ class application
         server_guard::enforce();
 
         // link to database
+        $sys->times->switch(system_time_type::DB_OPEN);
         $db_con = new sql_db;
         $db_con->db_type = SQL_DB_TYPE;
         $db_con->open();
@@ -151,6 +152,7 @@ class application
 
         // preload all types, with one database read from the cached types json when available
         // or with one select per type list if the cache is missing or outdated
+        $sys->times->switch(system_time_type::LOAD_TYPES);
         $sys->typ_lst->load_cached($db_con, $msg);
 
         $this->load_system_config($msg);
@@ -159,6 +161,8 @@ class application
         global $cfg;
         $sys->typ_lst->reload_if_cache_denied($db_con, $msg, $cfg->cache_allowed(db_cache_types::TYPES));
 
+        // the rest of the request is the work of the api controller
+        $sys->times->switch(system_time_type::API_CTRL);
         return $db_con;
     }
 
@@ -184,6 +188,8 @@ class application
         // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
         // to see the request lifecycle without the message flood of the levels above
         log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
+        // without a section the time of a step is not counted, so a slow request would not show it
+        $sys->times->switch(system_time_type::INIT);
 
         // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
         // upgrade a plain-http request to https (prod/test), harden the session cookie before it is
@@ -202,6 +208,7 @@ class application
         server_guard::enforce();
 
         // link to database
+        $sys->times->switch(system_time_type::DB_OPEN);
         $db_con = new sql_db;
         $db_con->db_type = SQL_DB_TYPE;
         $db_con->open();
@@ -213,6 +220,7 @@ class application
 
         // preload all types, with one database read from the cached types json when available
         // or with one select per type list if the cache is missing or outdated
+        $sys->times->switch(system_time_type::LOAD_TYPES);
         $sys->load_type_lists_cached($db_con, $msg);
 
         $this->load_system_config($msg);
@@ -221,6 +229,8 @@ class application
         global $cfg;
         $sys->typ_lst->reload_if_cache_denied($db_con, $msg, $cfg->cache_allowed(db_cache_types::TYPES));
 
+        // the rest of the request is the work of the api controller
+        $sys->times->switch(system_time_type::API_CTRL);
         return $db_con;
     }
 

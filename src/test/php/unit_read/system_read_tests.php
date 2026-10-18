@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::API_OBJECT . 'ui_config.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'system_time_slow_list.php';
@@ -51,6 +52,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 
 use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
@@ -123,6 +125,15 @@ class system_read_tests
         $slw_lst = new system_time_slow_list();
         $slw_lst->load($msg);
         $t->assert_true($test_name, $msg->is_ok());
+
+        // a config load within a request ends its sections, so that the rest of the request is
+        // not counted as reading the config cache in the report of a slow request
+        $test_name = 'a config load returns to the time section around it';
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $cfg = new config_numbers($t->usr1);
+        $cfg->load_cfg($msg, null, $t->usr1);
+        $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
+        $sys->times->switch();
 
         $t->subheader($ts . 'type list cached load');
 

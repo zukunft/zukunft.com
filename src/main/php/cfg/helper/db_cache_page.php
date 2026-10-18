@@ -440,6 +440,75 @@ class db_cache_page extends db_object_seq_id
         return $db_con->delete($qp, 'all cached pages', $msg);
     }
 
+    /**
+     * remove the cached html pages of all users or of one user, but not the cached api answers,
+     * which a write outdates only if they can show the changed object (see del_api)
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @param int $usr_id the user whose pages are removed or zero for the pages of all users
+     * @return bool true if the cached pages have been removed
+     */
+    function del_html(user_message $msg, int $usr_id = 0): bool
+    {
+        global $db_con;
+
+        $qp = $db_con->sql_creator()->del_sql_list_by_text(
+            self::class, self::FLD_URL, self::html_key_pattern($usr_id), sql_par_type::LIKE_R);
+        return $db_con->delete($qp, 'cached html pages', $msg);
+    }
+
+    /**
+     * remove the cached answers of one api e.g. of the result list, of all users or of one user
+     *
+     * @param string $class the list class of the api e.g. result_list
+     * @param user_message $msg to report a problem of the delete
+     * @param int $usr_id the user whose answers are removed or zero for the answers of all users
+     * @return bool true if the cached api answers have been removed
+     */
+    function del_api(string $class, user_message $msg, int $usr_id = 0): bool
+    {
+        global $db_con;
+
+        $qp = $db_con->sql_creator()->del_sql_list_by_text(
+            self::class, self::FLD_URL, self::api_key_pattern($class, $usr_id), sql_par_type::LIKE_R);
+        return $db_con->delete($qp, 'cached api answers', $msg);
+    }
+
+    /**
+     * the start of the key of the cached html pages (see frontend::url_cache_key), with the
+     * user in the middle for the pages of one user; the delete adds the wildcard at the end, so
+     * e.g. the pages of user 3 also match the pages of user 31, which only drops a page too many
+     *
+     * @param int $usr_id the user of the pages or zero for the pages of all users
+     * @return string the key pattern for a delete with sql_par_type::LIKE_R
+     */
+    static function html_key_pattern(int $usr_id = 0): string
+    {
+        $result = url_var::MASK . url_var::EQ;
+        if ($usr_id > 0) {
+            $result .= sql::WILDCARD . self::user_key($usr_id);
+        }
+        return $result;
+    }
+
+    /**
+     * the start of the key of the cached answers of one api (see api_key), with the user in the
+     * middle for the answers of one user
+     *
+     * @param string $class the list class of the api e.g. result_list
+     * @param int $usr_id the user of the answers or zero for the answers of all users
+     * @return string the key pattern for a delete with sql_par_type::LIKE_R
+     */
+    static function api_key_pattern(string $class, int $usr_id = 0): string
+    {
+        $lib = new library();
+        $result = $lib->class_to_api_route($class) . url_var::PAR;
+        if ($usr_id > 0) {
+            $result .= sql::WILDCARD . self::user_key($usr_id);
+        }
+        return $result;
+    }
+
 
     /*
      * load sql

@@ -76,6 +76,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
@@ -108,6 +109,7 @@ include_once html_paths::TYPES . 'position_type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
@@ -185,6 +187,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
@@ -198,6 +201,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
@@ -238,6 +242,35 @@ class frontend
      */
 
     const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
+
+    // the lists whose api answers are cached (see db_cache_page::api_key)
+    const array API_CACHED_LISTS = [phrase_list_ui::class, value_list_ui::class, result_list_ui::class];
+    // the cached api answers that a write of an object outdates, by the class of the changed object:
+    // every list names the phrases, so a changed word, triple or verb (part of the triple name) or
+    // the word of a formula outdates all of them, whereas e.g. a changed source only the value lists
+    const array API_LISTS_OUTDATED_BY = [
+        word_ui::class => self::API_CACHED_LISTS,
+        triple_ui::class => self::API_CACHED_LISTS,
+        verb_ui::class => self::API_CACHED_LISTS,
+        phrase_ui::class => self::API_CACHED_LISTS,
+        formula_ui::class => self::API_CACHED_LISTS,
+        formula_link_ui::class => [result_list_ui::class],
+        group_ui::class => [value_list_ui::class, result_list_ui::class],
+        value_ui::class => [value_list_ui::class, result_list_ui::class],
+        result_ui::class => [result_list_ui::class],
+        source_ui::class => [value_list_ui::class],
+        ref_ui::class => [phrase_list_ui::class],
+        term_view_ui::class => [phrase_list_ui::class],
+    ];
+    // the objects that no cached api answer shows, so their write keeps all of them
+    const array API_LISTS_KEPT_BY = [
+        view_ui::class,
+        view_relation_ui::class,
+        component_ui::class,
+        component_link_ui::class,
+        user_ui::class,
+        language_ui::class,
+    ];
 
 
     /*
@@ -1665,8 +1698,11 @@ class frontend
      * a user that sees the user sandbox changes only the own data, so only the own pages and the own
      * cached config values are outdated; a user that sees the standard data (an ip user or a system user, see
      * user::uses_standard_data) or an admin that sets a default changes the data that every page of
-     * every user can show, so then the complete cache is dropped. this is on purpose not selected by
-     * the changed object: a change can be shown by any page, e.g. a renamed word in a value list of another page
+     * every user can show, so then the pages of all users are dropped. the html pages are not
+     * selected by the changed object, because a change can be shown by any page, e.g. a renamed
+     * word in a value list of another page; the cached api answers are selected by the type of the
+     * changed object, because e.g. a changed view or source is not part of the cached phrase list
+     * (see api_lists_outdated_by)
      *
      * like filling the cache this is a system action, so it is done as the system user and a
      * failure is only logged: the user has the change in the database, and a page that is cleared
@@ -1674,9 +1710,10 @@ class frontend
      *
      * @param user_message_ui $msg_ui with the user that has done the change
      * @param bool $is_default true if an admin has changed the default of all users e.g. of a setting
+     * @param string $class the class of the changed object e.g. word
      * @return void
      */
-    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default): void
+    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default, string $class): void
     {
         $cac_page = new db_cache_page();
         // the cached config values include the overwrites of the user e.g. of the settings page
@@ -1684,17 +1721,46 @@ class frontend
         $del_msg = new backend_user_message(user_backend::system()); // not reported, see above
         $usr = $msg_ui->usr;
         $usr_id = self::session_user_id();
-        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data() and !$is_default) {
-            $cac_page->del_by_user($usr_id, $del_msg);
+        $own_only = ($usr_id > 0 and $usr != null and !$usr->uses_standard_data() and !$is_default);
+        // zero selects the pages and answers of all users
+        $del_usr_id = $own_only ? $usr_id : 0;
+        $cac_page->del_html($del_msg, $del_usr_id);
+        foreach (self::api_lists_outdated_by($class) as $lst_class) {
+            $cac_page->del_api($lst_class, $del_msg, $del_usr_id);
+        }
+        if ($own_only) {
             $cac_cfg->del_by_user($usr_id, $del_msg);
         } else {
-            $cac_page->del_all($del_msg);
             $cac_cfg->del_by_types(config_numbers::CACHE_TYPES, $del_msg);
         }
         if (!$del_msg->is_ok()) {
             log_warning('removing the cached pages after a change of user ' . $usr_id
                 . ' failed because ' . $del_msg->get_message());
         }
+    }
+
+    /**
+     * the lists whose cached api answers a write of an object of the given class outdates;
+     * all of them for an object that is not known to be shown or not shown by any list,
+     * so that a new object type never leaves an outdated api answer in the cache
+     *
+     * @param string $class the class of the changed object e.g. word or a child class of it
+     * @return array the list classes of the outdated api answers e.g. value_list
+     */
+    static function api_lists_outdated_by(string $class): array
+    {
+        $result = self::API_CACHED_LISTS;
+        foreach (self::API_LISTS_KEPT_BY as $kept_class) {
+            if (is_a($class, $kept_class, true)) {
+                $result = [];
+            }
+        }
+        foreach (self::API_LISTS_OUTDATED_BY as $changed_class => $lst_classes) {
+            if (is_a($class, $changed_class, true)) {
+                $result = $lst_classes;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2468,7 +2534,7 @@ class frontend
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
             $is_default = ($dbo instanceof value_ui and $dbo->set_default);
-            $this->drop_cached_pages($msg_ui, $is_default);
+            $this->drop_cached_pages($msg_ui, $is_default, $dbo::class);
             // the settings page shows many numbers, so it confirms which one has changed and how
             if ($this->is_setting_save($url_array, $crud)) {
                 $msg_ui->add_info($this->setting_saved_text($url_array));

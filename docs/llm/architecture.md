@@ -217,6 +217,15 @@ user it was created for, which lets the frontend detect a message meant for
 somebody else or for an outdated pod). When a second list becomes worth caching,
 cache it under its own `db_cache` type — never widen the match.
 
+**A write drops the cached api answers by the type of the changed object**: the
+answers of the phrase, value and result list apis are cached in `db_cache_pages`
+next to the html pages (`db_cache_page::api_key`). After a write
+`frontend::drop_cached_pages` drops all html pages, because any page can show
+any object, but only the api answers that can show the changed object
+(`frontend::api_lists_outdated_by`), e.g. a changed source drops the value lists
+and a changed view none. An object class that is in neither of its two lists
+drops all api answers, so a new object type never leaves an outdated answer.
+
 **API layer**: Backend objects produce JSON via `api_json()` for the frontend.
 Frontend `web/` objects consume these via `api_mapper()`. Import/export JSON uses
 names (never DB IDs) for portability between pods.

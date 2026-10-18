@@ -275,9 +275,11 @@ class result extends sandbox_value
         if ($db_row !== null and $db_row !== []) {
             // a row of the group keyed result tables carries the text group key, a row of the
             // prime and main tables the phrase id columns, and a union of both kinds shows an
-            // empty key for the latter, so the key decides the group (see set_grp_by_row)
+            // empty key for the latter, so the key decides the group (see set_grp_by_row);
+            // without the phrase names, because a result list loads them for all rows with one
+            // query and a single result after the mapping (see row_mapper_with_phrases)
             $one_id_fld = $this->set_grp_by_row($db_row, $msg, result_fields::FLD_ID,
-                $this->id_fields_main(1, result_id::MAIN_PHRASES_ALL));
+                $this->id_fields_main(1, result_id::MAIN_PHRASES_ALL), false);
             $result = parent::row_mapper_multi($db_row, $msg, $ext, result_fields::FLD_ID, $one_id_fld);
         }
         if ($result) {

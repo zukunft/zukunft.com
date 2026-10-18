@@ -2185,6 +2185,8 @@
             hp
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache_page.php
     \-- del_all - section for function del_all is expected to be del in /helper/db_cache_page.php
+    \-- del_html - section for function del_html is expected to be del in /helper/db_cache_page.php
+    \-- del_api - section for function del_api is expected to be del in /helper/db_cache_page.php
 \-- db_id_object_non_sandbox
     \-- unique_value - section for function unique_value not yet defined that it should be set and get in /helper/db_id_
             object_non_sandbox.php
@@ -4939,6 +4941,10 @@
         \-- db_cache_page - remove the cached html pages of one user, so that the next request renders them again
     \-- del_all
         \-- db_cache_page - remove every cached html page, so that the next request of any page renders it again;
+    \-- del_html
+        \-- db_cache_page - remove the cached html pages of all users or of one user, but not the cached api answers,
+    \-- del_api
+        \-- db_cache_page - remove the cached answers of one api e.g. of the result list, of all users or of one user
     \-- add
         \-- change_log - log a user change of a word, value or formula
     \-- filter_readable_by
