@@ -223,10 +223,14 @@ class phrase extends combine_named
      */
     function id(): int
     {
-        if ($this->is_word()) {
-            return $this->obj_id();
+        // the object is read once, because the id of a phrase is used for each cell of a table
+        $obj = $this->obj();
+        if ($obj === null) {
+            return 0;
+        } elseif ($obj::class == word::class) {
+            return $obj->id();
         } else {
-            return $this->obj_id() * -1;
+            return $obj->id() * -1;
         }
     }
 

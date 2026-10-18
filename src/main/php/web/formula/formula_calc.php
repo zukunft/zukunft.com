@@ -60,6 +60,11 @@ class formula_calc
     // the decimals compared, the same as the import validation (data_object::CALC_VALIDATION_DECIMALS)
     const int DECIMALS = 2;
 
+    // per value object the value itself and its phrase names, because each operand of each
+    // result is searched in all values of the page, but the phrases of a value do not change;
+    // the value is kept with its names, so a new object with a reused object id is not mixed up
+    private array $names_by_val = [];
+
     /**
      * repeat the calculation of a result with the values and results of the page, e.g. the
      * lifetime production from the annual production and the lifetime of the installation
@@ -175,13 +180,43 @@ class formula_calc
     private function value_of(array $names, array $ctx, result $res, value_list $val_lst): value|result|null
     {
         foreach ($val_lst->lst() as $val) {
-            $phr_names = $val->phr_lst()->names();
+            $phr_names = $this->phrase_names($val);
             $matches = (array_diff($names, $phr_names) == [] and array_diff($phr_names, $ctx) == []);
             if ($val->id() != $res->id() and $matches) {
                 return $val;
             }
         }
         return null;
+    }
+
+    /**
+     * @param value|result $val the value or result of the page
+     * @return array the names of the phrases of the value, created once per value object
+     */
+    private function phrase_names(value|result $val): array
+    {
+        $key = spl_object_id($val);
+        if (!$this->has_names_of($val)) {
+            $this->names_by_val[$key] = [$val, $val->phr_lst()->names()];
+        }
+        return $this->names_by_val[$key][1];
+    }
+
+    /**
+     * @param value|result $val the value or result of the page
+     * @return bool true if the phrase names of this value object are already created
+     */
+    private function has_names_of(value|result $val): bool
+    {
+        $result = false;
+        $key = spl_object_id($val);
+        if (array_key_exists($key, $this->names_by_val)) {
+            // the same object and not a new one that got the id of a freed object
+            if ($this->names_by_val[$key][0] === $val) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 }

@@ -7614,8 +7614,8 @@
             t.php
     \-- column_tier - section for function column_tier not yet defined that it should be related in /phrase/phrase_list.
             php
-    \-- column_phrase - section for function column_phrase not yet defined that it should be related in /phrase/phrase_l
-            ist.php
+    \-- column_phrases - section for function column_phrases not yet defined that it should be related in /phrase/phrase
+            _list.php
     \-- category_subtitle - section for function category_subtitle not yet defined that it should be related in /phrase/
             phrase_list.php
     \-- assigned_subtitle - section for function assigned_subtitle not yet defined that it should be related in /phrase/
@@ -10125,8 +10125,8 @@
         \-- phrase_list - the names of the phrases that this list defines as table columns, in the order that the
     \-- column_tier
         \-- phrase_list - the tier of the table column of the given phrase name
-    \-- column_phrase
-        \-- phrase_list - the phrase that this list defines as the table column of the given name
+    \-- column_phrases
+        \-- phrase_list - the phrases that this list defines as table columns, found with one walk over the list
     \-- category_subtitle
         \-- phrase_list - build the category subtitle html for the page-title
     \-- assigned_subtitle

@@ -353,20 +353,25 @@ url_to_html() loads the data of the page before the html is created: the object 
 and the page cache of the view (view_exe::add_page_cache with component_exe::add_page_cache
 of each component, e.g. ui_list::add_start_page_data for the start page table) are counted as
 load page, their backend wait as api wait. A render of the start page with a filled request
-cache makes no api call (load page below 0.001 s), so its url to html time (0.7 to 0.8 s in
-the workflow back steps) is frontend work: the start page table computes the ranking table
-from about 300 values, 289 results and some thousand cached phrases for each render. The 8
-start page variants of system_views_read_tests::run_start() share one request cache
-(test_base::view_context), so only the first loads the data of the table.
+cache makes no api call, so its url to html time is frontend work: about 0.3 s in the CLI
+for the ranking table of about 300 values and 289 results. The 8 start page variants of
+system_views_read_tests::run_start() share one request cache (test_base::view_context), so
+only the first loads the data of the table. The write workflows share one request cache over
+all workflows (url_test_base::wf_start), so a back step without a write before it (e.g.
+del_word_wf3/wf3_show_edit_back) loads nothing; with the formulas of the earlier pages in
+the cache, ui_list::check_results() recalculates each result of the table.
 
 Task:
 1. Move the api calls of the other components into their page cache step in the same way,
    e.g. the calculator fields (see step 6).
-2. The remaining frontend work of a start page render is spread over the table steps, by
-   profile share: value_list::triple_parts_of_all() (a phrase list of the triple parts for
-   each value), split_by_unit() (unit_key with is_unit for each phrase of each value),
-   phrase_cell() of table_html() and phrase_ranking() (group_phrases and impact for each
-   value); the start page snapshots must not change.
+2. The load page step of a back step after a write (0.5 to 0.6 s) is mostly the frontend
+   mapping of the result list: group::set_phrase_from_json_array() maps the full triples of
+   each result again (5100 triple mappings for 289 results); it shrinks with the smaller
+   result list answer of step 1 task 1.
+3. The remaining table steps that walk the related phrase list for each column:
+   phrase_list::column_tier() (called per column and unit) and column_list_phrases() (called
+   per phrase column by value_list::column_list_phrase()); the start page snapshots must not
+   change.
 
 ### 3. seed import of the database recreation
 

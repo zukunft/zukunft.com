@@ -1029,25 +1029,30 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * the phrase that this list defines as the table column of the given name
+     * the phrases that this list defines as table columns, found with one walk over the list
      *
-     * the caller has the column name from column_names() and needs the phrase itself to head the
-     * column with a link and to ask child_names() which phrases belong into that column
+     * the caller has the column names from column_names() and needs the phrases themselves to
+     * head the columns with a link and to ask child_names() which phrases belong into a column;
+     * a table asks for them in several steps, so each step gets all column phrases at once
+     * instead of walking the list for each name
      *
-     * @param string $name the name of a column phrase e.g. "solution"
-     * @return phrase|null the column phrase or null if this list defines no column of that name
+     * @return array the column phrases keyed by their name e.g. "solution", the first definition
+     *               of a name wins
      */
-    function column_phrase(string $name): ?phrase
+    function column_phrases(): array
     {
-        $result = null;
+        $result = [];
         foreach ($this->lst() as $phr) {
-            if ($phr->is_triple() and $result == null) {
+            if ($phr->is_triple()) {
                 $trp = $phr->obj();
                 // the tier is the "to" side, so the column phrase is the "from" side
                 if (in_array($trp->get_to()?->name(), triples::SYSTEM_COLUMN_TIERS)) {
                     $col = $this->column_and_unit($trp->get_from())[0];
-                    if ($col?->name() == $name) {
-                        $result = $col;
+                    if ($col != null) {
+                        // the first definition of a column name wins
+                        if (!array_key_exists($col->name(), $result)) {
+                            $result[$col->name()] = $col;
+                        }
                     }
                 }
             }

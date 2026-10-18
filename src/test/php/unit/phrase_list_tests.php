@@ -272,6 +272,22 @@ class phrase_list_tests
         $phr_lst_ui = $t_phr->phrase_list_ui();
         $t->assert($test_name, $phr_lst_ui->column_names(), []);
 
+        // a table asks for the phrase of each column in several steps, so it gets all column
+        // phrases with one walk over the list, keyed by the column name
+        $test_name = 'the column phrases are keyed by the column names';
+        $col_phrs = $t_phr->list_columns_partly_explained_ui()->column_phrases();
+        $col_names = $t_phr->list_columns_partly_explained_ui()->column_names();
+        sort($col_names);
+        $col_keys = array_keys($col_phrs);
+        sort($col_keys);
+        $t->assert($test_name, $col_keys, $col_names);
+        $test_name = '... and a column built from a triple is the triple';
+        $col_phr = $t_phr->list_columns_potential_loss_ui()->column_phrases()[triple_names::POTENTIAL_LOSS] ?? null;
+        $t->assert_true($test_name, $col_phr?->is_triple() ?? false);
+        // negative: a list without a column definition has no column phrase
+        $test_name = 'a list without a column definition has no column phrase';
+        $t->assert($test_name, $t_phr->phrase_list_ui()->column_phrases(), []);
+
         // the tier of a column says on which screens it is shown, so the table can hide a column
         // per screen size instead of dropping it; the "loss" and the "potential loss" column are
         // defined as mayor columns, the "reason" column as a main and the "cost" column as a

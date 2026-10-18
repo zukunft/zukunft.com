@@ -3853,8 +3853,9 @@ class ui_list extends ui_base
     private function column_links_loaded(data_object $dto): bool
     {
         $result = false;
+        $col_phr_lst = $dto->phr_lst->column_phrases();
         foreach ($dto->phr_lst->column_names() as $name) {
-            $col_phr = $dto->phr_lst->column_phrase($name);
+            $col_phr = $col_phr_lst[$name] ?? null;
             if ($col_phr != null and !$dto->phr_lst->child_phrases($col_phr)->is_empty()) {
                 $result = true;
             }

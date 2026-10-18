@@ -204,9 +204,10 @@ class result_list extends sandbox_list_value
     ): bool
     {
         $result = false;
-        if (!in_array($to_add->id(), $this->id_lst())) {
+        // the id index of the list finds a double without scanning the list, and add_direct keeps
+        // it up to date
+        if (!$this->has_id($to_add->id() ?? 0)) {
             $this->add_direct($to_add);
-            $this->set_hash_dirty();
             $result = true;
         }
         return $result;

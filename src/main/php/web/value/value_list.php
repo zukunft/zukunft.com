@@ -146,6 +146,10 @@ class value_list extends ListBase
     // another unit, so that the id can never clash with a phrase id
     const string UNIT_COLUMN_SEP = '|';
 
+    // per phrase id true if the phrase is a unit (see is_unit), because a table asks it for each
+    // phrase of each value in several steps, but the phrases of a table are only a few hundred
+    private array $unit_by_id = [];
+
     /*
      * set and get
      */
@@ -1440,8 +1444,22 @@ class value_list extends ListBase
      */
     private function is_unit(phrase $phr, user_message $msg): bool
     {
-        return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg)
-            or $phr->is_factor($msg) or $phr->is_measure_non_unit($msg));
+        // a phrase without an id is not yet in the database, so it cannot be told apart by its id
+        $id = $phr->id();
+        if ($id != 0 and array_key_exists($id, $this->unit_by_id)) {
+            $result = $this->unit_by_id[$id];
+        } else {
+            $result = (
+                $phr->is_scaling($msg)
+                or $phr->is_measure($msg)
+                or $phr->is_percent($msg)
+                or $phr->is_factor($msg)
+                or $phr->is_measure_non_unit($msg));
+            if ($id != 0) {
+                $this->unit_by_id[$id] = $result;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1538,18 +1556,16 @@ class value_list extends ListBase
         $val_lst = $this->lst();
         $first = array_shift($val_lst);
         if ($first != null) {
-            // the parts of each value are collected once and not once per part of the first value
-            $parts_of_vals = array_map(fn(sandbox_value $val) => $this->triple_parts($val, $shared), $val_lst);
-            foreach ($this->triple_parts($first, $shared)->lst() as $part) {
-                $is_shared = true;
-                foreach ($parts_of_vals as $parts) {
-                    if (!$parts->has_id($part->id())) {
-                        $is_shared = false;
-                    }
+            // the parts of the first value that the values so far all carry; a value can only
+            // remove a part, so the values after the last part are not split anymore
+            $parts = $this->triple_parts($first, $shared);
+            foreach ($val_lst as $val) {
+                if ($parts != []) {
+                    $parts = array_intersect_key($parts, $this->triple_parts($val, $shared));
                 }
-                if ($is_shared) {
-                    $result->add_phrase($part);
-                }
+            }
+            foreach ($parts as $part) {
+                $result->add_phrase($part);
             }
         }
         return $result;
@@ -1558,17 +1574,17 @@ class value_list extends ListBase
     /**
      * @param sandbox_value $val the value or result whose triples are split into their parts
      * @param phrase_list $shared the triples that every value carries and that are therefore not split
-     * @return phrase_list the from and to phrases of the other triples of the value
+     * @return array the from and to phrases of the other triples of the value keyed by phrase id
      */
-    private function triple_parts(sandbox_value $val, phrase_list $shared): phrase_list
+    private function triple_parts(sandbox_value $val, phrase_list $shared): array
     {
-        $result = new phrase_list();
+        $result = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
             if ($phr->is_triple() and !$shared->has_id($phr->id())) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
                     // a triple sent with its name only has empty parts, which name nothing
-                    if ($this->is_known($part) and !$result->has_id($part->id())) {
-                        $result->add_phrase($part);
+                    if ($this->is_known($part) and !array_key_exists($part->id(), $result)) {
+                        $result[$part->id()] = $part;
                     }
                 }
             }
@@ -2093,8 +2109,9 @@ class value_list extends ListBase
     private function without_row_column(array $col_order, ?phrase $row_col, ?phrase_list $rel_lst): array
     {
         $result = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             $parts = [$name];
             if ($phr != null and $phr->is_triple()) {
                 $parts[] = $phr->obj()->get_from()?->name();
@@ -2126,8 +2143,9 @@ class value_list extends ListBase
         // a linked phrase that is a defined column itself names a column and not a row phrase, e.g.
         // "potential gain" of the chart triple "potential gain and potential loss"
         $col_children = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             $children = ($phr == null) ? [] : array_diff($rel_lst->child_names($phr), $col_order);
             if ($children != []) {
                 $col_children[] = $children;
@@ -2177,8 +2195,9 @@ class value_list extends ListBase
         foreach ($col_phr as $val_col_phr) {
             $head_ids[] = $this->column_head($val_col_phr, $tbl_phr)->id();
         }
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             // a column that already holds the values of this phrase cannot name a phrase too,
             // and a unit describes the number, so it heads no column of its own either
             if ($phr != null and !array_key_exists($phr->id(), $col_phr)
@@ -2277,6 +2296,7 @@ class value_list extends ListBase
     {
         $by_parts = [];
         $by_phrase = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         // the defined columns first, in the order of the definition
         foreach ($col_order as $name) {
             $found = false;
@@ -2290,7 +2310,7 @@ class value_list extends ListBase
             // its two parts (see column_parts); it takes its values before the column of one of
             // the parts, because it names more of the phrases of a value, so it comes first
             if (!$found) {
-                $col_phr = $rel_lst?->column_phrase($name);
+                $col_phr = $col_phr_lst[$name] ?? null;
                 if ($col_phr != null and count($this->column_parts($col_phr, $all)) > 1) {
                     $by_parts[$col_phr->id()] = $col_phr;
                 }
@@ -2347,8 +2367,9 @@ class value_list extends ListBase
     private function column_names_with_parts(array $col_order, ?phrase_list $rel_lst): array
     {
         $result = $col_order;
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             if ($phr != null and $phr->is_triple() and !$this->is_carried($phr)) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
                     if ($part != null and !in_array($part->name(), $result)) {

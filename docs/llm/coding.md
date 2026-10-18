@@ -21,10 +21,11 @@ terminology: `docs/llm/architecture.md`. Read it before navigating unfamiliar co
    see "smallest diff" under "Understanding the request".
 2. **One logical element per line — three at most** (one assignment, one call,
    one condition). When a line packs more, split it into named steps or push a
-   chain behind a well-named helper; but don't pad a simple expression across
-   many lines either — minimise lines subject to each line still reading at a
-   glance. Worked examples and the companion ~50-line function-body limit:
-   `docs/llm/structure.md`.
+   chain behind a well-named helper. Fewer lines are not better in themselves:
+   one clear task per line beats a short line the reader has to unpack, and a
+   named function beats a short logical symbol (`!==`, `?->`, `??`, a ternary).
+   Don't pad a simple expression across many lines either. Worked examples and
+   the companion ~50-line function-body limit: `docs/llm/structure.md`.
 3. **100% correct — never a shortcut.** The target of this code is to be correct
    for every input the type allows, not for the data seen so far. A comparison
    uses the complete value: never compare a prefix, a cut, a hash or a rounded
