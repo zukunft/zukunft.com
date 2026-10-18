@@ -3680,10 +3680,14 @@ class ui_list extends ui_base
     function add_start_page_data(data_object $dto, user_message $msg): phrase
     {
         $phr = $this->start_page_phrase($dto, $msg);
-        $this->add_start_page_cache($dto, $phr, $msg);
-        // without the api the children cannot be loaded, so an offline cache keeps none
-        if ($dto->online and $dto->start_lst_children == null) {
-            $dto->start_lst_children = $this->start_page_children($dto, $msg);
+        // the children are loaded last, so with them all data of the table is in the cache and
+        // the checks of the other parts are not repeated for each render; without the api the
+        // children cannot be loaded, so an offline cache keeps none
+        if ($dto->start_lst_children == null) {
+            $this->add_start_page_cache($dto, $phr, $msg);
+            if ($dto->online) {
+                $dto->start_lst_children = $this->start_page_children($dto, $msg);
+            }
         }
         return $phr;
     }

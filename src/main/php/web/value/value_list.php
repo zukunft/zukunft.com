@@ -859,6 +859,9 @@ class value_list extends ListBase
         bool         $value_rows_only
     ): table_model
     {
+        // the table asks for the children of the same phrases many times and does not change
+        // the related phrases, so they are linked once for the whole build
+        $rel_lst = $rel_lst?->with_link_index();
         // the phrase that names the rows, e.g. "reason" on the reasons page, heads the row column,
         // so it is no column of the values and a column of it with another phrase, e.g. "potential
         // loss of reason", is the column of the other phrase, e.g. the mayor column "potential loss"
@@ -1939,8 +1942,17 @@ class value_list extends ListBase
         // tier and number of values keep the impact order
         $lead_first = fn(string $a, string $b) => [$level[$a], count($result[$b])] <=> [$level[$b], count($result[$a])];
         uksort($result, $lead_first);
+        // the subject names of each value are created once and not again for each confidence value
+        $subjects = [];
+        if ($conf_lst != []) {
+            foreach ($result as $unit_members) {
+                foreach ($unit_members as $val) {
+                    $subjects[spl_object_id($val)] = $this->subject_names($val, $msg);
+                }
+            }
+        }
         foreach ($conf_lst as $conf_val) {
-            $found = $this->unit_of_qualified($result, $conf_val, $msg);
+            $found = $this->unit_of_qualified($result, $conf_val, $subjects, $msg);
             // a confidence value that qualifies no value of the column keeps its own unit, where
             // it is shown like a value instead of a tooltip (see cell), so that it is not lost
             if ($found == '') {
@@ -1956,21 +1968,43 @@ class value_list extends ListBase
      *
      * @param array $unit_lst per unit the values of that unit collected so far
      * @param sandbox_value $conf_val the confidence value to place
+     * @param array $subjects per value object id the subject names of the value (see subject_names)
      * @param user_message $msg to report a problem of reading a phrase type
      * @return string the unit key of the qualified values or an empty string if none is qualified
      */
-    private function unit_of_qualified(array $unit_lst, sandbox_value $conf_val, user_message $msg): string
+    private function unit_of_qualified(
+        array         $unit_lst,
+        sandbox_value $conf_val,
+        array         $subjects,
+        user_message  $msg
+    ): string
     {
         $result = '';
+        // the qualified value names all subject phrases of the confidence value (see qualifies)
+        $conf_names = $this->subject_names($conf_val, $msg);
         // the first unit with a qualified value wins, so the confidence follows the leading unit
         foreach ($unit_lst as $unit_key => $unit_members) {
             foreach ($unit_members as $val) {
-                if ($result == '' and $this->qualifies($conf_val, $val, $msg)) {
+                if ($result == '' and $this->subject_qualifies($conf_names, $val, $subjects)) {
                     $result = $unit_key;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * true if the given value carries all subject phrases of a confidence value, like qualifies
+     * but with the subject names created upfront
+     *
+     * @param array $conf_names the subject names of the confidence value
+     * @param sandbox_value $val the value that the confidence value may qualify
+     * @param array $subjects per value object id the subject names of the value (see subject_names)
+     * @return bool true if the value carries all subject phrases of the confidence value
+     */
+    private function subject_qualifies(array $conf_names, sandbox_value $val, array $subjects): bool
+    {
+        return array_diff($conf_names, $subjects[spl_object_id($val)]) == [];
     }
 
     /**

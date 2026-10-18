@@ -420,6 +420,17 @@ class phrase_list_tests
         $test_name = 'a phrase that links to no phrase of the list has no parent';
         $t->assert($test_name, $phr_lst_ui->parent_names($t_trp->global_problem_ui()->phrase()), []);
 
+        // the copy with the link index for the build of one table returns the same names as
+        // the list, because the index is created by the same rules in one pass over the list
+        $test_name = 'the copy with the link index returns the same parents';
+        $idx_lst = $phr_lst_ui->with_link_index();
+        $t->assert($test_name, $idx_lst->parent_names($phr), [triple_names::GLOBAL_PROBLEM, word_names::POTENTIAL]);
+        $test_name = '... and the same children';
+        $t->assert($test_name, $idx_lst->child_names($t_trp->global_problem_ui()->phrase()),
+            $phr_lst_ui->child_names($t_trp->global_problem_ui()->phrase()));
+        $test_name = '... and no parent for a phrase that links to nothing';
+        $t->assert($test_name, $idx_lst->parent_names($t_trp->global_problem_ui()->phrase()), []);
+
 
 
         $t->subheader($ts . 'import names');

@@ -7597,6 +7597,8 @@
             php
     \-- parent_names - section for function parent_names not yet defined that it should be related in /phrase/phrase_lis
             t.php
+    \-- with_link_index - section for function with_link_index not yet defined that it should be related in /phrase/phra
+            se_list.php
     \-- child_phrases - section for function child_phrases not yet defined that it should be related in /phrase/phrase_l
             ist.php
     \-- parents_all - section for function parents_all not yet defined that it should be related in /phrase/phrase_list.
@@ -10103,6 +10105,8 @@
         \-- phrase_list - get the names of the phrases that this list links to the given phrase by a triple
     \-- parent_names
         \-- phrase_list - get the names of the phrases that this list links the given phrase to by a triple, the
+    \-- with_link_index
+        \-- phrase_list - a copy of this list that answers child_names and parent_names from an index of the
     \-- child_phrases
         \-- phrase_list - the phrases that this list links to the given phrase by a triple
     \-- parents_all

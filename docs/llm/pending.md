@@ -398,7 +398,7 @@ Task:
 all_unit_write_tests runs word_url_tests a second time after the import write tests (the block
 "url word" at 685 s, about 25 s incl. "search words by pattern via url" with 8.2 s), although
 all_workflow_tests has run it already (374 s) and word_write_url_tests covers the write
-workflows. Remove the second run if it tests nothing in addition, else name what it adds.
+workflows. Note that the second run at the end is done by intentions to have a final check that the change process creates the same result also if the database has been updated due to the other changes.
 
 ### 5. search words by pattern via url
 
