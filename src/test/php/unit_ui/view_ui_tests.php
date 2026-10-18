@@ -580,21 +580,22 @@ class view_ui_tests
         $t->assert_text_order($test_name, $cols_html, components::COL_FIRST_NAME, components::COL_SECOND_NAME);
         $test_name = 'the side-or-below column is shown before the side-or-last-below column';
         $t->assert_text_order($test_name, $cols_html, components::COL_THIRD_NAME, components::COL_FOURTH_NAME);
-        // rendering the plain view builds the complete component html, so a semi page timeout is used
+        // the plain view has only a word component, because a calculated component like the
+        // matrix loads and renders the start page table, which is not what these tests check
         $test_name = 'without the side or below position types no minimal width is set';
-        $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
-        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $msk_plain = new view($t_msk->view_with_word_component()->api_json([api_types::INCL_COMPONENTS]));
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width');
 
         $t->subheader($ts . 'page class');
         // the style of a view is the class of the div around its components e.g. the grid of a use case page
         $test_name = 'the view style is the page class around the components';
         $msk_plain->set_style_id(view_styles::USE_CASE_ID);
         $t->assert_text_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
-            '<div class="' . view_styles::USE_CASE . '">', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+            '<div class="' . view_styles::USE_CASE . '">');
         $test_name = 'a view without a style adds no page class';
         $msk_plain->set_style_id();
         $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
-            view_styles::USE_CASE, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+            view_styles::USE_CASE);
 
         $t->subheader($ts . 'use case frame');
         // a use case page like the calculator shows its first row as the header and its

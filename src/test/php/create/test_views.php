@@ -359,6 +359,18 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view with a word component without a position type, e.g. to test the page frame
+     *         of a view without the data load of a calculated component
+     */
+    function view_with_word_component(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view_protected();
+        $msk->cmp_lnk_lst = $t_cmp->component_link_list_word();
+        return $msk;
+    }
+
+    /**
      * @return view with a side-or-below group of four text columns
      *         to test the responsive column position types
      */

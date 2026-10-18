@@ -808,6 +808,17 @@ class test_components extends test_objects
         return $lst;
     }
 
+    /**
+     * @return component_link_list with only the word component, which renders without loading
+     *         any data, unlike the matrix, which loads and renders the start page table
+     */
+    function component_link_list_word(): component_link_list
+    {
+        $lst = new component_link_list($this->env->usr1);
+        $lst->add_link($this->component_link());
+        return $lst;
+    }
+
     function components_word_add(view $msk): component_link_list
     {
         $pos = 1;
