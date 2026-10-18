@@ -326,6 +326,15 @@ class result_tests
         $t->assert($test_name, $phr_lst->name(), $res_src->source_group()->phrase_list()->name());
         $test_name = '... and only a number with all of them is used';
         $t->assert_false($test_name, $any_phrase);
+        // the page asks for the selection for each used list, so it is decided once per result
+        $test_name = '... and a second call returns the same selection without deciding again';
+        [$phr_lst_again] = $res_src->used_phrase_selection($msg);
+        $t->assert_true($test_name, $phr_lst_again === $phr_lst);
+        // negative: a new source group selects other numbers, so the remembered selection is dropped
+        $test_name = '... but a new source group is used for the selection';
+        $res_src->set_src_grp(new group($t->usr1));
+        [, $any_after] = $res_src->used_phrase_selection($msg);
+        $t->assert_true($test_name, $any_after);
         $msg->reset();
 
         // negative: a result saved without the source group (e.g. imported without a context) falls

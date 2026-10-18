@@ -228,6 +228,9 @@ class result extends sandbox_value
     // the right side of the formula split into parts, each the shown text and the figure used or
     // null for an operator text, filled only for the result page like the used lists above
     public ?array $expression_parts = null;
+    // the phrases that select the numbers used and if any of them is enough, decided once per
+    // result, because each used list of the page asks for it (see used_phrase_selection)
+    private ?array $used_selection = null;
     // the bigger table in which the fallback load looks for a result that its source group has
     // moved there (see load_moved), null if the result is in the table of its source group
     private ?sql_type $moved_table_type = null;
@@ -252,6 +255,7 @@ class result extends sandbox_value
         $this->src_grp = new group($this->get_user());
         $this->add_info = null;
         $this->moved_table_type = null;
+        $this->used_selection = null;
         $this->set_id(0);
     }
 
@@ -294,6 +298,8 @@ class result extends sandbox_value
             $this->set_owner_id($db_row[user_db::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]));
             $this->last_val_update = $lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]);
+            // the groups of the row may differ from a previous load of this object
+            $this->used_selection = null;
         }
 
         return $msg->is_ok();
@@ -491,7 +497,7 @@ class result extends sandbox_value
         // add the source phrases if requested
         if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
             $phr_lst = $this->source_group()->phrase_list();
-            $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($typ_lst, $msg);
+            $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($this->phrase_typ_lst($typ_lst), $msg);
         }
 
         // add the formula that has created the result
@@ -511,7 +517,7 @@ class result extends sandbox_value
                     // with the from and to of its triples like the phrases of a value
                     $this->grp()->phrase_list()->load_triple_sides($msg);
                 }
-                $vars[json_fields::PHRASES] = $this->grp()->phrase_list()->api_json_array($typ_lst, $msg);
+                $vars[json_fields::PHRASES] = $this->grp()->phrase_list()->api_json_array($this->phrase_typ_lst($typ_lst), $msg);
             }
             if ($this->formula_id() != 0) {
                 // the result row only carries the formula id, so the name is loaded on demand
@@ -776,6 +782,8 @@ class result extends sandbox_value
     function set_src_grp(group $grp): void
     {
         $this->src_grp = $grp;
+        // the source group decides which numbers have been used
+        $this->used_selection = null;
     }
 
     function source_group(): group
@@ -1368,16 +1376,25 @@ class result extends sandbox_value
      */
     function used_phrase_selection(user_message $msg): array
     {
-        $this->load_phrases($msg);
-        $phr_lst = $this->src_grp?->phrase_list();
-        // the source phrases name exactly the numbers used, so a number must carry all of them;
-        // the result phrases of the fallback name the result, so any of them makes a number related
-        $any_phrase = false;
-        if ($phr_lst == null or $phr_lst->empty()) {
-            $phr_lst = $this->grp()->phrase_list();
-            $any_phrase = true;
+        if ($this->used_selection === null) {
+            $this->load_phrases($msg);
+            $phr_lst = $this->src_grp?->phrase_list();
+            // the source phrases name exactly the numbers used, so a number must carry all of them;
+            // the result phrases of the fallback name the result, so any of them makes a number related
+            $any_phrase = false;
+            if ($phr_lst == null or $phr_lst->empty()) {
+                $phr_lst = $this->grp()->phrase_list();
+                $any_phrase = true;
+            }
+            $phr_lst = $phr_lst ?? new phrase_list($this->get_user());
+            // shows with '&debug=…' which result selects its used numbers by the fallback, because
+            // a fallback with a common phrase e.g. EUR selects many numbers
+            $selection = $any_phrase ? 'any of the ' : 'all ';
+            log_debug($this->dsp_id() . ' selects the used numbers by ' . $selection
+                . $phr_lst->count() . ' phrases ' . $phr_lst->dsp_name());
+            $this->used_selection = [$phr_lst, $any_phrase];
         }
-        return [$phr_lst ?? new phrase_list($this->get_user()), $any_phrase];
+        return $this->used_selection;
     }
 
     /**

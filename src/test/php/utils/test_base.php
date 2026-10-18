@@ -139,6 +139,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_lists_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -200,6 +201,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -478,6 +480,10 @@ class test_base
     public array $unique_sql_names;
 
     public int $seq_nbr;
+
+    // the type lists of the frontend for a view test without a given context, loaded once per
+    // test run from the api, because the types do not change during a test run
+    private ?type_lists_ui $typ_lst_cache_ui = null;
 
     public text_log_format $format = text_log_format::TEXT;
     public text_log_level $level = text_log_level::TIMEOUT;
@@ -1438,10 +1444,14 @@ class test_base
         // load the frontend configuration cache if the caller has not provided it
         if ($cfg == null) {
             $sys->times->switch(system_time_type::LOAD_FRONTEND);
-            $ui = new frontend('');
-            $ui->load_cache($msg_ui);
+            if ($this->typ_lst_cache_ui == null) {
+                $ui = new frontend('');
+                $ui->load_cache($msg_ui);
+                $this->typ_lst_cache_ui = $ui->dto->typ_lst_cache;
+            }
+            // a new context for each view, because the rendering fills e.g. the phrases of the page into it
             $cfg = new data_object_ui();
-            $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
+            $cfg->typ_lst_cache = $this->typ_lst_cache_ui;
         }
         if ($cfg->usr->id() == 0) {
             $map_ui = new MapObject();

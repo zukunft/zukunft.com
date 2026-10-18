@@ -1538,7 +1538,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- save - 48 unit test calls shared by 27 classes
     \-- save_if_updated - 0 unit test calls
     \-- set_formula - 0 unit test calls shared by 4 classes
-    \-- set_src_grp - 0 unit test calls
+    \-- set_src_grp - 1 unit test calls
     \-- set_symbol - 0 unit test calls shared by 3 classes
     \-- set_value - 0 unit test calls shared by 6 classes
     \-- source_group - 1 unit test calls

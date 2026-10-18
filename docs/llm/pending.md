@@ -306,6 +306,8 @@ add CBAM calculation, portfolio split and company sheet use cases and pin them o
 
 ## speed up
 
+based on the following log reorder and review this speed up tasks
+
 ### speed up part 3
 
 The second result_default view test took 38 seconds (first one 10.9 s), with
