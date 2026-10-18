@@ -191,6 +191,10 @@ class data_object
         }
     }
     public view_list $msk_lst;
+    // the children of the list triples of the start page table e.g. every reason that "populism
+    // reason" links, kept out of the phrase list, because it also fills e.g. the phrase selectors
+    // of later pages; null if not yet loaded (see ui_list::add_start_page_data)
+    public ?phrase_list $start_lst_children = null;
     // the view of the page, set by view_exe::show, so that a component can show its name
     // (system_page::view_title); kept out of the view list, which a filled list makes the
     // view selectors take as the complete list of views (ui_select::view_list_for)

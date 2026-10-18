@@ -38,3 +38,4 @@ system_time_type_id, type_name, code_id, description
 37, 'load view', 'load_view', 'the time used to load the components of a view'
 38, 'ui map', 'ui_map', 'the time used to map an api message to the frontend objects'
 39, 'import', 'import', 'the time used by an import without its database steps e.g. for the json decoding and the object checks'
+40, 'load page', 'load page', 'the time used to load the data of a page from the backend before its html is created'

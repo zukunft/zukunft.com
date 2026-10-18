@@ -303,6 +303,15 @@ class system_view_ui_tests
         $test_name = '... and then returns to the time section around it';
         $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
         $sys->times->switch();
+        // the data of a page is loaded before its html is created, so that the html creation is
+        // frontend work only; the request cache keeps the data of the start page table
+        $test_name = 'the data of the start page is loaded before its html is created';
+        $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true);
+        $sys->times->reset_section();
+        $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::LOAD_PAGE);
+        $test_name = '... so that a second render of the start page waits for no backend answer';
+        $t->assert_false($test_name, str_contains($sys->times->section_report(), system_time_type::API_WAIT));
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
         // forged login/signup/import submit is rejected as well (see frontend::request_token_valid)

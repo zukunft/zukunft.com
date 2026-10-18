@@ -103,6 +103,27 @@ class component_exe extends component
 {
 
     /*
+     * load
+     */
+
+    /**
+     * fill the request cache with the data that this component shows, before the html of the
+     * page is created, so that the creation of the html needs no backend call
+     *
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return void
+     */
+    function add_page_cache(data_object $dto, user_message $msg): void
+    {
+        // an offline cache e.g. of a unit test is filled upfront and has no api to ask
+        if ($dto->online and $this->type_code_id($dto->typ_lst_cache, $msg) == component_types::CALC_SHEET) {
+            new ui_list()->add_start_page_data($dto, $msg);
+        }
+    }
+
+
+    /*
      * display
      */
 

@@ -3653,9 +3653,10 @@ class ui_list extends ui_base
         array        $url_array = []
     ): string
     {
-        $phr = $this->start_page_phrase($dto, $msg);
-        $this->add_start_page_cache($dto, $phr, $msg);
-        $child_lst = $this->start_page_children($dto, $msg);
+        // the data is loaded already by the page cache step (see view_exe::add_page_cache), so
+        // this only fills what a caller without that step has not loaded
+        $phr = $this->add_start_page_data($dto, $msg);
+        $child_lst = $dto->start_lst_children ?? new phrase_list();
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
         // no column stays on the page of the problem instead of adding a row here; by default
@@ -3665,6 +3666,26 @@ class ui_list extends ui_base
         // of a problem, so the ranking shows the rows with a number only
         return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array,
             true, value_list::COLUMN_TIERS_EX_MAIN, false, true, $child_lst);
+    }
+
+    /**
+     * load all data of the start view table into the request cache, so that the creation of the
+     * html needs no backend call: the page phrase, the values and results of its children with
+     * their links and the children of the list triples; each part is loaded only once per cache
+     *
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return phrase the page phrase of the start view
+     */
+    function add_start_page_data(data_object $dto, user_message $msg): phrase
+    {
+        $phr = $this->start_page_phrase($dto, $msg);
+        $this->add_start_page_cache($dto, $phr, $msg);
+        // without the api the children cannot be loaded, so an offline cache keeps none
+        if ($dto->online and $dto->start_lst_children == null) {
+            $dto->start_lst_children = $this->start_page_children($dto, $msg);
+        }
+        return $phr;
     }
 
     /**

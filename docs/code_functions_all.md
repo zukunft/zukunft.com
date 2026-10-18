@@ -6368,6 +6368,8 @@
     \-- phrase_selector - section for function phrase_selector not yet defined that it should be to review in /component
             /component.php
 \-- component_exe
+    \-- add_page_cache - section for function add_page_cache not yet defined that it should be load in /component/compon
+            ent_exe.php
     \-- dsp_entries - section for function dsp_entries not yet defined that it should be display in /component/component
             _exe.php
 \-- component_link
@@ -6855,6 +6857,7 @@
     \-- phrases_related - section for function phrases_related missing in /component/execute/ui_list.php
     \-- list_sort - section for function list_sort missing in /component/execute/ui_list.php
     \-- start_list - section for function start_list missing in /component/execute/ui_list.php
+    \-- add_start_page_data - section for function add_start_page_data missing in /component/execute/ui_list.php
     \-- result_changes - section for function result_changes missing in /component/execute/ui_list.php
 \-- ui_log
     \-- system_change_log - section for function system_change_log not yet defined that it should be display in /compone
@@ -8860,6 +8863,66 @@
         \-- sys_log_list - @return string the HTML code for the table headline
     \-- selector_page
         \-- view_exe - create a selection page where the user can select a view
+\-- load
+    \-- add_page_cache
+        \-- component_exe - fill the request cache with the data that this component shows, before the html of the
+    \-- load_by_view_id
+        \-- component_list - the components sorted by the position in the view and by the name for the components
+    \-- load_by_formula_id
+        \-- formula_link_list - get the formula link that use this formula from the backend via api
+    \-- load
+        \-- config - request the user-specific frontend configuration from the backend
+        \-- system_time_list - load the slow requests of the configured last days from the backend,
+                 which sends them only to an admin
+        \-- user_log_sum_list - load the users with the most server time from the backend,
+                 which sends them only to an admin
+    \-- get_by
+        \-- config - get a frontend config value selected by the phrase names
+    \-- load_by_object
+        \-- change_log_link_list - load the link change history of one object from the backend via the api
+    \-- load_api_by_object
+        \-- change_log_link_list - get the json of the link change history of one object from the api
+    \-- load_by_object_field
+        \-- change_log_list - load a list of changes from the api
+    \-- load_by_user
+        \-- change_log_list - load the overwrites done by the given user via the api
+        \-- job_list - load the jobs of the requesting user via the api
+        \-- sys_log_list - request the system log entries related to the session user from the backend
+    \-- load_api_by_object_field
+        \-- change_log_list - get the json of a list of changes from the api
+    \-- 13
+        \-- phrase_list - add the phrases related to the given formula to the list
+    \-- load_fallback
+        \-- change_log_list - if the change log list is empty fill it with the last changes
+        \-- phrase_list - if the phrase list is empty fill it with some general suggested phrases
+    \-- load_by_ids
+        \-- source_list - load the sources with the given ids from the backend via api, e.g. the sources of the
+    \-- load_for_selector
+        \-- source_list - fill the list for a source selector: the sources that match the typed chars,
+                 or all sources of the
+    \-- load_by_formula_and_group_list
+        \-- result_list - load all a result by the phrase group id and time phrase
+    \-- load_by_formula
+        \-- result_list - load a list of results linked to a formula
+    \-- load_by_phrase_list
+        \-- result_list - add the results of any of the given phrases to this list
+    \-- load_by_group
+        \-- result_list - load a list of results linked to a phrase group
+    \-- load_by
+        \-- result_list - get a list of results via api from the backend
+    \-- load_by_name
+        \-- combine_named - load the phrase by name via api
+    \-- load_by_id
+        \-- sandbox - add the user to the load of the user sandbox object e.g. word by id via api
+    \-- load_all
+        \-- job_list - load the jobs of all users via the api, which refuses the request of a user who is not an admin
+    \-- api_load
+        \-- sys_log_list - @param array $json_body the api answer with the log entries or the message why the entries ar
+                e not sent
+        \-- system_time_list - @param array $json_body the api answer with the slow requests or the message why they are
+                 not sent
+        \-- user_log_sum_list - @param array $json_body the api answer with the summed sessions or the message why they 
+                are not sent
 \-- display
     \-- dsp_entries
         \-- component_exe - create the html code of this component filled with the data from the given database object (
@@ -9153,64 +9216,6 @@
         \-- view_type_list - create the HTML code to select a view type
     \-- url
         \-- ref_type_list - a null id means the reference type is not (yet) set, e.g. for a new reference of an add
-\-- load
-    \-- load_by_view_id
-        \-- component_list - the components sorted by the position in the view and by the name for the components
-    \-- load_by_formula_id
-        \-- formula_link_list - get the formula link that use this formula from the backend via api
-    \-- load
-        \-- config - request the user-specific frontend configuration from the backend
-        \-- system_time_list - load the slow requests of the configured last days from the backend,
-                 which sends them only to an admin
-        \-- user_log_sum_list - load the users with the most server time from the backend,
-                 which sends them only to an admin
-    \-- get_by
-        \-- config - get a frontend config value selected by the phrase names
-    \-- load_by_object
-        \-- change_log_link_list - load the link change history of one object from the backend via the api
-    \-- load_api_by_object
-        \-- change_log_link_list - get the json of the link change history of one object from the api
-    \-- load_by_object_field
-        \-- change_log_list - load a list of changes from the api
-    \-- load_by_user
-        \-- change_log_list - load the overwrites done by the given user via the api
-        \-- job_list - load the jobs of the requesting user via the api
-        \-- sys_log_list - request the system log entries related to the session user from the backend
-    \-- load_api_by_object_field
-        \-- change_log_list - get the json of a list of changes from the api
-    \-- 13
-        \-- phrase_list - add the phrases related to the given formula to the list
-    \-- load_fallback
-        \-- change_log_list - if the change log list is empty fill it with the last changes
-        \-- phrase_list - if the phrase list is empty fill it with some general suggested phrases
-    \-- load_by_ids
-        \-- source_list - load the sources with the given ids from the backend via api, e.g. the sources of the
-    \-- load_for_selector
-        \-- source_list - fill the list for a source selector: the sources that match the typed chars,
-                 or all sources of the
-    \-- load_by_formula_and_group_list
-        \-- result_list - load all a result by the phrase group id and time phrase
-    \-- load_by_formula
-        \-- result_list - load a list of results linked to a formula
-    \-- load_by_phrase_list
-        \-- result_list - add the results of any of the given phrases to this list
-    \-- load_by_group
-        \-- result_list - load a list of results linked to a phrase group
-    \-- load_by
-        \-- result_list - get a list of results via api from the backend
-    \-- load_by_name
-        \-- combine_named - load the phrase by name via api
-    \-- load_by_id
-        \-- sandbox - add the user to the load of the user sandbox object e.g. word by id via api
-    \-- load_all
-        \-- job_list - load the jobs of all users via the api, which refuses the request of a user who is not an admin
-    \-- api_load
-        \-- sys_log_list - @param array $json_body the api answer with the log entries or the message why the entries ar
-                e not sent
-        \-- system_time_list - @param array $json_body the api answer with the slow requests or the message why they are
-                 not sent
-        \-- user_log_sum_list - @param array $json_body the api answer with the summed sessions or the message why they 
-                are not sent
 \-- 
     \-- __construct
         \-- calculator - @param phrase $phr the phrase of the page e.g. example PV installation
@@ -9470,6 +9475,8 @@
         \-- list_sort - @param phrase $phr the start phrase to select the rows
     \-- start_list
         \-- ui_list - the table of the start view: the values of the "global problem" phrase with one column per
+    \-- add_start_page_data
+        \-- ui_list - load all data of the start view table into the request cache, so that the creation of the
     \-- result_changes
         \-- ui_list - @return string the html code of the results that changes if the pending user change is confirmed
     \-- view_after
@@ -10148,7 +10155,7 @@
     \-- show
         \-- view_exe - create the html code to view a sandbox object
     \-- add_page_cache
-        \-- view_exe - fill the request cache with the phrases that the components of this view read only from
+        \-- view_exe - fill the request cache with the data that the components of this view show, before the
 \-- view
     \-- url_to_html
         \-- frontend - create the HTML code based on the given url

@@ -88,6 +88,8 @@ class system_time_type extends type_object
     const string UI_MAP = "ui_map";
     // the work of an import without its database steps e.g. the json decoding and the object checks
     const string IMPORT = "import";
+    // the load of the data of a page from the backend before its html is created
+    const string LOAD_PAGE = "load page";
 
 
     /*

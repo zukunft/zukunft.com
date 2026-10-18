@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-750 of 6151 public functions have at least 2 unit test calls; the 5401 functions below do not
+750 of 6153 public functions have at least 2 unit test calls; the 5403 functions below do not
 
 ## main backend
 
@@ -4173,6 +4173,8 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- type_selector - 0 unit test calls shared by 2 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- word_name - 0 unit test calls
+\-- component_exe
+    \-- add_page_cache - 0 unit test calls shared by 2 classes
 \-- component_link
     \-- api_array - 11 unit test calls shared by 37 classes
     \-- api_mapper - 30 unit test calls shared by 104 classes
@@ -5424,6 +5426,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
 \-- ui_link
     \-- phrase_link - 0 unit test calls
 \-- ui_list
+    \-- add_start_page_data - 0 unit test calls
     \-- assumption_fields - 0 unit test calls
     \-- calculation_detail_tables - 0 unit test calls
     \-- calculation_table - 0 unit test calls
@@ -5671,7 +5674,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- view_type_selector - 0 unit test calls shared by 2 classes
 \-- view_exe
-    \-- add_page_cache - 0 unit test calls
+    \-- add_page_cache - 0 unit test calls shared by 2 classes
     \-- dsp_edit - 0 unit test calls shared by 4 classes
     \-- dsp_hist - 0 unit test calls shared by 5 classes
     \-- dsp_hist_links - 0 unit test calls shared by 5 classes

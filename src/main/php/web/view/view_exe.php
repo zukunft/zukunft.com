@@ -348,9 +348,10 @@ class view_exe extends view_base
 
 
     /**
-     * fill the request cache with the phrases that the components of this view read only from
-     * the cache, before the title and the components are created; for the calculator these are
-     * the calculator triples of the page phrase (docs/llm/new_view_sample_pv_balance.md)
+     * fill the request cache with the data that the components of this view show, before the
+     * title and the components are created, so that their html creation needs no backend call;
+     * for the calculator these are the calculator triples of the page phrase
+     * (docs/llm/new_view_sample_pv_balance.md), for the start page the data of its table
      *
      * @param db_object|type_object|combine_named|sandbox_list $dbo the object of the page
      * @param user_message $msg to report a problem of the api message to the user
@@ -366,6 +367,11 @@ class view_exe extends view_base
         if ($this->code_id == views::CALCULATOR and $dto != null and $dto->online
             and ($dbo instanceof word or $dbo instanceof triple)) {
             $this->add_calculator_triples($dbo->phrase(), $dto, $msg);
+        }
+        if ($dto != null) {
+            foreach ($this->cmp_lst->lst() as $cmp) {
+                $cmp->add_page_cache($dto, $msg);
+            }
         }
     }
 

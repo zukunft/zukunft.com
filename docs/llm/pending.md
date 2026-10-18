@@ -306,142 +306,109 @@ add CBAM calculation, portfolio split and company sheet use cases and pin them o
 
 ## speed up
 
-The steps are ordered by the time they cost in the full run of test/test.php (809 s, 9823
-test cases, 248 timeouts). Each step is one commit with the test first; the developer runs the
+The steps are ordered by the time they cost in the full run of test/test.php (718 s, 9850
+test cases, 216 timeouts). Each step is one commit with the test first; the developer runs the
 tests after each step and compares the timing report with the one before.
 
 Where the time of the run goes:
-- the write workflows (workflow start db write): 258 s
-- the database recreation with the seed import (db write database recreation): 168 s
-- the read-only workflows (workflow start): 92 s
-- the db write tests: 71 s
-- the html unit ui tests: 68 s, of which the start page selections take 32 s
-- the system view read tests: 66 s, of which the 8 start page views take 28 s and the
-  calculator 16 s
-- the unit tests: 36 s, of which the admin dashboard takes 14 s
-- the api tests: 18 s, the localhost views: 17 s
+- the write workflows (workflow start db write): 194 s
+- the database recreation with the seed import (db write database recreation): 153 s
+- the read-only workflows (workflow start): 79 s
+- the db write tests: 72 s
+- the html unit ui tests: 72 s, of which the start page selections take 24 s
+- the system view read tests: 70 s, of which the 8 start page views take 29 s and the
+  calculator 19 s
+- the unit tests: 37 s, of which the admin dashboard takes 14 s
+- the api tests: 17 s, the localhost views: 17 s
+
+The time sections of the report: api_wait 184 s, url to html 163 s, import 115 s,
+not_specified 101 s, db_read 47 s, localhost view 31 s, db_write 25 s.
 
 ### 1. api wait of the write workflows
 
-The first page of each write workflow waits 7 to 12 s for the backend ("add_triple_wf4/
-wf4_edit_back: api_wait 7.3 sec", "add_view_wf22/wf22_edit_back: api_wait 9.2 sec",
-"add_component_wf25: 9.4 sec", "signup_confirm_wf36: 7.7 sec", "... so it can be deleted:
-8.3 sec"), and every confirm step after a write waits 1.2 to 1.7 s. The same pages of the
-read-only workflows wait 0.12 to 0.89 s, so the wait is caused by the write: about 130 s.
-
-The slow api requests of the run in the table system_times show that every api request of the
-frontend takes 1.2 to 1.7 s (e.g. /api/view, /api/source, /api/phraseList, /api/valueList)
-and /api/resultList of the start page 3 to 4 s; a confirm step makes about one request and the
-first page of a workflow about five (start page and object). The config cache is not missed:
-the config rebuild (load_sys_config) shows up only once in the whole run. But the same start
-page requests (/api/resultList, /api/valueList) are not slow in the read-only workflows, so
-something that only the write workflows do makes them slow, e.g. the login, the user of the
-session or the html page cache that drop_cached_pages() clears (the workflow tests call
-url_to_html() directly and do not read the page cache).
+The first page after a word, triple, formula, source or value write waits 5.5 to 6.7 s for the
+backend ("add_triple_wf4/wf4_edit_back: api_wait 6.7 sec", "add_formula_wf14: 5.8 sec",
+"add_source_wf19: 5.5 sec", "signup_confirm_wf36: 6.1 sec", "... so it can be deleted:
+6.6 sec", "add_view_wf22: 2.2 sec" after the source writes), because such a write drops the
+cached api answers of the start page lists (frontend::api_lists_outdated_by). The first page
+after a view, component or ref write waits 0.9 to 1.0 s like the read-only workflows. Every
+confirm step after a write waits 0.85 to 1.5 s.
 
 Task:
-1. The sections of config_numbers::load_cfg() are ended, so that the rest of a request is no
-   longer counted as load_config_cache (it showed 2.2 to 2.9 s of each /api/resultList).
-2. With the corrected rows in system_times, find what the base 1.2 s of every api request is
-   and speed up that part. application::start_api() switched to no time section, so the time
-   outside the db and config sections was counted nowhere (2.4 of the 3.2 s of /api/resultList);
-   both api starts now count init, db open, the type load and then the api controller work.
-   Result: the start is cheap (init, db open and type load below 0.1 s); /api/resultList of the
-   start page spends 2.2 s in the controller for 289 results (1.6 MB json). The per-row phrase
-   name query of a result (sandbox_value::set_grp_by_row) and the second name load of
-   sandbox_value_list::load_phrases() are removed, which halves its controller time.
-3. The api answers are cached in db_cache_pages (db_cache_page::json_by_key() in e.g.
-   api/resultList), and frontend::drop_cached_pages() deletes all cached pages after a write of
-   a user that sees the standard data, so the next start page misses the cache for every api
-   call; this is why the first page of each write workflow waits 7 to 12 s and the read-only
-   workflows do not. drop_cached_pages() now drops the api answers by the type of the changed
-   object (frontend::api_lists_outdated_by), so e.g. the source, view, component and ref write
-   workflows keep the cached lists; a word, triple or formula write still drops all of them.
-4. controller::cache_header() is never called, so def::DEBUG_API_CACHE shows nothing; call it
+1. The result list answer of the start page is 1.6 MB for 289 results, because every result
+   repeats the description of each of its phrases; check what the start page needs, so that a
+   start page after a write fills the cache faster.
+2. controller::cache_header() is never called, so def::DEBUG_API_CACHE shows nothing; call it
    where an api answer is read from or written to the cache, or remove it.
-5. The result list answer of the start page is 1.6 MB for 289 results, because every result
-   repeats the description of each of its phrases; check what the start page needs.
-6. The api wait of the first page and of the confirm steps of the write workflows drops to
-   the level of the read-only workflows. The first page of the view, component and ref write
-   workflows waits 0.9 to 1.0 s like the read-only ones; the first page after a word, triple,
-   formula, source or value write still waits 5.4 to 6.4 s (add_view 2.2 s after the source
-   writes), and every confirm step 0.85 to 1.4 s.
-7. not_specified is 298 s of the 757 s run. url_to_html() counts its rendering as url to html
-   and its api wait itself, so every direct render of a test is measured (e.g. "search words
-   by pattern via url" 7.4 s, "a url without a view ... shows the start view" 3.8 s); the
-   sections of frontend::load_cache(), config::load() and user::load_usr_data() return to the
-   section of the caller; the http requests of the tests count as localhost view or api wait;
-   the import work is counted as import (about half of the 170 s seed import). Then check the
-   next timing report for the remaining not_specified, e.g. the html unit ui tests that render
-   without url_to_html (start page selections 30 s, admin dashboard 13 s, see step 7).
+3. Find what the api wait of 0.85 to 1.5 s of each confirm step is.
+4. The api wait of the first page and of the confirm steps of the write workflows drops to
+   the level of the read-only workflows.
+5. not_specified is 101 s of the run, mainly the html unit ui tests that render without
+   url_to_html (start page selections 24 s, admin dashboard 14 s, side or below columns 7 s,
+   all component types 5 s, see step 7).
+6. if the creation of the api message takes longer than a threshold defined in config.yaml include the execution time splitting in the message header so that it can be picked up by the frontend for the user reporting or by the calling test function so that the api_wait can be split into smaller parts 
 
 ### 2. frontend work of the start page
 
-Every render of the start page takes 1.7 to 2.8 s "url to html" without the api wait: the 8
+Every render of the start page takes 1.3 to 2.2 s "url to html" without the api wait: the 8
 start page views of system_views_read_tests and the "back" step of every read-only and write
-workflow (e.g. "add_word_wf1/wf1_edit_back: url to html 1.73 sec"), together about 40 renders
-or 80 s. The first start page of a run waits 0.9 s more for the backend.
+workflow (e.g. "add_triple_wf4/wf4_edit_back: url to html 1.39 sec"), together about 40
+renders.
+
+url_to_html() loads the data of the page before the html is created: the object of the page
+and the page cache of the view (view_exe::add_page_cache with component_exe::add_page_cache
+of each component, e.g. ui_list::add_start_page_data for the start page table) are counted as
+load page, their backend wait as api wait. A render of the start page with a filled request
+cache makes no api call (load page 0.05 s), so its url to html time (about 0.9 s) is frontend
+work: the start page table computes the ranking table from about 300 values, 289 results and
+some thousand cached phrases for each render; value_list::table_model() is about two thirds of
+it (xdebug profile).
 
 Task:
-1. Find the slow part of the start page render. An xdebug profile of the render shows that two
-   thirds of it is value_list::table_model_of_columns(), mainly quadratic loops over the
-   phrases of the values: group::phr_lst() created a new list for each call, so each has_id()
-   on it rebuilt the id index (48000 rebuilds for 3 renders), triple_parts_of_all() created
-   the triple parts of every value once per part of the first value, and sort_by_impact()
-   created the impact and the name of a value in each compare.
-2. Speed up the slowest part; the start page snapshots must not change. group::phr_lst() keeps
-   the list with its index until the phrases change and returns a copy, triple_parts_of_all()
-   creates the parts of each value once and sort_by_impact() creates the sort keys once: a
-   render of the start page takes 1.25 s instead of 2.05 s with the same html.
-3. Next parts of the render, by profile share: phrase_list::linked_names() scans the whole
-   request cache for each of about 50 child_names() calls per render; an index of the triple
-   links would also need to follow triple sides that are filled after the phrase is cached
-   (e.g. load_triple_sides). Then value_list::split_by_unit() and the api mapping of the
-   related phrases of start_page_children(), which is loaded again for each render.
-4. Then check if the 8 start page variants of system_views_read_tests::run_start() that
+1. phrase_list::linked_names() scans the whole request cache for each of about 50
+   child_names() calls per render; an index of the triple links would also need to follow
+   triple sides that are filled after the phrase is cached (e.g. load_triple_sides).
+2. Then value_list::split_by_unit().
+3. Move the api calls of the other components into their page cache step in the same way,
+   e.g. the calculator fields (see step 6).
+4. The start page snapshots must not change.
+5. Then check if the 8 start page variants of system_views_read_tests::run_start() that
    differ only by the display parameters of the url can share one api answer of the table.
 
 ### 3. seed import of the database recreation
 
 The recreation imports the system and sample data with about 250 rows per second, one insert
-per row ("Add 155 words (272 words per sec)", "save single 175 views (18.8 views per sec)",
-"save 408 results (202.1 results per sec)"): 168 s. The db write tests import system_views.json
-a second time ("in switch from previous test ... took 11.7 seconds").
+per row ("Add 155 words (328 words per sec)", "save 159 values (317 values per sec)", "save 585
+results (232 results per sec)"): 153 s. The import work itself is about half of the import
+time (import 6.5 s of 12.5 s for the second import of system_views.json, the rest db read,
+write, sql create and db map).
 
 Task:
-1. Measure with the time sections which part of one import level takes the time (sql_create,
-   db_read for the existence check, db_write, the change log). The import work itself is about
-   half of the import time (import 5.9 s of 11.3 s for system_views.json, the rest db read,
-   write, sql create and db map). The biggest parts:
-   - the check of the pre-calculated results (data_object::validate_results) searched each
-     operand in all numbers of the file and created the phrase names of each number again for
-     each search (1.2 million name lists for problem_global_warming.json); the names of each
-     number are now created once, so the analysis of that file takes 3.8 s instead of 9.0 s
-     with the same validation result (about 10 s less for all problem files)
-   - the component links of system_views.json are saved one by one after the views
-     (view_list::save, about 7.4 s, shown in the progress as "check 175 views", because the
-     link save reports no step of its own)
-2. Insert the new rows of one import level with one statement per table and level instead of
-   one per row, with the change log rows in the same way; start with the component links of
-   the views (a list save for component_link_list like save_block_wise of the named lists).
-3. Check if the db write view test needs the second import of system_views.json (11.8 s); the
+1. Save the component links of the views with one list save like save_block_wise of the named
+   lists: view_list::save() saves them one by one after the views (6.8 s of the 11.7 s seed
+   import of system_views.json, shown in the progress as "check 175 views", because the link
+   save reports no step of its own).
+2. Then insert the new rows of one import level with one statement per table and level instead
+   of one per row, with the change log rows in the same way.
+3. Check if the db write view test needs the second import of system_views.json (13.2 s); the
    test asserts nothing about it, but a write test before may change a seed view.
 
 ### 4. word url tests run twice
 
 all_unit_write_tests runs word_url_tests a second time after the import write tests (the block
-"url word" at 773 s, about 30 s incl. "search words by pattern via url" with 10.9 s), although
-all_workflow_tests has run it already (387 s) and word_write_url_tests covers the write
+"url word" at 685 s, about 25 s incl. "search words by pattern via url" with 8.2 s), although
+all_workflow_tests has run it already (374 s) and word_write_url_tests covers the write
 workflows. Remove the second run if it tests nothing in addition, else name what it adds.
 
 ### 5. search words by pattern via url
 
-"search words by pattern via url" takes 10.0 s in the workflow tests and 10.9 s in the second
-run. Find out if the time is the search query, the result page or an api timeout, and fix it.
+"search words by pattern via url" takes 7.2 s in the workflow tests and 8.2 s in the second
+run, mostly api wait (5.7 and 6.5 s) and 1.5 s url to html. Find the slow api request of the
+search and fix it.
 
 ### 6. calculator page
 
-The calculator view takes 15.7 s ("url to html 6.99 sec, api_wait 7.91 sec").
+The calculator view takes 19.2 s ("url to html 7.37 sec, api_wait 10.93 sec").
 
 Causes in src/main/php/web/component/execute/ui_list.php and src/main/php/web/view/view_exe.php:
 a) ui_list::add_field_links() has no "already in cache" guard, unlike add_field_values(), so
@@ -460,18 +427,20 @@ Task:
 
 ### 7. slow html unit ui tests
 
-- "unit ui html start page selections" takes 32 s for the combinations of list size, column
+These tests render without url_to_html, so their time is not_specified.
+- "unit ui html start page selections" takes 24 s for the combinations of list size, column
   tiers, range and form: check if each combination needs its own render or if the shared
   parts can be rendered once.
 - "unit ui system views admin dashboard" takes 14 s.
-- "unit ui html view side or below columns" takes 9.2 s and "page class" 2 x 2.1 s.
-- "object_pages/all_component_types" takes 5.3 s.
+- "unit ui html view side or below columns" takes 7.3 s and "page class" 2 x 1.3 s.
+- "object_pages/all_component_types" takes 5.0 s.
 
 ### 8. smaller items
 
 - The admin login of the web tests times out after 1 s five times per run; known, the api
   auth tests tolerate a skip.
-- "... without the reason why only an admin can see it" takes 6.7 s in the api tests.
+- "... without the reason why only an admin can see it" takes 6.7 s in the api tests, of which
+  6.1 s api wait for the first api/sysLogList request.
 - The phrase list loads of values and results ignore $limit and $page:
   sandbox_value_list::load_sql_by_phr_lst_multi() never puts them into the sql, so
   value_list::read_limit() limits nothing; add ORDER BY and LIMIT to the union with an own

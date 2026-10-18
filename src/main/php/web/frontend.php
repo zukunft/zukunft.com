@@ -280,6 +280,7 @@ class frontend
     private float $start_time; // the start time to detect long runners
     private string $code_name; // the name of the call script to locate issues
     private string $msg; // messages that should be shown to the user asap
+    private float $load_page_wait = 0; // the backend wait of the load steps of the page that is created
 
     // false if the request's anti-csrf session token did not match the session token any more
     // (e.g. the session has expired); set by start() and read by http/view.php to recover the
@@ -1006,14 +1007,47 @@ class frontend
         global $sys;
         global $ui_sys;
 
-        // every caller gets the render time as url to html and the wait for the backend as api wait,
-        // and the section of the caller continues after the page is created
+        // every caller gets the render time as url to html, the load of the page data as load
+        // page and the wait for the backend as api wait, and the section of the caller continues
+        // after the page is created
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $wait_start = $ui_sys?->api_wait ?? 0;
+        $this->load_page_wait = 0;
         $result = $this->render_url($url_array, $msg_ui, $dto, $test_mode);
-        $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
+        // the wait of the load steps has been moved out of load page already
+        $render_wait = ($ui_sys?->api_wait ?? 0) - $wait_start - $this->load_page_wait;
+        $sys->times->move($render_wait, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
         $sys->times->switch();
         return $result;
+    }
+
+    /**
+     * start a load step of the page data (see render_url)
+     *
+     * @return float the backend wait of the request so far to count the wait of the load step
+     */
+    private function load_page_start(): float
+    {
+        global $sys;
+        global $ui_sys;
+        $sys->times->switch(system_time_type::LOAD_PAGE);
+        return $ui_sys?->api_wait ?? 0;
+    }
+
+    /**
+     * end a load step of the page data and count its wait for the backend as api wait
+     *
+     * @param float $wait_start the backend wait of the request at the start of the load step
+     * @return void
+     */
+    private function load_page_end(float $wait_start): void
+    {
+        global $sys;
+        global $ui_sys;
+        $wait = ($ui_sys?->api_wait ?? 0) - $wait_start;
+        $sys->times->move($wait, system_time_type::LOAD_PAGE, system_time_type::API_WAIT);
+        $this->load_page_wait += $wait;
+        $sys->times->switch();
     }
 
     /**
@@ -1151,6 +1185,7 @@ class frontend
         }
 
         // get the main object to display
+        $wait_start = $this->load_page_start();
         if ($id != 0) {
             // load the object from the database unless the url carries object field values (e.g. a
             // form submit, a confirm view url or a prefilled edit link), because a control var like
@@ -1202,6 +1237,7 @@ class frontend
                 $wrd = $usr->last_term();
             }
         }
+        $this->load_page_end($wait_start);
 
         // an admin protected object can still be changed by a normal user (the change creates the
         // user's own sandbox overlay), so the edit view opens without any protection message; only
@@ -1234,8 +1270,11 @@ class frontend
                 $result .= log_err('No view for "' . $view_id . '" found.',
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
-                // the title of a calculator reads the calculator triples of the request cache
+                // the title of a calculator reads the calculator triples of the request cache and
+                // the components read their data from it, so it is filled before the html is created
+                $wait_start = $this->load_page_start();
                 $msk_ui->add_page_cache($dbo, $msg_ui, $dto);
+                $this->load_page_end($wait_start);
                 $title = $msk_ui->title($dbo, $msg_ui, $dto);
                 $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 
