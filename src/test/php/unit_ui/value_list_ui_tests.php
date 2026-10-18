@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\table_chart;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
@@ -180,6 +181,20 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $t_val->value_list_number_tie_ui()->list($msg_ui), word_names::ZH, word_names::CITY);
         $test_name = 'sort by impact of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->list($msg_ui), '');
+
+        // a value is added once, also if a filter finds it twice e.g. by the page phrase and by a child
+        $t->subheader($ts . 'add');
+        $add_lst = new value_list_ui();
+        $val = $impact_lst->lst()[0];
+        $add_lst->add($val, $msg_ui);
+        $test_name = 'a value that is already in the list is not added again';
+        $t->assert_false($test_name, $add_lst->add($val, $msg_ui));
+        $test_name = '... so the list keeps one entry';
+        $t->assert($test_name, $add_lst->count(), 1);
+        // negative: a value without an id is not yet in the database, so it is never a double
+        $test_name = 'a second value without an id is added';
+        $add_lst->add(new value_ui(), $msg_ui);
+        $t->assert_true($test_name, $add_lst->add(new value_ui(), $msg_ui));
 
         $t->subheader($ts . 'most relevant');
         // a limit above the fixture size, so that these blocks test the grouping and the order;

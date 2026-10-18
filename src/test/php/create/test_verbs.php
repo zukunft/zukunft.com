@@ -366,6 +366,16 @@ class test_verbs extends test_objects
         return new verb_list($this->env->usr1);
     }
 
+    /**
+     * @return verb_list with only the "is" verb e.g. to test a list with one entry
+     */
+    function list_one(): verb_list
+    {
+        $lst = new verb_list($this->env->usr1);
+        $lst->add_verb($this->verb_is_full());
+        return $lst;
+    }
+
 
     /*
      * speed

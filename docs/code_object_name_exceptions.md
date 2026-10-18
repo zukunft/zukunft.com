@@ -260,14 +260,14 @@ user_request: $req
 user_status: $usr_sta
 user_type: $usr_typ
 value_geo: $obj_to_add, $result, $val
-value_list: $db_lst, $empty_keep_lst, $empty_lst, $lst, $num_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
+value_list: $add_lst, $db_lst, $empty_keep_lst, $empty_lst, $lst, $num_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
 value_list_dsp: $val_lst
 value_text: $obj_to_add, $result, $val
 value_time: $obj_to_add, $result, $val
 value_time_series: $db_chk, $db_rec, $db_vts, $std_rec, $vts
 value_ts_data: $ts
 value_type_list: $val_typ_lst
-verb_list: $link_types_ui, $lst, $lst_all, $lst_dbl, $lst_empty, $vrb_lst, $vrb_lst_ui
+verb_list: $link_types_ui, $lst, $lst_all, $lst_dbl, $lst_empty, $lst_one, $vrb_lst, $vrb_lst_ui
 verbs: $lst
 view_link_type: $lnk_typ_ui
 view_list: $dsp_to_validate, $lst, $msk_lst, $msk_typ_lst, $views, $wrd_lst

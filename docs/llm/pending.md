@@ -116,10 +116,6 @@ open from the old setup, still needed for the calculator page:
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
 
-## simple pv calc sheet
-
-make everything interactive changeable: column, values, formulas
-
 ## start page
 
 adjust the numbers in the json data files so that the problem / solution are in this order
@@ -135,7 +131,7 @@ adjust the numbers in the json data files so that the problem / solution are in 
 9. Use smartvote for initiatives and build a liquid democracy
 10. Measure the economy’s actual benefit instead of relying on GDP
 
-### PV calculator
+### PV installation calculator
 
 Catch process forms
 
@@ -366,8 +362,11 @@ start page variants of system_views_read_tests::run_start() share one request ca
 Task:
 1. Move the api calls of the other components into their page cache step in the same way,
    e.g. the calculator fields (see step 6).
-2. Profile the remaining frontend work of value_list::table_model() again; the start page
-   snapshots must not change.
+2. The remaining frontend work of a start page render is spread over the table steps, by
+   profile share: value_list::triple_parts_of_all() (a phrase list of the triple parts for
+   each value), split_by_unit() (unit_key with is_unit for each phrase of each value),
+   phrase_cell() of table_html() and phrase_ranking() (group_phrases and impact for each
+   value); the start page snapshots must not change.
 
 ### 3. seed import of the database recreation
 
@@ -472,14 +471,12 @@ As the log below shown it seems that at the moment the elapse time is nor resett
 462.3548 import country.json done: 8542 byte
 
 
-
-
 ## to recheck
 
-3. Two steps in one commit. Steps 3 (calculator reader) and 4 (default view of a phrase) are uncommitted together, but pending.md asks for one commit per step. Splitting is possible because the step 4 changes are in separate files and hunks: cfg/word/triple.php, web/word/triple.php, web/phrase/phrase.php, frontend.php, horizontal_tests.php, triple_tests.php, phrase_ui_tests.php, system_view_ui_tests.php, the guide, the api fixtures and the snapshots.
-4. Unrelated pending.md section. The new "## speed up" section doesn't belong to either step; better as its own commit.
-6. Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
-7. Hard-to-read condition in dbo_for_url (frontend.php:2710). It reads the url id with ?? 0 and then also checks array_key_exists. It is correct, but a local $url_id would make it easier to read.
+1. Two steps in one commit. Steps 3 (calculator reader) and 4 (default view of a phrase) are uncommitted together, but pending.md asks for one commit per step. Splitting is possible because the step 4 changes are in separate files and hunks: cfg/word/triple.php, web/word/triple.php, web/phrase/phrase.php, frontend.php, horizontal_tests.php, triple_tests.php, phrase_ui_tests.php, system_view_ui_tests.php, the guide, the api fixtures and the snapshots.
+2. Unrelated pending.md section. The new "## speed up" section doesn't belong to either step; better as its own commit.
+3. Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
+4. Hard-to-read condition in dbo_for_url (frontend.php:2710). It reads the url id with ?? 0 and then also checks array_key_exists. It is correct, but a local $url_id would make it easier to read.
 
 ## job list
 

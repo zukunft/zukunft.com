@@ -245,9 +245,10 @@ class value_list extends ListBase
     function add(value|IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
-        if (!in_array($to_add->id(), $this->id_lst())) {
+        // the id index of the list finds a double without scanning the list, and add_direct keeps
+        // it up to date; a value without an id is not yet in the database and therefore never a double
+        if ($to_add->id() == 0 or !$this->has_id($to_add->id())) {
             $this->add_direct($to_add);
-            $this->set_hash_dirty();
             $result = true;
         }
         return $result;

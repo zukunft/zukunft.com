@@ -93,11 +93,50 @@ class verb_list_ui_tests
         $t->assert_empty($test_name, $msg->text());
         $msg->reset();
 
+        // a type is picked by its id e.g. for each phrase of a table, so the list keeps the
+        // position of each id instead of scanning all entries
+        $test_name = 'a verb of the list is found by its id';
+        $vrb = $db_lst->lst()[1];
+        $t->assert($test_name, $lst->get($vrb->id())?->name(), $vrb->name());
+        $test_name = '... and of a list with the verbs twice the first entry';
+        $t->assert_true($test_name, $lst_dbl->get($vrb->id()) === $lst_dbl->lst()[1]);
+        // negative: a type id that is not set selects no verb
+        $test_name = 'a type id that is not set selects no verb';
+        $t->assert_true($test_name, $lst->get(0) === null);
+
         $test_name = 'an empty api message adds no verb';
         $lst_empty = new verb_list_ui();
         $lst_empty->set_from_json($t_vrb->list_empty()->api_json(), $msg);
         $t->assert($test_name, $lst_empty->db_id_list(), []);
         $msg->reset();
+
+        // every case of a type list: empty, one entry, the same entry twice and a code id of two
+        // rows; the last one is an inconsistency of the backend that add_obj logs as an error, so
+        // it is tested by the check alone, because a test must not write an error log entry
+        $t->subheader($ts . 'list cases');
+        $test_name = 'an empty list finds no verb by its code id';
+        $t->assert($test_name, $lst_empty->id(verbs::IS), type_list::CODE_ID_NOT_FOUND);
+        $test_name = '... and has no code id conflict';
+        $t->assert_false($test_name, $lst_empty->code_id_conflict(verbs::IS, verbs::IS_ID));
+        $lst_one = new verb_list_ui();
+        $lst_one->set_from_json($t_vrb->list_one()->api_json(), $msg);
+        $test_name = 'a list with one verb adds it without a message';
+        $t->assert_empty($test_name, $msg->text());
+        $test_name = '... finds it by its id';
+        $t->assert($test_name, $lst_one->get(verbs::IS_ID)?->name(), verbs::IS_NAME);
+        $test_name = '... and by its code id';
+        $t->assert($test_name, $lst_one->id(verbs::IS), verbs::IS_ID);
+        $test_name = '... and the same verb again is no code id conflict';
+        $t->assert_false($test_name, $lst_one->code_id_conflict(verbs::IS, verbs::IS_ID));
+        // negative: the code id of the verb for another row is the inconsistency
+        $test_name = '... but its code id for another id is a conflict';
+        $t->assert_true($test_name, $lst_one->code_id_conflict(verbs::IS, verbs::MEASURE_ID));
+        $test_name = '... and an empty code id is never a conflict';
+        $t->assert_false($test_name, $lst_one->code_id_conflict('', verbs::MEASURE_ID));
+        $test_name = 'a list with every verb twice finds a verb by its code id';
+        $t->assert($test_name, $lst_dbl->id(verbs::IS), verbs::IS_ID);
+        $test_name = '... and has no code id conflict for the same verb';
+        $t->assert_false($test_name, $lst_dbl->code_id_conflict(verbs::IS, verbs::IS_ID));
 
         // test the verb list display functions
         $form = 'verb_list_ui_test';

@@ -94,12 +94,16 @@ class type_list
     // the database id of each entry on its code id, so that id() can resolve a code id without
     // scanning the list; filled only by add_obj(), so there is one writer of this contract
     private array $hash = [];
+    // the position of the first entry of each database id, so that get() and the duplicate
+    // check of add_obj() find an entry without scanning the list; filled only by add_obj()
+    private array $id_pos = [];
 
 
     function reset(): void
     {
         $this->lst = [];
         $this->hash = [];
+        $this->id_pos = [];
     }
 
     /**
@@ -286,30 +290,11 @@ class type_list
     function get(?int $id): verb|ref_type|type_object|null
     {
         $result = null;
-        if (count($this->hash) != count($this->lst)) {
-            $dub_key = [];
-            $all_key = [];
-            foreach ($this->lst as $typ) {
-                $key = $typ->get_code_id();
-                if (!in_array($key, $all_key)) {
-                    $all_key[] = $key;
-                } else {
-                    if ($key != '') {
-                        $dub_key[] = $key;
-                    }
-                }
-            }
-            if (count($dub_key) > 0) {
-                log_err('probably "' . implode(', ', $dub_key) . '" are duplicate code_id in ' . $this::class);
-            }
-            //log_warning('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
-        }
         if ($id > 0) {
-            // pick by id instead of mapping the position in the hash to the position in the list,
+            // pick by the position of the id instead of the position in the code id hash,
             // because the two are only parallel as long as no entry is added twice
-            $found = array_filter($this->lst, fn(verb|ref_type|type_object $typ) => $typ->id() == $id);
-            if ($found != []) {
-                $result = reset($found);
+            if ($this->has_id($id)) {
+                $result = $this->lst[$this->id_pos[$id]];
             } else {
                 log_warning('Type with is ' . $id . ' not found in ' . $this->dsp_id());
             }
@@ -345,9 +330,20 @@ class type_list
     protected function add_obj(object $obj, user_message $msg, bool $allow_duplicates = false): bool
     {
         $added = false;
-        if ($allow_duplicates or !in_array($obj->id(), $this->id_lst())) {
+        if ($allow_duplicates or !$this->has_id($obj->id())) {
+            if (!$this->has_id($obj->id())) {
+                $this->id_pos[$obj->id()] = count($this->lst);
+            }
             $this->lst[] = $obj;
-            $this->hash[$obj->code_id] = $obj->id();
+            // the code links to one database row, so a code id of two rows is an inconsistency of
+            // the backend that the user cannot fix; the first row keeps the code id
+            $code_id = $obj->code_id ?? '';
+            if ($this->code_id_conflict($code_id, $obj->id())) {
+                log_err_msg_ui('the code id "' . $code_id . '" is used for the ids '
+                    . $this->hash[$code_id] . ' and ' . $obj->id() . ' in ' . $this::class, $msg);
+            } elseif (!array_key_exists($code_id, $this->hash)) {
+                $this->hash[$code_id] = $obj->id();
+            }
             $added = true;
         } else {
             $msg->add(msg_id::LIST_DOUBLE_ENTRY, [
@@ -359,17 +355,28 @@ class type_list
     }
 
     /**
-     * @returns array with all unique ids of this list
+     * true if the given code id is already used for another database row in this list; the same
+     * row added twice, e.g. to count the verb usages of a triple list, is no conflict, and an
+     * empty code id links to no row
+     *
+     * @param string $code_id the code id of the entry that should be added
+     * @param int|null $id the database id of the entry that should be added
+     * @return bool true if the code id would link to two database rows
      */
-    protected function id_lst(): array
+    function code_id_conflict(string $code_id, ?int $id): bool
     {
-        $result = array();
-        foreach ($this->lst as $val) {
-            if (!in_array($val->id(), $result)) {
-                $result[] = $val->id();
-            }
-        }
-        return $result;
+        return ($code_id != ''
+            and array_key_exists($code_id, $this->hash)
+            and $this->hash[$code_id] != $id);
+    }
+
+    /**
+     * @param int|null $id the database id of a type
+     * @return bool true if this list contains an entry with the given id
+     */
+    private function has_id(?int $id): bool
+    {
+        return array_key_exists($id ?? 0, $this->id_pos);
     }
 
 

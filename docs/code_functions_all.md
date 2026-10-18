@@ -8171,6 +8171,8 @@
     \-- name - section for function name is expected to be debug in /types/type_list.php
     \-- get - section for function get missing in /types/type_list.php
     \-- get_by_code_id - section for function get_by_code_id is expected to be set and get in /types/type_list.php
+    \-- code_id_conflict - section for function code_id_conflict not yet defined that it should be modify functions in /
+            types/type_list.php
     \-- name_tip - section for function name_tip not yet defined that it should be display in /types/type_list.php
     \-- name_link - section for function name_link not yet defined that it should be display in /types/type_list.php
     \-- sort_by_name - section for function sort_by_name not yet defined that it should be display in /types/type_list.p
