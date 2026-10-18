@@ -47,6 +47,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_RESULT . 'result.php';
@@ -67,6 +68,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -78,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -98,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class sandbox_value_list extends sandbox_list
 {
@@ -616,21 +620,91 @@ class sandbox_value_list extends sandbox_list
     }
 
     /**
-     * set the word objects for all values or results in the list if needed
-     * not included in load, because sometimes loading of the word objects is not needed
+     * set the phrases of all values or results in the list and the from and to of their
+     * triples, each with one query for the whole list;
+     * not included in load, because sometimes loading of the phrases is not needed
+     *
+     * @param user_message $msg to collect the loading problems
+     * @return void
      */
     function load_phrases(user_message $msg): void
     {
-        // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
-        $all_phr = new phrase_list($this->get_user());
-        foreach ($this->lst() as $val) {
-            $val->load_phrases($msg);
-            foreach ($val->grp()->phrase_list()->lst() as $phr) {
-                $all_phr->add($phr, true);
-            }
-        }
+        $all_phr = $this->set_phrases($this->lst(), $msg, true);
         // the from and to of the triples of all values with one read, e.g. to head a column by one part
         $all_phr->load_triple_sides($msg);
+    }
+
+    /**
+     * the api message of the list with the phrases of all entries loaded upfront with one query,
+     * so that the api message of a single value never loads its phrases on its own
+     *
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        // the same condition as in sandbox_value::api_json_array, which loads the phrases of one value
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names() or $typ_lst->incl_related()) {
+            $all_phr = $this->set_phrases($this->lst(), $msg, false);
+            $all_phr->load_triple_sides($msg);
+        }
+        return parent::api_json_array($typ_lst, $msg, $usr);
+    }
+
+    /**
+     * set the phrases of the groups of the given values or results with one query for the names
+     * of all phrases, because a query per value makes the load of a long list slow
+     *
+     * @param array $val_lst the values or results whose groups should get their phrases
+     * @param user_message $msg to collect the loading problems
+     * @param bool $reload true to reload also a group whose phrases are already loaded
+     * @return phrase_list the phrases that have been set
+     */
+    protected function set_phrases(array $val_lst, user_message $msg, bool $reload): phrase_list
+    {
+        $grp_id = new group_id();
+        $grp_lst = [];
+        $ids = [];
+        foreach ($val_lst as $val) {
+            foreach ($this->groups_of($val) as $grp) {
+                if ($grp != null and $grp->is_id_set()) {
+                    if ($reload or !$grp->phrase_list()->loaded()) {
+                        $grp_ids = $grp_id->get_array($grp->id());
+                        $grp_lst[] = [$grp, $grp_ids];
+                        $ids = array_merge($ids, $grp_ids);
+                    }
+                }
+            }
+        }
+        $all_phr = new phrase_list($this->get_user());
+        $ids = array_values(array_unique($ids));
+        if ($ids != []) {
+            $all_phr->load_names_by_ids(new phr_ids($ids), $msg);
+        }
+        foreach ($grp_lst as [$grp, $grp_ids]) {
+            $phr_lst = $all_phr->filter_by_ids(new phr_ids($grp_ids));
+            if ($phr_lst->is_empty()) {
+                // a number without phrases can never be shown, so report it like the single load
+                log_warning('Missing phrases for the group id ' . $grp->dsp_id(), $this::class . '->set_phrases');
+            } else {
+                $grp->set_phrase_list($phr_lst);
+            }
+        }
+        return $all_phr;
+    }
+
+    /**
+     * @param value_base|result $val a value or result of the list
+     * @return array the groups of the entry whose phrases are loaded with the list
+     */
+    protected function groups_of(value_base|result $val): array
+    {
+        return [$val->grp()];
     }
 
 

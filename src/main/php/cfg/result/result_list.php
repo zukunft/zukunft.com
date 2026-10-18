@@ -52,7 +52,6 @@ include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_IMPORT . 'import.php';
-include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -93,7 +92,6 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value_list;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
@@ -279,7 +277,7 @@ class result_list extends sandbox_value_list
                 }
                 // the phrases of all results with one query instead of some queries per result,
                 // set before the results are added, because the phrases may complete the group id
-                $this->set_phrases($mapped, $msg);
+                $this->set_phrases($mapped, $msg, true);
                 foreach ($mapped as $res) {
                     $this->add_obj($res);
                     $result = true;
@@ -290,56 +288,12 @@ class result_list extends sandbox_value_list
     }
 
     /**
-     * set the result and the source phrases of all results in the list and the from and to of
-     * their triples, each with one query for the whole list
-     *
-     * @param user_message $msg to collect the loading problems
-     * @return void
+     * @param value_base|result $val a result of the list
+     * @return array the result and the source group, whose phrases are loaded with the list
      */
-    function load_phrases(user_message $msg): void
+    protected function groups_of(value_base|result $val): array
     {
-        $all_phr = $this->set_phrases($this->lst(), $msg);
-        // the from and to of the triples of all results with one read, e.g. to head a column by one part
-        $all_phr->load_triple_sides($msg);
-    }
-
-    /**
-     * set the result and the source phrases of the given results with one query for the names
-     * of all phrases, because a query per result makes the load of a long list slow
-     *
-     * @param result[] $res_lst the results whose groups should get their phrases
-     * @param user_message $msg to collect the loading problems
-     * @return phrase_list all phrases of the given results
-     */
-    private function set_phrases(array $res_lst, user_message $msg): phrase_list
-    {
-        $grp_id = new group_id();
-        $grp_lst = [];
-        $ids = [];
-        foreach ($res_lst as $res) {
-            foreach ([$res->grp(), $res->src_grp] as $grp) {
-                if ($grp != null and $grp->is_id_set()) {
-                    $grp_ids = $grp_id->get_array($grp->id());
-                    $grp_lst[] = [$grp, $grp_ids];
-                    $ids = array_merge($ids, $grp_ids);
-                }
-            }
-        }
-        $all_phr = new phrase_list($this->get_user());
-        $ids = array_values(array_unique($ids));
-        if ($ids != []) {
-            $all_phr->load_names_by_ids(new phr_ids($ids), $msg);
-        }
-        foreach ($grp_lst as [$grp, $grp_ids]) {
-            $phr_lst = $all_phr->filter_by_ids(new phr_ids($grp_ids));
-            if ($phr_lst->is_empty()) {
-                // a result without phrases can never be shown, so report it like the single result load
-                log_warning('Missing phrases for the calculated value (group id ' . $grp->dsp_id() . ')', 'result_list->set_phrases');
-            } else {
-                $grp->set_phrase_list($phr_lst);
-            }
-        }
-        return $all_phr;
+        return [$val->grp(), $val->src_grp];
     }
 
     /**

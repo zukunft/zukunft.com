@@ -306,42 +306,6 @@ add CBAM calculation, portfolio split and company sheet use cases and pin them o
 
 ## speed up
 
-### speed up part 2
-
-Serializing a value list to the api json is slow because each value loads its phrases on its own.
-Evidence: "value_default: db_read 0.54 sec but map_json 3.1 sec" and "result_default:
-map_json 13.9 sec" in the system_views_read_tests log — the time is spent in api_json_array(),
-not in one big query.
-
-Causes:
-a) src/main/php/cfg/sandbox/sandbox_value.php, sandbox_value::api_json_array() (around line 1649):
-when INCL_PHRASES / INCL_RELATED is set and the group phrase list is not loaded(), it calls
-grp()->load_phrase_names() and phrase_list()->load_triple_sides() — per value, i.e. 2+
-queries per list entry inside the serialization.
-b) src/main/php/cfg/sandbox/sandbox_value_list.php, sandbox_value_list::load_phrases()
-(around line 626): loops $val->load_phrases() -> value_base::load_grp_by_id() ->
-group::load_by_id() + group::load_phrase_names(), again 2-3 queries per value. It is used by
-value_list::load_names_related(), which value::load_values_similar() calls.
-
-Task:
-1. Rewrite sandbox_value_list::load_phrases() so it does ONE phrase_list::load_names_by_ids()
-   for the union of all phrase ids of all groups of the list (decoded with
-   group_id::get_array()), then ONE load_triple_sides(), and assigns the matching phrases to
-   each value's group via set_phrase_list(). No per-value group::load_by_id() — a group row
-   is only needed when a user has named the group, and the group name is not part of the
-   value api message.
-2. In sandbox_value_list::api_json_array() (or the value_list/result_list overrides), call the
-   batched load_phrases() once up front when the api type list includes phrases, so that the
-   per-value fallback in sandbox_value::api_json_array() is never hit for a list. Keep that
-   fallback for a single value.
-3. Make sure value::load_values_similar(), result::load_values_used(),
-   result::load_results_used() and the api/value and api/result list endpoints use the batched
-   path.
-4. Run the unit tests and unit_read tests; the json fixtures in src/test/resources and the
-   view html snapshots must stay identical.
-
-Coding style: single-exit functions (one return $result at the end), one logic step per line.
-
 ### speed up part 3
 
 The second result_default view test took 38 seconds (first one 10.9 s), with

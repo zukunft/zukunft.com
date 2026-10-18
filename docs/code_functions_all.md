@@ -3065,7 +3065,7 @@
     \-- save - section for function save is expected to be save in /result/result_list.php
     \-- merge - section for function merge not yet defined that it should be get the result that needs to be recalculate
             d if one formula has been updated in /result/result_list.php
-    \-- order error - order of section load has difference at load_phrases should be before load
+    \-- order error - order of section load has difference at load_sql_by_ids should be before load
 \-- sandbox
     \-- row_mapper_usr - section for function row_mapper_usr not yet defined that it should be construct and map in /san
             dbox/sandbox.php
@@ -3748,6 +3748,7 @@
     \-- load_sql_init - section for function load_sql_init is expected to be load sql in /sandbox/sandbox_value_list.php
     \-- get_by_names_and_context - section for function get_by_names_and_context is expected to be set and get in /sandb
             ox/sandbox_value_list.php
+    \-- api_json_array - section for function api_json_array is expected to be api in /sandbox/sandbox_value_list.php
     \-- id_lst - section for function id_lst not yet defined that it should be info in /sandbox/sandbox_value_list.php
     \-- add_by_group - section for function add_by_group not yet defined that it should be modify in /sandbox/sandbox_va
             lue_list.php
@@ -4563,7 +4564,7 @@
         \-- sandbox_value_list - get the first value or result of the list that is related to all given phrase names
     \-- load_phrases
         \-- figure_list - set the SQL query parameters to load a list of figure objects
-        \-- sandbox_value_list - set the word objects for all values or results in the list if needed
+        \-- sandbox_value_list - set the phrases of all values or results in the list and the from and to of their
     \-- load_by_frm_id
         \-- formula_link_list - load a list of formula links with the direct linked phrases related to the given formula
                  id
@@ -4700,6 +4701,9 @@
                 y parameters
     \-- load_user_changes
         \-- sandbox_list - load the changes that the given user has done compared to the standard
+    \-- api_json_array
+        \-- sandbox_value_list - the api message of the list with the phrases of all entries loaded upfront with one que
+                ry,
     \-- load_by_id
         \-- ip_range - load an ip range from the database selected by id
     \-- load_by_ip_addresses
