@@ -739,7 +739,8 @@ class frontend
                 log_debug('type cache set from the api message', url_var::DEBUG_LEVEL_MAIN_STEP);
             }
         }
-        $sys->times->switch(system_time_type::DEFAULT);
+        // continue with the section of the caller e.g. url to html
+        $sys->times->switch();
         return $msg_ui->is_ok();
     }
 
@@ -1000,6 +1001,35 @@ class frontend
         user_message_ui $msg_ui,
         data_object     $dto = new data_object(),
         bool            $test_mode = false
+    ): string
+    {
+        global $sys;
+        global $ui_sys;
+
+        // every caller gets the render time as url to html and the wait for the backend as api wait,
+        // and the section of the caller continues after the page is created
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $wait_start = $ui_sys?->api_wait ?? 0;
+        $result = $this->render_url($url_array, $msg_ui, $dto, $test_mode);
+        $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
+        $sys->times->switch();
+        return $result;
+    }
+
+    /**
+     * the html code of the given url without the time measurement (see url_to_html)
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user
+     * @param data_object $dto the frontend cache used to reduce the backend loading
+     * @param bool $test_mode true to render a reproducible page without backend calls
+     * @return string the html code to show the page to the user
+     */
+    private function render_url(
+        array           $url_array,
+        user_message_ui $msg_ui,
+        data_object     $dto,
+        bool            $test_mode
     ): string
     {
         // the requesting user of this request; null renders the page for an anonymous user
@@ -1804,21 +1834,15 @@ class frontend
     ): string
     {
         global $sys;
-        global $ui_sys;
 
         // measure the action and the rendering separately, so a slow request shows which of the two
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
         // own switch() restores this section
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->msg, $req->dto, $req->do_it);
-        $sys->times->switch(system_time_type::URL_TO_HTML);
-        $wait_start = $ui_sys?->api_wait ?? 0;
-        $result = $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
-        // the wait for the backend is part of the rendering, but not frontend work
-        $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
-        // return to the default section for whatever the caller does next
-        $sys->times->switch(system_time_type::DEFAULT);
-        return $result;
+        $sys->times->switch();
+        // url_to_html counts the rendering and the api wait itself
+        return $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
     }
 
     function show_view(int $id, user_message_ui $msg_ui): string

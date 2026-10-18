@@ -1545,7 +1545,8 @@ class user extends db_id_object_non_sandbox
         $sys->msk_cac = new view_sys_list($this);
         $sys->msk_cac->load($db_con, $msg);
 
-        $sys->times->switch(system_time_type::DEFAULT);
+        // continue with the section of the caller
+        $sys->times->switch();
     }
 
     function has_any_user_this_profile(string $profile_code_id, user_message $msg): bool

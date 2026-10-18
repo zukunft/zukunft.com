@@ -78,7 +78,6 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -290,8 +289,7 @@ class test_api extends test_base
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data_string = json_encode($data);
-        $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::PUT, $url . '/', $data), true);
+        $actual = json_decode($this->api_call_timed(rest_ctrl::PUT, $url . '/', $data), true);
         $actual_text = json_encode($actual);
         $expected_raw_text = $this->file('api/' . $class . '/' . $class . '_put_response.json');
         $expected = json_decode($expected_raw_text, true);
@@ -346,8 +344,7 @@ class test_api extends test_base
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array("id" => $id);
-        $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::DELETE, $url, $data), true);
+        $actual = json_decode($this->api_call_timed(rest_ctrl::DELETE, $url, $data), true);
         if ($actual == null) {
             return false;
         } else {
@@ -468,7 +465,6 @@ class test_api extends test_base
     {
         // naming exception (to be removed?)
         $lib = new library();
-        $ctrl = new rest_call();
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         if ($levels > 0) {
@@ -483,7 +479,7 @@ class test_api extends test_base
         }
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
-            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+            $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         }
         // TODO simulate other users
         if ($class == user::class) {
@@ -514,7 +510,7 @@ class test_api extends test_base
                 return true;
             }
         } else {
-            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+            $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         }
         if ($actual == null) {
             log_err('GET api call for ' . $class_api . ' returned an empty result');
@@ -576,8 +572,7 @@ class test_api extends test_base
                 return true;
             }
         } else {
-            $ctrl = new rest_call();
-            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+            $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         }
         return $this->assert_api_compare($class, $actual, null, $filename);
     }
@@ -602,12 +597,11 @@ class test_api extends test_base
     {
         $url = $this->class_to_url(user::class);
         $data = array($field => $value);
-        $ctrl = new rest_call();
 
         // the anonymous call of the own pod gets the core data for the user page title
         // but never the personal fields like the email
         // the response comes from a real http REST call, so a REST timeout is used to avoid a false timeout
-        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $response = $this->api_call_timed(rest_ctrl::GET, $url, $data);
         $test_name = 'anonymous own pod api/user by ' . $field . ' returns the user name';
         $core = $this->assert_text_contains($test_name, $response, $name, self::TIMEOUT_LIMIT_REST);
         $test_name = 'anonymous own pod api/user by ' . $field . ' does not leak the email';
@@ -615,7 +609,7 @@ class test_api extends test_base
 
         // the same call of a user that does not match the session user and does not come
         // from the own pod (marked by the forward header) is rejected with 'not permitted'
-        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data, [self::HEADER_FORWARDED]);
+        $response = $this->api_call_timed(rest_ctrl::GET, $url, $data, [self::HEADER_FORWARDED]);
         $test_name = 'external anonymous api/user by ' . $field . ' is rejected with not permitted';
         $rejected = $this->assert_text_contains($test_name, $response, self::USER_NOT_PERMITTED_MSG, self::TIMEOUT_LIMIT_REST);
         $test_name = 'external anonymous api/user by ' . $field . ' does not leak the user name';
@@ -640,20 +634,19 @@ class test_api extends test_base
     {
         global $mtr;
         $url = $this->class_to_url(sys_log_list::class);
-        $ctrl = new rest_call();
         $only_admin = $mtr->txt(msg_id::SYS_LOG_LIST_ONLY_ADMIN);
 
         // the answer is the log list in the body of the api message header (see controller::check_api_msg)
         // or only the message why the log is not sent
         $data = [url_var::USER => users::SYSTEM_TEST_ADMIN_ID, url_var::LOG_SIZE => 1];
-        $answer = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true) ?? [];
+        $answer = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true) ?? [];
         $test_name = 'the own frontend gets the system log for an admin';
         $adm_body = $this->assert_true($test_name, array_key_exists(json_fields::BODY, $answer));
         $test_name = '... without the reason why only an admin can see it';
         $adm_no_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', '');
 
         $data = [url_var::USER => users::SYSTEM_TEST_NORMAL_ID, url_var::LOG_SIZE => 1];
-        $answer = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true) ?? [];
+        $answer = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true) ?? [];
         $test_name = 'the own frontend gets for a normal user only the reason why only an admin can see the system log';
         $usr_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', $only_admin);
         $test_name = '... and no system log entry';
@@ -742,8 +735,7 @@ class test_api extends test_base
             $data = array($id_fld => $ids);
         }
         $data = array_merge($data, $url_par);
-        $ctrl = new rest_call();
-        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $response = $this->api_call_timed(rest_ctrl::GET, $url, $data);
         $actual = json_decode($response, true);
         // the local deployment must be updated by an external script before the
         // api tests run; if it is unreachable or returns an http error the

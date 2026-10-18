@@ -362,7 +362,18 @@ Task:
 5. The result list answer of the start page is 1.6 MB for 289 results, because every result
    repeats the description of each of its phrases; check what the start page needs.
 6. The api wait of the first page and of the confirm steps of the write workflows drops to
-   the level of the read-only workflows.
+   the level of the read-only workflows. The first page of the view, component and ref write
+   workflows waits 0.9 to 1.0 s like the read-only ones; the first page after a word, triple,
+   formula, source or value write still waits 5.4 to 6.4 s (add_view 2.2 s after the source
+   writes), and every confirm step 0.85 to 1.4 s.
+7. not_specified is 298 s of the 757 s run. url_to_html() counts its rendering as url to html
+   and its api wait itself, so every direct render of a test is measured (e.g. "search words
+   by pattern via url" 7.4 s, "a url without a view ... shows the start view" 3.8 s); the
+   sections of frontend::load_cache(), config::load() and user::load_usr_data() return to the
+   section of the caller; the http requests of the tests count as localhost view or api wait;
+   the import work is counted as import (about half of the 170 s seed import). Then check the
+   next timing report for the remaining not_specified, e.g. the html unit ui tests that render
+   without url_to_html (start page selections 30 s, admin dashboard 13 s, see step 7).
 
 ### 2. frontend work of the start page
 

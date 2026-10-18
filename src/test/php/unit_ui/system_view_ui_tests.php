@@ -134,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -176,6 +177,7 @@ class system_view_ui_tests
     function run(test_cleanup $t): void
     {
         global $mtr;
+        global $sys;
 
         // init
         $lib = new library();
@@ -291,6 +293,16 @@ class system_view_ui_tests
         $t->assert($test_name,
             $ui->url_to_html([], new user_message(), $ui->dto, true),
             $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true));
+        // the render of a page is counted as url to html and then the section of the caller continues,
+        // so that the time of a test that renders a page is not reported as not specified
+        $test_name = 'a page render is counted as url to html';
+        $sys->times->reset_section();
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $ui->url_to_html([url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::URL_TO_HTML);
+        $test_name = '... and then returns to the time section around it';
+        $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
+        $sys->times->switch();
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
         // forged login/signup/import submit is rejected as well (see frontend::request_token_valid)

@@ -37,3 +37,4 @@ system_time_type_id, type_name, code_id, description
 36, 'db map', 'db_map', 'the time used to map the database rows to the objects'
 37, 'load view', 'load_view', 'the time used to load the components of a view'
 38, 'ui map', 'ui_map', 'the time used to map an api message to the frontend objects'
+39, 'import', 'import', 'the time used by an import without its database steps e.g. for the json decoding and the object checks'

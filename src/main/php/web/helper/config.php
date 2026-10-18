@@ -161,7 +161,8 @@ class config extends value_list
                 $msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
             }
         }
-        $sys->times->switch(system_time_type::DEFAULT);
+        // continue with the section of the caller
+        $sys->times->switch();
         return $msg;
     }
 

@@ -1191,8 +1191,7 @@ class test_base
         $test_name = $lib->class_to_name($test_name);
         $url = THIS_URL . url_var::API_PATH . 'json';
         $data = array($fld => $id);
-        $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         // TODO remove next line (added for faster debugging only)
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
@@ -1452,6 +1451,7 @@ class test_base
             // a new context for each view, because the rendering fills e.g. the phrases of the page into it
             $cfg = new data_object_ui();
             $cfg->typ_lst_cache = $this->typ_lst_cache_ui;
+            $sys->times->switch();
         }
         if ($cfg->usr->id() == 0) {
             $map_ui = new MapObject();
@@ -1463,8 +1463,8 @@ class test_base
         $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
         // the wait for the backend is part of the rendering, but not frontend work
         $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
-        // return to the default section for the following tests
-        $sys->times->switch(system_time_type::DEFAULT);
+        // continue with the section of the caller for the following tests
+        $sys->times->switch();
 
         // check if the created view matches the expected view; the page title is the one the
         // live page shows (see frontend::url_to_html), the object name and the view name
@@ -5725,14 +5725,19 @@ class test_base
 
     function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_SEMI): bool
     {
+        global $sys;
+
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
+            // the wait for the page of the local pod
+            $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
             try {
                 $result = file_get_contents(THIS_URL . $url_path);
             } catch (Exception $e) {
                 $result = false;
                 $msg_net_off .= ': ' . $e->getMessage();
             }
+            $sys->times->switch();
             if ($result === false) {
                 $this->dsp_warning($msg_net_off);
                 $is_connected = false;
@@ -5902,6 +5907,26 @@ class test_base
     }
 
     /**
+     * call the api of the local pod with the wait for the answer counted as api wait
+     *
+     * @param string $method the http method e.g. rest_ctrl::GET
+     * @param string $url the url of the api
+     * @param array $data the parameters of the call
+     * @param array $extra_headers e.g. a forwarded header
+     * @return string the answer of the api
+     */
+    function api_call_timed(string $method, string $url, array $data, array $extra_headers = []): string
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::API_WAIT);
+        $ctrl = new rest_call();
+        $result = $ctrl->api_call($method, $url, $data, $extra_headers);
+        $sys->times->switch();
+        return $result;
+    }
+
+    /**
      * request one page of this pod and keep the session cookie for the next request
      *
      * @param string $url the complete url of the requested page
@@ -5912,6 +5937,10 @@ class test_base
      */
     private function web_page_curl(string $url, string $cookie_file, array $post_form = [], int $timeout = self::TIMEOUT_LIMIT_LONG): string
     {
+        global $sys;
+
+        // the wait for the page of the local pod
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie_file);
@@ -5927,6 +5956,7 @@ class test_base
             $page = '';
         }
         curl_close($curl);
+        $sys->times->switch();
         return $page;
     }
 

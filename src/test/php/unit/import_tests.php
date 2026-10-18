@@ -47,6 +47,7 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CONST . 'files.php';
@@ -70,6 +71,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -85,6 +87,8 @@ class import_tests
 {
     function run(test_cleanup $t): void
     {
+        global $sys;
+
         $sc = new sql_creator();
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
         // use the dev user, because the import files set code ids (e.g. of the sources) and
@@ -116,6 +120,17 @@ class import_tests
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->word_list()->count(), 4);
+
+        // the import work is counted as import and then the section of the caller continues,
+        // so that e.g. the seed import of the database recreation is not reported as not specified
+        $test_name = 'the creation of an import data object is counted as import';
+        $sys->times->reset_section();
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::IMPORT);
+        $test_name = '... and then returns to the time section around it';
+        $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
+        $sys->times->switch();
 
         // beside the "words" with the parameters a file can name the words in a "word-list",
         // which is the compact format that convert_wikipedia_table creates for the countries
