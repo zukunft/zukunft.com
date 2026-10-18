@@ -595,31 +595,6 @@ class sandbox_value_list extends sandbox_list
     }
 
     /**
-     * get the first value or result of the list that is related to all given phrase names
-     * and where all its phrases are within the given context
-     * e.g. to select the number that a formula uses to calculate a result
-     *
-     * several names select one entry, because an operand of a formula can be a group of
-     * phrases e.g. "potential","loss","trillion","EUR" names the potential loss in trillion EUR
-     *
-     * @param array $phr_names the names of the phrases that select the number e.g. "price"
-     * @param array $ctx_names the phrase names that limit the selection e.g. "apple" and "CHF"
-     * @return sandbox_value|null the first matching number or null if none matches
-     */
-    function get_by_names_and_context(array $phr_names, array $ctx_names): ?sandbox_value
-    {
-        $result = null;
-        foreach ($this->lst() as $val) {
-            if ($result == null) {
-                if ($val->match_all($phr_names) and $val->matches_context($ctx_names)) {
-                    $result = $val;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * set the phrases of all values or results in the list and the from and to of their
      * triples, each with one query for the whole list;
      * not included in load, because sometimes loading of the phrases is not needed

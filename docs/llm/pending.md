@@ -410,10 +410,22 @@ a second time ("in switch from previous test ... took 11.7 seconds").
 
 Task:
 1. Measure with the time sections which part of one import level takes the time (sql_create,
-   db_read for the existence check, db_write, the change log).
+   db_read for the existence check, db_write, the change log). The import work itself is about
+   half of the import time (import 5.9 s of 11.3 s for system_views.json, the rest db read,
+   write, sql create and db map). The biggest parts:
+   - the check of the pre-calculated results (data_object::validate_results) searched each
+     operand in all numbers of the file and created the phrase names of each number again for
+     each search (1.2 million name lists for problem_global_warming.json); the names of each
+     number are now created once, so the analysis of that file takes 3.8 s instead of 9.0 s
+     with the same validation result (about 10 s less for all problem files)
+   - the component links of system_views.json are saved one by one after the views
+     (view_list::save, about 7.4 s, shown in the progress as "check 175 views", because the
+     link save reports no step of its own)
 2. Insert the new rows of one import level with one statement per table and level instead of
-   one per row, with the change log rows in the same way.
-3. Check if the db write view test needs the second import of system_views.json.
+   one per row, with the change log rows in the same way; start with the component links of
+   the views (a list save for component_link_list like save_block_wise of the named lists).
+3. Check if the db write view test needs the second import of system_views.json (11.8 s); the
+   test asserts nothing about it, but a write test before may change a seed view.
 
 ### 4. word url tests run twice
 

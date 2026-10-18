@@ -1242,15 +1242,6 @@ class sandbox_value extends sandbox_multi
         return $result;
     }
 
-    /**
-     * @param array $names list of phrase names e.g. the context phrases of a result validation
-     * @return bool true if all phrases of this value are part of the given phrase names
-     */
-    function matches_context(array $names): bool
-    {
-        return empty(array_diff($this->grp()->phrase_list()->names(), $names));
-    }
-
 
     /*
      * info

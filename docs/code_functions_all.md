@@ -3696,8 +3696,6 @@
             value.php
     \-- match_all - section for function match_all not yet defined that it should be select in /sandbox/sandbox_value.ph
             p
-    \-- matches_context - section for function matches_context not yet defined that it should be select in /sandbox/sand
-            box_value.php
     \-- delta - section for function delta is expected to be del in /sandbox/sandbox_value.php
     \-- id_fvt_lst - section for function id_fvt_lst not yet defined that it should be info in /sandbox/sandbox_value.ph
             p
@@ -3748,8 +3746,6 @@
     \-- load_sql_by_phr_lst_single - section for function load_sql_by_phr_lst_single is expected to be load sql in /sand
             box/sandbox_value_list.php
     \-- load_sql_init - section for function load_sql_init is expected to be load sql in /sandbox/sandbox_value_list.php
-    \-- get_by_names_and_context - section for function get_by_names_and_context is expected to be set and get in /sandb
-            ox/sandbox_value_list.php
     \-- api_json_array - section for function api_json_array is expected to be api in /sandbox/sandbox_value_list.php
     \-- id_lst - section for function id_lst not yet defined that it should be info in /sandbox/sandbox_value_list.php
     \-- add_by_group - section for function add_by_group not yet defined that it should be modify in /sandbox/sandbox_va
@@ -4515,6 +4511,7 @@
         \-- figure_list - create an SQL statement to retrieve a list of phrase objects by the id from the database
     \-- 4
         \-- db_cache - create an SQL statement to retrieve a batch db_cache by id from the database
+        \-- sandbox_value_list - set the SQL query parameters to load a list of values or results
     \-- 1
         \-- db_object - parent function to create the common part of an SQL statement for group, value and result tables
         \-- db_object_key - parent function to create the common part of an SQL statement for group,
@@ -4561,15 +4558,14 @@
     \-- get_by_link_id
         \-- element_list - set the SQL query parameters to load a list of formula elements by the formula id and filter 
                 by the element type
-    \-- 5
-        \-- group_list - set the SQL query parameters to load a list of phrase groups names by the ids
-        \-- sandbox_value_list - get the first value or result of the list that is related to all given phrase names
     \-- load_phrases
         \-- figure_list - set the SQL query parameters to load a list of figure objects
         \-- sandbox_value_list - set the phrases of all values or results in the list and the from and to of their
     \-- load_by_frm_id
         \-- formula_link_list - load a list of formula links with the direct linked phrases related to the given formula
                  id
+    \-- 5
+        \-- group_list - set the SQL query parameters to load a list of phrase groups names by the ids
     \-- load_sql_by_ids
         \-- formula_link_list - set the SQL query parameters to load a list of formula links by the formula link ids
         \-- group_list - set the SQL query parameters to load a list of phrase groups by the ids

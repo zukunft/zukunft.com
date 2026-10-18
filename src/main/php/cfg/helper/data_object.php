@@ -61,6 +61,7 @@ include_once paths::MODEL_REF . 'source_list.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 //include_once paths::MODEL_SYSTEM . 'ip_range.php';
 //include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
 //include_once paths::MODEL_USER . 'user_list.php';
@@ -116,6 +117,7 @@ use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
@@ -1324,17 +1326,20 @@ class data_object
     function validate_results(user_message $msg): int
     {
         $failures = 0;
+        // the phrase names of each number are created once, because each operand of each result
+        // is searched in all numbers of the file
+        $val_names = $this->numbers_with_name_sets($this->value_list()->lst());
         // a result that has been reproduced can be the operand of a later result, so that a
         // chain like "target value, then its probability range" is checked step by step; only a
         // reproduced result is an operand, else a wrong number would confirm the next one
-        $checked = new result_list($this->usr);
+        $checked = [];
         foreach ($this->res_chk_lst->lst() as $res_chk) {
             $usr_msg = new user_message(); // a per item buffer to count the failures, merged below
-            $this->validate_result($res_chk, $checked, $usr_msg);
+            $this->validate_result($res_chk, $val_names, $checked, $usr_msg);
             if (!$usr_msg->is_ok()) {
                 $failures++;
             } else {
-                $checked->add_result_direct($res_chk);
+                $checked = array_merge($checked, $this->numbers_with_name_sets([$res_chk]));
             }
             $msg->merge($usr_msg);
         }
@@ -1346,11 +1351,12 @@ class data_object
      * based on the values and formulas of this data object
      *
      * @param result $res_chk the imported result with the expected number
-     * @param result_list $checked the results of this file that have already been reproduced
+     * @param array $val_names the values of this file with their phrase names (see numbers_with_name_sets)
+     * @param array $checked the results of this file that have already been reproduced with their phrase names
      * @param user_message $msg to collect the problems that the user should fix in the import file
      * @return void
      */
-    private function validate_result(result $res_chk, result_list $checked, user_message $msg): void
+    private function validate_result(result $res_chk, array $val_names, array $checked, user_message $msg): void
     {
         // use the formula of this data object because the result may only know the formula name
         $frm = null;
@@ -1367,7 +1373,7 @@ class data_object
             // select the values by the context phrases e.g. "apple", "price", "quantity" and "CHF"
             $ctx_names = $res_chk->src_grp?->phrase_list()->names() ?? $res_chk->grp()->phrase_list()->names();
             // replace the phrase names in the source part of the expression with the imported values
-            $r_part = $this->expression_with_values($frm, $checked, $ctx_names, $res_name, $msg);
+            $r_part = $this->expression_with_values($frm, $val_names, $checked, $ctx_names, $res_name, $msg);
             // calculate and compare the result if all values have been found
             if ($msg->is_ok()) {
                 $calc = new calc_internal();
@@ -1398,7 +1404,8 @@ class data_object
      * used if the file states no value for the operand
      *
      * @param formula $frm the formula whose expression should be filled with the numbers
-     * @param result_list $checked the results of this file that have already been reproduced
+     * @param array $val_names the values of this file with their phrase names (see numbers_with_name_sets)
+     * @param array $checked the results of this file that have already been reproduced with their phrase names
      * @param array $ctx_names the phrase names that limit the value selection
      * @param string $res_name the name of the checked result to report a missing value
      * @param user_message $msg to collect the values that the import file does not contain
@@ -1406,7 +1413,8 @@ class data_object
      */
     private function expression_with_values(
         formula      $frm,
-        result_list  $checked,
+        array        $val_names,
+        array        $checked,
         array        $ctx_names,
         string       $res_name,
         user_message $msg
@@ -1415,6 +1423,7 @@ class data_object
         $lib = new library();
         $result = $lib->str_right_of($frm->usr_text, chars::CHAR_CALC);
         $exp_part_lst = explode(chars::TERM_DELIMITER, $result);
+        $ctx_set = array_flip($ctx_names);
         // the phrase names are the odd entries between the term delimiters
         $i = 1;
         while ($i < count($exp_part_lst)) {
@@ -1425,9 +1434,9 @@ class data_object
                 $i = $i + 2;
                 $phr_names[] = $exp_part_lst[$i];
             }
-            $val = $this->value_list()->get_by_names_and_context($phr_names, $ctx_names);
+            $val = $this->number_by_names($val_names, $phr_names, $ctx_set);
             if ($val == null) {
-                $val = $checked->get_by_names_and_context($phr_names, $ctx_names);
+                $val = $this->number_by_names($checked, $phr_names, $ctx_set);
             }
             if ($val == null) {
                 $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
@@ -1443,6 +1452,45 @@ class data_object
                     $val->number(), $result);
             }
             $i = $i + 2;
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $numbers the values or results e.g. of an import file
+     * @return array per number the number and its phrase names as the keys of a set
+     */
+    private function numbers_with_name_sets(array $numbers): array
+    {
+        $result = [];
+        foreach ($numbers as $num) {
+            $result[] = [$num, array_flip($num->grp()->phrase_list()->names())];
+        }
+        return $result;
+    }
+
+    /**
+     * the first number that is related to all given phrase names and whose phrases are all
+     * within the context e.g. the number that a formula uses to calculate a result
+     *
+     * several names select one number, because an operand of a formula can be a group of
+     * phrases e.g. "potential","loss","trillion","EUR" names the potential loss in trillion EUR
+     *
+     * @param array $numbers the numbers with their phrase names (see numbers_with_name_sets)
+     * @param array $phr_names the names of the phrases that select the number e.g. "price"
+     * @param array $ctx_set the phrase names that limit the selection as the keys of a set e.g. "apple" and "CHF"
+     * @return sandbox_value|null the first matching number or null if none matches
+     */
+    private function number_by_names(array $numbers, array $phr_names, array $ctx_set): ?sandbox_value
+    {
+        $result = null;
+        $phr_set = array_flip($phr_names);
+        foreach ($numbers as [$num, $names]) {
+            if ($result == null
+                and array_diff_key($phr_set, $names) == []
+                and array_diff_key($names, $ctx_set) == []) {
+                $result = $num;
+            }
         }
         return $result;
     }
