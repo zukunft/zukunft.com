@@ -129,6 +129,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -215,6 +216,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Exception;
 
 class sandbox_multi extends db_object_multi_user
@@ -742,10 +744,13 @@ class sandbox_multi extends db_object_multi_user
     protected function load(sql_par $qp, user_message $msg): int|string
     {
         global $db_con;
+        global $sys;
 
         $db_row = $db_con->get1($qp, $msg);
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $sys->times->switch(system_time_type::DB_MAP);
             $this->row_mapper_sandbox_multi($db_row, $msg, $qp->ext);
+            $sys->times->switch();
             return $this->id;
         } else {
             return 0;

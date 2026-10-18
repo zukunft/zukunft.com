@@ -55,6 +55,9 @@ class system_time_list
 
     // the microtime is in seconds and the system_times table in milliseconds
     const int MILLISECONDS_PER_SECOND = 1000;
+    // the sections that are remembered to return to; a section that is switched to and never
+    // ended e.g. the explicit sections of a test does not let the stack grow without limit
+    const int MAX_SECTION_DEPTH = 64;
 
     /*
      * object vars
@@ -68,7 +71,8 @@ class system_time_list
     private float $start_time = 0;
 
     private string $cur_cat = '';
-    private string $pre_cat = '';
+    // the sections around the current section with the outermost first
+    private array $pre_cats = [];
 
 
     /*
@@ -76,7 +80,9 @@ class system_time_list
      */
 
     /**
-     * start the timing of set the user of the error log
+     * start the timing of a section within the current section or, without a type, end the
+     * current section and continue with the section around it; also a section of the same type
+     * is remembered, so that each end returns to the section that has been counted before its start
      *
      * @param string $typ the category of the following
      * @param bool $do_snap
@@ -84,22 +90,29 @@ class system_time_list
      */
     function switch(string $typ = '', bool $do_snap = false): void
     {
+        // stop current time measurement
+        $this->stop();
         if ($typ == '') {
-            // stop current time measurement
-            $this->stop();
             // continue with previous time measurement
             $this->continue();
         } else {
-            if ($typ != $this->cur_cat) {
-                // stop current time measurement
-                $this->stop();
-                // remember current in stack
-                $this->pre_cat = $this->cur_cat;
-                $this->cur_cat = $typ;
-                // start time counting
-                $this->start($typ);
+            // remember current in stack
+            $this->pre_cats[] = $this->cur_cat;
+            if (count($this->pre_cats) > self::MAX_SECTION_DEPTH) {
+                array_shift($this->pre_cats);
             }
+            $this->cur_cat = $typ;
+            // start time counting
+            $this->start($typ);
         }
+    }
+
+    /**
+     * @return string the category that is counted now or an empty string if none is counted
+     */
+    function current(): string
+    {
+        return $this->cur_cat;
     }
 
     /**
@@ -242,7 +255,7 @@ class system_time_list
     private function continue(): void
     {
         // switch to previous category and continue with time counting
-        $this->cur_cat = $this->pre_cat;
+        $this->cur_cat = array_pop($this->pre_cats) ?? '';
         $this->start($this->cur_cat);
     }
 
@@ -308,6 +321,23 @@ class system_time_list
             $this->section_lst[$key] = $this->section_lst[$key] + $duration;
         } else {
             $this->section_lst[$key] = $duration;
+        }
+    }
+
+    /**
+     * book a part of the time of one category to another category e.g. the api wait that the
+     * frontend has measured within the url to html time
+     *
+     * @param float $duration the seconds to move
+     * @param string $from the category that has counted the time
+     * @param string $to the category that the time belongs to
+     * @return void
+     */
+    function move(float $duration, string $from, string $to): void
+    {
+        if ($duration > 0) {
+            $this->add(-$duration, $from);
+            $this->add($duration, $to);
         }
     }
 

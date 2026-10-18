@@ -249,6 +249,8 @@ class rest_call
      */
     function api_call(string $method, string $url, array $data, array $extra_headers = []): string
     {
+        global $ui_sys;
+
         $curl = curl_init();
         $data_json = json_encode($data);
 
@@ -310,10 +312,12 @@ class rest_call
             return strlen($line);
         });
 
-        // TODO Prio 2 measure the api call time in a frontend owned timing object on $ui_sys, so that
-        //      the api_ctrl section of the time report also covers the wait of the html frontend;
-        //      the backend $sys must not be used here (web/ may declare only $ui_sys and $mtr)
+        // the wait is counted on the frontend cache, because web/ must not use the backend $sys
+        $wait_start = microtime(true);
         $result = curl_exec($curl);
+        if ($ui_sys != null) {
+            $ui_sys->api_wait += microtime(true) - $wait_start;
+        }
 
         // the time shown with this message is the wait for the backend, so that the time of the next
         // message is the work of the frontend after the answer and not the api call

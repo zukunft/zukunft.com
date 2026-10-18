@@ -3043,7 +3043,6 @@ class sql_db
         string $debug_txt = ''
     ): \PgSql\Result|mysqli_result|null
     {
-        global $sys;
         global $debug;
 
         // trace the caller description at its named db level, so '&debug=6' shows all writes and
@@ -3073,7 +3072,6 @@ class sql_db
         } else {
             throw new Exception('Unknown database type "' . $this->db_type . '"');
         }
-        $sys->times->switch();
 
         return $result;
     }

@@ -88,6 +88,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -129,6 +130,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -1371,12 +1373,16 @@ class result extends sandbox_value
      */
     function load_values_used(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $val_lst = new value_list($this->get_user());
         [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
         if (!$phr_lst->empty()) {
             $val_lst->load_by_phr_lst($phr_lst, $msg, $any_phrase, value_list::read_limit());
         }
         $this->values_used = $val_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -1390,6 +1396,9 @@ class result extends sandbox_value
      */
     function load_results_used(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $res_lst = new result_list($this->get_user());
         [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
         if (!$phr_lst->empty()) {
@@ -1397,6 +1406,7 @@ class result extends sandbox_value
             $res_lst->unset_by_id($this->id());
         }
         $this->results_used = $res_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -1410,6 +1420,9 @@ class result extends sandbox_value
      */
     function load_formulas_used(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $frm_lst = new formula_list($this->get_user());
         if ($this->results_used == null) {
             $this->load_results_used($msg);
@@ -1425,6 +1438,7 @@ class result extends sandbox_value
             $frm_lst->load_by_ids($frm_ids, $msg);
         }
         $this->formulas_used = $frm_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -1438,6 +1452,9 @@ class result extends sandbox_value
      */
     function load_expression_parts(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $parts = [];
         [$src_phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
         if (!$any_phrase and $this->formula_id() != 0) {
@@ -1446,6 +1463,7 @@ class result extends sandbox_value
             $parts = $this->expression_parts($exp->r_part($msg), $grp_parts);
         }
         $this->expression_parts = $parts;
+        $sys->times->switch();
     }
 
     /**

@@ -1397,6 +1397,7 @@ class test_base
     ): bool
     {
         global $sys;
+        global $ui_sys;
         $msg = new user_message();
         $msg_ui = new user_message_ui();
         $lib = new library();
@@ -1408,14 +1409,14 @@ class test_base
         $class = $lib->class_to_name($dbo::class);
 
         if ($msk->id() > 0) {
+            $sys->times->switch(system_time_type::LOAD_VIEW);
             $msk->load_components($msg);
+            $sys->times->switch();
         }
 
         // build the api message and the ui objects the frontend would receive;
-        // an interleaved db read still counts as db_read because its own switch()
-        // restores this section, so only the mapping time is measured here. the
-        // sections are left with explicit switch() calls (ending in DEFAULT below)
-        // because a nested db read overwrites the single previous-section slot
+        // an interleaved db read or related load counts in its own section, whose end
+        // returns to this section, so only the mapping time is measured here
         $sys->times->switch(system_time_type::MAP_JSON);
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above;
@@ -1425,12 +1426,14 @@ class test_base
         $dbo_api_msg = $dbo->api_json(
             [api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg, $usr);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
+        $sys->times->switch(system_time_type::UI_MAP);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($with_obj) {
             $dbo_dsp->set_from_json($dbo_api_msg, $msg_ui);
         }
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $msg_ui);
+        $sys->times->switch();
 
         // load the frontend configuration cache if the caller has not provided it
         if ($cfg == null) {
@@ -1446,7 +1449,10 @@ class test_base
         }
         // render in test mode so that the result is reproducible without backend calls
         $sys->times->switch(system_time_type::URL_TO_HTML);
+        $wait_start = $ui_sys?->api_wait ?? 0;
         $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
+        // the wait for the backend is part of the rendering, but not frontend work
+        $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
         // return to the default section for the following tests
         $sys->times->switch(system_time_type::DEFAULT);
 

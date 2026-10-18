@@ -306,6 +306,43 @@ add CBAM calculation, portfolio split and company sheet use cases and pin them o
 
 ## speed up
 
+### speed up part 1
+
+The result list load is slow because of per-row database reads inside the row mapper.
+Evidence: the system_views_read_tests log shows "result_default: sql_create 1.32 sec,
+db_read 6.75 sec, db_map 15.0 sec" — hundreds of tiny statements, not one slow query.
+
+Cause: src/main/php/cfg/result/result.php, result::row_mapper_multi() (around line 296)
+calls $this->load_phrases($msg, true) for every mapped row. With force_reload = true that
+runs load_phr_lst_src() and load_phr_lst(), each doing group::load_by_id() and, because
+most groups have no database row, group::set_phrase_list_by_id() ->
+phrase_list::load_names_by_ids(). That is about 4 SQL round trips per result row.
+
+Task:
+1. Remove the load_phrases() call from result::row_mapper_multi(). The mapper must only
+   set the group ids (grp and src_grp) from the row, like value_base::row_mapper_sandbox_multi()
+   does for values.
+2. Add a batched loader result_list::load_phrases(user_message $msg): collect the phrase ids
+   of all grp() and src_grp() of the list (decode them with group_id::get_array()), load the
+   names of all of them with ONE phrase_list::load_names_by_ids() call, then one
+   phrase_list::load_triple_sides() for the from/to of the triples, and distribute the loaded
+   phrases to the groups of each result via set_phrase_list(). Follow the pattern already
+   sketched in sandbox_value_list::load_phrases() (src/main/php/cfg/sandbox/sandbox_value_list.php).
+3. Find every caller that relied on the phrases being loaded right after a result list load
+   (e.g. result::load_results_used(), value::load_results_related(), the result api endpoints,
+   the formula calculation) and call the new batched load_phrases() there once.
+   result::used_phrase_selection() must keep working for a single result (keep
+   result::load_phrases() for the single-object case, but without force_reload by default).
+4. Run the unit tests and the unit_read tests (src/test/php) and make sure the html
+   snapshots of the result views do not change.
+
+Coding style: single-exit functions (one return $result at the end), one logic step per line,
+no dense one-liners or nested ternaries. Keep PHPDoc comments in the existing style.
+
+### speed up part 1
+
+### speed up general
+
 check if and where the url_to_html function reads from db or calls the api instead of using the given data cache
 
 guess which parts inside the url_to_html execution might take long 
@@ -314,32 +351,48 @@ and create additional system_time_types to be able to identify execution time op
 check why the db_cache is reset during the test run /test/test.php 
 and check if some of the cache resets can be switched off to speed up 
 
-Guess based on this log entries programm parts can be changed to reduce the execution time or suggest additional time categories for better localisation of critical parts: 
+steps based on the timeout log of the system read db view tests, each step one commit with the
+test first, and the developer runs the tests after each step:
 
-068.8832 timeout: system read db-> view entry_view section not_specified: 0.0408 sec, load_frontend: 1.745 sec, db_read: 0.0926 sec, map_json: 0.3017 sec, url to html: 12.8321 sec, test diff: 0 sec, took 15.0123 seconds
-073.2490 timeout: system read db-> view entry_view section not_specified: 0.0078 sec, db_read: 0.0609 sec, map_json: 0.3011 sec, load_frontend: 0.8802 sec, url to html: 3.115 sec, test diff: 0 sec, took 4.3658 seconds
-078.3079 timeout: system read db-> view entry_view section not_specified: 0.0097 sec, db_read: 0.0551 sec, map_json: 0.2922 sec, load_frontend: 0.8647 sec, url to html: 3.8364 sec, test diff: 0 sec, took 5.0589 seconds
-082.6177 timeout: system read db-> view entry_view section not_specified: 0.0084 sec, db_read: 0.0499 sec, map_json: 0.2852 sec, load_frontend: 0.8839 sec, url to html: 3.0818 sec, test diff: 0 sec, took 4.3098 seconds
-086.9242 timeout: system read db-> view entry_view section not_specified: 0.0081 sec, db_read: 0.0539 sec, map_json: 0.2842 sec, load_frontend: 0.8818 sec, url to html: 3.0779 sec, test diff: 0 sec, took 4.3065 seconds
-091.2654 timeout: system read db-> view entry_view section not_specified: 0.0095 sec, db_read: 0.0614 sec, map_json: 0.3339 sec, load_frontend: 0.8685 sec, url to html: 3.067 sec, test diff: 0 sec, took 4.3411 seconds
-095.5964 timeout: system read db-> view entry_view section not_specified: 0.0091 sec, db_read: 0.0523 sec, map_json: 0.2959 sec, load_frontend: 0.8849 sec, url to html: 3.0882 sec, test diff: 0 sec, took 4.3311 seconds
-100.2396 timeout: system read db-> view entry_view section not_specified: 0.0092 sec, db_read: 0.0598 sec, map_json: 0.317 sec, load_frontend: 0.8808 sec, url to html: 3.3756 sec, test diff: 0 sec, took 4.6431 seconds
-102.3304 timeout: system read db-> view word_default section not_specified: 0.9471 sec, db_read: 0.3066 sec, map_json: 0.2051 sec, url to html: 0.3103 sec, test diff: 0 sec, took 1.7748 seconds
-104.7359 timeout: system read db-> view word_add section not_specified: 0.0553 sec, db_read: 0.018 sec, map_json: 0.0482 sec, load_frontend: 0.9045 sec, url to html: 0.3131 sec, test diff: 0 sec, took 1.3394 seconds
-112.3493 timeout: system read db-> view triple_default section not_specified: 0.0102 sec, db_read: 0.5121 sec, map_json: 1.9589 sec, url to html: 0.1635 sec, test diff: 0 sec, took 2.6534 seconds
-113.6377 timeout: system read db-> view triple_add section not_specified: 0.0131 sec, db_read: 0.0013 sec, map_json: 0.0022 sec, load_frontend: 0.8976 sec, url to html: 0.3741 sec, test diff: 0 sec, took 1.2884 seconds
-116.2853 timeout: system read db-> view source_add section not_specified: 0.0107 sec, db_read: 0.005 sec, map_json: 0.0042 sec, load_frontend: 0.9601 sec, url to html: 0.3251 sec, test diff: 0 sec, took 1.3053 seconds
-123.7197 timeout: system read db-> view value_default section not_specified: 0.0169 sec, db_read: 0.6317 sec, map_json: 3.2173 sec, url to html: 0.0718 sec, test diff: 0 sec, took 3.9442 seconds
-127.6917 timeout: system read db-> view value_default section not_specified: 0.0181 sec, db_read: 0.6056 sec, map_json: 3.2606 sec, url to html: 0.0809 sec, test diff: 0 sec, took 3.9719 seconds
-132.3817 timeout: system read db-> view value_default section not_specified: 0.0086 sec, db_read: 0.7395 sec, map_json: 3.8496 sec, url to html: 0.0793 sec, test diff: 0 sec -> measured 4.6769, took 4.69 seconds
-137.0285 timeout: system read db-> view value_default section not_specified: 0.011 sec, db_read: 0.7644 sec, map_json: 3.7962 sec, url to html: 0.0619 sec, test diff: 0 sec -> measured 4.6335, took 4.6468 seconds
-143.9706 timeout: system read db-> view value_overwrite section not_specified: 0.0051 sec, db_read: 0.7271 sec, map_json: 3.7424 sec, url to html: 0.0202 sec, test diff: 0 sec -> measured 4.4948, took 4.5079 seconds
-148.7059 timeout: system read db-> view value_overwrite section not_specified: 0.0077 sec, db_read: 0.7533 sec, map_json: 3.9399 sec, url to html: 0.0207 sec, test diff: 0 sec -> measured 4.7216, took 4.7353 seconds
-153.5003 timeout: system read db-> view value_overwrite section not_specified: 0.0076 sec, db_read: 0.793 sec, map_json: 3.9592 sec, url to html: 0.0205 sec, test diff: 0 sec -> measured 4.7804, took 4.7944 seconds
-155.1563 timeout: system read db-> view formula_add section not_specified: 0.01 sec, db_read: 0.0014 sec, map_json: 0.0019 sec, load_frontend: 0.9623 sec, url to html: 0.3186 sec, test diff: 0 sec, took 1.2942 seconds
-165.9820 timeout: system read db-> view result_default section not_specified: 0.0659 sec, db_read: 1.7268 sec, map_json: 8.313 sec, url to html: 0.0691 sec, test diff: 0 sec -> measured 10.1748, took 10.2075 seconds
-204.9093 timeout: system read db-> view result_default section not_specified: 0.038 sec, db_read: 7.1487 sec, map_json: 31.5163 sec, url to html: 0.0811 sec, test diff: 0 sec -> measured 38.7841 / unmeasured 0.1431, took 38.9273 seconds
-208.2249 timeout: system read db-> view component_add section not_specified: 0.0131 sec, db_read: 0.0042 sec, map_json: 0.0032 sec, load_frontend: 0.9957 sec, url to html: 0.5536 sec, test diff: 0 sec, took 1.57 seconds
+1. time section stack: system_time_list::switch remembers only one previous section (pre_cat),
+   so after a nested section e.g. db_read inside load_related inside map_json the time can be
+   counted in the wrong section; replace pre_cat by a stack, so that switch() without a type
+   returns to the section that was active before; unit test in sys_log_tests with three nested
+   sections and the expected time of each section.
+
+2. new time sections, so that the slow parts can be located:
+   - api_wait: the wait of the html frontend for the backend around curl_exec in
+     web/html/rest_call.php, measured in a frontend owned timing object on $ui_sys (the web part
+     must not use the backend $sys), so that url to html splits into frontend work and api wait
+   - load_related: the related loads of api_json_array e.g. result::load_values_used,
+     load_results_used and load_formulas_used, so that map_json is only the json building
+   - sql_create: the sql building of sql_creator before sql_db::fetch, today counted in the
+     section of the caller
+   - db_map: the row mappers after sql_db::fetch, today counted in the section of the caller
+   - load_view: view::load_components in test_base::assert_view_html, today not_specified
+   - ui_map: the set_from_json of the ui objects in test_base::assert_view_html, so that it is
+     not counted as map_json
+   add the consts to system_time_type and the rows to the system time type list; the developer
+   compares the next timeout log with the one before.
+
+3. frontend cache once per test run: test_base::assert_view_html creates a new frontend and
+   calls load_cache() for every view without a given context, which takes about 0.9 sec per
+   view (load_frontend of the start page and of every add view); keep the loaded type list
+   cache in test_base and reuse it, because it does not change during a test run.
+
+4. related loads of the result page: result_default takes up to 39 sec (map_json 31.5 sec,
+   db_read 7.1 sec); without a source group result::used_phrase_selection falls back to any
+   phrase of the result, so all results with e.g. Switzerland are loaded, and
+   load_results_used has no read limit like load_values_used; use value_list::read_limit()
+   also for the results used, load the phrase names of all groups of the list with one query
+   instead of one per value or result, and check if the any phrase fallback is wanted for a
+   page at all; then check value_default and value_overwrite (map_json up to 4 sec) for the
+   same pattern in the similar values and the results of the value.
+
+5. start page api wait: the eight start page variants take 3 to 4 sec url to html each and the
+   first one 12.8 sec; with api_wait of step 2 check if the time is the backend answer of the
+   table, warm the backend cache with one request before the start page tests, and let the
+   variants that differ only by the url parameters of the display use one cached api answer.
 
 ## clean up
 

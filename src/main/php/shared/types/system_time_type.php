@@ -74,6 +74,18 @@ class system_time_type extends type_object
     const string API_CTRL = "api_ctrl";
     // the total time of one api request, which is written if the request has been slow
     const string API_REQUEST = "api_request";
+    // the wait of the html frontend for the answer of the backend
+    const string API_WAIT = "api_wait";
+    // the loads of the related objects for the api message e.g. the values used by a result
+    const string LOAD_RELATED = "load_related";
+    // the creation of a sql statement from its parts
+    const string SQL_CREATE = "sql_create";
+    // the mapping of the database rows to the objects
+    const string DB_MAP = "db_map";
+    // the load of the components of a view
+    const string LOAD_VIEW = "load_view";
+    // the mapping of an api message to the frontend objects
+    const string UI_MAP = "ui_map";
 
 
     /*

@@ -3866,6 +3866,8 @@
     \-- insert - section for function insert not yet defined that it should be save in /system/system_time.php
 \-- system_time_list
     \-- switch - section for function switch not yet defined that it should be interface in /system/system_time_list.php
+    \-- current - section for function current not yet defined that it should be interface in /system/system_time_list.p
+            hp
     \-- report - section for function report not yet defined that it should be interface in /system/system_time_list.php
     \-- section_report - section for function section_report not yet defined that it should be interface in /system/syst
             em_time_list.php
@@ -4841,6 +4843,8 @@
     \-- add_obj
         \-- sandbox_list - add one object to the list of user sandbox objects,
                  but only if it is not yet part of the list
+    \-- move
+        \-- system_time_list - book a part of the time of one category to another category e.g. the api wait that the
     \-- count_request
         \-- user_log - add one api request to this session, which starts a new session if this row has no id
     \-- add_by_name
@@ -6035,7 +6039,9 @@
         \-- job_db_cleanup implements job_exe - remove the completed jobs whose end time is older than the retention per
                 iod
     \-- switch
-        \-- system_time_list - start the timing of set the user of the error log
+        \-- system_time_list - start the timing of a section within the current section or, without a type, end the
+    \-- current
+        \-- system_time_list - @return string the category that is counted now or an empty string if none is counted
     \-- report
         \-- system_time_list - @return string description of the execution times by category
     \-- section_report

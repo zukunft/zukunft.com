@@ -225,6 +225,9 @@ class data_object
     private user_message $msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
     public bool $online;
+    // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
+    // time of creating a page can be split into the frontend work and the api wait
+    public float $api_wait = 0;
 
 
     /*

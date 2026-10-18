@@ -270,8 +270,12 @@ class url_test_base
         // the start view, which every back step reaches, is the exception: it shows the global
         // problems as a table that the frontend fills from the api, so that the snapshot shows
         // the same table as the live start page, including the values and the tooltips
+        global $ui_sys;
+        $wait_start = $ui_sys?->api_wait ?? 0;
         $result = $this->ui->url_to_html($next_url, $this->req->msg,
             $this->req->dto, $this->req->test_mode);
+        // the wait for the backend is part of the rendering, but not frontend work
+        $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
         // return to the default section for the following assertions
         $sys->times->switch(system_time_type::DEFAULT);
         $this->assert_html($this->step_path, $result, $next_url);

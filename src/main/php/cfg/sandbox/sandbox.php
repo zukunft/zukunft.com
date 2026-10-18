@@ -124,6 +124,7 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -185,6 +186,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types as protect_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Exception;
 
 class sandbox extends db_object_seq_id_user
@@ -1156,6 +1158,7 @@ class sandbox extends db_object_seq_id_user
     protected function load(sql_par $qp, user_message $msg): int
     {
         global $db_con;
+        global $sys;
 
         // reset the id first, so that a missing database row is reported with id 0 as documented
         // and never with the stale id of e.g. a row that another user has deleted in the meantime,
@@ -1165,7 +1168,9 @@ class sandbox extends db_object_seq_id_user
         $db_row = $db_con->get1($qp, $msg);
         // a false db row means that the query itself failed
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $sys->times->switch(system_time_type::DB_MAP);
             $this->row_mapper_sandbox($db_row, $msg);
+            $sys->times->switch();
         }
         return $this->id();
     }

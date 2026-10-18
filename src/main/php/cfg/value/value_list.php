@@ -77,6 +77,7 @@ include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'def.php';
@@ -126,6 +127,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 
 class value_list extends sandbox_value_list
 {
@@ -423,6 +425,7 @@ class value_list extends sandbox_value_list
     {
 
         global $db_con;
+        global $sys;
         $result = false;
 
         $db_con_used = $db_con_given;
@@ -444,7 +447,9 @@ class value_list extends sandbox_value_list
             if ($db_lst === false) {
                 log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
             } else {
+                $sys->times->switch(system_time_type::DB_MAP);
                 $result = $this->rows_mapper_multi($db_lst, $qp->ext, $msg, $load_all);
+                $sys->times->switch();
             }
         }
         return $result;

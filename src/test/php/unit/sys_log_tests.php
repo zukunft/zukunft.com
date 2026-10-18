@@ -209,6 +209,38 @@ class sys_log_tests
         $t->assert_sql_index_create($sys_exe);
         $t->assert_sql_foreign_key_create($sys_exe);
 
+        $t->subheader($ts . 'system time sections');
+        // a section within a section within a section e.g. a db read of a related load of the api json
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->switch(system_time_type::MAP_JSON);
+        $sys_tim_lst->switch(system_time_type::LOAD_RELATED);
+        $sys_tim_lst->switch(system_time_type::DB_READ);
+        $test_name = 'the innermost section is counted';
+        $t->assert($test_name, $sys_tim_lst->current(), system_time_type::DB_READ);
+        $sys_tim_lst->switch();
+        $test_name = '... and the end of it returns to the section around it';
+        $t->assert($test_name, $sys_tim_lst->current(), system_time_type::LOAD_RELATED);
+        $sys_tim_lst->switch();
+        $test_name = '... and the end of that to the outermost section';
+        $t->assert($test_name, $sys_tim_lst->current(), system_time_type::MAP_JSON);
+        // a section that starts the section that is already counted e.g. a db read within a db read
+        $sys_tim_lst->switch(system_time_type::MAP_JSON);
+        $sys_tim_lst->switch();
+        $test_name = 'the end of a repeated section returns to the same section';
+        $t->assert($test_name, $sys_tim_lst->current(), system_time_type::MAP_JSON);
+        $sys_tim_lst->switch();
+        $test_name = '... and the end of the outermost section stops the counting';
+        $t->assert($test_name, $sys_tim_lst->current(), '');
+        // the api wait that the frontend has measured is moved out of the url to html time
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $sys_tim_lst->move(self::TV_STEP_LOAD_TYPES_SEC, system_time_type::DB_READ, system_time_type::API_WAIT);
+        $test_name = 'a moved time is shown in the new category';
+        $t->assert_text_contains($test_name, $sys_tim_lst->report(),
+            system_time_type::API_WAIT . ': ' . round(self::TV_STEP_LOAD_TYPES_SEC, 4) . ' sec');
+        $test_name = '... and no longer in the category that has counted it';
+        $t->assert_text_contains($test_name, $sys_tim_lst->report(),
+            system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC - self::TV_STEP_LOAD_TYPES_SEC, 4) . ' sec');
+
         $t->subheader($ts . 'system time of a slow request');
         $sys_tim_typ_lst = $t_sys->system_time_types();
         $start = (float)strtotime(self::TV_TIME);

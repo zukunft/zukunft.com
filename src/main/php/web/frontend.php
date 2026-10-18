@@ -1738,6 +1738,7 @@ class frontend
     ): string
     {
         global $sys;
+        global $ui_sys;
 
         // measure the action and the rendering separately, so a slow request shows which of the two
         // is slow; an interleaved db read or write still counts as db_read / db_write because its
@@ -1745,7 +1746,10 @@ class frontend
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->msg, $req->dto, $req->do_it);
         $sys->times->switch(system_time_type::URL_TO_HTML);
+        $wait_start = $ui_sys?->api_wait ?? 0;
         $result = $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
+        // the wait for the backend is part of the rendering, but not frontend work
+        $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
         // return to the default section for whatever the caller does next
         $sys->times->switch(system_time_type::DEFAULT);
         return $result;

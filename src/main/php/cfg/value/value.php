@@ -62,6 +62,7 @@ include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
@@ -303,9 +305,11 @@ class value extends value_base
     {
         global $sys;
 
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $msk_lst = new view_list($this->get_user());
         $msk_lst->load_by_type($sys->typ_lst->msk_typ->id(view_types::VALUE), $msg);
         $this->views_related = $msk_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -329,6 +333,9 @@ class value extends value_base
      */
     function load_values_similar(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $cat_lst = $this->phr_lst()->categories($msg);
         $val_lst = new value_list($this->get_user());
         // without a category nothing is related, and loading by the own phrases would list every
@@ -339,6 +346,7 @@ class value extends value_base
             $val_lst->load_names_related($msg);
         }
         $this->values_similar = $val_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -351,9 +359,13 @@ class value extends value_base
      */
     function load_results_related(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $res_lst = new result_list($this->get_user());
         $res_lst->load_by_val($this, $msg);
         $this->results_related = $res_lst;
+        $sys->times->switch();
     }
 
     /*
