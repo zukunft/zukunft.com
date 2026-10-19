@@ -288,6 +288,7 @@ class def
     const float FALLBACK_RESPONSE_TIME = 1.0; // the response time to update the frontend in seconds
     const float FALLBACK_RESPONSE_TIME_LOG = 1.2; // seconds above which a request is written to the system times
     const float FALLBACK_RESPONSE_TIME_DETAIL = 2.0; // seconds above which also each step of a request is written
+    const float FALLBACK_RESPONSE_TIME_API = 0.5; // seconds above which an api answer names the time of each step in its json
     const int FALLBACK_SLOW_REQUEST_DAYS = 10; // the number of last days of which the admin dashboard shows the slow requests
     const int FALLBACK_USER_LOG_SESSION_GAP = 1800; // the max seconds between two requests of a user that are still one session of the user log
     const int FALLBACK_USER_LOG_MAX_AGE_DAYS = 365; // the days a session is kept in the user log before it is archived

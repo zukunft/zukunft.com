@@ -42,8 +42,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::API_OBJECT . 'controller.php';
 include_once paths::SHARED_TYPES . 'component_types.php';
 include_once paths::SHARED_TYPES . 'formula_types.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_HELPER . 'Config.php';
@@ -57,6 +59,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'table_orders.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
+use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
@@ -67,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
@@ -98,6 +102,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
@@ -1178,6 +1183,38 @@ class base_ui_tests
         $test_name = '... but not from another header';
         $line = api::CSRF_TOKEN_HEADER . ': ' . api::CACHE_HIT . "\r\n";
         $t->assert($test_name, rest_call::cache_state_of($line), '');
+        // the backend names the seconds of each step of a slow answer in its json, which the
+        // frontend reads and removes, so that the answer is passed on like a fast one
+        $steps = [system_time_type::DB_READ => 1.5, system_time_type::SQL_CREATE => 0.25];
+        $api_json = json_encode([json_fields::NAME => word_names::MATH]);
+        $slow_json = controller::json_with_time($api_json, $steps);
+        $test_name = 'the steps of a slow api answer are the first field of its json';
+        $t->assert_text_contains($test_name, $slow_json, rest_call::TIME_START);
+        $test_name = '... which the frontend reads';
+        $t->assert($test_name, rest_call::time_steps_of($slow_json), $steps);
+        $test_name = '... and removes from the answer';
+        $t->assert($test_name, rest_call::without_time($slow_json), $api_json);
+        // negative: a fast answer, an empty object and a json list stay as they are
+        $test_name = 'a fast api answer gets no steps';
+        $t->assert($test_name, controller::json_with_time($api_json, []), $api_json);
+        $test_name = '... and the frontend reads none';
+        $t->assert($test_name, rest_call::time_steps_of($api_json), []);
+        $test_name = '... and leaves the answer as it is';
+        $t->assert($test_name, rest_call::without_time($api_json), $api_json);
+        $test_name = 'an empty json object gets no steps';
+        $t->assert($test_name, controller::json_with_time('{}', $steps), '{}');
+        $test_name = 'a json list gets no steps, because it has no field for them';
+        $t->assert($test_name, controller::json_with_time('[]', $steps), '[]');
+        // the frontend sums the steps of all api calls, so that a page can take the steps of its calls
+        $dto_ui = new data_object();
+        $dto_ui->add_api_steps([system_time_type::DB_READ => 1.5]);
+        $steps_start = $dto_ui->api_steps;
+        $dto_ui->add_api_steps([system_time_type::DB_READ => 0.25, system_time_type::SQL_CREATE => 0.5]);
+        $test_name = 'the backend steps of the api calls since a start are summed per step';
+        $t->assert($test_name, $dto_ui->api_steps_since($steps_start),
+            [system_time_type::DB_READ => 0.25, system_time_type::SQL_CREATE => 0.5]);
+        $test_name = '... and are empty without an api call since the start';
+        $t->assert($test_name, $dto_ui->api_steps_since($dto_ui->api_steps), []);
         // negative: the database key of an old link and an integer id are still accepted
         $test_name = 'the database key of an old link is still accepted';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID

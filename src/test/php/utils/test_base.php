@@ -1514,9 +1514,11 @@ class test_base
         // render in test mode so that the result is reproducible without backend calls
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $wait_start = $ui_sys?->api_wait ?? 0;
+        $steps_start = $ui_sys?->api_steps ?? [];
         $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
         // the wait for the backend is part of the rendering, but not frontend work
         $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
+        $sys->times->split_api_wait($ui_sys?->api_steps_since($steps_start) ?? []);
         // continue with the section of the caller for the following tests
         $sys->times->switch();
 

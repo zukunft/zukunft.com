@@ -633,6 +633,9 @@ zukunft.com:
               detail:
                 sys-conf-value: 2
                 tooltip-comment: "if a user response takes more seconds a log of the single execution steps is written to the system time log"
+              api:
+                sys-conf-value: 0.5
+                tooltip-comment: "if the creation of an api message takes more seconds the seconds of the single execution steps are added to the json of the answer, so that the frontend or a test can split the wait for the answer or ignore them"
           time:
             tooltip-comment: "time related user-specific settings"
             min columns:

@@ -3874,7 +3874,11 @@
             _time_list.php
     \-- slow_request_rows - section for function slow_request_rows not yet defined that it should be interface in /syste
             m/system_time_list.php
+    \-- answer_steps - section for function answer_steps not yet defined that it should be interface in /system/system_t
+            ime_list.php
     \-- add - section for function add not yet defined that it should be modify in /system/system_time_list.php
+    \-- split_api_wait - section for function split_api_wait not yet defined that it should be modify in /system/system_
+            time_list.php
 \-- system_time_slow_list
     \-- load - section for function load not yet defined that it should be load in /system/system_time_slow_list.php
     \-- load_sql - section for function load_sql is expected to be load sql in /system/system_time_slow_list.php
@@ -4847,6 +4851,8 @@
                  but only if it is not yet part of the list
     \-- move
         \-- system_time_list - book a part of the time of one category to another category e.g. the api wait that the
+    \-- split_api_wait
+        \-- system_time_list - book the backend steps that the api answers have named out of the api wait,
     \-- count_request
         \-- user_log - add one api request to this session, which starts a new session if this row has no id
     \-- add_by_name
@@ -6057,6 +6063,8 @@
     \-- slow_request_rows
         \-- system_time_list - the system time rows of one request: a row with the total time if the request has been sl
                 ow
+    \-- answer_steps
+        \-- system_time_list - the seconds of each step of a slow api request for the json of the answer
 \-- interface set and get
     \-- get_or_insert
         \-- type_list - get the type object with this name from the list
@@ -7159,6 +7167,10 @@
             ect.php
     \-- sys_log_list - section for function sys_log_list not yet defined that it should be set and get in /helper/data_o
             bject.php
+    \-- add_api_steps - section for function add_api_steps not yet defined that it should be set and get in /helper/data
+            _object.php
+    \-- api_steps_since - section for function api_steps_since not yet defined that it should be set and get in /helper/
+            data_object.php
     \-- add_id_to_views - section for function add_id_to_views not yet defined that it should be fill in /helper/data_ob
             ject.php
     \-- add_components_to_views - section for function add_components_to_views not yet defined that it should be fill in
@@ -9140,6 +9152,11 @@
         \-- data_object - @return bool true if this context object contains at least one system log entry
     \-- sys_log_list
         \-- data_object - @return sys_log_list the cache of the open system errors related to the session user
+    \-- add_api_steps
+        \-- data_object - @param array $steps the seconds per backend step of one api answer (see rest_call::time_steps_
+                of)
+    \-- api_steps_since
+        \-- data_object - @param array $start the backend steps at the start e.g. of the creation of a page
     \-- set_time
         \-- log - set the vars of this log html object bases on the api json array
     \-- time

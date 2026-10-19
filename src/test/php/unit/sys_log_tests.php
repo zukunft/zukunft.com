@@ -256,6 +256,22 @@ class sys_log_tests
         $test_name = '... and no longer in the category that has counted it';
         $t->assert_text_contains($test_name, $sys_tim_lst->report(),
             system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC - self::TV_STEP_LOAD_TYPES_SEC, 4) . ' sec');
+        // the steps that the backend has named in the time header of its answer split the api wait
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::API_WAIT);
+        $sys_tim_lst->split_api_wait([system_time_type::DB_READ => self::TV_STEP_DB_READ_SEC]);
+        $test_name = 'a backend step of the api wait is shown as an api step';
+        $t->assert_text_contains($test_name, $sys_tim_lst->report(),
+            system_time_type::API_STEP_PREFIX . system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC, 4) . ' sec');
+        $test_name = '... and no longer as api wait';
+        $t->assert_text_contains($test_name, $sys_tim_lst->report(),
+            system_time_type::API_WAIT . ': ' . round(self::TV_SLOW_SEC - self::TV_STEP_DB_READ_SEC, 4) . ' sec');
+        // negative: an answer without time header leaves the api wait as it is
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::API_WAIT);
+        $sys_tim_lst->split_api_wait([]);
+        $test_name = 'without backend steps the api wait is not split';
+        $t->assert_text_not_contains($test_name, $sys_tim_lst->report(), system_time_type::API_STEP_PREFIX);
 
         $t->subheader($ts . 'system time of a slow request');
         $sys_tim_typ_lst = $t_sys->system_time_types();
@@ -296,6 +312,20 @@ class sys_log_tests
         $sys_tim_lst = $t_sys->system_time_steps_unknown();
         $rows = $sys_tim_lst->slow_request_rows($start, $end, self::TV_URL, $log_limit, $detail_limit, $sys_tim_typ_lst);
         $t->assert($test_name, $rows[1]->type_id, $sys_tim_typ_lst->default_id());
+
+        $t->subheader($ts . 'time of a slow answer');
+        $answer_limit = def::FALLBACK_RESPONSE_TIME_API;
+        $steps = [system_time_type::DB_READ => self::TV_STEP_DB_READ_SEC, system_time_type::LOAD_TYPES => self::TV_STEP_LOAD_TYPES_SEC];
+
+        $test_name = 'a slow answer names the seconds of each step with the longest first';
+        $end = $start + self::TV_SLOW_SEC;
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $t->assert($test_name, $sys_tim_lst->answer_steps($start, $end, $answer_limit), $steps);
+        // negative: a fast answer has nothing to split
+        $test_name = '... but a fast answer names no step';
+        $end = $start + $answer_limit / 2;
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $t->assert($test_name, $sys_tim_lst->answer_steps($start, $end, $answer_limit), []);
 
         $t->subheader($ts . 'system time SQL write');
         $sys_tim = $t_sys->system_time();

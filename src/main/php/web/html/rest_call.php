@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -45,12 +46,16 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'group_id_url.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::USER . 'user_message.php';
 
 class rest_call
 {
+
+    // the start of a slow answer that names the seconds of its backend steps (see controller::json_with_time)
+    const string TIME_START = '{"' . json_fields::API_TIME . '":{';
 
     // the session cookie file used for all api calls of this process:
     // set by the test bootstrap after the admin login (test_base::api_login) so that the
@@ -238,6 +243,50 @@ class rest_call
     }
 
     /**
+     * @param string $json the json answer of the backend
+     * @return array the seconds per backend step that a slow answer names (see controller::json_with_time), else an empty array
+     */
+    static function time_steps_of(string $json): array
+    {
+        $result = [];
+        $end = self::time_end($json);
+        if ($end > 0) {
+            $start = strlen(self::TIME_START) - 1;
+            $result = json_decode(substr($json, $start, $end - $start + 1), true) ?? [];
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $json the json answer of the backend
+     * @return string the json without the seconds of the backend steps, so that a slow answer is the same as a fast one
+     */
+    static function without_time(string $json): string
+    {
+        $result = $json;
+        $end = self::time_end($json);
+        if ($end > 0) {
+            // the comma behind the steps is dropped with them
+            $result = '{' . substr($json, $end + 2);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $json the json answer of the backend
+     * @return int the position of the brace that closes the backend steps, 0 if the answer names none;
+     *             the steps are one flat object, so the first closing brace of the answer ends them
+     */
+    private static function time_end(string $json): int
+    {
+        $result = 0;
+        if (str_starts_with($json, self::TIME_START)) {
+            $result = (int)strpos($json, '}');
+        }
+        return $result;
+    }
+
+    /**
      * execute an api call
      *
      * @param string $method the REST method (GET, POST, PUT or DELETE)
@@ -317,6 +366,12 @@ class rest_call
         $result = curl_exec($curl);
         if ($ui_sys != null) {
             $ui_sys->api_wait += microtime(true) - $wait_start;
+        }
+        // a slow answer names the seconds of its backend steps, which split the wait, and is then
+        // passed on like a fast answer (see controller::json_with_time)
+        if (is_string($result)) {
+            $ui_sys?->add_api_steps(self::time_steps_of($result));
+            $result = self::without_time($result);
         }
 
         // the time shown with this message is the wait for the backend, so that the time of the next

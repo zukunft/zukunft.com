@@ -232,6 +232,9 @@ class data_object
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;
+    // of this wait the seconds per backend step that the json of a slow answer has named
+    // (see rest_call::time_steps_of), summed over all api calls
+    public array $api_steps = [];
 
 
     /*
@@ -624,6 +627,33 @@ class data_object
     function sys_log_list(): sys_log_list
     {
         return $this->sys_log;
+    }
+
+    /**
+     * @param array $steps the seconds per backend step of one api answer (see rest_call::time_steps_of)
+     * @return void
+     */
+    function add_api_steps(array $steps): void
+    {
+        foreach ($steps as $cat => $seconds) {
+            $this->api_steps[$cat] = ($this->api_steps[$cat] ?? 0) + $seconds;
+        }
+    }
+
+    /**
+     * @param array $start the backend steps at the start e.g. of the creation of a page
+     * @return array the seconds per backend step of the api answers since the start, without the steps that have not grown
+     */
+    function api_steps_since(array $start): array
+    {
+        $result = [];
+        foreach ($this->api_steps as $cat => $seconds) {
+            $grown = $seconds - ($start[$cat] ?? 0);
+            if ($grown != 0) {
+                $result[$cat] = $grown;
+            }
+        }
+        return $result;
     }
 
 

@@ -360,14 +360,16 @@ Task:
 2. controller::cache_header() is never called, so def::DEBUG_API_CACHE shows nothing; call it
    where an api answer is read from or written to the cache, or remove it. No saving, a
    diagnostic.
-3. Find what the api wait of 0.94 to 1.5 s of each confirm step after a write is; it needs a
-   trace of a write workflow (rest_call::api_call with xdebug trace, see the start page trace
-   above). Saving open.
+3. Find what the api wait of 0.94 to 1.5 s of each confirm step after a write is: an answer
+   slower than response time > api of config.yaml names the seconds of each backend step in
+   the api_time field of its json, which the report of the test shows as "api <step>" instead
+   of api_wait; an answer that is a json list has no field for it. Saving open.
 4. The api wait of the first page after a write drops to the level of the read-only workflows
    (5 x about 5 s and 1.3 s). Estimated saving about 27 s, overlapping with task 1.
 5. not_specified is 87 s of the run, mainly the html unit ui tests that render without
    url_to_html (see step 7).
-6. if the creation of the api message takes longer than a threshold defined in config.yaml include the execution time splitting in the message header so that it can be picked up by the frontend for the user reporting or by the calling test function so that the api_wait can be split into smaller parts; no saving itself, but it shows the cause of task 3, so it comes first
+6. Show the backend steps of a slow answer (data_object::api_steps) in the user reporting of
+   the frontend, e.g. beside the slow requests of the admin dashboard. No saving, a diagnostic.
 
 ### 2. frontend work of the start page
 

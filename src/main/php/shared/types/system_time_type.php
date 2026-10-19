@@ -76,6 +76,9 @@ class system_time_type extends type_object
     const string API_REQUEST = "api_request";
     // the wait of the html frontend for the answer of the backend
     const string API_WAIT = "api_wait";
+    // put before a step of the backend that the json of its answer names, e.g. "api db_read",
+    // so that the backend steps of the api wait are not mixed up with the steps of the caller
+    const string API_STEP_PREFIX = "api ";
     // the loads of the related objects for the api message e.g. the values used by a result
     const string LOAD_RELATED = "load_related";
     // the creation of a sql statement from its parts

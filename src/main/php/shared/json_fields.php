@@ -51,6 +51,8 @@ class json_fields
     const string TIMESTAMP = 'timestamp';
     const string SELECTION = 'selection';
     const string BODY = 'body';
+    // the seconds per backend step of a slow api answer, which the frontend may use or ignore (see controller::with_time)
+    const string API_TIME = 'api_time';
     // subarrays of the json url representation: the '7'-prefixed link vars (the link created with a new
     // object), the '8'-prefixed pre values (the db values when the edit view was opened) and the
     // '9'-prefixed back targets (where cancel / confirm return to)

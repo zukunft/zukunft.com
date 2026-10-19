@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'def.php';
@@ -49,6 +50,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
@@ -295,6 +297,43 @@ class controller
     }
 
     /**
+     * add the seconds of each step as the first field of the json object of an answer that has
+     * taken longer than the configured limit, so that the frontend can split its wait for the
+     * answer or ignore the field (see rest_call::time_steps_of and system_time_list::answer_limit);
+     * added after the cache, so that a cached answer never carries the time of its creation;
+     * a json list has no field, so it is sent without the time
+     *
+     * @param string $api_json the json answer as created or read from the cache
+     * @return string the json answer with the seconds of its steps if it has been slow
+     */
+    private function with_time(string $api_json): string
+    {
+        global $sys;
+        $steps = [];
+        if ($sys != null) {
+            $steps = $sys->times->answer_steps($sys->start_time, microtime(true), system_time_list::answer_limit());
+        }
+        return self::json_with_time($api_json, $steps);
+    }
+
+    /**
+     * @param string $api_json the json answer
+     * @param array $steps the seconds per backend step, empty for a fast answer
+     * @return string the json with the steps as the first field of its object, unchanged without steps or for a json list
+     */
+    static function json_with_time(string $api_json, array $steps): string
+    {
+        $result = $api_json;
+        $json = ltrim($api_json);
+        $fields = ltrim(substr($json, 1));
+        $is_filled_object = (str_starts_with($json, '{') and !str_starts_with($fields, '}'));
+        if ($steps != [] and $is_filled_object) {
+            $result = '{"' . json_fields::API_TIME . '":' . json_encode($steps) . ',' . $fields;
+        }
+        return $result;
+    }
+
+    /**
      * set the http response code only if the response headers have not been sent yet
      * during the test run the log writer may already have emitted output (e.g. a test header),
      * which sends the headers, so setting the response code afterwards would raise a php warning
@@ -326,6 +365,9 @@ class controller
             header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
         }
 
+        // the answer is collected, so that the time of a slow answer can be added (see with_time)
+        ob_start();
+
         // return the api json or the error message
         if ($msg == '') {
 
@@ -345,6 +387,7 @@ class controller
                 array(json_fields::MSG => $msg)
             );
         }
+        echo $this->with_time(ob_get_clean());
     }
 
     /**
@@ -376,6 +419,8 @@ class controller
         // object before calling this, so here only format the response - never map+save or delete
         // again (the previous re-execution here was a double write / double delete)
         log_debug($method);
+        // the answer is collected, so that the time of a slow answer can be added (see with_time)
+        ob_start();
         switch ($method) {
             case rest_ctrl::PUT:
                 if ($msg == '') {
@@ -471,6 +516,7 @@ class controller
                 }
                 break;
         }
+        echo $this->with_time(ob_get_clean());
     }
 
     /**

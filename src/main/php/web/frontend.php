@@ -1012,11 +1012,14 @@ class frontend
         // after the page is created
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $wait_start = $ui_sys?->api_wait ?? 0;
+        $steps_start = $ui_sys?->api_steps ?? [];
         $this->load_page_wait = 0;
         $result = $this->render_url($url_array, $msg_ui, $dto, $test_mode);
         // the wait of the load steps has been moved out of load page already
         $render_wait = ($ui_sys?->api_wait ?? 0) - $wait_start - $this->load_page_wait;
         $sys->times->move($render_wait, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
+        // the load steps included, because their wait is in the api wait too
+        $sys->times->split_api_wait($ui_sys?->api_steps_since($steps_start) ?? []);
         $sys->times->switch();
         return $result;
     }

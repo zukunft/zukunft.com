@@ -231,6 +231,37 @@ class system_time_list
         return $cfg?->get_by($names, def::FALLBACK_RESPONSE_TIME_LOG) ?? def::FALLBACK_RESPONSE_TIME_LOG;
     }
 
+    /**
+     * the seconds of each step of a slow api request for the json of the answer
+     * (see controller::with_time), so that the caller can split its wait for the answer
+     *
+     * @param float $start the microtime when the request has been received
+     * @param float $end the microtime when the answer is sent
+     * @param float $limit seconds above which the steps are named
+     * @return array the seconds per step with the longest first, empty if the request has not been slower than the limit
+     */
+    function answer_steps(float $start, float $end, float $limit): array
+    {
+        $result = [];
+        if ($end - $start > $limit) {
+            foreach ($this->steps($end) as $cat => $seconds) {
+                $result[$cat] = round($seconds, 4);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @return float seconds above which an api answer names the time of each step in its json
+     *               (config.yaml user > default > frontend > behaviour > response time > api)
+     */
+    static function answer_limit(): float
+    {
+        global $cfg;
+        $names = [triples::RESPONSE_TIME, words::API, words::FRONTEND, words::BEHAVIOUR];
+        return $cfg?->get_by($names, def::FALLBACK_RESPONSE_TIME_API) ?? def::FALLBACK_RESPONSE_TIME_API;
+    }
+
 
     /*
      * timing
@@ -338,6 +369,20 @@ class system_time_list
         if ($duration > 0) {
             $this->add(-$duration, $from);
             $this->add($duration, $to);
+        }
+    }
+
+    /**
+     * book the backend steps that the api answers have named out of the api wait,
+     * so that the report shows which step of the backend the frontend has waited for
+     *
+     * @param array $steps the seconds per backend step e.g. from data_object::api_steps_since
+     * @return void
+     */
+    function split_api_wait(array $steps): void
+    {
+        foreach ($steps as $cat => $seconds) {
+            $this->move($seconds, system_time_type::API_WAIT, system_time_type::API_STEP_PREFIX . $cat);
         }
     }
 
