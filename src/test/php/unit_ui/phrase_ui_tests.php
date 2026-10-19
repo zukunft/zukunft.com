@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -450,12 +451,18 @@ class phrase_ui_tests
         $dto_rsn_sol = new data_object();
         $dto_rsn_sol->online = false;
         $dto_rsn_sol->val_lst = $t_val->value_list_solution_prio_reason_solution_ui();
+        // the solution research has the highest impact, so the impact order puts its reason heat
+        // mortality first; the numbers are no impact, because the loss and the gain have different
+        // units, which the preferred order never compares (docs/llm/frontend.md)
+        // selected by the reason too, because the ranking values name research as the solution of poverty as well
+        $dto_rsn_sol->val_lst->get_by_names([triple_names::HEAT_MORTALITY, word_names::RESEARCH])->phr_lst()
+            ->get_by_name(word_names::RESEARCH, $msg)->obj()->impact = impacts::MAX;
         $dto_rsn_sol->phr_lst = $t_phr->list_global_warming_reasons_ui();
         $tbl_rsn_sol = $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_rsn_sol);
         $t->assert_text_contains($test_name, $tbl_rsn_sol, '>' . word_names::RESEARCH . '</a>');
         $test_name = '... in the solution column';
         $t->assert_text_contains($test_name, $lib->str_left_of($tbl_rsn_sol, '</tr>'), '>' . word_names::SOLUTION . '</a>');
-        // the gain of 50 of the solution of the heat mortality puts that reason first by impact,
+        // the impact of the solution of the heat mortality puts that reason first by impact,
         // but the default sort order of the live page sorts the reasons by the loss they cause
         $test_name = 'the reasons page sorts the reasons by their loss';
         $dto_rsn_sol->add_phrases($t_phr->list_sort_definitions_ui(), $msg);

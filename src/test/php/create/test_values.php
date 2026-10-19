@@ -1563,6 +1563,22 @@ class test_values extends test_objects
     }
 
     /**
+     * the values of the calculator input test and the inhabitants of Bern, which fit the field
+     * inhabitants as well as the inhabitants of Zurich, so that the field has to pick one of two
+     * values that rank the same
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_input_tie_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = $this->calculator_values(false);
+        $lst->add($this->value_for_phrases([$t_wrd->word_bern()->phrase(), $t_wrd->word_inhabitant()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the values of the calculation result test: the values of the calculator input test and
      * the inhabitants of the canton of Zurich in 2019 as the number of the row inhabitants with
      * the filter canton in the column 2019
@@ -1575,12 +1591,40 @@ class test_values extends test_objects
     }
 
     /**
+     * the inhabitants of Zurich in 2019 and in 2020, so that the phrases Zurich and inhabitants
+     * select two numbers with the same number of other phrases and a calculator cell of only
+     * these two phrases is ambiguous
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_ambiguous_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$zh, $inhab, $t_wrd->word_2019()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$zh, $inhab, $t_wrd->word_2020()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @param bool $with_result true to add the number of the result table
      * @return value_list_ui the values of the calculator tests
      */
     private function calculator_values_ui(bool $with_result): value_list_ui
     {
         $tl = new test_lib();
+        return $tl->list_to_ui($this->calculator_values($with_result), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param bool $with_result true to add the number of the result table
+     * @return value_list the values of the calculator tests
+     */
+    private function calculator_values(bool $with_result): value_list
+    {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
         $zh = $t_wrd->word_zh()->phrase();
@@ -1594,7 +1638,7 @@ class test_values extends test_objects
             $lst->add($this->value_for_phrases([$zh, $inhab, $t_wrd->word_canton()->phrase(),
                 $t_wrd->word_2019()->phrase()], values::SAMPLE_INT));
         }
-        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+        return $lst;
     }
 
     /**
@@ -1636,6 +1680,24 @@ class test_values extends test_objects
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase()], values::SAMPLE_FLOAT));
         $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * two values in kWh and a smaller value in gram with the same impact, so that a sort that
+     * compares the numbers of different units would put the gram value last
+     *
+     * @return value_list_ui the values with two units for unit testing
+     */
+    function value_list_sort_units_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $kwh = $t_wrd->word_kwh()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $kwh], values::SAMPLE_FLOAT));
+        $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase(), $t_wrd->word_gram()->phrase()], 1));
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $kwh], values::SAMPLE_INT));
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 

@@ -1657,7 +1657,7 @@ class test_triples extends test_objects
     /**
      * the triples that the calculation result test adds to the reader test (calculator_zh): the
      * result column 2019 with a label of the column group, the row group city signed, and the
-     * detail table city with the column inhabitants and the extra row 2019
+     * detail table city with the column inhabitants filtered by canton and the extra row 2019
      *
      * @return triple[] the keyword, the column, the sign and the detail table triples
      */
@@ -1680,14 +1680,16 @@ class test_triples extends test_objects
         $cols = $this->calc_triple($id, 'Zurich result columns', $zh, $has, $kw[triples::CALCULATOR_RESULT_COLUMN]);
         $tbls = $this->calc_triple($id, 'Zurich detail tables', $zh, $has, $kw[triples::CALCULATOR_DETAIL_TABLE]);
         $tbl = $this->calc_triple($id, 'Zurich detail city', $tbls->phrase(), $has, $t_wrd->word_city()->phrase());
+        $col_2019 = $this->calc_triple($id, 'Zurich column 2019', $cols->phrase(), $has, $t_wrd->word_2019()->phrase());
+        $cols_label = $this->calc_triple($id, 'Zurich result columns label', $cols->phrase(), $has,
+            $calc[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_COLUMNS_LABEL_COM);
+        $signed = $this->calc_triple($id, 'Zurich rows city signed', $calc['Zurich rows city']->phrase(), $has, $kw[triples::CALCULATOR_SIGNED]);
+        $col = $this->calc_triple($id, 'Zurich detail column inhabitants', $tbl->phrase(), $has, $t_wrd->word_inhabitant()->phrase());
         return [
-            ...array_values($kw), $cols, $tbls, $tbl,
-            $this->calc_triple($id, 'Zurich column 2019', $cols->phrase(), $has, $t_wrd->word_2019()->phrase()),
-            $this->calc_triple($id, 'Zurich result columns label', $cols->phrase(), $has,
-                $calc[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_COLUMNS_LABEL_COM),
-            $this->calc_triple($id, 'Zurich rows city signed', $calc['Zurich rows city']->phrase(), $has, $kw[triples::CALCULATOR_SIGNED]),
-            $this->calc_triple($id, 'Zurich detail column inhabitants', $tbl->phrase(), $has, $t_wrd->word_inhabitant()->phrase()),
+            ...array_values($kw), $cols, $tbls, $tbl, $col_2019, $cols_label, $signed, $col,
             $this->calc_triple($id, 'Zurich detail total', $tbl->phrase(), $t_vrb->verb_with(), $t_wrd->word_2019()->phrase()),
+            // the column shows only the inhabitants of the canton, like a row of the main table with a filter
+            $this->calc_triple($id, 'Zurich detail column inhabitants canton', $col->phrase(), $t_vrb->verb_with(), $t_wrd->word_canton()->phrase()),
         ];
     }
 

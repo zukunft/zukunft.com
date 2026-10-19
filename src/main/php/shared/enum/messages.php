@@ -1148,6 +1148,11 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" to plot';
     case CHART_COLUMNS_MISSING = 'the table has not enough value columns for the chart';
+    case CALCULATOR_CELL_AMBIGUOUS = 'the calculator cell of "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '" stays empty, because its phrases select the different numbers "'
+        . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
+        . '" equally; add the phrase that selects one of them to the calculator triples of the cell';
     case CHART_TYPE_UNKNOWN = 'the chart type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" has no code id of a known chart type, so the chart is not shown';

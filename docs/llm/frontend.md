@@ -349,9 +349,20 @@ Pick the key that matches the list's purpose and is reproducible:
   `phrase_list::sort_by_impact()`, `value_list::sort_by_impact()`; ties must
   still resolve deterministically, so fall back to name or id when impacts are
   equal.
+- **numbers** (values and results) unless the page names another order: the
+  bigger impact first, then the bigger number if the unit is the same, then the
+  name — `sandbox_value::sorted()`, used by `value_list::sort_by_impact()` and
+  `result_list::sort_by_impact()`; a list of only the names e.g.
+  `result_list::display_linked()` is a name list and sorted by name. Two numbers are compared only within
+  the same unit (unit, scaling and percent phrases), so the unit is a sort key
+  between the impact and the number, which keeps the order the same for every
+  compare. The name is the phrase names in alphabetic order, never the group
+  id, which is packed from the phrase database ids and changes with a new
+  database.
 - **name** for alphabetical pick lists and selectors.
 - **id** (or another stable unique field) as the last-resort tie-breaker so the
-  order is total, never partial.
+  order is total, never partial; not the group id of a value or a result (see
+  numbers above).
 
 ```php
 // right: sort, then render

@@ -293,7 +293,7 @@ class a_selected_test extends all_unit_tests
             //$msk_tests->run_users($this, $cfg);
             //$msk_tests->run_system_pages($this);
             //$msk_tests->run_use_cases($this, $cfg);
-            $msk_tests->run_pv_lifetime_balance($this, $cfg);
+            $msk_tests->run_pv_lifetime_balance($this);
             //$msk_tests->run_web_frontend($this);
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);

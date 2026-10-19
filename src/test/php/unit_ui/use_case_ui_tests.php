@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
@@ -48,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -324,6 +326,36 @@ class use_case_ui_tests
         $sources_html = $this->render($t_cmp->component_sources_used(), $wrd, $msk, $dto_as, $msg);
         $test_name = 'the source of a value that a result of the page uses is listed by the name of the source cache';
         $t->assert_text_contains($test_name, $sources_html, '>' . sources::SIB . '</a>');
+        // the sources that only the results use are numbered in the order of the results, which the
+        // backend returns in any order, so the results are taken in the preferred order: the bigger
+        // impact first, then within the same unit the bigger number, then by name, which unlike the
+        // group id does not change with a new database (docs/llm/frontend.md)
+        $res_sum = $t_res->result_zh_sum_ui(values::SAMPLE_FLOAT);
+        $res_scaled = $t_res->result_zh_scaled_ui(values::SAMPLE_FLOAT);
+        $res_lst_a = new result_list_ui();
+        $res_lst_a->add($res_sum, $msg);
+        $res_lst_a->add($res_scaled, $msg);
+        $res_lst_b = new result_list_ui();
+        $res_lst_b->add($res_scaled, $msg);
+        $res_lst_b->add($res_sum, $msg);
+        $names_a = array_map(fn($res) => $res->name(), $res_lst_a->sorted_by_impact($msg));
+        $names_b = array_map(fn($res) => $res->name(), $res_lst_b->sorted_by_impact($msg));
+        $test_name = 'the results of the page are taken in the same order whatever order the backend returns';
+        $t->assert($test_name, $names_a, $names_b);
+        // with the same impact and the same number Zurich city comes before Zurich inhabitants by the name
+        $test_name = '... which is the order of the name if impact and number are the same';
+        $t->assert($test_name, $names_a, [$res_scaled->name(), $res_sum->name()]);
+        $test_name = '... but the bigger number first if the unit is the same';
+        $res_big = $t_res->result_zh_sum_ui(values::SAMPLE_INT);
+        $res_lst_c = new result_list_ui();
+        $res_lst_c->add($res_scaled, $msg);
+        $res_lst_c->add($res_big, $msg);
+        $t->assert($test_name, array_map(fn($res) => $res->name(), $res_lst_c->sorted_by_impact($msg)),
+            [$res_big->name(), $res_scaled->name()]);
+        $test_name = '... and the bigger impact before the bigger number';
+        $res_scaled->grp->phr_lst()->get_by_name(word_names::CITY, $msg)->obj()->impact = impacts::MAX;
+        $t->assert($test_name, array_map(fn($res) => $res->name(), $res_lst_c->sorted_by_impact($msg)),
+            [$res_scaled->name(), $res_big->name()]);
         // the notes of the page are the descriptions of the formulas of its results
         $frm_scaled->set_description(formula_names::JOULE_DEF_COM);
         $notes_html = $this->render($t_cmp->component_formula_notes(), $wrd, $msk, $dto_as, $msg);
@@ -426,13 +458,33 @@ class use_case_ui_tests
         $test_name = 'the calculator input starts with the default heading in the inputs frame';
         $t->assert_text_contains($test_name, $in_html, '<div class="' . styles::INPUTS . '">'
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_INPUTS)));
-        $inh_name = url_var::NUMERIC_VALUE . $dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
+        $inh_id = $dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
+        $inh_name = url_var::NUMERIC_VALUE . $inh_id;
+        // the save writes the entered number to the value that the field shows, so the field sends its group id
+        $inh_val_id = (string)$dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->id();
         $test_name = 'a number field shows the label, the number, the limit, the step and the hint of the input';
         $t->assert_text_contains($test_name, $in_html, $html->div(
             $html->label(triple_names::CALC_INHABITANTS_LABEL_COM, $inh_name)
-            . $html->div($html->input_number($inh_name, values::CITY_ZH_INHABITANTS_2019, 0, null, 100, $form), styles::INPUT_ROW)
+            . $html->div($html->input_number($inh_name, values::CITY_ZH_INHABITANTS_2019, 0, null, 100, $form)
+                . $html->form_hidden(url_var::GROUP . $inh_id, $inh_val_id, $form), styles::INPUT_ROW)
             . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::INPUT_HINT),
             styles::INPUT_FIELD));
+        // negative: a phrase selector selects a phrase and not a value, so it sends no group id
+        $test_name = '... but a phrase selector sends no group id';
+        $canton_id = $dto_in->phr_lst->get_by_name(word_names::CANTON, $msg)->id();
+        $t->assert_text_not_contains($test_name, $in_html, 'name="' . url_var::GROUP . $canton_id . '"');
+        // two values that fit a field equally e.g. the inhabitants of Zurich and of Bern are picked
+        // by the preferred order of numbers and not by the order of the list, which the backend
+        // returns in any order; here the bigger number of the same unit
+        $dto_tie = clone $dto_in;
+        $dto_tie->val_lst = $t_val->value_list_calculator_input_tie_ui();
+        $tie_html = $page->calculator_input($zh_city, $msg, $dto_tie, $form, views::CALCULATOR, []);
+        $dto_tie->val_lst->set_lst(array_reverse($dto_tie->val_lst->lst()));
+        $tie_rev_html = $page->calculator_input($zh_city, $msg, $dto_tie, $form, views::CALCULATOR, []);
+        $test_name = 'a field shows the same value whatever order the values have';
+        $t->assert($test_name, $tie_rev_html, $tie_html);
+        $test_name = '... which is the value first in the preferred order of numbers';
+        $t->assert_text_contains($test_name, $tie_html, 'value="' . values::CITY_ZH_INHABITANTS_2019 . '"');
         $test_name = 'the inputs follow the order of the calculator';
         $t->assert_text_order($test_name, $in_html, triple_names::CALC_INHABITANTS_LABEL_COM, triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM);
         $t->assert_text_order($test_name, $in_html, triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM, '>' . word_names::YEAR_2019 . '<');
@@ -483,6 +535,15 @@ class use_case_ui_tests
                 . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::CALC_SUB)));
         $test_name = '... and the number of a signed group with its sign';
         $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
+        // the save compares the results of the page by their group id, so a cell names the number it shows
+        $cell_id = ui_list::CALC_CELL_VALUE . $dto_res->val_lst->get_by_names(
+            [word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019])->id();
+        $test_name = '... and the cell carries the group id of its number';
+        $t->assert_text_contains($test_name, $res_html, '<' . html_base::TD . ' class="' . styles::CALC_NUMBER
+            . '" id="' . $cell_id . '">');
+        // negative: the extra row 2019 of the detail table shows the same number again, but an id is unique on a page
+        $test_name = '... but only once, also if a detail table shows the number again';
+        $t->assert($test_name, (string)substr_count($res_html, 'id="' . $cell_id . '"'), '1');
         $test_name = 'the details follow the main table in a collapsed block with the default summary';
         $t->assert_text_order($test_name, $res_html, '</table>',
             '<summary>' . $mtr->txt(msg_id::CALCULATOR_DETAILS) . '</summary><div class="' . styles::CALC_MORE . '">');
@@ -495,6 +556,16 @@ class use_case_ui_tests
         $t->assert_text_order($test_name, $res_html, '<td>' . word_names::BE . '</td><td class', $zh_row);
         $test_name = '... and an extra row per with sub-item';
         $t->assert_text_order($test_name, $res_html, $zh_row, '<td>' . word_names::YEAR_2019 . '</td><td class');
+        // the column inhabitants has the filter canton, so the row Zurich shows the inhabitants of
+        // the canton and not the inhabitants of the city, which have no canton phrase
+        $zh_cell = '<td>' . triple_names::CALC_ZH_LABEL_COM . '</td><td class="' . styles::CALC_NUMBER . '">';
+        $canton_val = $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019]);
+        $city_val = $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
+        $test_name = 'a detail column with a filter shows only the number with the filter phrase';
+        $t->assert_text_contains($test_name, $res_html, $zh_cell . $canton_val->val_formatted($msg) . '</td>');
+        // negative: the number without the filter phrase is not shown in the column
+        $test_name = '... and not the number without it';
+        $t->assert_text_not_contains($test_name, $res_html, $zh_cell . $city_val->val_formatted($msg) . '</td>');
         $test_name = 'the sources are numbered in the order of the first use';
         $t->assert_text_contains($test_name, $res_html, '<div class="' . styles::CALC_SOURCES . '">'
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_SOURCES)) . '<' . html_base::OL . '>');
@@ -505,6 +576,43 @@ class use_case_ui_tests
         // negative: a phrase without calculator triples has no results
         $test_name = 'a phrase without calculator triples shows no calculation result';
         $t->assert($test_name, $page->calculation_result(new test_triples($t)->triple_bern_ui(), $msg, $dto_res), '');
+        // a cell shows the number that its phrases select with the fewest other phrases
+        $msg->reset();
+        $amb_lst = $t_val->value_list_calculator_ambiguous_ui();
+        $amb_phr = $amb_lst->lst()[0]->phr_lst();
+        $zh_phr = $amb_phr->get_by_name(word_names::ZH, $msg);
+        $inhab_phr = $amb_phr->get_by_name(word_names::INHABITANTS, $msg);
+        $y19_phr = $amb_phr->get_by_name(word_names::YEAR_2019, $msg);
+        $list = new ui_list();
+        $test_name = 'a calculator cell shows the number that its phrases select';
+        $t->assert($test_name, (string)$list->calculator_result([$zh_phr, $inhab_phr, $y19_phr], $amb_lst, $msg)?->number(),
+            (string)values::SAMPLE_INT);
+        // negative: two numbers that the phrases select equally would make the cell depend on the
+        // order of the list, so the cell stays empty and the user is told which phrase is missing
+        $test_name = '... but no number if the phrases select two numbers equally';
+        $t->assert_null($test_name, $list->calculator_result([$zh_phr, $inhab_phr], $amb_lst, $msg));
+        $test_name = '... and reports the ambiguous cell';
+        $t->assert_true($test_name, $msg->has_msg_id(msg_id::CALCULATOR_CELL_AMBIGUOUS));
+        $msg->reset();
+
+        // the request cache can hold the results of another phrase e.g. of a table on the same page,
+        // so the results of the page phrase are loaded by the phrase and not by an empty result list
+        $dto_lst = new data_object();
+        $dto_lst->set_result_list($t_res->result_list_solution_prio_first_row_ui());
+        $zh_city_id = new test_triples($t)->zh_city_ui()->phrase()->id();
+        $test_name = 'the results of a phrase are not loaded if the cache has only the results of another phrase';
+        $t->assert_false($test_name, $dto_lst->has_results_of($zh_city_id));
+        $zh_res_lst = $t_res->result_list_zh_city_ui();
+        $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
+        $test_name = '... but after their load';
+        $t->assert_true($test_name, $dto_lst->has_results_of($zh_city_id));
+        $test_name = '... with the results of both phrases in the cache';
+        $res_count = $t_res->result_list_solution_prio_first_row_ui()->count() + $zh_res_lst->count();
+        $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
+        // negative: a result that the cache has already is not added a second time
+        $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
+        $test_name = '... and a result that the cache has already is not added again';
+        $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
 
         $t->subheader($ts . 'calculator page title');
         // the calculator page is named by the calculator label of the page phrase instead of the view name

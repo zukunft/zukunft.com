@@ -188,9 +188,13 @@ class data_object
     public result_list $res_lst {
         set(result_list $value) {
             $this->res_lst = $value;
+            // a new list holds none of the loaded results of a phrase
+            $this->res_phr_ids = [];
         }
     }
     public view_list $msk_lst;
+    // the ids of the phrases whose results are in the result list (see add_results_of)
+    private array $res_phr_ids = [];
     // the children of the list triples of the start page table e.g. every reason that "populism
     // reason" links, kept out of the phrase list, because it also fills e.g. the phrase selectors
     // of later pages; null if not yet loaded (see ui_list::add_start_page_data)
@@ -432,6 +436,33 @@ class data_object
     function set_result_list(result_list $res_lst): void
     {
         $this->res_lst = $res_lst;
+    }
+
+    /**
+     * @param int $phr_id the id of the phrase of a page
+     * @return bool true if the results of the phrase have been loaded into the result list
+     *              (see add_results_of), which can hold the results of other phrases too
+     */
+    function has_results_of(int $phr_id): bool
+    {
+        return in_array($phr_id, $this->res_phr_ids);
+    }
+
+    /**
+     * add the loaded results of a phrase to the result list, which can hold the results of
+     * other phrases already, e.g. of a table on the same page
+     *
+     * @param int $phr_id the id of the phrase whose results have been loaded
+     * @param result_list $res_lst the loaded results of the phrase
+     * @return void
+     */
+    function add_results_of(int $phr_id, result_list $res_lst): void
+    {
+        $this->res_phr_ids[] = $phr_id;
+        foreach ($res_lst->lst() as $res) {
+            // add_result skips a result that the list has already
+            $this->res_lst->add_result($res);
+        }
     }
 
     /**

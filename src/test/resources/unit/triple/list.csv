@@ -2705,3 +2705,4 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 2704,-2671,33,-2670,1,PV installation detail column consumption mix order,,,,,,,,,,,,,,
 2705,-2672,23,-2505,1,PV installation detail total label,,,Year,,,,,,,,,,,
 2706,-2672,23,-2512,1,PV installation detail total highlight,,,,,,,,,,,,,,
+2707,-2671,15,-1961,1,PV installation detail column consumption mix unit,,,"the column shows the mix in gram per kWh and not the net avoided emission or the battery effect, which name the consumption mix too",,,,,,,,,,,

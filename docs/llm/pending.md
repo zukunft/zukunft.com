@@ -20,12 +20,10 @@ the test run after each step (an llm never runs test/*, docs/llm/coding.md).
    the input fields, the main result table, the detail tables and "PV life-cycle emissions"
    from the database; each number in the html carries the database id or group id of its
    value or result, so that the save action (step 4) knows which value to update and which
-   result to compare; today the labels, hints and order are in the request cache before the
-   components render, but the values, the results and the selector options are not, so every
-   cell of the main result table and "PV life-cycle emissions" are empty; confirm on a
-   recreated database that the fixed operand match of `formula_calc::value_of` gives the
-   PV-weighted (13'072) and the residual mix (113'805) net avoided emission; the lifetime
-   column in t and the annual column in kg
+   result to compare; the numbers, the hidden group id of each input and the cell ids are on
+   the page, still empty are the rows "Self-consumption rate", "Autarky" and "vs. replacement
+   mix" (the residual mix net avoided emission 113'805) and the assumption "PV life-cycle
+   emissions"; the lifetime column shows kg, the sample t
 2. delete `docs/llm/samples/new_view_sample_pv_balance.json` and point the links of the guide
    and of `docs/llm/json_views.md` to `calculator_keywords.json` and
    `pv_lifetime_balance.json`; decide whether the component types that only the old view used
@@ -45,14 +43,17 @@ open for the calculator page:
 - judge the page only after a database recreation: `test_part.php` imports into the existing
   database and never removes an object that a newer json left out
 - inputs: the maximum of the three number fields
-- replacement mix selector: it offers only "please select ..." although the triples
-  `residual mix (replacement mix)` and `production mix (replacement mix)` exist, so the DOWN
-  load in `view_exe::add_calculator_triples` should find them as options; the options come from
-  the `is a` triples instead of the values of the selector phrase, and the gross formula uses
-  the selected mix
+- monthly table, column "CH mix g/kWh", month rows: the monthly Swiss consumption mix values
+  (e.g. 150.8 for January) have no page phrase, so a month cell (page phrase, month, `consumption
+  mix`, `gram per kWh`) selects none of them; the column needs a way to select a general value,
+  e.g. a calculator keyword for a column without the page phrase
+- replacement mix selector: the options come from the `is a` triples instead of the values of
+  the selector phrase, and the gross formula uses the selected mix
 - context load: the derived assumptions and the sources are loaded by any phrase of a result,
   so values and sources of other files show up (PVGIS 5.3, BEA US GDP 2023) and the field
-  definition values need a filter; a result whose values the page has not loaded keeps its
+  definition values need a filter; e.g. the assumption "Swiss consumer mix, annual" shows the
+  79.2 of `pv_switzerland_co2.json` instead of the 128 (BAFU 2018) of `pv_lifetime_balance.json`,
+  and "PV life-cycle emissions" stays empty although the file has 35.8 (IEA PVPS 2023); a result whose values the page has not loaded keeps its
   stored number; an api that answers with the values within a phrase set would be leaner
 - monthly table: the months in their order (January … December, not by number) and the short
   names "Jan" … "Dec" (open point of the guide)

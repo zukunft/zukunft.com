@@ -328,29 +328,16 @@ class value_list extends ListBase
     }
 
     /**
-     * sort this value list in place so that the value with the highest impact is first
-     * the impact of a value is the highest impact of the phrases it is assigned to
+     * sort this value list in place in the preferred order of numbers (see sandbox_value::sorted):
+     * the value with the highest impact first, then within the same unit the bigger number, then
+     * by name; the impact of a value is the highest impact of the phrases it is assigned to
+     *
+     * @param user_message $msg to report a problem of the phrase types that name the unit
      * @return void
      */
-    function sort_by_impact(): void
+    function sort_by_impact(user_message $msg): void
     {
-        $lst = $this->lst();
-        // impact first, then number, then the group name so that values with the same impact and
-        // number keep a deterministic order that does not depend on the value (group) id: a value's
-        // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
-        // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
-        // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md);
-        // the impact and the name of each value are created once and not in each compare
-        $impact = [];
-        $name = [];
-        foreach ($lst as $val) {
-            $impact[spl_object_id($val)] = $val->impact();
-            $name[spl_object_id($val)] = $val->name() ?? '';
-        }
-        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $impact[spl_object_id($b)] <=> $impact[spl_object_id($a)]
-            ?: $b->number() <=> $a->number()
-                ?: strcmp($name[spl_object_id($a)], $name[spl_object_id($b)]));
-        $this->set_lst($lst);
+        $this->set_lst(sandbox_value::sorted($this->lst(), $msg));
     }
 
 
@@ -384,7 +371,7 @@ class value_list extends ListBase
 
         if (!$this->is_empty()) {
             // sort so the highest impact value is shown first and the order is always deterministic
-            $this->sort_by_impact();
+            $this->sort_by_impact($msg);
             if ($limit == null) {
                 $limit = $this->configured_limit($msg);
             }
@@ -915,7 +902,7 @@ class value_list extends ListBase
             $col_tiers = (int)$url_array[url_var::DISPLAY_LIST_COLUMNS];
         }
         // the row order follows the impact, so it never depends on the api/db row order
-        $this->sort_by_impact();
+        $this->sort_by_impact($msg);
         // a phrase that every value carries describes the whole table, so the header names
         // it once and no row repeats it
         $tbl_phr = $this->phrases_of_every_value(
@@ -2528,7 +2515,7 @@ class value_list extends ListBase
         if (count($pool) > 0) {
             $val_lst = new value_list();
             $val_lst->set_lst($pool);
-            $val_lst->sort_by_impact();
+            $val_lst->sort_by_impact($msg);
             // the remaining page budget after the grouped sections; the pool holds the ungrouped
             // values and the values of the skipped groups, so the more tail of this last section
             // covers everything the page does not show
@@ -2578,7 +2565,7 @@ class value_list extends ListBase
         // bucketed in pool order by time_groups / relevant_phrase_groups, which is not stable
         $val_lst = new value_list();
         $val_lst->set_lst($members);
-        $val_lst->sort_by_impact();
+        $val_lst->sort_by_impact($msg);
         // show at most the configured number of values per group and offer the rest behind the
         // "... and n more" tail, so that a phrase with many values cannot fill the whole screen
         // and the messages below the view stay visible (see docs/llm/frontend.md)
@@ -3140,7 +3127,7 @@ class value_list extends ListBase
         if (!$this->is_empty()) {
             // sort so the highest impact value is shown first and the order (and the limited subset)
             // never depends on the api/db row order (see docs/llm/frontend.md), like list() and table()
-            $this->sort_by_impact();
+            $this->sort_by_impact($msg);
             if ($limit == null) {
                 $limit = $this->configured_limit($msg);
             }
@@ -3177,7 +3164,7 @@ class value_list extends ListBase
         $html = new html_base();
 
         // sort so the highest impact value is shown first and the order is always deterministic
-        $this->sort_by_impact();
+        $this->sort_by_impact($msg);
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;

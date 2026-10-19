@@ -1809,6 +1809,13 @@
       "from": "PV installation detail total",
       "verb": "has a",
       "to": "calculator highlight"
+    },
+    {
+      "name": "PV installation detail column consumption mix unit",
+      "description": "the column shows the mix in gram per kWh and not the net avoided emission or the battery effect, which name the consumption mix too",
+      "from": "PV installation detail column consumption mix",
+      "verb": "with",
+      "to": "gram per kWh"
     }
   ],
   "formulas": [
@@ -2006,6 +2013,14 @@
       "assigned": [
         "delivered electricity",
         "production mix"
+      ]
+    },
+    {
+      "name": "annual consumption mix by PV weighting",
+      "description": "the consumption mix of a year as the PV installation uses it: the PV-weighted consumption mix, so that the year row of the monthly table shows the mix that the twelve monthly mixes give with the PV delivery as the weight",
+      "expression": "\"consumption mix\",\"annual\" = \"PV-weighted consumption mix\"",
+      "assigned": [
+        "PV-weighted consumption mix"
       ]
     }
   ],
@@ -3645,7 +3660,27 @@
     {"context": ["example PV installation", "household consumption", "November", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "November", "kWh"], "number": "151.21"},
     {"context": ["example PV installation", "battery charge", "December", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "December", "kWh"], "number": "44.91"},
     {"context": ["example PV installation", "PV production", "December", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "December", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "household consumption", "December", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "December", "kWh"], "number": "247.59"}
+    {"context": ["example PV installation", "household consumption", "December", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "December", "kWh"], "number": "247.59"},
+    {
+      "context": [
+        "example PV installation",
+        "PV-weighted consumption mix",
+        "2018 to 2022",
+        "mean",
+        "CO2-eq",
+        "gram per kWh",
+        "modelled"
+      ],
+      "formula": "annual consumption mix by PV weighting",
+      "words": [
+        "example PV installation",
+        "consumption mix",
+        "annual",
+        "CO2-eq",
+        "gram per kWh"
+      ],
+      "number": "105.83"
+    }
   ],
   "view-validation": [
     {

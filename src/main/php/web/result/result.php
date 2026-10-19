@@ -258,6 +258,15 @@ class result extends sandbox_value
     }
 
     /**
+     * @return string the phrase names in alphabetic order followed by the formula name, because
+     *                two results of different formulas can have the same phrases
+     */
+    function name_key(): string
+    {
+        return parent::name_key() . ' ' . ($this->frm?->name() ?? '');
+    }
+
+    /**
      * a result is shown by its own page, which names the formula that has calculated it
      * @return int the view id of the default page of a result
      */

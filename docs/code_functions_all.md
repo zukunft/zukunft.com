@@ -6859,6 +6859,7 @@
             .php
     \-- calculator_sources - section for function calculator_sources missing in /component/execute/ui_list.php
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
+    \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -7141,6 +7142,10 @@
     \-- value_list - section for function value_list is expected to be related in /helper/data_object.php
     \-- formula_link_list - section for function formula_link_list not yet defined that it should be set and get in /hel
             per/data_object.php
+    \-- has_results_of - section for function has_results_of not yet defined that it should be set and get in /helper/da
+            ta_object.php
+    \-- add_results_of - section for function add_results_of not yet defined that it should be set and get in /helper/da
+            ta_object.php
     \-- result_list - section for function result_list not yet defined that it should be set and get in /helper/data_obj
             ect.php
     \-- formula_list - section for function formula_list not yet defined that it should be set and get in /helper/data_o
@@ -7821,6 +7826,7 @@
             php
     \-- display - section for function display not yet defined that it should be display in /result/result.php
     \-- name - section for function name is expected to be debug in /result/result.php
+    \-- name_key - section for function name_key not yet defined that it should be display in /result/result.php
     \-- get_description - section for function get_description is expected to be set and get in /result/result.php
     \-- display_linked - section for function display_linked not yet defined that it should be display in /result/result
             .php
@@ -7838,8 +7844,10 @@
     \-- add_result - section for function add_result not yet defined that it should be modify in /result/result_list.php
     \-- get_by_formula - section for function get_by_formula is expected to be set and get in /result/result_list.php
     \-- filter - section for function filter not yet defined that it should be modify in /result/result_list.php
-    \-- sort_by_number - section for function sort_by_number not yet defined that it should be sort in /result/result_li
+    \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be sort in /result/result_li
             st.php
+    \-- sorted_by_impact - section for function sorted_by_impact not yet defined that it should be sort in /result/resul
+            t_list.php
     \-- list - section for function list not yet defined that it should be sort in /result/result_list.php
     \-- list_most_relevant - section for function list_most_relevant not yet defined that it should be sort in /result/r
             esult_list.php
@@ -8058,6 +8066,8 @@
             hp
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/sandbox_value.php
     \-- impact - section for function impact not yet defined that it should be display in /sandbox/sandbox_value.php
+    \-- unit_key - section for function unit_key not yet defined that it should be display in /sandbox/sandbox_value.php
+    \-- name_key - section for function name_key not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- has_phrase - section for function has_phrase not yet defined that it should be display in /sandbox/sandbox_value
             .php
     \-- value - section for function value not yet defined that it should be display in /sandbox/sandbox_value.php
@@ -8986,7 +8996,8 @@
                 f words
     \-- display
         \-- formula_link - @return string that best describes this object
-        \-- result_list - @return string with a list of the result names with html links
+        \-- result_list - @param user_message $msg to report a problem of the phrase types that name the unit of the sor
+                t
         \-- sandbox_link - @return string that best describes this object
         \-- job_list - @return string with a table of the batch job entries for users
         \-- sys_log_list - @return string with a table of the system log entries for users
@@ -9031,8 +9042,8 @@
         \-- result_list - @param array $url_arr the url parameters of the calling page,
                  which become the back part of the links
     \-- table
-        \-- result_list - @param phrase_list|null $context_phr_lst the phrases the reader assumes and that are left out 
-                of the header
+        \-- result_list - @param user_message $msg to report a problem of the phrase types that name the unit of the sor
+                t
     \-- display_old
         \-- result_list - create the html code to show the formula results to the user
     \-- load_by_id_with_related
@@ -9125,6 +9136,10 @@
         \-- data_object - @return formula_link_list with the formula links of this data object
     \-- set_result_list
         \-- data_object - set the result_list of this data object
+    \-- has_results_of
+        \-- data_object - @param int $phr_id the id of the phrase of a page
+    \-- add_results_of
+        \-- data_object - add the loaded results of a phrase to the result list, which can hold the results of
     \-- result_list
         \-- data_object - @return result_list with the results of this data object
     \-- set_formula_list
@@ -9489,6 +9504,8 @@
         \-- ui_list - the sources of a calculator page as a numbered list in the order of their first use, so
     \-- calculator_numbers
         \-- ui_list - @param word|triple $dbo the phrase of the page
+    \-- calculator_result
+        \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
@@ -10663,11 +10680,12 @@
     \-- sort_by_impact
         \-- phrase_list - sort this phrase list in place so that the phrase with the highest impact is first
         \-- term_list - sort this term list in place so that the term with the highest impact is first
+        \-- result_list - sort this result list in place in the preferred order of numbers (see sandbox_value::sorted),
     \-- max_impact
         \-- phrase_list - @return float the highest system calculated impact of the phrases in this list (0.0 if the lis
                 t is empty)
-    \-- sort_by_number
-        \-- result_list - sort this result list in place so that the result with the highest number is first and the
+    \-- sorted_by_impact
+        \-- result_list - @param user_message $msg to report a problem of the phrase types that name the unit
     \-- list
         \-- result_list - the deterministically sorted list rendered by the generic ListBase::list(); overridden so the
     \-- list_most_relevant

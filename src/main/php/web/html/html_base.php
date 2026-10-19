@@ -1843,13 +1843,18 @@ class html_base
      * add the hidden field
      * @param string $name the internal name of the field
      * @param string $value the value that should be returned
+     * @param string $form_name the form that the field joins although it is outside of it e.g. a calculator input, empty for the form around it
      * @return string the html code to add a hidden field
      */
-    function form_hidden(string $name, string $value): string
+    function form_hidden(string $name, string $value, string $form_name = ''): string
     {
+        $form = '';
+        if ($form_name != '') {
+            $form = ' ' . self::FORM . '="' . $form_name . '"';
+        }
         return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
             '" ' . self::NAME . '="' . $name .
-            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '">';
+            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"' . $form . '>';
     }
 
     /**

@@ -1990,3 +1990,4 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 1989,1,battery effect formula,,,21,,,,,,,,
 1990,1,PV site intensity formula,,,21,,,,,,,,
 1991,1,gross avoided emission by production mix,,,21,,,,,,,,
+1992,1,annual consumption mix by PV weighting,,,21,,,,,,,,

@@ -130,8 +130,15 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 class ui_list extends ui_base
 {
 
+    // put before the group id of the number of a calculator cell, so that a value and a result
+    // with the same group id get different html ids (see calculator_cell_id)
+    const string CALC_CELL_VALUE = 'val-';
+    const string CALC_CELL_RESULT = 'res-';
+
     // the results whose context values this renderer has loaded, so a context is loaded once per page
     private array $ctx_loaded = [];
+    // the html ids of the calculator cells that this renderer has written, so an id is unique on a page
+    private array $cell_ids = [];
 
     /**
      * HTML for a list of words or triples
@@ -1702,12 +1709,13 @@ class ui_list extends ui_base
      */
     private function add_phrase_results(data_object $dto, phrase $phr, user_message $msg): void
     {
-        if ($dto->online and $dto->res_lst->is_empty()) {
+        // the cache can hold the results of another phrase e.g. of a table on the same page
+        if ($dto->online and !$dto->has_results_of($phr->id())) {
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($phr);
             $res_lst = new result_list();
             if ($res_lst->load_by_phrase_list($phr_lst, $msg)) {
-                $dto->set_result_list($res_lst);
+                $dto->add_results_of($phr->id(), $res_lst);
                 $this->add_result_formulas($dto, $res_lst, $msg);
             }
         }
@@ -2134,7 +2142,8 @@ class ui_list extends ui_base
         $result = [];
         $this->add_phrase_results($dto, $dbo->phrase(), $msg);
         $calc = new formula_calc();
-        foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->lst() as $res) {
+        // in a fixed order, because the order of the operands is the order of their sources on the page
+        foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->sorted_by_impact($msg) as $res) {
             $this->add_context_values($res, $dto, $msg);
             $operands = $calc->operands($res, $this->values_and_results($dto, $msg), $dto->formula_list());
             foreach ($operands as $val) {
@@ -2479,6 +2488,10 @@ class ui_list extends ui_base
             $this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto),
             $this->field_property($phr, triples::FIELD_LIMIT_UP, $dto),
             $this->field_property($phr, triples::FIELD_STEP, $dto), $form_name);
+        // the save writes the entered number to the value that the field shows
+        if ($val != null) {
+            $input .= $html->form_hidden(url_var::GROUP . $phr->id(), (string)$val->id(), $form_name);
+        }
         $unit = $val == null ? '' : $this->unit_name($val, $msg);
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
@@ -2558,8 +2571,11 @@ class ui_list extends ui_base
         user_message $msg
     ): ?sandbox_value
     {
-        return $dto->val_lst->get_by_names([$phr->name(), $opt->name()])
-            ?? $this->calculator_value($opt, $dbo, $dto, $msg);
+        $names = [$phr->name(), $opt->name()];
+        $matches = array_values(array_filter($dto->val_lst->lst(), fn($val) => $val->match_all($names)));
+        // in the preferred order of numbers, because the backend returns the values in any order
+        $result = sandbox_value::sorted($matches, $msg)[0] ?? null;
+        return $result ?? $this->calculator_value($opt, $dbo, $dto, $msg);
     }
 
     /**
@@ -2636,7 +2652,7 @@ class ui_list extends ui_base
     private function calculator_value(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
     {
         $properties = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE];
-        $result = null;
+        $best_vals = [];
         $best = null;
         foreach ($dto->val_lst->lst() as $val) {
             $names = $val->phr_lst()->names();
@@ -2644,12 +2660,16 @@ class ui_list extends ui_base
                 and $this->has_field_value_phrases($phr, $val, $dto, $msg)) {
                 $rank = [$val->has_phrase($dbo->phrase(), $msg) ? 0 : 1, $this->context_count($phr, $val, $msg), count($names)];
                 if ($best == null or $rank < $best) {
-                    $result = $val;
+                    $best_vals = [$val];
                     $best = $rank;
+                } elseif ($rank == $best) {
+                    $best_vals[] = $val;
                 }
             }
         }
-        return $result;
+        // values that rank the same are picked by the preferred order of numbers and not by the
+        // order of the list, which the backend returns in any order (docs/llm/frontend.md)
+        return sandbox_value::sorted($best_vals, $msg)[0] ?? null;
     }
 
     /**
@@ -2735,6 +2755,7 @@ class ui_list extends ui_base
      * phrase as the first header, one column per sub-item, one row per phrase that is a table
      * phrase in their order e.g. January to December and an extra row per "with" sub-item e.g.
      * the year; a cell is the result or value with the page phrase, the row and the column phrase
+     * and the "with" filter of the column, e.g. the unit gram per kWh
      *
      * @param calculator $calc the calculator reader of the page
      * @param word|triple $dbo the phrase of the page
@@ -2817,27 +2838,65 @@ class ui_list extends ui_base
     }
 
     /**
+     * the number of a calculator cell: the value or result with all the phrases of the cell and
+     * the fewest other phrases; if the phrases select two different numbers equally, the shown
+     * number would depend on the order of the list, so the cell stays empty and the user is told
+     *
      * @param array $phrases the phrases that the number must have; null entries are ignored
      * @param value_list $lst the values and results of the page
-     * @param user_message $msg to report a problem of the phrase compare
-     * @return sandbox_value|null the value or result with all the phrases and the fewest other phrases
+     * @param user_message $msg to report a problem of the phrase compare or an ambiguous cell
+     * @return sandbox_value|null the value or result of the cell or null if the phrases select none or not one number
      */
-    private function calculator_result(array $phrases, value_list $lst, user_message $msg): ?sandbox_value
+    function calculator_result(array $phrases, value_list $lst, user_message $msg): ?sandbox_value
     {
         $phrases = array_filter($phrases);
-        $result = null;
+        $best = [];
         foreach ($lst->lst() as $val) {
-            $all = true;
-            foreach ($phrases as $phr) {
-                if (!$val->has_phrase($phr, $msg)) {
-                    $all = false;
+            if ($this->has_all_phrases($val, $phrases, $msg)) {
+                $count = count($val->phr_lst()->names());
+                $best_count = count(($best[0] ?? $val)->phr_lst()->names());
+                if ($best == [] or $count < $best_count) {
+                    $best = [$val];
+                } elseif ($count == $best_count) {
+                    $best[] = $val;
                 }
             }
-            if ($all and ($result == null or count($val->phr_lst()->names()) < count($result->phr_lst()->names()))) {
-                $result = $val;
+        }
+        $result = $best[0] ?? null;
+        if ($result != null and !$this->is_one_number($best)) {
+            $msg->add_warning_with_vars(msg_id::CALCULATOR_CELL_AMBIGUOUS, [
+                msg_id::VAR_NAME_LIST => implode(', ', array_map(fn($phr) => $phr->name(), $phrases)),
+                msg_id::VAR_VALUE_LIST => implode(', ', array_map(fn($val) => $val->number(), $best))]);
+            $result = null;
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val a value or result of the page
+     * @param array $phrases the phrases of a calculator cell
+     * @param user_message $msg to report a problem of the phrase compare
+     * @return bool true if the number has all the phrases of the cell
+     */
+    private function has_all_phrases(sandbox_value $val, array $phrases, user_message $msg): bool
+    {
+        $result = true;
+        foreach ($phrases as $phr) {
+            if (!$val->has_phrase($phr, $msg)) {
+                $result = false;
             }
         }
         return $result;
+    }
+
+    /**
+     * @param array $vals the values and results that a calculator cell selects equally
+     * @return bool true if they all have the same number, so the cell shows the same number whichever is taken
+     */
+    private function is_one_number(array $vals): bool
+    {
+        $numbers = array_map(fn($val) => $val->number(), $vals);
+        return count(array_unique($numbers, SORT_REGULAR)) == 1;
     }
 
     /**
@@ -2864,13 +2923,37 @@ class ui_list extends ui_base
     {
         $html = new html_base();
         $txt = '';
+        $id = '';
         if ($val != null and !$val->is_null()) {
             $txt = $html->esc($with_unit ? $this->calculator_number_text($val, $msg) : $val->val_formatted($msg));
             if ($signed) {
                 $txt = $html->span($txt, $val->number() < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
             }
+            $id = $this->calculator_cell_id($val);
         }
-        return $html->block(html_base::TD, $txt, styles::CALC_NUMBER);
+        return $html->block(html_base::TD, $txt, styles::CALC_NUMBER, $id);
+    }
+
+    /**
+     * the id of a number cell, so that the save can compare the results of the page by their
+     * group id; an id is unique on a page, so a number that a detail table shows again gets none
+     *
+     * @param sandbox_value $val the value or result of the cell
+     * @return string the html id e.g. "res-5-0M-06+" or an empty string if the page names the number already
+     */
+    private function calculator_cell_id(sandbox_value $val): string
+    {
+        $prefix = self::CALC_CELL_VALUE;
+        if ($val instanceof result) {
+            $prefix = self::CALC_CELL_RESULT;
+        }
+        $result = $prefix . $val->id();
+        if (in_array($result, $this->cell_ids)) {
+            $result = '';
+        } else {
+            $this->cell_ids[] = $result;
+        }
+        return $result;
     }
 
     /**
@@ -2920,7 +3003,8 @@ class ui_list extends ui_base
     {
         $cells = '';
         foreach ($cols as $col) {
-            $val = $this->calculator_result([...$ctx, $calc->item_phrase($col)], $lst, $msg);
+            // the filter of a column e.g. the unit gram per kWh selects its numbers like the filter of a row
+            $val = $this->calculator_result([...$ctx, $calc->item_phrase($col), $calc->filter($col)], $lst, $msg);
             $cells .= $this->calculator_cell($val, false, false, $msg);
         }
         return $this->calculator_row(new html_base()->esc($label), $cells, $key);

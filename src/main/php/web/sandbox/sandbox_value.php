@@ -400,6 +400,61 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * the values or results in the preferred order (docs/llm/frontend.md): the bigger impact
+     * first, then within the same unit the bigger number, then by name; the unit is part of the
+     * order, so that two numbers are only compared if they have the same unit and the order stays
+     * the same for every compare; the name is never the group id, which shifts between database rebuilds
+     *
+     * @param sandbox_value[] $lst the values or results to sort
+     * @param user_message $msg to report a problem of the phrase types that name the unit
+     * @return sandbox_value[] the values or results sorted
+     */
+    static function sorted(array $lst, user_message $msg): array
+    {
+        // the keys of each number are created once and not in each compare
+        $impact = [];
+        $unit = [];
+        $name = [];
+        foreach ($lst as $val) {
+            $impact[spl_object_id($val)] = $val->impact();
+            $unit[spl_object_id($val)] = $val->unit_key($msg);
+            $name[spl_object_id($val)] = $val->name_key();
+        }
+        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $impact[spl_object_id($b)] <=> $impact[spl_object_id($a)]
+            ?: strcmp($unit[spl_object_id($a)], $unit[spl_object_id($b)])
+                ?: $b->number() <=> $a->number()
+                    ?: strcmp($name[spl_object_id($a)], $name[spl_object_id($b)]));
+        return $lst;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the names of the unit, scaling and percent phrases of the number in alphabetic order
+     */
+    function unit_key(user_message $msg): string
+    {
+        $names = [];
+        foreach ($this->grp->phr_lst()->lst() as $phr) {
+            if ($phr->is_measure($msg) or $phr->is_scaling($msg) or $phr->is_percent($msg)) {
+                $names[] = $phr->name();
+            }
+        }
+        sort($names, SORT_STRING);
+        return implode(', ', $names);
+    }
+
+    /**
+     * @return string the phrase names of the number in alphabetic order, because the order of the
+     *                phrases in a group follows their database id
+     */
+    function name_key(): string
+    {
+        $names = $this->grp->phr_lst()->names();
+        sort($names, SORT_STRING);
+        return implode(', ', $names);
+    }
+
+    /**
      * to select a value or a result by a phrase
      * @param phrase $phr the phrase to select the number
      * @param user_message $msg to report a problem of reading a phrase type

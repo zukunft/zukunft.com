@@ -153,6 +153,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-2526" id="n-2526" value="10" min="0.5" step="0.5" form="calculator">
+                                    <input type="hidden" name="g-2526" value="497930589028911607" form="calculator">
                                     <span class="unit">
                                         kWp
                                     </span>
@@ -194,6 +195,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-2528" id="n-2528" value="10" min="0" step="1" form="calculator">
+                                    <input type="hidden" name="g-2528" value="88665143963060727" form="calculator">
                                     <span class="unit">
                                         kWh
                                     </span>
@@ -205,6 +207,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-2535" id="n-2535" value="4500" min="0" step="100" form="calculator">
+                                    <input type="hidden" name="g-2535" value="br-bb-/u+2M+2v+" form="calculator">
                                     <span class="unit">
                                         kWh
                                     </span>
@@ -231,6 +234,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-1981" id="n-1981" value="976" form="calculator">
+                                    <input type="hidden" name="g-1981" value="188026489310906303" form="calculator">
                                     <span class="unit">
                                         kWh per kWp
                                     </span>
@@ -248,6 +252,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n801" id="n801" value="30" form="calculator">
+                                    <input type="hidden" name="g801" value="3440275720658" form="calculator">
                                 </div>
                                 <span class="hint">
                                     [2]
@@ -270,6 +275,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-1956" id="n-1956" value="79.2" form="calculator">
+                                    <input type="hidden" name="g-1956" value="Sd-Sb-SY-SX-PD+" form="calculator">
                                     <span class="unit">
                                         gram per kWh
                                     </span>
@@ -281,11 +287,17 @@
                                 </label>
                                 <div class="form-group ">
                                     <select class="form-control" name="n-2544" form="calculator" id="n-2544_form_select" >
-                                        <option value="0" selected>
-                                            please select ...
+                                        <option value="395"  >
+                                            Production mix
+                                        </option>
+                                        <option value="523"  selected >
+                                            Residual mix
                                         </option>
                                     </select>
                                 </div>
+                                <span class="hint">
+                                    [4]
+                                </span>
                             </div>
                             <div class="field">
                                 <label for="n-2539">
@@ -296,6 +308,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-2539" id="n-2539" value="0.35" form="calculator">
+                                    <input type="hidden" name="g-2539" value="br-bf-bb-0U+2v+" form="calculator">
                                     <span class="unit">
                                         percent
                                     </span>
@@ -310,6 +323,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-2531" id="n-2531" value="0.9" form="calculator">
+                                    <input type="hidden" name="g-2531" value="550566407371262435" form="calculator">
                                     <span class="unit">
                                         percent
                                     </span>
@@ -324,6 +338,7 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-2534" id="n-2534" value="100" form="calculator">
+                                    <input type="hidden" name="g-2534" value="550566409673542118" form="calculator">
                                     <span class="unit">
                                         kg per kWh
                                     </span>
@@ -338,7 +353,53 @@
                                 </label>
                                 <div class="row">
                                     <input type="number" name="n-2533" id="n-2533" value="15" form="calculator">
+                                    <input type="hidden" name="g-2533" value="550566407367657957" form="calculator">
                                 </div>
+                            </div>
+                            <div class="field">
+                                <label for="nSd-Sc-SZ-4w+Cf+Nq+PD+">
+                                    CO2-eq electricity Europe life cycle production mix
+                                    <span class="tag">
+                                        measured
+                                    </span>
+                                </label>
+                                <input type="number" name="nSd-Sc-SZ-4w+Cf+Nq+PD+" id="nSd-Sc-SZ-4w+Cf+Nq+PD+" value="395" form="calculator">
+                                <span class="unit">
+                                    gram per kWh
+                                </span>
+                                <span class="hint">
+                                    treeze monthly electricity mixes 2025
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="nbH-Sd-Sc-Cf+Nq+PD+">
+                                    CO2-eq electricity Europe life cycle residual mix
+                                    <span class="tag">
+                                        measured
+                                    </span>
+                                </label>
+                                <input type="number" name="nbH-Sd-Sc-Cf+Nq+PD+" id="nbH-Sd-Sc-Cf+Nq+PD+" value="523" form="calculator">
+                                <span class="unit">
+                                    gram per kWh
+                                </span>
+                                <span class="hint">
+                                    Swissolar PV fact sheet 2024
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="n689507699165">
+                                    east-west yield factor
+                                    <span class="tag">
+                                        measured
+                                    </span>
+                                </label>
+                                <input type="number" name="n689507699165" id="n689507699165" value="0.85" form="calculator">
+                                <span class="unit">
+                                    percent
+                                </span>
+                                <span class="hint">
+                                    gruenes.haus tilt and orientation table
+                                </span>
                             </div>
                         </details>
                     </aside>
@@ -371,18 +432,22 @@
                                         <td>
                                             PV production
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-225461982644374007">
+                                            248'880 kWh
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-78813519778122231">
+                                            8'296 kWh
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             Used directly
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-225461982644963831">
+                                            47'250 kWh
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="val-br-bc-/u+2M+3B+">
+                                            1'575 kWh
                                         </td>
                                     </tr>
                                     <tr>
@@ -392,36 +457,44 @@
                                                 after losses
                                             </span>
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-225461982644570615">
+                                            66'713 kWh
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-78813519778318839">
+                                            2'224 kWh
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             Exported to grid
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-282322841917622775">
+                                            127'504 kWh
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-282320604239661559">
+                                            4'250 kWh
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             Battery losses
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-225461982645357047">
+                                            7'413 kWh
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-78813519779105271">
+                                            247.09 kWh
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             Grid import still needed
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-225461982645029367">
+                                            21'037 kWh
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-78813519778777591">
+                                            701.23 kWh
                                         </td>
                                     </tr>
                                     <tr>
@@ -457,18 +530,22 @@
                                         <td>
                                             PV system
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-bs-br-Q+AV+PD+">
+                                            10'482 kg
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-bs-br-Q+2M+PD+">
+                                            349.41 kg
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
                                             Battery
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-bu-br-Q+AV+PD+">
+                                            2'000 kg
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-bu-br-Q+2M+PD+">
+                                            66.67 kg
                                         </td>
                                     </tr>
                                     <tr class="sec">
@@ -480,18 +557,30 @@
                                         <td>
                                             vs. Swiss consumer mix, annual
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-br-bM-SY-Q+AV+PD+">
+                                            <span class="pos">
+                                                18'426 kg
+                                            </span>
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-br-bM-SY-Q+2M+PD+">
+                                            <span class="pos">
+                                                614.19 kg
+                                            </span>
                                         </td>
                                     </tr>
                                     <tr class="key">
                                         <td>
                                             vs. Swiss consumer mix, monthly
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-br-bM-bI-Q+AV+PD+">
+                                            <span class="pos">
+                                                13'072 kg
+                                            </span>
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-br-bM-bI-Q+2M+PD+">
+                                            <span class="pos">
+                                                435.74 kg
+                                            </span>
                                         </td>
                                     </tr>
                                     <tr class="key">
@@ -510,9 +599,15 @@
                                                 vs. same PV without battery, annual Swiss mix
                                             </span>
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-br-bj-SY-Q+AV+PD+">
+                                            <span class="neg">
+                                                -2'949 kg
+                                            </span>
                                         </td>
-                                        <td class="n">
+                                        <td class="n" id="res-br-bj-SY-Q+2M+PD+">
+                                            <span class="neg">
+                                                -98.29 kg
+                                            </span>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -562,23 +657,151 @@
                                                     Year
                                                 </td>
                                                 <td class="n">
+                                                    8'296
                                                 </td>
-                                                <td class="n">
+                                                <td class="n" id="val-br-bb-/u+2M+2v+">
                                                     4'500
                                                 </td>
                                                 <td class="n">
+                                                    1'575
                                                 </td>
                                                 <td class="n">
+                                                    2'224
                                                 </td>
                                                 <td class="n">
+                                                    4'250
                                                 </td>
                                                 <td class="n">
+                                                    701.23
                                                 </td>
-                                                <td class="n">
+                                                <td class="n" id="res-br-Sd-SY-2M+PD+">
+                                                    105.83
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="notes">
+                                    <p>
+                                        <b>
+                                            PV production by orientation
+                                        </b>
+                                        the annual PV production: the rated power times the specific yield of the best orientation times the yield factor of the real orientation
+                                    </p>
+                                    <p>
+                                        <b>
+                                            PV site intensity formula
+                                        </b>
+                                        the embodied emission of the PV system divided by the lifetime production at this site; the multiplication by 1000 converts kg to gram
+                                    </p>
+                                    <p>
+                                        <b>
+                                            annual consumption mix by PV weighting
+                                        </b>
+                                        the consumption mix of a year as the PV installation uses it: the PV-weighted consumption mix, so that the year row of the monthly table shows the mix that the twelve monthly mixes give with the PV delivery as the weight
+                                    </p>
+                                    <p>
+                                        <b>
+                                            annual share formula
+                                        </b>
+                                        the share of one year of a CO2-eq total over the lifetime, e.g. the embodied emission of the PV system or the net avoided emission; the result carries the annual word, and the years are the lifetime of the PV installation
+                                    </p>
+                                    <p>
+                                        <b>
+                                            autarky formula
+                                        </b>
+                                        the share of the household consumption covered by the own PV electricity
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery discharge formula
+                                        </b>
+                                        what the battery gives back: the charge times the round-trip efficiency
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery effect formula
+                                        </b>
+                                        the effect of the battery on the net avoided emission against the same PV installation without battery, which delivers all its production: the lifetime battery losses do not displace the reference mix and the battery production adds its embodied emission; the division by 1000 converts gram to kg
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery embodied emission formula
+                                        </b>
+                                        the production emission of all batteries bought over the lifetime
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery losses formula
+                                        </b>
+                                        the battery losses: the charge minus what the battery gives back
+                                    </p>
+                                    <p>
+                                        <b>
+                                            delivered electricity formula
+                                        </b>
+                                        the PV electricity that reaches a consumer, so the production minus the battery losses
+                                    </p>
+                                    <p>
+                                        <b>
+                                            emission payback formula
+                                        </b>
+                                        the operating years until the gross avoided emission equals the embodied emission, assuming an even avoided emission per year
+                                    </p>
+                                    <p>
+                                        <b>
+                                            export formula
+                                        </b>
+                                        the PV production that is neither used directly nor stored goes to the grid
+                                    </p>
+                                    <p>
+                                        <b>
+                                            grid import formula
+                                        </b>
+                                        the consumption not covered by direct use and battery discharge is bought from the grid
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by PV-weighted consumption mix
+                                        </b>
+                                        the same with the Swiss consumption mix weighted by the monthly PV delivery: PV produces mostly in summer, when the Swiss consumption mix is cleanest (about 70 to 90 g/kWh in May to August, 140 to 165 g/kWh in winter), so weighting the PV output of each month by the mix of that month gives a lower saving than the annual average
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by consumption mix
+                                        </b>
+                                        the emission of the Swiss consumption mix that the delivered PV electricity displaces over the lifetime; one formula per reference mix, because the mix is the operand; the division by 1000 converts gram to kg
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by production mix
+                                        </b>
+                                        the same with the European production mix as the replacement mix
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by residual mix
+                                        </b>
+                                        the same with the European residual mix as the replacement mix
+                                    </p>
+                                    <p>
+                                        <b>
+                                            lifetime total formula
+                                        </b>
+                                        the total of an annual number over the lifetime of the installation, e.g. the PV production or the export; the result carries the lifetime word in place of the annual word of the input, and the years are the lifetime of the PV installation
+                                    </p>
+                                    <p>
+                                        <b>
+                                            net avoided emission formula
+                                        </b>
+                                        the gross avoided emission minus the embodied emission of the PV system and the battery; the reference mix is selected by the context. Every PV kilowatt-hour that reaches a consumer, used at home or exported, is assumed to displace one kilowatt-hour of grid electricity, the production emissions of the modules and the battery are subtracted, and the battery losses reduce the delivered energy
+                                    </p>
+                                    <p>
+                                        <b>
+                                            self-consumption share by dispatch
+                                        </b>
+                                        the share of the production used on site; the battery charge counts in full, because the losses happen on site too. The self-consumption model has a monthly resolution: the direct use is capped at the load during the PV hours, the battery does at most one full cycle per day and only covers the evening and night load. Real day-to-day weather swings lower the battery share somewhat. The monthly PV and load profiles are assumed typical values for the Zurich region (confidence 0.6)
+                                    </p>
                                 </div>
                                 <div class="src">
                                     <h2>
@@ -593,6 +816,21 @@
                                         <li>
                                             <a href="https://iea-pvps.org/wp-content/uploads/2024/09/Task-12-Fact-Sheet-Stucki.pdf">
                                                 IEA PVPS Task 12 fact sheet 2023
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.stadt-zuerich.ch/content/dam/web/de/aktuell/publikationen/2025/studien-netto-null/oekobilanz-monatliche-strombereitstellung-studie.pdf">
+                                                treeze monthly electricity mixes 2025
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf">
+                                                Swissolar PV fact sheet 2024
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf.download.pdf/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf">
+                                                BAFU Swiss electricity mixes 2018
                                             </a>
                                         </li>
                                     </ol>
