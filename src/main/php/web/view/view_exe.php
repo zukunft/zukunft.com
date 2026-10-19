@@ -193,6 +193,7 @@ class view_exe extends view_base
         array                                            $url_array = []
     ): string
     {
+        global $ui_sys;
         $html = new html_base();
 
         $this->log_debug($this->dsp_id());
@@ -276,7 +277,11 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache, $msg)) {
                     $auto_row = false;
                 }
+                $tc_id = $cmp->type_code_id($cfg->typ_lst_cache, $msg);
+                // the render time per component type splits the url to html time in the report
+                $ui_sys?->start_html_step(microtime(true));
                 $cmp_html = $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $pattern, $test_mode, $url_array);
+                $ui_sys?->end_html_step($tc_id, microtime(true));
                 // the time of this message is the creation of this component incl. its api calls, so a slow component can be found
                 log_debug('component ' . $cmp->dsp_id() . ' rendered', url_var::DEBUG_LEVEL_MAIN_STEP);
                 // a combined component shares the row with the previous one, but it is still an own
@@ -302,7 +307,6 @@ class view_exe extends view_base
                 // Do not add the row or column style
                 // if the style has been added by the component already
                 // TODO Prio 1 find a more strait forward way to define it
-                $tc_id = $cmp->type_code_id($cfg->typ_lst_cache, $msg);
                 if ($cmp->no_row_style($tc_id)) {
                     $style_id = null;
                 }

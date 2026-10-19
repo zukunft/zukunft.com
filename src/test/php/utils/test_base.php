@@ -591,6 +591,8 @@ class test_base
     function header(string $header_text, string $base_url = ''): void
     {
         global $log_txt;
+        // the frontend times of the previous section are booked before its times are reset
+        frontend::book_times();
         $this->check_time_section($header_text);
         $log_txt->header($header_text, $base_url);
 
@@ -1464,7 +1466,6 @@ class test_base
     ): bool
     {
         global $sys;
-        global $ui_sys;
         $msg = new user_message();
         $msg_ui = new user_message_ui();
         $lib = new library();
@@ -1512,13 +1513,11 @@ class test_base
             $cfg->usr = $map_ui->convertToUi($usr, $msg_ui);
         }
         // render in test mode so that the result is reproducible without backend calls
-        $sys->times->switch(system_time_type::URL_TO_HTML);
-        $wait_start = $ui_sys?->api_wait ?? 0;
-        $steps_start = $ui_sys?->api_steps ?? [];
-        $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
         // the wait for the backend is part of the rendering, but not frontend work
-        $sys->times->move(($ui_sys?->api_wait ?? 0) - $wait_start, system_time_type::URL_TO_HTML, system_time_type::API_WAIT);
-        $sys->times->split_api_wait($ui_sys?->api_steps_since($steps_start) ?? []);
+        frontend::book_times();
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
+        frontend::book_times();
         // continue with the section of the caller for the following tests
         $sys->times->switch();
 
@@ -5710,6 +5709,9 @@ class test_base
     {
         global $log_txt;
 
+        // a test that renders without url_to_html leaves its api wait and html creation to the category of the test
+        frontend::book_times();
+
         // calculate the execution time
         $new_start_time = microtime(true);
         $since_start = $new_start_time - $this->section_start_time;
@@ -6064,9 +6066,10 @@ class test_base
         global $sys;
 
         echo "\n";
+        frontend::book_times();
         $since_start = microtime(true) - $this->start_time();
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
-        echo ' (' . $sys->times->report($since_start) . ')';
+        echo "\n" . $sys->times->report($since_start);
         echo "\n";
         echo $this->test_cases_line();
         echo "\n";

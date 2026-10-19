@@ -76,9 +76,20 @@ class system_time_type extends type_object
     const string API_REQUEST = "api_request";
     // the wait of the html frontend for the answer of the backend
     const string API_WAIT = "api_wait";
-    // put before a step of the backend that the json of its answer names, e.g. "api db_read",
-    // so that the backend steps of the api wait are not mixed up with the steps of the caller
-    const string API_STEP_PREFIX = "api ";
+    // the parts of the api wait that the frontend measures itself: the connect to the backend and
+    // the transfer of the answer after its first byte (see rest_call::transfer_steps)
+    const string API_CONNECT = "connect";
+    const string API_TRANSFER = "transfer";
+    // the server time of an answer without named steps by the kind of answer (see rest_call::server_steps):
+    // an object that has been faster than the limit to name its steps, a json list, which has no field
+    // for them, and an answer that is no json e.g. an error page
+    const string API_FAST = "fast api response";
+    const string API_LIST = "api list response";
+    const string API_NO_JSON = "no json response";
+    // the server time of a slow answer that its named steps do not cover e.g. the end of the request
+    const string API_NOT_MEASURED = "api not measured";
+    // the wait around the api call that curl does not count e.g. the session cookie file (see rest_call::curl_step)
+    const string API_CURL = "curl";
     // the loads of the related objects for the api message e.g. the values used by a result
     const string LOAD_RELATED = "load_related";
     // the creation of a sql statement from its parts

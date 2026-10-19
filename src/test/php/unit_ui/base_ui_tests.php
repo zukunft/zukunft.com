@@ -102,6 +102,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types as comp_type_shared;
@@ -1205,16 +1206,66 @@ class base_ui_tests
         $t->assert($test_name, controller::json_with_time('{}', $steps), '{}');
         $test_name = 'a json list gets no steps, because it has no field for them';
         $t->assert($test_name, controller::json_with_time('[]', $steps), '[]');
-        // the frontend sums the steps of all api calls, so that a page can take the steps of its calls
+        // the frontend sums the wait and the steps of the api calls until they are booked to the time report
         $dto_ui = new data_object();
-        $dto_ui->add_api_steps([system_time_type::DB_READ => 1.5]);
-        $steps_start = $dto_ui->api_steps;
+        $dto_ui->api_wait += 1.5;
+        $dto_ui->add_api_steps([system_time_type::DB_READ => 1.0]);
         $dto_ui->add_api_steps([system_time_type::DB_READ => 0.25, system_time_type::SQL_CREATE => 0.5]);
-        $test_name = 'the backend steps of the api calls since a start are summed per step';
-        $t->assert($test_name, $dto_ui->api_steps_since($steps_start),
-            [system_time_type::DB_READ => 0.25, system_time_type::SQL_CREATE => 0.5]);
-        $test_name = '... and are empty without an api call since the start';
-        $t->assert($test_name, $dto_ui->api_steps_since($dto_ui->api_steps), []);
+        $test_name = 'the api wait not yet booked is taken for the time report';
+        $t->assert($test_name, (string)$dto_ui->take_api_wait(), '1.5');
+        $test_name = '... and the backend steps summed per step';
+        $t->assert($test_name, $dto_ui->take_api_steps(),
+            [system_time_type::DB_READ => 1.25, system_time_type::SQL_CREATE => 0.5]);
+        // negative: a booked time is not booked again
+        $test_name = 'a booked api wait is not taken again';
+        $t->assert($test_name, (string)$dto_ui->take_api_wait(), '0');
+        $test_name = '... and neither are the booked steps';
+        $t->assert($test_name, $dto_ui->take_api_steps(), []);
+        // the frontend splits the rest of its wait into the connect and the transfer of the answer
+        $test_name = 'the wait for an api answer is split into connect and transfer';
+        $t->assert($test_name, rest_call::transfer_steps(0.25, 0.5, 0.75),
+            [system_time_type::API_CONNECT => 0.25, system_time_type::API_TRANSFER => 0.25]);
+        // negative: a reused connection and an answer in one package add no step
+        $test_name = '... but not without connect and transfer time';
+        $t->assert($test_name, rest_call::transfer_steps(0, 0.5, 0.5), []);
+        // the time from the open connection to the first byte is the server time, named by the kind of answer
+        // a slow answer always names its steps, so an object without them has been fast
+        $test_name = 'the server time of an api object without steps is a fast api response';
+        $t->assert($test_name, rest_call::server_steps($api_json, 0.5), [system_time_type::API_FAST => 0.5]);
+        $test_name = '... of a json list, which has no field for the steps, a list response';
+        $t->assert($test_name, rest_call::server_steps('[]', 0.5), [system_time_type::API_LIST => 0.5]);
+        $test_name = '... of an answer that is no json e.g. an error page a no json response';
+        $t->assert($test_name, rest_call::server_steps('', 0.5), [system_time_type::API_NO_JSON => 0.5]);
+        $test_name = '... and of a slow answer its steps and the part that the backend has not measured';
+        $t->assert($test_name, rest_call::server_steps($slow_json, 2.0),
+            [system_time_type::DB_READ => 1.5, system_time_type::SQL_CREATE => 0.25, system_time_type::API_NOT_MEASURED => 0.25]);
+        // negative: a slow answer whose steps cover the whole server time has no unmeasured part
+        $test_name = '... but without an unmeasured part if the steps cover the server time';
+        $t->assert($test_name, rest_call::server_steps($slow_json, 1.75),
+            [system_time_type::DB_READ => 1.5, system_time_type::SQL_CREATE => 0.25]);
+        // the wait around the call that curl itself does not count e.g. the session cookie file
+        $test_name = 'the wait that curl does not count is the curl time';
+        $t->assert($test_name, rest_call::curl_step(1.0, 0.75), [system_time_type::API_CURL => 0.25]);
+        $test_name = '... but not if curl has counted the whole wait';
+        $t->assert($test_name, rest_call::curl_step(0.75, 0.75), []);
+        // the render time of each component without its api wait and without the components within it
+        $dto_ui = new data_object();
+        $dto_ui->start_html_step(10.0);
+        $dto_ui->start_html_step(11.0);
+        $dto_ui->end_html_step(component_types::TEXT, 12.0);
+        $dto_ui->api_wait += 0.5;
+        $dto_ui->end_html_step(component_types::FORM_TITLE, 14.0);
+        $test_name = 'a component is timed without the components within it';
+        $t->assert($test_name, $dto_ui->take_html_steps(),
+            [component_types::TEXT => 1.0, component_types::FORM_TITLE => 2.5]);
+        $test_name = '... and after the booking only the components rendered since';
+        $dto_ui->start_html_step(20.0);
+        $dto_ui->end_html_step(component_types::TEXT, 20.25);
+        $t->assert($test_name, $dto_ui->take_html_steps(), [component_types::TEXT => 0.25]);
+        // negative: an end without a start e.g. after an error in the render adds no time
+        $test_name = 'an end of a component without its start adds no time';
+        $dto_ui->end_html_step(component_types::TEXT, 30.0);
+        $t->assert($test_name, $dto_ui->take_html_steps(), []);
         // negative: the database key of an old link and an integer id are still accepted
         $test_name = 'the database key of an old link is still accepted';
         $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID

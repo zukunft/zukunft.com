@@ -7,87 +7,49 @@ match the hand made sample `pv_lifetime_balance_sample.html` without hardcoding,
 from the database of the use case json; the calculation follows the double calculation check
 of `docs/llm/frontend.md`. the sample is the target and is never adapted to the renderer.
 
-the page is created by the new setup of `docs/llm/new_view_sample_pv_balance.md`: the system
-view `Calculator` with the three components `title calculator`, `calculator input` and
-`calculation result`, and everything that depends on the phrase as calculator triples, with
-general triples of the phrases preferred over triples of the page. the target data is
-`docs/llm/samples/new_view_sample_pv_balance.json`. it replaces the own view
-`PV lifetime CO2 balance` of `pv_lifetime_balance.json` and its 17 components; the values,
-formulas, sources and validations of `pv_lifetime_balance.json` stay, so the file is not
-deprecated but gets the use case triples of the sample in place of its view part.
-
-already there and reused by the new renderers: the period words `lifetime` and `annual` with
-the two general period formulas, the input fields from the field triples
-(`ui_list::input_fields`), the assumption fields, the formula notes, the sources used, the
-frontend check of the results, the source names loaded by id and the `use-case` css of the
-sample in style_html.css.
+the page is the system view `Calculator` with the components `title calculator`,
+`calculator input` and `calculation result` for `example PV installation`, configured by the
+calculator triples of `pv_lifetime_balance.json` (guide: `docs/llm/new_view_sample_pv_balance.md`).
 
 run the steps one at a time, each as its own commit with the tests written first, and ask for
 the test run after each step (an llm never runs test/*, docs/llm/coding.md).
 
-1. the keywords: `calculator_keywords.json` with the words and the ten keyword triples of
-   the sample json (section 4 of the guide), appended to `files::SYSTEM_DATA_APPENDED_FILES`,
-   the const pairs in `shared/const/triples.php` and a unit test that the import creates them
-   with their code id; re-baseline the pinned ids from the regenerated list.csv
-2. the component types `calculator_title`, `calculator_input` and `calculation_result`
-   appended to `component_types.php` (append, then pin, docs/llm/json_views.md) with the
-   dispatch in `component_exe::dsp_entries` and a first renderer that shows only the title
-3. the calculator reader in the frontend, built from the request cache only: from the page
-   phrase or the phrase it is built from to the groups, items, sub-items and the order chain,
-   and the lookup of rule 6 of the guide: the triple of the item, then of its phrase (for the
-   flag and the side result of a row also of its filter phrase), then for a row built from the
-   group phrase the other phrase, then the phrase name; unit tests with a fixed `data_object`
-   for every step of the lookup, an item without order triple and a phrase without calculator
-   triples (the title and the link to the editor)
-4. the view selection by the phrase: `phrase::name_link` uses the default view of the phrase
-   if it is a phrase view, and `frontend::phrase_view_id` takes it for a url with `id` and
-   without `m`
-5. the three renderers from the existing `ui_list` functions, including the steps marked ‡ in
-   the overview of the guide, in three commits:
-   - 5a the views `Calculator` (`calculator_views.json`) and `Calculator editor` (the
-     placeholder of `editor_views.json`) with the view relation in the system data, the
-     former system view `Calculator` renamed to `Comparison table`, and the `use-case`
-     frame with header, grid, aside and section panel
-   - 5b the `calculator input` renderer: the `inputs` frame, the input fields, "Save" as the
-     button text and the assumptions
-   - 5c the `calculation result` renderer: the page title with the calculator label, the
-     `scroll` and `tbody` frame of both tables, the detail tables, the notes and the
-     sources with their heading, and the source numbers [n] in the hints of the inputs,
-     including the orientation hint with the value of the selected option
-6. replace the view part of `pv_lifetime_balance.json` with the data of the sample json: add
-   the use case triples (the triples without a code id, incl. the general triples of the
-   phrases), give `example PV installation` the `"view": "Calculator"`, remove the view
-   `PV lifetime CO2 balance` and its 17 components, load the calculator triples of the page
-   phrase and of the phrase it is built from into the request cache before the components
-   render (the reader reads the cache only), and let `run_pv_lifetime_balance` render
-   the `Calculator` view; the view and component ids after the use case shift, so the
-   developer recreates the database and re-pins (`test/test_re_pin.php`)
-7. delete `docs/llm/samples/new_view_sample_pv_balance.json` and point the links of the guide
+1. the values and results in `src/test/resources/web/html/use_cases/pv_lifetime_balance.html`:
+   when the page is created, all values and results of the page are already in the database
+   (imported from `pv_lifetime_balance.json` and calculated), so the page shows the numbers of
+   the input fields, the main result table, the detail tables and "PV life-cycle emissions"
+   from the database; each number in the html carries the database id or group id of its
+   value or result, so that the save action (step 4) knows which value to update and which
+   result to compare; today the labels, hints and order are in the request cache before the
+   components render, but the values, the results and the selector options are not, so every
+   cell of the main result table and "PV life-cycle emissions" are empty; confirm on a
+   recreated database that the fixed operand match of `formula_calc::value_of` gives the
+   PV-weighted (13'072) and the residual mix (113'805) net avoided emission; the lifetime
+   column in t and the annual column in kg
+2. delete `docs/llm/samples/new_view_sample_pv_balance.json` and point the links of the guide
    and of `docs/llm/json_views.md` to `calculator_keywords.json` and
    `pv_lifetime_balance.json`; decide whether the component types that only the old view used
    (`view_title`, `name_sub_title`, `details_start`, `details_end`, `assumption_fields`,
    `formula_notes`, `sources_used`, `table_with_own_columns`) are retired or kept for other
    use case views, because retiring them shifts the component type ids
-8. the `Calculator editor` view with the components of section 6 of the guide and a snapshot
+3. the `Calculator editor` view with the components of section 6 of the guide and a snapshot
    test of the editor for `example PV installation`
-9. the save: write the inputs as values, use the entered numbers as the inputs of the page
-   calculation, start the backend calculation job, compare the job results with the frontend
-   results and show every difference as a message
-10. when the generated page matches the sample up to the numbers, let the use case test assert
-    the generated page against the sample
+4. the save: write the inputs as values by the ids of step 1, use the entered numbers as the
+   inputs of the page calculation, start the backend calculation job, compare the job results
+   with the frontend results and show every difference as a message
+5. when the generated page matches the sample up to the numbers, let the use case test assert
+   the generated page against the sample
 
-open from the old setup, still needed for the calculator page:
+open for the calculator page:
 
 - judge the page only after a database recreation: `test_part.php` imports into the existing
   database and never removes an object that a newer json left out
-- result numbers: confirm with a run on a recreated database that the fixed operand match of
-  `formula_calc::value_of` gives the PV-weighted (13'072) and the residual mix (113'805) net
-  avoided emission; the lifetime column in t and the annual column in kg
-- inputs: the household consumption field shows 0.6 percent (the confidence of the day share)
-  instead of 4500 kWh, so the value selection of a number field must use the field value
-  phrases only; the maximum of the three number fields
-- replacement mix selector: the options come from the `is a` triples instead of the values of
-  the selector phrase, and the gross formula uses the selected mix
+- inputs: the maximum of the three number fields
+- replacement mix selector: it offers only "please select ..." although the triples
+  `residual mix (replacement mix)` and `production mix (replacement mix)` exist, so the DOWN
+  load in `view_exe::add_calculator_triples` should find them as options; the options come from
+  the `is a` triples instead of the values of the selector phrase, and the gross formula uses
+  the selected mix
 - context load: the derived assumptions and the sources are loaded by any phrase of a result,
   so values and sources of other files show up (PVGIS 5.3, BEA US GDP 2023) and the field
   definition values need a filter; a result whose values the page has not loaded keeps its
@@ -97,20 +59,13 @@ open from the old setup, still needed for the calculator page:
 - notes: only the notes meant for the page, with their own titles (open point of the guide:
   a `calculator note` list or notes as descriptions of the row groups)
 - sources: numbered in the order of the first use and cited as [n] in the hints and notes
-
-### to check 
-
-1. The page renders, but without numbers.
-    - Every cell of the main result table is empty, apart from the 4'500 load in the monthly table.
-    - "PV life-cycle emissions" has no value.
-    - The replacement mix selector offers only "please select ...". The triples residual mix (replacement mix) and production mix (replacement mix) exist now, so the DOWN load in add_calculator_triples should find them as options.
-    - The snapshot saves this state as the expected page.
-    - The step's goal, the cache filled before render, is reached for labels, hints and order. The values, results and options aren't. This needs a follow-up.
-2. ui_list::context_count has no unit test (coding.md: tests first). Only the run_pv_lifetime_balance snapshot covers the new ranking. A small case in use_case_ui_tests would make it explicit: a general value against a value with a place phrase.
-3. Repeated loads. add_page_cache runs twice per request, in frontend and in show(). The is_calculator() guard only stops the second run if the first run found calculator triples. For a phrase without them that is opened with the Calculator view, all the api loads run twice. This is minor, but it adds to the timing problem in your pending.md notes.
-4. Several changes in one commit. The commit holds step 6 plus three fixes it needed: the import order (USE_CASE_FILES_APPENDED), the repeated keywords and the value ranking. pending.md asks for one commit per step. One commit is defensible, since step 6 fails without those fixes, but the message should name them.
-5. The new TODO Prio 1 / TODO Prio 2 comments in calculator.php and system_views_read_tests.php are yours, and they're fine to commit.
-6. Generated files: the docs/code_*.md files, the api fixtures and about 140 html snapshots are regenerated output from the id shift. Nothing in them needs a manual review.
+- value ranking: `ui_list::context_count` has no unit test, only the `run_pv_lifetime_balance`
+  snapshot covers it; add a case in `use_case_ui_tests`: a general value against a value with a
+  place phrase
+- repeated loads: `view_exe::add_page_cache` runs twice per request (in `frontend::render_url`
+  and in `view_exe::show`); the `is_calculator()` guard stops the second run only if the first
+  has found calculator triples, so for a phrase without them that is opened with the
+  `Calculator` view all api loads run twice
 
 ## import / export
 
@@ -299,203 +254,6 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
 ## use cases
 
 add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
-
-## speed up
-
-The steps are ordered by the time they cost in the full run of test/test.php (599 s, 9862
-test cases, 179 timeouts). Each step is one commit with the test first; the developer runs the
-tests after each step and compares the timing report with the one before.
-
-Where the time of the run goes:
-- the write workflows (workflow start db write): 156 s
-- the database recreation with the seed import (db write database recreation): 154 s
-- the db write tests: 59 s
-- the read-only workflows (workflow start): 53 s
-- the system view read tests: 46 s, of which the calculator takes 17 s
-- the html unit ui tests: 45 s, of which the start page selections take 16 s
-- the unit tests: 37 s, of which the admin dashboard takes 10 s
-- the api tests: 16 s, the localhost views: 15 s
-
-The time sections of the report: api_wait 166 s, import 116 s, not_specified 87 s, url to
-html 84 s, db_read 46 s, localhost view 28 s, db_write 24 s.
-
-The estimated saving of all steps is about 100 to 140 s. The estimates by size:
-1. step 1 task 4 with step 2 task 2 (start page answers after a write): about 20 s; a shorter
-   result list answer (task 1) saves only 6 to 10 s of it, because each phrase description that
-   it leaves out is shown as a tooltip and the frontend would have to fill it in
-2. step 7 (slow html unit ui tests): 10 to 15 s
-3. step 3 task 4 (php work of the import): open, the import section is 116 s
-4. step 6 (calculator): about 14 s, step 3 task 3 (second system_views import): about 12 s,
-   step 5 (word search): about 11 s
-5. step 3 task 2 (bulk insert of the seed import): 10 to 15 s
-6. step 8: about 10 s, step 3 task 1: about 5 s, step 1 task 3 (confirm steps): open,
-   step 2 task 3: 2 to 3 s
-
-### 1. api wait of the write workflows
-
-The first page after a word, triple, formula, source or value write waits 5.7 to 7.3 s for the
-backend ("add_triple_wf4/wf4_edit_back: api_wait 6.0 sec", "add_formula_wf14: 6.0 sec",
-"add_source_wf19: 5.7 sec", "signup_confirm_wf36: 5.7 sec", "... so it can be deleted:
-7.3 sec", "add_view_wf22: 2.3 sec" after the source writes), because such a write drops the
-cached api answers of the start page lists (frontend::api_lists_outdated_by). The first page
-after a view, component or ref write waits 1.0 s like the read-only workflows.
-
-There is no base wait per request: a word request takes 0.1 s and the api calls of a word
-page 0.1 to 0.24 s each. The wait of a start page comes from four answers, which the start
-page loads with an empty cache in 5.5 s: api/valueList for the 15 table phrases 1.35 s,
-api/resultList for the same phrases 1.59 s and two api/phraseList requests by an id list
-(the phrases of the values and of the results) 0.70 s and 1.06 s. After a write their cached
-answers are dropped, without a write they come from the api cache (about 0.97 s). The backend
-work of api/resultList is 0.78 s in the CLI (load of the 289 results 0.50 s, of which
-phrase_list::sort_by_id() for each group id about 0.2 s, and the api array 0.20 s), so about
-half of the 1.59 s is the request around it, e.g. the transfer and caching of the 1.6 MB.
-
-Task:
-1. The result list answer of the start page is 1.6 MB for 289 results, because every result
-   repeats the description of each of its phrases (in "phrases" and again in "context"); the
-   descriptions are shown as tooltips, and without them 2 of the 44 phrases of the results
-   ("reward ratio", "reward") get their description from no other answer of the start page, so
-   a shorter answer has to send each phrase once with its description, e.g. one phrase list
-   per answer and the phrase ids per result. Estimated saving 6 to 10 s, part of task 4.
-2. controller::cache_header() is never called, so def::DEBUG_API_CACHE shows nothing; call it
-   where an api answer is read from or written to the cache, or remove it. No saving, a
-   diagnostic.
-3. Find what the api wait of 0.94 to 1.5 s of each confirm step after a write is: an answer
-   slower than response time > api of config.yaml names the seconds of each backend step in
-   the api_time field of its json, which the report of the test shows as "api <step>" instead
-   of api_wait; an answer that is a json list has no field for it. Saving open.
-4. The api wait of the first page after a write drops to the level of the read-only workflows
-   (5 x about 5 s and 1.3 s). Estimated saving about 27 s, overlapping with task 1.
-5. not_specified is 87 s of the run, mainly the html unit ui tests that render without
-   url_to_html (see step 7).
-6. Show the backend steps of a slow answer (data_object::api_steps) in the user reporting of
-   the frontend, e.g. beside the slow requests of the admin dashboard. No saving, a diagnostic.
-
-### 2. frontend work of the start page
-
-The start page is rendered about 40 times per run: the 8 start page views of
-system_views_read_tests and the "back" step of every read-only and write workflow.
-
-url_to_html() loads the data of the page before the html is created: the object of the page
-and the page cache of the view (view_exe::add_page_cache with component_exe::add_page_cache
-of each component, e.g. ui_list::add_start_page_data for the start page table) are counted as
-load page, their backend wait as api wait. A render of the start page with a filled request
-cache makes no api call, so its url to html time is frontend work: about 0.3 s in the CLI
-for the ranking table of about 300 values and 289 results. The 8 start page variants of
-system_views_read_tests::run_start() share one request cache (test_base::view_context), so
-only the first loads the data of the table. The write workflows share one request cache over
-all workflows (url_test_base::wf_start), so a back step without a write before it (e.g.
-del_word_wf3/wf3_show_edit_back) loads nothing; with the formulas of the earlier pages in
-the cache, ui_list::check_results() recalculates each result of the table.
-
-Task:
-1. Move the api calls of the other components into their page cache step in the same way,
-   e.g. the calculator fields (see step 6 for the saving).
-2. The load page step of a back step after a write (about 0.57 s in 16 back steps, 9.9 s of
-   the run) is mostly the frontend mapping of the result list:
-   group::set_phrase_from_json_array() maps the full triples of each result again (5100 triple
-   mappings for 289 results); it shrinks with the smaller result list answer of step 1 task 1.
-   Estimated saving about 5 s.
-3. The remaining table steps that walk the related phrase list for each column:
-   phrase_list::column_tier() (called per column and unit) and column_list_phrases() (called
-   per phrase column by value_list::column_list_phrase()); the start page snapshots must not
-   change. The back steps take 0.34 s url to html and the start page selections use the same
-   table. Estimated saving 2 to 3 s.
-
-### 3. seed import of the database recreation
-
-The recreation imports the system and sample data with about 250 rows per second, one insert
-per row ("Add 155 words (328 words per sec)", "save 159 values (317 values per sec)", "save 585
-results (232 results per sec)"): 154 s. The import work itself is about half of the import
-time (import 6.0 s of 12.1 s for the second import of system_views.json, the rest db read,
-write, sql create and db map).
-
-Task:
-1. Save the component links of the views with one list save like save_block_wise of the named
-   lists: view_list::save() saves them one by one after the views (6.2 s of the 11.0 s seed
-   import of system_views.json, shown in the progress as "check 175 views", because the link
-   save reports no step of its own). Estimated saving about 5 s.
-2. Then insert the new rows of one import level with one statement per table and level instead
-   of one per row, with the change log rows in the same way. The db writes are only about 11 %
-   of an import (second system_views import: import 6.0 s, db_read 1.89 s, sql_create 1.23 s,
-   db_write 1.28 s, db_map 1.03 s; db_write of the whole run 24 s), so the 250 rows per second
-   come from the php work and not from the single inserts. Estimated saving 10 to 15 s.
-3. Check if the db write view test needs the second import of system_views.json (12 s); the
-   test asserts nothing about it, but a write test before may change a seed view. Estimated
-   saving about 12 s if the import can be dropped.
-4. Profile the php work of the import (the import section, 116 s of the run): which steps of
-   the import of one file cost the most besides the db access. Saving open.
-
-### 4. word url tests run twice
-
-all_unit_write_tests runs word_url_tests a second time after the import write tests (the block
-"url word" at 575 s, about 17 s incl. "search words by pattern via url" with 7.0 s), although
-all_workflow_tests has run it already (374 s) and word_write_url_tests covers the write
-workflows. Note that the second run at the end is done by intentions to have a final check that the change process creates the same result also if the database has been updated due to the other changes.
-The second run stays, so no saving is planned here (17 s if it were dropped).
-
-### 5. search words by pattern via url
-
-"search words by pattern via url" takes 7.4 s in the workflow tests and 7.0 s in the second
-run, mostly api wait (6.4 and 6.1 s), 0.6 s load page and 0.4 s url to html. Find the slow api
-request of the search and fix it. Estimated saving about 11 s.
-
-### 6. calculator page
-
-The calculator view takes 16.7 s ("url to html 4.57 sec, api_wait 11.35 sec"). Estimated
-saving about 14 s.
-
-Causes in src/main/php/web/component/execute/ui_list.php and src/main/php/web/view/view_exe.php:
-a) ui_list::add_field_links() has no "already in cache" guard, unlike add_field_values(), so
-   it loads the links of a field phrase for every walk over the fields
-   (calculator_source_ids() and calculator_fields() both walk them).
-b) view_exe::add_page_cache() fills the request cache with one api call per tree level (4 +
-   2 levels and one DOWN load).
-
-Task:
-1. Add the cache guard to add_field_links() like add_field_values().
-2. Load the links and the values of all field phrases with one call each instead of one per
-   field.
-3. Let the backend return the calculator tree of a phrase with one api call instead of one
-   call per level, e.g. with a levels parameter for api/phraseList.
-4. The calculator snapshot stays the same and its api wait drops below 1 s.
-
-### 7. slow html unit ui tests
-
-These tests render without url_to_html, so their time is not_specified. Estimated saving 10 to
-15 s.
-- "unit ui html start page selections" takes 16 s for 81 renders (3 list sizes x 9 column
-  selections x 3 forms): a table takes 0.09 s, a chart 0.21 s and table and chart 0.26 s. 60 %
-  of a chart render is sandbox_value::percent_symbol() for each percent tooltip: it calls
-  phrase::symbol_name(), whose phrase_list::symbol_of() walks the system phrase cache for the
-  symbol triples once per symbol (symbol_triples()). A cache of the symbol triples per list is
-  not correct as long as a phrase of the list can get its verb later (e.g. by the load of the
-  triple sides), so the symbol has to be found once per table instead, e.g. by the table model.
-  Estimated saving about 6 s.
-- "unit ui system views admin dashboard" takes 10 s.
-- "object_pages/all_component_types" takes 3.4 to 5.0 s for 217 component types, spread thinly
-  (44 selectors 1.2 s, process_catch_fields 0.7 s). Estimated saving about 2 s.
-
-### 8. smaller items
-
-- The admin login of the web tests times out after 1 s five times per run; known, the api
-  auth tests tolerate a skip. Estimated saving about 5 s if the login answers in time.
-- "... without the reason why only an admin can see it" takes 6.1 s in the api tests, of which
-  5.1 s api wait for the first api/sysLogList request. Estimated saving about 5 s.
-- The phrase list loads of values and results ignore $limit and $page:
-  sandbox_value_list::load_sql_by_phr_lst_multi() never puts them into the sql, so
-  value_list::read_limit() limits nothing; add ORDER BY and LIMIT to the union with an own
-  query name and new sql fixtures for both database types. A correctness fix with little
-  saving in the test run.
-
-### 9. not yet assigned
-
-- Time booked to the wrong test: a test that renders inside the argument of the assert, e.g.
-  $t->assert_text_contains($test_name, $msk->show(...), ...), renders before the assert starts
-  its time, so the render time is reported as "took" of the test and as not_specified of the
-  next test; render into a variable first where the time of the render matters.
-- The localhost views ("unit ui localhost views") take 14.7 s and are part of no step yet;
-  check which views are slow and if the login timeout of step 8 is part of it.
 
 ## clean up
 

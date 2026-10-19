@@ -232,9 +232,17 @@ class data_object
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;
-    // of this wait the seconds per backend step that the json of a slow answer has named
-    // (see rest_call::time_steps_of), summed over all api calls
+    // the part of the api wait that has been booked to the time report already (see take_api_wait)
+    private float $api_wait_booked = 0;
+    // of the wait not yet booked the seconds per backend step e.g. that the json of a slow answer
+    // has named (see rest_call::time_steps_of)
     public array $api_steps = [];
+    // the seconds per component type that the html creation has taken without the api wait and
+    // that are not yet booked to the time report (see start_html_step)
+    public array $html_steps = [];
+    // per component that is being rendered its start, the api wait at the start and the time of
+    // the components within it, the outermost first
+    private array $html_step_starts = [];
 
 
     /*
@@ -641,20 +649,70 @@ class data_object
     }
 
     /**
-     * @param array $start the backend steps at the start e.g. of the creation of a page
-     * @return array the seconds per backend step of the api answers since the start, without the steps that have not grown
+     * @return float the seconds that the frontend has waited for the backend since the last call,
+     *               which are booked to the time report by the caller (see frontend::book_times)
      */
-    function api_steps_since(array $start): array
+    function take_api_wait(): float
     {
-        $result = [];
-        foreach ($this->api_steps as $cat => $seconds) {
-            $grown = $seconds - ($start[$cat] ?? 0);
-            if ($grown != 0) {
-                $result[$cat] = $grown;
-            }
-        }
+        $result = $this->api_wait - $this->api_wait_booked;
+        $this->api_wait_booked = $this->api_wait;
         return $result;
     }
+
+    /**
+     * @return array the seconds per backend step of the api wait since the last call
+     */
+    function take_api_steps(): array
+    {
+        $result = $this->api_steps;
+        $this->api_steps = [];
+        return $result;
+    }
+
+    /**
+     * @return array the seconds per component type of the html creation since the last call
+     */
+    function take_html_steps(): array
+    {
+        $result = $this->html_steps;
+        $this->html_steps = [];
+        return $result;
+    }
+
+    /**
+     * start the timing of the html creation of a component (see end_html_step)
+     *
+     * @param float $now the microtime of the start
+     * @return void
+     */
+    function start_html_step(float $now): void
+    {
+        $this->html_step_starts[] = [$now, $this->api_wait, 0.0];
+    }
+
+    /**
+     * add the html creation time of a component to its component type, without the api wait and
+     * without the components within it, which are counted for their own type
+     *
+     * @param string $cmp_typ the code id of the type of the component e.g. "text"
+     * @param float $now the microtime of the end
+     * @return void
+     */
+    function end_html_step(string $cmp_typ, float $now): void
+    {
+        $step_start = array_pop($this->html_step_starts);
+        if ($step_start != null) {
+            [$start, $wait_start, $within] = $step_start;
+            $total = $now - $start - ($this->api_wait - $wait_start);
+            $this->html_steps[$cmp_typ] = ($this->html_steps[$cmp_typ] ?? 0) + $total - $within;
+            // the component around this one leaves the time of this one to this component type
+            $outer = array_key_last($this->html_step_starts);
+            if ($outer !== null) {
+                $this->html_step_starts[$outer][2] += $total;
+            }
+        }
+    }
+
 
 
     /*

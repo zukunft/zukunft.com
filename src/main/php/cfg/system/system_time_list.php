@@ -58,6 +58,16 @@ class system_time_list
     // the sections that are remembered to return to; a section that is switched to and never
     // ended e.g. the explicit sections of a test does not let the stack grow without limit
     const int MAX_SECTION_DEPTH = 64;
+    // between a category and one of its steps e.g. "api_wait > db_map", so that the report shows the step within the category
+    const string STEP_SEP = ' > ';
+    // the part of a split category in the report that no step names e.g. the page frame of the url to html time
+    const string GROUP_REST = 'rest';
+    // the report of the whole run shows one category per line and the steps of a category indented below it
+    const string REPORT_LINE = "\n";
+    const string REPORT_INDENT = '    ';
+    // a step of the report of the whole run below these seconds is only part of the sum of the small steps
+    const float REPORT_MIN_STEP_SEC = 0.5;
+    const string SMALL_STEPS = 'others below';
 
     /*
      * object vars
@@ -122,17 +132,120 @@ class system_time_list
     {
         $total = 0.0;
         $time_report = '';
-        arsort($this->lst);
-        foreach ($this->lst as $cat => $time) {
-            if ($time_report != '') {
-                $time_report .= ', ';
-            }
-            $time_report .= $cat . ': ' . round($time, 4) . ' sec';
+        $times = $this->times_with_steps_in_group($this->lst);
+        arsort($times);
+        foreach ($times as $cat => $time) {
+            $time_report .= $this->time_text($cat, $time) . self::REPORT_LINE;
+            $time_report .= $this->steps_lines($cat, $this->lst);
             $total = $total + $time;
         }
-        $time_report .= ' -> measured ' . round($total, 4) .
+        $time_report .= 'measured ' . round($total, 4) .
             ' / unmeasured ' . round($expected - $total, 4);
         return $time_report;
+    }
+
+    /**
+     * @param array $times the seconds per category of the whole run or of the last section
+     * @return array the seconds per category in the same order, the steps counted in the category they
+     *               split (see split), so that it stays comparable with a run without split
+     */
+    private function times_with_steps_in_group(array $times): array
+    {
+        $result = [];
+        foreach ($times as $cat => $time) {
+            $key = explode(self::STEP_SEP, $cat, 2)[0];
+            $result[$key] = ($result[$key] ?? 0) + $time;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $cat a category of the report
+     * @param array $times the seconds per category of the whole run or of the last section
+     * @return array the seconds per step of the category incl. the rest that no step names, the longest
+     *               first, empty for a category without steps
+     */
+    private function steps_of(string $cat, array $times): array
+    {
+        $prefix = $cat . self::STEP_SEP;
+        $result = [];
+        foreach ($times as $step => $time) {
+            if (str_starts_with($step, $prefix)) {
+                $result[substr($step, strlen($prefix))] = $time;
+            }
+        }
+        if ($result != []) {
+            $result[self::GROUP_REST] = $times[$cat] ?? 0;
+        }
+        arsort($result);
+        return $result;
+    }
+
+    /**
+     * the steps of a category for the report of the whole run, one per line and indented, followed
+     * by an empty line; the steps below the limit are summed in one line, so that the lines still
+     * add up to the time of the category
+     *
+     * @param string $cat a category of the report
+     * @param array $times the seconds per category of the whole run
+     * @return string the lines of the steps or an empty string for a category without steps
+     */
+    private function steps_lines(string $cat, array $times): string
+    {
+        $steps = $this->steps_of($cat, $times);
+        $result = '';
+        $small = 0.0;
+        foreach ($steps as $step => $time) {
+            if ($time >= self::REPORT_MIN_STEP_SEC) {
+                $result .= self::REPORT_INDENT . $this->time_text($step, $time) . self::REPORT_LINE;
+            } else {
+                $small += $time;
+            }
+        }
+        if ($small != 0) {
+            $result .= self::REPORT_INDENT . $this->time_text(self::small_steps_name(), $small) . self::REPORT_LINE;
+        }
+        if ($steps != []) {
+            $result .= self::REPORT_LINE;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $cat a category of the section report
+     * @param array $times the seconds per category of the last section
+     * @return string the steps of the category in one line e.g. " [db_map: 19.3 sec, rest: 5.5 sec]", empty without steps
+     */
+    private function steps_inline(string $cat, array $times): string
+    {
+        $texts = [];
+        foreach ($this->steps_of($cat, $times) as $step => $time) {
+            $texts[] = $this->time_text($step, $time);
+        }
+        $result = '';
+        if ($texts != []) {
+            // square brackets, because the section report is shown within round brackets
+            $result = ' [' . implode(', ', $texts) . ']';
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the line that sums the steps below the limit e.g. "others below 0.5 sec"
+     */
+    static function small_steps_name(): string
+    {
+        return self::SMALL_STEPS . ' ' . self::REPORT_MIN_STEP_SEC . ' sec';
+    }
+
+    /**
+     * @param string $name the category or step
+     * @param float $time the seconds of the category or step
+     * @return string the line of the report e.g. "db_map: 19.3 sec"
+     */
+    private function time_text(string $name, float $time): string
+    {
+        return $name . ': ' . round($time, 4) . ' sec';
     }
 
     /**
@@ -142,13 +255,13 @@ class system_time_list
     {
         $total = 0.0;
         $time_report = '';
-        foreach ($this->section_lst as $cat => $time) {
+        foreach ($this->times_with_steps_in_group($this->section_lst) as $cat => $time) {
             if ($time_report != '') {
                 $time_report .= ', ';
             } else {
                 $time_report .= 'section ';
             }
-            $time_report .= $cat . ': ' . round($time, 4) . ' sec';
+            $time_report .= $cat . ': ' . round($time, 4) . ' sec' . $this->steps_inline($cat, $this->section_lst);
             $total = $total + $time;
         }
         $unmeasured = $expected - $total;
@@ -373,16 +486,51 @@ class system_time_list
     }
 
     /**
-     * book the backend steps that the api answers have named out of the api wait,
-     * so that the report shows which step of the backend the frontend has waited for
+     * book the time of steps out of the category that has counted it, so that the report shows the
+     * steps within the category e.g. the backend steps within the api wait
      *
-     * @param array $steps the seconds per backend step e.g. from data_object::api_steps_since
+     * @param string $cat the category that has counted the time of the steps
+     * @param array $steps the seconds per step
      * @return void
      */
-    function split_api_wait(array $steps): void
+    function split(string $cat, array $steps): void
     {
-        foreach ($steps as $cat => $seconds) {
-            $this->move($seconds, system_time_type::API_WAIT, system_time_type::API_STEP_PREFIX . $cat);
+        foreach ($steps as $step => $seconds) {
+            $this->move($seconds, $cat, $cat . self::STEP_SEP . $step);
+        }
+    }
+
+    /**
+     * book the times that the html frontend has measured out of the category that is counted now,
+     * because it has counted them: the wait for the backend as api wait split into the backend
+     * steps and the html creation per component type within the category
+     *
+     * @param float $api_wait the seconds that the frontend has waited for the backend since the last booking
+     * @param array $api_steps the seconds per backend step of this wait
+     * @param array $html_steps the seconds per component type of the html creation since the last booking
+     * @return void
+     */
+    function book_frontend(float $api_wait, array $api_steps, array $html_steps): void
+    {
+        $cat = $this->current();
+        if ($cat != '') {
+            $this->move($api_wait, $cat, system_time_type::API_WAIT);
+            $this->split(system_time_type::API_WAIT, $api_steps);
+            $this->split($cat, $html_steps);
+        }
+    }
+
+    /**
+     * add the time from the request until the timing has started, which the includes of the script take
+     *
+     * @param float $request_start the microtime of the request e.g. from server_guard::request_start_time, 0 if unknown
+     * @param float $start the microtime when the timing has started
+     * @return void
+     */
+    function add_script_loading(float $request_start, float $start): void
+    {
+        if ($request_start > 0) {
+            $this->add($start - $request_start, system_time_type::SCRIPT_LOADING);
         }
     }
 
