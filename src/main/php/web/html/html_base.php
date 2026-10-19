@@ -3728,13 +3728,6 @@ class html_base
     }
 
     /**
-     * @param string $stylesheet path to the stylesheet file
-     * @param string $base_url e.g. the pod url to turn the root relative path into an
-     *                         absolute url, so that the stylesheet is also found by a page
-     *                         that is not served by the pod (e.g. a html test snapshot)
-     * @return string the HTML link element for the stylesheet
-     */
-    /**
      * the data of a page script as json, which the browser never runs as code; a "<" is written
      * as its unicode escape, so a text in the data cannot close the script tag
      *
@@ -3758,6 +3751,13 @@ class html_base
         return '<' . self::SCRIPT . ' ' . self::SRC . '="' . $url . '"></' . self::SCRIPT . '>';
     }
 
+    /**
+     * @param string $stylesheet path to the stylesheet file
+     * @param string $base_url e.g. the pod url to turn the root relative path into an
+     *                         absolute url, so that the stylesheet is also found by a page
+     *                         that is not served by the pod (e.g. a html test snapshot)
+     * @return string the HTML link element for the stylesheet
+     */
     private function link_style(string $stylesheet, string $base_url = ''): string
     {
         $url = $stylesheet;

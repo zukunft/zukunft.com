@@ -1195,8 +1195,9 @@ class system_page extends component
         if (($dbo instanceof word or $dbo instanceof triple) and $dbo->name() != '') {
             $html = new html_base();
             $calc = new calculator($dbo->phrase(), $cfg?->phr_lst ?? new phrase_list());
-            // escape the user settable texts, because the title is shown as raw html
-            $result = $html->text_h4($html->esc($calc->title()));
+            // escape the user settable texts, because the title is shown as raw html;
+            // a h4, because the use case style of style_html.css formats the h4 of the header
+            $result = $html->block(html_base::H4, $html->esc($calc->title()));
             if ($calc->lead() != '') {
                 $result .= $html->p($html->esc($calc->lead()));
             }

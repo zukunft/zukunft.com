@@ -394,8 +394,9 @@ class use_case_ui_tests
         // a phrase without calculator triples shows its name as the title (rule 6 of
         // docs/llm/new_view_sample_pv_balance.md), so every phrase can be shown as a calculator
         $test_name = 'the calculator title of a phrase without a calculator label is the phrase name';
+        // the title is a h4, which the use case style of style_html.css formats
         $t->assert($test_name, $this->render($t_cmp->component_calculator_title(), $wrd, $msk, $dto, $msg),
-            $html->text_h4($wrd->name()));
+            $html->block(html_base::H4, $wrd->name()));
         // negative: a component without a page phrase e.g. in a preview has no title to show
         $test_name = '... and nothing for a component without a phrase';
         $t->assert($test_name, $this->render($t_cmp->component_calculator_title(), new word_ui(), $msk, $dto, $msg), '');
@@ -465,7 +466,7 @@ class use_case_ui_tests
         $dto_calc->online = false;
         $dto_calc->phr_lst = $cac;
         $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $dto_calc),
-            $html->text_h4(triple_names::CALC_ZH_LABEL_COM) . $html->p(triple_names::CALC_ZH_HINT_COM));
+            $html->block(html_base::H4, triple_names::CALC_ZH_LABEL_COM) . $html->p(triple_names::CALC_ZH_HINT_COM));
 
         $t->subheader($ts . 'calculator input');
         // the inputs of Zurich (city) are the inputs of Zurich, the phrase it is built from: the

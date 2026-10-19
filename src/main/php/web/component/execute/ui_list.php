@@ -74,6 +74,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::SHARED_CONST . 'files.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
@@ -122,6 +123,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -3023,8 +3025,9 @@ class ui_list extends ui_base
             self::CALC_INPUTS => $this->calculator_input_plan($calc, $dbo, $dto, $msg),
             self::CALC_CELLS => $this->cell_plan,
             self::CALC_FORMAT => [
-                self::CALC_THOUSAND_SEP => $ui_sys->cfg->thousand_sep(),
-                self::CALC_PERCENT_DECIMALS => $ui_sys->cfg->percent_decimals(),
+                // without a loaded config the format of the page cells, the shared defaults
+                self::CALC_THOUSAND_SEP => $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP,
+                self::CALC_PERCENT_DECIMALS => $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS,
                 self::CALC_POSITIVE => styles::CALC_POSITIVE,
                 self::CALC_NEGATIVE => styles::CALC_NEGATIVE,
             ],
