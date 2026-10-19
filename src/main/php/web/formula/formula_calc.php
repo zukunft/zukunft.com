@@ -60,6 +60,13 @@ class formula_calc
     // the decimals compared, the same as the import validation (data_object::CALC_VALIDATION_DECIMALS)
     const int DECIMALS = 2;
 
+    // the kinds of the tokens of a calculation that the browser repeats (see tokens and calculator.js)
+    const string TOKEN_NUM = 'n';
+    const string TOKEN_OP = 'o';
+    const string TOKEN_REF = 'r';
+    // one number or one char of the arithmetic between the operands
+    const string TOKEN_PATTERN = '/\G\s*(\d+(?:\.\d+)?|[-+*\/()])/';
+
     // per value object the value itself and its phrase names, because each operand of each
     // result is searched in all values of the page, but the phrases of a value do not change;
     // the value is kept with its names, so a new object with a reused object id is not mixed up
@@ -85,6 +92,83 @@ class formula_calc
             if ($txt !== null) {
                 $result = new arithmetic()->calc($txt);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the calculation of a result as tokens for the browser, which repeats it when an input of a
+     * calculator page changes: each operand is the html id of the value or result that the
+     * calculation of this page uses for it, so the browser needs no phrase names and never runs
+     * a formula text as code
+     *
+     * @param result $res the stored result with its formula and the phrases of the values used
+     * @param value_list $val_lst the values and results of the page, the values first
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return array|null per token its kind (TOKEN_NUM, TOKEN_OP or TOKEN_REF) and its number, char
+     *                    or html id; null if the formula, an operand or the arithmetic is missing
+     */
+    function tokens(result $res, value_list $val_lst, formula_list $frm_lst): ?array
+    {
+        $result = null;
+        $frm_id = $res->frm?->id() ?? 0;
+        if ($res->src_grp != null and $frm_id != 0 and $frm_lst->has_id($frm_id)) {
+            $exp = new library()->str_right_of($frm_lst->get($frm_id)->get_usr_text(), chars::CHAR_CALC);
+            $result = $this->operand_tokens($exp, $res, $val_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $exp the right part of the formula expression with the phrase names
+     * @param result $res the result with the context phrases of the values used
+     * @param value_list $val_lst the values and results of the page
+     * @return array|null the tokens of the expression or null if an operand or the arithmetic is missing
+     */
+    private function operand_tokens(string $exp, result $res, value_list $val_lst): ?array
+    {
+        $ctx = $res->src_grp->phr_lst()->names();
+        preg_match_all($this->operand_pattern(), $exp, $found, PREG_OFFSET_CAPTURE);
+        $result = [];
+        $pos = 0;
+        foreach ($found[0] as [$operand, $start]) {
+            $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $operand)));
+            $val = $this->value_of($names, $ctx, $res, $val_lst);
+            $between = $this->arithmetic_tokens(substr($exp, $pos, $start - $pos));
+            if ($result !== null and $val != null and $between !== null) {
+                $result = [...$result, ...$between, [self::TOKEN_REF => $val->html_id()]];
+            } else {
+                $result = null;
+            }
+            $pos = $start + strlen($operand);
+        }
+        $rest = $this->arithmetic_tokens(substr($exp, $pos));
+        if ($result !== null and $rest !== null) {
+            $result = [...$result, ...$rest];
+        } else {
+            $result = null;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $txt a part of an expression between two operands e.g. " * 1000 / "
+     * @return array|null the numbers and the chars of the arithmetic as tokens or null if the text has another char
+     */
+    private function arithmetic_tokens(string $txt): ?array
+    {
+        $result = [];
+        $pos = 0;
+        while (preg_match(self::TOKEN_PATTERN, $txt, $found, 0, $pos)) {
+            $pos += strlen($found[0]);
+            if (is_numeric($found[1])) {
+                $result[] = [self::TOKEN_NUM => (float)$found[1]];
+            } else {
+                $result[] = [self::TOKEN_OP => $found[1]];
+            }
+        }
+        if (trim(substr($txt, $pos)) != '') {
+            $result = null;
         }
         return $result;
     }

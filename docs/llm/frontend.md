@@ -18,7 +18,30 @@ client-side handler.
   entries in a list, and the `.<name>-menu` rules in `style_html.css` float the
   list below the label (the header menus and the "…" column menu of a value table).
 - Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
-  for a JS plugin, …) from a `web/` renderer.
+  for a JS plugin, …) from a `web/` renderer, except the calculator script below.
+
+### Javascript only for the calculator
+
+The one exception is a calculator page: if `config.yaml` allows it (user > default >
+frontend > use javascript > for calculator; `use javascript` itself stays false for
+every other page), the result panel (`system_page::calculation_result`) adds the
+calculator script, so that the results change as soon as an input changes:
+
+- The page gives the browser its calculation as **data**, never as code
+  (`ui_list::calculator_script`, `html_base::script_data`): the numbers by their html
+  id (`sandbox_value::html_id`), the calculation of each result as tokens
+  (`formula_calc::tokens`: numbers, `+ - * /`, brackets and the html id of each
+  operand, the same operands that the page calculation of PHP uses), the number that
+  each input sets and the number and format of each cell. A formula text is never
+  written into the page as script, so a formula cannot inject code.
+- The script is one static file, `src/main/resources/script/calculator.js`
+  (`files::CALCULATOR_SCRIPT`), loaded with `<script src>`; it has no inline handler
+  and evaluates only the tokens with the grammar of `shared/calc/arithmetic.php`.
+- The page stays complete without the script: the inputs are a normal form, the
+  cells show the numbers of the page calculation, and a browser without javascript
+  shows the same page as before.
+- Every cell of a number has a unique html id (a repeated number gets its count
+  behind the id), so the script can update each cell and the save can name it.
 
 A separate JavaScript frontend (likely Vue.js or React) is planned for later as
 its own app consuming the same api; that is a future, additional client and does
@@ -97,6 +120,8 @@ return the shared defaults. A `config` constructed anywhere else is an *empty*
 value list: `get_by()` silently returns the fallback instead of the user setting,
 and the per-request load from the backend is bypassed. The rule is enforced by
 `coding_rule_tests::php_web_config_from_cache_tests`.
+The steps from a new `config.yaml` key to the backend and frontend getter are
+in *Using a config.yaml setting in a script* in `docs/llm/architecture.md`.
 
 ### The pinned views of the static start page are written by the test run
 

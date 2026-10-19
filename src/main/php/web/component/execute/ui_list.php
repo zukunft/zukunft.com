@@ -73,6 +73,7 @@ include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
@@ -116,6 +117,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -130,15 +132,32 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 class ui_list extends ui_base
 {
 
-    // put before the group id of the number of a calculator cell, so that a value and a result
-    // with the same group id get different html ids (see calculator_cell_id)
-    const string CALC_CELL_VALUE = 'val-';
-    const string CALC_CELL_RESULT = 'res-';
+    // put between the html id of a number and the count of a cell that shows the number again,
+    // e.g. the year of a detail table, so that every cell id is unique on a page
+    const string CALC_CELL_REPEAT = '-';
+    // the html id and the keys of the calculation data of a calculator page, which the browser
+    // script reads to repeat the calculation (see calculator_script and calculator.js)
+    const string CALC_DATA_ID = 'calc-data';
+    const string CALC_NUMBERS = 'numbers';
+    const string CALC_RESULTS = 'results';
+    const string CALC_INPUTS = 'inputs';
+    const string CALC_CELLS = 'cells';
+    const string CALC_FORMAT = 'format';
+    const string CALC_CELL_NUMBER = 'number';
+    const string CALC_CELL_UNIT = 'unit';
+    const string CALC_CELL_PERCENT = 'percent';
+    const string CALC_CELL_SIGNED = 'signed';
+    const string CALC_THOUSAND_SEP = 'thousand_sep';
+    const string CALC_PERCENT_DECIMALS = 'percent_decimals';
+    const string CALC_POSITIVE = 'positive';
+    const string CALC_NEGATIVE = 'negative';
 
     // the results whose context values this renderer has loaded, so a context is loaded once per page
     private array $ctx_loaded = [];
-    // the html ids of the calculator cells that this renderer has written, so an id is unique on a page
-    private array $cell_ids = [];
+    // per html id of a number how often a calculator cell of this renderer has shown it (see calculator_cell_id)
+    private array $cell_counts = [];
+    // per calculator cell id that this renderer has written the number and the format of the cell
+    private array $cell_plan = [];
 
     /**
      * HTML for a list of words or triples
@@ -2930,28 +2949,179 @@ class ui_list extends ui_base
                 $txt = $html->span($txt, $val->number() < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
             }
             $id = $this->calculator_cell_id($val);
+            $this->cell_plan[$id] = $this->calculator_cell_format($val, $signed, $with_unit, $msg);
         }
         return $html->block(html_base::TD, $txt, styles::CALC_NUMBER, $id);
     }
 
     /**
      * the id of a number cell, so that the save can compare the results of the page by their
-     * group id; an id is unique on a page, so a number that a detail table shows again gets none
+     * group id and the browser can update the cell; an id is unique on a page, so a number that
+     * a detail table shows again gets its count behind the id
      *
      * @param sandbox_value $val the value or result of the cell
-     * @return string the html id e.g. "res-5-0M-06+" or an empty string if the page names the number already
+     * @return string the html id e.g. "res-5-0M-06+" or "res-5-0M-06+-2" for the second cell of the number
      */
     private function calculator_cell_id(sandbox_value $val): string
     {
-        $prefix = self::CALC_CELL_VALUE;
-        if ($val instanceof result) {
-            $prefix = self::CALC_CELL_RESULT;
+        $result = $val->html_id();
+        $count = ($this->cell_counts[$result] ?? 0) + 1;
+        $this->cell_counts[$val->html_id()] = $count;
+        if ($count > 1) {
+            $result .= self::CALC_CELL_REPEAT . $count;
         }
-        $result = $prefix . $val->id();
-        if (in_array($result, $this->cell_ids)) {
-            $result = '';
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value or result of a cell
+     * @param bool $signed true if the cell shows the sign of the number as the positive or negative style
+     * @param bool $with_unit true if the cell shows the unit behind the number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array how the browser writes a new number into the cell like calculator_cell does
+     */
+    private function calculator_cell_format(sandbox_value $val, bool $signed, bool $with_unit, user_message $msg): array
+    {
+        $is_percent = $val->is_percent($msg);
+        $unit = '';
+        if ($with_unit and !$is_percent) {
+            $unit = $this->unit_name($val, $msg);
+        }
+        $percent = null;
+        if ($is_percent) {
+            $percent = $val->percent_symbol($msg);
+        }
+        return [
+            self::CALC_CELL_NUMBER => $val->html_id(),
+            self::CALC_CELL_UNIT => $unit,
+            self::CALC_CELL_PERCENT => $percent,
+            self::CALC_CELL_SIGNED => $signed,
+        ];
+    }
+
+    /**
+     * the calculation of a calculator page as data and the script that repeats it in the browser
+     * when an input changes (docs/llm/frontend.md "Javascript only for the calculator"): the
+     * numbers of the page by their html id, the results as tokens of their formula, the number
+     * that each input field and each cell shows and the number format of the user; called after
+     * the tables of the page, because the cells are known only then
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param data_object $dto the request cache with the formulas and the field triples
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the data and of the script
+     */
+    function calculator_script(calculator $calc, word|triple $dbo, value_list $lst, data_object $dto, user_message $msg): string
+    {
+        global $ui_sys;
+        $html = new html_base();
+        $plan = [
+            self::CALC_NUMBERS => $this->calculator_number_plan($lst),
+            self::CALC_RESULTS => $this->calculator_result_plan($lst, $dto),
+            self::CALC_INPUTS => $this->calculator_input_plan($calc, $dbo, $dto, $msg),
+            self::CALC_CELLS => $this->cell_plan,
+            self::CALC_FORMAT => [
+                self::CALC_THOUSAND_SEP => $ui_sys->cfg->thousand_sep(),
+                self::CALC_PERCENT_DECIMALS => $ui_sys->cfg->percent_decimals(),
+                self::CALC_POSITIVE => styles::CALC_POSITIVE,
+                self::CALC_NEGATIVE => styles::CALC_NEGATIVE,
+            ],
+        ];
+        return $html->script_data(self::CALC_DATA_ID, $plan) . $html->script_src(files::CALCULATOR_SCRIPT);
+    }
+
+    /**
+     * @param value_list $lst the values and the results of the page
+     * @return array per html id the number of the value or result, without a value that has no number
+     */
+    private function calculator_number_plan(value_list $lst): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $val) {
+            if ($val->number() !== null) {
+                $result[$val->html_id()] = $val->number();
+            }
+        }
+        // sorted by the html id, so that the page does not depend on the load order of the values
+        ksort($result);
+        return $result;
+    }
+
+    /**
+     * @param value_list $lst the values and the results of the page
+     * @param data_object $dto the request cache with the formulas of the results
+     * @return array per html id of a result the tokens of its calculation, without a result that the page cannot calculate
+     */
+    private function calculator_result_plan(value_list $lst, data_object $dto): array
+    {
+        $calc = new formula_calc();
+        $result = [];
+        foreach ($lst->lst() as $res) {
+            if ($res instanceof result) {
+                $tokens = $calc->tokens($res, $lst, $dto->formula_list());
+                if ($tokens !== null) {
+                    $result[$res->html_id()] = $tokens;
+                }
+            }
+        }
+        // sorted by the html id, so that the page does not depend on the load order of the results
+        ksort($result);
+        return $result;
+    }
+
+    /**
+     * the number that each input of the page sets: a number field the value that it shows, a
+     * phrase selector the value of the option that the calculation of the page uses, and an
+     * assumption that a result uses the value itself (see assumption_fields)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per name of an input field the html id of its number
+     */
+    private function calculator_input_plan(calculator $calc, word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->operand_values($dbo, $msg, $dto) as $val) {
+            if ($val instanceof value) {
+                $result[url_var::NUMERIC_VALUE . $val->id()] = $val->html_id();
+            }
+        }
+        foreach ([...$calc->items(triples::CALCULATOR_INPUT), ...$calc->items(triples::CALCULATOR_ASSUMPTION)] as $item) {
+            $phr = $calc->item_phrase($item);
+            $val = null;
+            if ($phr != null) {
+                $val = $this->calculator_field_value($calc, $phr, $dbo, $dto, $msg);
+            }
+            if ($val != null) {
+                $result[url_var::NUMERIC_VALUE . $phr->id()] = $val->html_id();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr the field phrase e.g. yield factor
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the value that the field sets: the shown value of a number field or
+     *                            the value of the option that the page phrase uses of a phrase selector
+     */
+    private function calculator_field_value(calculator $calc, phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
+    {
+        $result = null;
+        if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
+            $used = $calc->used(array_column($calc->options($phr), 0));
+            if ($used != null) {
+                $result = $this->calculator_option_value($phr, $used, $dbo, $dto, $msg);
+            }
         } else {
-            $this->cell_ids[] = $result;
+            $result = $this->calculator_value($phr, $dbo, $dto, $msg);
         }
         return $result;
     }

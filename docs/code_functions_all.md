@@ -6860,6 +6860,7 @@
     \-- calculator_sources - section for function calculator_sources missing in /component/execute/ui_list.php
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
+    \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -6995,6 +6996,7 @@
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_calc
     \-- result - section for function result missing in /formula/formula_calc.php
+    \-- tokens - section for function tokens missing in /formula/formula_calc.php
     \-- operands - section for function operands missing in /formula/formula_calc.php
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
@@ -7504,6 +7506,8 @@
     \-- popover - section for function popover not yet defined that it should be internal in /html/html_base.php
     \-- list_unsorted - section for function list_unsorted not yet defined that it should be internal in /html/html_base
             .php
+    \-- script_data - section for function script_data not yet defined that it should be internal in /html/html_base.php
+    \-- script_src - section for function script_src not yet defined that it should be internal in /html/html_base.php
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
@@ -8066,6 +8070,7 @@
             hp
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /sandbox/sandbox_value.php
     \-- impact - section for function impact not yet defined that it should be display in /sandbox/sandbox_value.php
+    \-- html_id - section for function html_id not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- unit_key - section for function unit_key not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- name_key - section for function name_key not yet defined that it should be display in /sandbox/sandbox_value.php
     \-- has_phrase - section for function has_phrase not yet defined that it should be display in /sandbox/sandbox_value
@@ -9506,6 +9511,8 @@
         \-- ui_list - @param word|triple $dbo the phrase of the page
     \-- calculator_result
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
+    \-- calculator_script
+        \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
@@ -9596,6 +9603,8 @@
         \-- expression - get a list of all formula elements
     \-- result
         \-- formula_calc - repeat the calculation of a result with the values and results of the page, e.g. the
+    \-- tokens
+        \-- formula_calc - the calculation of a result as tokens for the browser, which repeats it when an input of a
     \-- operands
         \-- formula_calc - the values and results that the calculation of a result uses, found the same way as the
     \-- send
@@ -10608,6 +10617,10 @@
         \-- html_base - a button that shows a long text above the page without javascript (html popover)
     \-- list_unsorted
         \-- html_base - html unsorted list
+    \-- script_data
+        \-- html_base - the data of a page script as json, which the browser never runs as code; a "<" is written
+    \-- script_src
+        \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
 \-- table
     \-- tr
         \-- change_log_link - @param array $url_arr the url vars of the calling page for the back link of the undo butto

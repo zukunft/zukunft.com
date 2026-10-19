@@ -204,6 +204,47 @@ reduce the message to one config part if the config ever gets too big — it mus
 then be called *after* `load_phrases()`, because it matches on the loaded
 `$val->phr_lst`.
 
+**Using a config.yaml setting in a script** takes these steps:
+
+1. **Key** — each level of the key has one or two words. Register the const in
+   `shared/const/words.php` or `shared/const/triples.php` (see *config.yaml
+   keys are at most two space-separated words* in `docs/llm/constants.md`). A
+   new key adds a word or triple to the seed import, so the test ids need a
+   re-pin (`docs/llm/testing.md`).
+2. **Database** — `config.yaml` is the seed only. The database (re)creation
+   imports it (`sql_db` setup → `import_file::import_config_yaml`). An existing
+   database keeps its values, so a changed value in `config.yaml` reaches the
+   scripts only by a database recreation or by a change in the settings view.
+3. **Backend** — read from the global `$cfg` (`config_numbers`), with a
+   fallback const in `cfg/const/def.php` for a missing or not yet loaded config:
+   ```php
+   global $cfg;
+   $limit = $cfg?->get_by([triples::RESPONSE_TIME, words::DETAIL, ...], def::FALLBACK_X) ?? def::FALLBACK_X;
+   ```
+   The names select the value by a contains-all match (`value_base::match_all`).
+   So the name set of a key must not be a subset of the set of another key.
+   `config_numbers::get_by` treats 0 as missing and returns the fallback. For a
+   switch whose explicit `false` must count, use `get_by_names` (see
+   `config_numbers::pod_switch`).
+4. **Frontend** — read only from the request cache `$ui_sys->cfg` (see *Config
+   values come from `$ui_sys->cfg`* in `docs/llm/frontend.md`). The cache is
+   loaded once per request from `api/config` (`web/helper/config::load`) and is
+   served from the `db_cache` entry or the config cache file of the user. The
+   cache file is valid only while it is newer than `config.yaml`. The default
+   const is in `shared/helper/Config.php`:
+   ```php
+   global $ui_sys;
+   $flag = $ui_sys?->cfg?->get_by([triples::USE_JAVASCRIPT, triples::FOR_CALCULATOR], $msg, $default) ?? $default;
+   ```
+   The frontend `get_by` returns the formatted value, so an explicit 0 stays 0.
+5. **Default const = config.yaml value** — the unit tests use an empty
+   `config_ui` (`test_lib::ui_test_cache()`), so every frontend getter returns
+   its default const there. The default const therefore always has the
+   `config.yaml` value. A test of another setting builds its own `config_ui`
+   from a value list, e.g. `test_values::value_list_calculator_javascript_off()`.
+   The config values are not part of `api/ui_config/ui_config.json`, which only
+   holds the types, the system views and the system phrases.
+
 **The api type list stays a caller parameter, also where only one list is cached**:
 a cache entry may only be given to a caller that asked for exactly the content
 that was cached, so a cached api endpoint compares the requested type list with

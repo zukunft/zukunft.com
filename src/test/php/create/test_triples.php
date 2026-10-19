@@ -1710,6 +1710,26 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "use javascript" - the config.yaml switch of the javascript of the html frontend
+     */
+    function config_use_javascript(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::USE_JAVASCRIPT_ID, triple_names::USE_JAVASCRIPT);
+        return $trp;
+    }
+
+    /**
+     * @return triple "for calculator" - the exception of the javascript switch for the calculator pages
+     */
+    function config_for_calculator(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FOR_CALCULATOR_ID, triple_names::FOR_CALCULATOR);
+        return $trp;
+    }
+
+    /**
      * @return triple "main column (system)" - the tier of the columns hidden on a small screen
      */
     function column_main(): triple

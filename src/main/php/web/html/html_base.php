@@ -196,6 +196,9 @@ class html_base
     const string SMALL = 'small';
     const string SCOPE = 'scope';
     const string DETAILS = 'details';
+    // only for the calculator pages if config.yaml allows javascript for them (docs/llm/frontend.md)
+    const string SCRIPT = 'script';
+    const string JSON_TYPE = 'application/json';
     const string SUMMARY = 'summary';
     const string DL = 'dl';
     const string DT = 'dt';
@@ -3731,6 +3734,30 @@ class html_base
      *                         that is not served by the pod (e.g. a html test snapshot)
      * @return string the HTML link element for the stylesheet
      */
+    /**
+     * the data of a page script as json, which the browser never runs as code; a "<" is written
+     * as its unicode escape, so a text in the data cannot close the script tag
+     *
+     * @param string $id the html id by which the script finds the data
+     * @param array $data the data of the script
+     * @return string the html code of the data block
+     */
+    function script_data(string $id, array $data): string
+    {
+        $json = json_encode($data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES);
+        return '<' . self::SCRIPT . ' ' . self::TYPE . '="' . self::JSON_TYPE . '" ' . self::ID . '="' . $id . '">'
+            . $json . '</' . self::SCRIPT . '>';
+    }
+
+    /**
+     * @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
+     * @return string the html code that loads the script
+     */
+    function script_src(string $url): string
+    {
+        return '<' . self::SCRIPT . ' ' . self::SRC . '="' . $url . '"></' . self::SCRIPT . '>';
+    }
+
     private function link_style(string $stylesheet, string $base_url = ''): string
     {
         $url = $stylesheet;

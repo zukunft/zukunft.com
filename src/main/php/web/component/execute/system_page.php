@@ -1297,8 +1297,25 @@ class system_page extends component
                     ?: $mtr->txt(msg_id::CALCULATOR_DETAILS);
                 $result .= $html->details($html->esc($summary), $html->div($more, styles::CALC_MORE));
             }
+            // the only page with javascript: it repeats the calculation when an input changes
+            if ($this->calculator_uses_javascript($msg)) {
+                $result .= $list->calculator_script($calc, $dbo, $lst, $cfg, $msg);
+            }
         }
         return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the config value
+     * @return bool true if config.yaml allows javascript for the calculator pages (user > default >
+     *              frontend > use javascript > for calculator), the default of config.yaml if the value is missing
+     */
+    private function calculator_uses_javascript(user_message $msg): bool
+    {
+        global $ui_sys;
+        $default = (int)shared_config::DEFAULT_CALCULATOR_JAVASCRIPT;
+        $flag = $ui_sys?->cfg?->get_by([triples::USE_JAVASCRIPT, triples::FOR_CALCULATOR], $msg, $default) ?? $default;
+        return (bool)(float)$flag;
     }
 
     /**

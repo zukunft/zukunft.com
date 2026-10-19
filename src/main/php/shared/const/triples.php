@@ -63,6 +63,8 @@ class triples
     const string FACTOR_WRONG = 'factor wrong';
     const string FILE_READ = 'file read';
     const string FILE_SIZE = 'file size';
+    // the exception of use javascript for the calculator pages (see USE_JAVASCRIPT)
+    const string FOR_CALCULATOR = 'for calculator';
     const string FORMULA_LIST = 'formula list';
     const string FUTURE_PERCENT = 'future percent';
     // the start page lists the children of this triple, so the frontend needs its name
@@ -352,6 +354,8 @@ class triples
     const string TIME_PERCENT = 'time percent';
     const string TOP_LEVEL = 'top level';
     const string USER_FRONTEND = 'user frontend';
+    // if the html frontend may add javascript to a page; false except for the calculator pages
+    const string USE_JAVASCRIPT = 'use javascript';
     const string VALUE_LIST = 'value list';
     const string VALUE_TABLE = 'value table';
     const string WEB_MOBILE = 'web mobile';

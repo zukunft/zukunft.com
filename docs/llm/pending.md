@@ -2,6 +2,67 @@
 
 ## PV lifetime balance page
 
+### remaining
+
+the differences of `pv_lifetime_balance.html` to `pv_lifetime_balance_sample.html`, as steps in
+the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
+renderer, never by adapting the sample
+
+1. frame: the sample wraps the page in `<div class="wrap">` with its own `<style>` block and a
+   `h4` header, the page uses `<div class="use-case">` with style_html.css and a `h6` header;
+   the sample has inline styles (`style="display:grid;gap:14px"` on the inputs, `gap:18px` on
+   the result panel, `margin-bottom:8px` on the sources heading), which belong to style_html.css
+2. inputs: the units of the sample are the short units of the field ("kWh/a" for the local
+   consumption instead of "kWh"); the orientation options show two decimals ("1.00" instead
+   of "1"); the orientation hint names no source ("Yield factor relative to south 30°"
+   without "[1]") and the selector has no `div.form-group` around it
+3. assumptions, one row each:
+   - specific yield: unit "kWh/kWp·a" instead of "kWh per kWp", step 10 and the hint
+     "Lifetime average incl. 0.7 %/a degradation [1]" instead of "[2]"
+   - lifetime: unit "a" and the hint "Reference lifetime used in the LCA [1]"
+   - PV life-cycle emissions: the measured 35.8 g/kWh with step 0.1 and the hint "Swiss 3 kWp
+     mono-Si pitched roof, 2023 update [1]; converted to a fixed amount per kWp" (empty today)
+   - Swiss consumer mix, annual: measured 128 g/kWh (BAFU 2018) with the hint "2018 consumer
+     mix, low voltage [2]" instead of the assumed 79.2 of `pv_switzerland_co2.json`
+   - replacement mix: the residual mix first and selected, the option labels with the number
+     and the source ("European residual mix — 523 g/kWh [4]", "ENTSO-E production mix 2022 —
+     ~395 g/kWh (midpoint of 350–440) [3]") and no hint below the selector
+   - load share during PV hours: unit "share" instead of "percent", step 0.05, min 0, max 1
+     and the hint "Household; raise for home office or a heat pump running at noon"
+   - battery round-trip efficiency: unit "share" and the number with two decimals ("0.90")
+   - battery production emissions: the tag "assumed 0.5" with the confidence, step 5 and the
+     hint "Literature spans ~37–212 kg CO₂-eq per kWh capacity [5][6]"
+   - battery lifetime: unit "a" and the tag "assumed 0.6"
+   - the three derived assumptions (production mix 395, residual mix 523, east-west yield
+     factor 0.85) are not shown, because they are options of the selectors already
+4. main table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
+   kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
+   the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
+   of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
+5. main table, numbers: the per year column of "Self-consumption rate" (49 %) and "Autarky"
+   (84 %) and both columns of "vs. replacement mix" (113.8 t, 3'794 kg) are empty
+6. number format: the lifetime column shows kg results in t with one decimal (10.5 t, 2.0 t,
+   18.4 t, 13.1 t, 113.8 t, -2.9 t) and the per year column the numbers without decimals (247,
+   701, 349, 67, 614, 436, -98 kg), the percent with a blank before "%" ("49 %")
+7. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
+   the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
+   Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
+8. notes: only the three notes of the page with their own titles and sources ("How the CO₂
+   saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
+   instead of the description of every formula (19 notes with the formula name in `b`)
+9. sources: the seven sources of the sample in the order of their first use ([1] IEA PVPS,
+   [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
+   [7] gruenes.haus) with their full citation as the link text and `target="_blank"
+   rel="noopener"`; today five sources with the short source name, gruenes.haus first and
+   the two battery sources missing
+10. the comparison: let the use case test assert the generated page against the sample with
+    a normalisation of the differences that are design and not content: the html ids and
+    names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
+    attributes and the save form, the cell ids, and the calculator data with `calculator.js`
+    instead of the inline script of the sample
+
+### general
+
 the generated page `src/test/resources/web/html/use_cases/pv_lifetime_balance.html` should
 match the hand made sample `pv_lifetime_balance_sample.html` without hardcoding, generated
 from the database of the use case json; the calculation follows the double calculation check
@@ -259,6 +320,11 @@ add CBAM calculation, portfolio split and company sheet use cases and pin them o
 ## clean up
 
 db row identification should not be based on the database id instead the code_id should be used. *_ID pinned db rows e.g. words should only be used for tests.
+
+### config value 0 is treated as missing
+
+`config_numbers::get_by` (backend) returns the fallback if the config value is 0, so an explicit 0 or `false` in `config.yaml` is ignored whenever the fallback is not null (e.g. a switch with a true fallback). The workaround is `get_by_names` (see `config_numbers::pod_switch`).
+Suggestion: only a missing value (null) is missing, so `get_by` uses the fallback only if the value is null and returns a configured 0 as 0. The guard against an unwanted 0 (e.g. a zero list limit) moves to the getters that need it. Align the frontend `web/helper/config::get_by` to the same rule. It already keeps 0 only by chance, because `$val->value($msg)` returns the formatted text "0" and PHP 8 does not treat "0" as equal to null. Then remove the workaround note in `docs/llm/architecture.md` (*Using a config.yaml setting in a script*, step 3).
 
 ## unlink import chain time measurement
 

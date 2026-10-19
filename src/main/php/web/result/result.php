@@ -79,6 +79,9 @@ class result extends sandbox_value
      * const
      */
 
+    // put before the group id in the html id of a result (see sandbox_value::html_id)
+    const string HTML_ID_PREFIX = 'res-';
+
     // curl views
     const string VIEW_EDIT = views::RESULT_EDIT;
     const string VIEW_DEL = views::RESULT_DEL;

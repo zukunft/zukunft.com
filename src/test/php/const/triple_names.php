@@ -240,6 +240,11 @@ class triple_names
     const int POPULISM_SOLUTION_ID = 1190;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 225;
+    // the config.yaml switch of the javascript of the calculator pages
+    const string USE_JAVASCRIPT = shared_triples::USE_JAVASCRIPT;
+    const int USE_JAVASCRIPT_ID = 757;
+    const string FOR_CALCULATOR = shared_triples::FOR_CALCULATOR;
+    const int FOR_CALCULATOR_ID = 758;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking
     // (see triples::SYSTEM_CHART_TYPE and docs/llm/frontend.md "A table as a chart")
     const string SYSTEM_CHART_TYPE = shared_triples::SYSTEM_CHART_TYPE;

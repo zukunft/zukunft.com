@@ -28,7 +28,7 @@ change_log: $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
 element: $elm_ui
 figure: $fig_ui
-formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_be, $frm_empty, $frm_error, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_no_typ, $frm_order, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_scaled, $frm_tab, $frm_this, $frm_trm, $frm_typ, $frm_ui, $frm_unknown, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
+formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_be, $frm_empty, $frm_error, $frm_fn, $frm_has_next, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_no_typ, $frm_order, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_scaled, $frm_tab, $frm_this, $frm_trm, $frm_typ, $frm_ui, $frm_unknown, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
 group: $db_grp, $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_lst, $grp_no_names, $grp_used, $obj, $phr_grp, $phr_grp_reload, $result, $unnamed_grp, $val_grp
 import: $imp_cnt
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_new, $job_newer, $job_older, $job_oldest, $job_upd
@@ -81,7 +81,7 @@ api_type_list: $api_typ_lst, $typ_lst, $with_related, $without_related
 arithmetic: $calc
 button_dsp: $btn
 calc_internal: $calc
-calculator: $calc, $calc_be
+calculator: $calc, $calc_be, $js_calc
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
@@ -136,7 +136,7 @@ formula_dsp: $frm_html
 formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $lnk, $lnk_fld_url, $lnk_id_only, $lnk_new, $lnk_plain, $lnk_row, $lnk_tab, $lnk_url, $obj
 formula_link_list: $frm_lnk_lst, $lnk_lst, $lst
 formula_link_type: $frm_lnk_typ
-formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_be_lst, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
+formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_be_lst, $frm_fn_lst, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
 formula_type: $frm_typ
 formula_type_list: $lst
 group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj
@@ -246,7 +246,7 @@ ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port
 ui_link: $link
-ui_list: $list, $lst_ui
+ui_list: $js_list, $list, $lst_ui
 ui_preview: $preview
 ui_rank: $rank
 ui_select: $select

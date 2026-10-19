@@ -1563,6 +1563,20 @@ class test_values extends test_objects
     }
 
     /**
+     * the config of a pod that switches the javascript of the calculator pages off, which config.yaml allows by default
+     *
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_calculator_javascript_off(): value_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->config_use_javascript()->phrase(),
+            $t_trp->config_for_calculator()->phrase()], 0));
+        return $lst;
+    }
+
+    /**
      * the values of the calculator input test and the inhabitants of Bern, which fit the field
      * inhabitants as well as the inhabitants of Zurich, so that the field has to pick one of two
      * values that rank the same

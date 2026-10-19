@@ -529,6 +529,12 @@ zukunft.com:
           type:
             sys-conf-value: "pure HTML"
             tooltip-comment: "either 'pure HTML' for forms without javascript e.g. to add a value by selecting its words and triples step by step, 'HTML with js phrase selection' for forms that select the words and triples with javascript or 'full js' for a javascript frontend"
+          use javascript:
+            sys-conf-value: false
+            tooltip-comment: "if true the html frontend may add javascript to a page; false for pure html pages, which work in every browser and are tested by their html snapshot"
+            for calculator:
+              sys-conf-value: true
+              tooltip-comment: "the exception for the calculator pages, which recalculate the results with javascript as soon as an input changes"
           selections:
             tooltip-comment: "the default number of item to select"
             target:

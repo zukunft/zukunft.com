@@ -82,6 +82,8 @@ use DateTimeInterface;
 class sandbox_value extends sandbox
 {
 
+    // put before the group id in the html id of a number (see html_id), a result has its own
+    const string HTML_ID_PREFIX = 'val-';
     // the format of a time value in a form field and in the api message to the backend
     const string TIME_FORMAT = DateTimeInterface::ATOM;
     // the key of the date text in the json of a DateTime object
@@ -397,6 +399,16 @@ class sandbox_value extends sandbox
     function impact(): float
     {
         return $this->grp->phr_lst()->max_impact();
+    }
+
+    /**
+     * @return string the html id of the number e.g. "val-5-0M-06+", so that a calculator page names
+     *                the value of a cell or a field by its group id and a value and a result with
+     *                the same group id stay apart
+     */
+    function html_id(): string
+    {
+        return static::HTML_ID_PREFIX . $this->id();
     }
 
     /**

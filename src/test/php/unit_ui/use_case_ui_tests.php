@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -49,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -57,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -200,6 +203,26 @@ class use_case_ui_tests
         $frm_be_lst->add($frm_be, $msg);
         $num_be = new formula_calc()->result($t_res->result_zh_sum_ui($sum), $t_val->value_list_assumptions_ui(), $frm_be_lst);
         $t->assert_null($test_name, $num_be);
+        // a calculator page repeats the calculation in the browser, so the expression is given as
+        // tokens with the html id of each operand instead of the formula text, which the browser
+        // never runs as code
+        $test_name = 'the calculation of a result is given to the browser with the html ids of its operands';
+        $tokens = new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_lst);
+        $t->assert($test_name, $tokens, [
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::CITY_ZH_NAME])->html_id()],
+            [formula_calc::TOKEN_OP => '+'],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::COMPANY_ZURICH])->html_id()]]);
+        // negative: without a value for an operand the browser cannot repeat the calculation
+        $test_name = '... but no calculation if an operand has no value on the page';
+        $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $t_val->value_list_assumptions_ui(), $frm_be_lst));
+        // negative: a char outside the arithmetic of the page is never given to the browser
+        $test_name = '... and no calculation for an expression with other chars than numbers, + - * / and brackets';
+        $frm_fn = new formula_ui();
+        $frm_fn->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_fn->set_usr_text('"total" = max("' . triple_names::CITY_ZH_NAME . '")');
+        $frm_fn_lst = new formula_list_ui();
+        $frm_fn_lst->add($frm_fn, $msg);
+        $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_fn_lst));
 
         $t->subheader($ts . 'input fields');
         // a phrase of the values of the page that is assigned a field type is an input of the page:
@@ -536,8 +559,8 @@ class use_case_ui_tests
         $test_name = '... and the number of a signed group with its sign';
         $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
         // the save compares the results of the page by their group id, so a cell names the number it shows
-        $cell_id = ui_list::CALC_CELL_VALUE . $dto_res->val_lst->get_by_names(
-            [word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019])->id();
+        $cell_id = $dto_res->val_lst->get_by_names(
+            [word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019])->html_id();
         $test_name = '... and the cell carries the group id of its number';
         $t->assert_text_contains($test_name, $res_html, '<' . html_base::TD . ' class="' . styles::CALC_NUMBER
             . '" id="' . $cell_id . '">');
@@ -558,14 +581,17 @@ class use_case_ui_tests
         $t->assert_text_order($test_name, $res_html, $zh_row, '<td>' . word_names::YEAR_2019 . '</td><td class');
         // the column inhabitants has the filter canton, so the row Zurich shows the inhabitants of
         // the canton and not the inhabitants of the city, which have no canton phrase
-        $zh_cell = '<td>' . triple_names::CALC_ZH_LABEL_COM . '</td><td class="' . styles::CALC_NUMBER . '">';
+        // the cell id is the html id of the number that the cell shows, and the main table shows
+        // the inhabitants of the canton first, so the cell of the detail table is the second one
+        $zh_cell = '<td>' . triple_names::CALC_ZH_LABEL_COM . '</td><td class="' . styles::CALC_NUMBER . '" id="';
         $canton_val = $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019]);
         $city_val = $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
         $test_name = 'a detail column with a filter shows only the number with the filter phrase';
-        $t->assert_text_contains($test_name, $res_html, $zh_cell . $canton_val->val_formatted($msg) . '</td>');
+        $t->assert_text_contains($test_name, $res_html, $zh_cell . $canton_val->html_id()
+            . ui_list::CALC_CELL_REPEAT . '2">' . $canton_val->val_formatted($msg) . '</td>');
         // negative: the number without the filter phrase is not shown in the column
         $test_name = '... and not the number without it';
-        $t->assert_text_not_contains($test_name, $res_html, $zh_cell . $city_val->val_formatted($msg) . '</td>');
+        $t->assert_text_not_contains($test_name, $res_html, $zh_cell . $city_val->html_id());
         $test_name = 'the sources are numbered in the order of the first use';
         $t->assert_text_contains($test_name, $res_html, '<div class="' . styles::CALC_SOURCES . '">'
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_SOURCES)) . '<' . html_base::OL . '>');
@@ -613,6 +639,49 @@ class use_case_ui_tests
         $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
         $test_name = '... and a result that the cache has already is not added again';
         $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
+        // with javascript for the calculator the page gets its calculation as data and the script
+        // that repeats it in the browser when an input changes (docs/llm/frontend.md)
+        $lib = new library();
+        $js_list = new ui_list();
+        $js_calc = new calculator($wrd->phrase(), $dto_res->phr_lst);
+        $js_lst = $js_list->calculator_numbers($wrd, $dto_res, $msg);
+        $js_list->calculation_table($js_calc, $wrd, $js_lst, $msg);
+        $script = $js_list->calculator_script($js_calc, $wrd, $js_lst, $dto_res, $msg);
+        $test_name = 'the calculator script gets the numbers of the page as data';
+        $t->assert_text_contains($test_name, $script, '<script type="application/json" id="' . ui_list::CALC_DATA_ID . '">');
+        $plan = json_decode($lib->str_left_of($lib->str_right_of($script, ui_list::CALC_DATA_ID . '">'), '</script>'), true);
+        $canton_key = $canton_val->html_id();
+        $test_name = '... with the number of each value';
+        $t->assert($test_name, (string)$plan[ui_list::CALC_NUMBERS][$canton_key], (string)values::SAMPLE_INT);
+        // the numbers and the results are sorted by their html id, so that the page does not
+        // depend on the load order of the values and results (docs/llm/frontend.md)
+        $num_keys = array_keys($plan[ui_list::CALC_NUMBERS]);
+        $sorted_keys = $num_keys;
+        sort($sorted_keys);
+        $test_name = '... sorted by the html id';
+        $t->assert_true($test_name, count($num_keys) > 1 and $num_keys === $sorted_keys);
+        $res_keys = array_keys($plan[ui_list::CALC_RESULTS]);
+        $sorted_keys = $res_keys;
+        sort($sorted_keys);
+        $test_name = '... also the results';
+        $t->assert_true($test_name, $res_keys === $sorted_keys);
+        $test_name = '... the number that each cell shows';
+        $t->assert($test_name, $plan[ui_list::CALC_CELLS][$canton_key][ui_list::CALC_CELL_NUMBER], $canton_key);
+        $test_name = '... the value of each number field';
+        $t->assert($test_name, $plan[ui_list::CALC_INPUTS][$inh_name],
+            $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->html_id());
+        $test_name = '... and the script that repeats the calculation behind the data';
+        $t->assert_text_contains($test_name, $script, '<script src="' . files::CALCULATOR_SCRIPT . '"></script>');
+        // config.yaml allows javascript for the calculator, so also a pod without the config value
+        // gets the script (shared Config::DEFAULT_CALCULATOR_JAVASCRIPT)
+        $test_name = 'the calculation result has the calculator script by default';
+        $t->assert_text_contains($test_name, $res_html, '<script src="' . files::CALCULATOR_SCRIPT . '"></script>');
+        // negative: a pod that switches the javascript of the calculator off gets no script, like every other page
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = new config_ui($t_val->value_list_calculator_javascript_off()->api_json([api_types::INCL_PHRASES]));
+        $test_name = 'a calculation result without javascript has no script';
+        $t->assert_text_not_contains($test_name, $page->calculation_result($wrd, $msg, $dto_res), '<script');
+        $ui_sys->cfg = $cfg_keep;
 
         $t->subheader($ts . 'calculator page title');
         // the calculator page is named by the calculator label of the page phrase instead of the view name
