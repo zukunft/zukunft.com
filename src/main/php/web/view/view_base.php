@@ -46,6 +46,7 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::PHRASE . 'term_list.php';
@@ -67,6 +68,7 @@ include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
@@ -307,7 +309,18 @@ class view_base extends sandbox_code_id
         return parent::name_link($url_arr, $style, $msk_id, $base_url);
     }
 
-    function title(db_object|type_object|combine_named|sandbox_list $dbo, user_message $msg): string
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the object of the page
+     * @param user_message $msg to report a problem of the title name
+     * @param data_object|null $dto the request cache e.g. with the calculator triples of the page phrase
+     * @return string the title of the page: the object name and the view name, or for the
+     *                calculator the calculator label of the page phrase if it has one
+     */
+    function title(
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        user_message                                     $msg,
+        ?data_object                                     $dto = null
+    ): string
     {
         // the object name comes first, then the view name, joined by the configured title separator
         $html = new html_base();
@@ -316,7 +329,11 @@ class view_base extends sandbox_code_id
         if ($dbo instanceof sandbox_value) {
             $name = $dbo->title_name($msg);
         }
-        return $html->concat_title_text($name, $this->name(), $msg);
+        $view_name = $this->name();
+        if ($this->code_id == views::CALCULATOR and $dto != null and ($dbo instanceof word or $dbo instanceof triple)) {
+            $view_name = new calculator($dbo->phrase(), $dto->phr_lst)->page_label() ?: $view_name;
+        }
+        return $html->concat_title_text($name, $view_name, $msg);
     }
 
 

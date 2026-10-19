@@ -359,6 +359,18 @@ class test_views extends test_objects
     }
 
     /**
+     * @return view with a word component without a position type, e.g. to test the page frame
+     *         of a view without the data load of a calculated component
+     */
+    function view_with_word_component(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view_protected();
+        $msk->cmp_lnk_lst = $t_cmp->component_link_list_word();
+        return $msk;
+    }
+
+    /**
      * @return view with a side-or-below group of four text columns
      *         to test the responsive column position types
      */
@@ -367,6 +379,18 @@ class test_views extends test_objects
         $t_cmp = new test_components($this->env);
         $msk = $this->view();
         $msk->cmp_lnk_lst = $t_cmp->components_side_or_below($msk);
+        return $msk;
+    }
+
+    /**
+     * @return view with a header row and a side-or-below group of an input and a result column
+     *         to test the frame of a use case page like the calculator
+     */
+    function view_use_case(): view
+    {
+        $t_cmp = new test_components($this->env);
+        $msk = $this->view();
+        $msk->cmp_lnk_lst = $t_cmp->components_use_case($msk);
         return $msk;
     }
 

@@ -126,6 +126,8 @@ class sql
     // lower case like the pattern search of the existing queries
     const string LIKE_LOWER_CASE = 'like';
     const string LIKE_NO_UP_CASE = 'ilike';
+    // the part of a like pattern that matches any text e.g. between the start and the end of a key
+    const string WILDCARD = '%';
     // the postgres name of the fixed length char type, which postgres returns padded with spaces
     const string PG_TYPE_CHAR = 'bpchar';
     // the case-sensitive regular expression match of postgres and mysql (see sql_creator::key_match)

@@ -32,12 +32,14 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
@@ -48,8 +50,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -109,6 +113,55 @@ class phrase_ui_tests
                 $trp_problem, $msg, $dto_prio, true, false) . '<br>';
         $t->html_page_test($test_page, 'phrase', 'phrase', $msg);
 
+        $t->subheader($ts . 'default view');
+        // a phrase with an own view e.g. the calculator of a PV installation is linked to that
+        // view with the phrase id, which is negative for a triple (frontend::dbo_for_url)
+        $trp_msk = $t_trp->triple_pi();
+        $trp_msk->set_view_id(views::CALCULATOR_ID);
+        $phr_msk = new phrase($trp_msk->phrase()->api_json());
+        $test_name = 'a phrase with a default phrase view links to that view';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::CALCULATOR_ID);
+        $test_name = '... with the phrase id';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), 'id=' . $phr_msk->id());
+        $t->assert_true($test_name, $phr_msk->id() < 0);
+        // negative: a default view that is not a phrase view cannot take the phrase id, so the
+        // phrase is linked to the triple view
+        $trp_msk->set_view_id(views::MATH_CONST_ID);
+        $phr_msk = new phrase($trp_msk->phrase()->api_json());
+        $test_name = 'a phrase with a default view that is no phrase view links to the triple view';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);
+        // negative: a phrase without a default view links to the triple view
+        $test_name = 'a phrase without a default view links to the triple view';
+        $t->assert_text_contains($test_name, $trp->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);
+
+        $t->subheader($ts . 'all rows style');
+        // the ranking has as many rows as the unit config allows, so the cut is forced with the
+        // list size of the url; a table component cuts the rows with the more link, unless the
+        // component has the style "all rows", which a use case page sets, because the chain of
+        // its results is the page; a list size in the url still wins over the style
+        global $ui_sys;
+        $t_cmp = new test_components($t);
+        $dto_prio->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $cut_rows = 2;
+        $url_cut = [url_var::DISPLAY_LIST_SIZE => $cut_rows];
+        $cmp_tbl = new component_ui($t_cmp->component_table()->api_json());
+        $tbl_cut = $cmp_tbl->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_cut);
+        $test_name = 'a table component cuts the rows to the list size with the more link';
+        $t->assert_text_contains($test_name, $tbl_cut, msg_id::MORE->text());
+        $t->assert($test_name, substr_count($tbl_cut, '<' . html_base::TR . '>'), $cut_rows + 2);
+        $cmp_all = new component_ui($t_cmp->component_table_all_rows()->api_json());
+        $tbl_all = $cmp_all->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true);
+        $test_name = '... and with the all rows style it shows every row without a more row';
+        $t->assert_text_not_contains($test_name, $tbl_all, msg_id::MORE->text());
+        // the style stands for the list size "all" of the url, so both show the same rows
+        $url_all = [url_var::DISPLAY_LIST_SIZE => value_list_ui::LIMIT_ALL];
+        $tbl_url_all = $cmp_tbl->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_all);
+        $t->assert($test_name, substr_count($tbl_all, '<' . html_base::TR . '>'),
+            substr_count($tbl_url_all, '<' . html_base::TR . '>'));
+        $test_name = '... but the list size of the url still cuts the rows';
+        $t->assert_text_contains($test_name,
+            $cmp_all->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_cut), msg_id::MORE->text());
+
         $t->subheader($ts . 'table with related columns');
         $tbl_html = $list->table_with_related_columns($trp_zh_city, $msg, $dto);
         $test_name = 'the values of a triple are shown as a table';
@@ -158,6 +211,14 @@ class phrase_ui_tests
         $test_name = '... in the smaller label size';
         $t->assert_text_contains($test_name,
             $lib->str_left_of($tbl_header, '<table'), '<' . html_base::H5 . '>');
+
+        // a calculated number of the page phrase is shown in the same table as its values; the
+        // cache is offline, so the table shows the result it has and loads none from the api
+        $t_res = new test_results($t);
+        $dto->set_result_list($t_res->result_list_zh_city_ui());
+        $test_name = 'the result of the page phrase is shown as a row named by its other phrase';
+        $t->assert_text_contains($test_name,
+            $list->table_with_related_columns($trp_zh_city, $msg, $dto), '>' . word_names::INHABITANTS . '</a>');
 
         $t->subheader($ts . 'global issues table');
         // the "global problem" phrase is in no value group: the values of "global warming" and
@@ -390,12 +451,18 @@ class phrase_ui_tests
         $dto_rsn_sol = new data_object();
         $dto_rsn_sol->online = false;
         $dto_rsn_sol->val_lst = $t_val->value_list_solution_prio_reason_solution_ui();
+        // the solution research has the highest impact, so the impact order puts its reason heat
+        // mortality first; the numbers are no impact, because the loss and the gain have different
+        // units, which the preferred order never compares (docs/llm/frontend.md)
+        // selected by the reason too, because the ranking values name research as the solution of poverty as well
+        $dto_rsn_sol->val_lst->get_by_names([triple_names::HEAT_MORTALITY, word_names::RESEARCH])->phr_lst()
+            ->get_by_name(word_names::RESEARCH, $msg)->obj()->impact = impacts::MAX;
         $dto_rsn_sol->phr_lst = $t_phr->list_global_warming_reasons_ui();
         $tbl_rsn_sol = $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_rsn_sol);
         $t->assert_text_contains($test_name, $tbl_rsn_sol, '>' . word_names::RESEARCH . '</a>');
         $test_name = '... in the solution column';
         $t->assert_text_contains($test_name, $lib->str_left_of($tbl_rsn_sol, '</tr>'), '>' . word_names::SOLUTION . '</a>');
-        // the gain of 50 of the solution of the heat mortality puts that reason first by impact,
+        // the impact of the solution of the heat mortality puts that reason first by impact,
         // but the default sort order of the live page sorts the reasons by the loss they cause
         $test_name = 'the reasons page sorts the reasons by their loss';
         $dto_rsn_sol->add_phrases($t_phr->list_sort_definitions_ui(), $msg);

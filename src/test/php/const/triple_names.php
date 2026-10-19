@@ -240,6 +240,11 @@ class triple_names
     const int POPULISM_SOLUTION_ID = 1190;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 225;
+    // the config.yaml switch of the javascript of the calculator pages
+    const string USE_JAVASCRIPT = shared_triples::USE_JAVASCRIPT;
+    const int USE_JAVASCRIPT_ID = 757;
+    const string FOR_CALCULATOR = shared_triples::FOR_CALCULATOR;
+    const int FOR_CALCULATOR_ID = 758;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking
     // (see triples::SYSTEM_CHART_TYPE and docs/llm/frontend.md "A table as a chart")
     const string SYSTEM_CHART_TYPE = shared_triples::SYSTEM_CHART_TYPE;
@@ -252,13 +257,59 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2491;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2457;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 2492;
+    const int GAIN_AND_LOSS_ID = 2458;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2493;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2459;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2494;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2460;
+    // the field types and properties of process_catch_fields.json, appended like the chart
+    // triples above, so they move with them; check them in the triple list.csv
+    const string FIELD_NUMBER_WITH_LIMITS = shared_triples::FIELD_NUMBER_WITH_LIMITS;
+    const int FIELD_NUMBER_WITH_LIMITS_ID = 2488;
+    const string FIELD_PHRASE_SELECTOR_TYPE = shared_triples::FIELD_PHRASE_SELECTOR_TYPE;
+    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2490;
+    const string FIELD_LIMIT_DOWN = shared_triples::FIELD_LIMIT_DOWN;
+    const int FIELD_LIMIT_DOWN_ID = 2474;
+    const string FIELD_STEP = shared_triples::FIELD_STEP;
+    const int FIELD_STEP_ID = 2475;
+    // the fields of the input field test (unit_ui/use_case_ui_tests.php), which exist in no
+    // database, so their ids are fixed like SYSTEM_TEST_ADD_ID
+    const string FIELD_INHABITANTS = 'field inhabitants';
+    const int FIELD_INHABITANTS_ID = 989;
+    const string FIELD_CITY = 'field city';
+    const int FIELD_CITY_ID = 988;
+    const string ZH_USES_BERN = 'Zurich uses Bern';
+    const int ZH_USES_BERN_ID = 987;
+    // the field value phrase 2019 of the inhabitants field, so that the field shows the 2019
+    // value and not the value of another year (like the annual household consumption of the PV page)
+    const string FIELD_VALUE_PHRASES = shared_triples::FIELD_VALUE_PHRASES;
+    const int FIELD_VALUE_PHRASES_ID = 986;
+    const string INHABITANTS_INPUT_YEAR = 'inhabitants input year';
+    const int INHABITANTS_INPUT_YEAR_ID = 985;
+    const string INHABITANTS_FIELD_VALUE_PHRASE = 'inhabitants field value phrase';
+    const int INHABITANTS_FIELD_VALUE_PHRASE_ID = 984;
+    // the calculator of the reader test (unit_ui/use_case_ui_tests.php), which exists in no
+    // database, so its triples count down from this fixed id
+    const int CALC_FIRST_ID = 983;
+    const string CALC_ZH_INPUTS = 'Zurich inputs';
+    const string CALC_ZH_INPUT_INHABITANTS = 'Zurich input inhabitants';
+    const string CALC_ZH_INPUT_CANTON = 'Zurich input canton';
+    const string CALC_ZH_INPUT_YEAR = 'Zurich input 2019';
+    const string CALC_ZH_ROW_BE = 'Zurich row Bern';
+    const string CALC_ZH_ROW_INHABITANTS = 'Zurich row inhabitants';
+    const string CALC_ZH_LABEL_COM = 'City calculator';
+    const string CALC_ZH_HINT_COM = 'The inhabitants of a city';
+    const string CALC_INHABITANTS_LABEL_COM = 'People';
+    const string CALC_INHABITANTS_HINT_COM = 'living in the city';
+    const string CALC_CANTON_LABEL_COM = 'Canton of the city';
+    const string CALC_ZH_INPUT_CANTON_LABEL_COM = 'Region';
+    // the triples of the calculator input test, which follow the 24 triples of the reader test
+    const int CALC_INPUT_FIRST_ID = 959;
+    // the triples of the calculation result test, which follow the 5 triples of the input test
+    const int CALC_RESULT_FIRST_ID = 954;
+    const string CALC_ZH_COLUMNS_LABEL_COM = 'Main numbers';
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 151;
     // the minor and marginal columns of the ranking and the unit of the initial effort
@@ -396,6 +447,8 @@ class triple_names
     const string PV_IN_SWITZERLAND = 'PV in Switzerland';
     // the worked example of the use case pv_lifetime_balance.json, selected by the name only as well
     const string EXAMPLE_PV_INSTALLATION = 'example PV installation';
+    // the phrase that the worked example is built from and that has the calculator triples of the page
+    const string PV_INSTALLATION = 'PV installation';
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 612;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

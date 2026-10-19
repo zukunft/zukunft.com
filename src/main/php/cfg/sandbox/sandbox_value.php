@@ -84,6 +84,7 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -140,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use Exception;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -340,15 +342,24 @@ class sandbox_value extends sandbox_multi
      * @param user_message $msg to report a key that cannot be decoded
      * @param string $id_fld the name of the text group key field
      * @param array $phr_id_flds the names of the phrase id fields of the prime and main tables
+     * @param bool $with_names false if the caller loads the phrase names of many rows with one query
      * @return bool true if the row carries the text group key
      */
-    function set_grp_by_row(array $db_row, user_message $msg, string $id_fld, array $phr_id_flds): bool
+    function set_grp_by_row(
+        array        $db_row,
+        user_message $msg,
+        string       $id_fld,
+        array        $phr_id_flds,
+        bool         $with_names = true
+    ): bool
     {
         $key = $db_row[$id_fld] ?? null;
         $has_key = ($key !== null and $key !== '' and $key !== 'null');
         $grp = new group($this->get_user());
         if ($has_key) {
-            $grp->set_phrase_list_by_id($key, $msg);
+            if ($with_names) {
+                $grp->set_phrase_list_by_id($key, $msg);
+            }
             $grp->set_id($key);
         } else {
             $phr_lst = new phrase_list($this->get_user());
@@ -1231,15 +1242,6 @@ class sandbox_value extends sandbox_multi
         return $result;
     }
 
-    /**
-     * @param array $names list of phrase names e.g. the context phrases of a result validation
-     * @return bool true if all phrases of this value are part of the given phrase names
-     */
-    function matches_context(array $names): bool
-    {
-        return empty(array_diff($this->grp()->phrase_list()->names(), $names));
-    }
-
 
     /*
      * info
@@ -1652,11 +1654,30 @@ class sandbox_value extends sandbox_multi
                 $this->grp()->phrase_list()->load_triple_sides($msg);
             }
             $phr_lst = $this->grp()->phrase_list();
-            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst, $msg);
+            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($this->phrase_typ_lst($typ_lst), $msg);
         }
 
         return $vars;
 
+    }
+
+    /**
+     * the api message configuration for the phrases of this value: a page request (incl_related)
+     * is for this value and not for its phrases, so the phrases are sent with their names and
+     * the names of the triple sides, but without e.g. the related values of each phrase, which
+     * for a common phrase like EUR are a big part of all values of the pod
+     *
+     * @param api_type_list $typ_lst the configuration of the api message of this value
+     * @return api_type_list the configuration for the phrases of this value
+     */
+    protected function phrase_typ_lst(api_type_list $typ_lst): api_type_list
+    {
+        $phr_typ_lst = clone $typ_lst;
+        if ($phr_typ_lst->remove(api_types::INCL_RELATED)) {
+            // the page shows the phrase names and the sides of the triples like a phrase request
+            $phr_typ_lst->add(api_types::INCL_PHRASES);
+        }
+        return $phr_typ_lst;
     }
 
 

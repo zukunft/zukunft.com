@@ -256,6 +256,18 @@ class result_write_tests
         $target = '"sales","' . words::PCT . '","increase","' . word_names::TEST_RENAMED . '","2017"';
         $target = word_names::INHABITANTS;
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        // the phrases of all results are loaded with one query for the whole list, also the source phrases
+        $test_name = '... and each result of the list has the names of its source phrases';
+        $src_named = true;
+        foreach ($res_lst->lst() as $res) {
+            if ($res->src_grp->is_id_set() and in_array('', $res->src_grp->phrase_list()->names())) {
+                $src_named = false;
+            }
+            if ($res->src_grp->is_id_set() and $res->src_grp->phrase_list()->is_empty()) {
+                $src_named = false;
+            }
+        }
+        $t->assert_true($test_name, $src_named);
 
         // cleanup - fallback delete (done here and not at the end of run,
         // because the result list tests above load the results of the renamed test formula)

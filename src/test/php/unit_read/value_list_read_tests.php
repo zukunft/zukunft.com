@@ -135,6 +135,15 @@ class value_list_read_tests
                 . triple_names::PI_ID . ',,, / -' . triple_names::E_NUM_ID . ',,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
+        // the phrases of all values are loaded with one query for the whole list
+        $test_name = '... and the phrase load of the list names the phrases of each value';
+        $val_lst->load_phrases($msg);
+        $named = [];
+        foreach ($val_lst->lst() as $val) {
+            $phr_lst = $val->grp()->phrase_list();
+            $named[] = (!$phr_lst->is_empty() and $phr_lst->loaded());
+        }
+        $t->assert($test_name, $named, [true, true]);
 
         // load by phrase list
         $phr = new phrase($t->usr1);

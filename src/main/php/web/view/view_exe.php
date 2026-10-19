@@ -40,11 +40,15 @@ namespace Zukunft\ZukunftCom\main\php\web\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
@@ -53,6 +57,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'components.php';
 include_once html_paths::SHARED_CONST . 'def.php';
@@ -60,6 +65,7 @@ include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_ENUM . 'foaf_direction.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'position_types.php';
 include_once html_paths::SHARED_TYPES . 'view_styles.php';
@@ -68,23 +74,29 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
@@ -93,6 +105,13 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class view_exe extends view_base
 {
+
+    // the triples in a row from the page phrase of a calculator to the label or the order of a
+    // row or a detail column: list, group item, row and its property
+    const int CALCULATOR_LEVELS = 4;
+    // the triples in a row from a listed phrase to the label or the order of a selector option
+    const int CALCULATOR_PHRASE_LEVELS = 2;
+
 
     /*
      * execute
@@ -128,15 +147,25 @@ class view_exe extends view_base
         if ($this->code_id != '') {
             $form_name = $this->code_id;
         } else {
-            $form_name = $this->name();
+            // a user view has no code id, so its name is the form name, without the chars that
+            // an html id may not contain, because the inputs of the page refer to the form by its id
+            $form_name = trim(preg_replace('/[^\p{L}\p{N}_-]+/u', '_', $this->name()), '_');
         }
 
         if ($this->id() <= 0) {
             $this->log_err("The view id must be loaded to display it.");
         } else {
+            // the view of the page is in the request cache, so that a component can show its name
+            // and description (see system_page::view_title)
+            if ($cfg != null) {
+                $cfg->msk = $this;
+            }
+            $this->add_page_cache($dbo, $msg, $cfg);
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open($msg);
-            $result .= $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
+            // the style of the view is the page class e.g. use-case for the grid of a use case page
+            $entries = $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
+            $result .= new html_base()->add_style($entries, $this->get_style_id());
             $result .= $this->dsp_type_close($msg);
         }
 
@@ -164,6 +193,7 @@ class view_exe extends view_base
         array                                            $url_array = []
     ): string
     {
+        global $ui_sys;
         $html = new html_base();
 
         $this->log_debug($this->dsp_id());
@@ -187,6 +217,9 @@ class view_exe extends view_base
             $style_id = null;
             // the columns of a side-or-below group that are stacked on small screens
             $col_lst = [];
+            // a use case page e.g. the calculator shows its first row as the header and its
+            // side-or-below group as panels in one grid instead of the bootstrap rows and columns
+            $use_case = $html->get_style_code($this->get_style_id()) == view_styles::USE_CASE;
             foreach ($this->cmp_lst->lst() as $cmp) {
                 $pos_type = $cmp->pos_type_code_id($cfg->typ_lst_cache);
                 // add previous collected components to the final result
@@ -196,8 +229,11 @@ class view_exe extends view_base
                         if ($col_lst != []) {
                             // close the side-or-below group with the last collected column
                             $col_lst[] = $row;
-                            $result .= $this->dsp_side_or_below_row($col_lst, $msg);
+                            $result .= $this->dsp_side_or_below_row($col_lst, $msg, $use_case);
                             $col_lst = [];
+                            $style_id = null;
+                        } elseif ($use_case and $result == '') {
+                            $result .= $html->block(html_base::HEADER, $row);
                             $style_id = null;
                         } elseif ($auto_row) {
                             // the row uses the style of the component e.g. col-md-4 for a short line
@@ -241,7 +277,11 @@ class view_exe extends view_base
                 if ($cmp->needs_row_components($cfg->typ_lst_cache, $msg)) {
                     $auto_row = false;
                 }
+                $tc_id = $cmp->type_code_id($cfg->typ_lst_cache, $msg);
+                // the render time per component type splits the url to html time in the report
+                $ui_sys?->start_html_step(microtime(true));
                 $cmp_html = $cmp->dsp_entries($dbo, $msg, $form_name, $this->id(), $cfg, $cmp->style_id, $pattern, $test_mode, $url_array);
+                $ui_sys?->end_html_step($tc_id, microtime(true));
                 // the time of this message is the creation of this component incl. its api calls, so a slow component can be found
                 log_debug('component ' . $cmp->dsp_id() . ' rendered', url_var::DEBUG_LEVEL_MAIN_STEP);
                 // a combined component shares the row with the previous one, but it is still an own
@@ -267,7 +307,6 @@ class view_exe extends view_base
                 // Do not add the row or column style
                 // if the style has been added by the component already
                 // TODO Prio 1 find a more strait forward way to define it
-                $tc_id = $cmp->type_code_id($cfg->typ_lst_cache, $msg);
                 if ($cmp->no_row_style($tc_id)) {
                     $style_id = null;
                 }
@@ -276,7 +315,7 @@ class view_exe extends view_base
             if ($col_lst != []) {
                 // close a side-or-below group at the end of the view
                 $col_lst[] = $html->add_style($row, $style_id);
-                $result .= $this->dsp_side_or_below_row($col_lst, $msg);
+                $result .= $this->dsp_side_or_below_row($col_lst, $msg, $use_case);
             } elseif ($row != '') {
                 $result .= $row;
             }
@@ -292,17 +331,140 @@ class view_exe extends view_base
      * as the screen gets narrower than the configured side widths
      *
      * @param array $col_lst the html code of the columns
+     * @param bool $use_case true for a use case page, whose first column is the input panel and
+     *                       every following column a result panel in one grid
      * @return string the html code of the row with the wrapping columns
      */
-    private function dsp_side_or_below_row(array $col_lst, user_message $msg): string
+    private function dsp_side_or_below_row(array $col_lst, user_message $msg, bool $use_case = false): string
     {
-        return new html_base()->div_row_wrapping_cols($col_lst, $msg);
+        $html = new html_base();
+        if (!$use_case) {
+            return $html->div_row_wrapping_cols($col_lst, $msg);
+        }
+        // empty columns are skipped like in a bootstrap row, so the first panel shown is the input panel
+        $panels = '';
+        foreach (array_values(array_filter($col_lst, fn($col) => $col != '')) as $pos => $col) {
+            $tag = $pos == 0 ? html_base::ASIDE : html_base::SECTION;
+            $panels .= $html->block($tag, $col, styles::PANEL);
+        }
+        return $html->div($panels, styles::GRID);
+    }
+
+
+    /**
+     * fill the request cache with the data that the components of this view show, before the
+     * title and the components are created, so that their html creation needs no backend call;
+     * for the calculator these are the calculator triples of the page phrase
+     * (docs/llm/new_view_sample_pv_balance.md), for the start page the data of its table
+     *
+     * @param db_object|type_object|combine_named|sandbox_list $dbo the object of the page
+     * @param user_message $msg to report a problem of the api message to the user
+     * @param data_object|null $dto the request cache to fill
+     * @return void
+     */
+    function add_page_cache(
+        db_object|type_object|combine_named|sandbox_list $dbo,
+        user_message                                     $msg,
+        ?data_object                                     $dto
+    ): void
+    {
+        if ($this->code_id == views::CALCULATOR and $dto != null and $dto->online
+            and ($dbo instanceof word or $dbo instanceof triple)) {
+            $this->add_calculator_triples($dbo->phrase(), $dto, $msg);
+        }
+        if ($dto != null) {
+            foreach ($this->cmp_lst->lst() as $cmp) {
+                $cmp->add_page_cache($dto, $msg);
+            }
+        }
     }
 
 
     /*
      * internal execute
      */
+
+    /**
+     * add the calculator triples of a page phrase to the request cache, once per page: the tree
+     * of the page phrase and of the phrase it is built from with the lists, the items, the rows,
+     * the detail columns and their labels, hints, flags, filters and order triples; then the
+     * general triples of the listed phrases with the side results and the selector options;
+     * and last the phrases that are a listed phrase e.g. the rows of a detail table or the
+     * options of a selector without option triples
+     *
+     * @param phrase $phr the phrase of the page e.g. example PV installation
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_calculator_triples(phrase $phr, data_object $dto, user_message $msg): void
+    {
+        if (!new calculator($phr, $dto->phr_lst)->is_calculator()) {
+            $tree = new phrase_list();
+            $tree->add_phrase($phr);
+            if ($phr->is_triple() and $phr->get_from() != null) {
+                $tree->add_phrase($phr->get_from());
+            }
+            $this->add_triples_from($tree, self::CALCULATOR_LEVELS, false, $dto, $msg);
+            $calc = new calculator($phr, $dto->phr_lst);
+            $listed = new phrase_list();
+            foreach ($calc->phrases() as $lst_phr) {
+                $listed->add_phrase($lst_phr);
+            }
+            $this->add_triples_from($listed, self::CALCULATOR_PHRASE_LEVELS, true, $dto, $msg);
+            $kinds = new phrase_list();
+            foreach ([triples::CALCULATOR_INPUT, triples::CALCULATOR_ASSUMPTION, triples::CALCULATOR_DETAIL_TABLE] as $list) {
+                foreach ($calc->items($list) as $item) {
+                    $item_phr = $calc->item_phrase($item);
+                    if ($item_phr != null) {
+                        $kinds->add_phrase($item_phr);
+                    }
+                }
+            }
+            $lst = new phrase_list();
+            if (!$kinds->is_empty() and $lst->load_related_by_ids($kinds, foaf_direction::DOWN, $msg)) {
+                $dto->add_phrases($lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the triples from the given phrases to the request cache and follow the added triples,
+     * one api call per level
+     *
+     * @param phrase_list $phr_lst the phrases to start from
+     * @param int $levels the number of triples in a row from a start phrase
+     * @param bool $with_to true to follow also the phrase that an added triple points to e.g.
+     *                      the side result of a row, whose label is a triple of the phrase
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_triples_from(
+        phrase_list  $phr_lst,
+        int          $levels,
+        bool         $with_to,
+        data_object  $dto,
+        user_message $msg
+    ): void
+    {
+        $done = [];
+        $next = $phr_lst;
+        for ($i = 0; $i < $levels and !$next->is_empty(); $i++) {
+            $done = array_merge($done, $next->ids());
+            $lst = new phrase_list();
+            $lst->load_related_by_ids($next, foaf_direction::UP, $msg);
+            $dto->add_phrases($lst, $msg);
+            $next = new phrase_list();
+            foreach ($lst->lst() as $trp) {
+                foreach ([$trp, $with_to ? $trp->get_to() : null] as $nxt_phr) {
+                    if ($nxt_phr != null and !in_array($nxt_phr->id(), $done)) {
+                        $next->add_phrase($nxt_phr);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * return the beginning html code for the view_type;

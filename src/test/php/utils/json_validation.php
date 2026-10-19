@@ -121,6 +121,7 @@ class json_validation
         'files::FULL_LOAD_FILES' => cfg_files::FULL_LOAD_FILES,
         'files::USE_CASE_FILES' => cfg_files::USE_CASE_FILES,
         'files::SYSTEM_DATA_APPENDED_FILES' => cfg_files::SYSTEM_DATA_APPENDED_FILES,
+        'files::USE_CASE_FILES_APPENDED' => cfg_files::USE_CASE_FILES_APPENDED,
         'test_files::TEST_DATA_FILES' => test_files::TEST_DATA_FILES,
         'test_files::TEST_DATA_FILES_DIRECT' => test_files::TEST_DATA_FILES_DIRECT,
         'test_files::TEST_DATA_FILES_NOT_REVIEWED' => test_files::TEST_DATA_FILES_NOT_REVIEWED,

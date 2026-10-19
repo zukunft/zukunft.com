@@ -40,10 +40,13 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'config_tree.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -65,6 +68,7 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'components.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
@@ -72,12 +76,14 @@ include_once html_paths::SHARED_HELPER . 'Translator.php';
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
@@ -89,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
@@ -1151,6 +1158,168 @@ class system_page extends component
     }
 
     /**
+     * the name of the view as the page title and its description as the lead text, e.g. of a use
+     * case page; the view of the page is in the request cache (see view_exe::show)
+     *
+     * @param int $msk_id the database id of the view that shows the component
+     * @param data_object|null $cfg the request cache with the view of the page
+     * @return string the html code of the title and the lead text or an empty string if the view is unknown
+     */
+    function view_title(int $msk_id, ?data_object $cfg): string
+    {
+        $result = '';
+        $msk = $cfg?->msk;
+        if ($msk != null and $msk->id() == $msk_id) {
+            $html = new html_base();
+            // the same heading as the phrase title, so the page title is bigger than its sections
+            $result = $html->text_h2($msk->name()) . $html->p($msk->get_description());
+        }
+        return $result;
+    }
+
+    /**
+     * the title of a calculator page: the calculator label of the page phrase, or of the phrase it
+     * is built from, else the phrase name, and the calculator hint as the lead text
+     * (rule 6 of docs/llm/new_view_sample_pv_balance.md)
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param data_object|null $cfg the request cache with the calculator triples of the page
+     * @return string the html code of the title or an empty string if the page has no phrase
+     */
+    function calculator_title(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        if (($dbo instanceof word or $dbo instanceof triple) and $dbo->name() != '') {
+            $html = new html_base();
+            $calc = new calculator($dbo->phrase(), $cfg?->phr_lst ?? new phrase_list());
+            // escape the user settable texts, because the title is shown as raw html;
+            // a h4, because the use case style of style_html.css formats the h4 of the header
+            $result = $html->block(html_base::H4, $html->esc($calc->title()));
+            if ($calc->lead() != '') {
+                $result .= $html->p($html->esc($calc->lead()));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+     * the heading, the input fields and the save button in the inputs frame, then a collapsed
+     * block with the assumptions that the calculator lists and after them the other values that
+     * the results of the page use; the headings are the labels of the groups, else the default text
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $cfg the request cache with the calculator triples and the values of the page
+     * @param string $form_name the name of the save form that the fields join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @param array $url_arr the url parameters of the page with the entered numbers
+     * @return string the html code of the inputs or an empty string if the calculator has no input and no assumption
+     */
+    function calculator_input(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg,
+        string                                                $form_name,
+        string|int                                            $msk_key,
+        array                                                 $url_arr
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $html = new html_base();
+            $list = new ui_list();
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+            $inputs = $calc->items(triples::CALCULATOR_INPUT);
+            $assumptions = $calc->items(triples::CALCULATOR_ASSUMPTION);
+            if ($inputs != [] or $assumptions != []) {
+                $heading = $calc->own_label($calc->group(triples::CALCULATOR_INPUT))
+                    ?: $mtr->txt(msg_id::CALCULATOR_INPUTS);
+                $result = $html->div($html->block(html_base::H2, $html->esc($heading))
+                    . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
+                    . $this->process_catch_button_refresh(msg_id::CALCULATOR_SAVE, $form_name, $msk_key, $dbo, $url_arr),
+                    styles::INPUTS);
+                $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
+                $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
+                    . $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr, $listed);
+                if ($fields != '') {
+                    $summary = $calc->own_label($calc->group(triples::CALCULATOR_ASSUMPTION))
+                        ?: $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS);
+                    $result .= $html->details($html->esc($summary), $fields);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+     * the label of the result columns as the heading, the main table and then a collapsed block
+     * with the detail tables, the notes of the formulas and the numbered sources; the summary of
+     * the block is the label of the detail tables, else the default text
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load or a stored result that differs
+     * @param data_object|null $cfg the request cache with the calculator triples, the values and the results of the page
+     * @return string the html code of the results or an empty string if the calculator has no result
+     */
+    function calculation_result(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        $calc = null;
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+        }
+        // a phrase without calculator triples loads no result, because it shows none
+        if ($calc?->is_calculator()) {
+            $html = new html_base();
+            $list = new ui_list();
+            $lst = $list->calculator_numbers($dbo, $cfg, $msg);
+            $table = $list->calculation_table($calc, $dbo, $lst, $msg);
+            if ($table != '') {
+                $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
+                $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
+            }
+            $notes = $list->formula_notes($dbo, $msg, $cfg);
+            $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
+                . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))
+                . $list->calculator_sources($calc, $dbo, $msg, $cfg);
+            if ($more != '') {
+                $summary = $calc->own_label($calc->group(triples::CALCULATOR_DETAIL_TABLE))
+                    ?: $mtr->txt(msg_id::CALCULATOR_DETAILS);
+                $result .= $html->details($html->esc($summary), $html->div($more, styles::CALC_MORE));
+            }
+            // the only page with javascript: it repeats the calculation when an input changes
+            if ($this->calculator_uses_javascript($msg)) {
+                $result .= $list->calculator_script($calc, $dbo, $lst, $cfg, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the config value
+     * @return bool true if config.yaml allows javascript for the calculator pages (user > default >
+     *              frontend > use javascript > for calculator), the default of config.yaml if the value is missing
+     */
+    private function calculator_uses_javascript(user_message $msg): bool
+    {
+        global $ui_sys;
+        $default = (int)shared_config::DEFAULT_CALCULATOR_JAVASCRIPT;
+        $flag = $ui_sys?->cfg?->get_by([triples::USE_JAVASCRIPT, triples::FOR_CALCULATOR], $msg, $default) ?? $default;
+        return (bool)(float)$flag;
+    }
+
+    /**
      * the input fields of a process catch page or of one of its tabs; a placeholder with the name of
      * the component until the fields are read from the field triples of the question phrase
      *
@@ -1160,7 +1329,15 @@ class system_page extends component
      * @param array $url_arr the url vars of the page with the selected tab
      * @return string the html code of the fields or an empty string if the fields belong to a tab that is not selected
      */
-    function process_catch_fields(string $cmp_name, ?string $cmp_code_id, array $url_arr): string
+    function process_catch_fields(
+        string                                                $cmp_name,
+        ?string                                               $cmp_code_id,
+        array                                                 $url_arr,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        ?data_object                                          $dto = null,
+        string                                                $form_name = '',
+        user_message                                          $msg = new user_message()
+    ): string
     {
         global $mtr;
         $result = '';
@@ -1168,7 +1345,11 @@ class system_page extends component
         // the fields of a tab are only shown if the tab is selected, so the page shows one tab at a time
         if ($nbr == 0 or $nbr == $this->process_catch_tab_selected($url_arr)) {
             $html = new html_base();
-            $result = $html->p($mtr->txt(msg_id::PROCESS_CATCH_FIELDS_PENDING) . ' ' . $html->esc($cmp_name));
+            $result = new ui_list()->input_fields($dbo, $msg, $dto, $form_name, $url_arr);
+            // a page whose phrase has no field yet says so instead of showing nothing
+            if ($result == '') {
+                $result = $html->p($mtr->txt(msg_id::PROCESS_CATCH_FIELDS_PENDING) . ' ' . $html->esc($cmp_name));
+            }
         }
         return $result;
     }
@@ -1249,7 +1430,7 @@ class system_page extends component
     function process_catch_button_refresh(
         msg_id                                                $label,
         string                                                $form_name,
-        string                                                $msk_code_id,
+        string|int                                            $msk_key,
         db_object|type_object|combine_named|sandbox_list|null $dbo,
         array                                                 $url_arr
     ): string
@@ -1257,9 +1438,9 @@ class system_page extends component
         global $mtr;
         $result = '';
         // e.g. a preview of the component has no page to show again
-        if ($msk_code_id != '') {
+        if ($msk_key != '' and $msk_key != 0) {
             $html = new html_base();
-            $page_vars = $html->form_hidden(url_var::MASK, $msk_code_id);
+            $page_vars = $html->form_hidden(url_var::MASK, (string)$msk_key);
             $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
             // the tab is only kept if the user has selected one, so a page without tabs gets no tab var
             if (array_key_exists(url_var::TAB, $url_arr)) {

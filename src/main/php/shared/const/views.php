@@ -95,25 +95,26 @@ class views
     const int LOGIN_RESET_ID = 15;
 
     // easy data change
-    // the calculator: the values of a word/triple as a table with the columns the system column
-    // tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with the
-    // avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
+    // the calculator page of a phrase with the title, the inputs and the results that the
+    // calculator triples of the phrase select (calculator_views.json, docs/llm/new_view_sample_pv_balance.md)
     const string CALCULATOR = 'calculator';
     const int CALCULATOR_ID = 16;
     const string CALCULATOR_NAME = 'Calculator';
-    const string CALCULATOR_COM = 'The values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared';
-    // the view of the use case pv_lifetime_balance.json: a use case view is user data, so it is
-    // selected by its name only and never by a code id (docs/llm/json_structure.md "Use case files")
-    const string PV_LIFETIME_BALANCE_NAME = 'PV lifetime CO2 balance';
+    // the comparison table: the values of a word/triple as a table with the columns the system
+    // column tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with
+    // the avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
+    const string COMPARISON_TABLE = 'comparison_table';
+    const int COMPARISON_TABLE_ID = 199;
+    const string COMPARISON_TABLE_NAME = 'Comparison table';
     // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
     const string TABLE_EDITOR = 'table_editor';
-    const int TABLE_EDITOR_ID = 194;
+    const int TABLE_EDITOR_ID = 193;
     const string TABLE_EDITOR_NAME = 'Table editor';
-    const string CALCULATION_EDITOR = 'calculation_editor';
-    const string CALCULATION_EDITOR_NAME = 'Calculation editor';
+    const string CALCULATOR_EDITOR = 'calculator_editor';
+    const string CALCULATOR_EDITOR_NAME = 'Calculator editor';
     // the views whose phrase selector sends the name of the phrase that the view shows next
     // (see frontend::url_with_selected_phrase)
-    const array PHRASE_SELECT_VIEWS = [self::TABLE_EDITOR, self::CALCULATION_EDITOR];
+    const array PHRASE_SELECT_VIEWS = [self::TABLE_EDITOR, self::CALCULATOR_EDITOR];
     // the four pages of a process catch, which guide the user of a question phrase e.g. the PV
     // calculator from one easy question to the result (process_catch_views.json)
     const string PROCESS_CATCH_START = 'process_catch_start';
@@ -798,6 +799,7 @@ class views
         self::TERM_ID,
         self::TABLE_ID,
         self::CALCULATOR_ID,
+        self::COMPARISON_TABLE_ID,
         self::TABLE_EDITOR_ID,
     ];
 
@@ -1110,6 +1112,7 @@ class views
         self::PHRASE_VALUES_ID,
         self::TABLE_ID,
         self::CALCULATOR_ID,
+        self::COMPARISON_TABLE_ID,
         self::CURRENCY_ID,
         self::VIEW_DEFAULT_ID,
         self::COMPONENT_DEFAULT_ID,
@@ -1507,6 +1510,7 @@ class views
         self::PHRASE_VALUES_ID => self::PHRASE_VALUES,
         self::TABLE_ID => self::TABLE,
         self::CALCULATOR_ID => self::CALCULATOR,
+        self::COMPARISON_TABLE_ID => self::COMPARISON_TABLE,
         self::CURRENCY_ID => self::CURRENCY,
         self::VIEW_DEFAULT_ID => self::VIEW,
         self::COMPONENT_DEFAULT_ID => self::COMPONENT,

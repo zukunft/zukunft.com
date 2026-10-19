@@ -452,8 +452,11 @@ class config_numbers extends value_list
             $typ->name = db_cache_types::SYSTEM_CONFIG_NAME;
         }
         $load_msg = new user_message($usr); // judges only this load, see above; merged into $msg below
+        // each section is ended, so that the rest of the request is counted in the section around the load
         $sys->times->switch(system_time_type::LOAD_CONFIG_CACHE);
-        if (!$this->read_cache($typ, $usr, $load_msg, $phr)) {
+        $cached = $this->read_cache($typ, $usr, $load_msg, $phr);
+        $sys->times->switch();
+        if (!$cached) {
             $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
             $phr_sys_cfg = new phrase($usr);
             $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG, $load_msg);
@@ -472,9 +475,11 @@ class config_numbers extends value_list
                 log_warning('no config values loaded');
                 $load_msg->add_id(msg_id::CONFIG_EMPTY);
             }
+            $sys->times->switch();
             if ($load_msg->is_ok()) {
                 $sys->times->switch(system_time_type::WRITE_CONFIG_CACHE);
                 $this->write_cache($typ, $usr, $snap_time, $load_msg, $phr);
+                $sys->times->switch();
             }
         }
         $msg->merge($load_msg);

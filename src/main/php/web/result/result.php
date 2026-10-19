@@ -79,6 +79,9 @@ class result extends sandbox_value
      * const
      */
 
+    // put before the group id in the html id of a result (see sandbox_value::html_id)
+    const string HTML_ID_PREFIX = 'res-';
+
     // curl views
     const string VIEW_EDIT = views::RESULT_EDIT;
     const string VIEW_DEL = views::RESULT_DEL;
@@ -134,6 +137,13 @@ class result extends sandbox_value
             $frm = new formula();
             $frm->set_id($json_array[json_fields::FORMULA_ID]);
             $this->frm = $frm;
+        }
+
+        // the phrases of the values used, so that the page can repeat the calculation (formula_calc)
+        if (array_key_exists(json_fields::CONTEXT, $json_array)) {
+            $grp = new group();
+            $grp->api_mapper($json_array[json_fields::CONTEXT], $msg);
+            $this->src_grp = $grp;
         }
 
         // only the result page asks for the values, formulas and results used for the calculation,
@@ -248,6 +258,15 @@ class result extends sandbox_value
     function name(): string|null
     {
         return $this->grp->name();
+    }
+
+    /**
+     * @return string the phrase names in alphabetic order followed by the formula name, because
+     *                two results of different formulas can have the same phrases
+     */
+    function name_key(): string
+    {
+        return parent::name_key() . ' ' . ($this->frm?->name() ?? '');
     }
 
     /**

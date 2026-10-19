@@ -265,15 +265,14 @@ class url_test_base
                 $this->req->dto, $this->req->do_it);
         }
         $this->after_action($step);
-        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $sys->times->switch();
         // render in test mode so that the snapshot is reproducible without backend calls;
         // the start view, which every back step reaches, is the exception: it shows the global
         // problems as a table that the frontend fills from the api, so that the snapshot shows
-        // the same table as the live start page, including the values and the tooltips
+        // the same table as the live start page, including the values and the tooltips;
+        // url_to_html counts the rendering and the api wait itself
         $result = $this->ui->url_to_html($next_url, $this->req->msg,
             $this->req->dto, $this->req->test_mode);
-        // return to the default section for the following assertions
-        $sys->times->switch(system_time_type::DEFAULT);
         $this->assert_html($this->step_path, $result, $next_url);
         return $result;
     }

@@ -202,7 +202,9 @@ class test_triples extends test_objects
         $trp = $this->triple();
         $trp->name_given = triple_names::MATH_CONST_GIVEN;
         $trp->weight = 0.5;
-        $trp->set_view_id(views::MATH_CONST_ID);
+        // the view with its name, because the export names the view
+        $t_msk = new test_views($this->env);
+        $trp->view = $t_msk->view_math();
         $trp->usage = triple_names::SYSTEM_TEST_ADD_USAGE;
         $trp->impact = impacts::MAX;
         $trp->exclude();
@@ -997,6 +999,15 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple_ui the "Bern (city)" triple for frontend unit testing e.g. as a page phrase
+     *         without calculator triples
+     */
+    function triple_bern_ui(): triple_ui
+    {
+        return $this->page_ui($this->triple_bern());
+    }
+
+    /**
      * @return triple_ui the "US dollar" triple for frontend unit testing
      */
     function us_dollar_ui(): triple_ui
@@ -1443,6 +1454,278 @@ class test_triples extends test_objects
     {
         $trp = new triple($this->env->usr1);
         $trp->set(triple_names::SYSTEM_COLUMN_MAYOR_ID, triple_names::SYSTEM_COLUMN_MAYOR);
+        return $trp;
+    }
+
+    /**
+     * @return triple "number with limits" - the field type of a number input (process_catch_fields.json)
+     */
+    function field_number_with_limits(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_NUMBER_WITH_LIMITS_ID, triple_names::FIELD_NUMBER_WITH_LIMITS);
+        return $trp;
+    }
+
+    /**
+     * @return triple "phrase selector" - the field type of a selection of one phrase
+     */
+    function field_phrase_selector_type(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_PHRASE_SELECTOR_TYPE_ID, triple_names::FIELD_PHRASE_SELECTOR_TYPE);
+        return $trp;
+    }
+
+    /**
+     * @return triple "field limit down" - the property phrase of the lowest number of a field
+     */
+    function field_limit_down(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_LIMIT_DOWN_ID, triple_names::FIELD_LIMIT_DOWN);
+        return $trp;
+    }
+
+    /**
+     * @return triple "field step" - the property phrase of the increment of a field
+     */
+    function field_step(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_STEP_ID, triple_names::FIELD_STEP);
+        return $trp;
+    }
+
+    /**
+     * @return triple "inhabitant can be number with limits" - the inhabitants as a number input
+     */
+    function field_inhabitants(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_INHABITANTS_ID, triple_names::FIELD_INHABITANTS);
+        $trp->set_from($t_wrd->word_inhabitant()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->field_number_with_limits()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "city can be phrase selector" - the city as a selection of one of the cities with a value
+     */
+    function field_city(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_CITY_ID, triple_names::FIELD_CITY);
+        $trp->set_from($t_wrd->word_city()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->field_phrase_selector_type()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "field value phrases" - the property phrase of the phrases of the value of a field
+     */
+    function field_value_phrases(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FIELD_VALUE_PHRASES_ID, triple_names::FIELD_VALUE_PHRASES);
+        return $trp;
+    }
+
+    /**
+     * @return triple "inhabitants input year" - the inhabitants are entered for the year 2019
+     */
+    function inhabitants_input_year(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::INHABITANTS_INPUT_YEAR_ID, triple_names::INHABITANTS_INPUT_YEAR);
+        $trp->set_from($t_wrd->word_inhabitant()->phrase());
+        $trp->set_verb($t_vrb->verb_has());
+        $trp->set_to($t_wrd->word_2019()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "inhabitants field value phrase" - the year 2019 is a field value phrase of the inhabitants field
+     */
+    function inhabitants_field_value_phrase(): triple
+    {
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::INHABITANTS_FIELD_VALUE_PHRASE_ID, triple_names::INHABITANTS_FIELD_VALUE_PHRASE);
+        $trp->set_from($this->inhabitants_input_year()->phrase());
+        $trp->set_verb($t_vrb->verb_can_be());
+        $trp->set_to($this->field_value_phrases()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "Zurich uses Bern" - the option of the city selector that the page phrase Zurich uses
+     */
+    function zh_uses_bern(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::ZH_USES_BERN_ID, triple_names::ZH_USES_BERN);
+        $trp->set_from($t_wrd->word_zh()->phrase());
+        $trp->set_verb($t_vrb->verb_uses());
+        $trp->set_to($t_wrd->word_bern()->phrase());
+        return $trp;
+    }
+
+    /**
+     * the calculator of the reader test (docs/llm/new_view_sample_pv_balance.md rule 6 to 8):
+     * Zurich has the inputs inhabitants, canton (follower of inhabitants) and 2019 (no order) and
+     * the row group city with the rows Bern (city), built from the group phrase, and inhabitants
+     * (follower of Bern) filtered by canton, which is a highlight with the side result 2020;
+     * the inhabitants have a general label and hint, the canton a general and an item label
+     *
+     * @return triple[] the keywords and the calculator triples
+     */
+    function calculator_zh(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $zh = $t_wrd->word_zh()->phrase();
+        $inhabitant = $t_wrd->word_inhabitant()->phrase();
+        $canton = $t_wrd->word_canton()->phrase();
+        $id = triple_names::CALC_FIRST_ID;
+        $kw = [];
+        foreach ([triples::CALCULATOR_LABEL, triples::CALCULATOR_HINT, triples::CALCULATOR_INPUT,
+                     triples::CALCULATOR_ROW_GROUP, triples::CALCULATOR_HIGHLIGHT] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        $inputs = $this->calc_triple($id, triple_names::CALC_ZH_INPUTS, $zh, $has, $kw[triples::CALCULATOR_INPUT]);
+        $in_inh = $this->calc_triple($id, triple_names::CALC_ZH_INPUT_INHABITANTS, $inputs->phrase(), $has, $inhabitant);
+        $in_canton = $this->calc_triple($id, triple_names::CALC_ZH_INPUT_CANTON, $inputs->phrase(), $has, $canton);
+        $groups = $this->calc_triple($id, 'Zurich row groups', $zh, $has, $kw[triples::CALCULATOR_ROW_GROUP]);
+        $rows = $this->calc_triple($id, 'Zurich rows city', $groups->phrase(), $has, $t_wrd->word_city()->phrase());
+        $row_be = $this->calc_triple($id, triple_names::CALC_ZH_ROW_BE, $rows->phrase(), $has, $this->triple_bern()->phrase());
+        $row_inh = $this->calc_triple($id, triple_names::CALC_ZH_ROW_INHABITANTS, $rows->phrase(), $has, $inhabitant);
+        return [
+            ...array_values($kw), $inputs, $in_inh, $in_canton, $groups, $rows, $row_be, $row_inh,
+            $this->calc_triple($id, 'Zurich label', $zh, $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_LABEL_COM),
+            $this->calc_triple($id, 'Zurich hint', $zh, $has, $kw[triples::CALCULATOR_HINT], triple_names::CALC_ZH_HINT_COM),
+            $this->calc_triple($id, triple_names::CALC_ZH_INPUT_YEAR, $inputs->phrase(), $has, $t_wrd->word_2019()->phrase()),
+            $this->calc_triple($id, 'Zurich input canton order', $in_canton->phrase(), $t_vrb->verb_follow(), $in_inh->phrase()),
+            $this->calc_triple($id, 'Zurich input canton label', $in_canton->phrase(), $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM),
+            $this->calc_triple($id, 'inhabitants label', $inhabitant, $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_INHABITANTS_LABEL_COM),
+            $this->calc_triple($id, 'inhabitants hint', $inhabitant, $has, $kw[triples::CALCULATOR_HINT], triple_names::CALC_INHABITANTS_HINT_COM),
+            $this->calc_triple($id, 'canton label', $canton, $has, $kw[triples::CALCULATOR_LABEL], triple_names::CALC_CANTON_LABEL_COM),
+            $this->calc_triple($id, 'canton highlight', $canton, $has, $kw[triples::CALCULATOR_HIGHLIGHT]),
+            $this->calc_triple($id, 'canton side result', $canton, $has, $t_wrd->word_2020()->phrase()),
+            $this->calc_triple($id, 'Zurich row inhabitants filter', $row_inh->phrase(), $t_vrb->verb_with(), $canton),
+            $this->calc_triple($id, 'Zurich row inhabitants order', $row_inh->phrase(), $t_vrb->verb_follow(), $row_be->phrase()),
+        ];
+    }
+
+    /**
+     * the triples that the calculator input test adds to the reader test (calculator_zh): the
+     * canton is a phrase selector, whose only option is its side result 2020, which the page
+     * phrase Zurich (city) uses, and the inhabitants are also the only assumption of Zurich
+     *
+     * @return triple[] the field, the selection and the assumption triples
+     */
+    function calculator_zh_input(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $zh = $t_wrd->word_zh()->phrase();
+        $id = triple_names::CALC_INPUT_FIRST_ID;
+        $trp_kw = new triple($this->env->usr1);
+        $trp_kw->set($id--, triples::CALCULATOR_ASSUMPTION);
+        $assumptions = $this->calc_triple($id, 'Zurich assumptions', $zh, $has, $trp_kw);
+        return [
+            $trp_kw, $assumptions,
+            $this->calc_triple($id, 'Zurich assumption inhabitants', $assumptions->phrase(), $has, $t_wrd->word_inhabitant()->phrase()),
+            $this->calc_triple($id, 'field canton', $t_wrd->word_canton()->phrase(), $t_vrb->verb_can_be(), $this->field_phrase_selector_type()),
+            $this->calc_triple($id, 'Zurich (city) uses 2020', $this->zh_city()->phrase(), $t_vrb->verb_uses(), $t_wrd->word_2020()->phrase()),
+        ];
+    }
+
+    /**
+     * the triples that the calculation result test adds to the reader test (calculator_zh): the
+     * result column 2019 with a label of the column group, the row group city signed, and the
+     * detail table city with the column inhabitants filtered by canton and the extra row 2019
+     *
+     * @return triple[] the keyword, the column, the sign and the detail table triples
+     */
+    function calculator_zh_result(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $zh = $t_wrd->word_zh()->phrase();
+        $calc = [];
+        foreach ($this->calculator_zh() as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        $id = triple_names::CALC_RESULT_FIRST_ID;
+        $kw = [];
+        foreach ([triples::CALCULATOR_RESULT_COLUMN, triples::CALCULATOR_DETAIL_TABLE, triples::CALCULATOR_SIGNED] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        $cols = $this->calc_triple($id, 'Zurich result columns', $zh, $has, $kw[triples::CALCULATOR_RESULT_COLUMN]);
+        $tbls = $this->calc_triple($id, 'Zurich detail tables', $zh, $has, $kw[triples::CALCULATOR_DETAIL_TABLE]);
+        $tbl = $this->calc_triple($id, 'Zurich detail city', $tbls->phrase(), $has, $t_wrd->word_city()->phrase());
+        $col_2019 = $this->calc_triple($id, 'Zurich column 2019', $cols->phrase(), $has, $t_wrd->word_2019()->phrase());
+        $cols_label = $this->calc_triple($id, 'Zurich result columns label', $cols->phrase(), $has,
+            $calc[triples::CALCULATOR_LABEL], triple_names::CALC_ZH_COLUMNS_LABEL_COM);
+        $signed = $this->calc_triple($id, 'Zurich rows city signed', $calc['Zurich rows city']->phrase(), $has, $kw[triples::CALCULATOR_SIGNED]);
+        $col = $this->calc_triple($id, 'Zurich detail column inhabitants', $tbl->phrase(), $has, $t_wrd->word_inhabitant()->phrase());
+        return [
+            ...array_values($kw), $cols, $tbls, $tbl, $col_2019, $cols_label, $signed, $col,
+            $this->calc_triple($id, 'Zurich detail total', $tbl->phrase(), $t_vrb->verb_with(), $t_wrd->word_2019()->phrase()),
+            // the column shows only the inhabitants of the canton, like a row of the main table with a filter
+            $this->calc_triple($id, 'Zurich detail column inhabitants canton', $col->phrase(), $t_vrb->verb_with(), $t_wrd->word_canton()->phrase()),
+        ];
+    }
+
+    /**
+     * @param int $id the id of the triple, counted down for the next triple
+     * @return triple a triple of the calculator of the reader test
+     */
+    private function calc_triple(
+        int &$id, string $name, phrase $from, verb $vrb, triple|phrase $to, string $description = ''): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set($id--, $name);
+        $trp->set_from($from);
+        $trp->set_verb($vrb);
+        $trp->set_to($to instanceof triple ? $to->phrase() : $to);
+        $trp->set_description($description);
+        return $trp;
+    }
+
+    /**
+     * @return triple "use javascript" - the config.yaml switch of the javascript of the html frontend
+     */
+    function config_use_javascript(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::USE_JAVASCRIPT_ID, triple_names::USE_JAVASCRIPT);
+        return $trp;
+    }
+
+    /**
+     * @return triple "for calculator" - the exception of the javascript switch for the calculator pages
+     */
+    function config_for_calculator(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::FOR_CALCULATOR_ID, triple_names::FOR_CALCULATOR);
         return $trp;
     }
 

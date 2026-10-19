@@ -14,7 +14,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 13,1,Signup,the system signup form,7,,,signup,,,
 14,1,Login activate,the system login activate form,7,,,login_activate,,,
 15,1,Login reset,reset the password of a login user name,7,,,login_reset,,,
-16,1,Calculator,"the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",11,,,calculator,,,
+16,1,Calculator,"the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",13,8,,calculator,,,
 17,1,Change value,"Change just the number, text, time or geolocation of a value for the user without the confirm view",7,,,value_overwrite,,,3
 18,1,Change result,Change just the number of a result for the user without the confirm view,7,,,result_overwrite,,,3
 19,1,Add value pure,Create a new value by selecting its words and triples step by step without javascript and  without the confirm view,7,,,value_add_phrases,,,3
@@ -191,10 +191,10 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 190,1,company sheet,"The income statement, balance sheet or cash flow sheet of a big company",6,,,,,,
 191,1,company list with main ratios,list the most interesting companies with the main ratios,6,,,,,,
 192,1,PV in Switzerland emission comparison,the climate benefit of photovoltaic electricity in Switzerland with and without the displacement concept,13,,,,,,
-193,1,PV lifetime CO2 balance,"the lifetime electricity and CO2-eq balance of a PV installation with battery, compared with the annual Swiss consumption mix, the PV-weighted monthly Swiss mix and the European residual mix",13,,,,,,
-194,1,Table editor,"placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",11,,,table_editor,,,
-195,1,Calculation editor,placeholder to define a calculation starting from a word or triple,11,,,calculation_editor,,,
-196,1,process catch start page,the first page of a process catch with one easy to answer question and a next button to the main page,11,,,process_catch_start,,,
-197,1,process catch main page,"the page of a process catch with the about three inputs that are most relevant for the result, with pre-selection options for complex answers, and a next button to the detail page",11,,,process_catch_main,,,
-198,1,process catch detail page,the page of a process catch with the fine tuning of the assumptions in up to five tabs and a next button to the result page,11,,,process_catch_detail,,,
-199,1,process catch result page,the last page of a process catch with the result in up to five tabs and a back button to the detail page,11,,,process_catch_result,,,
+193,1,Table editor,"placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",11,,,table_editor,,,
+194,1,Calculator editor,placeholder to define the calculator page of a word or triple,11,,,calculator_editor,,,
+195,1,process catch start page,the first page of a process catch with one easy to answer question and a next button to the main page,11,,,process_catch_start,,,
+196,1,process catch main page,"the page of a process catch with the about three inputs that are most relevant for the result, with pre-selection options for complex answers, and a next button to the detail page",11,,,process_catch_main,,,
+197,1,process catch detail page,the page of a process catch with the fine tuning of the assumptions in up to five tabs and a next button to the result page,11,,,process_catch_detail,,,
+198,1,process catch result page,the last page of a process catch with the result in up to five tabs and a back button to the detail page,11,,,process_catch_result,,,
+199,1,Comparison table,"the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",11,,,comparison_table,,,

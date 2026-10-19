@@ -280,7 +280,8 @@ class sandbox_list_named extends sandbox_list
      */
     protected function add_direct(sandbox_named|IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
     {
-        if (!$this->lst_name_dirty) {
+        // like the rebuild of the index the first entry of a name is kept
+        if (!$this->lst_name_dirty and !array_key_exists($obj_to_add->name(), $this->name_pos_lst)) {
             $this->name_pos_lst[$obj_to_add->name()] = count($this->lst());
         }
         parent::add_direct($obj_to_add);

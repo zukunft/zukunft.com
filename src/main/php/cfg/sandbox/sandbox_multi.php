@@ -129,6 +129,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -215,6 +216,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Exception;
 
 class sandbox_multi extends db_object_multi_user
@@ -742,10 +744,13 @@ class sandbox_multi extends db_object_multi_user
     protected function load(sql_par $qp, user_message $msg): int|string
     {
         global $db_con;
+        global $sys;
 
         $db_row = $db_con->get1($qp, $msg);
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $sys->times->switch(system_time_type::DB_MAP);
             $this->row_mapper_sandbox_multi($db_row, $msg, $qp->ext);
+            $sys->times->switch();
             return $this->id;
         } else {
             return 0;
@@ -3636,6 +3641,7 @@ class sandbox_multi extends db_object_multi_user
                     // update the user row only if it does not yet match the requested state
                     // (e.g. a leftover user row of a previous test run can already match),
                     // because an update without any changed field would be an invalid sql
+                    $this->set_user_table_source();
                     $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
                     if (!$fvt_lst->is_empty_except_internal_fields()) {
                         $sc_par_lst->add(sql_type::UPDATE);
@@ -3652,13 +3658,7 @@ class sandbox_multi extends db_object_multi_user
                 if (!$this->no_diff($norm_obj, $msg)) {
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
-                    // because one user can link a value to more than one source the source id is part of the user value prime key
-                    // and due to that the source id in the user table cannot be null instead 0 is used
-                    if ($this->source_id() == null) {
-                        $src = new source($this->get_user());
-                        $src->id = sources::TRUST_ME_BRO_ID;
-                        $this->set_source($src);
-                    }
+                    $this->set_user_table_source();
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
                     // TODO compare sql_write with sql_insert_switch
@@ -3669,6 +3669,21 @@ class sandbox_multi extends db_object_multi_user
 
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $msg->is_ok();
+    }
+
+    /**
+     * use the placeholder source for a value without source, because one user can link a value
+     * to more than one source, so the source id is part of the user value prime key and cannot
+     * be null; the insert and the update of a user row use it alike, or the update compares the
+     * missing source with the placeholder of the stored row and finds a change of a key field only
+     */
+    private function set_user_table_source(): void
+    {
+        if ($this->source_id() == null) {
+            $src = new source($this->get_user());
+            $src->id = sources::TRUST_ME_BRO_ID;
+            $this->set_source($src);
+        }
     }
 
     /**

@@ -260,6 +260,7 @@ class result_list extends sandbox_value_list
             if ($db_rows === false) {
                 log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
             } else {
+                $mapped = [];
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->get_user());
                     // the result mapper, because the inherited row_mapper of the key object is
@@ -271,13 +272,28 @@ class result_list extends sandbox_value_list
                         log_err('result db row without a phrase group skipped'
                             . ' (table type "' . $qp->ext . '"): ' . implode(',', $db_row));
                     } else {
-                        $this->add_obj($res);
-                        $result = true;
+                        $mapped[] = $res;
                     }
+                }
+                // the phrases of all results with one query instead of some queries per result,
+                // set before the results are added, because the phrases may complete the group id
+                $this->set_phrases($mapped, $msg, true);
+                foreach ($mapped as $res) {
+                    $this->add_obj($res);
+                    $result = true;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * @param value_base|result $val a result of the list
+     * @return array the result and the source group, whose phrases are loaded with the list
+     */
+    protected function groups_of(value_base|result $val): array
+    {
+        return [$val->grp(), $val->src_grp];
     }
 
     /**

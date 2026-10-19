@@ -134,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -176,6 +177,7 @@ class system_view_ui_tests
     function run(test_cleanup $t): void
     {
         global $mtr;
+        global $sys;
 
         // init
         $lib = new library();
@@ -278,6 +280,38 @@ class system_view_ui_tests
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($msg, file_get_contents(test_files::TYPE_LISTS_CACHE));
         $usr_sys_ui = $tl->cast_user($t->usr1);
+
+        $t->subheader($ts . 'phrase without a view');
+        // a url with a phrase id and without a view shows the phrase with its default view; a test
+        // render loads no phrase, so the word without an own view is shown with the word view
+        $test_name = 'a phrase url without a view shows the word with the word view';
+        $t->assert($test_name,
+            $ui->url_to_html([url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true),
+            $ui->url_to_html([url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true));
+        // negative: a url without a view and without an object still shows the start view
+        $test_name = 'a url without a view and without an object shows the start view';
+        $t->assert($test_name,
+            $ui->url_to_html([], new user_message(), $ui->dto, true),
+            $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true));
+        // the render of a page is counted as url to html and then the section of the caller continues,
+        // so that the time of a test that renders a page is not reported as not specified
+        $test_name = 'a page render is counted as url to html';
+        $sys->times->reset_section();
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $ui->url_to_html([url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::URL_TO_HTML);
+        $test_name = '... and then returns to the time section around it';
+        $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
+        $sys->times->switch();
+        // the data of a page is loaded before its html is created, so that the html creation is
+        // frontend work only; the request cache keeps the data of the start page table
+        $test_name = 'the data of the start page is loaded before its html is created';
+        $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true);
+        $sys->times->reset_section();
+        $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::LOAD_PAGE);
+        $test_name = '... so that a second render of the start page waits for no backend answer';
+        $t->assert_false($test_name, str_contains($sys->times->section_report(), system_time_type::API_WAIT));
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
         // forged login/signup/import submit is rejected as well (see frontend::request_token_valid)
@@ -991,10 +1025,10 @@ class system_view_ui_tests
                 } else {
                     $msg->usr = null;
                 }
-                // the start page, the table and the calculator show the values of the global
-                // problems, so they render with the start page cache that carries them
+                // the start page, the table and the comparison table show the values of the
+                // global problems, so they render with the start page cache that carries them
                 $dto = $ui->dto;
-                if (in_array($id, [views::START_ID, views::TABLE_ID, views::CALCULATOR_ID])) {
+                if (in_array($id, [views::START_ID, views::TABLE_ID, views::COMPARISON_TABLE_ID])) {
                     $dto = $dto_start;
                 } elseif ($dbo instanceof value or $dbo instanceof result) {
                     $dto = $dto_smp;

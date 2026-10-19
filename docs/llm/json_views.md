@@ -143,6 +143,126 @@ inserted, so the unique `ui_msg_code_id` is not duplicated.
 This mirrors the "define once, link many" pattern already used inside
 `system_views.json`.
 
+## Component or triple
+
+The first decision for a new view is which part of the page is a
+**component** and which part is a **triple**. The main criterion is whether
+the part **depends on the initial phrase** of the page: the same for every
+phrase → component, different per phrase → triple.
+
+### When and why a component
+
+Use a component for a part that is the **same for every phrase** of the view:
+
+- **It needs code.** A new kind of html, e.g. a number field, a selector, a
+  table with section rows or a collapsible block, is a component type, because
+  only code can create html (see `docs/llm/frontend.md`).
+- **It is layout.** Its place on the page (`position`, `position_type`,
+  `style`) belongs to the view, not to the data.
+- **It is a system text.** A heading like "Inputs" or a button like "Save" is the
+  translated `ui_msg_code_id` of the component and is the same for all phrases.
+
+Why: a component is code and layout. A developer changes it, a snapshot test
+checks it, and its `code_id` lets the code refer to it. Every phrase reuses
+the same few components, so a page has no lookups for its structure.
+
+Keep the components few and generic. A view has just the components of its
+first level, e.g. title, input and result. The pieces inside them (one field per
+input, one row per result) are created at runtime and are not linked in the
+view. A component that names a domain phrase (a `row` or `column` phrase) is a
+sign that the part should be a triple.
+
+### When and why a triple
+
+Use triples for everything that **differs from phrase to phrase**:
+
+- **What is shown:** which inputs, which assumptions, which columns, which rows,
+  which detail tables
+- **In which order:** an order triple per item: the item *is follower of* the
+  item before
+- **With which text:** labels and hints, as the description of a triple to
+  `calculator label` / `calculator hint`
+- **With which parameters:** the field type, the limits, the step and the
+  selector options of an input phrase
+
+Each of these triples links the phrase to a system keyword triple with a
+`code_id` (see `docs/llm/json_structure.md` "A system keyword with properties
+and types"). A number parameter is a value with the phrase and the keyword
+triple.
+
+Why: a triple is data, not code.
+- A page for a new phrase needs a json import and no developer.
+- Every user can change the triples in their own sandbox, e.g. in the editor
+  view, and the change is logged. The page of the other users stays the same
+  until they take over the change.
+- A triple about the phrase is used by every view of the phrase. `PV capacity
+  can be number with limits` defines the field on every page that has
+  PV capacity as an input.
+
+The cost is one lookup per kind of triple. Every triple therefore has a parent
+keyword triple that selects all triples of one kind in one load (see
+`docs/llm/new_view_sample_pv_balance.md`).
+
+### Neither: derive it
+
+What can be derived from the values, results, formulas and sources needs neither
+a component nor a triple:
+- the assumptions are the formula operands that the page phrase does not carry
+- the notes are the formula descriptions
+- the sources are the sources of the values used
+- the units are the unit phrases of the values
+- the tag "measured" / "assumed" comes from the source and the confidence of a value
+
+A triple for a derivable part would be a second truth that can contradict the
+first.
+
+### The decision in questions
+
+Ask these in order. The first yes decides:
+
+1. Can it be derived from the values, results, formulas or sources? → nothing to define
+2. Would another phrase show something else here? → triple
+3. Should a user be able to change it without a developer? → triple
+4. Does it need html that no component type creates yet? → a new component type
+5. Otherwise → an existing component in the view
+
+Then choose the level of a triple:
+- **On the phrase:** true for the phrase on every page, e.g. the field type of
+  `PV capacity`. Use the `process catch field (system)` keywords.
+- **For the page:** only true for this page of the phrase, e.g. that PV capacity
+  is the first input labelled "System size". Use the `calculator …` keywords.
+
+Follow "reduce to the max": no triple, component or layer that is not strictly
+needed.
+
+### Example: the calculator
+
+A `Calculator` view has three components: `title calculator`,
+`calculator input` and `calculation result`. For the phrase `PV installation`,
+everything else is triples:
+- the inputs: PV capacity, battery capacity, …
+- the result columns: lifetime, annual
+- the row groups and the detail tables, e.g. the monthly consumption mix
+
+They are triples from `PV installation` to the keywords `calculator input`,
+`calculator result column`, `calculator row group` and
+`calculator detail table`. The page phrase `example PV installation` finds them
+through the phrase it is built from, `PV installation`.
+
+Each input field is created at runtime with the page phrase and the input
+phrase as its context, e.g. `example PV installation` and `PV capacity`. From
+that context it takes:
+- its type from the field triple (`PV capacity can be number with limits`)
+- its limits and step from the values with the field phrase and the property
+  triple (`0.5` with `PV capacity` and `field step`)
+- the number it shows from the value with all context phrases
+
+How to create a new view on the "PV lifetime CO₂ balance" sample is described
+in `docs/llm/new_view_sample_pv_balance.md`. It covers the url, every component and
+triple, the `Calculator editor`, and the parent triple rule for the fast
+selection of all triples of one kind. Its machine readable form is
+`docs/llm/samples/new_view_sample_pv_balance.json`.
+
 ## Views
 
 A view is a named page layout that links an ordered list of components to a main
@@ -171,6 +291,9 @@ object type:
   canonically (see *Components*) — plus the link-only fields `position`,
   `position_type`, `style`.
 
+Which part of a page is a component and which part is a triple is decided first
+(see "Component or triple" above).
+
 ### Component positions are contiguous, starting at 1
 
 `position` is `1, 2, 3, …` with **no gaps**: the importer rejects a hole
@@ -186,14 +309,26 @@ Optional, default `below`. The values that have coded layout behaviour:
 |---|---|
 | `below` | start a new full-width row (the default) |
 | `combine` | stack below the previous component **within the same column** |
-| `side_or_first_below` | start the first column of a side-by-side group |
+| `side_or_first_below` | open a side-by-side group: the components since the last `below` row become its first column, and this component starts the second column |
 | `side_or_below` | start a following column of that group |
 | `side_or_last_below` | start the last column of that group |
 
 A side-or-below group shows its columns next to each other on wide screens and
-wraps them onto fewer rows (down to one) as the screen narrows; build a multi-row
-column by giving its first component the `side_or_*` type and the rest `combine`.
-`style` is an optional Bootstrap column class (e.g. `col-md-4`).
+wraps them onto fewer rows (down to one) as the screen narrows. Each `side_or_*`
+type closes the components collected before it as a column, so the first column
+needs no `side_or_*` type of its own, and a group of two columns needs only
+`side_or_last_below` on the first component of the second column, e.g. the
+`Calculator` view. Build a multi-row column by giving its first component the
+`side_or_*` type and the rest `combine`. The group ends with the next `below`
+component or the end of the view.
+`style` is an optional Bootstrap column class (e.g. `col-md-4`) or one of the
+coded styles of `view_styles.csv`: `text-left`, `fields-in-line` and `all-rows`,
+which shows every row of a list component instead of the short list with the
+more link, e.g. the result chain of a use case table (`docs/llm/frontend.md`
+"A page never fills the screen"). A view has a `style` too, which is the page
+class of the div around its components: `use-case` puts the inputs and the
+assumptions in a panel left of the results panel with the grid and panel rules
+of `style_html.css`, stacked on phones.
 
 ### The process catch views: four pages for one question phrase
 
@@ -209,7 +344,7 @@ triples of the question phrase (`process_catch_fields.json`, see
 |---|---|
 | `system_title_for_phrase` | the translated page title with the name of the question phrase |
 | `system_text_explain` | the translated `ui_msg_code_id` of the component as a paragraph |
-| `process_catch_fields` | the input fields of the page or, with a tab code id, of one tab, shown only if that tab is selected |
+| `process_catch_fields` | the input fields of the page or, with a tab code id, of one tab, shown only if that tab is selected; a field is a phrase of the values of the page phrase that a use case assigns a field type (`<phrase> can be number with limits`), its limits and step are values with the field phrase and the property triple (`0.5` with `PV capacity` and `field step`), if the field phrase is in several values the field shows the one with all field value phrases (`household consumption has a annual`, that triple `can be field value phrases`) and the fewest phrases, and a `phrase selector` field offers the phrases of the values of the field phrase (`<phrase> can be field phrase selector value based`) with the one selected that the page phrase `uses`; the fields join the refresh form, and an entered number or phrase of the url is shown again (`ui_list::input_fields`) |
 | `process_catch_tab` | one tab: the selected tab as text, every other tab as a link to the same page with the tab url var (`url_var::TAB`) |
 | `process_catch_button_next` | a link to the next page with the same question phrase (`views::PROCESS_CATCH_NEXT`) |
 | `process_catch_button_back` | a link to the page before with the same question phrase (`views::PROCESS_CATCH_BACK`) |
@@ -222,6 +357,40 @@ component (`components::PROCESS_CATCH_TAB_NBR`), never by a shared
 the tab label is the message of the tab number in the code
 (`system_page::PROCESS_CATCH_TABS`). Every link carries the whole page state,
 so the pages work without javascript.
+
+### The components of a use case page
+
+A use case page like the PV lifetime balance (`pv_lifetime_balance.json`) is
+built from the related columns table and these component types, which take
+their text from the component itself, because a use case may carry no
+`ui_msg_code_id` (see "Use case files" in `docs/llm/json_structure.md`):
+
+| component type | what it shows |
+|---|---|
+| `view_title` | the name of the view as the page title and the description of the view as the lead text; the view of the page is the page view of the request cache (`data_object::$msk`), set by `view_exe::show` and kept out of the view list, because a filled view list is what the view selectors offer |
+| `name_sub_title` | the **name** of the component as a section heading, so the component is named like the heading e.g. `Inputs` |
+| `description_text` | the **description** of the component as a paragraph e.g. a note of the page |
+| `details_start` | the start of a collapsed block with the name of the component as the summary line; the block spans the components up to the `details_end`, like a `row_start` spans a row |
+| `details_end` | the end of the collapsed block |
+| `value_input_fields` | the values of the page phrase as number input fields, each labelled by the other phrases of the value and sorted by the label; a first version until the fields come from the field triples of the phrase like the process catch fields |
+| `sources_used` | the sources of the values of the page phrase and of the values that its results use as a list with a link to the source url, each source once, sorted by name; a value that knows its source only by the id gets the name from the source cache of the page or from one load of all missing sources |
+| `formula_notes` | the descriptions of the formulas that calculate the results of the page as paragraphs with the formula name in front, sorted by name, so the notes of a page are the formula descriptions of the use case file and not a text of their own |
+| `assumption_fields` | the values that the calculation of the results of the page uses and that the page phrase does not carry, e.g. the yield and the reference mixes of the PV balance, each as a number field with the tag "measured" for a value with a source, with the source as the hint, or "assumed" with the confidence that a value with the same phrases and the word `confidence` states; the operands are found like the page calculation finds them (`formula_calc::operands`) and loaded by the phrases of the context of each result |
+
+A `table_with_related_columns` component with a `row` phrase shows the table of
+that phrase instead of the page phrase, e.g. the monthly Swiss consumption mix
+on the PV balance page; the phrase comes from the request cache or is loaded
+with its values (`component_exe::table_phrase`).
+
+A `table_with_own_columns` component is the same table, but its `column` and
+`column2` phrases are its columns, e.g. `lifetime` and `annual` for the main
+results of the PV balance page. A use case never defines a column with a
+system column tier (`... can be mayor column (system)`), because the tiers are
+shared by all tables and would add the column e.g. to the start page.
+
+The refresh form of the inputs (`process_catch_button_refresh`) shows the page
+again with the entered inputs until the save starts the backend calculation
+(`docs/llm/frontend.md` "The frontend calculates, a save job verifies").
 
 ## View relations
 

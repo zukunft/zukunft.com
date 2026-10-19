@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test - zukunft.com
+            PV in Switzerland - Calculator editor - zukunft.com
         </title>
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
@@ -133,134 +133,119 @@
         </nav>
         <main class="main-container">
             <div class="row col-md-12">
-                <div class="heading-line">
-                    <h4 class="heading-inline">
-                        PV in Switzerland
-                    </h4>
-                    <a href="http://localhost/http/view.php?m=51&amp;id=1955" title="rename word" class="heading-icon-inline">
-                        <i class="fas fa-edit">
-                        </i>
-                    </a>
-                </div>
-                <div class="subtitle">
-                    (
-                    <a href="http://localhost/http/view.php?m=3&amp;id=1739" title="the usual acronym for photovoltaic">
-                        PV
-                    </a>
-                    <a href="http://localhost/http/view.php?m=10&amp;id=11" title="to specify the measure unit or the frame of a phrase e.g. temperature in celsius">
-                        in
-                    </a>
-                    <a href="http://localhost/http/view.php?m=3&amp;id=210" title="a landlocked country at the confluence of Western, Central and Southern Europe.">
-                        Switzerland
-                    </a>
-                    )
+                <h4>
+                    Calculator editor for PV in Switzerland
+                </h4>
+            </div>
+            <div class="row col-md-12">
+                <div class="form-group col-md-4">
+                    <label for="p_form_select_phrase">
+                        word or triple
+                    </label>
+                    <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="calculator_editor" id="p_form_select_phrase" >
+                    <datalist id="p_form_select_phrase_list">
+                        <option value="column (system)" data-value="-184">
+                        </option>
+                        <option value="column confidence" data-value="-255">
+                        </option>
+                        <option value="column consumption mix" data-value="-1964">
+                        </option>
+                        <option value="column cost" data-value="-247">
+                        </option>
+                        <option value="column cost is explaining column for column problem (high prio)" data-value="-273">
+                        </option>
+                        <option value="column displacement mix" data-value="-1965">
+                        </option>
+                        <option value="column displacement mix is next main column after column consumption mix" data-value="-1966">
+                        </option>
+                        <option value="column effort" data-value="-252">
+                        </option>
+                        <option value="column effort is explaining column for column solution (high prio)" data-value="-277">
+                        </option>
+                        <option value="column expected return" data-value="-251">
+                        </option>
+                        <option value="column expected return is explaining column for column solution (high prio)" data-value="-279">
+                        </option>
+                        <option value="column initial effort" data-value="-259">
+                        </option>
+                        <option value="column loss reduction" data-value="-258">
+                        </option>
+                        <option value="column percent" data-value="-253">
+                        </option>
+                        <option value="column percent is explaining column for column problem (high prio)" data-value="-275">
+                        </option>
+                        <option value="column potential gain" data-value="-245">
+                        </option>
+                        <option value="column potential gain in EUR" data-value="-254">
+                        </option>
+                        <option value="column potential gain in EUR is explaining column for column solution (high prio)" data-value="-272">
+                        </option>
+                        <option value="column potential gain in htp" data-value="-257">
+                        </option>
+                        <option value="column potential gain in htp is explaining column for column solution (high prio)" data-value="-276">
+                        </option>
+                        <option value="column potential gain is explaining column for column solution (high prio)" data-value="-278">
+                        </option>
+                        <option value="column potential loss" data-value="-243">
+                        </option>
+                        <option value="column potential loss is explaining column for column problem (high prio)" data-value="-274">
+                        </option>
+                        <option value="column potential loss of reason" data-value="-267">
+                        </option>
+                        <option value="column potential loss of reason is explaining column for column reason" data-value="-281">
+                        </option>
+                        <option value="column priority" data-value="-248">
+                        </option>
+                        <option value="column probability" data-value="-249">
+                        </option>
+                        <option value="column probability is explaining column for column priority" data-value="-269">
+                        </option>
+                        <option value="column probability range" data-value="-261">
+                        </option>
+                        <option value="column problem (high prio)" data-value="-242">
+                        </option>
+                        <option value="column problem (high prio) is next main column after column priority" data-value="-268">
+                        </option>
+                        <option value="column ranking" data-value="-246">
+                        </option>
+                        <option value="column ranking is explaining column for column priority" data-value="-271">
+                        </option>
+                        <option value="column reason" data-value="-266">
+                        </option>
+                        <option value="column reason is next main column after column problem (high prio)" data-value="-280">
+                        </option>
+                        <option value="column reward ratio" data-value="-260">
+                        </option>
+                        <option value="column solution (high prio)" data-value="-244">
+                        </option>
+                        <option value="column solution (high prio) is next main column after column reason" data-value="-282">
+                        </option>
+                        <option value="column standard deviation" data-value="-250">
+                        </option>
+                        <option value="column standard deviation is explaining column for column priority" data-value="-270">
+                        </option>
+                        <option value="default sort order (system)" data-value="-240">
+                        </option>
+                        <option value="main column (system)" data-value="-225">
+                        </option>
+                        <option value="marginal column (system)" data-value="-227">
+                        </option>
+                        <option value="mayor column (system)" data-value="-224">
+                        </option>
+                        <option value="minor column (system)" data-value="-226">
+                        </option>
+                        <option value="sort numeric descending of potential loss" data-value="-265">
+                        </option>
+                    </datalist>
                 </div>
             </div>
-            <div>
-                <table class="table table-striped table-bordered">
-                    <tr>
-                        <th>
-                        </th>
-                        <th>
-                            <a href="http://localhost/http/view.php?m=4&amp;id=1956" title="the average mix of the electricity consumed in a country including the imports; the reference of the classic comparison without the displacement concept">
-                                consumption mix
-                            </a>
-                            in
-                            <a href="http://localhost/http/view.php?m=4&amp;id=1961" title="the unit of the emission intensity of electricity">
-                                gram per kWh
-                            </a>
-                        </th>
-                        <th>
-                            <a href="http://localhost/http/view.php?m=4&amp;id=1958" title="the FfE concept &#039;EU-Verdrängungsmix&#039;: a simplified marginal approach that takes the generation an additional kWh displaces in the coupled European market, mostly fossil plants, as the reference for the environmental effect of a new source instead of the average mix">
-                                displacement mix
-                            </a>
-                            in
-                            <a href="http://localhost/http/view.php?m=4&amp;id=1961" title="the unit of the emission intensity of electricity">
-                                gram per kWh
-                            </a>
-                        </th>
-                        <th>
-                            <a href="http://localhost/http/view.php?m=4&amp;id=1960" title="the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment">
-                                life cycle
-                            </a>
-                            in
-                            <a href="http://localhost/http/view.php?m=4&amp;id=1961" title="the unit of the emission intensity of electricity">
-                                gram per kWh
-                            </a>
-                        </th>
-                        <th>
-                            ...
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="http://localhost/http/view.php?m=4&amp;id=1959" title="the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source">
-                                avoided emission
-                            </a>
-                        </td>
-                        <td>
-                            <a href="http://localhost/http/view.php?m=5&amp;id=Sd-Sb-SY-SX-PD_">
-                                79.2
-                            </a>
-                            <sup>
-                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                    -
-                                </span>
-                            </sup>
-                        </td>
-                        <td>
-                            <a href="http://localhost/http/view.php?m=5&amp;id=Sd-Sb-Sa-SX-PD_">
-                                939.2
-                            </a>
-                            <sup>
-                                <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                    -
-                                </span>
-                            </sup>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="http://localhost/http/view.php?m=3&amp;id=384">
-                                2018
-                            </a>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                            <a href="http://localhost/http/view.php?m=5&amp;id=Sd-Sc-SX-4._PD_">
-                                46.8
-                            </a>
-                        </td>
-                        <td>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a href="http://localhost/http/view.php?m=3&amp;id=668" title="the year 2023">
-                                2023
-                            </a>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                        </td>
-                        <td>
-                            <a href="http://localhost/http/view.php?m=5&amp;id=Sd-Sc-SX-8Q_PD_">
-                                35.8
-                            </a>
-                        </td>
-                        <td>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+            <form action="http://localhost/http/view.php" id="calculator_editor">
+                <input type="hidden" name="m" value="calculator_editor">
+                <input type="hidden" name="id" value="-1957">
+                <button type="submit" class="btn btn-outline-primary btn-space">
+                    show
+                </button>
+            </form>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

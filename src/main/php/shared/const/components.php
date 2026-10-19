@@ -134,6 +134,14 @@ class components
     // the refresh button of the process catch detail page and the place input of process_catch_views.json
     const string PROCESS_CATCH_REFRESH_NAME = 'button refresh process catch detail';
     const string GEOLOCATOR_NAME = 'geolocator place of user';
+    // the three components of the calculator view, which are the same for every calculator page
+    // (calculator_views.json)
+    const string CALCULATOR_TITLE = 'title_calculator';
+    const string CALCULATOR_TITLE_NAME = 'title calculator';
+    const string CALCULATOR_INPUT = 'calculator_input';
+    const string CALCULATOR_INPUT_NAME = 'calculator input';
+    const string CALCULATION_RESULT = 'calculation_result';
+    const string CALCULATION_RESULT_NAME = 'calculation result';
 
     // select object types
     const string FORM_PHRASE_TYPE = 'form_field_phrase_type';
@@ -212,6 +220,19 @@ class components
     const string TEST_RESULTS_NAME = 'System Test View Component Results';
     const string TEST_EXCLUDED_NAME = 'System Test View Component Excluded';
     const string TEST_TABLE_NAME = 'System Test View Component Table';
+    // the components of the use case page test (unit_ui/use_case_ui_tests.php), never saved
+    const string TEST_VIEW_TITLE_NAME = 'System Test View Component View Title';
+    const string TEST_SUB_TITLE_NAME = 'System Test View Component Sub Title';
+    const string TEST_NOTE_NAME = 'System Test View Component Note';
+    const string TEST_DETAILS_START_NAME = 'System Test View Component Details Start';
+    const string TEST_DETAILS_END_NAME = 'System Test View Component Details End';
+    const string TEST_INPUT_FIELDS_NAME = 'System Test View Component Input Fields';
+    const string TEST_SOURCES_NAME = 'System Test View Component Sources';
+    const string TEST_ASSUMPTIONS_NAME = 'System Test View Component Assumptions';
+    const string TEST_NOTES_NAME = 'System Test View Component Notes';
+    const string TEST_CALCULATOR_TITLE_NAME = 'System Test View Component Calculator Title';
+    const string TEST_CALCULATOR_INPUT_NAME = 'System Test View Component Calculator Input';
+    const string TEST_CALCULATION_RESULT_NAME = 'System Test View Component Calculation Result';
 
 
     // array of component names that used for testing and remove them after the test

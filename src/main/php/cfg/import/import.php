@@ -66,6 +66,7 @@ include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -100,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class import
@@ -381,6 +383,10 @@ class import
     function put_yaml(string $yaml_str): user_message
     {
         global $cfg;
+        global $sys;
+
+        // the work of the import itself; the database steps are counted in their own sections
+        $sys->times->switch(system_time_type::IMPORT);
 
         // get the relevant config values
         $decode_per_sec = $cfg->get_by([words::DECODE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_BYTE_PER_SEC);
@@ -417,6 +423,7 @@ class import
             $msg->set_checksum($dto->value_list()->count());
             $this->step_main_end();
         }
+        $sys->times->switch();
         return $msg;
     }
 
@@ -434,10 +441,14 @@ class import
     ): bool
     {
         global $cfg;
+        global $sys;
 
         // allow a long but limited processing time
         // because a large import needs more cpu time than a single page request
         set_time_limit(self::MAX_IMPORT_TIME_SEC);
+
+        // the work of the import itself; the database steps are counted in their own sections
+        $sys->times->switch(system_time_type::IMPORT);
 
         // get the relevant config values
         $decode_per_sec = $cfg->get_by([
@@ -478,6 +489,7 @@ class import
         // show the import result
         $this->end($msg, $size, $store_per_sec);
 
+        $sys->times->switch();
         return $msg->is_ok();
     }
 
@@ -493,6 +505,10 @@ class import
         user_message $msg
     ): bool
     {
+        global $sys;
+
+        // the work of the import itself; the database steps are counted in their own sections
+        $sys->times->switch(system_time_type::IMPORT);
         $json_array = json_decode($json_str, true);
         if ($json_array == null) {
             if ($json_str != '') {
@@ -503,6 +519,7 @@ class import
         } else {
             $this->put($json_array, $msg);
         }
+        $sys->times->switch();
         return $msg->is_ok();
     }
 
@@ -847,6 +864,10 @@ class import
     ): data_object
     {
         global $cfg;
+        global $sys;
+
+        // the work of the import itself also if the data object is only used e.g. as a frontend cache
+        $sys->times->switch(system_time_type::IMPORT);
 
         // get the relevant config values
         $wrd_per_sec = $cfg->get_by([words::WORDS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
@@ -986,6 +1007,7 @@ class import
             $this->calc_validations_done += $dto->result_check_list()->count() - $failed;
         }
 
+        $sys->times->switch();
         return $dto;
     }
 

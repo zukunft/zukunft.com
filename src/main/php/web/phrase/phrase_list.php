@@ -112,6 +112,10 @@ class phrase_list extends sandbox_list_named
     // are defined like the charts: the tier and the assignment of the order
     const int SORT_LEVELS = 2;
 
+    // the names of the linked phrases by direction and phrase name of a copy for the build of
+    // one table (see with_link_index) or null if each request scans the list
+    private ?array $link_index = null;
+
     /*
      * set and get
      */
@@ -609,23 +613,56 @@ class phrase_list extends sandbox_list_named
      */
     private function linked_names(phrase $phr, foaf_direction $direction): array
     {
-        $result = [];
-        foreach ($this->lst() as $lst_phr) {
-            if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
-                $trp = $lst_phr->obj();
-                // the parents are on the "to" side of the triples that start with the phrase
-                [$own, $linked] = [$trp->get_from(), $trp->get_to()];
-                if ($direction == foaf_direction::DOWN) {
-                    [$own, $linked] = [$trp->get_to(), $trp->get_from()];
-                }
-                if ($own?->name() == $phr->name()) {
-                    $name = $linked?->name();
-                    if ($name != null and !in_array($name, $result)) {
-                        $result[] = $name;
+        if ($this->link_index !== null) {
+            $result = $this->link_index[$direction->value][$phr->name() ?? ''] ?? [];
+        } else {
+            $result = [];
+            foreach ($this->lst() as $lst_phr) {
+                if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
+                    $trp = $lst_phr->obj();
+                    // the parents are on the "to" side of the triples that start with the phrase
+                    [$own, $linked] = [$trp->get_from(), $trp->get_to()];
+                    if ($direction == foaf_direction::DOWN) {
+                        [$own, $linked] = [$trp->get_to(), $trp->get_from()];
+                    }
+                    if ($own?->name() == $phr->name()) {
+                        $name = $linked?->name();
+                        if ($name != null and !in_array($name, $result)) {
+                            $result[] = $name;
+                        }
                     }
                 }
             }
         }
+        return $result;
+    }
+
+    /**
+     * a copy of this list that answers child_names and parent_names from an index of the
+     * triple links created in one pass by the rules of linked_names, e.g. for the build of
+     * one table, which asks for the children of the same phrases many times; the copy must not
+     * be changed, because the index would not follow a change of the list or of its triples
+     *
+     * @return phrase_list the copy with the link index
+     */
+    function with_link_index(): phrase_list
+    {
+        $index = [foaf_direction::UP->value => [], foaf_direction::DOWN->value => []];
+        foreach ($this->lst() as $lst_phr) {
+            if ($lst_phr->is_triple() and $lst_phr->obj()->get_verb()?->name() != verbs::OF_NAME) {
+                $trp = $lst_phr->obj();
+                $from = $trp->get_from()?->name();
+                $to = $trp->get_to()?->name();
+                // the parents of the from side are on the to side, the children of the to side on the from side
+                foreach ([foaf_direction::UP->value => [$from, $to], foaf_direction::DOWN->value => [$to, $from]] as $dir => [$own, $name]) {
+                    if ($name != null and !in_array($name, $index[$dir][$own ?? ''] ?? [])) {
+                        $index[$dir][$own ?? ''][] = $name;
+                    }
+                }
+            }
+        }
+        $result = clone $this;
+        $result->link_index = $index;
         return $result;
     }
 
@@ -992,25 +1029,30 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * the phrase that this list defines as the table column of the given name
+     * the phrases that this list defines as table columns, found with one walk over the list
      *
-     * the caller has the column name from column_names() and needs the phrase itself to head the
-     * column with a link and to ask child_names() which phrases belong into that column
+     * the caller has the column names from column_names() and needs the phrases themselves to
+     * head the columns with a link and to ask child_names() which phrases belong into a column;
+     * a table asks for them in several steps, so each step gets all column phrases at once
+     * instead of walking the list for each name
      *
-     * @param string $name the name of a column phrase e.g. "solution"
-     * @return phrase|null the column phrase or null if this list defines no column of that name
+     * @return array the column phrases keyed by their name e.g. "solution", the first definition
+     *               of a name wins
      */
-    function column_phrase(string $name): ?phrase
+    function column_phrases(): array
     {
-        $result = null;
+        $result = [];
         foreach ($this->lst() as $phr) {
-            if ($phr->is_triple() and $result == null) {
+            if ($phr->is_triple()) {
                 $trp = $phr->obj();
                 // the tier is the "to" side, so the column phrase is the "from" side
                 if (in_array($trp->get_to()?->name(), triples::SYSTEM_COLUMN_TIERS)) {
                     $col = $this->column_and_unit($trp->get_from())[0];
-                    if ($col?->name() == $name) {
-                        $result = $col;
+                    if ($col != null) {
+                        // the first definition of a column name wins
+                        if (!array_key_exists($col->name(), $result)) {
+                            $result[$col->name()] = $col;
+                        }
                     }
                 }
             }

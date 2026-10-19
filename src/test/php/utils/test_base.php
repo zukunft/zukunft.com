@@ -116,6 +116,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
 use Zukunft\ZukunftCom\main\php\cfg\system\job;
 use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
@@ -139,6 +140,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_ui;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_lists_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -187,6 +189,7 @@ include_once paths::MODEL_PHRASE . 'phrase_types.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::MODEL_REF . 'ref_type.php';
 include_once paths::MODEL_REF . 'source_type.php';
@@ -200,6 +203,7 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -479,6 +483,10 @@ class test_base
 
     public int $seq_nbr;
 
+    // the type lists of the frontend for a view test without a given context, loaded once per
+    // test run from the api, because the types do not change during a test run
+    private ?type_lists_ui $typ_lst_cache_ui = null;
+
     public text_log_format $format = text_log_format::TEXT;
     public text_log_level $level = text_log_level::TIMEOUT;
 
@@ -583,6 +591,9 @@ class test_base
     function header(string $header_text, string $base_url = ''): void
     {
         global $log_txt;
+        // the frontend times of the previous section are booked before its times are reset
+        frontend::book_times();
+        $this->check_time_section($header_text);
         $log_txt->header($header_text, $base_url);
 
         // reset the test timer to avoid timeouts due to a delay in previous tests
@@ -692,7 +703,43 @@ class test_base
     function subheader(string $header_text): void
     {
         global $log_txt;
+        $this->check_time_section($header_text);
         $log_txt->header($header_text);
+    }
+
+    /**
+     * report a time section that the tests before the given header have left open, because
+     * it would count the time of all following tests e.g. a switch(X) without its switch()
+     *
+     * @param string $header_text the header of the following tests to name where it has been found
+     * @return void
+     */
+    private function check_time_section(string $header_text): void
+    {
+        global $sys;
+        $problem = self::time_section_problem($sys->times);
+        if ($problem != '') {
+            $this->assert('the time sections are ended before ' . $header_text, $problem, '');
+            // continue with the base section, so that only the tests that left it open are reported
+            $sys->times->switch(system_time_type::DEFAULT);
+        }
+    }
+
+    /**
+     * @param system_time_list $times the time sections of the test run
+     * @return string the problem if not the base section of the test run is counted, otherwise
+     *                an empty string
+     */
+    static function time_section_problem(system_time_list $times): string
+    {
+        $result = '';
+        $cur = $times->current();
+        if ($cur == '') {
+            $result = 'no time section is counted, because a section has been ended once too often';
+        } elseif ($cur != system_time_type::DEFAULT) {
+            $result = 'the time section ' . $cur . ' has not been ended';
+        }
+        return $result;
     }
 
 
@@ -1185,8 +1232,7 @@ class test_base
         $test_name = $lib->class_to_name($test_name);
         $url = THIS_URL . url_var::API_PATH . 'json';
         $data = array($fld => $id);
-        $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+        $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         // TODO remove next line (added for faster debugging only)
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
@@ -1195,6 +1241,29 @@ class test_base
         return $this->assert($test_name . ' API GET', $lib->json_is_similar($actual, $expected), true, self::TIMEOUT_LIMIT_REST);
     }
 
+
+    /**
+     * an empty request cache with the frontend types to render a view (see assert_view), e.g. to
+     * render several variants of one view with one cache, so that only the first loads the data
+     *
+     * @param user_message_ui $msg_ui to report a problem of loading the frontend types
+     * @return data_object_ui the request cache with the frontend types and no data
+     */
+    function view_context(user_message_ui $msg_ui = new user_message_ui()): data_object_ui
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_FRONTEND);
+        if ($this->typ_lst_cache_ui == null) {
+            $ui = new frontend('');
+            $ui->load_cache($msg_ui);
+            $this->typ_lst_cache_ui = $ui->dto->typ_lst_cache;
+        }
+        $cfg = new data_object_ui();
+        $cfg->typ_lst_cache = $this->typ_lst_cache_ui;
+        $sys->times->switch();
+        return $cfg;
+    }
 
     /**
      * test a system view with a sample user object
@@ -1255,10 +1324,10 @@ class test_base
      * test a view with a sample user object where both are selected by their name, never by the
      * database id or the code id: a use case (files::USE_CASE_FILES) is user data, which has no
      * code id and whose ids follow the import, so its view and its objects are named like a user
-     * names them e.g. the "Calculator" view with the triple "PV in Switzerland"
+     * names them e.g. the "Comparison table" view with the triple "PV in Switzerland"
      * (docs/llm/json_structure.md "Use case files")
      *
-     * @param string $view_name the name of the view that should be tested e.g. views::CALCULATOR_NAME
+     * @param string $view_name the name of the view that should be tested e.g. views::COMPARISON_TABLE_NAME
      * @param user $usr to define for which user the view should be created
      * @param db_object_seq_id $dbo the empty database object of the class that should be shown
      * @param string $obj_name the name of the database object that should be loaded and shown
@@ -1408,14 +1477,14 @@ class test_base
         $class = $lib->class_to_name($dbo::class);
 
         if ($msk->id() > 0) {
+            $sys->times->switch(system_time_type::LOAD_VIEW);
             $msk->load_components($msg);
+            $sys->times->switch();
         }
 
         // build the api message and the ui objects the frontend would receive;
-        // an interleaved db read still counts as db_read because its own switch()
-        // restores this section, so only the mapping time is measured here. the
-        // sections are left with explicit switch() calls (ending in DEFAULT below)
-        // because a nested db read overwrites the single previous-section slot
+        // an interleaved db read or related load counts in its own section, whose end
+        // returns to this section, so only the mapping time is measured here
         $sys->times->switch(system_time_type::MAP_JSON);
         $api_msg = $msk->api_json([api_types::INCL_COMPONENTS]);
         // INCL_RELATED and INCL_PHRASES preserves any phrases_related populated above;
@@ -1425,35 +1494,38 @@ class test_base
         $dbo_api_msg = $dbo->api_json(
             [api_types::INCL_RELATED, api_types::INCL_PHRASES], $msg, $usr);
         $api_msg = $lib->json_merge_str($api_msg, $dbo_api_msg, $class);
+        $sys->times->switch();
+        $sys->times->switch(system_time_type::UI_MAP);
         $dbo_dsp = $tl->obj_to_ui_obj($dbo);
         if ($with_obj) {
             $dbo_dsp->set_from_json($dbo_api_msg, $msg_ui);
         }
         $dsp_html = new view_ui;
         $dsp_html->set_from_json($api_msg, $msg_ui);
+        $sys->times->switch();
 
-        // load the frontend configuration cache if the caller has not provided it
+        // a new context for each view, because the rendering fills e.g. the phrases of the page into it
         if ($cfg == null) {
-            $sys->times->switch(system_time_type::LOAD_FRONTEND);
-            $ui = new frontend('');
-            $ui->load_cache($msg_ui);
-            $cfg = new data_object_ui();
-            $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
+            $cfg = $this->view_context($msg_ui);
         }
         if ($cfg->usr->id() == 0) {
             $map_ui = new MapObject();
             $cfg->usr = $map_ui->convertToUi($usr, $msg_ui);
         }
         // render in test mode so that the result is reproducible without backend calls
+        // the wait for the backend is part of the rendering, but not frontend work
+        frontend::book_times();
         $sys->times->switch(system_time_type::URL_TO_HTML);
         $actual = $dsp_html->show($dbo_dsp, $msg_ui, $cfg, '', true, $url_array);
-        // return to the default section for the following tests
-        $sys->times->switch(system_time_type::DEFAULT);
+        frontend::book_times();
+        // continue with the section of the caller for the following tests
+        $sys->times->switch();
 
-        // check if the created view matches the expected view
+        // check if the created view matches the expected view; the page title is the one the
+        // live page shows (see frontend::url_to_html), the object name and the view name
         return $this->assert_html_body(
             $this->name . ' view ' . $view_key,
-            $actual, $file_path);
+            $actual, $file_path, self::TIMEOUT_LIMIT_PAGE_LONG, $dsp_html->title($dbo_dsp, $msg_ui));
     }
 
     /**
@@ -1665,12 +1737,20 @@ class test_base
      * @param string $test_name the description of the test
      * @param string $body the body of a html page
      * @param string $file_path the filename of the expected html page
+     * @param float $exe_max_time the seconds the check may take before a timeout is reported
+     * @param string $title the page title e.g. the object and view name of a view page; 'test' for a fragment page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html_body(string $test_name, string $body, string $file_path, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG): bool
+    function assert_html_body(
+        string $test_name,
+        string $body,
+        string $file_path,
+        float  $exe_max_time = self::TIMEOUT_LIMIT_PAGE_LONG,
+        string $title = 'test'
+    ): bool
     {
         $msg_ui = new user_message_ui();
-        $actual = $this->link_to_pod($this->html_page($body, $msg_ui), THIS_URL);
+        $actual = $this->link_to_pod($this->html_page($body, $msg_ui, THIS_URL, languages::DEFAULT, $title), THIS_URL);
         return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
     }
 
@@ -5629,6 +5709,9 @@ class test_base
     {
         global $log_txt;
 
+        // a test that renders without url_to_html leaves its api wait and html creation to the category of the test
+        frontend::book_times();
+
         // calculate the execution time
         $new_start_time = microtime(true);
         $since_start = $new_start_time - $this->section_start_time;
@@ -5700,14 +5783,19 @@ class test_base
 
     function dsp_web_test(string $url_path, string $must_contain, string $msg, bool $is_connected = true, float $exe_max_time = self::TIMEOUT_LIMIT_PAGE_SEMI): bool
     {
+        global $sys;
+
         $msg_net_off = 'Cannot gat the policy, probably not connected to the internet';
         if ($is_connected) {
+            // the wait for the page of the local pod
+            $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
             try {
                 $result = file_get_contents(THIS_URL . $url_path);
             } catch (Exception $e) {
                 $result = false;
                 $msg_net_off .= ': ' . $e->getMessage();
             }
+            $sys->times->switch();
             if ($result === false) {
                 $this->dsp_warning($msg_net_off);
                 $is_connected = false;
@@ -5877,6 +5965,26 @@ class test_base
     }
 
     /**
+     * call the api of the local pod with the wait for the answer counted as api wait
+     *
+     * @param string $method the http method e.g. rest_ctrl::GET
+     * @param string $url the url of the api
+     * @param array $data the parameters of the call
+     * @param array $extra_headers e.g. a forwarded header
+     * @return string the answer of the api
+     */
+    function api_call_timed(string $method, string $url, array $data, array $extra_headers = []): string
+    {
+        global $sys;
+
+        $sys->times->switch(system_time_type::API_WAIT);
+        $ctrl = new rest_call();
+        $result = $ctrl->api_call($method, $url, $data, $extra_headers);
+        $sys->times->switch();
+        return $result;
+    }
+
+    /**
      * request one page of this pod and keep the session cookie for the next request
      *
      * @param string $url the complete url of the requested page
@@ -5887,6 +5995,10 @@ class test_base
      */
     private function web_page_curl(string $url, string $cookie_file, array $post_form = [], int $timeout = self::TIMEOUT_LIMIT_LONG): string
     {
+        global $sys;
+
+        // the wait for the page of the local pod
+        $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_COOKIEJAR, $cookie_file);
@@ -5902,6 +6014,7 @@ class test_base
             $page = '';
         }
         curl_close($curl);
+        $sys->times->switch();
         return $page;
     }
 
@@ -5953,9 +6066,10 @@ class test_base
         global $sys;
 
         echo "\n";
+        frontend::book_times();
         $since_start = microtime(true) - $this->start_time();
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
-        echo ' (' . $sys->times->report($since_start) . ')';
+        echo "\n" . $sys->times->report($since_start);
         echo "\n";
         echo $this->test_cases_line();
         echo "\n";
@@ -6080,14 +6194,15 @@ class test_base
         string          $body,
         user_message_ui $msg_ui,
         string          $base_url = '',
-        string          $lan = languages::DEFAULT
+        string          $lan = languages::DEFAULT,
+        string          $title = 'test'
     ): string
     {
         $html = new html_base();
         // a caller can set the pod url as the base url, so that its snapshot opened from the
         // file system or an ide preview server still finds the styles and the icon font;
         // the language is set once by the caller and only passed through, never overwritten
-        return $html->header('test', $msg_ui, '', $lan, $base_url)
+        return $html->header($title, $msg_ui, '', $lan, $base_url)
             . $html->navbar(views::START_ID)
             . $html->main($body)
             . $html->footer();

@@ -603,6 +603,46 @@ class component_types
     // the row phrase of the component is the value phrase of the place e.g. place of user
     const string GEOLOCATOR = "geolocator";
     const int GEOLOCATOR_ID = 276;
+    // the components of a use case page e.g. the PV lifetime balance (docs/llm/json_views.md)
+    // the name of the view as the page title and the description of the view as the lead text
+    const string VIEW_TITLE = "view_title";
+    const int VIEW_TITLE_ID = 277;
+    // the name of the component as a sub title e.g. a section of a use case page
+    const string NAME_SUB_TITLE = "name_sub_title";
+    const int NAME_SUB_TITLE_ID = 278;
+    // the description of the component as a paragraph e.g. a note of a use case page
+    const string DESCRIPTION_TEXT = "description_text";
+    const int DESCRIPTION_TEXT_ID = 279;
+    // a collapsed block with the name of the component as the summary line, closed by details end
+    const string DETAILS_START = "details_start";
+    const int DETAILS_START_ID = 280;
+    const string DETAILS_END = "details_end";
+    const int DETAILS_END_ID = 281;
+    // the values of the page phrase as number input fields with the other phrases as the label
+    const string VALUE_INPUT_FIELDS = "value_input_fields";
+    const int VALUE_INPUT_FIELDS_ID = 282;
+    // the sources of the values of the page phrase as a list with a link to the source url
+    const string SOURCES_USED = "sources_used";
+    const int SOURCES_USED_ID = 283;
+    // the values that the results of the page use and that the page phrase does not carry as
+    // number input fields with a measured or assumed tag and the source as the hint
+    const string ASSUMPTION_FIELDS = "assumption_fields";
+    const int ASSUMPTION_FIELDS_ID = 284;
+    // the descriptions of the formulas that calculate the results of the page as paragraphs
+    const string FORMULA_NOTES = "formula_notes";
+    const int FORMULA_NOTES_ID = 285;
+    // the table with related columns, but with the column phrases of the component as its own
+    // columns e.g. lifetime and annual, so that no system column tier changes other tables
+    const string TABLE_WITH_OWN_COLUMNS = "table_with_own_columns";
+    const int TABLE_WITH_OWN_COLUMNS_ID = 286;
+    // the three components of the calculator view, filled by the calculator triples of the page
+    // phrase (docs/llm/new_view_sample_pv_balance.md): the title, the inputs and the results
+    const string CALCULATOR_TITLE = "calculator_title";
+    const int CALCULATOR_TITLE_ID = 287;
+    const string CALCULATOR_INPUT = "calculator_input";
+    const int CALCULATOR_INPUT_ID = 288;
+    const string CALCULATION_RESULT = "calculation_result";
+    const int CALCULATION_RESULT_ID = 289;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -953,7 +993,10 @@ class component_types
         self::ROW_START,
         self::ROW_RIGHT,
         self::ROW_CENTER,
-        self::ROW_END
+        self::ROW_END,
+        // a collapsed block spans several components like a row, so its start and end are not wrapped
+        self::DETAILS_START,
+        self::DETAILS_END
     );
 
     // list of component types that set their own rows: the phrase steps close their form and open a second one,
@@ -973,6 +1016,7 @@ class component_types
         self::VALUES_MOST_RELEVANT,
         self::VALUES_IN_COLUMNS,
         self::TABLE_WITH_RELATED_COLUMNS,
+        self::TABLE_WITH_OWN_COLUMNS,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -1192,6 +1236,19 @@ class component_types
         [self::PROCESS_CATCH_BUTTON_BACK, self::PROCESS_CATCH_BUTTON_BACK_ID],
         [self::PROCESS_CATCH_BUTTON_REFRESH, self::PROCESS_CATCH_BUTTON_REFRESH_ID],
         [self::GEOLOCATOR, self::GEOLOCATOR_ID],
+        [self::VIEW_TITLE, self::VIEW_TITLE_ID],
+        [self::NAME_SUB_TITLE, self::NAME_SUB_TITLE_ID],
+        [self::DESCRIPTION_TEXT, self::DESCRIPTION_TEXT_ID],
+        [self::DETAILS_START, self::DETAILS_START_ID],
+        [self::DETAILS_END, self::DETAILS_END_ID],
+        [self::VALUE_INPUT_FIELDS, self::VALUE_INPUT_FIELDS_ID],
+        [self::SOURCES_USED, self::SOURCES_USED_ID],
+        [self::ASSUMPTION_FIELDS, self::ASSUMPTION_FIELDS_ID],
+        [self::FORMULA_NOTES, self::FORMULA_NOTES_ID],
+        [self::TABLE_WITH_OWN_COLUMNS, self::TABLE_WITH_OWN_COLUMNS_ID],
+        [self::CALCULATOR_TITLE, self::CALCULATOR_TITLE_ID],
+        [self::CALCULATOR_INPUT, self::CALCULATOR_INPUT_ID],
+        [self::CALCULATION_RESULT, self::CALCULATION_RESULT_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

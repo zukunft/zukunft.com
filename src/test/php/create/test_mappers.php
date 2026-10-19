@@ -910,6 +910,9 @@ class test_mappers
             case component_types::PROCESS_CATCH_BUTTON_BACK:
             case component_types::PROCESS_CATCH_BUTTON_REFRESH:
             case component_types::GEOLOCATOR:
+            case component_types::CALCULATOR_TITLE:
+            case component_types::CALCULATOR_INPUT:
+            case component_types::CALCULATION_RESULT:
             case component_types::USED_IN_AS_TEXT:
             case component_types::USED_IN_AS_TEXT_WITH_LINK:
             case component_types::FORM_CLASS:
@@ -978,6 +981,7 @@ class test_mappers
             case component_types::VALUES_MOST_RELEVANT:
             case component_types::VALUES_IN_COLUMNS:
             case component_types::TABLE_WITH_RELATED_COLUMNS:
+            case component_types::TABLE_WITH_OWN_COLUMNS:
             case component_types::NUMERIC_VALUE:
             case component_types::VALUES_ALL:
             case component_types::SYSTEM_BODY_VALUE_DETAIL:
@@ -1137,10 +1141,10 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case phrase::class:
-                // the table and the calculator show the values of a phrase as a table, so their
-                // sample is the triple "global warming", which has the values of the start page
-                // fixture, instead of the filled test phrase that has none
-                if (in_array($msk_id, [views::TABLE_ID, views::CALCULATOR_ID])) {
+                // the table and the comparison table show the values of a phrase as a table, so
+                // their sample is the triple "global warming", which has the values of the start
+                // page fixture, instead of the filled test phrase that has none
+                if (in_array($msk_id, [views::TABLE_ID, views::COMPARISON_TABLE_ID])) {
                     $obj = $t_trp->global_warming()->phrase();
                 } else {
                     $obj = $t_phr->phrase_filled();

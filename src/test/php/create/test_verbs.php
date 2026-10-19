@@ -282,6 +282,11 @@ class test_verbs extends test_objects
         return new verb(verbs::HAS_ID, verbs::HAS_NAME, verbs::HAS);
     }
 
+    function verb_uses(): verb
+    {
+        return new verb(verbs::USES_ID, verbs::USES_NAME, verbs::USES);
+    }
+
     /**
      * @return verb "is next main column after" that chains the main columns of a table
      */
@@ -304,6 +309,14 @@ class test_verbs extends test_objects
     function verb_kind_of(): verb
     {
         return new verb(verbs::KIND_OF_ID, verbs::KIND_OF_NAME, verbs::KIND_OF);
+    }
+
+    /**
+     * @return verb "is follower of" that orders the items of a list e.g. the inputs of a calculator
+     */
+    function verb_follow(): verb
+    {
+        return new verb(verbs::FOLLOW_ID, verbs::FOLLOW_NAME, verbs::FOLLOW);
     }
 
 
@@ -351,6 +364,16 @@ class test_verbs extends test_objects
     function list_empty(): verb_list
     {
         return new verb_list($this->env->usr1);
+    }
+
+    /**
+     * @return verb_list with only the "is" verb e.g. to test a list with one entry
+     */
+    function list_one(): verb_list
+    {
+        $lst = new verb_list($this->env->usr1);
+        $lst->add_verb($this->verb_is_full());
+        return $lst;
     }
 
 

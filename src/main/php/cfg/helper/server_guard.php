@@ -208,6 +208,16 @@ class server_guard
     }
 
     /**
+     * the time when the request has been received e.g. to count the script loading of an api call;
+     * $_SERVER is read here because this is the request boundary, like request_url
+     * @return float the microtime of the request or 0 if it is not known
+     */
+    public static function request_start_time(): float
+    {
+        return (float)($_SERVER[rest_ctrl::REQUEST_TIME_FLOAT] ?? 0);
+    }
+
+    /**
      * the url of the request as received e.g. to log a slow api call in the system times;
      * $_SERVER is read here because this is the request boundary, like enforce_tls / enforce
      * @return string the path and query of the request or '' if the script has not been called by an url

@@ -47,6 +47,9 @@ class Config
     const string FRONTEND_HTML_JS_PHRASE = 'HTML with js phrase selection';
     const string FRONTEND_FULL_JS = 'full js';
     const string DEFAULT_FRONTEND_TYPE = self::FRONTEND_PURE_HTML;
+    // config.yaml "user > default > frontend > use javascript > for calculator": the calculator pages repeat
+    // their calculation in the browser, the only javascript of the html frontend (docs/llm/frontend.md)
+    const bool DEFAULT_CALCULATOR_JAVASCRIPT = true;
 
     // number of entries initial to show in a named list
     const int LIMIT_NAME_LIST = 4;

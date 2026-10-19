@@ -303,6 +303,19 @@ class value_tests
         $test_name = '... and a changed user row still carries the source key field';
         $fvt_lst = $val_ex->db_fields_changed($val_db, $msg, new sql_type_list([sql_type::USER]));
         $t->assert_true($test_name, $fvt_lst->has_name(source_fields::FLD_ID));
+        // a user row of a value without source is stored with the placeholder source, so the
+        // update of a repeated import must use the placeholder too (sandbox_multi::save_fields_func)
+        $val_stored = $t_val->value_16();
+        $val_stored->set_source_id(sources::TRUST_ME_BRO_ID);
+        $val_no_src = $t_val->value_16();
+        $val_no_src->set_source(null);
+        $test_name = 'a value without source differs from the placeholder source of its stored user row';
+        $fvt_lst = $val_no_src->db_fields_changed($val_stored, $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->has_name(source_fields::FLD_ID));
+        $test_name = '... but with the placeholder source it matches, so no update without a set clause is created';
+        $val_no_src->set_source_id(sources::TRUST_ME_BRO_ID);
+        $fvt_lst = $val_no_src->db_fields_changed($val_stored, $msg, new sql_type_list([sql_type::USER]));
+        $t->assert_true($test_name, $fvt_lst->is_empty_except_internal_fields());
 
         // step 5: the user row of the exclude is added only if the user has no overlay row yet
         $test_name = 'a value row with a user row reports a user overwrite, so that the exclude '
@@ -423,6 +436,23 @@ class value_tests
         $t->assert($test_name, $msg->all_message_text(), $target);
         $test_name = '... and the unscaled number is returned as fallback';
         $t->assert($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
+
+        $t->subheader($ts . 'api message of a page');
+        // a page request is for the value, so its phrases are sent without their related numbers,
+        // which for a common phrase like EUR are a big part of all values of the pod
+        $val_page = $t_val->value_pi();
+        foreach ($val_page->grp()->phrase_list()->lst() as $phr) {
+            $phr->obj()->values_related = $t_val->value_list_math();
+        }
+        $vars_page = $val_page->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $related_sent = [];
+        foreach ($vars_page[json_fields::PHRASES] ?? [] as $phr_vars) {
+            $related_sent[] = array_key_exists(json_fields::VALUES, $phr_vars);
+        }
+        $test_name = 'the phrases of a value page are sent';
+        $t->assert_true($test_name, $related_sent != []);
+        $test_name = '... but without the related values of each phrase';
+        $t->assert_false($test_name, in_array(true, $related_sent));
 
         $t->subheader($ts . 'sql setup');
         $val = $t_val->value($msg); // one value object creates all tables (e.g. prime, big, time, text and geo)

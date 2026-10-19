@@ -35,6 +35,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::FORMULA . 'formula.php';
 //include_once html_paths::RESULT . 'result.php';
@@ -47,6 +48,7 @@ include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -72,6 +74,22 @@ class formula_list extends ListBase
     function load_by_phr_id(int $id, user_message $msg): bool
     {
         return parent::load_by_id(self::class, url_var::PHRASE, $id, $msg);
+    }
+
+    /**
+     * load the formulas of the given ids from the backend via api, e.g. the formulas that have
+     * calculated the results of a page, so that the page can repeat the calculation (formula_calc)
+     *
+     * @param array $ids the database ids of the formulas
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one formula has been loaded
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        $rest = new rest_call();
+        $json_body = $rest->api_get(self::class, [url_var::ID_LST => implode(',', $ids)], $msg);
+        $this->api_mapper($json_body);
+        return !$this->is_empty();
     }
 
     /**

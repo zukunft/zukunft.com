@@ -893,6 +893,11 @@ class triple extends sandbox_link_named
                 }
                 $vars[json_fields::USAGE] = $this->usage;
                 $vars[json_fields::IMPACT] = $this->impact;
+                // the default view of the triple, so that a link to it opens e.g. the calculator
+                // (json_fields::VIEW is the id here, like for the word)
+                if ($this->get_view_id() > 0) {
+                    $vars[json_fields::VIEW] = $this->get_view_id();
+                }
                 // related data is keyed by the triple's phrase id, so a fresh
                 // triple (id 0, e.g. the add form) has none to load
                 if ($typ_lst->incl_related() and $this->id() != 0) {

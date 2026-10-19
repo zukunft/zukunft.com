@@ -223,10 +223,14 @@ class phrase extends combine_named
      */
     function id(): int
     {
-        if ($this->is_word()) {
-            return $this->obj_id();
+        // the object is read once, because the id of a phrase is used for each cell of a table
+        $obj = $this->obj();
+        if ($obj === null) {
+            return 0;
+        } elseif ($obj::class == word::class) {
+            return $obj->id();
         } else {
-            return $this->obj_id() * -1;
+            return $obj->id() * -1;
         }
     }
 
@@ -515,6 +519,14 @@ class phrase extends combine_named
         return $this->obj()->is_time($msg);
     }
 
+    /**
+     * @return bool true if the phrase says how a number has been found e.g. "assumed" or "modelled"
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->obj()->is_quality($msg);
+    }
+
     function is_info(user_message $msg): bool
     {
         return $this->obj()->is_info($msg);
@@ -649,7 +661,12 @@ class phrase extends combine_named
      */
     function name_link(): string
     {
-        return $this->obj()->name_link();
+        if ($this->own_view_id() > 0) {
+            $html = new html_base();
+            return $html->ref($html->url_back($this->own_view_id(), $this->id()), $this->name(), $this->get_description());
+        } else {
+            return $this->obj()->name_link();
+        }
     }
 
     /**
@@ -688,6 +705,19 @@ class phrase extends combine_named
         $html = new html_base();
         // the page of a word or a triple is called with the id of the word or the triple
         return $html->url_back($this->view_id(), $this->obj_id(), $url_arr);
+    }
+
+    /**
+     * the default view of the phrase e.g. the calculator of example PV installation, which a link
+     * calls with the phrase id, negative for a triple (see frontend::dbo_for_url); only a phrase
+     * view takes a phrase id, so any other default view is not used
+     *
+     * @return int the database id of the default phrase view of the phrase or 0 if it has none
+     */
+    function own_view_id(): int
+    {
+        $msk_id = $this->obj()?->view_id() ?? 0;
+        return in_array($msk_id, views::PHRASE_MASKS_IDS) ? $msk_id : 0;
     }
 
     /**

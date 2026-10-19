@@ -955,7 +955,7 @@ class formula extends sandbox_code_id
         log_debug("value list");
         $res_lst = new result_list();
         $res_lst->load_by_formula($this, $msg);
-        $sample_val = $res_lst->display();
+        $sample_val = $res_lst->display($msg);
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
                 $name_wrd_dsp = $this->name_wrd;

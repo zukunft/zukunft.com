@@ -1,63 +1,133 @@
 # pending - list of planned llm prompts with prio 1
 
-## pin pages
+## PV lifetime balance page
 
-add to the config.yaml below 'system' and 'view' the entry 'startup' and below that 'pinned views'. 
+### remaining
 
-the 'pinned views' are a list and each entry has these fields:
+the differences of `pv_lifetime_balance.html` to `pv_lifetime_balance_sample.html`, as steps in
+the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
+renderer, never by adapting the sample
 
-- url: the url of the view including all parameters but excluding the user and session token e.g. http://localhost/http/view.php?m=4&id=1954
-- url_name: the shortcut for direkt url typing e.g. if it is 'pv' and the pod url is zukunft.com than the user typed url zukunft.com/pv should lead to the url e.g. http://localhost/http/view.php?m=4&id=1954 
-- name: the name that is should be shown in the search start page (http://localhost/index.html) below the search field with the url as a link and a tooltip e.g. 'PV Installation'
-- tooltip: the tooltip that should be shown in the search start page if the mouse stays on one of the links
+1. inputs: the units of the sample are the short units of the field ("kWh/a" for the local
+   consumption instead of "kWh"); the orientation options show two decimals ("1.00" instead
+   of "1"); the orientation hint names no source ("Yield factor relative to south 30°"
+   without "[1]") and the selector has no `div.form-group` around it
+2. assumptions, one row each:
+   - specific yield: unit "kWh/kWp·a" instead of "kWh per kWp", step 10 and the hint
+     "Lifetime average incl. 0.7 %/a degradation [1]" instead of "[2]"
+   - lifetime: unit "a" and the hint "Reference lifetime used in the LCA [1]"
+   - PV life-cycle emissions: the measured 35.8 g/kWh with step 0.1 and the hint "Swiss 3 kWp
+     mono-Si pitched roof, 2023 update [1]; converted to a fixed amount per kWp" (empty today)
+   - Swiss consumer mix, annual: measured 128 g/kWh (BAFU 2018) with the hint "2018 consumer
+     mix, low voltage [2]" instead of the assumed 79.2 of `pv_switzerland_co2.json`
+   - replacement mix: the residual mix first and selected, the option labels with the number
+     and the source ("European residual mix — 523 g/kWh [4]", "ENTSO-E production mix 2022 —
+     ~395 g/kWh (midpoint of 350–440) [3]") and no hint below the selector
+   - load share during PV hours: unit "share" instead of "percent", step 0.05, min 0, max 1
+     and the hint "Household; raise for home office or a heat pump running at noon"
+   - battery round-trip efficiency: unit "share" and the number with two decimals ("0.90")
+   - battery production emissions: the tag "assumed 0.5" with the confidence, step 5 and the
+     hint "Literature spans ~37–212 kg CO₂-eq per kWh capacity [5][6]"
+   - battery lifetime: unit "a" and the tag "assumed 0.6"
+   - the three derived assumptions (production mix 395, residual mix 523, east-west yield
+     factor 0.85) are not shown, because they are options of the selectors already
+3. main table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
+   kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
+   the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
+   of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
+4. main table, numbers: the per year column of "Self-consumption rate" (49 %) and "Autarky"
+   (84 %) and both columns of "vs. replacement mix" (113.8 t, 3'794 kg) are empty
+5. number format: the lifetime column shows kg results in t with one decimal (10.5 t, 2.0 t,
+   18.4 t, 13.1 t, 113.8 t, -2.9 t) and the per year column the numbers without decimals (247,
+   701, 349, 67, 614, 436, -98 kg), the percent with a blank before "%" ("49 %")
+6. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
+   the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
+   Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
+7. notes: only the three notes of the page with their own titles and sources ("How the CO₂
+   saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
+   instead of the description of every formula (19 notes with the formula name in `b`)
+8. sources: the seven sources of the sample in the order of their first use ([1] IEA PVPS,
+   [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
+   [7] gruenes.haus) with their full citation as the link text and `target="_blank"
+   rel="noopener"`; today five sources with the short source name, gruenes.haus first and
+   the two battery sources missing
+9. the comparison: let the use case test assert the generated page against the sample with
+   a normalisation of the differences that are design and not content: the html ids and
+   names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
+   attributes and the save form, the cell ids, and the calculator data with `calculator.js`
+   instead of the inline script of the sample
 
-add these 'pinned views' values to the config.yaml:
+### general
 
-url: http://localhost/http/view.php?m=1
-url_name: problems
-name: Global problems
-tooltip: the global issues that are expected to cause the damage with the suggested solution to solve the problem
+the generated page `src/test/resources/web/html/use_cases/pv_lifetime_balance.html` should
+match the hand made sample `pv_lifetime_balance_sample.html` without hardcoding, generated
+from the database of the use case json; the calculation follows the double calculation check
+of `docs/llm/frontend.md`. the sample is the target and is never adapted to the renderer.
 
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: pv
-name: Photovoltaic calculator
-tooltip: calculate the effects of photovoltaic
+the page is the system view `Calculator` with the components `title calculator`,
+`calculator input` and `calculation result` for `example PV installation`, configured by the
+calculator triples of `pv_lifetime_balance.json` (guide: `docs/llm/new_view_sample_pv_balance.md`).
 
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: panels
-name: PV panels installation
-tooltip: step by step process to calculate the installation of PV panels
+run the steps one at a time, each as its own commit with the tests written first, and ask for
+the test run after each step (an llm never runs test/*, docs/llm/coding.md).
 
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: cbam
-name: CBAM Calculator
-tooltip: step by step process to calculate the carbon border adjustment
+1. the values and results in `src/test/resources/web/html/use_cases/pv_lifetime_balance.html`:
+   when the page is created, all values and results of the page are already in the database
+   (imported from `pv_lifetime_balance.json` and calculated), so the page shows the numbers of
+   the input fields, the main result table, the detail tables and "PV life-cycle emissions"
+   from the database; each number in the html carries the database id or group id of its
+   value or result, so that the save action (step 4) knows which value to update and which
+   result to compare; the numbers, the hidden group id of each input and the cell ids are on
+   the page, still empty are the rows "Self-consumption rate", "Autarky" and "vs. replacement
+   mix" (the residual mix net avoided emission 113'805) and the assumption "PV life-cycle
+   emissions"; the lifetime column shows kg, the sample t
+2. delete `docs/llm/samples/new_view_sample_pv_balance.json` and point the links of the guide
+   and of `docs/llm/json_views.md` to `calculator_keywords.json` and
+   `pv_lifetime_balance.json`; decide whether the component types that only the old view used
+   (`view_title`, `name_sub_title`, `details_start`, `details_end`, `assumption_fields`,
+   `formula_notes`, `sources_used`, `table_with_own_columns`) are retired or kept for other
+   use case views, because retiring them shifts the component type ids
+3. the `Calculator editor` view with the components of section 6 of the guide and a snapshot
+   test of the editor for `example PV installation`
+4. the save: write the inputs as values by the ids of step 1, use the entered numbers as the
+   inputs of the page calculation, start the backend calculation job, compare the job results
+   with the frontend results and show every difference as a message
+5. when the generated page matches the sample up to the numbers, let the use case test assert
+   the generated page against the sample
 
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: portfolio_split
-name: Portfolio split
-tooltip: step by step process to calculate the splitting of an investment portfolio taking the round lots into account
+open for the calculator page:
 
-url: http://localhost/http/view.php?m=4&id=1954
-url_name: company_sheet
-name: Company sheet
-tooltip: compare two or more key figure sheets related to a company 
-
-the frontend forward page e.g. /settings with '<!DOCTYPE html>
-<script>const p = new URLSearchParams(location.search); p.set('m', '126'); location.replace('/http/view.php?' + p);</script>
-<noscript><meta http-equiv="refresh" content="0; url=/http/view.php?m=126"></noscript>
-</html>
-' are checked and if needed updated. Near that check add the creation of the pinned views and after the creation try to remove forward pages that should not be used any more, so that are not a fixed forward page nor a pinned one.
-
-
+- judge the page only after a database recreation: `test_part.php` imports into the existing
+  database and never removes an object that a newer json left out
+- inputs: the maximum of the three number fields
+- monthly table, column "CH mix g/kWh", month rows: the monthly Swiss consumption mix values
+  (e.g. 150.8 for January) have no page phrase, so a month cell (page phrase, month, `consumption
+  mix`, `gram per kWh`) selects none of them; the column needs a way to select a general value,
+  e.g. a calculator keyword for a column without the page phrase
+- replacement mix selector: the options come from the `is a` triples instead of the values of
+  the selector phrase, and the gross formula uses the selected mix
+- context load: the derived assumptions and the sources are loaded by any phrase of a result,
+  so values and sources of other files show up (PVGIS 5.3, BEA US GDP 2023) and the field
+  definition values need a filter; e.g. the assumption "Swiss consumer mix, annual" shows the
+  79.2 of `pv_switzerland_co2.json` instead of the 128 (BAFU 2018) of `pv_lifetime_balance.json`,
+  and "PV life-cycle emissions" stays empty although the file has 35.8 (IEA PVPS 2023); a result whose values the page has not loaded keeps its
+  stored number; an api that answers with the values within a phrase set would be leaner
+- monthly table: the months in their order (January … December, not by number) and the short
+  names "Jan" … "Dec" (open point of the guide)
+- notes: only the notes meant for the page, with their own titles (open point of the guide:
+  a `calculator note` list or notes as descriptions of the row groups)
+- sources: numbered in the order of the first use and cited as [n] in the hints and notes
+- value ranking: `ui_list::context_count` has no unit test, only the `run_pv_lifetime_balance`
+  snapshot covers it; add a case in `use_case_ui_tests`: a general value against a value with a
+  place phrase
+- repeated loads: `view_exe::add_page_cache` runs twice per request (in `frontend::render_url`
+  and in `view_exe::show`); the `is_calculator()` guard stops the second run only if the first
+  has found calculator triples, so for a phrase without them that is opened with the
+  `Calculator` view all api loads run twice
 
 ## import / export
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
-
-## simple pv calc sheet
-
-make everything interactive changeable: column, values, formulas
 
 ## start page
 
@@ -74,7 +144,7 @@ adjust the numbers in the json data files so that the problem / solution are in 
 9. Use smartvote for initiatives and build a liquid democracy
 10. Measure the economy’s actual benefit instead of relying on GDP
 
-### PV calculator
+### PV installation calculator
 
 Catch process forms
 
@@ -242,6 +312,55 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
 ## use cases
 
 add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
+
+## clean up
+
+db row identification should not be based on the database id instead the code_id should be used. *_ID pinned db rows e.g. words should only be used for tests.
+
+### calculator data only with the numbers the page uses
+
+`ui_list::calculator_number_plan` writes every number of the request cache into the `calc-data` json of a calculator page, also the values of other use cases (e.g. solution priorities, city values). The PV lifetime balance page carries 467 numbers, but shows about 30 cells and has 75 inputs, which adds about 15 KB to each page.
+Suggestion: write only the numbers that a cell, an input or a result token of the page references (`cells`, `inputs`, `results`), and the results that a cell shows or another result uses. Test positive (a referenced number is in the data) and negative (a value of another phrase is not), then regenerate `pv_lifetime_balance.html`.
+
+### config value 0 is treated as missing
+
+`config_numbers::get_by` (backend) returns the fallback if the config value is 0, so an explicit 0 or `false` in `config.yaml` is ignored whenever the fallback is not null (e.g. a switch with a true fallback). The workaround is `get_by_names` (see `config_numbers::pod_switch`).
+Suggestion: only a missing value (null) is missing, so `get_by` uses the fallback only if the value is null and returns a configured 0 as 0. The guard against an unwanted 0 (e.g. a zero list limit) moves to the getters that need it. Align the frontend `web/helper/config::get_by` to the same rule. It already keeps 0 only by chance, because `$val->value($msg)` returns the formatted text "0" and PHP 8 does not treat "0" as equal to null. Then remove the workaround note in `docs/llm/architecture.md` (*Using a config.yaml setting in a script*, step 3).
+
+## unlink import chain time measurement
+
+If more than one json is imported make it optional either to count the percent load of all import files or per json file.
+As the log below shown it seems that at the moment the elapse time is nor resetted for each import json. In a first step reset all count parameters for each json import file so that the percent ist always the person of load per json file.
+
+455.2125 import time_definition.json (5 kBytes)
+455.7386 import time_definition.json 100% 18.77s / 18.77s  check 4739 formulas (42975.6 formulas per sec vs. 5)
+455.7386 import time_definition.json done: 4739 byte
+455.7397 import base_phrases.json (6 kBytes)
+456.1197 import base_phrases.json done: 6144 byte
+456.1209 import base_views.json (10 kBytes)
+456.4491 import base_views.json done: 9884 byte
+456.4501 import solution_prio.json (105 kBytes)
+456.9500 import solution_prio.json 54.6% 19.981s / 36.629s  count 9 results (665.8 results per sec vs. 480) e.g. poverty,reward ratio,trillion,EUR per person year,high: 0.025 (group_id ) for user 1 (zukunft.com system)
+457.7437 import solution_prio.json 60.3% 20.775s / 34.426s  Add 155 words (324.2 words per sec vs. 340)
+458.3303 import solution_prio.json 64.2% 21.361s / 33.279s  Add 68 triples (240.9 triples per sec vs. 300)
+458.8901 import solution_prio.json 67.7% 21.921s / 32.383s  Add 20 triples (314.7 triples per sec vs. 300)
+459.4951 import solution_prio.json 70% 22.526s / 32.192s  check 176 triples (38451.8 triples per sec)
+460.0975 import solution_prio.json 77.6% 23.129s / 29.795s  save 1 values (100.3 values per sec vs. 300) e.g. global,human,population,billion: 8.5 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 273,198,159,14) for user 1 (zukunft.com system)
+460.6002 import solution_prio.json 79.5% 23.631s / 29.709s  Add 4 words (429.6 words per sec vs. 340)
+461.1050 import solution_prio.json 79.6% 24.136s / 30.306s  save 33 results (214.1 results per sec vs. 210) e.g. citizen participation,reward ratio,trillion,EUR per person year,high: 0.225 (group_id 10-0M-06-2H+32+) for user 1 (zukunft.com system)
+461.1681 import solution_prio.json done: 104746 byte
+461.1695 import country.json (9 kBytes)
+461.8019 import country.json 100% 24.833s / 24.833s  load 9 formulas (2744 formulas per sec vs. 4000)
+462.3377 import country.json 100% 25.369s / 25.369s  load 1 components (1149.4 components per sec vs. 4000)
+462.3548 import country.json done: 8542 byte
+
+
+## to recheck
+
+1. Two steps in one commit. Steps 3 (calculator reader) and 4 (default view of a phrase) are uncommitted together, but pending.md asks for one commit per step. Splitting is possible because the step 4 changes are in separate files and hunks: cfg/word/triple.php, web/word/triple.php, web/phrase/phrase.php, frontend.php, horizontal_tests.php, triple_tests.php, phrase_ui_tests.php, system_view_ui_tests.php, the guide, the api fixtures and the snapshots.
+2. Unrelated pending.md section. The new "## speed up" section doesn't belong to either step; better as its own commit.
+3. Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
+4. Hard-to-read condition in dbo_for_url (frontend.php:2710). It reads the url id with ?? 0 and then also checks array_key_exists. It is correct, but a local $url_id would make it easier to read.
 
 ## job list
 

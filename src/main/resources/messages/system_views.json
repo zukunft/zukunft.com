@@ -3252,20 +3252,10 @@
     },
     {
       "name": "Calculator",
-      "description": "the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",
+      "description": "the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",
       "code_id": "calculator",
-      "type": "word",
-      "components": [
-        {
-          "position": "1",
-          "name": "phrase title"
-        },
-        {
-          "position": "2",
-          "name": "table with related columns",
-          "position_type": "combine"
-        }
-      ]
+      "type": "triple",
+      "style": "use-case"
     },
     {
       "name": "Change value",

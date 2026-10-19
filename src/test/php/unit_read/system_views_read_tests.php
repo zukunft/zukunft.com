@@ -112,7 +112,8 @@ class system_views_read_tests
         $this->run_users($t, $cfg);
         $this->run_system_pages($t);
         $this->run_use_cases($t, $cfg);
-        $this->run_pv_lifetime_balance($t, $cfg);
+        // TODO Prio 2 rename it to run_sample_use_cases
+        $this->run_pv_lifetime_balance($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -154,33 +155,36 @@ class system_views_read_tests
      */
     function run_start(test_cleanup $t): void
     {
-        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID);
+        // the variants differ only by the display parameters of the url, so they share one
+        // request cache and only the first loads the data of the table
+        $cfg = $t->view_context();
+        $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID, $cfg);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         // the full table with the short list, and the two switches on their own: the mayor
         // columns with the ranges, and the mayor columns explicitly without the ranges
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
+            $cfg, [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
                 url_var::DISPLAY_LIST_RANGE => url_var::FALSE]);
         // the steps between the mayor columns and the full table, which the "..." clicks
         // request: one tier is added per step, but still one unit per column and no range
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MINOR]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
-            null, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
+            $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MARGINAL]);
     }
 
@@ -478,13 +482,13 @@ class system_views_read_tests
      */
     function run_use_cases(test_cleanup $t, data_object_ui $cfg): void
     {
-        // the calculator shows the values of a phrase with the defined columns: the use case
+        // the comparison table shows the values of a phrase with the defined columns: the use case
         // "PV in Switzerland" is the sample with the avoided emission per reference mix
-        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        $t->assert_view_by_name(views::COMPARISON_TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
         // the editor placeholders show only their title and the phrase selector
         $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
-        $t->assert_view_by_name(views::CALCULATION_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
+        $t->assert_view_by_name(views::CALCULATOR_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
         // the process catch pages are appended to the seed views, so they are selected by name like the editors
         $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
@@ -494,18 +498,23 @@ class system_views_read_tests
     }
 
     /**
-     * the PV lifetime balance use case brings its own view; the page is written to the use
-     * case folder next to the hand made sample page (pv_lifetime_balance_sample.html), so
-     * that the generated page can be compared with the target layout
+     * the PV lifetime balance use case has no view of its own: the system view Calculator shows
+     * the example PV installation by the calculator triples of PV installation, which the view
+     * loads into the request cache before the components render; the page is written to the use
+     * case folder next to the hand made sample page (pv_lifetime_balance_sample.html), so that
+     * the generated page can be compared with the target layout
+     *
+     * the page gets a request cache of its own like a live request, so that it shows only the
+     * values and results of the database and none of the test objects of the other views
      *
      * @param test_cleanup $t the test environment with the test users
-     * @param data_object_ui $cfg the stable test context of context()
      * @return void
      */
-    function run_pv_lifetime_balance(test_cleanup $t, data_object_ui $cfg): void
+    function run_pv_lifetime_balance(test_cleanup $t): void
     {
-        $t->assert_view_by_name(views::PV_LIFETIME_BALANCE_NAME, $t->usr1, new triple($t->usr1),
-            triple_names::EXAMPLE_PV_INSTALLATION, $cfg, test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
     }
 
     /**

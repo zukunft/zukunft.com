@@ -908,6 +908,39 @@ class component extends sandbox_code_id
     }
 
     /**
+     * @return string the name of the component as a sub title e.g. a section of a use case page
+     */
+    function name_sub_title(): string
+    {
+        // one size below the page title (see system_page::view_title)
+        return new html_base()->text_h3($this->name());
+    }
+
+    /**
+     * @return string the description of the component as a paragraph e.g. a note of a use case page
+     */
+    function description_text(): string
+    {
+        return new html_base()->p($this->get_description());
+    }
+
+    /**
+     * @return string the start of a collapsed block with the name of the component as the summary line
+     */
+    function details_start(): string
+    {
+        return new html_base()->details_start($this->name());
+    }
+
+    /**
+     * @return string the end of the collapsed block that details_start has opened
+     */
+    function details_end(): string
+    {
+        return new html_base()->details_end();
+    }
+
+    /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
     function word_name(phrase $phr, user_message $msg): string

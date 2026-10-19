@@ -188,9 +188,21 @@ class data_object
     public result_list $res_lst {
         set(result_list $value) {
             $this->res_lst = $value;
+            // a new list holds none of the loaded results of a phrase
+            $this->res_phr_ids = [];
         }
     }
     public view_list $msk_lst;
+    // the ids of the phrases whose results are in the result list (see add_results_of)
+    private array $res_phr_ids = [];
+    // the children of the list triples of the start page table e.g. every reason that "populism
+    // reason" links, kept out of the phrase list, because it also fills e.g. the phrase selectors
+    // of later pages; null if not yet loaded (see ui_list::add_start_page_data)
+    public ?phrase_list $start_lst_children = null;
+    // the view of the page, set by view_exe::show, so that a component can show its name
+    // (system_page::view_title); kept out of the view list, which a filled list makes the
+    // view selectors take as the complete list of views (ui_select::view_list_for)
+    public ?view $msk = null;
     private component_list $cmp_lst;
     // TODO Prio 0 rename to $typ_lst
     public ?type_lists $typ_lst_cache = null;
@@ -221,6 +233,20 @@ class data_object
     private user_message $msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
     public bool $online;
+    // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
+    // time of creating a page can be split into the frontend work and the api wait
+    public float $api_wait = 0;
+    // the part of the api wait that has been booked to the time report already (see take_api_wait)
+    private float $api_wait_booked = 0;
+    // of the wait not yet booked the seconds per backend step e.g. that the json of a slow answer
+    // has named (see rest_call::time_steps_of)
+    public array $api_steps = [];
+    // the seconds per component type that the html creation has taken without the api wait and
+    // that are not yet booked to the time report (see start_html_step)
+    public array $html_steps = [];
+    // per component that is being rendered its start, the api wait at the start and the time of
+    // the components within it, the outermost first
+    private array $html_step_starts = [];
 
 
     /*
@@ -268,6 +294,7 @@ class data_object
         $this->frm_lnk_lst = new formula_link_list();
         $this->res_lst = new result_list();
         $this->msk_lst = new view_list();
+        $this->msk = null;
         $this->cmp_lst = new component_list();
         $this->chg_log = new change_log_list();
         $this->sys_log = new sys_log_list();
@@ -409,6 +436,33 @@ class data_object
     function set_result_list(result_list $res_lst): void
     {
         $this->res_lst = $res_lst;
+    }
+
+    /**
+     * @param int $phr_id the id of the phrase of a page
+     * @return bool true if the results of the phrase have been loaded into the result list
+     *              (see add_results_of), which can hold the results of other phrases too
+     */
+    function has_results_of(int $phr_id): bool
+    {
+        return in_array($phr_id, $this->res_phr_ids);
+    }
+
+    /**
+     * add the loaded results of a phrase to the result list, which can hold the results of
+     * other phrases already, e.g. of a table on the same page
+     *
+     * @param int $phr_id the id of the phrase whose results have been loaded
+     * @param result_list $res_lst the loaded results of the phrase
+     * @return void
+     */
+    function add_results_of(int $phr_id, result_list $res_lst): void
+    {
+        $this->res_phr_ids[] = $phr_id;
+        foreach ($res_lst->lst() as $res) {
+            // add_result skips a result that the list has already
+            $this->res_lst->add_result($res);
+        }
     }
 
     /**
@@ -613,6 +667,83 @@ class data_object
     {
         return $this->sys_log;
     }
+
+    /**
+     * @param array $steps the seconds per backend step of one api answer (see rest_call::time_steps_of)
+     * @return void
+     */
+    function add_api_steps(array $steps): void
+    {
+        foreach ($steps as $cat => $seconds) {
+            $this->api_steps[$cat] = ($this->api_steps[$cat] ?? 0) + $seconds;
+        }
+    }
+
+    /**
+     * @return float the seconds that the frontend has waited for the backend since the last call,
+     *               which are booked to the time report by the caller (see frontend::book_times)
+     */
+    function take_api_wait(): float
+    {
+        $result = $this->api_wait - $this->api_wait_booked;
+        $this->api_wait_booked = $this->api_wait;
+        return $result;
+    }
+
+    /**
+     * @return array the seconds per backend step of the api wait since the last call
+     */
+    function take_api_steps(): array
+    {
+        $result = $this->api_steps;
+        $this->api_steps = [];
+        return $result;
+    }
+
+    /**
+     * @return array the seconds per component type of the html creation since the last call
+     */
+    function take_html_steps(): array
+    {
+        $result = $this->html_steps;
+        $this->html_steps = [];
+        return $result;
+    }
+
+    /**
+     * start the timing of the html creation of a component (see end_html_step)
+     *
+     * @param float $now the microtime of the start
+     * @return void
+     */
+    function start_html_step(float $now): void
+    {
+        $this->html_step_starts[] = [$now, $this->api_wait, 0.0];
+    }
+
+    /**
+     * add the html creation time of a component to its component type, without the api wait and
+     * without the components within it, which are counted for their own type
+     *
+     * @param string $cmp_typ the code id of the type of the component e.g. "text"
+     * @param float $now the microtime of the end
+     * @return void
+     */
+    function end_html_step(string $cmp_typ, float $now): void
+    {
+        $step_start = array_pop($this->html_step_starts);
+        if ($step_start != null) {
+            [$start, $wait_start, $within] = $step_start;
+            $total = $now - $start - ($this->api_wait - $wait_start);
+            $this->html_steps[$cmp_typ] = ($this->html_steps[$cmp_typ] ?? 0) + $total - $within;
+            // the component around this one leaves the time of this one to this component type
+            $outer = array_key_last($this->html_step_starts);
+            if ($outer !== null) {
+                $this->html_step_starts[$outer][2] += $total;
+            }
+        }
+    }
+
 
 
     /*

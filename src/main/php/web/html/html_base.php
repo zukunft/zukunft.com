@@ -166,7 +166,12 @@ class html_base
     const string MIDDLE_DOT = ' &middot; ';
     const string P = 'p';
     const string DIV = 'div';
+    // the parts of a use case page: the title on top, the input panel and the result panels
+    const string HEADER = 'header';
+    const string ASIDE = 'aside';
+    const string SECTION = 'section';
     const string UL = 'ul';
+    const string OL = 'ol';
     const string LI = 'li';
     const string BUTTON = 'button';
     const string HTML = 'html';
@@ -191,6 +196,9 @@ class html_base
     const string SMALL = 'small';
     const string SCOPE = 'scope';
     const string DETAILS = 'details';
+    // only for the calculator pages if config.yaml allows javascript for them (docs/llm/frontend.md)
+    const string SCRIPT = 'script';
+    const string JSON_TYPE = 'application/json';
     const string SUMMARY = 'summary';
     const string DL = 'dl';
     const string DT = 'dt';
@@ -1838,13 +1846,18 @@ class html_base
      * add the hidden field
      * @param string $name the internal name of the field
      * @param string $value the value that should be returned
+     * @param string $form_name the form that the field joins although it is outside of it e.g. a calculator input, empty for the form around it
      * @return string the html code to add a hidden field
      */
-    function form_hidden(string $name, string $value): string
+    function form_hidden(string $name, string $value, string $form_name = ''): string
     {
+        $form = '';
+        if ($form_name != '') {
+            $form = ' ' . self::FORM . '="' . $form_name . '"';
+        }
         return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
             '" ' . self::NAME . '="' . $name .
-            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '">';
+            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"' . $form . '>';
     }
 
     /**
@@ -2792,6 +2805,41 @@ class html_base
         return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . $form . '>';
     }
 
+    /**
+     * a number input with the limits and the step that the browser enforces, e.g. an input field
+     * of a use case page; the id equals the name, so a label can point to it
+     *
+     * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
+     * @param float|null $value the number shown, null for an empty field
+     * @param float|null $min the lowest number accepted, null for no limit
+     * @param float|null $max the highest number accepted, null for no limit
+     * @param float|null $step the increment of the number, null for any number
+     * @param string $form_name the form that the input joins by its form attribute, '' for the surrounding form
+     * @return string the html code of the number input
+     */
+    function input_number(string $name, ?float $value, ?float $min, ?float $max, ?float $step, string $form_name = ''): string
+    {
+        $attr = ' ' . self::TYPE . '="number" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
+        foreach (['value' => $value, 'min' => $min, 'max' => $max, 'step' => $step] as $key => $num) {
+            if ($num !== null) {
+                $attr .= ' ' . $key . '="' . $this->number_attr($num) . '"';
+            }
+        }
+        if ($form_name != '') {
+            $attr .= ' ' . self::FORM . '="' . $form_name . '"';
+        }
+        return '<' . self::INPUT . $attr . '>';
+    }
+
+    /**
+     * @param float $num a number
+     * @return string the number without trailing zeros and with a point, as an html attribute needs it
+     */
+    private function number_attr(float $num): string
+    {
+        return rtrim(rtrim(sprintf('%.12F', $num), '0'), '.');
+    }
+
     function div_form(string $text, string $style = ''): string
     {
         return $this->div_bs($text, 'form-group ' . $style);
@@ -3012,6 +3060,23 @@ class html_base
         return '</' . self::DIV . '>';
     }
 
+    /**
+     * @param string $summary the text of the always shown summary line
+     * @return string html code to start a collapsed block that details_end closes
+     */
+    function details_start(string $summary): string
+    {
+        return '<' . self::DETAILS . '><' . self::SUMMARY . '>' . $summary . '</' . self::SUMMARY . '>';
+    }
+
+    /**
+     * @return string html code to end a collapsed block that details_start has opened
+     */
+    function details_end(): string
+    {
+        return '</' . self::DETAILS . '>';
+    }
+
     /*
      * base
      */
@@ -3131,6 +3196,19 @@ class html_base
      */
     function div(string $txt, string $style = '', string $id = ''): string
     {
+        return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * wrap a block tag e.g. the header, aside or section of a use case page around html code
+     * @param string $tag the html block tag e.g. self::SECTION
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @param string $id the html id
+     * @return string the wrapped html code
+     */
+    function block(string $tag, string $txt, string $style = '', string $id = ''): string
+    {
         $attr = '';
         if ($style != '') {
             $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
@@ -3138,7 +3216,7 @@ class html_base
         if ($id != '') {
             $attr .= ' ' . self::ID . '="' . $id . '"';
         }
-        return '<' . self::DIV . $attr . '>' . $txt . '</' . self::DIV . '>';
+        return '<' . $tag . $attr . '>' . $txt . '</' . $tag . '>';
     }
 
     /**
@@ -3647,6 +3725,30 @@ class html_base
     private function stylesheet_font(string $base_url = ''): string
     {
         return $this->link_style(files::STYLE_FONT, $base_url);
+    }
+
+    /**
+     * the data of a page script as json, which the browser never runs as code; a "<" is written
+     * as its unicode escape, so a text in the data cannot close the script tag
+     *
+     * @param string $id the html id by which the script finds the data
+     * @param array $data the data of the script
+     * @return string the html code of the data block
+     */
+    function script_data(string $id, array $data): string
+    {
+        $json = json_encode($data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES);
+        return '<' . self::SCRIPT . ' ' . self::TYPE . '="' . self::JSON_TYPE . '" ' . self::ID . '="' . $id . '">'
+            . $json . '</' . self::SCRIPT . '>';
+    }
+
+    /**
+     * @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
+     * @return string the html code that loads the script
+     */
+    function script_src(string $url): string
+    {
+        return '<' . self::SCRIPT . ' ' . self::SRC . '="' . $url . '"></' . self::SCRIPT . '>';
     }
 
     /**

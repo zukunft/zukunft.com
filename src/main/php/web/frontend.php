@@ -76,6 +76,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::RESULT . 'result.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
@@ -108,6 +109,7 @@ include_once html_paths::TYPES . 'position_type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
@@ -185,6 +187,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
@@ -198,6 +201,7 @@ use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\web\view\term_view as term_view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
@@ -238,6 +242,35 @@ class frontend
      */
 
     const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
+
+    // the lists whose api answers are cached (see db_cache_page::api_key)
+    const array API_CACHED_LISTS = [phrase_list_ui::class, value_list_ui::class, result_list_ui::class];
+    // the cached api answers that a write of an object outdates, by the class of the changed object:
+    // every list names the phrases, so a changed word, triple or verb (part of the triple name) or
+    // the word of a formula outdates all of them, whereas e.g. a changed source only the value lists
+    const array API_LISTS_OUTDATED_BY = [
+        word_ui::class => self::API_CACHED_LISTS,
+        triple_ui::class => self::API_CACHED_LISTS,
+        verb_ui::class => self::API_CACHED_LISTS,
+        phrase_ui::class => self::API_CACHED_LISTS,
+        formula_ui::class => self::API_CACHED_LISTS,
+        formula_link_ui::class => [result_list_ui::class],
+        group_ui::class => [value_list_ui::class, result_list_ui::class],
+        value_ui::class => [value_list_ui::class, result_list_ui::class],
+        result_ui::class => [result_list_ui::class],
+        source_ui::class => [value_list_ui::class],
+        ref_ui::class => [phrase_list_ui::class],
+        term_view_ui::class => [phrase_list_ui::class],
+    ];
+    // the objects that no cached api answer shows, so their write keeps all of them
+    const array API_LISTS_KEPT_BY = [
+        view_ui::class,
+        view_relation_ui::class,
+        component_ui::class,
+        component_link_ui::class,
+        user_ui::class,
+        language_ui::class,
+    ];
 
 
     /*
@@ -706,7 +739,8 @@ class frontend
                 log_debug('type cache set from the api message', url_var::DEBUG_LEVEL_MAIN_STEP);
             }
         }
-        $sys->times->switch(system_time_type::DEFAULT);
+        // continue with the section of the caller e.g. url to html
+        $sys->times->switch();
         return $msg_ui->is_ok();
     }
 
@@ -969,6 +1003,76 @@ class frontend
         bool            $test_mode = false
     ): string
     {
+        global $sys;
+
+        // every caller gets the render time as url to html, the load of the page data as load
+        // page and the wait for the backend as api wait, and the section of the caller continues
+        // after the page is created
+        self::book_times();
+        $sys->times->switch(system_time_type::URL_TO_HTML);
+        $result = $this->render_url($url_array, $msg_ui, $dto, $test_mode);
+        self::book_times();
+        $sys->times->switch();
+        return $result;
+    }
+
+    /**
+     * book the times that the frontend has measured since the last booking out of the category
+     * that has counted them, which is the one counted now: the wait for the backend as api wait
+     * and the html creation per component type (see system_time_list::book_frontend); called
+     * before every switch of the category, so that each time is booked out of the right one
+     *
+     * @return void
+     */
+    static function book_times(): void
+    {
+        global $sys;
+        global $ui_sys;
+        if ($sys != null and $ui_sys != null) {
+            $sys->times->book_frontend($ui_sys->take_api_wait(), $ui_sys->take_api_steps(), $ui_sys->take_html_steps());
+        }
+    }
+
+    /**
+     * start a load step of the page data (see render_url)
+     *
+     * @return void
+     */
+    private function load_page_start(): void
+    {
+        global $sys;
+        self::book_times();
+        $sys->times->switch(system_time_type::LOAD_PAGE);
+    }
+
+    /**
+     * end a load step of the page data and count its wait for the backend as api wait
+     *
+     * @return void
+     */
+    private function load_page_end(): void
+    {
+        global $sys;
+        self::book_times();
+        $sys->times->switch();
+    }
+
+    /**
+     * the html code of the given url without the time measurement (see url_to_html)
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user
+     * @param data_object $dto the frontend cache used to reduce the backend loading
+     * @param bool $test_mode true to render a reproducible page without backend calls
+     * @return string the html code to show the page to the user
+     */
+    private function render_url(
+        array           $url_array,
+        user_message_ui $msg_ui,
+        data_object     $dto,
+        bool            $test_mode
+    ): string
+    {
         // the requesting user of this request; null renders the page for an anonymous user
         // (docs/llm/state-and-messages.md)
         $usr = $msg_ui->usr;
@@ -986,6 +1090,12 @@ class frontend
 
         // init the view
         $result = ''; // reset the html code var
+
+        // checked before the mapping, because the mapping sets the start view as the default view
+        // (a human or pod url is detected by its own view key)
+        $no_view = !array_key_exists(url_var::MASK_HUMAN, $url_array)
+            && !array_key_exists(url_var::MASK_POD, $url_array)
+            && in_array($url_array[url_var::MASK] ?? null, [null, '', 0, 'null']);
 
         // detect the url format and map it to standard keys
         $url_map = new url_mapper();
@@ -1006,6 +1116,13 @@ class frontend
         //$api_msg = $this->api_get(type_lists::class);
         //$frontend_cache = new type_lists($api_msg);
 
+        // a phrase url without a view shows the phrase with its default view e.g. the calculator
+        if ($no_view and is_numeric($id) and $id != 0) {
+            $view = $this->phrase_view_id((int)$id, $msg_ui, $test_mode);
+            // the links of the page e.g. the back links name the view that shows the phrase
+            // first, as in a url that names the view
+            $url_array = [url_var::MASK => $view] + $url_array;
+        }
         // use the default start view if neither a view nor an object is set
         $view = self::default_view_id($view, $id);
 
@@ -1075,6 +1192,7 @@ class frontend
         }
 
         // get the main object to display
+        $this->load_page_start();
         if ($id != 0) {
             // load the object from the database unless the url carries object field values (e.g. a
             // form submit, a confirm view url or a prefilled edit link), because a control var like
@@ -1126,6 +1244,7 @@ class frontend
                 $wrd = $usr->last_term();
             }
         }
+        $this->load_page_end();
 
         // an admin protected object can still be changed by a normal user (the change creates the
         // user's own sandbox overlay), so the edit view opens without any protection message; only
@@ -1158,7 +1277,12 @@ class frontend
                 $result .= log_err('No view for "' . $view_id . '" found.',
                     "view.php", '', (new Exception)->getTraceAsString());
             } else {
-                $title = $msk_ui->title($dbo, $msg_ui);
+                // the title of a calculator reads the calculator triples of the request cache and
+                // the components read their data from it, so it is filled before the html is created
+                $this->load_page_start();
+                $msk_ui->add_page_cache($dbo, $msg_ui, $dto);
+                $this->load_page_end();
+                $title = $msk_ui->title($dbo, $msg_ui, $dto);
                 $dsp_text = $msk_ui->show($dbo, $msg_ui, $dto, '', $test_mode, $url_array);
 
                 // use a fallback if the view is empty
@@ -1650,8 +1774,11 @@ class frontend
      * a user that sees the user sandbox changes only the own data, so only the own pages and the own
      * cached config values are outdated; a user that sees the standard data (an ip user or a system user, see
      * user::uses_standard_data) or an admin that sets a default changes the data that every page of
-     * every user can show, so then the complete cache is dropped. this is on purpose not selected by
-     * the changed object: a change can be shown by any page, e.g. a renamed word in a value list of another page
+     * every user can show, so then the pages of all users are dropped. the html pages are not
+     * selected by the changed object, because a change can be shown by any page, e.g. a renamed
+     * word in a value list of another page; the cached api answers are selected by the type of the
+     * changed object, because e.g. a changed view or source is not part of the cached phrase list
+     * (see api_lists_outdated_by)
      *
      * like filling the cache this is a system action, so it is done as the system user and a
      * failure is only logged: the user has the change in the database, and a page that is cleared
@@ -1659,9 +1786,10 @@ class frontend
      *
      * @param user_message_ui $msg_ui with the user that has done the change
      * @param bool $is_default true if an admin has changed the default of all users e.g. of a setting
+     * @param string $class the class of the changed object e.g. word
      * @return void
      */
-    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default): void
+    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default, string $class): void
     {
         $cac_page = new db_cache_page();
         // the cached config values include the overwrites of the user e.g. of the settings page
@@ -1669,17 +1797,46 @@ class frontend
         $del_msg = new backend_user_message(user_backend::system()); // not reported, see above
         $usr = $msg_ui->usr;
         $usr_id = self::session_user_id();
-        if ($usr_id > 0 and $usr != null and !$usr->uses_standard_data() and !$is_default) {
-            $cac_page->del_by_user($usr_id, $del_msg);
+        $own_only = ($usr_id > 0 and $usr != null and !$usr->uses_standard_data() and !$is_default);
+        // zero selects the pages and answers of all users
+        $del_usr_id = $own_only ? $usr_id : 0;
+        $cac_page->del_html($del_msg, $del_usr_id);
+        foreach (self::api_lists_outdated_by($class) as $lst_class) {
+            $cac_page->del_api($lst_class, $del_msg, $del_usr_id);
+        }
+        if ($own_only) {
             $cac_cfg->del_by_user($usr_id, $del_msg);
         } else {
-            $cac_page->del_all($del_msg);
             $cac_cfg->del_by_types(config_numbers::CACHE_TYPES, $del_msg);
         }
         if (!$del_msg->is_ok()) {
             log_warning('removing the cached pages after a change of user ' . $usr_id
                 . ' failed because ' . $del_msg->get_message());
         }
+    }
+
+    /**
+     * the lists whose cached api answers a write of an object of the given class outdates;
+     * all of them for an object that is not known to be shown or not shown by any list,
+     * so that a new object type never leaves an outdated api answer in the cache
+     *
+     * @param string $class the class of the changed object e.g. word or a child class of it
+     * @return array the list classes of the outdated api answers e.g. value_list
+     */
+    static function api_lists_outdated_by(string $class): array
+    {
+        $result = self::API_CACHED_LISTS;
+        foreach (self::API_LISTS_KEPT_BY as $kept_class) {
+            if (is_a($class, $kept_class, true)) {
+                $result = [];
+            }
+        }
+        foreach (self::API_LISTS_OUTDATED_BY as $changed_class => $lst_classes) {
+            if (is_a($class, $changed_class, true)) {
+                $result = $lst_classes;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1729,11 +1886,9 @@ class frontend
         // own switch() restores this section
         $sys->times->switch(system_time_type::URL_TO_ACTION);
         $next_url = $this->url_to_action($url_arr, $req->usr_backend, $req->msg, $req->dto, $req->do_it);
-        $sys->times->switch(system_time_type::URL_TO_HTML);
-        $result = $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
-        // return to the default section for whatever the caller does next
-        $sys->times->switch(system_time_type::DEFAULT);
-        return $result;
+        $sys->times->switch();
+        // url_to_html counts the rendering and the api wait itself
+        return $this->url_to_html($next_url, $req->msg, $req->dto, $req->test_mode);
     }
 
     function show_view(int $id, user_message_ui $msg_ui): string
@@ -2449,7 +2604,7 @@ class frontend
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
             $is_default = ($dbo instanceof value_ui and $dbo->set_default);
-            $this->drop_cached_pages($msg_ui, $is_default);
+            $this->drop_cached_pages($msg_ui, $is_default, $dbo::class);
             // the settings page shows many numbers, so it confirms which one has changed and how
             if ($this->is_setting_save($url_array, $crud)) {
                 $msg_ui->add_info($this->setting_saved_text($url_array));
@@ -2692,9 +2847,12 @@ class frontend
         }
         // a phrase view (e.g. the calculator) shows a word or a triple, and the frontend objects
         // of a view are typed (see system_form::title_phrase), so the phrase id of the url decides
-        // the object: a negative phrase id is a triple, a positive one a word
-        if ($dbo instanceof phrase_ui and array_key_exists(url_var::ID, $url_array)) {
-            $dbo = $this->phrase_id_to_dbo_ui((int)$url_array[url_var::ID]);
+        // the object: a negative phrase id is a triple, a positive one a word; a triple view
+        // called with the phrase id e.g. by phrase::name_link gets the triple of the phrase id
+        $url_id = $url_array[url_var::ID] ?? null;
+        if ($url_id !== null
+            and ($dbo instanceof phrase_ui or ($dbo instanceof triple_ui and (int)$url_id < 0))) {
+            $dbo = $this->phrase_id_to_dbo_ui((int)$url_id);
         }
         return $dbo;
     }
@@ -2714,6 +2872,29 @@ class frontend
         }
         $dbo->set_id(abs($phr_id));
         return $dbo;
+    }
+
+    /**
+     * the view of a url with a phrase id and without a view: the default view of the phrase e.g.
+     * the calculator of example PV installation, else the word or the triple view; a test render
+     * makes no backend call, so it always shows the word or the triple view
+     *
+     * @param int $phr_id the phrase id of the url, negative for a triple
+     * @param user_message_ui $msg to report a problem of the load and with the requesting user
+     * @param bool $test_mode true to render without backend calls
+     * @return int the database id of the view that shows the phrase
+     */
+    private function phrase_view_id(int $phr_id, user_message_ui $msg, bool $test_mode): int
+    {
+        $dbo = $this->phrase_id_to_dbo_ui($phr_id);
+        if (!$test_mode) {
+            $dbo->load_by_id(abs($phr_id), $msg, [], $msg->usr?->id() ?? 0);
+        }
+        $msk_id = $dbo->phrase()->own_view_id();
+        if ($msk_id <= 0) {
+            $msk_id = $phr_id < 0 ? views::TRIPLE_ID : views::WORD_ID;
+        }
+        return $msk_id;
     }
 
     private function exe_process_step(

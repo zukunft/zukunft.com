@@ -146,6 +146,10 @@ class value_list extends ListBase
     // another unit, so that the id can never clash with a phrase id
     const string UNIT_COLUMN_SEP = '|';
 
+    // per phrase id true if the phrase is a unit (see is_unit), because a table asks it for each
+    // phrase of each value in several steps, but the phrases of a table are only a few hundred
+    private array $unit_by_id = [];
+
     /*
      * set and get
      */
@@ -245,9 +249,10 @@ class value_list extends ListBase
     function add(value|IdObject|TextIdObject|CombineObject|null $to_add, user_message $msg): bool
     {
         $result = false;
-        if (!in_array($to_add->id(), $this->id_lst())) {
+        // the id index of the list finds a double without scanning the list, and add_direct keeps
+        // it up to date; a value without an id is not yet in the database and therefore never a double
+        if ($to_add->id() == 0 or !$this->has_id($to_add->id())) {
             $this->add_direct($to_add);
-            $this->set_hash_dirty();
             $result = true;
         }
         return $result;
@@ -323,22 +328,16 @@ class value_list extends ListBase
     }
 
     /**
-     * sort this value list in place so that the value with the highest impact is first
-     * the impact of a value is the highest impact of the phrases it is assigned to
+     * sort this value list in place in the preferred order of numbers (see sandbox_value::sorted):
+     * the value with the highest impact first, then within the same unit the bigger number, then
+     * by name; the impact of a value is the highest impact of the phrases it is assigned to
+     *
+     * @param user_message $msg to report a problem of the phrase types that name the unit
      * @return void
      */
-    function sort_by_impact(): void
+    function sort_by_impact(user_message $msg): void
     {
-        $lst = $this->lst();
-        // impact first, then number, then the group name so that values with the same impact and
-        // number keep a deterministic order that does not depend on the value (group) id: a value's
-        // id is its phrase group key, packed from the word/triple db ids, which the seed assigns
-        // serially and shift between test database rebuilds, so an id tiebreak reorders the list per
-        // rebuild; the group name is built from the (stable) phrase names (see docs/llm/frontend.md)
-        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $b->impact() <=> $a->impact()
-            ?: $b->number() <=> $a->number()
-                ?: strcmp($a->name() ?? '', $b->name() ?? ''));
-        $this->set_lst($lst);
+        $this->set_lst(sandbox_value::sorted($this->lst(), $msg));
     }
 
 
@@ -372,7 +371,7 @@ class value_list extends ListBase
 
         if (!$this->is_empty()) {
             // sort so the highest impact value is shown first and the order is always deterministic
-            $this->sort_by_impact();
+            $this->sort_by_impact($msg);
             if ($limit == null) {
                 $limit = $this->configured_limit($msg);
             }
@@ -852,6 +851,9 @@ class value_list extends ListBase
         bool         $value_rows_only
     ): table_model
     {
+        // the table asks for the children of the same phrases many times and does not change
+        // the related phrases, so they are linked once for the whole build
+        $rel_lst = $rel_lst?->with_link_index();
         // the phrase that names the rows, e.g. "reason" on the reasons page, heads the row column,
         // so it is no column of the values and a column of it with another phrase, e.g. "potential
         // loss of reason", is the column of the other phrase, e.g. the mayor column "potential loss"
@@ -900,7 +902,7 @@ class value_list extends ListBase
             $col_tiers = (int)$url_array[url_var::DISPLAY_LIST_COLUMNS];
         }
         // the row order follows the impact, so it never depends on the api/db row order
-        $this->sort_by_impact();
+        $this->sort_by_impact($msg);
         // a phrase that every value carries describes the whole table, so the header names
         // it once and no row repeats it
         $tbl_phr = $this->phrases_of_every_value(
@@ -1429,8 +1431,22 @@ class value_list extends ListBase
      */
     private function is_unit(phrase $phr, user_message $msg): bool
     {
-        return ($phr->is_scaling($msg) or $phr->is_measure($msg) or $phr->is_percent($msg)
-            or $phr->is_factor($msg) or $phr->is_measure_non_unit($msg));
+        // a phrase without an id is not yet in the database, so it cannot be told apart by its id
+        $id = $phr->id();
+        if ($id != 0 and array_key_exists($id, $this->unit_by_id)) {
+            $result = $this->unit_by_id[$id];
+        } else {
+            $result = (
+                $phr->is_scaling($msg)
+                or $phr->is_measure($msg)
+                or $phr->is_percent($msg)
+                or $phr->is_factor($msg)
+                or $phr->is_measure_non_unit($msg));
+            if ($id != 0) {
+                $this->unit_by_id[$id] = $result;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -1527,16 +1543,16 @@ class value_list extends ListBase
         $val_lst = $this->lst();
         $first = array_shift($val_lst);
         if ($first != null) {
-            foreach ($this->triple_parts($first, $shared)->lst() as $part) {
-                $is_shared = true;
-                foreach ($val_lst as $val) {
-                    if (!$this->triple_parts($val, $shared)->has_id($part->id())) {
-                        $is_shared = false;
-                    }
+            // the parts of the first value that the values so far all carry; a value can only
+            // remove a part, so the values after the last part are not split anymore
+            $parts = $this->triple_parts($first, $shared);
+            foreach ($val_lst as $val) {
+                if ($parts != []) {
+                    $parts = array_intersect_key($parts, $this->triple_parts($val, $shared));
                 }
-                if ($is_shared) {
-                    $result->add_phrase($part);
-                }
+            }
+            foreach ($parts as $part) {
+                $result->add_phrase($part);
             }
         }
         return $result;
@@ -1545,17 +1561,17 @@ class value_list extends ListBase
     /**
      * @param sandbox_value $val the value or result whose triples are split into their parts
      * @param phrase_list $shared the triples that every value carries and that are therefore not split
-     * @return phrase_list the from and to phrases of the other triples of the value
+     * @return array the from and to phrases of the other triples of the value keyed by phrase id
      */
-    private function triple_parts(sandbox_value $val, phrase_list $shared): phrase_list
+    private function triple_parts(sandbox_value $val, phrase_list $shared): array
     {
-        $result = new phrase_list();
+        $result = [];
         foreach ($val->grp->phr_lst()->lst() as $phr) {
             if ($phr->is_triple() and !$shared->has_id($phr->id())) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
                     // a triple sent with its name only has empty parts, which name nothing
-                    if ($this->is_known($part) and !$result->has_id($part->id())) {
-                        $result->add_phrase($part);
+                    if ($this->is_known($part) and !array_key_exists($part->id(), $result)) {
+                        $result[$part->id()] = $part;
                     }
                 }
             }
@@ -1930,8 +1946,17 @@ class value_list extends ListBase
         // tier and number of values keep the impact order
         $lead_first = fn(string $a, string $b) => [$level[$a], count($result[$b])] <=> [$level[$b], count($result[$a])];
         uksort($result, $lead_first);
+        // the subject names of each value are created once and not again for each confidence value
+        $subjects = [];
+        if ($conf_lst != []) {
+            foreach ($result as $unit_members) {
+                foreach ($unit_members as $val) {
+                    $subjects[spl_object_id($val)] = $this->subject_names($val, $msg);
+                }
+            }
+        }
         foreach ($conf_lst as $conf_val) {
-            $found = $this->unit_of_qualified($result, $conf_val, $msg);
+            $found = $this->unit_of_qualified($result, $conf_val, $subjects, $msg);
             // a confidence value that qualifies no value of the column keeps its own unit, where
             // it is shown like a value instead of a tooltip (see cell), so that it is not lost
             if ($found == '') {
@@ -1947,21 +1972,43 @@ class value_list extends ListBase
      *
      * @param array $unit_lst per unit the values of that unit collected so far
      * @param sandbox_value $conf_val the confidence value to place
+     * @param array $subjects per value object id the subject names of the value (see subject_names)
      * @param user_message $msg to report a problem of reading a phrase type
      * @return string the unit key of the qualified values or an empty string if none is qualified
      */
-    private function unit_of_qualified(array $unit_lst, sandbox_value $conf_val, user_message $msg): string
+    private function unit_of_qualified(
+        array         $unit_lst,
+        sandbox_value $conf_val,
+        array         $subjects,
+        user_message  $msg
+    ): string
     {
         $result = '';
+        // the qualified value names all subject phrases of the confidence value (see qualifies)
+        $conf_names = $this->subject_names($conf_val, $msg);
         // the first unit with a qualified value wins, so the confidence follows the leading unit
         foreach ($unit_lst as $unit_key => $unit_members) {
             foreach ($unit_members as $val) {
-                if ($result == '' and $this->qualifies($conf_val, $val, $msg)) {
+                if ($result == '' and $this->subject_qualifies($conf_names, $val, $subjects)) {
                     $result = $unit_key;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * true if the given value carries all subject phrases of a confidence value, like qualifies
+     * but with the subject names created upfront
+     *
+     * @param array $conf_names the subject names of the confidence value
+     * @param sandbox_value $val the value that the confidence value may qualify
+     * @param array $subjects per value object id the subject names of the value (see subject_names)
+     * @return bool true if the value carries all subject phrases of the confidence value
+     */
+    private function subject_qualifies(array $conf_names, sandbox_value $val, array $subjects): bool
+    {
+        return array_diff($conf_names, $subjects[spl_object_id($val)]) == [];
     }
 
     /**
@@ -2049,8 +2096,9 @@ class value_list extends ListBase
     private function without_row_column(array $col_order, ?phrase $row_col, ?phrase_list $rel_lst): array
     {
         $result = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             $parts = [$name];
             if ($phr != null and $phr->is_triple()) {
                 $parts[] = $phr->obj()->get_from()?->name();
@@ -2082,8 +2130,9 @@ class value_list extends ListBase
         // a linked phrase that is a defined column itself names a column and not a row phrase, e.g.
         // "potential gain" of the chart triple "potential gain and potential loss"
         $col_children = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             $children = ($phr == null) ? [] : array_diff($rel_lst->child_names($phr), $col_order);
             if ($children != []) {
                 $col_children[] = $children;
@@ -2133,8 +2182,9 @@ class value_list extends ListBase
         foreach ($col_phr as $val_col_phr) {
             $head_ids[] = $this->column_head($val_col_phr, $tbl_phr)->id();
         }
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             // a column that already holds the values of this phrase cannot name a phrase too,
             // and a unit describes the number, so it heads no column of its own either
             if ($phr != null and !array_key_exists($phr->id(), $col_phr)
@@ -2233,6 +2283,7 @@ class value_list extends ListBase
     {
         $by_parts = [];
         $by_phrase = [];
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         // the defined columns first, in the order of the definition
         foreach ($col_order as $name) {
             $found = false;
@@ -2246,7 +2297,7 @@ class value_list extends ListBase
             // its two parts (see column_parts); it takes its values before the column of one of
             // the parts, because it names more of the phrases of a value, so it comes first
             if (!$found) {
-                $col_phr = $rel_lst?->column_phrase($name);
+                $col_phr = $col_phr_lst[$name] ?? null;
                 if ($col_phr != null and count($this->column_parts($col_phr, $all)) > 1) {
                     $by_parts[$col_phr->id()] = $col_phr;
                 }
@@ -2303,8 +2354,9 @@ class value_list extends ListBase
     private function column_names_with_parts(array $col_order, ?phrase_list $rel_lst): array
     {
         $result = $col_order;
+        $col_phr_lst = $rel_lst?->column_phrases() ?? [];
         foreach ($col_order as $name) {
-            $phr = $rel_lst?->column_phrase($name);
+            $phr = $col_phr_lst[$name] ?? null;
             if ($phr != null and $phr->is_triple() and !$this->is_carried($phr)) {
                 foreach ([$phr->obj()->get_from(), $phr->obj()->get_to()] as $part) {
                     if ($part != null and !in_array($part->name(), $result)) {
@@ -2463,7 +2515,7 @@ class value_list extends ListBase
         if (count($pool) > 0) {
             $val_lst = new value_list();
             $val_lst->set_lst($pool);
-            $val_lst->sort_by_impact();
+            $val_lst->sort_by_impact($msg);
             // the remaining page budget after the grouped sections; the pool holds the ungrouped
             // values and the values of the skipped groups, so the more tail of this last section
             // covers everything the page does not show
@@ -2513,7 +2565,7 @@ class value_list extends ListBase
         // bucketed in pool order by time_groups / relevant_phrase_groups, which is not stable
         $val_lst = new value_list();
         $val_lst->set_lst($members);
-        $val_lst->sort_by_impact();
+        $val_lst->sort_by_impact($msg);
         // show at most the configured number of values per group and offer the rest behind the
         // "... and n more" tail, so that a phrase with many values cannot fill the whole screen
         // and the messages below the view stay visible (see docs/llm/frontend.md)
@@ -3075,7 +3127,7 @@ class value_list extends ListBase
         if (!$this->is_empty()) {
             // sort so the highest impact value is shown first and the order (and the limited subset)
             // never depends on the api/db row order (see docs/llm/frontend.md), like list() and table()
-            $this->sort_by_impact();
+            $this->sort_by_impact($msg);
             if ($limit == null) {
                 $limit = $this->configured_limit($msg);
             }
@@ -3112,7 +3164,7 @@ class value_list extends ListBase
         $html = new html_base();
 
         // sort so the highest impact value is shown first and the order is always deterministic
-        $this->sort_by_impact();
+        $this->sort_by_impact($msg);
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;

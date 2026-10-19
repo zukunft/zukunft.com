@@ -61,9 +61,14 @@ include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'component_types.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
@@ -81,16 +86,42 @@ use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 
 class component_exe extends component
 {
+
+    /*
+     * load
+     */
+
+    /**
+     * fill the request cache with the data that this component shows, before the html of the
+     * page is created, so that the creation of the html needs no backend call
+     *
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return void
+     */
+    function add_page_cache(data_object $dto, user_message $msg): void
+    {
+        // an offline cache e.g. of a unit test is filled upfront and has no api to ask
+        if ($dto->online and $this->type_code_id($dto->typ_lst_cache, $msg) == component_types::CALC_SHEET) {
+            new ui_list()->add_start_page_data($dto, $msg);
+        }
+    }
+
 
     /*
      * display
@@ -182,6 +213,11 @@ class component_exe extends component
         $tc_id = $this->type_code_id($cfg->typ_lst_cache, $msg);
         // get the style code id from the component
         $style = $this->style_code_id($cfg->typ_lst_cache, $msg);
+        // a component styled "all rows" shows every row of its list, e.g. the result chain of a
+        // use case page, unless the url of the page names a list size (docs/llm/frontend.md)
+        if ($style == view_styles::ALL_ROWS and !array_key_exists(url_var::DISPLAY_LIST_SIZE, $url_arr)) {
+            $url_arr[url_var::DISPLAY_LIST_SIZE] = value_list::LIMIT_ALL;
+        }
 
         // get the html code from the component
         $result .= match ($tc_id) {
@@ -371,14 +407,32 @@ class component_exe extends component
             component_types::SYSTEM_TITLE_WITH_OBJECT_NAME => $page->title_with_object_name($this->ui_msg_code_id, $dbo),
             component_types::SYSTEM_TITLE_FOR_PHRASE => $page->title_for_phrase($this->ui_msg_code_id, $dbo),
             component_types::SYSTEM_TEXT_EXPLAIN => $page->text_explain($this->ui_msg_code_id),
-            component_types::PROCESS_CATCH_FIELDS => $page->process_catch_fields($this->name(), $this->code_id, $url_arr),
+            component_types::PROCESS_CATCH_FIELDS => $page->process_catch_fields(
+                $this->name(), $this->code_id, $url_arr, $dbo, $cfg, $form_name, $msg),
             // the process catch tabs and buttons link by the code id of the page that shows them
             component_types::PROCESS_CATCH_TAB => $page->process_catch_tab($this->code_id, $adm_dto->view_code_id($msk_id), $dbo, $url_arr),
             component_types::PROCESS_CATCH_BUTTON_NEXT => $page->process_catch_button_next($adm_dto->view_code_id($msk_id), $dbo),
             component_types::PROCESS_CATCH_BUTTON_BACK => $page->process_catch_button_back($adm_dto->view_code_id($msk_id), $dbo),
+            // a user view e.g. of a use case has no code id, so its id names the page to show again
             component_types::PROCESS_CATCH_BUTTON_REFRESH => $page->process_catch_button_refresh(
-                $this->ui_msg_code_id ?? msg_id::PROCESS_CATCH_BUTTON_REFRESH, $form_name, $adm_dto->view_code_id($msk_id), $dbo, $url_arr),
+                $this->ui_msg_code_id ?? msg_id::PROCESS_CATCH_BUTTON_REFRESH, $form_name,
+                $adm_dto->view_code_id($msk_id) ?: $msk_id, $dbo, $url_arr),
             component_types::GEOLOCATOR => $page->geolocator($this->ui_msg_code_id ?? msg_id::GEOLOCATOR_LABEL, $form_name, $url_arr),
+            // use case page - the title, the sections, the notes, the inputs and the sources of a page like the PV lifetime balance
+            component_types::VIEW_TITLE => $page->view_title($msk_id, $cfg),
+            component_types::NAME_SUB_TITLE => $this->name_sub_title(),
+            component_types::DESCRIPTION_TEXT => $this->description_text(),
+            component_types::DETAILS_START => $this->details_start(),
+            component_types::DETAILS_END => $this->details_end(),
+            component_types::VALUE_INPUT_FIELDS => $list->value_input_fields($dbo, $msg, $cfg),
+            component_types::SOURCES_USED => $list->sources_used($dbo, $msg, $cfg),
+            component_types::ASSUMPTION_FIELDS => $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr),
+            component_types::FORMULA_NOTES => $list->formula_notes($dbo, $msg, $cfg),
+            // calculator page - the parts are selected by the calculator triples of the page phrase
+            component_types::CALCULATOR_TITLE => $page->calculator_title($dbo, $cfg),
+            component_types::CALCULATOR_INPUT => $page->calculator_input(
+                $dbo, $msg, $cfg, $form_name, $adm_dto->view_code_id($msk_id) ?: $msk_id, $url_arr),
+            component_types::CALCULATION_RESULT => $page->calculation_result($dbo, $msg, $cfg),
             component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
@@ -520,7 +574,11 @@ class component_exe extends component
             component_types::VALUES_RELATED => $list->values_by_word($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id),
             component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg),
-            component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns($dbo, $msg, $cfg, false, true, $url_arr),
+            component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns(
+                $this->table_phrase($dbo, $cfg, $msg), $msg, $cfg, false, true, $url_arr),
+            component_types::TABLE_WITH_OWN_COLUMNS => $list->table_with_related_columns(
+                $this->table_phrase($dbo, $cfg, $msg), $msg, $cfg, false, true, $url_arr,
+                col_names: $this->column_names($cfg, $msg)),
             component_types::TRIPLE_LIST => $list->triples_of_types($dbo, $this->col_phrase, $msg, $cfg, $url_arr),
             component_types::VALUE_CHART => $list->value_chart($dbo, $msg, $cfg),
             component_types::VIEW_TAB_BOX => $list->view_tab_box($dbo, $msg, $test_mode, $url_arr),
@@ -585,6 +643,70 @@ class component_exe extends component
     {
         $suffix = '_' . $test_form_unique_id;
         return preg_replace('/(\s(?:name|id|for|list)=")([^"]+)(")/', '${1}${2}' . $suffix . '${3}', $html);
+    }
+
+    /**
+     * the phrase whose values a table component shows: the row phrase of the component, e.g. the
+     * consumption mix for the monthly mix table of a use case page, else the phrase of the page;
+     * the row phrase comes from the request cache or is loaded with its values
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
+     * @param data_object|null $cfg the request cache of the page with the phrases
+     * @param user_message $msg to report a problem of the load
+     * @return db_object|type_object|combine_named|sandbox_list|null the phrase of the table
+     */
+    private function table_phrase(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        ?data_object                                          $cfg,
+        user_message                                          $msg
+    ): db_object|type_object|combine_named|sandbox_list|null
+    {
+        return $this->layout_phrase($this->row_phrase, $cfg, $msg) ?? $dbo;
+    }
+
+    /**
+     * the names of the column phrases of a table component, e.g. lifetime and annual for the main
+     * results of a use case page, so that the table has its own columns instead of the system
+     * column tiers that are shared by all tables, e.g. of the start page
+     *
+     * @param data_object|null $cfg the request cache of the page with the phrases
+     * @param user_message $msg to report a problem of the load
+     * @return array the names of the column phrases, the main column first
+     */
+    private function column_names(?data_object $cfg, user_message $msg): array
+    {
+        $names = [];
+        foreach ([$this->col_phrase, $this->col_sub_phrase] as $id) {
+            $phr = $this->layout_phrase($id, $cfg, $msg);
+            if ($phr != null) {
+                $names[] = $phr->name();
+            }
+        }
+        return $names;
+    }
+
+    /**
+     * a layout phrase of the component, e.g. the row or a column phrase, from the request cache
+     * or loaded with its values
+     *
+     * @param int|null $id the phrase id of the layout phrase
+     * @param data_object|null $cfg the request cache of the page with the phrases
+     * @param user_message $msg to report a problem of the load
+     * @return word|triple|null the phrase or null if the component has no such phrase
+     */
+    private function layout_phrase(?int $id, ?data_object $cfg, user_message $msg): word|triple|null
+    {
+        $result = null;
+        if ($id != null and $id != 0) {
+            if ($cfg?->phr_lst->has_id($id)) {
+                $result = $cfg->phr_lst->get($id)->obj();
+            } elseif ($cfg?->online) {
+                // a triple is a phrase with a negative id, but its own id in the api
+                $result = $id < 0 ? new triple() : new word();
+                $result->load_by_id_with_related(abs($id), $msg);
+            }
+        }
+        return $result;
     }
 
 }

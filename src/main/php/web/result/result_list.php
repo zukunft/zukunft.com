@@ -204,9 +204,10 @@ class result_list extends sandbox_list_value
     ): bool
     {
         $result = false;
-        if (!in_array($to_add->id(), $this->id_lst())) {
+        // the id index of the list finds a double without scanning the list, and add_direct keeps
+        // it up to date
+        if (!$this->has_id($to_add->id() ?? 0)) {
             $this->add_direct($to_add);
-            $this->set_hash_dirty();
             $result = true;
         }
         return $result;
@@ -267,19 +268,26 @@ class result_list extends sandbox_list_value
      */
 
     /**
-     * sort this result list in place so that the result with the highest number is first and the
-     * order is always deterministic, so the html order never depends on the api/db row order
-     * (see docs/llm/frontend.md); number first, then the group name so results with the same number
-     * keep a stable order that does not depend on the volatile result (group) id (which is packed
-     * from the phrase db ids and shifts between database rebuilds), mirroring value_list::sort_by_impact
+     * sort this result list in place in the preferred order of numbers (see sandbox_value::sorted),
+     * so the html order never depends on the api/db row order nor on the group id
+     *
+     * @param user_message $msg to report a problem of the phrase types that name the unit
      * @return void
      */
-    function sort_by_number(): void
+    function sort_by_impact(user_message $msg): void
     {
-        $lst = $this->lst();
-        usort($lst, fn(result $a, result $b) => $b->number() <=> $a->number()
-            ?: strcmp($a->name() ?? '', $b->name() ?? ''));
-        $this->set_lst($lst);
+        $this->set_lst($this->sorted_by_impact($msg));
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the phrase types that name the unit
+     * @return result[] the results of this list in the preferred order of numbers (see
+     *                  sandbox_value::sorted), the list itself unchanged, e.g. to number the
+     *                  sources of the operands of a page
+     */
+    function sorted_by_impact(user_message $msg): array
+    {
+        return sandbox_value::sorted($this->lst(), $msg);
     }
 
     /**
@@ -295,7 +303,7 @@ class result_list extends sandbox_list_value
         ?int         $page = null
     ): string
     {
-        $this->sort_by_number();
+        $this->sort_by_impact($msg);
         return parent::list($msg, $context_phr_lst, $url_arr, $style, $limit, $page);
     }
 
@@ -327,12 +335,13 @@ class result_list extends sandbox_list_value
      */
 
     /**
+     * @param user_message $msg to report a problem of the phrase types that name the unit of the sort
      * @return string with a list of the result names with html links
      * ex. names_linked
      */
-    function display(): string
+    function display(user_message $msg): string
     {
-        $this->sort_by_number();
+        $this->sort_by_impact($msg);
         $results = array();
         foreach ($this->lst() as $res) {
             $results[] = $res->display();
@@ -357,8 +366,9 @@ class result_list extends sandbox_list_value
      */
     protected function names_linked(array $url_arr = [], int $limit = config::LIMIT_NAME_LIST): array
     {
-        // sort first so the limited subset and its order do not depend on the api/db row order
-        $this->sort_by_number();
+        // a name list like name_link of the parent, so sorted by name (docs/llm/frontend.md); sorted
+        // first so the limited subset and its order do not depend on the api/db row order
+        $this->sort_by_name();
         $result = array();
         $i = 0;
         foreach ($this->lst() as $res) {
@@ -371,15 +381,16 @@ class result_list extends sandbox_list_value
     }
 
     /**
+     * @param user_message $msg to report a problem of the phrase types that name the unit of the sort
      * @param phrase_list|null $context_phr_lst the phrases the reader assumes and that are left out of the header
      * @return string the html code to show the results as a table to the user
      */
-    function table(?phrase_list $context_phr_lst = null): string
+    function table(user_message $msg, ?phrase_list $context_phr_lst = null): string
     {
         $html = new html_base();
 
-        // sort so the highest number is shown first and the row order is always deterministic
-        $this->sort_by_number();
+        // sort in the preferred order of numbers, so the row order is always deterministic
+        $this->sort_by_impact($msg);
 
         // prepare to show where the user uses different word than a normal viewer
         $row_nbr = 0;

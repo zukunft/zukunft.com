@@ -1753,6 +1753,102 @@ class test_phrases
      * @param phrase_list $lst tbe backend list to convert
      * @return phrase_list_ui the converted frontend list
      */
+    /**
+     * @return phrase_list_ui the field types of process_catch_fields.json with the inhabitants as a
+     *         number field and the city as a phrase selector of the page Zurich, which uses Bern
+     */
+    function list_input_fields_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_city()->phrase());
+        $lst->add($t_wrd->word_bern()->phrase());
+        $lst->add($t_trp->field_number_with_limits()->phrase());
+        $lst->add($t_trp->field_phrase_selector_type()->phrase());
+        $lst->add($t_trp->field_inhabitants()->phrase());
+        $lst->add($t_trp->field_city()->phrase());
+        $lst->add($t_trp->zh_uses_bern()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases of the input fields with the year 2019 as the field value phrase of the inhabitants
+     * @return phrase_list_ui the input field phrases with the field value phrase triples
+     */
+    function list_input_field_value_phrases_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_2019()->phrase());
+        $lst->add($t_wrd->word_2020()->phrase());
+        $lst->add($t_trp->field_number_with_limits()->phrase());
+        $lst->add($t_trp->field_inhabitants()->phrase());
+        $lst->add($t_trp->field_value_phrases()->phrase());
+        $lst->add($t_trp->inhabitants_input_year()->phrase());
+        $lst->add($t_trp->inhabitants_field_value_phrase()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculator reader test with the page phrase
+     *         Zurich (city), which is built from Zurich, the phrases of the calculator and Bern (city)
+     */
+    function list_calculator_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        foreach ([$t_wrd->word_zh(), $t_wrd->word_city(), $t_wrd->word_canton(), $t_wrd->word_bern(),
+                     $t_wrd->word_inhabitant(), $t_wrd->word_2019(), $t_wrd->word_2020(),
+                     $t_trp->zh_city(), $t_trp->triple_bern(), ...$t_trp->calculator_zh()] as $obj) {
+            $lst->add($obj->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculator input test: the reader test with
+     *         the inhabitants as a number field and the canton as a phrase selector
+     */
+    function list_calculator_input_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui([]);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculation result test: the calculator
+     *         input test with the result column, the signed row group and the detail table
+     */
+    function list_calculator_result_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_result());
+    }
+
+    /**
+     * @param array $extra the triples that a test adds to the calculator input test
+     * @return phrase_list_ui the request cache of the calculator input test with the given triples
+     */
+    private function calculator_input_ui(array $extra): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        foreach ([$t_wrd->word_zh(), $t_wrd->word_city(), $t_wrd->word_canton(), $t_wrd->word_bern(),
+                     $t_wrd->word_inhabitant(), $t_wrd->word_2019(), $t_wrd->word_2020(),
+                     $t_trp->zh_city(), $t_trp->triple_bern(), ...$t_trp->calculator_zh(),
+                     $t_trp->field_number_with_limits(), $t_trp->field_phrase_selector_type(),
+                     $t_trp->field_inhabitants(), ...$t_trp->calculator_zh_input(), ...$extra] as $obj) {
+            $lst->add($obj->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
     private function ui_list(phrase_list $lst): phrase_list_ui
     {
         return new phrase_list_ui($lst->api_json([api_types::INCL_PHRASES]));

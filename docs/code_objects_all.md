@@ -84,6 +84,7 @@ the object structure is:
 ├── triple_db - the database const for triple tables
 ├── word_db - the database const for word tables
 ├── apiShared - constants used for the backend to frontend api of zukunft.com
+├── arithmeticShared - calculate a text with numbers, the four basic operations and brackets
 ├── expressionShared - common parts of the formula expressing handling used in front- and backend
 ├── charsShared - const symbols used for the formula expressions
 ├── componentsShared - all component code id used in the code and some with name, id and comment used by the system
@@ -401,6 +402,7 @@ the object structure is:
 ├── view_stylesShared - db based ENUM of the view and component styles
 ├── view_typesShared - db based ENUM of the view types
 ├── url_varShared - all names used for the url and the form field names
+├── calculatorUi - read the calculator triples of a page phrase
 ├── ui_baseUi
 │   ├── ui_im_exportUi - html user interface components for im- and export
 │   ├── ui_listUi - create the html for listed related to an object
@@ -414,6 +416,7 @@ the object structure is:
 ├── defUi - general frontend definitions
 ├── iconsUi - the css class strings of the icons used in the frontend
 ├── pathsUi - set the path const for the frontend php scripts
+├── formula_calcUi - repeat the calculation of a result with the values of a page
 ├── frontendUi - $ui - the main html frontend application
 ├── config_nodeUi - $cfn - one key of the read only tree of the system configuration
 ├── config_treeUi - $cft - the tree of the system configuration in config.yaml

@@ -580,10 +580,49 @@ class view_ui_tests
         $t->assert_text_order($test_name, $cols_html, components::COL_FIRST_NAME, components::COL_SECOND_NAME);
         $test_name = 'the side-or-below column is shown before the side-or-last-below column';
         $t->assert_text_order($test_name, $cols_html, components::COL_THIRD_NAME, components::COL_FOURTH_NAME);
-        // rendering the plain view builds the complete component html, so a semi page timeout is used
+        // the plain view has only a word component, because a calculated component like the
+        // matrix loads and renders the start page table, which is not what these tests check
         $test_name = 'without the side or below position types no minimal width is set';
-        $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
-        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $msk_plain = new view($t_msk->view_with_word_component()->api_json([api_types::INCL_COMPONENTS]));
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width');
+
+        $t->subheader($ts . 'page class');
+        // the style of a view is the class of the div around its components e.g. the grid of a use case page
+        $test_name = 'the view style is the page class around the components';
+        $msk_plain->set_style_id(view_styles::USE_CASE_ID);
+        $t->assert_text_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
+            '<div class="' . view_styles::USE_CASE . '">');
+        $test_name = 'a view without a style adds no page class';
+        $msk_plain->set_style_id();
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
+            view_styles::USE_CASE);
+
+        $t->subheader($ts . 'use case frame');
+        // a use case page like the calculator shows its first row as the header and its
+        // side-or-below group as one grid of the input panel beside the result panel
+        $msk_uc = new view($t_msk->view_use_case()->api_json([api_types::INCL_COMPONENTS]));
+        $msk_uc->set_style_id(view_styles::USE_CASE_ID);
+        $uc_html = $msk_uc->show($wrd, $msg, $ui->dto, '', true);
+        $test_name = 'the first row of a use case page is the header';
+        $t->assert_text_order($test_name, $uc_html, '<' . html_base::HEADER . '>', components::COL_FIRST_NAME);
+        $test_name = '... above the grid';
+        $t->assert_text_order($test_name, $uc_html, components::COL_FIRST_NAME, '<div class="' . styles::GRID . '">');
+        $test_name = 'the first column of the group is the input panel';
+        $t->assert_text_order($test_name, $uc_html,
+            '<' . html_base::ASIDE . ' class="' . styles::PANEL . '">', components::COL_SECOND_NAME);
+        $test_name = 'the last column of the group is the result panel';
+        $t->assert_text_order($test_name, $uc_html,
+            '<' . html_base::SECTION . ' class="' . styles::PANEL . '">', components::COL_FOURTH_NAME);
+        $test_name = '... without the bootstrap columns';
+        $t->assert_text_not_contains($test_name, $uc_html, 'min-width');
+        // negative: the same components without the use case style keep the bootstrap rows and columns
+        $msk_uc->set_style_id();
+        $plain_html = $msk_uc->show($wrd, $msg, $ui->dto, '', true);
+        $test_name = 'a view without the use case style has no header';
+        $t->assert_text_not_contains($test_name, $plain_html, '<' . html_base::HEADER . '>');
+        $test_name = '... and no grid but the bootstrap columns';
+        $t->assert_text_not_contains($test_name, $plain_html, '<div class="' . styles::GRID . '">');
+        $t->assert_text_contains($test_name, $plain_html, 'min-width');
 
 
         $t->subheader($ts . 'same line');

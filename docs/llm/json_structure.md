@@ -99,13 +99,18 @@ out of `cfg/const/files.php`:
 2. `SAMPLE_VIEW_DATA_FILES` — the demo files that every database setup needs to
    render the seed views, e.g. `zurich`, `global_warming` and the `problem_*`
    file of each start page ranking row
-3. `USE_CASE_FILES` — the last step of the database setup
-4. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
+3. `USE_CASE_FILES` — the use cases that build on the start page phrases
+4. `SYSTEM_DATA_APPENDED_FILES` — the system data added after the test ids have
+   been pinned, e.g. `process_catch_fields` and `calculator_keywords`
+5. `USE_CASE_FILES_APPENDED` — the use cases that build on the appended system
+   data, e.g. `pv_lifetime_balance` with the calculator keywords; the last step
+   of the database setup
+6. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
    const block itself labels *"loaded at the end not to change the id of objects
    used by the system tests"*
-5. `BASE_DATA_PATH_FILES` — the per-topic demo files
+7. `BASE_DATA_PATH_FILES` — the per-topic demo files
 
-Only the first three are imported by every setup; the rest is added by
+Only the first five are imported by every setup; the rest is added by
 `test/test_full_load.php`.
 
 Importing more data on every setup is not a cost to avoid: it keeps the
@@ -146,7 +151,7 @@ in a second and `gas of climate` in a third.
 
 ### Use case files never carry a `code_id` and import for a normal user
 
-A use case file (`files::USE_CASE_FILES`, `src/main/resources/messages/use_cases/`,
+A use case file (`files::USE_CASE_FILES` or `files::USE_CASE_FILES_APPENDED`, `src/main/resources/messages/use_cases/`,
 e.g. `pv_switzerland_co2.json`) answers a question with the data — the kind of file
 any user may add. So it is user data, not system data:
 
@@ -164,10 +169,10 @@ any user may add. So it is user data, not system data:
   triple of the page, the values — and never by a code id or a database id: the
   code id does not exist, and the database id follows the import order, so it moves
   with every file imported before it. In the tests this means
-  `test_base::assert_view_by_name(views::CALCULATOR_NAME, $usr, new triple(),
+  `test_base::assert_view_by_name(views::COMPARISON_TABLE_NAME, $usr, new triple(),
   triple_names::PV_IN_SWITZERLAND, $cfg)` instead of `assert_view` with an id, a
   `triple_names::PV_IN_SWITZERLAND` name const **without** an `_ID` twin, and a
-  snapshot file named by the names (`calculator_triple_pv_in_switzerland.html`),
+  snapshot file named by the names (`comparison_table_triple_pv_in_switzerland.html`),
   so no re-baseline ever touches a use case test.
 - the unit test that runs the calc-validation of the file imports it as a **normal**
   user (`import_tests`), so a code id in the file fails the test — that is the
@@ -651,7 +656,7 @@ at the moment:
 | `is time jump for` | `time_jump` | the default time period |
 | `is term jump for` | `term_jump` | the default term jump |
 | `is measure type for` | `measure_type` | the default measure type |
-| `is follower of` | `follow` | **time** ordering: sequence / successor (2025 is follower of 2024) |
+| `is follower of` | `follow` | ordering: the successor in time (2025 is follower of 2024) or in a list (the next input of a calculator page) |
 | `is next main column after` | `before` | **table column** ordering: this main column follows the other main column and all columns explaining it |
 | `is explaining column for` | `after` | **table column** ordering: this column explains the other one, so it is shown between its main column and the next main column |
 | `term type needed` | `term_needed` | the formula needs the linked term type |

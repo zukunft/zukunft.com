@@ -18,7 +18,30 @@ client-side handler.
   entries in a list, and the `.<name>-menu` rules in `style_html.css` float the
   list below the label (the header menus and the "…" column menu of a value table).
 - Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
-  for a JS plugin, …) from a `web/` renderer.
+  for a JS plugin, …) from a `web/` renderer, except the calculator script below.
+
+### Javascript only for the calculator
+
+The one exception is a calculator page: if `config.yaml` allows it (user > default >
+frontend > use javascript > for calculator; `use javascript` itself stays false for
+every other page), the result panel (`system_page::calculation_result`) adds the
+calculator script, so that the results change as soon as an input changes:
+
+- The page gives the browser its calculation as **data**, never as code
+  (`ui_list::calculator_script`, `html_base::script_data`): the numbers by their html
+  id (`sandbox_value::html_id`), the calculation of each result as tokens
+  (`formula_calc::tokens`: numbers, `+ - * /`, brackets and the html id of each
+  operand, the same operands that the page calculation of PHP uses), the number that
+  each input sets and the number and format of each cell. A formula text is never
+  written into the page as script, so a formula cannot inject code.
+- The script is one static file, `src/main/resources/script/calculator.js`
+  (`files::CALCULATOR_SCRIPT`), loaded with `<script src>`; it has no inline handler
+  and evaluates only the tokens with the grammar of `shared/calc/arithmetic.php`.
+- The page stays complete without the script: the inputs are a normal form, the
+  cells show the numbers of the page calculation, and a browser without javascript
+  shows the same page as before.
+- Every cell of a number has a unique html id (a repeated number gets its count
+  behind the id), so the script can update each cell and the save can name it.
 
 A separate JavaScript frontend (likely Vue.js or React) is planned for later as
 its own app consuming the same api; that is a future, additional client and does
@@ -97,6 +120,8 @@ return the shared defaults. A `config` constructed anywhere else is an *empty*
 value list: `get_by()` silently returns the fallback instead of the user setting,
 and the per-request load from the backend is bypassed. The rule is enforced by
 `coding_rule_tests::php_web_config_from_cache_tests`.
+The steps from a new `config.yaml` key to the backend and frontend getter are
+in *Using a config.yaml setting in a script* in `docs/llm/architecture.md`.
 
 ### The pinned views of the static start page are written by the test run
 
@@ -162,6 +187,40 @@ config loads *after* the types, so the bootstrap calls
 `type_lists::reload_if_cache_denied` once the config is known. A caller that
 needs guaranteed fresh types (e.g. `ui_config::reload`, the test bootstrap)
 keeps using `load_type_lists` / `type_lists::load`.
+
+## The frontend calculates, a save job verifies — the double calculation check
+
+A page with inputs, e.g. the PV lifetime balance use case, calculates its
+results **in the frontend** from the values and formulas it has loaded via the
+api, so the user sees the effect of a changed input at once and without a
+write. The frontend never stores a result.
+
+When the user presses **save**, the inputs are written as values and a
+**backend job** repeats the calculation on the complete database. The job may
+use data the frontend did not have, e.g. a value of a phrase the page never
+loaded, a user overwrite or a newer measured number, and may collect missing
+data on the way. The results of the job are the ones stored.
+
+The frontend then **compares** the job results with its own. Every difference
+is shown to the user as a message that names the result and both numbers,
+never swallowed: a silent difference would hide either a value the frontend
+load missed or a formula the two sides evaluate differently, and both are
+defects to fix, not to average out. The same comparison is what a test
+asserts: the frontend numbers of a use case page and the stored results of
+its import must agree.
+
+The first half is in place: a value table loads the stored results of its
+phrase with the formulas that made them (`ui_list::add_phrase_results`) and
+repeats every calculation with the values and results of the page
+(`ui_list::check_results`, `formula_calc`): the phrase names of the formula
+are replaced by the numbers of the page the way the import validation does,
+values before results, within the context phrases that the result carries
+(`json_fields::CONTEXT`), and the text is calculated by the shared
+`arithmetic`. A stored number that differs from the page calculation is
+replaced on the page and reported with `msg_id::RESULT_DIFFERS_FROM_PAGE`; a
+result whose formula or values the page does not have keeps its stored number.
+The save with the backend job and its compare is the next step
+(`docs/llm/pending.md` "PV lifetime balance page").
 
 ## `frontend.php` boots the html frontend, `application.php` the api backend
 
@@ -315,9 +374,20 @@ Pick the key that matches the list's purpose and is reproducible:
   `phrase_list::sort_by_impact()`, `value_list::sort_by_impact()`; ties must
   still resolve deterministically, so fall back to name or id when impacts are
   equal.
+- **numbers** (values and results) unless the page names another order: the
+  bigger impact first, then the bigger number if the unit is the same, then the
+  name — `sandbox_value::sorted()`, used by `value_list::sort_by_impact()` and
+  `result_list::sort_by_impact()`; a list of only the names e.g.
+  `result_list::display_linked()` is a name list and sorted by name. Two numbers are compared only within
+  the same unit (unit, scaling and percent phrases), so the unit is a sort key
+  between the impact and the number, which keeps the order the same for every
+  compare. The name is the phrase names in alphabetic order, never the group
+  id, which is packed from the phrase database ids and changes with a new
+  database.
 - **name** for alphabetical pick lists and selectors.
 - **id** (or another stable unique field) as the last-resort tie-breaker so the
-  order is total, never partial.
+  order is total, never partial; not the group id of a value or a result (see
+  numbers above).
 
 ```php
 // right: sort, then render
@@ -355,6 +425,11 @@ only the page as a whole.
   literal, so an admin can tune how much a page shows.
 - The same holds for a new list component: if it can grow with the data, it needs
   a limit and a tail, even when it sits next to lists that already have one.
+- The one exception is the component style `all-rows` (`view_styles::ALL_ROWS`):
+  the author of a view sets it on a component whose rows are the content of the
+  page and cannot grow with the data, e.g. the result chain of a use case table,
+  and takes the responsibility for the page length. The renderer passes the list
+  size "all" to the component unless the url names a size (`component_exe`).
 
 When you add or change a page renderer, ask what the page looks like for the
 object with the *most* data, not for the test fixture.

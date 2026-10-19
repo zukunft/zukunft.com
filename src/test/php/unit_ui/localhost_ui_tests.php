@@ -92,7 +92,7 @@ class localhost_ui_tests
         //      until it is fixed the generous import timeout is used to avoid a false timeout
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::WORD_EDIT_ID . url_var::ADD_ID . word_names::MATH_ID);
-        $sys->times->switch(system_time_type::DEFAULT);
+        $sys->times->switch();
         $t->assert_text_contains(
             $test_name, $page, $mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER), test_base::TIMEOUT_LIMIT_IMPORT);
         // but with a login the same word edit view is shown
@@ -101,7 +101,7 @@ class localhost_ui_tests
         $page = $t->web_page_with_login(
             api::MAIN_SCRIPT_EXT . url_var::PAR . url_var::MASK . url_var::EQ . views::WORD_EDIT_ID
             . url_var::ADD_ID . word_names::MATH_ID);
-        $sys->times->switch(system_time_type::DEFAULT);
+        $sys->times->switch();
         if ($page != '') {
             // the login and localhost view render share the slow render path noted above,
             // so the generous import timeout is used to avoid a false timeout
@@ -110,7 +110,7 @@ class localhost_ui_tests
         $test_name = 'verb add by url';
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = file_get_contents(api::URL_DEV . views::VERB_ADD_ID);
-        $sys->times->switch(system_time_type::DEFAULT);
+        $sys->times->switch();
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $page, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), test_base::TIMEOUT_LOCALHOST);
 
@@ -124,7 +124,7 @@ class localhost_ui_tests
             . url_var::ADD . url_var::DISPLAY_LIST_RANGE . url_var::EQ . url_var::TRUE;
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = (string)file_get_contents($url);
-        $sys->times->switch(system_time_type::DEFAULT);
+        $sys->times->switch();
         // the pod links root relative, so link to the pod like the other views_by_id snapshots
         $t->assert_html_page($test_name, $t->link_to_pod($page, THIS_URL),
             system_view_ui_tests::START_PAGE_DETAILS_FILE, test_base::TIMEOUT_LIMIT_IMPORT);

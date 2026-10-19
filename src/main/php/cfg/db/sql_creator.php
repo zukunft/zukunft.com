@@ -111,6 +111,8 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'group_id_url.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+// loaded by sql_db.php, because system_time_type extends type_object, which is still being included here
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
@@ -179,6 +181,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use DateTime;
 
 class sql_creator
@@ -1287,6 +1290,9 @@ class sql_creator
         bool $num_id = false
     ): string
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::SQL_CREATE);
         // check if the minimum parameters are set
         if ($this->query_name == '') {
             if ($par_offset > 0 or $this->sub_query) {
@@ -1310,10 +1316,10 @@ class sql_creator
         $sql .= $fields . $from . $this->join . $where . $this->order . $this->get_page();
 
         if ($prepare) {
-            return $this->end_sql($sql);
-        } else {
-            return $sql;
+            $sql = $this->end_sql($sql);
         }
+        $sys->times->switch();
+        return $sql;
     }
 
     /**

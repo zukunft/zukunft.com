@@ -272,6 +272,22 @@ class phrase_list_tests
         $phr_lst_ui = $t_phr->phrase_list_ui();
         $t->assert($test_name, $phr_lst_ui->column_names(), []);
 
+        // a table asks for the phrase of each column in several steps, so it gets all column
+        // phrases with one walk over the list, keyed by the column name
+        $test_name = 'the column phrases are keyed by the column names';
+        $col_phrs = $t_phr->list_columns_partly_explained_ui()->column_phrases();
+        $col_names = $t_phr->list_columns_partly_explained_ui()->column_names();
+        sort($col_names);
+        $col_keys = array_keys($col_phrs);
+        sort($col_keys);
+        $t->assert($test_name, $col_keys, $col_names);
+        $test_name = '... and a column built from a triple is the triple';
+        $col_phr = $t_phr->list_columns_potential_loss_ui()->column_phrases()[triple_names::POTENTIAL_LOSS] ?? null;
+        $t->assert_true($test_name, $col_phr?->is_triple() ?? false);
+        // negative: a list without a column definition has no column phrase
+        $test_name = 'a list without a column definition has no column phrase';
+        $t->assert($test_name, $t_phr->phrase_list_ui()->column_phrases(), []);
+
         // the tier of a column says on which screens it is shown, so the table can hide a column
         // per screen size instead of dropping it; the "loss" and the "potential loss" column are
         // defined as mayor columns, the "reason" column as a main and the "cost" column as a
@@ -419,6 +435,17 @@ class phrase_list_tests
         // list links other phrases to it
         $test_name = 'a phrase that links to no phrase of the list has no parent';
         $t->assert($test_name, $phr_lst_ui->parent_names($t_trp->global_problem_ui()->phrase()), []);
+
+        // the copy with the link index for the build of one table returns the same names as
+        // the list, because the index is created by the same rules in one pass over the list
+        $test_name = 'the copy with the link index returns the same parents';
+        $idx_lst = $phr_lst_ui->with_link_index();
+        $t->assert($test_name, $idx_lst->parent_names($phr), [triple_names::GLOBAL_PROBLEM, word_names::POTENTIAL]);
+        $test_name = '... and the same children';
+        $t->assert($test_name, $idx_lst->child_names($t_trp->global_problem_ui()->phrase()),
+            $phr_lst_ui->child_names($t_trp->global_problem_ui()->phrase()));
+        $test_name = '... and no parent for a phrase that links to nothing';
+        $t->assert($test_name, $idx_lst->parent_names($t_trp->global_problem_ui()->phrase()), []);
 
 
 

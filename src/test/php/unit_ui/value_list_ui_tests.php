@@ -39,11 +39,13 @@ use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\table_chart;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
@@ -170,7 +172,7 @@ class value_list_ui_tests
 
         $t->subheader($ts . 'sort by impact');
         $impact_lst = $t_val->value_list_zh_impact_ui();
-        $impact_lst->sort_by_impact();
+        $impact_lst->sort_by_impact($msg_ui);
         $test_name = 'the value of the phrase with the highest impact is first';
         $t->assert_text_order($test_name, $impact_lst->list($msg_ui), triple_names::COMPANY_ZURICH, triple_names::CITY_ZH_NAME);
         // two values with the same impact and number must not be ordered by the volatile group id
@@ -178,8 +180,32 @@ class value_list_ui_tests
         // order stays the same across test database rebuilds ("Zurich" sorts before "city")
         $test_name = 'a number tie is broken by the group name for a stable order';
         $t->assert_text_order($test_name, $t_val->value_list_number_tie_ui()->list($msg_ui), word_names::ZH, word_names::CITY);
+        // a number is compared only with a number of the same unit, so the values are grouped by
+        // their unit (gram before kWh) and within the unit the bigger number is first
+        $unit_lst = $t_val->value_list_sort_units_ui();
+        $gram_val = $unit_lst->get_by_names([word_names::GRAM]);
+        $big_kwh_val = $unit_lst->get_by_names([word_names::CANTON, word_names::KWH]);
+        $small_kwh_val = $unit_lst->get_by_names([word_names::ZH, word_names::KWH]);
+        $unit_lst->sort_by_impact($msg_ui);
+        $test_name = 'the numbers are compared only within the same unit';
+        $t->assert($test_name, array_map(fn($val) => $val->name(), $unit_lst->lst()),
+            [$gram_val->name(), $big_kwh_val->name(), $small_kwh_val->name()]);
         $test_name = 'sort by impact of an empty value list renders nothing';
         $t->assert($test_name, new value_list_ui()->list($msg_ui), '');
+
+        // a value is added once, also if a filter finds it twice e.g. by the page phrase and by a child
+        $t->subheader($ts . 'add');
+        $add_lst = new value_list_ui();
+        $val = $impact_lst->lst()[0];
+        $add_lst->add($val, $msg_ui);
+        $test_name = 'a value that is already in the list is not added again';
+        $t->assert_false($test_name, $add_lst->add($val, $msg_ui));
+        $test_name = '... so the list keeps one entry';
+        $t->assert($test_name, $add_lst->count(), 1);
+        // negative: a value without an id is not yet in the database, so it is never a double
+        $test_name = 'a second value without an id is added';
+        $add_lst->add(new value_ui(), $msg_ui);
+        $t->assert_true($test_name, $add_lst->add(new value_ui(), $msg_ui));
 
         $t->subheader($ts . 'most relevant');
         // a limit above the fixture size, so that these blocks test the grouping and the order;
@@ -863,7 +889,13 @@ class value_list_ui_tests
             $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $desc_url);
         $test_name = 'the biggest number of another column first changes the impact order';
         $t->assert_text_order($test_name, $tbl_desc, word_names::DISINFORMATION, word_names::HEALTH);
-        $tbl_impact = $t_val->value_list_solution_prio_ui()->table_by_related_columns(
+        // the solution basic income has the highest impact, so the impact order puts its problem
+        // wealth concentration first; the numbers are no impact, because the loss and the gain have
+        // different units, which the preferred order never compares (docs/llm/frontend.md)
+        $rank_impact_lst = $t_val->value_list_solution_prio_ui();
+        $rank_impact_lst->get_by_names([triple_names::WEALTH_CONCENTRATION, triple_names::BASIC_INCOME])->phr_lst()
+            ->get_by_name(triple_names::BASIC_INCOME, $msg_ui)->obj()->impact = impacts::MAX;
+        $tbl_impact = $rank_impact_lst->table_by_related_columns(
             $msg_ui, $rank_ctx, $rank_lst->column_names(), false, true, $rank_lst, value_list_ui::LIMIT_ALL, $rank_url);
         $test_name = '... which the table without an order keeps';
         $t->assert_text_order($test_name, $tbl_impact, word_names::HEALTH, word_names::DISINFORMATION);

@@ -408,6 +408,9 @@ class triple extends sandbox_code_id
         if (array_key_exists(json_fields::CONDITION_ID, $json_array)) {
             $this->condition_id = $json_array[json_fields::CONDITION_ID];
         }
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $this->view_id = $json_array[json_fields::VIEW];
+        }
         if (array_key_exists(json_fields::CONDITION, $json_array)) {
             $frm = new formula();
             $frm->api_mapper($json_array[json_fields::CONDITION], $msg);
@@ -496,6 +499,9 @@ class triple extends sandbox_code_id
         // usage and impact are included here because to allow
         // at least admin users to overwrite the impact and usage via GUI
         $vars[json_fields::IMPACT] = $this->impact;
+        if ($this->view_id != null) {
+            $vars[json_fields::VIEW] = $this->view_id;
+        }
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array($typ_lst, $msg);
         }
@@ -1028,6 +1034,14 @@ class triple extends sandbox_code_id
     function is_time(user_message $msg): bool
     {
         return $this->is_type(phrase_types::TIME, $msg);
+    }
+
+    /**
+     * @return bool true if the triple says how a number has been found e.g. a named survey method
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
     }
 
     /**

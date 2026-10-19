@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test - zukunft.com
+            example PV installation - Calculator - zukunft.com
         </title>
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
@@ -132,215 +132,719 @@
             </div>
         </nav>
         <main class="main-container">
-            <div class="row col-md-12">
-                <div class="row col-md-12">
-                    <div class="heading-line">
-                        <h4 class="heading-inline">
-                            example PV installation
-                        </h4>
-                        <a href="http://localhost/http/view.php?m=51&amp;id=2485" title="rename word" class="heading-icon-inline">
-                            <i class="fas fa-edit">
-                            </i>
-                        </a>
-                    </div>
-                    <div class="subtitle">
-                        (
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2457" title="a photovoltaic system on a building: the modules, the inverter and, if present, the battery">
-                            PV installation
-                        </a>
-                        <a href="http://localhost/http/view.php?m=10&amp;id=4" title="to assign a sub kind to a parent category e.g. the quadratic formula is a kind of formula">
-                            kind of
-                        </a>
-                        <a href="http://localhost/http/view.php?m=3&amp;id=1776">
-                            example
-                        </a>
-                        )
-                    </div>
+            <div class="use-case">
+                <header>
+                    <h4>
+                        PV lifetime CO₂ balance
+                    </h4>
+                    <p>
+                        Rooftop photovoltaic installation in the Swiss plateau: electricity produced over the lifetime and greenhouse-gas savings against the Swiss consumer mix and against a replacement (import) mix. Edit the four inputs; all assumptions are open below them.
+                    </p>
+                </header>
+                <div class="grid">
+                    <aside class="panel">
+                        <div class="inputs">
+                            <h2>
+                                Inputs
+                            </h2>
+                            <div class="field">
+                                <label for="n-2528">
+                                    System size
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2528" id="n-2528" value="10" min="0.5" step="0.5" form="calculator">
+                                    <input type="hidden" name="g-2528" value="499056488935885305" form="calculator">
+                                    <span class="unit">
+                                        kWp
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2526_form_select">
+                                    Orientation
+                                </label>
+                                <div class="form-group ">
+                                    <select class="form-control" name="n-2526" form="calculator" id="n-2526_form_select" >
+                                        <option value="1"  >
+                                            South, ~30° tilt
+                                        </option>
+                                        <option value="0.95"  >
+                                            South-east / south-west, ~30°
+                                        </option>
+                                        <option value="0.85"  selected >
+                                            East-west split, flat tilt
+                                        </option>
+                                        <option value="0.82"  >
+                                            East or west only, ~30°
+                                        </option>
+                                        <option value="0.88"  >
+                                            Flat (0°)
+                                        </option>
+                                        <option value="0.59"  >
+                                            North, ~30°
+                                        </option>
+                                    </select>
+                                </div>
+                                <span class="hint">
+                                    Yield factor relative to south 30° [1]
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="n-2530">
+                                    Battery capacity (usable)
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2530" id="n-2530" value="10" min="0" step="1" form="calculator">
+                                    <input type="hidden" name="g-2530" value="88665143963191801" form="calculator">
+                                    <span class="unit">
+                                        kWh
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2537">
+                                    Local electricity consumption
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2537" id="n-2537" value="4500" min="0" step="100" form="calculator">
+                                    <input type="hidden" name="g-2537" value="bt-bd-/u+2M+2v+" form="calculator">
+                                    <span class="unit">
+                                        kWh
+                                    </span>
+                                </div>
+                            </div>
+                            <form action="http://localhost/http/view.php" id="calculator">
+                                <input type="hidden" name="m" value="calculator">
+                                <input type="hidden" name="id" value="-2553">
+                                <button type="submit" class="btn btn-outline-primary btn-space">
+                                    Save
+                                </button>
+                            </form>
+                        </div>
+                        <details>
+                            <summary>
+                                Assumptions
+                            </summary>
+                            <div class="field">
+                                <label for="n-1983">
+                                    Specific yield, south 30°
+                                    <span class="tag m">
+                                        measured
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-1983" id="n-1983" value="976" form="calculator">
+                                    <input type="hidden" name="g-1983" value="188026489311037377" form="calculator">
+                                    <span class="unit">
+                                        kWh per kWp
+                                    </span>
+                                </div>
+                                <span class="hint">
+                                    [2]
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="n801">
+                                    Lifetime
+                                    <span class="tag m">
+                                        measured
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n801" id="n801" value="30" form="calculator">
+                                    <input type="hidden" name="g801" value="3440275720660" form="calculator">
+                                </div>
+                                <span class="hint">
+                                    [2]
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="n-2555">
+                                    PV life-cycle emissions
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2555" id="n-2555" form="calculator">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-1958">
+                                    Swiss consumer mix, annual
+                                    <span class="tag a">
+                                        assumed
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-1958" id="n-1958" value="79.2" form="calculator">
+                                    <input type="hidden" name="g-1958" value="Sf-Sd-Sa-SZ-PH+" form="calculator">
+                                    <span class="unit">
+                                        gram per kWh
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2546_form_select">
+                                    Replacement mix
+                                </label>
+                                <div class="form-group ">
+                                    <select class="form-control" name="n-2546" form="calculator" id="n-2546_form_select" >
+                                        <option value="395"  >
+                                            Production mix
+                                        </option>
+                                        <option value="523"  selected >
+                                            Residual mix
+                                        </option>
+                                    </select>
+                                </div>
+                                <span class="hint">
+                                    [4]
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="n-2541">
+                                    Load share during PV hours
+                                    <span class="tag a">
+                                        assumed 0.6
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2541" id="n-2541" value="0.35" form="calculator">
+                                    <input type="hidden" name="g-2541" value="bt-bh-bd-0U+2v+" form="calculator">
+                                    <span class="unit">
+                                        percent
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2533">
+                                    Battery round-trip efficiency
+                                    <span class="tag a">
+                                        assumed 0.7
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2533" id="n-2533" value="0.9" form="calculator">
+                                    <input type="hidden" name="g-2533" value="551410832301394405" form="calculator">
+                                    <span class="unit">
+                                        percent
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2536">
+                                    Battery production emissions
+                                    <span class="tag a">
+                                        assumed
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2536" id="n-2536" value="100" form="calculator">
+                                    <input type="hidden" name="g-2536" value="551410834603805160" form="calculator">
+                                    <span class="unit">
+                                        kg per kWh
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="n-2535">
+                                    Battery lifetime
+                                    <span class="tag a">
+                                        assumed
+                                    </span>
+                                </label>
+                                <div class="row">
+                                    <input type="number" name="n-2535" id="n-2535" value="15" form="calculator">
+                                    <input type="hidden" name="g-2535" value="551410832297789927" form="calculator">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="nSf-Se-Sb-4w+Cj+Nu+PH+">
+                                    CO2-eq electricity Europe life cycle production mix
+                                    <span class="tag">
+                                        measured
+                                    </span>
+                                </label>
+                                <input type="number" name="nSf-Se-Sb-4w+Cj+Nu+PH+" id="nSf-Se-Sb-4w+Cj+Nu+PH+" value="395" form="calculator">
+                                <span class="unit">
+                                    gram per kWh
+                                </span>
+                                <span class="hint">
+                                    treeze monthly electricity mixes 2025
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="nbJ-Sf-Se-Cj+Nu+PH+">
+                                    CO2-eq electricity Europe life cycle residual mix
+                                    <span class="tag">
+                                        measured
+                                    </span>
+                                </label>
+                                <input type="number" name="nbJ-Sf-Se-Cj+Nu+PH+" id="nbJ-Sf-Se-Cj+Nu+PH+" value="523" form="calculator">
+                                <span class="unit">
+                                    gram per kWh
+                                </span>
+                                <span class="hint">
+                                    Swissolar PV fact sheet 2024
+                                </span>
+                            </div>
+                            <div class="field">
+                                <label for="n689507830239">
+                                    east-west yield factor
+                                    <span class="tag">
+                                        measured
+                                    </span>
+                                </label>
+                                <input type="number" name="n689507830239" id="n689507830239" value="0.85" form="calculator">
+                                <span class="unit">
+                                    percent
+                                </span>
+                                <span class="hint">
+                                    gruenes.haus tilt and orientation table
+                                </span>
+                            </div>
+                        </details>
+                    </aside>
+                    <section class="panel">
+                        <h2>
+                            Main results over the lifetime
+                        </h2>
+                        <div class="scroll">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Result
+                                        </th>
+                                        <th class="n">
+                                            Lifetime
+                                        </th>
+                                        <th class="n">
+                                            Per year
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="sec">
+                                        <td colspan="3">
+                                            Electricity
+                                        </td>
+                                    </tr>
+                                    <tr class="key">
+                                        <td>
+                                            PV production
+                                        </td>
+                                        <td class="n" id="res-225461982644505081">
+                                            248'880 kWh
+                                        </td>
+                                        <td class="n" id="res-78813519778253305">
+                                            8'296 kWh
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Used directly
+                                        </td>
+                                        <td class="n" id="res-225461982645094905">
+                                            47'250 kWh
+                                        </td>
+                                        <td class="n" id="val-bt-be-/u+2M+3B+">
+                                            1'575 kWh
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Used via battery
+                                            <span class="sub">
+                                                after losses
+                                            </span>
+                                        </td>
+                                        <td class="n" id="res-225461982644701689">
+                                            66'713 kWh
+                                        </td>
+                                        <td class="n" id="res-78813519778449913">
+                                            2'224 kWh
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Exported to grid
+                                        </td>
+                                        <td class="n" id="res-283448741824465401">
+                                            127'504 kWh
+                                        </td>
+                                        <td class="n" id="res-283446504146504185">
+                                            4'250 kWh
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Battery losses
+                                        </td>
+                                        <td class="n" id="res-225461982645488121">
+                                            7'413 kWh
+                                        </td>
+                                        <td class="n" id="res-78813519779236345">
+                                            247.09 kWh
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Grid import still needed
+                                        </td>
+                                        <td class="n" id="res-225461982645160441">
+                                            21'037 kWh
+                                        </td>
+                                        <td class="n" id="res-78813519778908665">
+                                            701.23 kWh
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Self-consumption rate
+                                            <span class="sub">
+                                                share of PV used on site
+                                            </span>
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                    </tr>
+                                    <tr class="key">
+                                        <td>
+                                            Autarky
+                                            <span class="sub">
+                                                share of load covered by PV
+                                            </span>
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                    </tr>
+                                    <tr class="sec">
+                                        <td colspan="3">
+                                            Production emissions
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            PV system
+                                        </td>
+                                        <td class="n" id="res-bu-bt-Q+AV+PH+">
+                                            10'482 kg
+                                        </td>
+                                        <td class="n" id="res-bu-bt-Q+2M+PH+">
+                                            349.41 kg
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Battery
+                                        </td>
+                                        <td class="n" id="res-bw-bt-Q+AV+PH+">
+                                            2'000 kg
+                                        </td>
+                                        <td class="n" id="res-bw-bt-Q+2M+PH+">
+                                            66.67 kg
+                                        </td>
+                                    </tr>
+                                    <tr class="sec">
+                                        <td colspan="3">
+                                            CO₂-eq saved, net of production emissions
+                                        </td>
+                                    </tr>
+                                    <tr class="key">
+                                        <td>
+                                            vs. Swiss consumer mix, annual
+                                        </td>
+                                        <td class="n" id="res-bt-bO-Sa-Q+AV+PH+">
+                                            <span class="pos">
+                                                18'426 kg
+                                            </span>
+                                        </td>
+                                        <td class="n" id="res-bt-bO-Sa-Q+2M+PH+">
+                                            <span class="pos">
+                                                614.19 kg
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="key">
+                                        <td>
+                                            vs. Swiss consumer mix, monthly
+                                        </td>
+                                        <td class="n" id="res-bt-bO-bK-Q+AV+PH+">
+                                            <span class="pos">
+                                                13'072 kg
+                                            </span>
+                                        </td>
+                                        <td class="n" id="res-bt-bO-bK-Q+2M+PH+">
+                                            <span class="pos">
+                                                435.74 kg
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr class="key">
+                                        <td>
+                                            vs. replacement mix
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                        <td class="n">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Effect of the battery
+                                            <span class="sub">
+                                                vs. same PV without battery, annual Swiss mix
+                                            </span>
+                                        </td>
+                                        <td class="n" id="res-bt-bl-Sa-Q+AV+PH+">
+                                            <span class="neg">
+                                                -2'949 kg
+                                            </span>
+                                        </td>
+                                        <td class="n" id="res-bt-bl-Sa-Q+2M+PH+">
+                                            <span class="neg">
+                                                -98.29 kg
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <details>
+                            <summary>
+                                Monthly details and sources
+                            </summary>
+                            <div class="more">
+                                <h2>
+                                    Monthly energy balance, average year
+                                </h2>
+                                <div class="scroll">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Month
+                                                </th>
+                                                <th class="n">
+                                                    PV kWh
+                                                </th>
+                                                <th class="n">
+                                                    Load kWh
+                                                </th>
+                                                <th class="n">
+                                                    Direct
+                                                </th>
+                                                <th class="n">
+                                                    Battery
+                                                </th>
+                                                <th class="n">
+                                                    Export
+                                                </th>
+                                                <th class="n">
+                                                    Grid import
+                                                </th>
+                                                <th class="n">
+                                                    CH mix g/kWh
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="key">
+                                                <td>
+                                                    Year
+                                                </td>
+                                                <td class="n" id="res-78813519778253305-2">
+                                                    8'296
+                                                </td>
+                                                <td class="n" id="val-bt-bd-/u+2M+2v+">
+                                                    4'500
+                                                </td>
+                                                <td class="n" id="val-bt-be-/u+2M+3B+-2">
+                                                    1'575
+                                                </td>
+                                                <td class="n" id="res-78813519778449913-2">
+                                                    2'224
+                                                </td>
+                                                <td class="n" id="res-283446504146504185-2">
+                                                    4'250
+                                                </td>
+                                                <td class="n" id="res-78813519778908665-2">
+                                                    701.23
+                                                </td>
+                                                <td class="n" id="res-bt-Sf-Sa-2M+PH+">
+                                                    105.83
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="notes">
+                                    <p>
+                                        <b>
+                                            PV production by orientation
+                                        </b>
+                                        the annual PV production: the rated power times the specific yield of the best orientation times the yield factor of the real orientation
+                                    </p>
+                                    <p>
+                                        <b>
+                                            PV site intensity formula
+                                        </b>
+                                        the embodied emission of the PV system divided by the lifetime production at this site; the multiplication by 1000 converts kg to gram
+                                    </p>
+                                    <p>
+                                        <b>
+                                            annual consumption mix by PV weighting
+                                        </b>
+                                        the consumption mix of a year as the PV installation uses it: the PV-weighted consumption mix, so that the year row of the monthly table shows the mix that the twelve monthly mixes give with the PV delivery as the weight
+                                    </p>
+                                    <p>
+                                        <b>
+                                            annual share formula
+                                        </b>
+                                        the share of one year of a CO2-eq total over the lifetime, e.g. the embodied emission of the PV system or the net avoided emission; the result carries the annual word, and the years are the lifetime of the PV installation
+                                    </p>
+                                    <p>
+                                        <b>
+                                            autarky formula
+                                        </b>
+                                        the share of the household consumption covered by the own PV electricity
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery discharge formula
+                                        </b>
+                                        what the battery gives back: the charge times the round-trip efficiency
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery effect formula
+                                        </b>
+                                        the effect of the battery on the net avoided emission against the same PV installation without battery, which delivers all its production: the lifetime battery losses do not displace the reference mix and the battery production adds its embodied emission; the division by 1000 converts gram to kg
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery embodied emission formula
+                                        </b>
+                                        the production emission of all batteries bought over the lifetime
+                                    </p>
+                                    <p>
+                                        <b>
+                                            battery losses formula
+                                        </b>
+                                        the battery losses: the charge minus what the battery gives back
+                                    </p>
+                                    <p>
+                                        <b>
+                                            delivered electricity formula
+                                        </b>
+                                        the PV electricity that reaches a consumer, so the production minus the battery losses
+                                    </p>
+                                    <p>
+                                        <b>
+                                            emission payback formula
+                                        </b>
+                                        the operating years until the gross avoided emission equals the embodied emission, assuming an even avoided emission per year
+                                    </p>
+                                    <p>
+                                        <b>
+                                            export formula
+                                        </b>
+                                        the PV production that is neither used directly nor stored goes to the grid
+                                    </p>
+                                    <p>
+                                        <b>
+                                            grid import formula
+                                        </b>
+                                        the consumption not covered by direct use and battery discharge is bought from the grid
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by PV-weighted consumption mix
+                                        </b>
+                                        the same with the Swiss consumption mix weighted by the monthly PV delivery: PV produces mostly in summer, when the Swiss consumption mix is cleanest (about 70 to 90 g/kWh in May to August, 140 to 165 g/kWh in winter), so weighting the PV output of each month by the mix of that month gives a lower saving than the annual average
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by consumption mix
+                                        </b>
+                                        the emission of the Swiss consumption mix that the delivered PV electricity displaces over the lifetime; one formula per reference mix, because the mix is the operand; the division by 1000 converts gram to kg
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by production mix
+                                        </b>
+                                        the same with the European production mix as the replacement mix
+                                    </p>
+                                    <p>
+                                        <b>
+                                            gross avoided emission by residual mix
+                                        </b>
+                                        the same with the European residual mix as the replacement mix
+                                    </p>
+                                    <p>
+                                        <b>
+                                            lifetime total formula
+                                        </b>
+                                        the total of an annual number over the lifetime of the installation, e.g. the PV production or the export; the result carries the lifetime word in place of the annual word of the input, and the years are the lifetime of the PV installation
+                                    </p>
+                                    <p>
+                                        <b>
+                                            net avoided emission formula
+                                        </b>
+                                        the gross avoided emission minus the embodied emission of the PV system and the battery; the reference mix is selected by the context. Every PV kilowatt-hour that reaches a consumer, used at home or exported, is assumed to displace one kilowatt-hour of grid electricity, the production emissions of the modules and the battery are subtracted, and the battery losses reduce the delivered energy
+                                    </p>
+                                    <p>
+                                        <b>
+                                            self-consumption share by dispatch
+                                        </b>
+                                        the share of the production used on site; the battery charge counts in full, because the losses happen on site too. The self-consumption model has a monthly resolution: the direct use is capped at the load during the PV hours, the battery does at most one full cycle per day and only covers the evening and night load. Real day-to-day weather swings lower the battery share somewhat. The monthly PV and load profiles are assumed typical values for the Zurich region (confidence 0.6)
+                                    </p>
+                                </div>
+                                <div class="src">
+                                    <h2>
+                                        Sources
+                                    </h2>
+                                    <ol>
+                                        <li>
+                                            <a href="https://gruenes.haus/?p=485">
+                                                gruenes.haus tilt and orientation table
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://iea-pvps.org/wp-content/uploads/2024/09/Task-12-Fact-Sheet-Stucki.pdf">
+                                                IEA PVPS Task 12 fact sheet 2023
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.stadt-zuerich.ch/content/dam/web/de/aktuell/publikationen/2025/studien-netto-null/oekobilanz-monatliche-strombereitstellung-studie.pdf">
+                                                treeze monthly electricity mixes 2025
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf">
+                                                Swissolar PV fact sheet 2024
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf.download.pdf/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf">
+                                                BAFU Swiss electricity mixes 2018
+                                            </a>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </details>
+                        <script type="application/json" id="calc-data">
+                            {"numbers":{"res-225461982644505081":248880,"res-225461982644701689":66713.1,"res-225461982645094905":47250,"res-225461982645160441":21036.9,"res-225461982645225977":241467.3,"res-225461982645488121":7412.7,"res-283446031700101625":0,"res-283446035995068921":0,"res-283446040290036217":229.43,"res-283446044585003513":526.56,"res-283446048879970809":675.13,"res-283446053174938105":740.73,"res-283446057469905401":782.21,"res-283446061764872697":657.77,"res-283446066059839993":467.73,"res-283446070354807289":170.6,"res-283446074649774585":0,"res-283446078944741881":0,"res-283446504146504185":4250.14,"res-283448741824465401":127504.2,"res-29704021901806073":12.12,"res-29704026196773369":3.93,"res-29706422788524537":2.97,"res-29706427083491833":14.65,"res-47851272340277753":44.91,"res-47851272340736505":247.59,"res-48132747316988409":208.413,"res-48132747317447161":54.84,"res-48414222293699065":263.25,"res-48414222294157817":0,"res-48695697270409721":234,"res-48695697270868473":0,"res-48977172247120377":219.375,"res-48977172247579129":0,"res-491885955137505830":42.12,"res-49258647223831033":204.75,"res-49258647224289785":0,"res-49540122200541689":204.75,"res-49540122201000441":0,"res-49821597177252345":204.75,"res-49821597177711097":0,"res-50103072153963001":219.375,"res-50103072154421753":0,"res-50384547130673657":248.625,"res-50384547131132409":0,"res-50666022107384313":126.6615,"res-50666022107843065":151.21,"res-50947497084094969":44.91,"res-50947497084553721":247.59,"res-689472768505":0.49,"res-78813519778253305":8296,"res-78813519778449913":2223.77,"res-78813519778908665":701.23,"res-78813519778974201":8048.91,"res-78813519779236345":247.09,"res-8431031323129":0.84,"res-bt-Sf-Sa-2M+PH+":105.83,"res-bt-bN-Sa-Q+AV+PH+":30907.81,"res-bt-bN-Sb-Q+AV+PH+":95379.58,"res-bt-bN-bJ-Q+AV+PH+":126287.4,"res-bt-bN-bK-Q+AV+PH+":25554.48,"res-bt-bO-Sa-Q+2M+PH+":614.19,"res-bt-bO-Sa-Q+AV+PH+":18425.61,"res-bt-bO-Sb-Q+2M+PH+":2763.25,"res-bt-bO-Sb-Q+AV+PH+":82897.38,"res-bt-bO-bJ-Q+2M+PH+":3793.51,"res-bt-bO-bJ-Q+AV+PH+":113805.2,"res-bt-bO-bK-Q+2M+PH+":435.74,"res-bt-bO-bK-Q+AV+PH+":13072.28,"res-bt-bl-Sa-Q+2M+PH+":-98.29,"res-bt-bl-Sa-Q+AV+PH+":-2948.83,"res-bu-bt-Q+2M+PH+":349.41,"res-bu-bt-Q+AV+PH+":10482.2,"res-bw-bt-Q+2M+PH+":66.67,"res-bw-bt-Q+AV+PH+":2000,"val-02-0U+2M+2N+2v+":0.012722,"val-03-0U+2M+2N+2v+":0.014539,"val-04-0U+2M+2N+2v+":0.004089,"val-06+0U+0y+17+1G+1N+":0.18264281677284,"val-06+0U+17+1G+TT+":0.0074676683205838,"val-06-0U+2M+2N+2v+":0.0016357,"val-07-0U+2M+2N+2v+":0.0022718,"val-08-0U+2M+2N+2v+":0.0009087,"val-0U+0y+1N+2P+Cj+Ck+":0.78,"val-0U+1.+1N+2P+Cj+Ck+":0.82,"val-0U+1h+1o+1p+1q+2M+2N+2O+":-0.0097,"val-0U+1h+1o+1p+1q+2M+2N+2O+31+":-0.0116,"val-0U+1h+1o+1p+1q+2M+2N+2O+32+":-0.0081,"val-0U+1h+1o+1p+1r+2M+2N+2O+":-0.0104,"val-0U+1h+1o+1p+1r+2M+2N+2O+31+":-0.0125,"val-0U+1h+1o+1p+1r+2M+2N+2O+32+":-0.0087,"val-0U+1h+2M+2N+2v+":0.036348,"val-0U+1x+2M+2N+2v+":0.04998,"val-0U+1z+2M+2N+2v+":0.018174,"val-0U+2/+2M+2N+2v+":0.004998,"val-0U+2M+2N+2Q+2v+":0.00318,"val-0w-0U+2M+2N+2v+":0.001999,"val-1/-07-0U+2M+2v+":0.0011,"val-107524343057319785":2.72,"val-109213931655004361":8419.55,"val-1215489541000":7,"val-1355228285433":2,"val-13796238":1,"val-1636396302537":8327126,"val-188026456982552781":8849852,"val-188026489311037377":976,"val-188026491346813138":818403773236,"val-2309786080":0.5,"val-2309786082":0,"val-2309786089":0,"val-2309851616":0.5,"val-2309851618":1,"val-2309851625":100,"val-260365689210732754":9.3,"val-269374417469080416":9,"val-283449613738574103":2821696106538,"val-3440275720660":30,"val-499056488935885305":10,"val-551410832297789927":15,"val-551410832301394405":0.9,"val-551410834603805160":100,"val-59110608408019079":8.606033,"val-59110608408019080":8.6703,"val-689507830239":0.85,"val-7597807667678":0.88,"val-78813682884904529":0.0005,"val-78813916907472799":0.005,"val-78962250165094372":1152.22,"val-78962250165094373":1244.4,"val-78962250165094374":1170.57,"val-78962250165094375":1275.14,"val-78962250165094376":1287.13,"val-78962250165094377":1322.58,"val-78962250165094378":1244.78,"val-78962250165094379":1435.39,"val-78962250165094380":1130.94,"val-78962250165094381":1158.71,"val-78962250165094382":1281.81,"val-78962250165094383":1275.81,"val-78962250165094419":1345.37,"val-78962250165094524":1176.75,"val-78962250165094525":1210.81,"val-78962250165094526":1037.67,"val-78962250165094527":1044.91,"val-78962250165094528":1311.64,"val-78962250165094531":1241.6,"val-78962250165094532":1297.32,"val-78962250165094533":1095.29,"val-78962250165094534":1129.72,"val-78962250165094535":1054.51,"val-78962250165094536":973.67,"val-78962250165094537":950.29,"val-78962250165094538":953.4,"val-78962250165094539":974.46,"val-78962250165094540":876.84,"val-78962250165094541":1148.79,"val-78962250165094542":1624.74,"val-78962250165094543":1060.98,"val-78962250165094544":1139.54,"val-78962250165094545":1573.65,"val-78962250165094546":1468.23,"val-78962250165094547":1249.8,"val-78962250165094548":1263.44,"val-78962250165094549":1502.57,"val-78962250165094550":1369.01,"val-78962250165094551":983.58,"val-78962250165094552":984.84,"val-78962250165094553":981.84,"val-78962250165094554":1005.01,"val-78962250165094555":1027.37,"val-78962250165094556":1057.68,"val-78962250165094557":944.98,"val-78962250165094558":749.51,"val-78962250165094559":1052.45,"val-78962250165094560":1084.93,"val-78962250165094561":1578.43,"val-78962250165094562":1506.39,"val-78962250165094563":1297.08,"val-78962250165094564":1212.76,"val-78962250165094565":1172.83,"val-78962250165094566":1161.66,"val-78962250165094567":1176.9,"val-78962250165094568":1233.55,"val-78962250165094569":1620.71,"val-78962250165094570":1671.74,"val-78962250165094571":990.41,"val-78962250165094572":1065.14,"val-78962254460651492":1247.77,"val-78962254460651493":1310.83,"val-78962254460651494":1254.13,"val-78962254460651495":1368.68,"val-78962254460651496":1366.58,"val-78962254460651497":1382.25,"val-78962254460651498":1292.02,"val-78962254460651499":1419.67,"val-78962254460651500":1199.85,"val-78962254460651501":1240.08,"val-78962254460651502":1320.07,"val-78962254460651503":1301.68,"val-78962254460651539":1473.53,"val-78962254460651644":1254.62,"val-78962254460651645":1278.66,"val-78962254460651646":1102.55,"val-78962254460651647":1105.04,"val-78962254460651648":1428.73,"val-78962254460651651":1363.47,"val-78962254460651652":1386.36,"val-78962254460651653":1168.03,"val-78962254460651654":1211.37,"val-78962254460651655":1075.17,"val-78962254460651656":1002.11,"val-78962254460651657":977.14,"val-78962254460651658":987.18,"val-78962254460651659":983.88,"val-78962254460651660":897.42,"val-78962254460651661":1218.86,"val-78962254460651662":1691.66,"val-78962254460651663":1115.1,"val-78962254460651664":1211.3,"val-78962254460651665":1800.09,"val-78962254460651666":1629.91,"val-78962254460651667":1329.86,"val-78962254460651668":1375.19,"val-78962254460651669":1642.32,"val-78962254460651670":1470.22,"val-78962254460651671":1012.15,"val-78962254460651672":1025.55,"val-78962254460651673":1030.88,"val-78962254460651674":1053.98,"val-78962254460651675":1079.84,"val-78962254460651676":1119.53,"val-78962254460651677":931.82,"val-78962254460651678":794.54,"val-78962254460651679":1115.08,"val-78962254460651680":1146.22,"val-78962254460651681":1757.59,"val-78962254460651682":1636.5,"val-78962254460651683":1430.86,"val-78962254460651684":1302.81,"val-78962254460651685":1277.57,"val-78962254460651686":1247.8,"val-78962254460651687":1292.45,"val-78962254460651688":1318.6,"val-78962254460651689":1779.45,"val-78962254460651690":1903.97,"val-78962254460651691":990.27,"val-78962254460651692":1085.67,"val-78962254460717028":1461.17,"val-78962254460717029":1562.49,"val-78962254460717030":1481.02,"val-78962254460717031":1618.96,"val-78962254460717032":1626.5,"val-78962254460717033":1679.3,"val-78962254460717034":1539.48,"val-78962254460717035":1757.91,"val-78962254460717036":1418.46,"val-78962254460717037":1461.87,"val-78962254460717038":1543.62,"val-78962254460717039":1536.12,"val-78962254460717075":1697.86,"val-78962254460717180":1476.32,"val-78962254460717181":1528.87,"val-78962254460717182":1292.13,"val-78962254460717183":1301.61,"val-78962254460717184":1651.51,"val-78962254460717187":1587.9,"val-78962254460717188":1637.26,"val-78962254460717189":1370.86,"val-78962254460717190":1418.13,"val-78962254460717191":1300.94,"val-78962254460717192":1200.52,"val-78962254460717193":1190.4,"val-78962254460717194":1195.23,"val-78962254460717195":1218.95,"val-78962254460717196":1100.49,"val-78962254460717197":1435.47,"val-78962254460717198":2038.22,"val-78962254460717199":1323.72,"val-78962254460717200":1433.56,"val-78962254460717201":2034.11,"val-78962254460717202":1889.87,"val-78962254460717203":1578.23,"val-78962254460717204":1610.05,"val-78962254460717205":1923.52,"val-78962254460717206":1764.38,"val-78962254460717207":1218.27,"val-78962254460717208":1221.41,"val-78962254460717209":1216.4,"val-78962254460717210":1250.08,"val-78962254460717211":1270.01,"val-78962254460717212":1318.37,"val-78962254460717213":1174.8,"val-78962254460717214":946.31,"val-78962254460717215":1313.94,"val-78962254460717216":1356.52,"val-78962254460717217":2006.48,"val-78962254460717218":1911,"val-78962254460717219":1658.74,"val-78962254460717220":1526.37,"val-78962254460717221":1481.7,"val-78962254460717222":1466.89,"val-78962254460717223":1495,"val-78962254460717224":1563.33,"val-78962254460717225":2093.73,"val-78962254460717226":2201.26,"val-78962254460717227":1223.11,"val-78962254460717228":1313.83,"val-8439621257694":1,"val-8443916224990":0.95,"val-8448211192286":0.95,"val-8452506159582":0.82,"val-8456801126878":0.82,"val-8461096094174":0.59,"val-88665143963191801":10,"val-901956305054":8.6703,"val-AC-0y+1G+1N+4w+Ao+":5,"val-Bm-0U+0y+1G+1N+4w+":0.203,"val-Bm-0y+1G+1N+4w+Ao+":1,"val-GQ-FV-0T+1L+2L+2M+2w+":132.2,"val-GQ-FV-0T+1L+2L+2M+2w+31+":53.6,"val-GQ-FV-0T+1L+2L+2M+2w+32+":210.9,"val-Gb-GQ-GP-0U+2M+2v+G/+":0.5,"val-Gd-0U+1h+2M+2N+2v+":0.0104,"val-Ko-Kn-1.-0S+2M+2v+4y+":910,"val-NF-D9-0U+2M+32+":0.0011,"val-NI-NH-08-0T+2L+2M+2v+":10,"val-No-0U+1G+Ld+Lh+":0.044,"val-No-0U+1G+Le+Lh+":0.061,"val-Np-0U+1G+La+Lj+":1.209,"val-Nu-0T+1L+2L+2M+31+8K+":1.85,"val-Nu-0T+1L+2L+2M+32+8K+":3.7,"val-O3-Nn-06+1G+31+Lb+":-1.39,"val-O3-Nn-06+1G+32+Lb+":-0.55,"val-O3-Nn-06+1G+Lb+":-0.92,"val-O5-NO-NJ-0U+1L+2M+31+La+Lk+":0.012,"val-O5-NO-NJ-0U+1L+2M+32+La+Lk+":0.093,"val-Oh-Oa-0T+2L+2M+31+Dg+":739.8,"val-Oh-Oa-0T+2L+2M+32+Dg+":1017.3,"val-Os-0T+1L+2L+2M+":157.2,"val-PD-0T+2L+2M+2w+3x+Dg+":15.72,"val-PD-P4-0U+2M+Dg+":0.01,"val-Q/-Pv-Gs-1G+NP+":2.8,"val-QC-0T+1L+2L+2M+":72.14,"val-QJ-0T+1L+2L+2M+":36.07,"val-QY-QP-0U+1G+8Q+":0.076,"val-Qa-QM-QL-0U+Lk+Nu+":1.95,"val-R2-Qw-0U+1G+2N+":0.072,"val-R5-NG-2L+2M+AJ+":7781,"val-R5-NG-Kn-2L+2M+":16212,"val-R5-Qt-NG-2L+2M+":3374,"val-RH-0U+1L+2M+2N+":0.15,"val-RH-RF-R9-0U+1L+2M+2N+":0.05,"val-RH-RG-0U+1L+2M+2N+31+OL+":0.00397,"val-RH-RG-0U+1L+2M+2N+32+OL+":0.00766,"val-RH-RG-0U+1L+2M+2N+OL+":0.0055,"val-RL-/a+0T+1L+2M+OO+OP+":12,"val-RL-0T+1L+2L+2M+OO+OP+":924.8,"val-Rm-O9-0U+2M+31+Av+EZ+":0.004,"val-Rm-O9-0U+2M+32+Av+EZ+":0.006,"val-S5-0U+1L+2M+JC+":0.07,"val-Sf-Sd-Sa-SZ-PH+":79.2,"val-Sf-Sd-Sc-SZ-PH+":939.2,"val-Sf-Se-SZ-4.+PH+":46.8,"val-Sf-Se-SZ-8Q+PH+":35.8,"val-Sf-Se-Sa-1G+4.+Cj+PH+":128,"val-Sf-Se-Sb-1G+4.+Cj+PH+":32.4,"val-Sf-Se-Sb-4w+Cj+Nu+PH+":395,"val-Sf-Se-Sc-31+3x+Cj+EZ+PH+":446,"val-Sf-Se-Sc-3x+Cj+EZ+PH+":986,"val-T/-Sz-2M+2v+Po+":1000,"val-TC-T3-1G+8O+GY+":0.06,"val-bJ-Sf-Se-Cj+Nu+PH+":523,"val-bZ-0U+2v+2y+Sb+":0.7,"val-bb-0U+2v+2y+Sb+":0.6,"val-bc-0U+2v+2y+Sb+":0.5,"val-bi-bV-0U+0e+1G+2v+":0.03,"val-bi-bV-0U+0f+1G+2v+":0.05,"val-bi-bV-0U+0g+1G+2v+":0.08,"val-bi-bV-0U+0h+1G+2v+":0.11,"val-bi-bV-0U+0i+1G+2v+":0.13,"val-bi-bV-0U+0j+1G+2v+":0.13,"val-bi-bV-0U+0k+1G+2v+":0.14,"val-bi-bV-0U+0l+1G+2v+":0.12,"val-bi-bV-0U+0m+1G+2v+":0.1,"val-bi-bV-0U+0n+1G+2v+":0.07,"val-bi-bV-0U+0o+1G+2v+":0.04,"val-bi-bV-0U+0p+1G+2v+":0.03,"val-bi-bV-0U+1G+2v+2y+":0.6,"val-bi-bd-0U+0e+1G+2v+":0.1,"val-bi-bd-0U+0f+1G+2v+":0.09,"val-bi-bd-0U+0g+1G+2v+":0.09,"val-bi-bd-0U+0h+1G+2v+":0.08,"val-bi-bd-0U+0i+1G+2v+":0.08,"val-bi-bd-0U+0j+1G+2v+":0.07,"val-bi-bd-0U+0k+1G+2v+":0.07,"val-bi-bd-0U+0l+1G+2v+":0.07,"val-bi-bd-0U+0m+1G+2v+":0.08,"val-bi-bd-0U+0n+1G+2v+":0.09,"val-bi-bd-0U+0o+1G+2v+":0.1,"val-bi-bd-0U+0p+1G+2v+":0.1,"val-bi-bd-0U+1G+2v+2y+":0.6,"val-bj-Sf-Sa-0e+1G+Cj+PH+SZ+":150.8,"val-bj-Sf-Sa-0f+1G+Cj+PH+SZ+":146.9,"val-bj-Sf-Sa-0g+1G+Cj+PH+SZ+":141.4,"val-bj-Sf-Sa-0h+1G+Cj+PH+SZ+":100,"val-bj-Sf-Sa-0i+1G+Cj+PH+SZ+":69.1,"val-bj-Sf-Sa-0j+1G+Cj+PH+SZ+":79.5,"val-bj-Sf-Sa-0k+1G+Cj+PH+SZ+":87.7,"val-bj-Sf-Sa-0l+1G+Cj+PH+SZ+":88.8,"val-bj-Sf-Sa-0m+1G+Cj+PH+SZ+":129.6,"val-bj-Sf-Sa-0n+1G+Cj+PH+SZ+":134.6,"val-bj-Sf-Sa-0o+1G+Cj+PH+SZ+":163.7,"val-bj-Sf-Sa-0p+1G+Cj+PH+SZ+":152.8,"val-bt-bV-/u+0e+3B+":207.4,"val-bt-bV-/u+0f+3B+":373.32,"val-bt-bV-/u+0g+3B+":663.68,"val-bt-bV-/u+0h+3B+":912.56,"val-bt-bV-/u+0i+3B+":1037,"val-bt-bV-/u+0j+3B+":1078.48,"val-bt-bV-/u+0k+3B+":1119.96,"val-bt-bV-/u+0l+3B+":995.52,"val-bt-bV-/u+0m+3B+":829.6,"val-bt-bV-/u+0n+3B+":580.72,"val-bt-bV-/u+0o+3B+":290.36,"val-bt-bV-/u+0p+3B+":207.4,"val-bt-bX-/u+0e+3B+":49.9,"val-bt-bX-/u+0f+3B+":231.57,"val-bt-bX-/u+0g+3B+":292.5,"val-bt-bX-/u+0h+3B+":260,"val-bt-bX-/u+0i+3B+":243.75,"val-bt-bX-/u+0j+3B+":227.5,"val-bt-bX-/u+0k+3B+":227.5,"val-bt-bX-/u+0l+3B+":227.5,"val-bt-bX-/u+0m+3B+":243.75,"val-bt-bX-/u+0n+3B+":276.25,"val-bt-bX-/u+0o+3B+":140.735,"val-bt-bX-/u+0p+3B+":49.9,"val-bt-bX-/u+2M+3B+":2470.86,"val-bt-bd-/u+0e+3B+":450,"val-bt-bd-/u+0f+3B+":405,"val-bt-bd-/u+0g+3B+":405,"val-bt-bd-/u+0h+3B+":360,"val-bt-bd-/u+0i+3B+":337.5,"val-bt-bd-/u+0j+3B+":315,"val-bt-bd-/u+0k+3B+":315,"val-bt-bd-/u+0l+3B+":315,"val-bt-bd-/u+0m+3B+":337.5,"val-bt-bd-/u+0n+3B+":382.5,"val-bt-bd-/u+0o+3B+":427.5,"val-bt-bd-/u+0p+3B+":450,"val-bt-bd-/u+2M+2v+":4500,"val-bt-be-/u+0e+3B+":157.5,"val-bt-be-/u+0f+3B+":141.75,"val-bt-be-/u+0g+3B+":141.75,"val-bt-be-/u+0h+3B+":126,"val-bt-be-/u+0i+3B+":118.125,"val-bt-be-/u+0j+3B+":110.25,"val-bt-be-/u+0k+3B+":110.25,"val-bt-be-/u+0l+3B+":110.25,"val-bt-be-/u+0m+3B+":118.125,"val-bt-be-/u+0n+3B+":133.875,"val-bt-be-/u+0o+3B+":149.625,"val-bt-be-/u+0p+3B+":157.5,"val-bt-be-/u+2M+3B+":1575,"val-bt-bh-bd-0U+2v+":0.35,"val-bt-bh-bd-0U+2v+2y+":0.6,"val-bt-bj-bK-Sf-3B+PH+SZ+":105.83},"results":{"res-225461982644505081":[{"r":"res-78813519778253305"},{"o":"*"},{"r":"val-3440275720660"}],"res-225461982644701689":[{"r":"res-78813519778449913"},{"o":"*"},{"r":"val-3440275720660"}],"res-225461982645094905":[{"r":"val-bt-be-/u+2M+3B+"},{"o":"*"},{"r":"val-3440275720660"}],"res-225461982645160441":[{"r":"res-78813519778908665"},{"o":"*"},{"r":"val-3440275720660"}],"res-225461982645225977":[{"r":"res-78813519778974201"},{"o":"*"},{"r":"val-3440275720660"}],"res-225461982645488121":[{"r":"res-78813519779236345"},{"o":"*"},{"r":"val-3440275720660"}],"res-283446031700101625":[{"r":"val-bt-bV-/u+0e+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0e+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0e+3B+"}],"res-283446035995068921":[{"r":"val-bt-bV-/u+0f+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0f+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0f+3B+"}],"res-283446040290036217":[{"r":"val-bt-bV-/u+0g+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0g+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0g+3B+"}],"res-283446044585003513":[{"r":"val-bt-bV-/u+0h+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0h+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0h+3B+"}],"res-283446048879970809":[{"r":"val-bt-bV-/u+0i+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0i+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0i+3B+"}],"res-283446053174938105":[{"r":"val-bt-bV-/u+0j+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0j+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0j+3B+"}],"res-283446057469905401":[{"r":"val-bt-bV-/u+0k+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0k+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0k+3B+"}],"res-283446061764872697":[{"r":"val-bt-bV-/u+0l+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0l+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0l+3B+"}],"res-283446066059839993":[{"r":"val-bt-bV-/u+0m+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0m+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0m+3B+"}],"res-283446070354807289":[{"r":"val-bt-bV-/u+0n+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0n+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0n+3B+"}],"res-283446074649774585":[{"r":"val-bt-bV-/u+0o+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0o+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0o+3B+"}],"res-283446078944741881":[{"r":"val-bt-bV-/u+0p+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0p+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+0p+3B+"}],"res-283446504146504185":[{"r":"res-78813519778253305"},{"o":"-"},{"r":"val-bt-be-/u+2M+3B+"},{"o":"-"},{"r":"val-bt-bX-/u+2M+3B+"}],"res-283448741824465401":[{"r":"res-283446504146504185"},{"o":"*"},{"r":"val-3440275720660"}],"res-29704021901806073":[{"o":"("},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"+"},{"r":"res-bw-bt-Q+AV+PH+"},{"o":")"},{"o":"/"},{"r":"res-bt-bN-Sa-Q+AV+PH+"},{"o":"*"},{"r":"val-3440275720660"}],"res-29704026196773369":[{"o":"("},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"+"},{"r":"res-bw-bt-Q+AV+PH+"},{"o":")"},{"o":"/"},{"r":"res-bt-bN-Sb-Q+AV+PH+"},{"o":"*"},{"r":"val-3440275720660"}],"res-29706422788524537":[{"o":"("},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"+"},{"r":"res-bw-bt-Q+AV+PH+"},{"o":")"},{"o":"/"},{"r":"res-bt-bN-bJ-Q+AV+PH+"},{"o":"*"},{"r":"val-3440275720660"}],"res-29706427083491833":[{"o":"("},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"+"},{"r":"res-bw-bt-Q+AV+PH+"},{"o":")"},{"o":"/"},{"r":"res-bt-bN-bK-Q+AV+PH+"},{"o":"*"},{"r":"val-3440275720660"}],"res-47851272340277753":[{"r":"val-bt-bX-/u+0e+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-47851272340736505":[{"r":"val-bt-bd-/u+0e+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0e+3B+"},{"o":"-"},{"r":"res-47851272340277753"}],"res-48132747316988409":[{"r":"val-bt-bX-/u+0f+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-48132747317447161":[{"r":"val-bt-bd-/u+0f+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0f+3B+"},{"o":"-"},{"r":"res-48132747316988409"}],"res-48414222293699065":[{"r":"val-bt-bX-/u+0g+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-48414222294157817":[{"r":"val-bt-bd-/u+0g+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0g+3B+"},{"o":"-"},{"r":"res-48414222293699065"}],"res-48695697270409721":[{"r":"val-bt-bX-/u+0h+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-48695697270868473":[{"r":"val-bt-bd-/u+0h+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0h+3B+"},{"o":"-"},{"r":"res-48695697270409721"}],"res-48977172247120377":[{"r":"val-bt-bX-/u+0i+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-48977172247579129":[{"r":"val-bt-bd-/u+0i+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0i+3B+"},{"o":"-"},{"r":"res-48977172247120377"}],"res-491885955137505830":[{"r":"res-bu-bt-Q+AV+PH+"},{"o":"*"},{"n":1000},{"o":"/"},{"r":"res-225461982644505081"}],"res-49258647223831033":[{"r":"val-bt-bX-/u+0j+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-49258647224289785":[{"r":"val-bt-bd-/u+0j+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0j+3B+"},{"o":"-"},{"r":"res-49258647223831033"}],"res-49540122200541689":[{"r":"val-bt-bX-/u+0k+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-49540122201000441":[{"r":"val-bt-bd-/u+0k+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0k+3B+"},{"o":"-"},{"r":"res-49540122200541689"}],"res-49821597177252345":[{"r":"val-bt-bX-/u+0l+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-49821597177711097":[{"r":"val-bt-bd-/u+0l+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0l+3B+"},{"o":"-"},{"r":"res-49821597177252345"}],"res-50103072153963001":[{"r":"val-bt-bX-/u+0m+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-50103072154421753":[{"r":"val-bt-bd-/u+0m+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0m+3B+"},{"o":"-"},{"r":"res-50103072153963001"}],"res-50384547130673657":[{"r":"val-bt-bX-/u+0n+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-50384547131132409":[{"r":"val-bt-bd-/u+0n+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0n+3B+"},{"o":"-"},{"r":"res-50384547130673657"}],"res-50666022107384313":[{"r":"val-bt-bX-/u+0o+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-50666022107843065":[{"r":"val-bt-bd-/u+0o+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0o+3B+"},{"o":"-"},{"r":"res-50666022107384313"}],"res-50947497084094969":[{"r":"val-bt-bX-/u+0p+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-50947497084553721":[{"r":"val-bt-bd-/u+0p+3B+"},{"o":"-"},{"r":"val-bt-be-/u+0p+3B+"},{"o":"-"},{"r":"res-50947497084094969"}],"res-689472768505":[{"o":"("},{"r":"val-bt-be-/u+2M+3B+"},{"o":"+"},{"r":"val-bt-bX-/u+2M+3B+"},{"o":")"},{"o":"/"},{"r":"res-78813519778253305"}],"res-78813519778253305":[{"r":"val-499056488935885305"},{"o":"*"},{"r":"val-188026489311037377"},{"o":"*"},{"r":"val-689507830239"}],"res-78813519778449913":[{"r":"val-bt-bX-/u+2M+3B+"},{"o":"*"},{"r":"val-551410832301394405"}],"res-78813519778908665":[{"r":"val-bt-bd-/u+2M+2v+"},{"o":"-"},{"r":"val-bt-be-/u+2M+3B+"},{"o":"-"},{"r":"res-78813519778449913"}],"res-78813519778974201":[{"r":"val-bt-be-/u+2M+3B+"},{"o":"+"},{"r":"res-78813519778449913"},{"o":"+"},{"r":"res-283446504146504185"}],"res-78813519779236345":[{"r":"val-bt-bX-/u+2M+3B+"},{"o":"-"},{"r":"res-78813519778449913"}],"res-8431031323129":[{"o":"("},{"r":"val-bt-be-/u+2M+3B+"},{"o":"+"},{"r":"res-78813519778449913"},{"o":")"},{"o":"/"},{"r":"val-bt-bd-/u+2M+2v+"}],"res-bt-Sf-Sa-2M+PH+":[{"r":"val-bt-bj-bK-Sf-3B+PH+SZ+"}],"res-bt-bN-Sa-Q+AV+PH+":[{"r":"res-225461982645225977"},{"o":"*"},{"r":"val-Sf-Se-Sa-1G+4.+Cj+PH+"},{"o":"/"},{"n":1000}],"res-bt-bN-Sb-Q+AV+PH+":[{"r":"res-225461982645225977"},{"o":"*"},{"r":"val-Sf-Se-Sb-4w+Cj+Nu+PH+"},{"o":"/"},{"n":1000}],"res-bt-bN-bJ-Q+AV+PH+":[{"r":"res-225461982645225977"},{"o":"*"},{"r":"val-bJ-Sf-Se-Cj+Nu+PH+"},{"o":"/"},{"n":1000}],"res-bt-bN-bK-Q+AV+PH+":[{"r":"res-225461982645225977"},{"o":"*"},{"r":"val-bt-bj-bK-Sf-3B+PH+SZ+"},{"o":"/"},{"n":1000}],"res-bt-bO-Sa-Q+2M+PH+":[{"r":"res-bt-bO-Sa-Q+AV+PH+"},{"o":"/"},{"r":"val-3440275720660"}],"res-bt-bO-Sa-Q+AV+PH+":[{"r":"res-bt-bN-Sa-Q+AV+PH+"},{"o":"-"},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"-"},{"r":"res-bw-bt-Q+AV+PH+"}],"res-bt-bO-Sb-Q+2M+PH+":[{"r":"res-bt-bO-Sb-Q+AV+PH+"},{"o":"/"},{"r":"val-3440275720660"}],"res-bt-bO-Sb-Q+AV+PH+":[{"r":"res-bt-bN-Sb-Q+AV+PH+"},{"o":"-"},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"-"},{"r":"res-bw-bt-Q+AV+PH+"}],"res-bt-bO-bJ-Q+2M+PH+":[{"r":"res-bt-bO-bJ-Q+AV+PH+"},{"o":"/"},{"r":"val-3440275720660"}],"res-bt-bO-bJ-Q+AV+PH+":[{"r":"res-bt-bN-bJ-Q+AV+PH+"},{"o":"-"},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"-"},{"r":"res-bw-bt-Q+AV+PH+"}],"res-bt-bO-bK-Q+2M+PH+":[{"r":"res-bt-bO-bK-Q+AV+PH+"},{"o":"/"},{"r":"val-3440275720660"}],"res-bt-bO-bK-Q+AV+PH+":[{"r":"res-bt-bN-bK-Q+AV+PH+"},{"o":"-"},{"r":"res-bu-bt-Q+AV+PH+"},{"o":"-"},{"r":"res-bw-bt-Q+AV+PH+"}],"res-bt-bl-Sa-Q+2M+PH+":[{"r":"res-bt-bl-Sa-Q+AV+PH+"},{"o":"/"},{"r":"val-3440275720660"}],"res-bt-bl-Sa-Q+AV+PH+":[{"n":0},{"o":"-"},{"r":"res-225461982645488121"},{"o":"*"},{"r":"val-Sf-Se-Sa-1G+4.+Cj+PH+"},{"o":"/"},{"n":1000},{"o":"-"},{"r":"res-bw-bt-Q+AV+PH+"}],"res-bu-bt-Q+2M+PH+":[{"r":"res-bu-bt-Q+AV+PH+"},{"o":"/"},{"r":"val-3440275720660"}],"res-bw-bt-Q+2M+PH+":[{"r":"res-bw-bt-Q+AV+PH+"},{"o":"/"},{"r":"val-3440275720660"}],"res-bw-bt-Q+AV+PH+":[{"r":"val-88665143963191801"},{"o":"*"},{"r":"val-551410834603805160"},{"o":"*"},{"r":"val-1355228285433"}]},"inputs":{"n3440275720660":"val-3440275720660","nbt-bj-bK-Sf-3B+PH+SZ+":"val-bt-bj-bK-Sf-3B+PH+SZ+","nbt-be-/u+2M+3B+":"val-bt-be-/u+2M+3B+","n499056488935885305":"val-499056488935885305","n188026489311037377":"val-188026489311037377","n689507830239":"val-689507830239","nbt-bX-/u+2M+3B+":"val-bt-bX-/u+2M+3B+","n551410832301394405":"val-551410832301394405","nbt-bV-/u+0k+3B+":"val-bt-bV-/u+0k+3B+","nbt-be-/u+0k+3B+":"val-bt-be-/u+0k+3B+","nbt-bX-/u+0k+3B+":"val-bt-bX-/u+0k+3B+","nbt-bV-/u+0j+3B+":"val-bt-bV-/u+0j+3B+","nbt-be-/u+0j+3B+":"val-bt-be-/u+0j+3B+","nbt-bX-/u+0j+3B+":"val-bt-bX-/u+0j+3B+","nbt-bd-/u+2M+2v+":"val-bt-bd-/u+2M+2v+","nbt-bV-/u+0i+3B+":"val-bt-bV-/u+0i+3B+","nbt-be-/u+0i+3B+":"val-bt-be-/u+0i+3B+","nbt-bX-/u+0i+3B+":"val-bt-bX-/u+0i+3B+","nbt-bV-/u+0l+3B+":"val-bt-bV-/u+0l+3B+","nbt-be-/u+0l+3B+":"val-bt-be-/u+0l+3B+","nbt-bX-/u+0l+3B+":"val-bt-bX-/u+0l+3B+","nbt-bV-/u+0h+3B+":"val-bt-bV-/u+0h+3B+","nbt-be-/u+0h+3B+":"val-bt-be-/u+0h+3B+","nbt-bX-/u+0h+3B+":"val-bt-bX-/u+0h+3B+","nbt-bV-/u+0m+3B+":"val-bt-bV-/u+0m+3B+","nbt-be-/u+0m+3B+":"val-bt-be-/u+0m+3B+","nbt-bX-/u+0m+3B+":"val-bt-bX-/u+0m+3B+","nbt-bX-/u+0g+3B+":"val-bt-bX-/u+0g+3B+","nbt-bX-/u+0n+3B+":"val-bt-bX-/u+0n+3B+","nbt-bd-/u+0p+3B+":"val-bt-bd-/u+0p+3B+","nbt-be-/u+0p+3B+":"val-bt-be-/u+0p+3B+","nbt-bd-/u+0e+3B+":"val-bt-bd-/u+0e+3B+","nbt-be-/u+0e+3B+":"val-bt-be-/u+0e+3B+","nbt-bV-/u+0g+3B+":"val-bt-bV-/u+0g+3B+","nbt-be-/u+0g+3B+":"val-bt-be-/u+0g+3B+","nbt-bX-/u+0f+3B+":"val-bt-bX-/u+0f+3B+","nbt-bV-/u+0n+3B+":"val-bt-bV-/u+0n+3B+","nbt-be-/u+0n+3B+":"val-bt-be-/u+0n+3B+","nbt-bd-/u+0o+3B+":"val-bt-bd-/u+0o+3B+","nbt-be-/u+0o+3B+":"val-bt-be-/u+0o+3B+","nbt-bX-/u+0o+3B+":"val-bt-bX-/u+0o+3B+","nbt-bd-/u+0f+3B+":"val-bt-bd-/u+0f+3B+","nbt-be-/u+0f+3B+":"val-bt-be-/u+0f+3B+","nbt-bX-/u+0p+3B+":"val-bt-bX-/u+0p+3B+","nbt-bX-/u+0e+3B+":"val-bt-bX-/u+0e+3B+","nbt-bd-/u+0h+3B+":"val-bt-bd-/u+0h+3B+","nbt-bd-/u+0l+3B+":"val-bt-bd-/u+0l+3B+","nbt-bV-/u+0p+3B+":"val-bt-bV-/u+0p+3B+","nbt-bV-/u+0f+3B+":"val-bt-bV-/u+0f+3B+","nbt-bV-/u+0e+3B+":"val-bt-bV-/u+0e+3B+","nbt-bd-/u+0k+3B+":"val-bt-bd-/u+0k+3B+","nbt-bd-/u+0j+3B+":"val-bt-bd-/u+0j+3B+","nbt-bd-/u+0g+3B+":"val-bt-bd-/u+0g+3B+","nbt-bd-/u+0i+3B+":"val-bt-bd-/u+0i+3B+","nbt-bV-/u+0o+3B+":"val-bt-bV-/u+0o+3B+","nbt-bd-/u+0n+3B+":"val-bt-bd-/u+0n+3B+","nbt-bd-/u+0m+3B+":"val-bt-bd-/u+0m+3B+","nbJ-Sf-Se-Cj+Nu+PH+":"val-bJ-Sf-Se-Cj+Nu+PH+","nSf-Se-Sb-4w+Cj+Nu+PH+":"val-Sf-Se-Sb-4w+Cj+Nu+PH+","nSf-Se-Sa-1G+4.+Cj+PH+":"val-Sf-Se-Sa-1G+4.+Cj+PH+","n88665143963191801":"val-88665143963191801","n551410834603805160":"val-551410834603805160","n1355228285433":"val-1355228285433","n-2528":"val-499056488935885305","n-2526":"val-689507830239","n-2530":"val-88665143963191801","n-2537":"val-bt-bd-/u+2M+2v+","n-1983":"val-188026489311037377","n801":"val-3440275720660","n-1958":"val-Sf-Sd-Sa-SZ-PH+","n-2546":"val-bJ-Sf-Se-Cj+Nu+PH+","n-2541":"val-bt-bh-bd-0U+2v+","n-2533":"val-551410832301394405","n-2536":"val-551410834603805160","n-2535":"val-551410832297789927"},"cells":{"res-225461982644505081":{"number":"res-225461982644505081","unit":"kWh","percent":null,"signed":false},"res-78813519778253305":{"number":"res-78813519778253305","unit":"kWh","percent":null,"signed":false},"res-225461982645094905":{"number":"res-225461982645094905","unit":"kWh","percent":null,"signed":false},"val-bt-be-/u+2M+3B+":{"number":"val-bt-be-/u+2M+3B+","unit":"kWh","percent":null,"signed":false},"res-225461982644701689":{"number":"res-225461982644701689","unit":"kWh","percent":null,"signed":false},"res-78813519778449913":{"number":"res-78813519778449913","unit":"kWh","percent":null,"signed":false},"res-283448741824465401":{"number":"res-283448741824465401","unit":"kWh","percent":null,"signed":false},"res-283446504146504185":{"number":"res-283446504146504185","unit":"kWh","percent":null,"signed":false},"res-225461982645488121":{"number":"res-225461982645488121","unit":"kWh","percent":null,"signed":false},"res-78813519779236345":{"number":"res-78813519779236345","unit":"kWh","percent":null,"signed":false},"res-225461982645160441":{"number":"res-225461982645160441","unit":"kWh","percent":null,"signed":false},"res-78813519778908665":{"number":"res-78813519778908665","unit":"kWh","percent":null,"signed":false},"res-bu-bt-Q+AV+PH+":{"number":"res-bu-bt-Q+AV+PH+","unit":"kg","percent":null,"signed":false},"res-bu-bt-Q+2M+PH+":{"number":"res-bu-bt-Q+2M+PH+","unit":"kg","percent":null,"signed":false},"res-bw-bt-Q+AV+PH+":{"number":"res-bw-bt-Q+AV+PH+","unit":"kg","percent":null,"signed":false},"res-bw-bt-Q+2M+PH+":{"number":"res-bw-bt-Q+2M+PH+","unit":"kg","percent":null,"signed":false},"res-bt-bO-Sa-Q+AV+PH+":{"number":"res-bt-bO-Sa-Q+AV+PH+","unit":"kg","percent":null,"signed":true},"res-bt-bO-Sa-Q+2M+PH+":{"number":"res-bt-bO-Sa-Q+2M+PH+","unit":"kg","percent":null,"signed":true},"res-bt-bO-bK-Q+AV+PH+":{"number":"res-bt-bO-bK-Q+AV+PH+","unit":"kg","percent":null,"signed":true},"res-bt-bO-bK-Q+2M+PH+":{"number":"res-bt-bO-bK-Q+2M+PH+","unit":"kg","percent":null,"signed":true},"res-bt-bl-Sa-Q+AV+PH+":{"number":"res-bt-bl-Sa-Q+AV+PH+","unit":"kg","percent":null,"signed":true},"res-bt-bl-Sa-Q+2M+PH+":{"number":"res-bt-bl-Sa-Q+2M+PH+","unit":"kg","percent":null,"signed":true},"res-78813519778253305-2":{"number":"res-78813519778253305","unit":"","percent":null,"signed":false},"val-bt-bd-/u+2M+2v+":{"number":"val-bt-bd-/u+2M+2v+","unit":"","percent":null,"signed":false},"val-bt-be-/u+2M+3B+-2":{"number":"val-bt-be-/u+2M+3B+","unit":"","percent":null,"signed":false},"res-78813519778449913-2":{"number":"res-78813519778449913","unit":"","percent":null,"signed":false},"res-283446504146504185-2":{"number":"res-283446504146504185","unit":"","percent":null,"signed":false},"res-78813519778908665-2":{"number":"res-78813519778908665","unit":"","percent":null,"signed":false},"res-bt-Sf-Sa-2M+PH+":{"number":"res-bt-Sf-Sa-2M+PH+","unit":"","percent":null,"signed":false}},"format":{"thousand_sep":"'","percent_decimals":2,"positive":"pos","negative":"neg"}}
+                        </script>
+                        <script src="http://localhost/src/main/resources/script/calculator.js">
+                        </script>
+                    </section>
                 </div>
             </div>
-            <div class="row col-md-12">
-                the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example
-            </div>
-            <table class="table table-striped table-bordered">
-                <tr>
-                    <th>
-                    </th>
-                    <th>
-                        <a href="http://localhost/http/view.php?m=3&amp;id=280" title="measured over one year">
-                            annual
-                        </a>
-                        in
-                        <a href="http://localhost/http/view.php?m=3&amp;id=122" title="A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.">
-                            kWh
-                        </a>
-                    </th>
-                    <th>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2482" title="the share of the household consumption that falls into the hours with PV production">
-                            day share
-                        </a>
-                        in
-                        <a href="http://localhost/http/view.php?m=3&amp;id=160" title="A percentage is a number or ratio expressed as a fraction of 100; the percent measure auto-scales, so a formula that produces a ratio is shown to the user as a percent without multiplying by 100.">
-                            percent
-                        </a>
-                    </th>
-                    <th>
-                        Values
-                    </th>
-                    <th>
-                        ...
-                    </th>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2478" title="the electricity the household uses in a year, the local consumption that the PV electricity can replace first">
-                            household consumption
-                        </a>
-                    </td>
-                    <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ai-%2Fu_2M_2v_">
-                            4'500
-                        </a>
-                        <sup>
-                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                a
-                            </span>
-                        </sup>
-                    </td>
-                    <td title="assumed, confidence 60%">
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-am-ai-0U_2v_">
-                            35%
-                        </a>
-                        <sup>
-                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                a
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2472" title="the PV surplus that goes into the battery">
-                            battery charge
-                        </a>
-                    </td>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ac-%2Fu_2M_3B_">
-                            2'471
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2479" title="the PV electricity used in the house in the hour it is produced">
-                            direct use
-                        </a>
-                    </td>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-aj-%2Fu_2M_3B_">
-                            1'575
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2484">
-                            2018 to 2022
-                        </a>
-                        ,
-                        <a href="http://localhost/http/view.php?m=3&amp;id=1743" title="carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released">
-                            CO2-eq
-                        </a>
-                        ,
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2459" title="the Swiss consumption mix averaged over the twelve months with the PV electricity delivered in each month as the weight; lower than the annual mean, because PV produces most in summer when the Swiss mix is cleanest">
-                            PV-weighted consumption mix
-                        </a>
-                        ,
-                        <a href="http://localhost/http/view.php?m=3&amp;id=1936">
-                            mean
-                        </a>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=5&amp;id=ap-ao-aP-Sd-3B_PD_SE_">
-                            105.83
-                        </a>
-                        <sup>
-                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
-                                -
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=4&amp;id=2471" title="the usable storage capacity of the battery in kWh">
-                            battery capacity
-                        </a>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td title="assumed">
-                        <a href="http://localhost/http/view.php?m=5&amp;id=88665143959325109">
-                            10
-                        </a>
-                        <sup>
-                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
-                                a
-                            </span>
-                        </sup>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <a href="http://localhost/http/view.php?m=114&amp;id=-2485">
-                            ... and 2 more
-                        </a>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-            </table>
         </main>
         <!--usr_msg-->
         <footer class="site-footer">

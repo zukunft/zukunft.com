@@ -67,6 +67,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 
@@ -95,6 +96,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 
 class sandbox_list extends list_db_write
 {
@@ -401,6 +403,7 @@ class sandbox_list extends list_db_write
     {
 
         global $db_con;
+        global $sys;
         $result = false;
 
         $db_con_used = $db_con_given;
@@ -422,7 +425,9 @@ class sandbox_list extends list_db_write
             if ($db_lst === false) {
                 log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
             } else {
+                $sys->times->switch(system_time_type::DB_MAP);
                 $result = $this->rows_mapper($db_lst, $msg, $load_all);
+                $sys->times->switch();
             }
         }
         return $result;

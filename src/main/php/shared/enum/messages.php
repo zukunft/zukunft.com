@@ -786,6 +786,14 @@ enum messages: string
         . ' does not match the result '
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
         . ' calculated based on the imported values';
+    // the page shows the number calculated with its own values (docs/llm/frontend.md "The frontend calculates, a save job verifies")
+    case RESULT_DIFFERS_FROM_PAGE = 'the stored result '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' differs from the result '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' calculated with the values of this page, which is shown instead';
     case XBRL_FACT_VALUE_CONFLICT = 'the XBRL fact "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" for the context "'
@@ -1140,6 +1148,11 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" to plot';
     case CHART_COLUMNS_MISSING = 'the table has not enough value columns for the chart';
+    case CALCULATOR_CELL_AMBIGUOUS = 'the calculator cell of "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '" stays empty, because its phrases select the different numbers "'
+        . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
+        . '" equally; add the phrase that selects one of them to the calculator triples of the cell';
     case CHART_TYPE_UNKNOWN = 'the chart type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" has no code id of a known chart type, so the chart is not shown';
@@ -1833,6 +1846,17 @@ enum messages: string
     case QUALITY_MARK_ASSUMED = 'quality_mark_assumed';
     case QUALITY_MARK_NO_SOURCE = 'quality_mark_no_source';
     case QUALITY_MARK_PEER_REVIEWED = 'quality_mark_peer_reviewed';
+    // the tag behind the label of an assumption field: a number with a source or an estimate
+    case FIELD_TAG_MEASURED = 'field_tag_measured';
+    case FIELD_TAG_ASSUMED = 'field_tag_assumed';
+    // the headings of the calculator input if the calculator triples name no label, and its button
+    case CALCULATOR_INPUTS = 'calculator_inputs';
+    case CALCULATOR_ASSUMPTIONS = 'calculator_assumptions';
+    case CALCULATOR_SAVE = 'calculator_save';
+    // the first header of the result table, the default summary of the details and the sources heading
+    case CALCULATOR_RESULT = 'calculator_result';
+    case CALCULATOR_DETAILS = 'calculator_details';
+    case CALCULATOR_SOURCES = 'calculator_sources';
 
     // text to be shown in buttons
     case ADD = 'add';

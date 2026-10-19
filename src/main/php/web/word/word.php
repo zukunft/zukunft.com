@@ -805,6 +805,14 @@ class word extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the word says how a number has been found e.g. "assumed" or "modelled"
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
+    }
+
+    /**
      * @return bool true if the word has the type "time" e.g. "monthly"
      */
     function is_time_jump(user_message $msg): bool

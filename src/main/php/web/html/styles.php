@@ -75,6 +75,10 @@ class styles
     const string SORT_ACTIVE = 'sort-active';
     // the charts of a table beside each other, wrapping on a narrow screen (see style_html.css)
     const string CHART_ROW = 'chart-row';
+    // the input panel beside the result panels of a use case page, stacked on a phone, and the
+    // frame of each panel (see view_exe::dsp_entries and the .use-case rules of style_html.css)
+    const string GRID = 'grid';
+    const string PANEL = 'panel';
     // the line above the charts of a table shown without the table: the header of the table
     // centred and the "..." menu of the table in the top right corner (see style_html.css)
     const string CHART_HEAD = 'chart-head';
@@ -148,6 +152,32 @@ class styles
     // and the measure/scaling part that follows the number like on a price tag
     const string VALUE_ROW = 'value-row';
     const string VALUE_UNIT = 'value-unit';
+    // an input field of a use case page with its label and the unit behind the input (ui_list::input_fields)
+    const string INPUT_FIELD = 'field';
+    const string INPUT_UNIT = 'unit';
+    // the measured or assumed tag behind the label and the source hint below an assumption field
+    const string INPUT_TAG = 'tag';
+    const string INPUT_HINT = 'hint';
+    // the measured and the assumed tag of a calculator assumption in their own colour
+    const string INPUT_TAG_MEASURED = 'tag m';
+    const string INPUT_TAG_ASSUMED = 'tag a';
+    // the input and its unit on one line of a calculator field, and the frame of the inputs and
+    // the save button of the calculator input (ui_list::calculator_fields)
+    const string INPUT_ROW = 'row';
+    const string INPUTS = 'inputs';
+    // the parts of the calculation result (ui_list::calculation_table): the frame that scrolls a
+    // wide table, a section row, a key row, the sub text of a row, a number cell, the sign of a
+    // number, the content of the details, the formula notes and the source list
+    const string CALC_SCROLL = 'scroll';
+    const string CALC_SECTION = 'sec';
+    const string CALC_KEY = 'key';
+    const string CALC_SUB = 'sub';
+    const string CALC_NUMBER = 'n';
+    const string CALC_POSITIVE = 'pos';
+    const string CALC_NEGATIVE = 'neg';
+    const string CALC_MORE = 'more';
+    const string CALC_NOTES = 'notes';
+    const string CALC_SOURCES = 'src';
 
     // the not critical entries of an admin dashboard column, which open by a click on the +/- marker
     const string ADMIN_MORE = 'admin-more';
