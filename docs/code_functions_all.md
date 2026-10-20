@@ -7110,6 +7110,7 @@
             .php
     \-- percent_decimals - section for function percent_decimals not yet defined that it should be interface in /helper/
             config.php
+    \-- digits - section for function digits not yet defined that it should be interface in /helper/config.php
     \-- dec_point - section for function dec_point not yet defined that it should be interface in /helper/config.php
     \-- thousand_sep - section for function thousand_sep not yet defined that it should be interface in /helper/config.p
             hp
@@ -10111,12 +10112,12 @@
     \-- percent_decimals
         \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
                  the
+    \-- digits
+        \-- config - the full precision tier has no number of digits, because it shows all decimals
     \-- dec_point
-        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
-                 the
+        \-- config - the full precision tier has no number of digits, because it shows all decimals
     \-- thousand_sep
-        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
-                 the
+        \-- config - the full precision tier has no number of digits, because it shows all decimals
     \-- date_time_format
         \-- config - @return string with the date format as requested by the user
 \-- classifications

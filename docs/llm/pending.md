@@ -149,11 +149,13 @@ All digit and precision numbers should be in the config.yaml so that the default
 
 ### high and low of ranges
 
-create system triples to define th high and low of a standard range e.g.
-- range high (system) with code_id
-- range low (system)
+create system triples to define the high and low of a variance e.g.
+- variance high (system) with code_id
+- variance low (system)
 
-rename the existing 'high' and 'low' words in values and results
+This implies that the word variance also needs to be defined, that links to https://en.wikipedia.org/wiki/Variance
+
+rename the existing 'high' and 'low' words in values and results because that actually mean 'variance high (system)' and 'variance low (system)' in most cases. Check if there are some exceptions
 
 ## start page
 

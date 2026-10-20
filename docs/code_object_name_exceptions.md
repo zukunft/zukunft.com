@@ -114,7 +114,7 @@ component_link_type: $cmp_lnk_typ, $lnk_typ_ui
 component_list: $add_lst, $cmp_lst, $db_lst, $db_lst_all, $lst, $phr_lst, $wrd_lst
 component_type: $cmp_typ
 component_type_list: $cmp_lst
-config: $cfg, $cfg_all, $cfg_db, $cfg_sys, $sys_cfg
+config: $cfg, $cfg_all, $cfg_db, $cfg_digits, $cfg_none, $cfg_sys, $sys_cfg
 controller: $ctrl
 data_object: $cac, $cache_dto, $cfg, $ctg_dto, $dto, $dto_as, $dto_base_ui, $dto_calc, $dto_col, $dto_empty, $dto_in, $dto_lst, $dto_no_links, $dto_no_reasons, $dto_prio, $dto_reasons, $dto_res, $dto_rsn_sol, $dto_sim, $dto_sol, $dto_start, $dto_ui, $dto_vp, $res_cfg, $steps_dto
 db_cache: $cac, $cac_cfg, $db_cache

@@ -59,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -767,6 +768,26 @@ class use_case_ui_tests
         $test_name = 'a calculation result without javascript has no script';
         $t->assert_text_not_contains($test_name, $page->calculation_result($wrd, $msg, $dto_res), '<script');
         $ui_sys->cfg = $cfg_keep;
+
+        $t->subheader($ts . 'number format digits');
+        // without a config value each precision tier has the digits of its shared config const
+        $cfg_none = new config_ui();
+        $test_name = 'the default tier has the default digits without a config value';
+        $t->assert($test_name, $cfg_none->digits(), shared_config::DEFAULT_DIGITS);
+        $test_name = '... and each tier the digits of its const';
+        $t->assert($test_name, $cfg_none->digits(triples::VERY_ROUGH), shared_config::VERY_ROUGH_DIGITS);
+        // a pod overwrites the digits in config.yaml; every user default value has "default" in its
+        // path, so also the precise tier matches the names of the default tier
+        $cfg_digits = new config_ui($t_val->value_list_config_digits()->api_json([api_types::INCL_PHRASES]));
+        $test_name = 'the config value overwrites the digits of a tier';
+        $t->assert($test_name, $cfg_digits->digits(words::PRECISE), shared_config::PRECISE_DIGITS + 1);
+        $test_name = '... and the default tier reads its own value, not the first value with its names';
+        $t->assert($test_name, $cfg_digits->digits(), shared_config::DEFAULT_DIGITS + 1);
+        // negative: a tier without a config value keeps its const, an unknown tier gets the default tier
+        $test_name = '... but a tier without a config value keeps the digits of its const';
+        $t->assert($test_name, $cfg_digits->digits(words::ROUGH), shared_config::ROUGH_DIGITS);
+        $test_name = 'an unknown tier has the digits of the default tier';
+        $t->assert($test_name, $cfg_digits->digits(words::DIGITS), shared_config::DEFAULT_DIGITS + 1);
 
         $t->subheader($ts . 'calculator page title');
         // the calculator page is named by the calculator label of the page phrase instead of the view name

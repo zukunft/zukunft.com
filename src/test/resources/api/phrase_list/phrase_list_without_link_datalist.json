@@ -1,36 +1,36 @@
 [
     {
-        "id": 379,
+        "id": 385,
         "name": "2013",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 380,
+        "id": 386,
         "name": "2014",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 381,
+        "id": 387,
         "name": "2015",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 382,
+        "id": 388,
         "name": "2016",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 383,
+        "id": 389,
         "name": "2017",
         "type_id": 11,
         "class": "word"
     },
     {
-        "id": 384,
+        "id": 390,
         "name": "2018",
         "type_id": 11,
         "class": "word"
@@ -49,7 +49,7 @@
         "class": "word"
     },
     {
-        "id": 601,
+        "id": 607,
         "name": "ABB",
         "description": "ABB (ASEA Brown Boveri) is a Swedish-Swiss multinational corporation headquartered in Zürich",
         "type_id": 1,
@@ -82,31 +82,31 @@
         "class": "word"
     },
     {
-        "id": 604,
+        "id": 610,
         "name": "cash",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 612,
+        "id": 623,
         "name": "cash flow",
         "class": "triple"
     },
     {
-        "id": 615,
+        "id": 626,
         "name": "cash flow statement",
         "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
         "class": "triple"
     },
     {
-        "id": 460,
+        "id": 466,
         "name": "CHF",
         "description": "ISO 4217 alphabetic code for the Swiss franc (Confoederatio Helvetica Franc), also widely used as the currency's typographic symbol.",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 446,
+        "id": 457,
         "name": "CHF is symbol for Swiss franc",
         "class": "triple"
     },
@@ -126,7 +126,7 @@
         "class": "word"
     },
     {
-        "id": 230,
+        "id": 239,
         "name": "climate",
         "description": "long-term statistical characterization of atmospheric conditions in a region, typically averaged over periods of 30 years or more",
         "type_id": 1,
@@ -165,14 +165,14 @@
         "class": "word"
     },
     {
-        "id": 257,
+        "id": 266,
         "name": "education",
         "description": "process of teaching and learning",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 125,
+        "id": 137,
         "name": "education can be global problem",
         "class": "triple"
     },
@@ -222,18 +222,18 @@
         "class": "triple"
     },
     {
-        "id": 112,
+        "id": 124,
         "name": "global warming",
         "description": "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.",
         "class": "triple"
     },
     {
-        "id": 181,
+        "id": 195,
         "name": "global warming (global problem)",
         "class": "triple"
     },
     {
-        "id": 113,
+        "id": 125,
         "name": "global warming potential",
         "description": "see Wikipedia: Global warming potential",
         "class": "triple"
@@ -259,47 +259,47 @@
         "class": "word"
     },
     {
-        "id": 269,
+        "id": 278,
         "name": "happy",
         "description": "feeling or showing pleasure or contentment",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 178,
+        "id": 192,
         "name": "happy time points",
         "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\".",
         "class": "triple"
     },
     {
-        "id": 253,
+        "id": 262,
         "name": "health",
         "description": "a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 122,
+        "id": 134,
         "name": "health can be a global problem",
         "description": "poor health of many people is one of the problems ranked on the start page",
         "class": "triple"
     },
     {
-        "id": 274,
+        "id": 283,
         "name": "htp",
         "description": "the symbol used in formulas for happy time points",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 305,
+        "id": 314,
         "name": "income",
         "description": "Income is the consumption and saving opportunity gained by an entity within a specified time frame, which is generally expressed in monetary terms.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 613,
+        "id": 624,
         "name": "income taxes",
         "class": "triple"
     },
@@ -377,7 +377,7 @@
         "class": "word"
     },
     {
-        "id": 607,
+        "id": 613,
         "name": "parts",
         "type_id": 1,
         "class": "word"
@@ -419,40 +419,40 @@
         "class": "word"
     },
     {
-        "id": 271,
+        "id": 280,
         "name": "points",
         "description": "a counted unit on a rating scale",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 237,
+        "id": 246,
         "name": "populism",
         "description": "a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 121,
+        "id": 133,
         "name": "populism (global problem)",
         "class": "triple"
     },
     {
-        "id": 226,
+        "id": 235,
         "name": "potential",
         "description": "the size an effect can reach if nothing counteracts it",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 255,
+        "id": 264,
         "name": "poverty",
         "description": "the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 124,
+        "id": 136,
         "name": "poverty (global problem)",
         "class": "triple"
     },
@@ -464,7 +464,7 @@
         "class": "word"
     },
     {
-        "id": 603,
+        "id": 609,
         "name": "sales",
         "type_id": 1,
         "class": "word"
@@ -477,14 +477,14 @@
         "class": "word"
     },
     {
-        "id": 218,
+        "id": 227,
         "name": "solution",
         "description": "a homogeneous mixture of a solute dissolved in a solvent",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 605,
+        "id": 611,
         "name": "statement",
         "type_id": 1,
         "class": "word"
@@ -497,47 +497,47 @@
         "class": "word"
     },
     {
-        "id": 308,
+        "id": 317,
         "name": "tax",
         "description": "compulsory financial charge to public authority",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 116,
+        "id": 128,
         "name": "time points",
         "description": "a value multiplied by the time e.g. used for the UN Disability-adjusted life year (DALYs)",
         "class": "triple"
     },
     {
-        "id": 387,
+        "id": 393,
         "name": "total",
         "description": "the whole amount or count, e.g. the total number of possible outcomes",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 275,
+        "id": 284,
         "name": "trillion",
         "description": "the scaling factor of 10^12",
         "type_id": 6,
         "class": "word"
     },
     {
-        "id": 446,
+        "id": 452,
         "name": "USD",
         "description": "ISO 4217 alphabetic code for the United States dollar.",
         "type_id": 2,
         "class": "word"
     },
     {
-        "id": 602,
+        "id": 608,
         "name": "Vestas",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 233,
+        "id": 242,
         "name": "warmer",
         "description": "having a higher temperature than before",
         "type_id": 1,
@@ -600,7 +600,7 @@
         "class": "triple"
     },
     {
-        "id": 288,
+        "id": 299,
         "name": "Zurich Insurance",
         "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
         "class": "triple"

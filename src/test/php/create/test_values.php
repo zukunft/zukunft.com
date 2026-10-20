@@ -49,7 +49,10 @@ include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'values.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -73,7 +76,10 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -1585,6 +1591,29 @@ class test_values extends test_objects
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_for_phrases([$t_trp->config_use_javascript()->phrase(),
             $t_trp->config_for_calculator()->phrase()], 0));
+        return $lst;
+    }
+
+    /**
+     * the config of a pod that overwrites the digits of the default and of the precise tier
+     * (config.yaml number format > digits) by one more digit than the fallback; both have the
+     * path of a user default value, so the path of the precise tier contains the default key too
+     *
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_config_digits(): value_list
+    {
+        $t_phr = new test_phrases($this->env);
+        $path = [words::DEFAULT, triples::NUMBER_FORMAT, words::DIGITS];
+        $lst = new value_list($this->env->usr1);
+        // the precise tier first, so that a first match would read it also for the default tier;
+        // set directly like config_cache_switch, because add() skips a value without a group name
+        $lst->set_lst([
+            new value($this->env->usr1, shared_config::PRECISE_DIGITS + 1,
+                $t_phr->list_cache_switch([...$path, words::PRECISE])->get_grp_id(false)),
+            new value($this->env->usr1, shared_config::DEFAULT_DIGITS + 1,
+                $t_phr->list_cache_switch($path)->get_grp_id(false)),
+        ]);
         return $lst;
     }
 

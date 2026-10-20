@@ -160,7 +160,7 @@ class group_tests
         $phr_lst->merge($t_wrd->word_list()->phrase_list());
         $phr_lst->merge($t_trp->triple_list_short()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '/l-3-/-/+0+3+4+');
+            '/x-3-/-/+0+3+4+');
         $t->assert('group_id phrase list', $grp_id->get_id($t_phr->phrase_list()),
             '3-/-/+0+F+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t_phr->phrase_list_16()),
