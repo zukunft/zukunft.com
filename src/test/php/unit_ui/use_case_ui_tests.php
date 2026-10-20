@@ -578,6 +578,13 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $in_html, 'value="' . values::SAMPLE_FLOAT . '"');
         $test_name = '... and selects the option that the page phrase uses';
         $t->assert_text_contains($test_name, $in_html, ' selected >' . word_names::YEAR_2020 . '</option>');
+        // a result row of a selector phrase e.g. replacement mix shows the numbers of the used option
+        $calc_in = new calculator($dto_in->phr_lst->get_by_name(triple_names::CITY_ZH_NAME, $msg), $dto_in->phr_lst);
+        $test_name = 'a selector phrase stands for the option that the page phrase uses';
+        $t->assert($test_name, $calc_in->chosen($dto_in->phr_lst->get_by_name(word_names::CANTON, $msg))?->name(), word_names::YEAR_2020);
+        // negative: a phrase that is no selector or whose options the page phrase does not use stands for itself
+        $test_name = '... and a phrase without a used option stands for itself';
+        $t->assert($test_name, $calc_in->chosen($dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg))?->name(), word_names::INHABITANTS);
         // the field gives the selector its layout, so the selector follows its label directly
         $test_name = '... directly behind its label';
         $t->assert_text_contains($test_name, $in_html, '</label><select class="form-control" name="'

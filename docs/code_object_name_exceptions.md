@@ -68,7 +68,7 @@ ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
 RecursiveDirectoryIterator: $dir_iterator
 RecursiveIteratorIterator: $iter
-ReflectionClass: $ref, $refl
+ReflectionClass: $ref
 ZipArchive: $zip
 a_selected_test: $t_sel
 all_api_tests: $t_api
@@ -81,7 +81,7 @@ api_type_list: $api_typ_lst, $typ_lst, $with_related, $without_related
 arithmetic: $calc
 button_dsp: $btn
 calc_internal: $calc
-calculator: $calc, $calc_be, $js_calc
+calculator: $calc, $calc_be, $calc_in, $js_calc
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac

@@ -3343,6 +3343,7 @@
       "words": [
         "example PV installation",
         "self-consumption share",
+        "annual",
         "percent"
       ],
       "number": "0.49"
@@ -3363,6 +3364,7 @@
       "words": [
         "example PV installation",
         "autarky",
+        "annual",
         "percent"
       ],
       "number": "0.84"

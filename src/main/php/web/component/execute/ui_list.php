@@ -2746,7 +2746,8 @@ class ui_list extends ui_base
      * 3.2): one column per result column, one section row per row group and one row per item of
      * the group in their order, with the label, the hint or else the side results as sub text,
      * the key row style of a highlight and the sign of the numbers of a signed group; a cell is
-     * the result or value with the page phrase, the row phrase, its filter phrase and the column phrase
+     * the result or value with the page phrase, the row phrase, its filter phrase and the column phrase;
+     * the row phrase of a selector is the option that the page phrase uses e.g. residual mix
      *
      * @param calculator $calc the calculator reader of the page
      * @param word|triple $dbo the phrase of the page
@@ -2773,7 +2774,7 @@ class ui_list extends ui_base
                 $rows .= $html->block(html_base::TR, $sec, styles::CALC_SECTION);
                 $signed = $calc->has_flag($grp, triples::CALCULATOR_SIGNED);
                 foreach ($calc->sub_items($grp, verbs::HAS_ID) as $row) {
-                    $ctx = [$dbo->phrase(), $calc->item_phrase($row), $calc->filter($row)];
+                    $ctx = [$dbo->phrase(), $calc->chosen($calc->item_phrase($row)), $calc->filter($row)];
                     $cells = '';
                     foreach ($cols as $col) {
                         $val = $this->calculator_result([...$ctx, $calc->item_phrase($col)], $lst, $msg);

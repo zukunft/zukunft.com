@@ -8,9 +8,7 @@ the differences of `pv_lifetime_balance.html` to `pv_lifetime_balance_sample.htm
 the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
 renderer, never by adapting the sample
 
-1. Autarky numbers - try to solve mainly by changing the json files - main table, numbers: the per year column of "Self-consumption rate" (49 %) and "Autarky"
-   (84 %) and both columns of "vs. replacement mix" (113.8 t, 3'794 kg) are empty
-2. number format - allow to set a target number of digits per value per view,
+1. number format - allow to set a target number of digits per value per view,
    but allow absolut and relative exceptions.  
    if a number is higher than the number of target number of decimals
    and there is a formula to scale the number down, use if
@@ -22,10 +20,10 @@ renderer, never by adapting the sample
    the lifetime column shows kg results in t with one decimal (10.5 t, 2.0 t,
    18.4 t, 13.1 t, 113.8 t, -2.9 t) and the per year column the numbers without decimals (247,
    701, 349, 67, 614, 436, -98 kg), the percent with a blank before "%" ("49 %")
-3. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
+2. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
    the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
    Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
-4. assumptions - the parts that the json cannot solve:
+3. assumptions - the parts that the json cannot solve:
     - the tags "assumed 0.5" of the battery production emissions and "assumed 0.6" of the
       battery lifetime: the confidence value has the phrases of the value without its unit (a
       value has one unit only), so the lookup of the confidence must ignore the unit phrase
@@ -41,22 +39,22 @@ renderer, never by adapting the sample
     - the input of the load share during PV hours has no `step="0.05" min="0" max="1"`, although
       the json has the field step and both field limits of "day share"; the field steps of the
       other inputs are shown, so the property lookup fails for the value group of the day share
-5. formula sample - add parameter 'show formula sample' to the field 
+4. formula sample - add parameter 'show formula sample' to the field 
    and create a sample based on the formula and the database values -   
    table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
    kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
    the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
    of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
-6. notes: only the three notes of the page with their own titles and sources ("How the CO₂
+5. notes: only the three notes of the page with their own titles and sources ("How the CO₂
    saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
    instead of the description of every formula (19 notes with the formula name in `b`)
-7. sources - just add sources - more sources is an excepted difference:   
+6. sources - just add sources - more sources is an excepted difference:   
    the seven sources of the sample in the order of their first use ([1] IEA PVPS,
    [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
    [7] gruenes.haus) with their full citation as the link text and `target="_blank"
    rel="noopener"`; today five sources with the short source name, gruenes.haus first and
    the two battery sources missing
-8. the comparison: let the use case test assert the generated page against the sample with
+7. the comparison: let the use case test assert the generated page against the sample with
    a normalisation of the differences that are design and not content: the html ids and
    names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
    attributes and the save form, the cell ids, and the calculator data with `calculator.js`
@@ -133,6 +131,29 @@ open for the calculator page:
 ## import / export
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
+
+## general
+
+### digits
+
+add system triples with code_id to define the number of digits that should be shown: 
+- digits (system): the number of digits used by the system (code_id: system_digits) 
+- default digits (system): the default number of digits that should be shown in the frontend = 4
+- high precision digits (system): the number of digits for views or values / results that needs more precision = 8   
+- very high precision digits (system): the number of digits for views or values / results that needs even more precision = 12
+- full precision digits (system): always the full number with all decimal palaces shound be shown
+- low precision digits (system): the number of digits for views or values / results that are used only as an indication = 3
+- very low precision digits (system): the number of digits for views or values / results that are used just as a rough indication = 2
+
+All digit and precision numbers should be in the config.yaml so that the default value (create a const!) can be overwritten
+
+### high and low of ranges
+
+create system triples to define th high and low of a standard range e.g.
+- range high (system) with code_id
+- range low (system)
+
+rename the existing 'high' and 'low' words in values and results
 
 ## start page
 

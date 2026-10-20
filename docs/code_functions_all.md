@@ -6455,6 +6455,8 @@
             lator.php
     \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
             tor.php
+    \-- chosen - section for function chosen not yet defined that it should be texts and flags in /component/execute/cal
+            culator.php
     \-- phrases - section for function phrases not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
 \-- system_form
@@ -9763,6 +9765,8 @@
         \-- calculator - @param phrase $phr e.g. month or replacement mix
     \-- used
         \-- calculator - @param phrase[] $phr_lst e.g. the option phrases of a selector
+    \-- chosen
+        \-- calculator - the phrase whose numbers a row shows: the option that the page phrase uses if the phrase
     \-- phrases
         \-- calculator - the phrases whose general triples the page reads by rule 6 and 8: the phrase of each item,
 \-- optional with show password but without auto fill

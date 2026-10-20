@@ -867,10 +867,10 @@ class test_pinned_ids
         $result = '';
         foreach ($re_pin_lst as [$key, $id, $new_id, $const, $reason]) {
             if ($reason == '') {
-                [$refl, $const_name, $pattern] = $const;
-                $file = $refl->getFileName();
+                [$ref, $const_name, $pattern] = $const;
+                $file = $ref->getFileName();
                 file_put_contents($file, preg_replace($pattern, '${1}' . $new_id . ';', file_get_contents($file), 1));
-                $result .= $refl->getShortName() . '::' . $const_name . ' ' . $id . ' to ' . $new_id . '; ';
+                $result .= $ref->getShortName() . '::' . $const_name . ' ' . $id . ' to ' . $new_id . '; ';
             } else {
                 $result .= $key . ' pinned as ' . $id . ' needs a re-pin by hand, because of ' . $reason . '; ';
             }
@@ -913,8 +913,8 @@ class test_pinned_ids
             $result .= $tested . ' ' . $name . 's tested, ' . count($re_pin_lst) . ' to re-pin:' . "\n\n";
             foreach ($re_pin_lst as [$key, $id, $new_id, $const, $reason]) {
                 if ($reason == '') {
-                    [$refl, $const_name] = $const;
-                    $result .= '- `' . $refl->getShortName() . '::' . $const_name . '` ' . $id . ' to ' . $new_id . ' (' . $key . ')' . "\n";
+                    [$ref, $const_name] = $const;
+                    $result .= '- `' . $ref->getShortName() . '::' . $const_name . '` ' . $id . ' to ' . $new_id . ' (' . $key . ')' . "\n";
                 } else {
                     $result .= '- ' . $key . ' pinned as ' . $id . ': re-pin by hand, because of ' . $reason . "\n";
                 }
@@ -939,12 +939,12 @@ class test_pinned_ids
     {
         $candidates = [];
         foreach (self::CONST_CLASSES[$class] as $const_class) {
-            $refl = new ReflectionClass($const_class);
-            $src = file_get_contents($refl->getFileName());
-            foreach ($refl->getConstants() as $const => $value) {
+            $ref = new ReflectionClass($const_class);
+            $src = file_get_contents($ref->getFileName());
+            foreach ($ref->getConstants() as $const => $value) {
                 $pattern = '/(const int ' . $const . '\s*=\s*)' . $id . ';/';
                 if (str_ends_with($const, '_ID') and $value === $id and preg_match($pattern, $src)) {
-                    $candidates[] = [$refl, $const, $pattern];
+                    $candidates[] = [$ref, $const, $pattern];
                 }
             }
         }
@@ -952,9 +952,9 @@ class test_pinned_ids
         // by the const of the name that starts like the id const e.g. CHF for CHF_ID
         if (count($candidates) > 1) {
             $candidates = array_values(array_filter($candidates, function ($candidate) use ($key) {
-                [$refl, $const] = $candidate;
+                [$ref, $const] = $candidate;
                 $base = substr($const, 0, -strlen('_ID'));
-                foreach ($refl->getConstants() as $key_const => $value) {
+                foreach ($ref->getConstants() as $key_const => $value) {
                     if ($value === $key and str_starts_with($key_const, $base)) {
                         return true;
                     }
