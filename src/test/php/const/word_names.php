@@ -172,7 +172,7 @@ class word_names
     // data, so they are selected by the name only (docs/llm/json_structure.md "Use case files")
     const string ISBN = 'ISBN';
     const string ISIN_MERCEDES = 'DE0007100000';
-    // the bounds of the probability range of a value
+    // the words of the variance bound triples e.g. "variance low (system)"
     const string LOW = 'low';
     const int LOW_ID = 225;
     const string HIGH = 'high';

@@ -132,32 +132,9 @@ open for the calculator page:
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
 
-## general
-
-### digits
-
-add system triples with code_id to define the number of digits that should be shown: 
-- digits (system): the number of digits used by the system (code_id: system_digits) 
-- default digits (system): the default number of digits that should be shown in the frontend = 4
-- high precision digits (system): the number of digits for views or values / results that needs more precision = 8   
-- very high precision digits (system): the number of digits for views or values / results that needs even more precision = 12
-- full precision digits (system): always the full number with all decimal palaces shound be shown
-- low precision digits (system): the number of digits for views or values / results that are used only as an indication = 3
-- very low precision digits (system): the number of digits for views or values / results that are used just as a rough indication = 2
-
-All digit and precision numbers should be in the config.yaml so that the default value (create a const!) can be overwritten
-
-### high and low of ranges
-
-create system triples to define the high and low of a variance e.g.
-- variance high (system) with code_id
-- variance low (system)
-
-This implies that the word variance also needs to be defined, that links to https://en.wikipedia.org/wiki/Variance
-
-rename the existing 'high' and 'low' words in values and results because that actually mean 'variance high (system)' and 'variance low (system)' in most cases. Check if there are some exceptions
-
 ## start page
+
+rename the '...'-menu entries like 'mayor + range' to 'mayor + variance' and 'main + range' to 'main + variance', ...
 
 adjust the numbers in the json data files so that the problem / solution are in this order
 

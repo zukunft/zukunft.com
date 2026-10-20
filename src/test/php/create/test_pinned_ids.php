@@ -360,6 +360,8 @@ class test_pinned_ids
         [triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT, triple_names::CHART_SCATTER_OF_GAIN_AND_EFFORT_ID],
         [triple_names::SYSTEM_SORT_ORDER, triple_names::SYSTEM_SORT_ORDER_ID],
         [triple_names::SYSTEM_SORT_ORDER_DEFAULT, triple_names::SYSTEM_SORT_ORDER_DEFAULT_ID],
+        [triple_names::SYSTEM_VARIANCE_HIGH, triple_names::SYSTEM_VARIANCE_HIGH_ID],
+        [triple_names::SYSTEM_VARIANCE_LOW, triple_names::SYSTEM_VARIANCE_LOW_ID],
         [triple_names::NUMERIC_DESC_OF_LOSS, triple_names::NUMERIC_DESC_OF_LOSS_ID],
         [triple_names::SORT_NUMERIC_DESC_OF_LOSS, triple_names::SORT_NUMERIC_DESC_OF_LOSS_ID],
         [triple_names::COLUMN_PROBLEM, triple_names::COLUMN_PROBLEM_ID],

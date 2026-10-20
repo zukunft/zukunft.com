@@ -101,6 +101,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -153,6 +156,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "market power",
       "from": "power",
@@ -382,7 +397,7 @@
     {"words": ["markup due to market power", "China", "2016", "factor"], "number": "1.4", "source": "De Loecker & Eeckhout (2020) Global Market Power", "description": "ratio of the price to the marginal cost"},
     {"words": ["deadweight loss due to market power", "TFP loss", "United States", "percent"], "number": "0.15", "source": "Baqaee & Farhi (2020)", "description": "the aggregate TFP would be about 15 percent higher without the misallocation caused by the markups"},
     {"words": ["deadweight loss due to market power", "consumption loss", "United States", "percent"], "number": "0.075", "source": "Edmond, Midrigan & Xu (2018)", "description": "the consumption-equivalent welfare gain from removing all markup distortions in the benchmark calibration"},
-    {"words": ["deadweight loss due to market power", "consumption loss", "United States", "percent", "high"], "number": "0.186", "source": "Edmond, Midrigan & Xu (2018)", "description": "the calibration to the cost-weighted Compustat markup of 1.25, an upper bound according to the authors"},
+    {"words": ["deadweight loss due to market power", "consumption loss", "United States", "percent", "variance high (system)"], "number": "0.186", "source": "Edmond, Midrigan & Xu (2018)", "description": "the calibration to the cost-weighted Compustat markup of 1.25, an upper bound according to the authors"},
     {"words": ["labour share change due to market power", "United States", "1984-2014", "percent"], "number": "-0.1", "source": "Barkai (2020)", "description": "the decline of the labour share of the US non-financial corporate sector over the past 30 years in percent of its level, not in percentage points"},
     {"words": ["excess profit due to market power", "profit share change", "United States", "1984-2014", "percent"], "number": "0.12", "source": "Barkai (2020)", "description": "the increase of the profit share by more than 12 percentage points of the gross value added"},
     {"words": ["excess profit due to market power", "United States", "2014", "billion", "EUR"], "number": "1017.29", "source": "Barkai (2020)", "description": "the value of the increase of the profit share, over 1.1 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
@@ -392,7 +407,7 @@
     {"words": ["wage markdown due to market power", "manufacturing", "United States", "1976-2014", "factor"], "number": "1.53", "source": "Yeh, Macaluso & Hershbein (2022)", "description": "the average markdown of the US manufacturing plants, i.e. a worker earns only 65 cents on the marginal dollar generated"},
     {"words": ["cartel overcharge due to market power", "median", "world", "percent"], "number": "0.23", "source": "Connor (2014) Price-Fixing Overcharges", "description": "the median average long-run overcharge of 2'041 estimates for all types of cartels over all time periods"},
     {"words": ["cartel fine", "European Union", "2015-2019", "billion", "EUR"], "number": "8.307828", "source": "European Commission (2021) Cartel statistics", "description": "the fines imposed by the European Commission for cartels, not adjusted for court judgments; the scale of the detected cartels, not a cost estimate and not attributed to market power by the source"},
-    {"words": ["investment loss due to market power", "United States", "percent", "low"], "number": "0.04", "source": "Gutiérrez & Philippon (2017)", "description": "capital and investment would be 4 to 8 percent higher if the markups were held at their level of the past; a statement of the author in the general discussion of the paper"},
-    {"words": ["investment loss due to market power", "United States", "percent", "high"], "number": "0.08", "source": "Gutiérrez & Philippon (2017)", "description": "capital and investment would be 4 to 8 percent higher if the markups were held at their level of the past; a statement of the author in the general discussion of the paper"}
+    {"words": ["investment loss due to market power", "United States", "percent", "variance low (system)"], "number": "0.04", "source": "Gutiérrez & Philippon (2017)", "description": "capital and investment would be 4 to 8 percent higher if the markups were held at their level of the past; a statement of the author in the general discussion of the paper"},
+    {"words": ["investment loss due to market power", "United States", "percent", "variance high (system)"], "number": "0.08", "source": "Gutiérrez & Philippon (2017)", "description": "capital and investment would be 4 to 8 percent higher if the markups were held at their level of the past; a statement of the author in the general discussion of the paper"}
   ]
 }

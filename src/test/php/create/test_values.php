@@ -317,10 +317,11 @@ class test_values extends test_objects
     function value_mio_eur(): value
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         return $this->value_for_phrases([
             $t_wrd->word()->phrase(),
             $t_wrd->word_assumed()->phrase(),
-            $t_wrd->word_high()->phrase(),
+            $t_trp->variance_high()->phrase(),
             $t_wrd->word_million()->phrase(),
             $t_wrd->word_eur()->phrase()]);
     }
@@ -1110,8 +1111,8 @@ class test_values extends test_objects
         $t_trp = new test_triples($this->env);
         $lst = $this->value_list_solution_prio_reason();
         $loss_phr = $this->solution_prio_loss_phrases($t_trp->global_warming()->phrase(), false);
-        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_low()->phrase()]), 25));
-        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_high()->phrase()]), 40));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_trp->variance_low()->phrase()]), 25));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_trp->variance_high()->phrase()]), 40));
         $pct = $t_wrd->word_percent()->phrase();
         $loss = $t_trp->potential_loss()->phrase();
         foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , $gain_nbr, $is_assumed]) {
@@ -1245,8 +1246,8 @@ class test_values extends test_objects
         $loss_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
             $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase(),
             $t_wrd->word_assumed()->phrase()];
-        $low_phr = array_merge($loss_phr, [$t_wrd->word_low()->phrase()]);
-        $high_phr = array_merge($loss_phr, [$t_wrd->word_high()->phrase()]);
+        $low_phr = array_merge($loss_phr, [$t_trp->variance_low()->phrase()]);
+        $high_phr = array_merge($loss_phr, [$t_trp->variance_high()->phrase()]);
         // the confidence is a share, so it names no unit of the loss but the percent format
         $conf_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
             $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase(),

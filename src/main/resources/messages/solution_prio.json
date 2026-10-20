@@ -775,12 +775,13 @@
       "description": "the check that a shown table can be reproduced from the values"
     },
     {
-      "name": "low",
-      "description": "the lower bound of the probability range of a value; the width of the range is defined by the file that states it"
+      "name": "low"
     },
     {
-      "name": "high",
-      "description": "the upper bound of the probability range of a value; the width of the range is defined by the file that states it"
+      "name": "high"
+    },
+    {
+      "name": "variance"
     },
     {
       "name": "centre",
@@ -997,6 +998,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "global problem",
       "from": "problem",
@@ -2578,7 +2591,7 @@
         "human",
         "population",
         "billion",
-        "low",
+        "variance low (system)",
         "assumed"
       ],
       "number": "5.67",
@@ -2590,7 +2603,7 @@
         "human",
         "population",
         "billion",
-        "high",
+        "variance high (system)",
         "assumed"
       ],
       "number": "12.75",
@@ -2603,7 +2616,7 @@
         "million",
         "EUR",
         "2024",
-        "low",
+        "variance low (system)",
         "assumed"
       ],
       "number": "73364739",
@@ -2616,7 +2629,7 @@
         "million",
         "EUR",
         "2024",
-        "high",
+        "variance high (system)",
         "assumed"
       ],
       "number": "165070664",
@@ -2632,7 +2645,7 @@
         "5-year",
         "aftermath",
         "OLS",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.0116",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)",
@@ -2648,7 +2661,7 @@
         "5-year",
         "aftermath",
         "OLS",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.0081",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)",
@@ -2664,7 +2677,7 @@
         "15-year",
         "aftermath",
         "OLS",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.0125",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)",
@@ -2680,7 +2693,7 @@
         "15-year",
         "aftermath",
         "OLS",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.0087",
       "source": "Populist Leaders and the Economy (Kiel Working Paper)",
@@ -2981,7 +2994,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -2989,7 +3002,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0059",
       "note": "2.2 * 0.04 / 15.0"
@@ -3000,7 +3013,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3008,7 +3021,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.43",
       "note": "13.75 * 0.25 / 2.4"
@@ -3036,7 +3049,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3044,7 +3057,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.04",
       "note": "2.0 * 0.4 / 20.0"
@@ -3055,7 +3068,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3063,7 +3076,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "note": "8.0 * 1.0 / 3.2"
@@ -3091,7 +3104,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3099,7 +3112,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0002",
       "note": "1.0 * 0.004 / 25.0"
@@ -3110,7 +3123,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3118,7 +3131,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.025",
       "note": "4.0 * 0.025 / 4.0"
@@ -3146,7 +3159,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3154,7 +3167,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0154",
       "note": "0.64 * 0.12 / 5.0"
@@ -3165,7 +3178,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3173,7 +3186,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "3.75",
       "note": "4.0 * 0.75 / 0.8"
@@ -3201,7 +3214,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3209,7 +3222,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0045",
       "note": "0.4667 * 0.12 / 12.5"
@@ -3220,7 +3233,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3228,7 +3241,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.58",
       "note": "4.2 * 0.75 / 2.0"
@@ -3256,7 +3269,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3264,7 +3277,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0003",
       "note": "0.22 * 0.02 / 15.0"
@@ -3275,7 +3288,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3283,7 +3296,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.0719",
       "note": "1.38 * 0.125 / 2.4"
@@ -3311,7 +3324,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3319,7 +3332,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0009",
       "note": "0.15 * 0.06 / 10.0"
@@ -3330,7 +3343,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3338,7 +3351,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.3164",
       "note": "1.35 * 0.375 / 1.6"
@@ -3366,7 +3379,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3374,7 +3387,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0002",
       "note": "0.1167 * 0.04 / 30.0"
@@ -3385,7 +3398,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3393,7 +3406,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.0547",
       "note": "1.05 * 0.25 / 4.8"
@@ -3421,7 +3434,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3429,7 +3442,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.004",
       "note": "0.1 * 0.4 / 10.0"
@@ -3440,7 +3453,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3448,7 +3461,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.3906",
       "note": "0.625 * 1.0 / 1.6"
@@ -3476,7 +3489,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3484,7 +3497,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0003",
       "note": "0.0733 * 0.2 / 50.0"
@@ -3495,7 +3508,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3503,7 +3516,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.0825",
       "note": "0.66 * 1.0 / 8.0"
@@ -3531,7 +3544,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3539,7 +3552,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0008",
       "note": "0.06 * 0.2 / 15.0"
@@ -3550,7 +3563,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3558,7 +3571,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.225",
       "note": "0.54 * 1.0 / 2.4"
@@ -3586,7 +3599,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3594,7 +3607,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0032",
       "note": "0.04 * 0.2 / 2.5"
@@ -3605,7 +3618,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -3613,7 +3626,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.625",
       "note": "0.25 * 1.0 / 0.4"
@@ -3657,7 +3670,7 @@
   "view-validation": [
     {
       "url": "mask=solution priority validation&words=problem,global",
-      "result": "# Global problems ranked by potential loss\n \nCompanion overview to `solution_prio.json`. Global scope, annual values.\nEvery figure is given as centre (low - high). The bounds are the 80 percent\nprobability range and are stored as separate values tagged `low` and `high`;\na value without a range word is the centre.\n \n## Ranking\n \n| rank | problem | potential loss (trillion EUR / year) | solution | loss reduction | initial effort (person year) | reward ratio |\n| ---: | --- | --- | --- | --- | --- | --- |\n| 1 | health | 5.5 (2.2 – 14) | taxes | 10% (4% – 25%) | 6.0 (2.4 – 15) | 0.09 (0.006 – 1.4) |\n| 2 | populism | 4.0 (2.0 – 8.0) | avoid wrong decisions | 100% (40% – 100%) | 8.0 (3.2 – 20) | 0.5 (0.04 – 2.5) |\n| 3 | global warming | 2.2 (0.88 – 5.5) | reduce climate gas emissions | 72.7% (29% – 100%) | 3.0 (1.2 – 7.5) | 0.53 (0.03 – 4.6) |\n| 4 | poverty | 2.0 (1.0 – 4.0) | research | 1% (0.4% – 2.5%) | 10 (4.0 – 25) | 0.002 (0.0002 – 0.03) |\n| 5 | market power | 1.6 (0.64 – 4.0) | market share tax | 30% (12% – 75%) | 2.0 (0.8 – 5.0) | 0.24 (0.02 – 3.8) |\n| 6 | wealth concentration | 1.4 (0.47 – 4.2) | basic income | 30% (12% – 75%) | 5.0 (2.0 – 12) | 0.08 (0.004 – 1.6) |\n| 7 | education | 0.55 (0.22 – 1.4) | spending | 5% (2% – 12.5%) | 6.0 (2.4 – 15) | 0.005 (0.0003 – 0.07) |\n| 8 | biased information | 0.45 (0.15 – 1.4) | Delphi method | 15% (6% – 37.5%) | 4.0 (1.6 – 10) | 0.02 (0.0009 – 0.32) |\n| 9 | disinformation | 0.35 (0.12 – 1.1) | platform regulation | 10% (4% – 25%) | 12 (4.8 – 30) | 0.003 (0.0002 – 0.05) |\n| 10 | GDP mismeasurement | 0.25 (0.1 – 0.62) | gross domestic usage | 100% (40% – 100%) | 4.0 (1.6 – 10) | 0.06 (0.004 – 0.39) |\n| 11 | black-box AI | 0.22 (0.07 – 0.66) | public AI | 50% (20% – 100%) | 20 (8.0 – 50) | 0.005 (0.0003 – 0.08) |\n| 12 | citizen participation | 0.18 (0.06 – 0.54) | fluid democracy | 50% (20% – 100%) | 6.0 (2.4 – 15) | 0.01 (0.0008 – 0.23) |\n| 13 | proprietary software | 0.1 (0.04 – 0.25) | free software | 50% (20% – 100%) | 1.0 (0.4 – 2.5) | 0.05 (0.003 – 0.62) |\n \n## Probability range\n \nThe range is not a measured dispersion. It is derived from the confidence of the\nvalue by a multiplicative factor around the centre, `[x / f, x * f]`:\n \n| kind of value | factor |\n| --- | ---: |\n| taken from a source, not assumed | 1.2 |\n| assumed, confidence at least 0.25 | 2.0 |\n| assumed, confidence 0.15 to 0.25 | 2.5 |\n| assumed, confidence below 0.15 | 3.0 |\n| definitional or structural | 1.5 |\n \nShares are clamped at 1, which is why the loss reduction of populism and of GDP\nmismeasurement has an upper bound equal to its centre and the one of global\nwarming an upper bound of 100%. Confidence values carry no\nrange of their own. The factor table is itself an assumption: it makes the ranges\ncomparable across the file, but it does not make any single range empirical, and\ntwo values with the same factor are not equally well known.\n \n## Reward ratio\n \n`reward ratio = potential loss * loss reduction / initial effort`\n \nThe range of the ratio combines the worst corner (low loss, low reduction, high\neffort) with the best corner (high loss, high reduction, low effort). This is a\ncorner combination and not a convolution, so the interval is far wider than 80\npercent: it assumes the three errors move together, which is the pessimistic\nreading. The ranges of all thirteen problems overlap, so the ranking by reward\nratio is not resolved by this data. Only the distance between populism at the top\nand poverty at the bottom survives the overlap.\n \nThe initial effort remains the weakest column: no source contains it, every\nfigure is an own order of magnitude estimate with a uniform confidence of 0.2.\nThe two loss reduction figures at the share limit are the weakest rows: populism\nassumes that the solution fully offsets the measured GDP decline, which is what\nthe value in `problem_populism.json` implies but is a very strong claim for a\nknowledge infrastructure.\n \nTwo errors of the earlier data should be corrected independently of this table:\nhealth and poverty are swapped both in the potential loss and in the potential\ngain. The htp shares give -0.24 for health and -0.16 for poverty, which yield\n20.4 and 13.6, while the file carried 13.6 for health and 20.4 for poverty.\n"
+      "result": "# Global problems ranked by potential loss\n \nCompanion overview to `solution_prio.json`. Global scope, annual values.\nEvery figure is given as centre (low - high). The bounds are the 80 percent\nprobability range and are stored as separate values tagged `variance low (system)` and `variance high (system)`;\na value without a variance bound is the centre.\n \n## Ranking\n \n| rank | problem | potential loss (trillion EUR / year) | solution | loss reduction | initial effort (person year) | reward ratio |\n| ---: | --- | --- | --- | --- | --- | --- |\n| 1 | health | 5.5 (2.2 – 14) | taxes | 10% (4% – 25%) | 6.0 (2.4 – 15) | 0.09 (0.006 – 1.4) |\n| 2 | populism | 4.0 (2.0 – 8.0) | avoid wrong decisions | 100% (40% – 100%) | 8.0 (3.2 – 20) | 0.5 (0.04 – 2.5) |\n| 3 | global warming | 2.2 (0.88 – 5.5) | reduce climate gas emissions | 72.7% (29% – 100%) | 3.0 (1.2 – 7.5) | 0.53 (0.03 – 4.6) |\n| 4 | poverty | 2.0 (1.0 – 4.0) | research | 1% (0.4% – 2.5%) | 10 (4.0 – 25) | 0.002 (0.0002 – 0.03) |\n| 5 | market power | 1.6 (0.64 – 4.0) | market share tax | 30% (12% – 75%) | 2.0 (0.8 – 5.0) | 0.24 (0.02 – 3.8) |\n| 6 | wealth concentration | 1.4 (0.47 – 4.2) | basic income | 30% (12% – 75%) | 5.0 (2.0 – 12) | 0.08 (0.004 – 1.6) |\n| 7 | education | 0.55 (0.22 – 1.4) | spending | 5% (2% – 12.5%) | 6.0 (2.4 – 15) | 0.005 (0.0003 – 0.07) |\n| 8 | biased information | 0.45 (0.15 – 1.4) | Delphi method | 15% (6% – 37.5%) | 4.0 (1.6 – 10) | 0.02 (0.0009 – 0.32) |\n| 9 | disinformation | 0.35 (0.12 – 1.1) | platform regulation | 10% (4% – 25%) | 12 (4.8 – 30) | 0.003 (0.0002 – 0.05) |\n| 10 | GDP mismeasurement | 0.25 (0.1 – 0.62) | gross domestic usage | 100% (40% – 100%) | 4.0 (1.6 – 10) | 0.06 (0.004 – 0.39) |\n| 11 | black-box AI | 0.22 (0.07 – 0.66) | public AI | 50% (20% – 100%) | 20 (8.0 – 50) | 0.005 (0.0003 – 0.08) |\n| 12 | citizen participation | 0.18 (0.06 – 0.54) | fluid democracy | 50% (20% – 100%) | 6.0 (2.4 – 15) | 0.01 (0.0008 – 0.23) |\n| 13 | proprietary software | 0.1 (0.04 – 0.25) | free software | 50% (20% – 100%) | 1.0 (0.4 – 2.5) | 0.05 (0.003 – 0.62) |\n \n## Probability range\n \nThe range is not a measured dispersion. It is derived from the confidence of the\nvalue by a multiplicative factor around the centre, `[x / f, x * f]`:\n \n| kind of value | factor |\n| --- | ---: |\n| taken from a source, not assumed | 1.2 |\n| assumed, confidence at least 0.25 | 2.0 |\n| assumed, confidence 0.15 to 0.25 | 2.5 |\n| assumed, confidence below 0.15 | 3.0 |\n| definitional or structural | 1.5 |\n \nShares are clamped at 1, which is why the loss reduction of populism and of GDP\nmismeasurement has an upper bound equal to its centre and the one of global\nwarming an upper bound of 100%. Confidence values carry no\nrange of their own. The factor table is itself an assumption: it makes the ranges\ncomparable across the file, but it does not make any single range empirical, and\ntwo values with the same factor are not equally well known.\n \n## Reward ratio\n \n`reward ratio = potential loss * loss reduction / initial effort`\n \nThe range of the ratio combines the worst corner (low loss, low reduction, high\neffort) with the best corner (high loss, high reduction, low effort). This is a\ncorner combination and not a convolution, so the interval is far wider than 80\npercent: it assumes the three errors move together, which is the pessimistic\nreading. The ranges of all thirteen problems overlap, so the ranking by reward\nratio is not resolved by this data. Only the distance between populism at the top\nand poverty at the bottom survives the overlap.\n \nThe initial effort remains the weakest column: no source contains it, every\nfigure is an own order of magnitude estimate with a uniform confidence of 0.2.\nThe two loss reduction figures at the share limit are the weakest rows: populism\nassumes that the solution fully offsets the measured GDP decline, which is what\nthe value in `problem_populism.json` implies but is a very strong claim for a\nknowledge infrastructure.\n \nTwo errors of the earlier data should be corrected independently of this table:\nhealth and poverty are swapped both in the potential loss and in the potential\ngain. The htp shares give -0.24 for health and -0.16 for poverty, which yield\n20.4 and 13.6, while the file carried 13.6 for health and 20.4 for poverty.\n"
     }
   ]
 }

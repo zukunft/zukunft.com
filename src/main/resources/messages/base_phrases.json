@@ -222,11 +222,11 @@
     },
     {
       "name": "low",
-      "description": "the lower bound of the probability range of a value; the width of the range is defined by the file that states it"
+      "description": "below the usual, the average or the expected level e.g. a low economic mobility"
     },
     {
       "name": "high",
-      "description": "the upper bound of the probability range of a value; the width of the range is defined by the file that states it"
+      "description": "above the usual, the average or the expected level e.g. a high precision"
     }
   ],
   "triples": [
@@ -395,7 +395,7 @@
     },
     {
       "name": "variance high (system)",
-      "description": "keyword for the upper bound of the variance of a value",
+      "description": "keyword for the upper bound of the variance of a value; the width of the range is defined by the file that states it",
       "from": "variance",
       "verb": "can be",
       "to": "high",
@@ -403,11 +403,25 @@
     },
     {
       "name": "variance low (system)",
-      "description": "keyword for the lower bound of the variance of a value",
+      "description": "keyword for the lower bound of the variance of a value; the width of the range is defined by the file that states it",
       "from": "variance",
       "verb": "can be",
       "to": "low",
       "code_id": "system_variance_low"
+    },
+    {
+      "name": "high (variance symbol)",
+      "description": "high as the symbol for the upper bound of the variance of a value",
+      "from": "high",
+      "verb": "is symbol for",
+      "to": "variance high (system)"
+    },
+    {
+      "name": "low (variance symbol)",
+      "description": "low as the symbol for the lower bound of the variance of a value",
+      "from": "low",
+      "verb": "is symbol for",
+      "to": "variance low (system)"
     }
   ]
 }

@@ -221,6 +221,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "1996",
       "type": "time"
     },
@@ -253,6 +256,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "biased information",
       "from": "information",
@@ -501,8 +516,8 @@
   ],
   "values": [
     {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent"], "number": "0.32", "source": "Turner et al. (2008)", "description": "the effect size of the published trials compared to all trials submitted to the FDA, overall for 12 antidepressants"},
-    {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent", "low"], "number": "0.11", "source": "Turner et al. (2008)", "description": "the lowest increase of the effect size of the 12 antidepressants"},
-    {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent", "high"], "number": "0.69", "source": "Turner et al. (2008)", "description": "the highest increase of the effect size of the 12 antidepressants"},
+    {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent", "variance low (system)"], "number": "0.11", "source": "Turner et al. (2008)", "description": "the lowest increase of the effect size of the 12 antidepressants"},
+    {"words": ["overstated efficacy due to biased information", "antidepressant", "effect size", "increase", "United States", "percent", "variance high (system)"], "number": "0.69", "source": "Turner et al. (2008)", "description": "the highest increase of the effect size of the 12 antidepressants"},
     {"words": ["overstated efficacy due to biased information", "antidepressant", "trial", "positive", "published", "United States", "percent"], "number": "0.94", "source": "Turner et al. (2008)", "description": "the share of the trials that appear positive according to the published literature"},
     {"words": ["antidepressant", "trial", "positive", "FDA", "United States", "percent"], "number": "0.51", "source": "Turner et al. (2008)", "description": "the share of the same trials that are positive according to the FDA analysis; the comparison for the published literature"},
     {"words": ["research waste due to biased information", "antidepressant", "trial", "unpublished", "United States", "percent"], "number": "0.31", "source": "Turner et al. (2008)", "description": "23 of the 74 FDA-registered studies with 3'449 participants were not published, mainly those with a negative or questionable result"},
@@ -516,10 +531,10 @@
     {"words": ["cost overrun due to biased information", "rail", "world", "percent"], "number": "0.447", "source": "Flyvbjerg, Holm & Buhl (2002)"},
     {"words": ["cost overrun due to biased information", "fixed link", "world", "percent"], "number": "0.338", "source": "Flyvbjerg, Holm & Buhl (2002)", "description": "bridges and tunnels"},
     {"words": ["cost overrun due to biased information", "road", "world", "percent"], "number": "0.204", "source": "Flyvbjerg, Holm & Buhl (2002)"},
-    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "1996-2000", "percent", "low"], "number": "0.004", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the gain of the Republican vote share in the presidential elections in the towns that broadcast Fox News"},
-    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "1996-2000", "percent", "high"], "number": "0.007", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the gain of the Republican vote share in the presidential elections in the towns that broadcast Fox News"},
-    {"words": ["vote share change due to biased information", "persuasion rate", "Fox News", "United States", "2000", "percent", "low"], "number": "0.03", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the share of the viewers convinced to vote Republican, depending on the audience measure"},
-    {"words": ["vote share change due to biased information", "persuasion rate", "Fox News", "United States", "2000", "percent", "high"], "number": "0.28", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the share of the viewers convinced to vote Republican, depending on the audience measure"},
+    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "1996-2000", "percent", "variance low (system)"], "number": "0.004", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the gain of the Republican vote share in the presidential elections in the towns that broadcast Fox News"},
+    {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "1996-2000", "percent", "variance high (system)"], "number": "0.007", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the gain of the Republican vote share in the presidential elections in the towns that broadcast Fox News"},
+    {"words": ["vote share change due to biased information", "persuasion rate", "Fox News", "United States", "2000", "percent", "variance low (system)"], "number": "0.03", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the share of the viewers convinced to vote Republican, depending on the audience measure"},
+    {"words": ["vote share change due to biased information", "persuasion rate", "Fox News", "United States", "2000", "percent", "variance high (system)"], "number": "0.28", "source": "DellaVigna & Kaplan (2007) The Fox News Effect", "description": "the share of the viewers convinced to vote Republican, depending on the audience measure"},
     {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "2000", "percent"], "number": "0.0046", "source": "Martin & Yurukoglu (2017) Bias in Cable News", "description": "the Republican presidential vote share with Fox News compared to a counterfactual without Fox News"},
     {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "2004", "percent"], "number": "0.0359", "source": "Martin & Yurukoglu (2017) Bias in Cable News", "description": "the Republican presidential vote share with Fox News compared to a counterfactual without Fox News"},
     {"words": ["vote share change due to biased information", "Fox News", "Republican", "United States", "2008", "percent"], "number": "0.0634", "source": "Martin & Yurukoglu (2017) Bias in Cable News", "description": "the Republican presidential vote share with Fox News compared to a counterfactual without Fox News"},

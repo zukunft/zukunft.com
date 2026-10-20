@@ -2353,6 +2353,26 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "variance low (system)" - the tag of the lower bound of the variance of a value
+     */
+    function variance_low(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_VARIANCE_LOW_ID, triple_names::SYSTEM_VARIANCE_LOW);
+        return $trp;
+    }
+
+    /**
+     * @return triple "variance high (system)" - the tag of the upper bound of the variance of a value
+     */
+    function variance_high(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SYSTEM_VARIANCE_HIGH_ID, triple_names::SYSTEM_VARIANCE_HIGH);
+        return $trp;
+    }
+
+    /**
      * @return triple "numeric descending of potential loss" - the rows by the loss, the biggest on top
      */
     function numeric_desc_of_loss(): triple

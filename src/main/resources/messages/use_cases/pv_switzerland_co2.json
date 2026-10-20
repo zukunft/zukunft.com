@@ -79,6 +79,9 @@
       "name": "low"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "zukunft.com"
     },
     {
@@ -92,6 +95,12 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
     {
       "name": "zukunft.com system",
       "description": "keyword for system internal triples such as the column definitions",
@@ -293,7 +302,7 @@
         "CO2-eq",
         "gram per kWh",
         "2015",
-        "low"
+        "variance low (system)"
       ],
       "number": "446",
       "source": "FfE EU displacement mix",

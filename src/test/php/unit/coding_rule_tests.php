@@ -467,7 +467,7 @@ class coding_rule_tests
         $t->assert($test_name, array_keys($hits), []);
 
         $test_name = 'a probability range factor without a source is not listed';
-        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, words::LOW];
+        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, triples::SYSTEM_VARIANCE_LOW];
         $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
         $t->assert($test_name, array_keys($hits), []);
 

@@ -78,6 +78,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "probability"
     },
     {
@@ -94,6 +97,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "public discourse",
       "from": "discourse",
@@ -166,14 +181,14 @@
     {
       "name": "probability range low",
       "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance low (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{low} = x \\cdot f_{low}",
       "assigned_word": "probability range factor"
     },
     {
       "name": "probability range high",
       "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance high (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{high} = x \\cdot f_{high}",
       "assigned_word": "probability range factor"
     },
@@ -348,7 +363,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.3333",
       "description": "the centre divided by 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent (see the view-validation of solution_prio.json)"
@@ -359,7 +374,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "3.0",
       "description": "the centre times 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent"
@@ -369,7 +384,7 @@
         "disinformation",
         "GDP",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.5",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -379,7 +394,7 @@
         "disinformation",
         "GDP",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.4",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -390,7 +405,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.5",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -401,7 +416,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.4",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -413,7 +428,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5, the range factor of an estimate, because the gain rests on the assumed loss"
@@ -425,7 +440,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5, the range factor of an estimate"
@@ -436,7 +451,7 @@
         "platform regulation",
         "person year",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -447,7 +462,7 @@
         "platform regulation",
         "person year",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -458,7 +473,7 @@
         "platform regulation",
         "percent",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -469,7 +484,7 @@
         "platform regulation",
         "percent",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -636,7 +651,7 @@
         "EUR",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -645,7 +660,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.1167",
       "note": "0.35 * 0.3333; the comparison rounds to two decimals, so 0.12"
@@ -658,7 +673,7 @@
         "EUR",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -667,7 +682,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.05",
       "note": "0.35 * 3.0"
@@ -680,7 +695,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -689,7 +704,7 @@
         "percent",
         "GDP",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.125",
       "note": "-0.05 * 2.5"
@@ -702,7 +717,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -711,7 +726,7 @@
         "percent",
         "GDP",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.02",
       "note": "-0.05 * 0.4"
@@ -724,7 +739,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -733,7 +748,7 @@
         "percent",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.2",
       "note": "-0.08 * 2.5"
@@ -746,7 +761,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -755,7 +770,7 @@
         "percent",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.032",
       "note": "-0.08 * 0.4"
@@ -769,7 +784,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -779,7 +794,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "4.8",
       "note": "12 * 0.4"
@@ -793,7 +808,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -803,7 +818,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "30",
       "note": "12 * 2.5"
@@ -816,7 +831,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -825,7 +840,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "4.8",
       "note": "12 * 0.4"
@@ -838,7 +853,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -847,7 +862,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "30",
       "note": "12 * 2.5"
@@ -860,7 +875,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -869,7 +884,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.04",
       "note": "0.1 * 0.4"
@@ -882,7 +897,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -891,7 +906,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.25",
       "note": "0.1 * 2.5"

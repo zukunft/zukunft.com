@@ -41,12 +41,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'table_orders.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
 
@@ -149,9 +151,9 @@ class table_model
             $names = $val->grp->phr_lst()->names();
             if (in_array(words::CONFIDENCE, $names)) {
                 $conf = $val;
-            } elseif (in_array(words::LOW, $names)) {
+            } elseif (in_array(triples::SYSTEM_VARIANCE_LOW, $names)) {
                 $low = $val;
-            } elseif (in_array(words::HIGH, $names)) {
+            } elseif (in_array(triples::SYSTEM_VARIANCE_HIGH, $names)) {
                 $high = $val;
             } elseif ($centre === null) {
                 $centre = $val;

@@ -95,7 +95,7 @@ the url form of a group id (shared/group_id_url.php) has known limits:
 - the decoding is limited to the masks of views::GROUP_ID_MASKS_IDS, so a user defined view that shows a value or result by a group id in the url is not covered until the mask list is derived from the view type instead of the fixed system mask lists
 - a raw "+" in a hand written old link arrives as a space (a url reads "+" as a space) and is not repaired; only the "%2B" form of an old link is accepted
 
-the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "high" lists every result with "high"; the fallback should be the phrases of the formula expression instead
+the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "variance high (system)" lists every result with "variance high (system)"; the fallback should be the phrases of the formula expression instead
 
 ## start page data
 

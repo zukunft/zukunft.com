@@ -114,6 +114,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "probability"
     },
     {
@@ -420,6 +423,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "global warming",
       "from": "climate",
@@ -1359,14 +1374,14 @@
     {
       "name": "probability range low",
       "description": "the lower bound of the probability range of an estimate, the estimate multiplied by its low range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"low\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance low (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{low} = x \\cdot f_{low}",
       "assigned_word": "probability range factor"
     },
     {
       "name": "probability range high",
       "description": "the upper bound of the probability range of an estimate, the estimate multiplied by its high range factor; the centre is the stated target value and each bound is calculated on its own, so that a range can be asymmetric",
-      "expression": "\"high\" = \"assumed\" * \"probability range factor\"",
+      "expression": "\"variance high (system)\" = \"assumed\" * \"probability range factor\"",
       "latex": "x_{high} = x \\cdot f_{high}",
       "assigned_word": "probability range factor"
     },
@@ -1661,7 +1676,7 @@
         "annual",
         "billion",
         "EUR",
-        "low"
+        "variance low (system)"
       ],
       "number": "53.6",
       "source": "Newman & Noy (2023)",
@@ -1676,7 +1691,7 @@
         "annual",
         "billion",
         "EUR",
-        "high"
+        "variance high (system)"
       ],
       "number": "210.9",
       "source": "Newman & Noy (2023)",
@@ -1701,7 +1716,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent (see the view-validation of solution_prio.json); a range factor names no column of the ranking, so it is an input of the table and no cell of it"
@@ -1712,7 +1727,7 @@
         "trillion",
         "EUR",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1722,7 +1737,7 @@
         "global warming",
         "GDP",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.5",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -1732,7 +1747,7 @@
         "global warming",
         "GDP",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.4",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -1743,7 +1758,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "2.5",
       "description": "the loss is stated as a negative share, so the bigger share is the numerically lower bound"
@@ -1754,7 +1769,7 @@
         "percent",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.4",
       "description": "the loss is stated as a negative share, so the smaller share is the numerically higher bound"
@@ -1766,7 +1781,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.6667",
       "description": "the centre divided by 1.5, the range factor of a structural number, which is narrower than the factor of an estimate"
@@ -1778,7 +1793,7 @@
         "billion",
         "htp",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.5",
       "description": "the centre times 1.5, the range factor of a structural number"
@@ -1789,7 +1804,7 @@
         "public CBAM calculation",
         "person year",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1800,7 +1815,7 @@
         "public CBAM calculation",
         "person year",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "2.5",
       "description": "the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1811,7 +1826,7 @@
         "public CBAM calculation",
         "percent",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.4",
       "description": "the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent"
@@ -1822,7 +1837,7 @@
         "public CBAM calculation",
         "percent",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": "1.375",
       "description": "the centre times 2.5 would exceed the share limit, so the upper bound is clamped at 100 percent, which is the centre of 72.73 percent times 1.375"
@@ -8348,7 +8363,7 @@
       "words": [
         "coal phase-out",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.4196,
       "description": "the ratio of the lower to the central loss reduction of coal phase-out (0.02542 / 0.06059), the relative range of its loss reduction and of its gain"
@@ -8357,7 +8372,7 @@
       "words": [
         "coal phase-out",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.7903,
       "description": "the ratio of the upper to the central loss reduction of coal phase-out (0.1085 / 0.06059)"
@@ -8366,7 +8381,7 @@
       "words": [
         "methane reduction",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5454,
       "description": "the ratio of the lower to the central loss reduction of methane reduction (0.02034 / 0.03729), the relative range of its loss reduction and of its gain"
@@ -8375,7 +8390,7 @@
       "words": [
         "methane reduction",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.5908,
       "description": "the ratio of the upper to the central loss reduction of methane reduction (0.05932 / 0.03729)"
@@ -8384,7 +8399,7 @@
       "words": [
         "energy efficiency",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.4396,
       "description": "the ratio of the lower to the central loss reduction of energy efficiency (0.01695 / 0.03856), the relative range of its loss reduction and of its gain"
@@ -8393,7 +8408,7 @@
       "words": [
         "energy efficiency",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.7582,
       "description": "the ratio of the upper to the central loss reduction of energy efficiency (0.0678 / 0.03856)"
@@ -8402,7 +8417,7 @@
       "words": [
         "building renovation",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2667,
       "description": "the ratio of the lower to the central loss reduction of building renovation (0.002543 / 0.009534), the relative range of its loss reduction and of its gain"
@@ -8411,7 +8426,7 @@
       "words": [
         "building renovation",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1333,
       "description": "the ratio of the upper to the central loss reduction of building renovation (0.02034 / 0.009534)"
@@ -8420,7 +8435,7 @@
       "words": [
         "heat pumps",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3845,
       "description": "the ratio of the lower to the central loss reduction of heat pumps (0.004237 / 0.01102), the relative range of its loss reduction and of its gain"
@@ -8429,7 +8444,7 @@
       "words": [
         "heat pumps",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.8456,
       "description": "the ratio of the upper to the central loss reduction of heat pumps (0.02034 / 0.01102)"
@@ -8438,7 +8453,7 @@
       "words": [
         "district heating",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2909,
       "description": "the ratio of the lower to the central loss reduction of district heating (0.001356 / 0.004661), the relative range of its loss reduction and of its gain"
@@ -8447,7 +8462,7 @@
       "words": [
         "district heating",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0364,
       "description": "the ratio of the upper to the central loss reduction of district heating (0.009492 / 0.004661)"
@@ -8456,7 +8471,7 @@
       "words": [
         "solar energy",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.4063,
       "description": "the ratio of the lower to the central loss reduction of solar energy (0.02712 / 0.06674), the relative range of its loss reduction and of its gain"
@@ -8465,7 +8480,7 @@
       "words": [
         "solar energy",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.6888,
       "description": "the ratio of the upper to the central loss reduction of solar energy (0.1127 / 0.06674)"
@@ -8474,7 +8489,7 @@
       "words": [
         "wind energy",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.4773,
       "description": "the ratio of the lower to the central loss reduction of wind energy (0.02492 / 0.0522), the relative range of its loss reduction and of its gain"
@@ -8483,7 +8498,7 @@
       "words": [
         "wind energy",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.6365,
       "description": "the ratio of the upper to the central loss reduction of wind energy (0.08543 / 0.0522)"
@@ -8492,7 +8507,7 @@
       "words": [
         "hydropower",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2564,
       "description": "the ratio of the lower to the central loss reduction of hydropower (0.001695 / 0.00661), the relative range of its loss reduction and of its gain"
@@ -8501,7 +8516,7 @@
       "words": [
         "hydropower",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0513,
       "description": "the ratio of the upper to the central loss reduction of hydropower (0.01356 / 0.00661)"
@@ -8510,7 +8525,7 @@
       "words": [
         "nuclear energy",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.1333,
       "description": "the ratio of the lower to the central loss reduction of nuclear energy (0.0005084 / 0.003814), the relative range of its loss reduction and of its gain"
@@ -8519,7 +8534,7 @@
       "words": [
         "nuclear energy",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.3997,
       "description": "the ratio of the upper to the central loss reduction of nuclear energy (0.009152 / 0.003814)"
@@ -8528,7 +8543,7 @@
       "words": [
         "geothermal energy",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.1818,
       "description": "the ratio of the lower to the central loss reduction of geothermal energy (0.0006779 / 0.003729), the relative range of its loss reduction and of its gain"
@@ -8537,7 +8552,7 @@
       "words": [
         "geothermal energy",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2272,
       "description": "the ratio of the upper to the central loss reduction of geothermal energy (0.008305 / 0.003729)"
@@ -8546,7 +8561,7 @@
       "words": [
         "energy storage",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2917,
       "description": "the ratio of the lower to the central loss reduction of energy storage (0.003559 / 0.0122), the relative range of its loss reduction and of its gain"
@@ -8555,7 +8570,7 @@
       "words": [
         "energy storage",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.8755,
       "description": "the ratio of the upper to the central loss reduction of energy storage (0.02288 / 0.0122)"
@@ -8564,7 +8579,7 @@
       "words": [
         "grid expansion",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3077,
       "description": "the ratio of the lower to the central loss reduction of grid expansion (0.004237 / 0.01377), the relative range of its loss reduction and of its gain"
@@ -8573,7 +8588,7 @@
       "words": [
         "grid expansion",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.9694,
       "description": "the ratio of the upper to the central loss reduction of grid expansion (0.02712 / 0.01377)"
@@ -8582,7 +8597,7 @@
       "words": [
         "electrification",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3847,
       "description": "the ratio of the lower to the central loss reduction of electrification (0.008475 / 0.02203), the relative range of its loss reduction and of its gain"
@@ -8591,7 +8606,7 @@
       "words": [
         "electrification",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.8465,
       "description": "the ratio of the upper to the central loss reduction of electrification (0.04068 / 0.02203)"
@@ -8600,7 +8615,7 @@
       "words": [
         "public transport",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2424,
       "description": "the ratio of the lower to the central loss reduction of public transport (0.000678 / 0.002797), the relative range of its loss reduction and of its gain"
@@ -8609,7 +8624,7 @@
       "words": [
         "public transport",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1209,
       "description": "the ratio of the upper to the central loss reduction of public transport (0.005932 / 0.002797)"
@@ -8618,7 +8633,7 @@
       "words": [
         "cycling",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3847,
       "description": "the ratio of the lower to the central loss reduction of cycling (0.0008475 / 0.002203), the relative range of its loss reduction and of its gain"
@@ -8627,7 +8642,7 @@
       "words": [
         "cycling",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.8465,
       "description": "the ratio of the upper to the central loss reduction of cycling (0.004068 / 0.002203)"
@@ -8636,7 +8651,7 @@
       "words": [
         "speed limit",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.1905,
       "description": "the ratio of the lower to the central loss reduction of speed limit (0.0000678 / 0.0003559), the relative range of its loss reduction and of its gain"
@@ -8645,7 +8660,7 @@
       "words": [
         "speed limit",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.3812,
       "description": "the ratio of the upper to the central loss reduction of speed limit (0.0008475 / 0.0003559)"
@@ -8654,7 +8669,7 @@
       "words": [
         "carbon price",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3333,
       "description": "the ratio of the lower to the central loss reduction of carbon price (0.01017 / 0.03051), the relative range of its loss reduction and of its gain"
@@ -8663,7 +8678,7 @@
       "words": [
         "carbon price",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.9999,
       "description": "the ratio of the upper to the central loss reduction of carbon price (0.06102 / 0.03051)"
@@ -8672,7 +8687,7 @@
       "words": [
         "climate dividend",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2424,
       "description": "the ratio of the lower to the central loss reduction of climate dividend (0.001356 / 0.005593), the relative range of its loss reduction and of its gain"
@@ -8681,7 +8696,7 @@
       "words": [
         "climate dividend",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1213,
       "description": "the ratio of the upper to the central loss reduction of climate dividend (0.01186 / 0.005593)"
@@ -8690,7 +8705,7 @@
       "words": [
         "emissions trading",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3077,
       "description": "the ratio of the lower to the central loss reduction of emissions trading (0.008474 / 0.02754), the relative range of its loss reduction and of its gain"
@@ -8699,7 +8714,7 @@
       "words": [
         "emissions trading",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.9694,
       "description": "the ratio of the upper to the central loss reduction of emissions trading (0.05424 / 0.02754)"
@@ -8708,7 +8723,7 @@
       "words": [
         "electric mobility",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.4375,
       "description": "the ratio of the lower to the central loss reduction of electric mobility (0.01186 / 0.02712), the relative range of its loss reduction and of its gain"
@@ -8717,7 +8732,7 @@
       "words": [
         "electric mobility",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.6874,
       "description": "the ratio of the upper to the central loss reduction of electric mobility (0.04576 / 0.02712)"
@@ -8726,7 +8741,7 @@
       "words": [
         "freight transport",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2909,
       "description": "the ratio of the lower to the central loss reduction of freight transport (0.002034 / 0.006992), the relative range of its loss reduction and of its gain"
@@ -8735,7 +8750,7 @@
       "words": [
         "freight transport",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0362,
       "description": "the ratio of the upper to the central loss reduction of freight transport (0.01424 / 0.006992)"
@@ -8744,7 +8759,7 @@
       "words": [
         "circular economy",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2425,
       "description": "the ratio of the lower to the central loss reduction of circular economy (0.00339 / 0.01398), the relative range of its loss reduction and of its gain"
@@ -8753,7 +8768,7 @@
       "words": [
         "circular economy",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1217,
       "description": "the ratio of the upper to the central loss reduction of circular economy (0.02966 / 0.01398)"
@@ -8762,7 +8777,7 @@
       "words": [
         "recycling",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2564,
       "description": "the ratio of the lower to the central loss reduction of recycling (0.0008474 / 0.003305), the relative range of its loss reduction and of its gain"
@@ -8771,7 +8786,7 @@
       "words": [
         "recycling",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0513,
       "description": "the ratio of the upper to the central loss reduction of recycling (0.00678 / 0.003305)"
@@ -8780,7 +8795,7 @@
       "words": [
         "material efficiency",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2645,
       "description": "the ratio of the lower to the central loss reduction of material efficiency (0.001356 / 0.005127), the relative range of its loss reduction and of its gain"
@@ -8789,7 +8804,7 @@
       "words": [
         "material efficiency",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0827,
       "description": "the ratio of the upper to the central loss reduction of material efficiency (0.01068 / 0.005127)"
@@ -8798,7 +8813,7 @@
       "words": [
         "sufficiency",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2286,
       "description": "the ratio of the lower to the central loss reduction of sufficiency (0.001695 / 0.007415), the relative range of its loss reduction and of its gain"
@@ -8807,7 +8822,7 @@
       "words": [
         "sufficiency",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2858,
       "description": "the ratio of the upper to the central loss reduction of sufficiency (0.01695 / 0.007415)"
@@ -8816,7 +8831,7 @@
       "words": [
         "afforestation",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2908,
       "description": "the ratio of the lower to the central loss reduction of afforestation (0.006779 / 0.02331), the relative range of its loss reduction and of its gain"
@@ -8825,7 +8840,7 @@
       "words": [
         "afforestation",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0359,
       "description": "the ratio of the upper to the central loss reduction of afforestation (0.04746 / 0.02331)"
@@ -8834,7 +8849,7 @@
       "words": [
         "peatland rewetting",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3334,
       "description": "the ratio of the lower to the central loss reduction of peatland rewetting (0.001526 / 0.004576), the relative range of its loss reduction and of its gain"
@@ -8843,7 +8858,7 @@
       "words": [
         "peatland rewetting",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0001,
       "description": "the ratio of the upper to the central loss reduction of peatland rewetting (0.009152 / 0.004576)"
@@ -8852,7 +8867,7 @@
       "words": [
         "soil carbon buildup",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2222,
       "description": "the ratio of the lower to the central loss reduction of soil carbon buildup (0.002542 / 0.01144), the relative range of its loss reduction and of its gain"
@@ -8861,7 +8876,7 @@
       "words": [
         "soil carbon buildup",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2224,
       "description": "the ratio of the upper to the central loss reduction of soil carbon buildup (0.02542 / 0.01144)"
@@ -8870,7 +8885,7 @@
       "words": [
         "carbon capture and storage",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.1905,
       "description": "the ratio of the lower to the central loss reduction of carbon capture and storage (0.001017 / 0.005339), the relative range of its loss reduction and of its gain"
@@ -8879,7 +8894,7 @@
       "words": [
         "carbon capture and storage",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.3809,
       "description": "the ratio of the upper to the central loss reduction of carbon capture and storage (0.01271 / 0.005339)"
@@ -8888,7 +8903,7 @@
       "words": [
         "carbon capture and utilization",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.1633,
       "description": "the ratio of the lower to the central loss reduction of carbon capture and utilization (0.0001695 / 0.001038), the relative range of its loss reduction and of its gain"
@@ -8897,7 +8912,7 @@
       "words": [
         "carbon capture and utilization",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.4493,
       "description": "the ratio of the upper to the central loss reduction of carbon capture and utilization (0.002542 / 0.001038)"
@@ -8906,7 +8921,7 @@
       "words": [
         "green hydrogen",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2222,
       "description": "the ratio of the lower to the central loss reduction of green hydrogen (0.001525 / 0.006864), the relative range of its loss reduction and of its gain"
@@ -8915,7 +8930,7 @@
       "words": [
         "green hydrogen",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2224,
       "description": "the ratio of the upper to the central loss reduction of green hydrogen (0.01525 / 0.006864)"
@@ -8924,7 +8939,7 @@
       "words": [
         "sustainable agriculture",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2667,
       "description": "the ratio of the lower to the central loss reduction of sustainable agriculture (0.002543 / 0.009534), the relative range of its loss reduction and of its gain"
@@ -8933,7 +8948,7 @@
       "words": [
         "sustainable agriculture",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1333,
       "description": "the ratio of the upper to the central loss reduction of sustainable agriculture (0.02034 / 0.009534)"
@@ -8942,7 +8957,7 @@
       "words": [
         "reduced meat consumption",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.309,
       "description": "the ratio of the lower to the central loss reduction of reduced meat consumption (0.00339 / 0.01097), the relative range of its loss reduction and of its gain"
@@ -8951,7 +8966,7 @@
       "words": [
         "reduced meat consumption",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0858,
       "description": "the ratio of the upper to the central loss reduction of reduced meat consumption (0.02288 / 0.01097)"
@@ -8960,7 +8975,7 @@
       "words": [
         "food waste reduction",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.291,
       "description": "the ratio of the lower to the central loss reduction of food waste reduction (0.00339 / 0.01165), the relative range of its loss reduction and of its gain"
@@ -8969,7 +8984,7 @@
       "words": [
         "food waste reduction",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.0368,
       "description": "the ratio of the upper to the central loss reduction of food waste reduction (0.02373 / 0.01165)"
@@ -8978,7 +8993,7 @@
       "words": [
         "aviation emission reduction",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2857,
       "description": "the ratio of the lower to the central loss reduction of aviation emission reduction (0.000678 / 0.002373), the relative range of its loss reduction and of its gain"
@@ -8987,7 +9002,7 @@
       "words": [
         "aviation emission reduction",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1428,
       "description": "the ratio of the upper to the central loss reduction of aviation emission reduction (0.005085 / 0.002373)"
@@ -8996,7 +9011,7 @@
       "words": [
         "emission standards",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.331,
       "description": "the ratio of the lower to the central loss reduction of emission standards (0.005084 / 0.01536), the relative range of its loss reduction and of its gain"
@@ -9005,7 +9020,7 @@
       "words": [
         "emission standards",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.8759,
       "description": "the ratio of the upper to the central loss reduction of emission standards (0.02881 / 0.01536)"
@@ -9014,7 +9029,7 @@
       "words": [
         "research (climate solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2198,
       "description": "the ratio of the lower to the central loss reduction of research (0.004238 / 0.01928), the relative range of its loss reduction and of its gain"
@@ -9023,7 +9038,7 @@
       "words": [
         "research (climate solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1099,
       "description": "the ratio of the upper to the central loss reduction of research (0.04068 / 0.01928)"
@@ -9032,7 +9047,7 @@
       "words": [
         "innovation",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2198,
       "description": "the ratio of the lower to the central loss reduction of innovation (0.004238 / 0.01928), the relative range of its loss reduction and of its gain"
@@ -9041,7 +9056,7 @@
       "words": [
         "innovation",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1099,
       "description": "the ratio of the upper to the central loss reduction of innovation (0.04068 / 0.01928)"
@@ -9050,7 +9065,7 @@
       "words": [
         "climate finance",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2666,
       "description": "the ratio of the lower to the central loss reduction of climate finance (0.005084 / 0.01907), the relative range of its loss reduction and of its gain"
@@ -9059,7 +9074,7 @@
       "words": [
         "climate finance",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1331,
       "description": "the ratio of the upper to the central loss reduction of climate finance (0.04068 / 0.01907)"
@@ -9068,7 +9083,7 @@
       "words": [
         "supply chain laws",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2222,
       "description": "the ratio of the lower to the central loss reduction of supply chain laws (0.0005084 / 0.002288), the relative range of its loss reduction and of its gain"
@@ -9077,7 +9092,7 @@
       "words": [
         "supply chain laws",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2224,
       "description": "the ratio of the upper to the central loss reduction of supply chain laws (0.005085 / 0.002288)"
@@ -9086,7 +9101,7 @@
       "words": [
         "fossil subsidy removal",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3809,
       "description": "the ratio of the lower to the central loss reduction of fossil subsidy removal (0.005085 / 0.01335), the relative range of its loss reduction and of its gain"
@@ -9095,7 +9110,7 @@
       "words": [
         "fossil subsidy removal",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.9044,
       "description": "the ratio of the upper to the central loss reduction of fossil subsidy removal (0.02542 / 0.01335)"
@@ -9104,7 +9119,7 @@
       "words": [
         "education (climate solution)",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.1897,
       "description": "the ratio of the lower to the central loss reduction of education (0.002034 / 0.01072), the relative range of its loss reduction and of its gain"
@@ -9113,7 +9128,7 @@
       "words": [
         "education (climate solution)",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2135,
       "description": "the ratio of the upper to the central loss reduction of education (0.02373 / 0.01072)"
@@ -9122,7 +9137,7 @@
       "words": [
         "digitalization",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2078,
       "description": "the ratio of the lower to the central loss reduction of digitalization (0.001356 / 0.006525), the relative range of its loss reduction and of its gain"
@@ -9131,7 +9146,7 @@
       "words": [
         "digitalization",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.182,
       "description": "the ratio of the upper to the central loss reduction of digitalization (0.01424 / 0.006525)"
@@ -9140,7 +9155,7 @@
       "words": [
         "international agreements",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2424,
       "description": "the ratio of the lower to the central loss reduction of international agreements (0.00678 / 0.02797), the relative range of its loss reduction and of its gain"
@@ -9149,7 +9164,7 @@
       "words": [
         "international agreements",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.1209,
       "description": "the ratio of the upper to the central loss reduction of international agreements (0.05932 / 0.02797)"
@@ -9194,7 +9209,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "low"
+        "variance low (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -9202,7 +9217,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.0038",
       "note": "0.88 * 0.032 / 7.5"
@@ -9213,7 +9228,7 @@
         "potential loss",
         "loss reduction",
         "initial effort",
-        "high"
+        "variance high (system)"
       ],
       "formula": "reward ratio (formula)",
       "words": [
@@ -9221,7 +9236,7 @@
         "reward ratio",
         "trillion",
         "EUR per person year",
-        "high"
+        "variance high (system)"
       ],
       "number": "0.9167",
       "note": "5.5 * 0.2 / 1.2"
@@ -9447,7 +9462,7 @@
         "EUR",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9456,7 +9471,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.88",
       "note": "2.2 * 0.4"
@@ -9469,7 +9484,7 @@
         "EUR",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9478,7 +9493,7 @@
         "trillion",
         "EUR",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "5.5",
       "note": "2.2 * 2.5"
@@ -9491,7 +9506,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9500,7 +9515,7 @@
         "percent",
         "GDP",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.8",
       "note": "-0.32 * 2.5"
@@ -9513,7 +9528,7 @@
         "GDP",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9522,7 +9537,7 @@
         "percent",
         "GDP",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.128",
       "note": "-0.32 * 0.4"
@@ -9535,7 +9550,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9544,7 +9559,7 @@
         "percent",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "-0.925",
       "note": "-0.37 * 2.5"
@@ -9557,7 +9572,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9566,7 +9581,7 @@
         "percent",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "-0.148",
       "note": "-0.37 * 0.4"
@@ -9580,7 +9595,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9590,7 +9605,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "213.35",
       "note": "320.01 * 0.6667; the comparison rounds to two decimals, so 213.35"
@@ -9604,7 +9619,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9614,7 +9629,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "480.02",
       "note": "320.01 * 1.5; the comparison rounds to two decimals, so 480.02"
@@ -9627,7 +9642,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9636,7 +9651,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "1.2",
       "note": "3 * 0.4"
@@ -9649,7 +9664,7 @@
         "person year",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9658,7 +9673,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "7.5",
       "note": "3 * 2.5"
@@ -9671,7 +9686,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "formula": "probability range low",
       "words": [
@@ -9680,7 +9695,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": "0.2909",
       "note": "0.7273 * 0.4; the comparison rounds to two decimals, so 0.29"
@@ -9693,7 +9708,7 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "formula": "probability range high",
       "words": [
@@ -9702,7 +9717,7 @@
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": "1",
       "note": "0.7273 * 1.375, clamped at the share limit"
@@ -9803,14 +9818,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "coal phase-out",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.02542
     },
@@ -9822,14 +9837,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "coal phase-out",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.1085
     },
@@ -9865,7 +9880,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "coal phase-out",
@@ -9873,7 +9888,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 11.1864
     },
@@ -9886,7 +9901,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "coal phase-out",
@@ -9894,7 +9909,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 47.7287
     },
@@ -9932,7 +9947,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 109.09
     },
@@ -9951,7 +9966,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 272.725
     },
@@ -9997,14 +10012,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "methane reduction",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.02034
     },
@@ -10016,14 +10031,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "methane reduction",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.05932
     },
@@ -10058,7 +10073,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "methane reduction",
@@ -10066,7 +10081,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 8.9487
     },
@@ -10079,7 +10094,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "methane reduction",
@@ -10087,7 +10102,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 26.1012
     },
@@ -10125,7 +10140,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.4545
     },
@@ -10144,7 +10159,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 27.2725
     },
@@ -10190,14 +10205,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "energy efficiency",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.01695
     },
@@ -10209,14 +10224,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "energy efficiency",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.0678
     },
@@ -10251,7 +10266,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "energy efficiency",
@@ -10259,7 +10274,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 7.4584
     },
@@ -10272,7 +10287,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "energy efficiency",
@@ -10280,7 +10295,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 29.8303
     },
@@ -10318,7 +10333,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 54.545
     },
@@ -10337,7 +10352,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 163.635
     },
@@ -10383,14 +10398,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "building renovation",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.002543
     },
@@ -10402,14 +10417,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "building renovation",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02034
     },
@@ -10444,7 +10459,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "building renovation",
@@ -10452,7 +10467,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.1188
     },
@@ -10465,7 +10480,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "building renovation",
@@ -10473,7 +10488,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 8.9491
     },
@@ -10511,7 +10526,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 54.545
     },
@@ -10530,7 +10545,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 218.18
     },
@@ -10576,14 +10591,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "heat pumps",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.004237
     },
@@ -10595,14 +10610,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "heat pumps",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02034
     },
@@ -10637,7 +10652,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "heat pumps",
@@ -10645,7 +10660,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.8644
     },
@@ -10658,7 +10673,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "heat pumps",
@@ -10666,7 +10681,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 8.9489
     },
@@ -10704,7 +10719,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 27.2725
     },
@@ -10723,7 +10738,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 81.8175
     },
@@ -10769,14 +10784,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "district heating",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001356
     },
@@ -10788,14 +10803,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "district heating",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.009492
     },
@@ -10830,7 +10845,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "district heating",
@@ -10838,7 +10853,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5966
     },
@@ -10851,7 +10866,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "district heating",
@@ -10859,7 +10874,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 4.1762
     },
@@ -10897,7 +10912,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 16.3635
     },
@@ -10916,7 +10931,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 54.545
     },
@@ -10962,14 +10977,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "solar energy",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.02712
     },
@@ -10981,14 +10996,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "solar energy",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.1127
     },
@@ -11023,7 +11038,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "solar energy",
@@ -11031,7 +11046,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 11.9312
     },
@@ -11044,7 +11059,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "solar energy",
@@ -11052,7 +11067,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 49.5926
     },
@@ -11090,7 +11105,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 54.545
     },
@@ -11109,7 +11124,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 163.635
     },
@@ -11155,14 +11170,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "wind energy",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.02492
     },
@@ -11174,14 +11189,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "wind energy",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.08543
     },
@@ -11216,7 +11231,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "wind energy",
@@ -11224,7 +11239,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 10.9626
     },
@@ -11237,7 +11252,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "wind energy",
@@ -11245,7 +11260,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 37.5871
     },
@@ -11283,7 +11298,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 81.8175
     },
@@ -11302,7 +11317,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 190.9075
     },
@@ -11348,14 +11363,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "hydropower",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001695
     },
@@ -11367,14 +11382,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "hydropower",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01356
     },
@@ -11409,7 +11424,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "hydropower",
@@ -11417,7 +11432,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.7457
     },
@@ -11430,7 +11445,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "hydropower",
@@ -11438,7 +11453,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 5.966
     },
@@ -11476,7 +11491,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 27.2725
     },
@@ -11495,7 +11510,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 81.8175
     },
@@ -11541,14 +11556,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "nuclear energy",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.0005084
     },
@@ -11560,14 +11575,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "nuclear energy",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.009152
     },
@@ -11602,7 +11617,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "nuclear energy",
@@ -11610,7 +11625,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2237
     },
@@ -11623,7 +11638,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "nuclear energy",
@@ -11631,7 +11646,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 4.0272
     },
@@ -11669,7 +11684,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 54.545
     },
@@ -11688,7 +11703,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 163.635
     },
@@ -11734,14 +11749,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "geothermal energy",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.0006779
     },
@@ -11753,14 +11768,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "geothermal energy",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.008305
     },
@@ -11795,7 +11810,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "geothermal energy",
@@ -11803,7 +11818,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2983
     },
@@ -11816,7 +11831,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "geothermal energy",
@@ -11824,7 +11839,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 3.6544
     },
@@ -11862,7 +11877,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 10.909
     },
@@ -11881,7 +11896,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 43.636
     },
@@ -11927,14 +11942,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "energy storage",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.003559
     },
@@ -11946,14 +11961,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "energy storage",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02288
     },
@@ -11988,7 +12003,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "energy storage",
@@ -11996,7 +12011,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.5658
     },
@@ -12009,7 +12024,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "energy storage",
@@ -12017,7 +12032,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 10.0677
     },
@@ -12055,7 +12070,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 27.2725
     },
@@ -12074,7 +12089,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 81.8175
     },
@@ -12120,14 +12135,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "grid expansion",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.004237
     },
@@ -12139,14 +12154,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "grid expansion",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02712
     },
@@ -12181,7 +12196,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "grid expansion",
@@ -12189,7 +12204,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.8643
     },
@@ -12202,7 +12217,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "grid expansion",
@@ -12210,7 +12225,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 11.9322
     },
@@ -12248,7 +12263,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 54.545
     },
@@ -12267,7 +12282,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 163.635
     },
@@ -12313,14 +12328,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "electrification",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.008475
     },
@@ -12332,14 +12347,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "electrification",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.04068
     },
@@ -12374,7 +12389,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "electrification",
@@ -12382,7 +12397,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 3.729
     },
@@ -12395,7 +12410,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "electrification",
@@ -12403,7 +12418,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 17.8985
     },
@@ -12441,7 +12456,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 81.8175
     },
@@ -12460,7 +12475,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 218.18
     },
@@ -12506,14 +12521,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "public transport",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.000678
     },
@@ -12525,14 +12540,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "public transport",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.005932
     },
@@ -12567,7 +12582,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "public transport",
@@ -12575,7 +12590,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2983
     },
@@ -12588,7 +12603,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "public transport",
@@ -12596,7 +12611,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.6102
     },
@@ -12634,7 +12649,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 27.2725
     },
@@ -12653,7 +12668,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 109.09
     },
@@ -12699,14 +12714,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "cycling",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.0008475
     },
@@ -12718,14 +12733,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "cycling",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.004068
     },
@@ -12760,7 +12775,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "cycling",
@@ -12768,7 +12783,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3729
     },
@@ -12781,7 +12796,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "cycling",
@@ -12789,7 +12804,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.7898
     },
@@ -12827,7 +12842,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.7273
     },
@@ -12846,7 +12861,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 10.909
     },
@@ -12892,14 +12907,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "speed limit",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 6.78e-05
     },
@@ -12911,14 +12926,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "speed limit",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.0008475
     },
@@ -12953,7 +12968,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "speed limit",
@@ -12961,7 +12976,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.02983
     },
@@ -12974,7 +12989,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "speed limit",
@@ -12982,7 +12997,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.3729
     },
@@ -13020,7 +13035,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.05455
     },
@@ -13039,7 +13054,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.5454
     },
@@ -13085,14 +13100,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "carbon price",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.01017
     },
@@ -13104,14 +13119,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "carbon price",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.06102
     },
@@ -13146,7 +13161,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "carbon price",
@@ -13154,7 +13169,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 4.4744
     },
@@ -13167,7 +13182,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "carbon price",
@@ -13175,7 +13190,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 26.8475
     },
@@ -13213,7 +13228,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.7273
     },
@@ -13232,7 +13247,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 16.3635
     },
@@ -13278,14 +13293,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "climate dividend",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001356
     },
@@ -13297,14 +13312,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "climate dividend",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01186
     },
@@ -13339,7 +13354,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "climate dividend",
@@ -13347,7 +13362,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5965
     },
@@ -13360,7 +13375,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "climate dividend",
@@ -13368,7 +13383,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 5.2203
     },
@@ -13406,7 +13421,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5454
     },
@@ -13425,7 +13440,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.7273
     },
@@ -13471,14 +13486,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "emissions trading",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.008474
     },
@@ -13490,14 +13505,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "emissions trading",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.05424
     },
@@ -13532,7 +13547,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "emissions trading",
@@ -13540,7 +13555,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 3.7286
     },
@@ -13553,7 +13568,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "emissions trading",
@@ -13561,7 +13576,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 23.8644
     },
@@ -13599,7 +13614,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.0909
     },
@@ -13618,7 +13633,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 10.909
     },
@@ -13664,14 +13679,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "electric mobility",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.01186
     },
@@ -13683,14 +13698,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "electric mobility",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.04576
     },
@@ -13725,7 +13740,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "electric mobility",
@@ -13733,7 +13748,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.2206
     },
@@ -13746,7 +13761,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "electric mobility",
@@ -13754,7 +13769,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 20.1354
     },
@@ -13792,7 +13807,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 54.545
     },
@@ -13811,7 +13826,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 163.635
     },
@@ -13857,14 +13872,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "freight transport",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.002034
     },
@@ -13876,14 +13891,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "freight transport",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01424
     },
@@ -13918,7 +13933,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "freight transport",
@@ -13926,7 +13941,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.89495
     },
@@ -13939,7 +13954,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "freight transport",
@@ -13947,7 +13962,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 6.2644
     },
@@ -13985,7 +14000,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 27.2725
     },
@@ -14004,7 +14019,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 81.8175
     },
@@ -14050,14 +14065,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "circular economy",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.00339
     },
@@ -14069,14 +14084,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "circular economy",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02966
     },
@@ -14111,7 +14126,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "circular economy",
@@ -14119,7 +14134,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.4917
     },
@@ -14132,7 +14147,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "circular economy",
@@ -14140,7 +14155,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 13.051
     },
@@ -14178,7 +14193,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 16.3635
     },
@@ -14197,7 +14212,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 54.545
     },
@@ -14243,14 +14258,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "recycling",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.0008474
     },
@@ -14262,14 +14277,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "recycling",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.00678
     },
@@ -14304,7 +14319,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "recycling",
@@ -14312,7 +14327,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.3729
     },
@@ -14325,7 +14340,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "recycling",
@@ -14333,7 +14348,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.983
     },
@@ -14371,7 +14386,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.4545
     },
@@ -14390,7 +14405,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 27.2725
     },
@@ -14436,14 +14451,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "material efficiency",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001356
     },
@@ -14455,14 +14470,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "material efficiency",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01068
     },
@@ -14497,7 +14512,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "material efficiency",
@@ -14505,7 +14520,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5967
     },
@@ -14518,7 +14533,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "material efficiency",
@@ -14526,7 +14541,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 4.6984
     },
@@ -14564,7 +14579,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.4545
     },
@@ -14583,7 +14598,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 27.2725
     },
@@ -14629,14 +14644,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "sufficiency",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001695
     },
@@ -14648,14 +14663,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "sufficiency",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01695
     },
@@ -14690,7 +14705,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "sufficiency",
@@ -14698,7 +14713,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.7458
     },
@@ -14711,7 +14726,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "sufficiency",
@@ -14719,7 +14734,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 7.4577
     },
@@ -14757,7 +14772,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5454
     },
@@ -14776,7 +14791,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 5.4545
     },
@@ -14822,14 +14837,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "afforestation",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.006779
     },
@@ -14841,14 +14856,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "afforestation",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.04746
     },
@@ -14883,7 +14898,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "afforestation",
@@ -14891,7 +14906,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.9826
     },
@@ -14904,7 +14919,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "afforestation",
@@ -14912,7 +14927,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 20.881
     },
@@ -14950,7 +14965,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.4545
     },
@@ -14969,7 +14984,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 27.2725
     },
@@ -15015,14 +15030,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "peatland rewetting",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001526
     },
@@ -15034,14 +15049,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "peatland rewetting",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.009152
     },
@@ -15076,7 +15091,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "peatland rewetting",
@@ -15084,7 +15099,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.6713
     },
@@ -15097,7 +15112,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "peatland rewetting",
@@ -15105,7 +15120,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 4.027
     },
@@ -15143,7 +15158,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.6364
     },
@@ -15162,7 +15177,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 8.1818
     },
@@ -15208,14 +15223,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "soil carbon buildup",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.002542
     },
@@ -15227,14 +15242,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "soil carbon buildup",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02542
     },
@@ -15269,7 +15284,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "soil carbon buildup",
@@ -15277,7 +15292,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.1185
     },
@@ -15290,7 +15305,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "soil carbon buildup",
@@ -15298,7 +15313,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 11.1867
     },
@@ -15336,7 +15351,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.7273
     },
@@ -15355,7 +15370,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 16.3635
     },
@@ -15401,14 +15416,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "carbon capture and storage",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001017
     },
@@ -15420,14 +15435,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "carbon capture and storage",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01271
     },
@@ -15462,7 +15477,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "carbon capture and storage",
@@ -15470,7 +15485,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.4475
     },
@@ -15483,7 +15498,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "carbon capture and storage",
@@ -15491,7 +15506,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 5.5932
     },
@@ -15529,7 +15544,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 27.2725
     },
@@ -15548,7 +15563,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 109.09
     },
@@ -15594,14 +15609,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "carbon capture and utilization",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.0001695
     },
@@ -15613,14 +15628,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "carbon capture and utilization",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.002542
     },
@@ -15655,7 +15670,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "carbon capture and utilization",
@@ -15663,7 +15678,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.07458
     },
@@ -15676,7 +15691,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "carbon capture and utilization",
@@ -15684,7 +15699,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.1186
     },
@@ -15722,7 +15737,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.4545
     },
@@ -15741,7 +15756,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 27.2725
     },
@@ -15787,14 +15802,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "green hydrogen",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001525
     },
@@ -15806,14 +15821,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "green hydrogen",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01525
     },
@@ -15848,7 +15863,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "green hydrogen",
@@ -15856,7 +15871,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.6711
     },
@@ -15869,7 +15884,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "green hydrogen",
@@ -15877,7 +15892,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 6.7121
     },
@@ -15915,7 +15930,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 27.2725
     },
@@ -15934,7 +15949,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 109.09
     },
@@ -15980,14 +15995,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "sustainable agriculture",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.002543
     },
@@ -15999,14 +16014,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "sustainable agriculture",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02034
     },
@@ -16041,7 +16056,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "sustainable agriculture",
@@ -16049,7 +16064,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.1188
     },
@@ -16062,7 +16077,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "sustainable agriculture",
@@ -16070,7 +16085,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 8.9491
     },
@@ -16108,7 +16123,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 10.909
     },
@@ -16127,7 +16142,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 43.636
     },
@@ -16173,14 +16188,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "reduced meat consumption",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.00339
     },
@@ -16192,14 +16207,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "reduced meat consumption",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02288
     },
@@ -16234,7 +16249,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "reduced meat consumption",
@@ -16242,7 +16257,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.4915
     },
@@ -16255,7 +16270,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "reduced meat consumption",
@@ -16263,7 +16278,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 10.0677
     },
@@ -16301,7 +16316,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5454
     },
@@ -16320,7 +16335,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 5.4545
     },
@@ -16366,14 +16381,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "food waste reduction",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.00339
     },
@@ -16385,14 +16400,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "food waste reduction",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02373
     },
@@ -16427,7 +16442,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "food waste reduction",
@@ -16435,7 +16450,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.4917
     },
@@ -16448,7 +16463,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "food waste reduction",
@@ -16456,7 +16471,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 10.4406
     },
@@ -16494,7 +16509,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.7273
     },
@@ -16513,7 +16528,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 16.3635
     },
@@ -16559,14 +16574,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "aviation emission reduction",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.000678
     },
@@ -16578,14 +16593,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "aviation emission reduction",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.005085
     },
@@ -16620,7 +16635,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "aviation emission reduction",
@@ -16628,7 +16643,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2983
     },
@@ -16641,7 +16656,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "aviation emission reduction",
@@ -16649,7 +16664,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2373
     },
@@ -16687,7 +16702,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 10.909
     },
@@ -16706,7 +16721,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 43.636
     },
@@ -16752,14 +16767,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "emission standards",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.005084
     },
@@ -16771,14 +16786,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "emission standards",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02881
     },
@@ -16813,7 +16828,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "emission standards",
@@ -16821,7 +16836,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.237
     },
@@ -16834,7 +16849,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "emission standards",
@@ -16842,7 +16857,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 12.6781
     },
@@ -16880,7 +16895,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2727
     },
@@ -16899,7 +16914,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.7273
     },
@@ -16945,14 +16960,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "research (climate solution)",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.004238
     },
@@ -16964,14 +16979,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "research (climate solution)",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.04068
     },
@@ -17006,7 +17021,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "research (climate solution)",
@@ -17014,7 +17029,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.8646
     },
@@ -17027,7 +17042,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "research (climate solution)",
@@ -17035,7 +17050,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 17.8987
     },
@@ -17073,7 +17088,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.4545
     },
@@ -17092,7 +17107,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 27.2725
     },
@@ -17138,14 +17153,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "innovation",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.004238
     },
@@ -17157,14 +17172,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "innovation",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.04068
     },
@@ -17199,7 +17214,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "innovation",
@@ -17207,7 +17222,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 1.8646
     },
@@ -17220,7 +17235,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "innovation",
@@ -17228,7 +17243,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 17.8987
     },
@@ -17266,7 +17281,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 10.909
     },
@@ -17285,7 +17300,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 43.636
     },
@@ -17331,14 +17346,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "climate finance",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.005084
     },
@@ -17350,14 +17365,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "climate finance",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.04068
     },
@@ -17392,7 +17407,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "climate finance",
@@ -17400,7 +17415,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.237
     },
@@ -17413,7 +17428,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "climate finance",
@@ -17421,7 +17436,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 17.8984
     },
@@ -17459,7 +17474,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 5.4545
     },
@@ -17478,7 +17493,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 54.545
     },
@@ -17524,14 +17539,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "supply chain laws",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.0005084
     },
@@ -17543,14 +17558,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "supply chain laws",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.005085
     },
@@ -17585,7 +17600,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "supply chain laws",
@@ -17593,7 +17608,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2237
     },
@@ -17606,7 +17621,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "supply chain laws",
@@ -17614,7 +17629,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.2373
     },
@@ -17652,7 +17667,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.2727
     },
@@ -17671,7 +17686,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 2.7273
     },
@@ -17717,14 +17732,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "fossil subsidy removal",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.005085
     },
@@ -17736,14 +17751,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "fossil subsidy removal",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02542
     },
@@ -17778,7 +17793,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "fossil subsidy removal",
@@ -17786,7 +17801,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.2374
     },
@@ -17799,7 +17814,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "fossil subsidy removal",
@@ -17807,7 +17822,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 11.1864
     },
@@ -17845,7 +17860,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.05455
     },
@@ -17864,7 +17879,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 1.0909
     },
@@ -17910,14 +17925,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "education (climate solution)",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.002034
     },
@@ -17929,14 +17944,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "education (climate solution)",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.02373
     },
@@ -17971,7 +17986,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "education (climate solution)",
@@ -17979,7 +17994,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.8948
     },
@@ -17992,7 +18007,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "education (climate solution)",
@@ -18000,7 +18015,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 10.4406
     },
@@ -18038,7 +18053,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.7273
     },
@@ -18057,7 +18072,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 16.3635
     },
@@ -18103,14 +18118,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "digitalization",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.001356
     },
@@ -18122,14 +18137,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "digitalization",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.01424
     },
@@ -18164,7 +18179,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "digitalization",
@@ -18172,7 +18187,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.5966
     },
@@ -18185,7 +18200,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "digitalization",
@@ -18193,7 +18208,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 6.2645
     },
@@ -18231,7 +18246,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 10.909
     },
@@ -18250,7 +18265,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 43.636
     },
@@ -18296,14 +18311,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "international agreements",
         "loss reduction",
         "percent",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.00678
     },
@@ -18315,14 +18330,14 @@
         "percent",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "international agreements",
         "loss reduction",
         "percent",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.05932
     },
@@ -18357,7 +18372,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "low"
+        "variance low (system)"
       ],
       "words": [
         "international agreements",
@@ -18365,7 +18380,7 @@
         "billion",
         "htp",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 2.9832
     },
@@ -18378,7 +18393,7 @@
         "htp",
         "assumed",
         "probability range factor",
-        "high"
+        "variance high (system)"
       ],
       "words": [
         "international agreements",
@@ -18386,7 +18401,7 @@
         "billion",
         "htp",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 26.1015
     },
@@ -18424,7 +18439,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "low"
+        "variance low (system)"
       ],
       "number": 0.05455
     },
@@ -18443,7 +18458,7 @@
         "initial effort",
         "person year",
         "assumed",
-        "high"
+        "variance high (system)"
       ],
       "number": 0.5454
     },

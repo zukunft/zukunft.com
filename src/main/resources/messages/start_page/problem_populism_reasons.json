@@ -166,6 +166,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "15-year"
     },
     {
@@ -213,6 +216,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "GDP per capita",
       "from": "GDP",
@@ -486,14 +501,14 @@
   "values": [
     {"words": ["GDP per capita change due to populism", "15-year", "aftermath", "percent"], "number": "-0.1", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "average of the 51 populist presidents and prime ministers 1900-2020 in 60 countries compared to a synthetic counterfactual without populists"},
     {"words": ["consumption change due to populism", "15-year", "aftermath", "percent"], "number": "-0.1", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "the GDP per capita and the consumption decline by more than 10 percent compared to a plausible non-populist counterfactual"},
-    {"words": ["debt to GDP ratio change due to populism", "15-year", "aftermath", "percent", "high"], "number": "0.1", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "the public debt to GDP ratio is up to ten percentage points higher than in the synthetic doppelganger"},
+    {"words": ["debt to GDP ratio change due to populism", "15-year", "aftermath", "percent", "variance high (system)"], "number": "0.1", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "the public debt to GDP ratio is up to ten percentage points higher than in the synthetic doppelganger"},
     {"words": ["financial globalization change due to populism", "15-year", "aftermath", "index point"], "number": "-5", "source": "Populist Leaders and the Economy (Kiel Working Paper)", "description": "the KOF Financial Globalisation Index declines by about 5 points compared to the synthetic control"},
     {"words": ["economic nationalism due to populism", "tariff", "cost", "United States", "2018", "billion", "EUR"], "number": "47.2", "source": "Fajgelbaum et al. (2020)", "description": "the loss of the US buyers of imports; 51 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["economic nationalism due to populism", "tariff", "cost", "United States", "2018", "percent", "GDP"], "number": "0.0027", "source": "Fajgelbaum et al. (2020)"},
     {"words": ["economic nationalism due to populism", "real income loss", "United States", "2018", "billion", "EUR"], "number": "6.66", "source": "Fajgelbaum et al. (2020)", "description": "7.2 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["economic nationalism due to populism", "real income loss", "United States", "2018", "percent", "GDP"], "number": "0.0004", "source": "Fajgelbaum et al. (2020)"},
-    {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2018", "percent", "low"], "number": "0.017", "source": "Born et al. (2019)"},
-    {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2018", "percent", "high"], "number": "0.025", "source": "Born et al. (2019)"},
+    {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2018", "percent", "variance low (system)"], "number": "0.017", "source": "Born et al. (2019)"},
+    {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2018", "percent", "variance high (system)"], "number": "0.025", "source": "Born et al. (2019)"},
     {"words": ["economic nationalism due to populism", "Brexit", "GDP loss", "United Kingdom", "2022", "percent"], "number": "0.055", "source": "Springford (2022) CER cost of Brexit", "description": "second quarter of 2022"},
     {"words": ["economic nationalism due to populism", "Brexit", "labour productivity loss", "United Kingdom", "15-year", "percent"], "number": "0.04", "source": "OBR Brexit analysis", "description": "a forecast assumption, not a measured loss"},
     {"words": ["economic nationalism due to populism", "Brexit", "trade change", "United Kingdom", "15-year", "percent"], "number": "-0.15", "source": "OBR Brexit analysis", "description": "a forecast assumption, not a measured loss"},

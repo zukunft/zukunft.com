@@ -187,11 +187,14 @@ class triples
     const string SYSTEM_DIGITS_LOW_CODE_ID = 'system_digits_low';
     const string SYSTEM_DIGITS_VERY_LOW = 'very low precision digits (system)';
     const string SYSTEM_DIGITS_VERY_LOW_CODE_ID = 'system_digits_very_low';
-    // the high and the low bound of the variance of a value, defined in base_phrases.json
+    // the high and the low bound of the variance of a value, defined in base_phrases.json; a value
+    // with one of these phrases is a bound of the value with the same other phrases
+    // (see the view-validation of solution_prio.json)
     const string SYSTEM_VARIANCE_HIGH = 'variance high (system)';
     const string SYSTEM_VARIANCE_HIGH_CODE_ID = 'system_variance_high';
     const string SYSTEM_VARIANCE_LOW = 'variance low (system)';
     const string SYSTEM_VARIANCE_LOW_CODE_ID = 'system_variance_low';
+    const array VARIANCE_BOUNDS = [self::SYSTEM_VARIANCE_LOW, self::SYSTEM_VARIANCE_HIGH];
     // an input field of the process catch views, defined in process_catch_fields.json like the
     // column tiers: the field of a question phrase is a phrase of a use case file that gets its
     // label, value phrases, unit and type by triples to these properties, and its limits, step and

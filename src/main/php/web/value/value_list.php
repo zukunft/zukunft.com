@@ -1725,8 +1725,8 @@ class value_list extends ListBase
     /**
      * one table cell with the values of one row and column
      *
-     * a value tagged with a range word is a bound of the probability range of the value with the
-     * same phrases, so it is shown behind that centre value as "centre (low – high)" instead of
+     * a value tagged with a variance bound e.g. "variance low (system)" is a bound of the value
+     * with the same other phrases, so it is shown behind that centre value as "centre (low – high)" instead of
      * as a value of its own (see the view-validation of solution_prio.json); a bound without a
      * centre is shown like a value, so that nothing is lost; the estimate qualifier of a value
      * is the tooltip of the cell, because the table is about the numbers and not about how they
@@ -1761,11 +1761,11 @@ class value_list extends ListBase
         $conf_used = [];
         foreach ($centre_lst as $val) {
             $txt = $val->value_edit($msg, $url_arr);
-            $key = $this->range_key($val);
+            $key = $this->variance_key($val);
             if (array_key_exists($key, $bound)) {
                 // a range normally has both bounds, but a missing one leaves its place empty
-                $low = $bound[$key][words::LOW] ?? null;
-                $high = $bound[$key][words::HIGH] ?? null;
+                $low = $bound[$key][triples::SYSTEM_VARIANCE_LOW] ?? null;
+                $high = $bound[$key][triples::SYSTEM_VARIANCE_HIGH] ?? null;
                 // a bound has the quality of its centre value, which shows the mark once
                 $low_txt = $low?->value_edit_link($msg, $url_arr) ?? '';
                 $high_txt = $high?->value_edit_link($msg, $url_arr) ?? '';
@@ -1802,7 +1802,7 @@ class value_list extends ListBase
      *
      * @param array $val_lst the values of the cell
      * @param user_message $msg to report a problem of reading a phrase type
-     * @return array [the centre values, the bounds keyed by range key and range word,
+     * @return array [the centre values, the bounds keyed by variance key and variance bound,
      *                the confidence values, the qualifier names]
      */
     private function sort_cell_values(array $val_lst, user_message $msg): array
@@ -1812,13 +1812,13 @@ class value_list extends ListBase
         $conf_lst = [];
         $qualifier_lst = [];
         foreach ($val_lst as $val) {
-            $range_word = $this->range_word($val);
+            $var_bound = $this->variance_bound($val);
             if ($this->is_confidence($val)) {
                 $conf_lst[] = $val;
-            } elseif ($range_word == '') {
+            } elseif ($var_bound == '') {
                 $centre_lst[] = $val;
             } else {
-                $bound[$this->range_key($val)][$range_word] = $val;
+                $bound[$this->variance_key($val)][$var_bound] = $val;
             }
             foreach ($val->grp->phr_lst()->lst() as $phr) {
                 $is_new = !in_array($phr->name(), $qualifier_lst);
@@ -2032,13 +2032,13 @@ class value_list extends ListBase
 
     /**
      * @param sandbox_value $val the value or result to check
-     * @return string the range word of the value e.g. "low", or an empty string for a centre value
+     * @return string the variance bound of the value e.g. "variance low (system)", or an empty string for a centre value
      */
-    private function range_word(sandbox_value $val): string
+    private function variance_bound(sandbox_value $val): string
     {
         $result = '';
         foreach ($val->grp->phr_lst()->lst() as $phr) {
-            if (in_array($phr->name(), words::RANGE_WORDS)) {
+            if (in_array($phr->name(), triples::VARIANCE_BOUNDS)) {
                 $result = $phr->name();
             }
         }
@@ -2047,13 +2047,13 @@ class value_list extends ListBase
 
     /**
      * @param sandbox_value $val the value or result to key
-     * @return string the phrase names of the value without the range word, which a centre value
+     * @return string the phrase names of the value without the variance bound, which a centre value
      *                shares with its bounds; encoded, so that a comma in a name cannot join two
      *                different phrase sets to the same key
      */
-    private function range_key(sandbox_value $val): string
+    private function variance_key(sandbox_value $val): string
     {
-        $names = array_diff($val->grp->phr_lst()->names(), words::RANGE_WORDS);
+        $names = array_diff($val->grp->phr_lst()->names(), triples::VARIANCE_BOUNDS);
         sort($names);
         return json_encode(array_values($names));
     }
