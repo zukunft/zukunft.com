@@ -2817,12 +2817,21 @@ class html_base
      * @param string $form_name the form that the input joins by its form attribute, '' for the surrounding form
      * @return string the html code of the number input
      */
-    function input_number(string $name, ?float $value, ?float $min, ?float $max, ?float $step, string $form_name = ''): string
+    function input_number(
+        string $name,
+        ?float $value,
+        ?float $min,
+        ?float $max,
+        ?float $step,
+        string $form_name = '',
+        ?int   $decimals = null
+    ): string
     {
         $attr = ' ' . self::TYPE . '="number" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
         foreach (['value' => $value, 'min' => $min, 'max' => $max, 'step' => $step] as $key => $num) {
             if ($num !== null) {
-                $attr .= ' ' . $key . '="' . $this->number_attr($num) . '"';
+                // only the shown number gets the decimals e.g. 0.90 for a share
+                $attr .= ' ' . $key . '="' . $this->number_value($num, $key == 'value' ? $decimals : null) . '"';
             }
         }
         if ($form_name != '') {
@@ -2833,11 +2842,18 @@ class html_base
 
     /**
      * @param float $num a number
-     * @return string the number without trailing zeros and with a point, as an html attribute needs it
+     * @param int|null $decimals the fixed number of decimals e.g. 2 for a share, null for the number as it is
+     * @return string the number with a point, as an html attribute needs it, with the fixed
+     *                decimals e.g. "1.00" or else without trailing zeros e.g. "0.5"
      */
-    private function number_attr(float $num): string
+    function number_value(float $num, ?int $decimals = null): string
     {
-        return rtrim(rtrim(sprintf('%.12F', $num), '0'), '.');
+        if ($decimals !== null) {
+            $result = number_format($num, $decimals, '.', '');
+        } else {
+            $result = rtrim(rtrim(sprintf('%.12F', $num), '0'), '.');
+        }
+        return $result;
     }
 
     function div_form(string $text, string $style = ''): string

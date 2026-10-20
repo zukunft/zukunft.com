@@ -2061,13 +2061,18 @@ class ui_list extends ui_base
     /**
      * @param sandbox_value $val a value of the page
      * @param user_message $msg to report a problem of the phrase types
-     * @return string the name of the unit phrase of the value or '' if the value has no unit
+     * @return string the symbol of the unit phrase of the value e.g. "kWh/a", else its name, or '' if the value has no unit
      */
-    private function unit_name(sandbox_value $val, user_message $msg): string
+    function unit_name(sandbox_value $val, user_message $msg): string
     {
         $result = '';
         foreach ($val->phr_lst()->lst() as $phr) {
-            if ($result == '' and ($phr->is_measure($msg) or $phr->is_percent($msg))) {
+            if ($result == '' and $phr->is_measure($msg)) {
+                // like behind a number: a unit that is a symbol itself e.g. "EUR" shows the symbol of "Euro"
+                $main_phr = $phr->stands_for() ?? $phr;
+                $result = $main_phr->symbol_name($msg) ?: $phr->name();
+            } elseif ($result == '' and $phr->is_percent($msg)) {
+                // not the symbol "%", because a field shows the stored ratio e.g. 0.35 and not 35
                 $result = $phr->name();
             }
         }
@@ -2455,7 +2460,7 @@ class ui_list extends ui_base
             $phr = $calc->item_phrase($item);
             if ($phr != null) {
                 if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
-                    $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
+                    $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $msg);
                 } else {
                     $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $src_ids, $msg);
                 }
@@ -2508,7 +2513,8 @@ class ui_list extends ui_base
         $input = $html->input_number($name, $num,
             $this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto),
             $this->field_property($phr, triples::FIELD_LIMIT_UP, $dto),
-            $this->field_property($phr, triples::FIELD_STEP, $dto), $form_name);
+            $this->field_property($phr, triples::FIELD_STEP, $dto), $form_name,
+            $val == null ? null : $this->field_decimals($val, $msg));
         // the save writes the entered number to the value that the field shows
         if ($val != null) {
             $input .= $html->form_hidden(url_var::GROUP . $phr->id(), (string)$val->id(), $form_name);
@@ -2522,9 +2528,26 @@ class ui_list extends ui_base
     }
 
     /**
+     * @param sandbox_value $val the value that a field shows
+     * @param user_message $msg to report a problem of the phrase types
+     * @return int|null the fixed decimals of the number in the field: the percent decimals of the
+     *                  user for a share e.g. 0.90, null for another number, which is shown as it is
+     */
+    function field_decimals(sandbox_value $val, user_message $msg): ?int
+    {
+        global $ui_sys;
+        $result = null;
+        if ($val->is_percent($msg)) {
+            $result = $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS;
+        }
+        return $result;
+    }
+
+    /**
      * a phrase selector of a calculator: the options of the field phrase (calculator::options)
      * with the number of each option as the value e.g. 0.85 for east-west, so the entered number
-     * is the input of the calculation, and the option that the page phrase uses is selected
+     * is the input of the calculation, and the option that the page phrase uses is selected; the
+     * hint names no source, because an option is chosen and not measured on the page
      *
      * @param calculator $calc the calculator reader of the page
      * @param phrase $item the item of the field e.g. PV installation input yield factor
@@ -2533,7 +2556,6 @@ class ui_list extends ui_base
      * @param data_object $dto the request cache with the values of the options
      * @param string $form_name the refresh form that the selector joins
      * @param array $url_arr the url parameters with the selected number
-     * @param array $src_ids the sources of the page in the order of their number
      * @param user_message $msg to report a problem of the cache
      * @return string the html code of the field
      */
@@ -2545,26 +2567,26 @@ class ui_list extends ui_base
         data_object  $dto,
         string       $form_name,
         array        $url_arr,
-        array        $src_ids,
         user_message $msg
     ): string
     {
         $html = new html_base();
         $opts = $calc->options($phr);
         $used = $calc->used(array_column($opts, 0));
-        $used_val = null;
         $sel = new html_selector();
         $sel->name = url_var::NUMERIC_VALUE . $phr->id();
         $sel->form = $form_name;
         $sel->with_label = false;
+        // the field gives the selector its layout like the row of a number field
+        $sel->with_group = false;
         $sel->lst = [];
         foreach ($opts as [$opt, $opt_label]) {
             $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
             if ($val?->number() !== null) {
-                $sel->lst[(string)$val->number()] = $opt_label;
+                $key = $html->number_value($val->number(), $this->field_decimals($val, $msg));
+                $sel->lst[$key] = $opt_label;
                 if ($used?->id() == $opt->id()) {
-                    $sel->selected = (string)$val->number();
-                    $used_val = $val;
+                    $sel->selected = $key;
                 }
             }
         }
@@ -2572,7 +2594,7 @@ class ui_list extends ui_base
         // the label points to the id that the selector builds from its name and its label message
         $dom_id = $sel->name . '_' . strtolower($sel->label_id->name);
         return $html->div($html->label($html->esc($calc->label($item)), $dom_id) . $sel->display()
-            . $this->calculator_hint($calc->hint($item), $this->source_ref($used_val, $src_ids)), styles::INPUT_FIELD);
+            . $this->calculator_hint($calc->hint($item)), styles::INPUT_FIELD);
     }
 
     /**
@@ -2601,8 +2623,9 @@ class ui_list extends ui_base
 
     /**
      * the sources of a calculator page in the order of their first use on the page: the values
-     * of the inputs and of the listed assumptions in their order, with all options of a
-     * selector, then the other values that the results of the page use
+     * of the number fields of the inputs and of the listed assumptions in their order, then the
+     * other values that the results of the page use; a selector names no source, so the source
+     * of its options is numbered by its next use
      *
      * @param calculator $calc the calculator reader of the page
      * @param word|triple $dbo the phrase of the page
@@ -2624,11 +2647,7 @@ class ui_list extends ui_base
             if ($phr != null) {
                 $this->add_field_links($phr, $dto, $msg);
                 $this->add_field_values($phr, $dto, $msg);
-                if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
-                    foreach ($calc->options($phr) as [$opt]) {
-                        $vals[] = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
-                    }
-                } else {
+                if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
                     $vals[] = $this->calculator_value($phr, $dbo, $dto, $msg);
                 }
             }

@@ -246,7 +246,7 @@ ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port
 ui_link: $link
-ui_list: $js_list, $list, $lst_ui
+ui_list: $dec_list, $js_list, $list, $lst_ui
 ui_preview: $preview
 ui_rank: $rank
 ui_select: $select

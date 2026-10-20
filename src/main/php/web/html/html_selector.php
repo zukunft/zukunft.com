@@ -55,6 +55,7 @@ class html_selector
     public string $attribute = '';  // to add addition attribute information for the bootstrap version e.g. display an disabled selector
     public string $tooltip = '';    // the hover text of the field, e.g. to say what a selector without a label selects
     public bool $with_label = true; // false to omit the label, e.g. for a selector inside a list row where the column says what is selected
+    public bool $with_group = true; // false to omit the bootstrap form group, e.g. for a calculator field that gives the selector its layout
     public string $more_text = '';  // shown as a disabled last entry if the list is cut by a limit, so that the user knows that more entries exist
     public string $sql = '';        // to deprecate: the list should be filled by the calling object with min objects: query to select the items
     public int|string|null $selected = null;  // id of the selected object
@@ -137,7 +138,9 @@ class html_selector
 
         $tip = $this->tooltip_attribute();
         if (html_base::UI_USE_BOOTSTRAP) {
-            $result .= '<div class="form-group ' . $this->style . '">';
+            if ($this->with_group) {
+                $result .= '<div class="form-group ' . $this->style . '">';
+            }
             if ($label != "" and $this->with_label) {
                 $result .= $html->label($label, $dom_id);
             }
@@ -203,7 +206,7 @@ class html_selector
         } else {
             $result = '</select>';
         }
-        if (html_base::UI_USE_BOOTSTRAP) {
+        if (html_base::UI_USE_BOOTSTRAP and $this->with_group) {
             $result .= '</div>';
         }
         return $result;

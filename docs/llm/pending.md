@@ -8,12 +8,8 @@ the differences of `pv_lifetime_balance.html` to `pv_lifetime_balance_sample.htm
 the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
 renderer, never by adapting the sample
 
-1. inputs: the units of the sample are the short units of the field ("kWh/a" for the local
-   consumption instead of "kWh"); the orientation options show two decimals ("1.00" instead
-   of "1"); the orientation hint names no source ("Yield factor relative to south 30°"
-   without "[1]") and the selector has no `div.form-group` around it
-2. assumptions, one row each:
-   - specific yield: unit "kWh/kWp·a" instead of "kWh per kWp", step 10 and the hint
+1. units - try to solve only by changing the json files - assumptions, one row each:
+   - sfdpecific yield: unit "kWh/kWp·a" instead of "kWh per kWp", step 10 and the hint
      "Lifetime average incl. 0.7 %/a degradation [1]" instead of "[2]"
    - lifetime: unit "a" and the hint "Reference lifetime used in the LCA [1]"
    - PV life-cycle emissions: the measured 35.8 g/kWh with step 0.1 and the hint "Swiss 3 kWp
@@ -31,27 +27,29 @@ renderer, never by adapting the sample
    - battery lifetime: unit "a" and the tag "assumed 0.6"
    - the three derived assumptions (production mix 395, residual mix 523, east-west yield
      factor 0.85) are not shown, because they are options of the selectors already
-3. main table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
+2. Autarky numbers - try to solve mainly by changing the json files - main table, numbers: the per year column of "Self-consumption rate" (49 %) and "Autarky"
+   (84 %) and both columns of "vs. replacement mix" (113.8 t, 3'794 kg) are empty
+3. formula sample - add parameter 'show formula sample' to the field 
+   and create a sample based on the formula and the database values -   
+   table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
    kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
    the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
    of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
-4. main table, numbers: the per year column of "Self-consumption rate" (49 %) and "Autarky"
-   (84 %) and both columns of "vs. replacement mix" (113.8 t, 3'794 kg) are empty
-5. number format: the lifetime column shows kg results in t with one decimal (10.5 t, 2.0 t,
+4. number format: the lifetime column shows kg results in t with one decimal (10.5 t, 2.0 t,
    18.4 t, 13.1 t, 113.8 t, -2.9 t) and the per year column the numbers without decimals (247,
    701, 349, 67, 614, 436, -98 kg), the percent with a blank before "%" ("49 %")
-6. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
+5. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
    the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
    Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
-7. notes: only the three notes of the page with their own titles and sources ("How the CO₂
+6. notes: only the three notes of the page with their own titles and sources ("How the CO₂
    saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
    instead of the description of every formula (19 notes with the formula name in `b`)
-8. sources: the seven sources of the sample in the order of their first use ([1] IEA PVPS,
+7. sources - just add sources - more sources is an excepted difference: the seven sources of the sample in the order of their first use ([1] IEA PVPS,
    [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
    [7] gruenes.haus) with their full citation as the link text and `target="_blank"
    rel="noopener"`; today five sources with the short source name, gruenes.haus first and
    the two battery sources missing
-9. the comparison: let the use case test assert the generated page against the sample with
+8. the comparison: let the use case test assert the generated page against the sample with
    a normalisation of the differences that are design and not content: the html ids and
    names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
    attributes and the save form, the cell ids, and the calculator data with `calculator.js`

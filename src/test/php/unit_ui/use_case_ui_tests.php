@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
@@ -74,6 +75,7 @@ use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class use_case_ui_tests
 {
@@ -254,6 +256,36 @@ class use_case_ui_tests
         // negative: the percent of the selector values is a unit and no option
         $test_name = 'a percent phrase of the selector values is not offered as an option';
         $t->assert_text_not_contains($test_name, $fields, 'value="' . words::PCT_ID . '"');
+        // a share is written into a field with the percent decimals of the user e.g. 1.00 and 0.90,
+        // so all options of a selector of shares have the same number of decimals
+        $dec_list = new ui_list();
+        $pct_val = $dto_in->val_lst->get_by_names([word_names::CITY, word_names::BE]);
+        $test_name = 'the field value of a share has the percent decimals of the user';
+        $t->assert($test_name, $html->number_value($pct_val->number(), $dec_list->field_decimals($pct_val, $msg)), '1.00');
+        // negative: another number is written as it is
+        $inh_val = $dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
+        $test_name = '... and another number without added decimals';
+        $t->assert($test_name, $html->number_value($inh_val->number(), $dec_list->field_decimals($inh_val, $msg)),
+            (string)values::CITY_ZH_INHABITANTS_2019);
+        // a unit is shown by its symbol e.g. "kWh/a" for kilowatthours per year like behind a
+        // number, so also the symbol "€" of Euro for the unit EUR that stands for Euro
+        $test_name = 'a field shows the symbol of its unit';
+        $unit_val = new test_lib()->ui_value($t_val->value_mio_eur());
+        $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->phr_lst = new test_phrases($t)->list_unit_symbol_cache_ui();
+        $t->assert($test_name, $dec_list->unit_name($unit_val, $msg), word_names::EURO_SIGN);
+        // negative: without the symbol triple in any cache the unit is named
+        $test_name = '... and the name of a unit without a symbol';
+        $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $t->assert($test_name, $dec_list->unit_name($unit_val, $msg), word_names::EUR);
+        // negative: a field shows the stored ratio e.g. 0.35, so "%" would read as 0.35 %
+        $test_name = '... but the name and not the symbol of percent';
+        $ui_sys->phr_lst = new test_phrases($t)->list_percent_symbol_cache_ui();
+        $t->assert($test_name, $dec_list->unit_name($pct_val, $msg), words::PCT);
+        $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
+        $ui_sys->phr_lst = $phr_lst_keep;
         $test_name = 'an entered number and phrase of the url are shown again';
         $entered = [$num_name => 5, $sel_name => word_names::ZH_ID];
         $fields_url = $page->process_catch_fields(components::TEST_INPUT_FIELDS_NAME, null, $entered, $wrd, $dto_in, $form, $msg);
@@ -516,6 +548,13 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $in_html, 'value="' . values::SAMPLE_FLOAT . '"');
         $test_name = '... and selects the option that the page phrase uses';
         $t->assert_text_contains($test_name, $in_html, ' selected >' . word_names::YEAR_2020 . '</option>');
+        // the field gives the selector its layout, so the selector follows its label directly
+        $test_name = '... directly behind its label';
+        $t->assert_text_contains($test_name, $in_html, '</label><select class="form-control" name="'
+            . url_var::NUMERIC_VALUE . $canton_id . '"');
+        // negative: the bootstrap form group around a selector is not used in a calculator field
+        $test_name = '... without a form group around it';
+        $t->assert_text_not_contains($test_name, $in_html, 'form-group');
         $test_name = 'the save button shows the page again with the entered inputs';
         $t->assert_text_contains($test_name, $in_html, '>' . $mtr->txt(msg_id::CALCULATOR_SAVE) . '</button>');
         $t->assert_text_contains($test_name, $in_html, $html->form_hidden(url_var::MASK, views::CALCULATOR));
@@ -600,6 +639,14 @@ class use_case_ui_tests
         $test_name = '... and the hint of a field with a value of a source names its number';
         $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_res, $form, views::CALCULATOR, []),
             $html->span(triple_names::CALC_INHABITANTS_HINT_COM . ' [1]', styles::INPUT_HINT));
+        // negative: the hint of a phrase selector names no source, also if the selected option
+        // has one, because an option is chosen and not measured on the page
+        $opt_val = $dto_res->val_lst->get_by_names([word_names::CANTON, word_names::YEAR_2020]);
+        $opt_val->src = $src;
+        $test_name = '... but the hint of a phrase selector names no source';
+        $t->assert_text_not_contains($test_name, $page->calculator_input($wrd, $msg, $dto_res, $form, views::CALCULATOR, []),
+            $html->span('[1]', styles::INPUT_HINT));
+        $opt_val->src = null;
         // negative: a phrase without calculator triples has no results
         $test_name = 'a phrase without calculator triples shows no calculation result';
         $t->assert($test_name, $page->calculation_result(new test_triples($t)->triple_bern_ui(), $msg, $dto_res), '');

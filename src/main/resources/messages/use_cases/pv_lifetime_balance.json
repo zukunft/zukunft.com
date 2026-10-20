@@ -357,6 +357,9 @@
     },
     {
       "name": "sign"
+    },
+    {
+      "name": "kWh/a"
     }
   ],
   "triples": [
@@ -1816,6 +1819,19 @@
       "from": "PV installation detail column consumption mix",
       "verb": "with",
       "to": "gram per kWh"
+    },
+    {
+      "name": "kilowatthours per year",
+      "description": "the unit of an annual electricity amount e.g. the household consumption",
+      "from": "kWh",
+      "verb": "per",
+      "to": "year",
+      "type": "measure_unit"
+    },
+    {
+      "from": "kWh/a",
+      "verb": "is symbol for",
+      "to": "kilowatthours per year"
     }
   ],
   "formulas": [
@@ -2092,7 +2108,7 @@
         "example PV installation",
         "household consumption",
         "annual",
-        "kWh",
+        "kilowatthours per year",
         "assumed"
       ],
       "number": "4500",
@@ -3029,6 +3045,7 @@
         "household consumption",
         "annual",
         "kWh",
+        "kilowatthours per year",
         "assumed",
         "direct use",
         "modelled",
@@ -3107,6 +3124,7 @@
         "household consumption",
         "annual",
         "kWh",
+        "kilowatthours per year",
         "assumed",
         "modelled"
       ],

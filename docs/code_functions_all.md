@@ -6851,9 +6851,11 @@
             st.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
+    \-- unit_name - section for function unit_name missing in /component/execute/ui_list.php
     \-- formula_notes - section for function formula_notes missing in /component/execute/ui_list.php
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
+    \-- field_decimals - section for function field_decimals missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
@@ -7441,6 +7443,8 @@
     \-- input - section for function input not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
     \-- input_number - section for function input_number not yet defined that it should be base elements - functions for
+             all html elements used in zukunft.com in /html/html_base.php
+    \-- number_value - section for function number_value not yet defined that it should be base elements - functions for
              all html elements used in zukunft.com in /html/html_base.php
     \-- div_form - section for function div_form not yet defined that it should be base elements - functions for all htm
             l elements used in zukunft.com in /html/html_base.php
@@ -9495,12 +9499,16 @@
         \-- ui_list - the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
     \-- input_fields
         \-- ui_list - the input fields of a page (process_catch_fields.json): a phrase of the values of the page
+    \-- unit_name
+        \-- ui_list - @param sandbox_value $val a value of the page
     \-- formula_notes
         \-- ui_list - the notes of a page: the descriptions of the formulas that calculate the results of the
     \-- assumption_fields
         \-- ui_list - the assumptions of a page: the values that the calculation of the results of the page uses
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+    \-- field_decimals
+        \-- ui_list - @param sandbox_value $val the value that a field shows
     \-- calculation_table
         \-- ui_list - the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
     \-- calculation_detail_tables
@@ -10537,6 +10545,8 @@
         \-- html_base - create the HTML code for an input field
     \-- input_number
         \-- html_base - a number input with the limits and the step that the browser enforces, e.g. an input field
+    \-- number_value
+        \-- html_base - @param float $num a number
     \-- div_form
         \-- html_base - @param float $num a number
     \-- div_row

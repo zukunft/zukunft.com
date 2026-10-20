@@ -32016,6 +32016,43 @@
                 "class": "triple"
             },
             {
+                "id": 2597,
+                "name": "kWh\/a is symbol for kilowatthours per year",
+                "from_id": 1973,
+                "from_phrase": {
+                    "id": 1973,
+                    "name": "kWh\/a",
+                    "description": null,
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -2553,
+                "to_phrase": {
+                    "id": 2553,
+                    "name": "kilowatthours per year",
+                    "description": "the unit of an annual electricity amount e.g. the household consumption",
+                    "type_id": 2,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
                 "id": 574,
                 "name": "L is symbol for Romanian leu",
                 "from_id": 511,
@@ -32535,43 +32572,6 @@
                 "class": "triple"
             },
             {
-                "id": 577,
-                "name": "PEN is symbol for Peruvian sol",
-                "from_id": 512,
-                "from_phrase": {
-                    "id": 512,
-                    "name": "PEN",
-                    "description": "ISO 4217 alphabetic code for the Peruvian sol.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -378,
-                "to_phrase": {
-                    "id": 378,
-                    "name": "Peruvian sol",
-                    "description": "The Peruvian sol (symbol: S\/; currency code: PEN) is the official currency of Peru. It is divided into 100 c\u00e9ntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
-            },
-            {
                 "id": 466,
                 "name": "kr",
                 "description": "Abbreviation shared by several Scandinavian krona\/krone currencies, including the Swedish krona, Norwegian krone, and Danish krone.",
@@ -32612,6 +32612,19 @@
                 "description": "The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.",
                 "type_id": 2,
                 "class": "word"
+            },
+            {
+                "id": 1973,
+                "name": "kWh\/a",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 2553,
+                "name": "kilowatthours per year",
+                "description": "the unit of an annual electricity amount e.g. the household consumption",
+                "type_id": 2,
+                "class": "triple"
             },
             {
                 "id": 511,
@@ -32768,16 +32781,40 @@
                 "class": "triple"
             },
             {
-                "id": 512,
-                "name": "PEN",
-                "description": "ISO 4217 alphabetic code for the Peruvian sol.",
-                "type_id": 1,
-                "class": "word"
-            },
-            {
-                "id": 378,
-                "name": "Peruvian sol",
-                "description": "The Peruvian sol (symbol: S\/; currency code: PEN) is the official currency of Peru. It is divided into 100 c\u00e9ntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
+                "id": 577,
+                "name": "PEN is symbol for Peruvian sol",
+                "from_id": 512,
+                "from_phrase": {
+                    "id": 512,
+                    "name": "PEN",
+                    "description": "ISO 4217 alphabetic code for the Peruvian sol.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -378,
+                "to_phrase": {
+                    "id": 378,
+                    "name": "Peruvian sol",
+                    "description": "The Peruvian sol (symbol: S\/; currency code: PEN) is the official currency of Peru. It is divided into 100 c\u00e9ntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
                 "class": "triple"
             },
             {
@@ -33488,40 +33525,16 @@
                 "class": "triple"
             },
             {
-                "id": 532,
-                "name": "TRY is symbol for Turkish lira",
-                "from_id": 494,
-                "from_phrase": {
-                    "id": 494,
-                    "name": "TRY",
-                    "description": "ISO 4217 alphabetic code for the Turkish lira.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -372,
-                "to_phrase": {
-                    "id": 372,
-                    "name": "Turkish lira",
-                    "description": "The Turkish lira (symbol: \u20ba; currency code: TRY) is the official currency of Turkey and Northern Cyprus. It is divided into 100 kuru\u015f and is issued by the Central Bank of the Republic of Turkey. The current lira replaced the old lira in 2005 at a ratio of 1,000,000 old lira to 1 new lira.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
+                "id": 512,
+                "name": "PEN",
+                "description": "ISO 4217 alphabetic code for the Peruvian sol.",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 378,
+                "name": "Peruvian sol",
+                "description": "The Peruvian sol (symbol: S\/; currency code: PEN) is the official currency of Peru. It is divided into 100 c\u00e9ntimos and is issued by the Central Reserve Bank of Peru. The current sol replaced the nuevo sol in 2015, though it has the same value.",
                 "class": "triple"
             },
             {
@@ -33704,11 +33717,41 @@
                 "class": "word"
             },
             {
-                "id": 494,
-                "name": "TRY",
-                "description": "ISO 4217 alphabetic code for the Turkish lira.",
-                "type_id": 1,
-                "class": "word"
+                "id": 532,
+                "name": "TRY is symbol for Turkish lira",
+                "from_id": 494,
+                "from_phrase": {
+                    "id": 494,
+                    "name": "TRY",
+                    "description": "ISO 4217 alphabetic code for the Turkish lira.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -372,
+                "to_phrase": {
+                    "id": 372,
+                    "name": "Turkish lira",
+                    "description": "The Turkish lira (symbol: \u20ba; currency code: TRY) is the official currency of Turkey and Northern Cyprus. It is divided into 100 kuru\u015f and is issued by the Central Bank of the Republic of Turkey. The current lira replaced the old lira in 2005 at a ratio of 1,000,000 old lira to 1 new lira.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
             },
             {
                 "id": 603,
@@ -34082,6 +34125,13 @@
                     "class": "triple"
                 },
                 "class": "triple"
+            },
+            {
+                "id": 494,
+                "name": "TRY",
+                "description": "ISO 4217 alphabetic code for the Turkish lira.",
+                "type_id": 1,
+                "class": "word"
             },
             {
                 "id": 475,
