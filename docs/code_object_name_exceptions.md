@@ -68,7 +68,7 @@ ListOfIdNamedObjects: $del_lst, $lst
 ListOfIdObjects: $del_lst, $lst
 RecursiveDirectoryIterator: $dir_iterator
 RecursiveIteratorIterator: $iter
-ReflectionClass: $ref
+ReflectionClass: $ref, $refl
 ZipArchive: $zip
 a_selected_test: $t_sel
 all_api_tests: $t_api

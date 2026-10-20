@@ -771,6 +771,19 @@ uses the new type fails with "not found". The csv load also removes the cached
 types api message (`db_cache` type `types`), because the frontend reads the
 types from that message and would miss the new rows until the cache age limit.
 Never derive an id by counting entries in the JSON or by assuming a shift of one.
+At the end of `csv_recreate()` the check `test/php/create/test_pinned_ids.php` takes
+the name or code id of each pinned object, picks its id from the `list.csv` of the
+class and from the database and reports every pinned id that differs together with
+the id to pin. A new `*_ID` const of a seed object is added to the array of its class
+there; the ids of test objects that exist in no database (e.g. `TEST_ADD_ID`) are not.
+Without `files::AUTO_RE_PIN_OBJECT_ID` the check writes `docs/pinned_id_findings.md`
+with a section per class: either "143 words tested, all ids are fine" or each const to
+re-pin with the pinned and the new id, or why it needs a re-pin by hand (several ids in
+the database, a `list.csv` that differs from the database, no single const).
+With the flag the check rewrites the number of each shifted const in its php file
+instead, if the name has exactly one id in the database and the `list.csv` has the same;
+the run still uses the old values, so the tests are run again, the diff of the const
+files is reviewed and the flag is set back to `false`.
 
 Two traps that make the drift look smaller than it is:
 

@@ -44,7 +44,7 @@ SELECT source_update_log_0022002020000
         195,
         'Federal Statistical Office',
         'System Test Source Renamed',
-        7,
+        9,
         196,
         'The Federal Statistical Office is a Federal agency of the Swiss Confederation. It is the statistics office of Switzerland.',
         null,

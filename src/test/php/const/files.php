@@ -44,6 +44,7 @@ class files
      */
 
     CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_RE_PIN_OBJECT_ID = false;
 
     /*
      * types and extensions
@@ -113,6 +114,7 @@ class files
     CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
     CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;
+    CONST string DOCS_PINNED_ID_FINDINGS = test_paths::DOCS . 'pinned_id_findings' . self::MD;
 
 
     /*
