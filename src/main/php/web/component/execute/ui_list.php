@@ -2068,11 +2068,12 @@ class ui_list extends ui_base
         $result = '';
         foreach ($val->phr_lst()->lst() as $phr) {
             if ($result == '' and $phr->is_measure($msg)) {
-                // like behind a number: a unit that is a symbol itself e.g. "EUR" shows the symbol of "Euro"
-                $main_phr = $phr->stands_for() ?? $phr;
-                $result = $main_phr->symbol_name($msg) ?: $phr->name();
+                $result = $phr->unit_text($msg);
+            } elseif ($result == '' and $phr->is_percent($msg) and $phr->is_triple()) {
+                // a qualified percent unit e.g. share (ratio) has a symbol that names the stored ratio
+                $result = $phr->unit_text($msg);
             } elseif ($result == '' and $phr->is_percent($msg)) {
-                // not the symbol "%", because a field shows the stored ratio e.g. 0.35 and not 35
+                // not the symbol "%" of the percent word, because a field shows the stored ratio e.g. 0.35 and not 35
                 $result = $phr->name();
             }
         }
@@ -2530,7 +2531,7 @@ class ui_list extends ui_base
     /**
      * @param sandbox_value $val the value that a field shows
      * @param user_message $msg to report a problem of the phrase types
-     * @return int|null the fixed decimals of the number in the field: the percent decimals of the
+     * @return int|null the minimum decimals of the number in the field: the percent decimals of the
      *                  user for a share e.g. 0.90, null for another number, which is shown as it is
      */
     function field_decimals(sandbox_value $val, user_message $msg): ?int

@@ -320,6 +320,18 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value in the percent unit share (ratio), which a field shows with its symbol "share"
+     */
+    function value_share(): value
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_trp->share_ratio()->phrase()]);
+    }
+
+    /**
      * @param phrase[] $phrases the phrases that should build the group of the value
      * @param float $number the number assigned to the value (a sample number by default)
      * @return value with the given number assigned to the group of the given phrases

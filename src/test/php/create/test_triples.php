@@ -1073,6 +1073,38 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "share (ratio)" of pv_lifetime_balance.json, a percent unit that a field
+     *                shows by its symbol "share" (see ui_list::unit_name)
+     */
+    function share_ratio(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SHARE_RATIO_ID, triple_names::SHARE_RATIO);
+        $trp->set_from($t_wrd->word_share()->phrase());
+        $trp->set_verb($t_vrb->verb_must_be_one_of());
+        $trp->set_to($t_wrd->word_ratio()->phrase());
+        $trp->set_type(phrase_types::PERCENT, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
+     * @return triple "share is symbol for share (ratio)", the symbol of the share unit
+     */
+    function share_symbol(): triple
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::SHARE_SYMBOL_ID, triple_names::SHARE_SYMBOL);
+        $trp->set_from($t_wrd->word_share()->phrase());
+        $trp->set_verb($t_vrb->verb_is_symbol());
+        $trp->set_to($this->share_ratio()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple "mio is symbol for million" used to test that a symbol shows the
      *         description of the word it stands for as its tooltip
      */

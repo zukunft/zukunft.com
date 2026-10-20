@@ -522,6 +522,12 @@ class triple_names
     const int EUR_SYMBOL_ID = 396;
     const string EURO_SIGN_SYMBOL = "€ is symbol for Euro";
     const int EURO_SIGN_SYMBOL_ID = 397;
+    // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share";
+    // the ids are fixed for the ui test until a reset writes the rows to triple/list.csv
+    const string SHARE_RATIO = 'share (ratio)';
+    const int SHARE_RATIO_ID = 899;
+    const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
+    const int SHARE_SYMBOL_ID = 898;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 407;
     const string IN_EUR = "in EUR";

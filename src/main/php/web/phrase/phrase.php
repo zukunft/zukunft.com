@@ -407,15 +407,39 @@ class phrase extends combine_named
     {
         $result = '';
         if ($this->is_factor($msg) or $this->is_scaling($msg) or $this->is_measure($msg)) {
-            // a unit can be a symbol itself e.g. "EUR" for "Euro", so the symbol, the link and the
-            // tooltip are those of the phrase it stands for e.g. "€" with the description of "Euro"
-            $main_phr = $this->stands_for() ?? $this;
+            // the link and the tooltip are those of the phrase the symbol stands for e.g. "Euro"
+            $main_phr = $this->symbol_owner();
             $symbol = $main_phr->symbol_name($msg);
             if ($symbol != '') {
                 $html = new html_base();
                 $url = $html->url_back($main_phr->view_id(), $main_phr->id());
                 $result = $html->ref($url, $symbol, $main_phr->tooltip($msg));
             }
+        }
+        return $result;
+    }
+
+    /**
+     * a unit can be a symbol itself e.g. "EUR" for "Euro", so its symbol is the one of the phrase
+     * it stands for e.g. "€"
+     *
+     * @return phrase the phrase whose symbol is shown for this phrase: "Euro" for "EUR", else this phrase
+     */
+    function symbol_owner(): phrase
+    {
+        return $this->stands_for() ?? $this;
+    }
+
+    /**
+     * the unit of a number in a field or a table cell, shortened by its symbol like behind a number
+     *
+     * @return string the symbol of this unit e.g. "kWh/a" or "€" for "EUR", else the name of this phrase
+     */
+    function unit_text(user_message $msg): string
+    {
+        $result = $this->symbol_owner()->symbol_name($msg);
+        if ($result == '') {
+            $result = $this->name();
         }
         return $result;
     }

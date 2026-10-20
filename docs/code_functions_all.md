@@ -7594,6 +7594,8 @@
     \-- is_word - section for function is_word is expected to be info in /phrase/phrase.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
     \-- number_symbol - section for function number_symbol not yet defined that it should be info in /phrase/phrase.php
+    \-- symbol_owner - section for function symbol_owner not yet defined that it should be info in /phrase/phrase.php
+    \-- unit_text - section for function unit_text not yet defined that it should be info in /phrase/phrase.php
     \-- symbol_name - section for function symbol_name not yet defined that it should be info in /phrase/phrase.php
     \-- stands_for - section for function stands_for not yet defined that it should be info in /phrase/phrase.php
     \-- tooltip - section for function tooltip not yet defined that it should be info in /phrase/phrase.php
@@ -10546,11 +10548,11 @@
     \-- input_number
         \-- html_base - a number input with the limits and the step that the browser enforces, e.g. an input field
     \-- number_value
-        \-- html_base - @param float $num a number
+        \-- html_base - the number as an html attribute needs it; the decimals are a minimum, so that a field or an
     \-- div_form
-        \-- html_base - @param float $num a number
+        \-- html_base - @param string $num_txt a number with a point and without trailing zeros e.g. "0.855"
     \-- div_row
-        \-- html_base - @param float $num a number
+        \-- html_base - @param string $num_txt a number with a point and without trailing zeros e.g. "0.855"
     \-- div_col_min_width
         \-- html_base - a column of a row that is moved below the previous column on small screens
     \-- div_row_wrapping_cols

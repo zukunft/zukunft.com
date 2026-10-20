@@ -369,6 +369,11 @@ class word_names
     const int DOLLAR_ID = 448;
     const string EURO_SIGN = '€';
     const int EURO_SIGN_ID = 450;
+    // the words of the share unit of use_cases/pv_lifetime_balance.json
+    const string SHARE = 'share';
+    const int SHARE_ID = 307;
+    const string RATIO = 'ratio';
+    const int RATIO_ID = 321;
     const int CURRENCY_ID = 397;
     const string US = 'US';
 

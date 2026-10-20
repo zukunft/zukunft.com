@@ -760,7 +760,13 @@ class sandbox_value extends sandbox
      */
     function percent_symbol(user_message $msg): string
     {
-        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name($msg) ?? '';
+        $pct_phr = $this->grp->phr_lst()->percent_phrase($msg);
+        $result = '';
+        // a qualified percent unit e.g. share (ratio) has a symbol for the stored ratio, not for the number times 100
+        if ($pct_phr != null and !$pct_phr->is_triple()) {
+            $result = $pct_phr->symbol_name($msg);
+        }
+        return $result;
     }
 
     /**

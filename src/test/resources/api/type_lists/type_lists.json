@@ -29924,6 +29924,43 @@
                 "class": "triple"
             },
             {
+                "id": 2602,
+                "name": "a is symbol for year (duration unit)",
+                "from_id": 1123,
+                "from_phrase": {
+                    "id": 1123,
+                    "name": "a",
+                    "description": null,
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -2555,
+                "to_phrase": {
+                    "id": 2555,
+                    "name": "year (duration unit)",
+                    "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
+                    "type_id": 2,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
                 "id": 593,
                 "name": "ARG$ is symbol for Argentine peso",
                 "from_id": 518,
@@ -30596,43 +30633,6 @@
                 "class": "triple"
             },
             {
-                "id": 562,
-                "name": "COP is symbol for Colombian peso",
-                "from_id": 506,
-                "from_phrase": {
-                    "id": 506,
-                    "name": "COP",
-                    "description": "ISO 4217 alphabetic code for the Colombian peso.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -364,
-                "to_phrase": {
-                    "id": 364,
-                    "name": "Colombian peso",
-                    "description": "The Colombian peso (symbol: $ or COL$; currency code: COP) is the official currency of Colombia. It is divided into 100 centavos and is issued by the Banco de la Rep\u00fablica. Centavos are no longer used in practice due to their negligible value.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
-            },
-            {
                 "id": 291,
                 "name": "AI",
                 "description": "the symbol used in formulas for artificial intelligence",
@@ -30643,6 +30643,19 @@
                 "id": 135,
                 "name": "artificial intelligence",
                 "description": "Artificial intelligence is the capability of computational systems to perform tasks typically associated with human intelligence, such as learning, reasoning and decision-making.",
+                "class": "triple"
+            },
+            {
+                "id": 1123,
+                "name": "a",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 2555,
+                "name": "year (duration unit)",
+                "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
+                "type_id": 2,
                 "class": "triple"
             },
             {
@@ -30852,11 +30865,41 @@
                 "class": "triple"
             },
             {
-                "id": 506,
-                "name": "COP",
-                "description": "ISO 4217 alphabetic code for the Colombian peso.",
-                "type_id": 1,
-                "class": "word"
+                "id": 562,
+                "name": "COP is symbol for Colombian peso",
+                "from_id": 506,
+                "from_phrase": {
+                    "id": 506,
+                    "name": "COP",
+                    "description": "ISO 4217 alphabetic code for the Colombian peso.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -364,
+                "to_phrase": {
+                    "id": 364,
+                    "name": "Colombian peso",
+                    "description": "The Colombian peso (symbol: $ or COL$; currency code: COP) is the official currency of Colombia. It is divided into 100 centavos and is issued by the Banco de la Rep\u00fablica. Centavos are no longer used in practice due to their negligible value.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
             },
             {
                 "id": 522,
@@ -31569,43 +31612,11 @@
                 "class": "triple"
             },
             {
-                "id": 304,
-                "name": "k is symbol for thousand",
-                "type_id": 6,
-                "from_id": 388,
-                "from_phrase": {
-                    "id": 388,
-                    "name": "k",
-                    "description": null,
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": 157,
-                "to_phrase": {
-                    "id": 157,
-                    "protection": 3,
-                    "name": "thousand",
-                    "description": "to specify numbers in thousand",
-                    "type_id": 6,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "class": "triple"
+                "id": 506,
+                "name": "COP",
+                "description": "ISO 4217 alphabetic code for the Colombian peso.",
+                "type_id": 1,
+                "class": "word"
             },
             {
                 "id": 490,
@@ -31815,18 +31826,43 @@
                 "class": "word"
             },
             {
-                "id": 388,
-                "name": "k",
-                "type_id": 1,
-                "class": "word"
-            },
-            {
-                "id": 157,
-                "protection": 3,
-                "name": "thousand",
-                "description": "to specify numbers in thousand",
+                "id": 304,
+                "name": "k is symbol for thousand",
                 "type_id": 6,
-                "class": "word"
+                "from_id": 388,
+                "from_phrase": {
+                    "id": 388,
+                    "name": "k",
+                    "description": null,
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": 157,
+                "to_phrase": {
+                    "id": 157,
+                    "protection": 3,
+                    "name": "thousand",
+                    "description": "to specify numbers in thousand",
+                    "type_id": 6,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "class": "triple"
             },
             {
                 "id": 502,
@@ -32016,7 +32052,7 @@
                 "class": "triple"
             },
             {
-                "id": 2597,
+                "id": 2600,
                 "name": "kWh\/a is symbol for kilowatthours per year",
                 "from_id": 1973,
                 "from_phrase": {
@@ -32045,6 +32081,43 @@
                     "id": 2553,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
+                    "type_id": 2,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
+                "id": 2601,
+                "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
+                "from_id": 1974,
+                "from_phrase": {
+                    "id": 1974,
+                    "name": "kWh\/kWp\u00b7a",
+                    "description": null,
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -2554,
+                "to_phrase": {
+                    "id": 2554,
+                    "name": "kilowatthours per kilowatt peak and year",
+                    "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
                     "usage": null,
                     "impact": null,
@@ -32498,78 +32571,18 @@
                 "class": "triple"
             },
             {
-                "id": 474,
-                "name": "NZD is symbol for New Zealand dollar",
-                "from_id": 469,
-                "from_phrase": {
-                    "id": 469,
-                    "name": "NZD",
-                    "description": "ISO 4217 alphabetic code for the New Zealand dollar.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -352,
-                "to_phrase": {
-                    "id": 352,
-                    "name": "New Zealand dollar",
-                    "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
+                "id": 388,
+                "name": "k",
+                "type_id": 1,
+                "class": "word"
             },
             {
-                "id": 223,
-                "name": "OLS is symbol for ordinary least squares",
-                "from_id": 244,
-                "from_phrase": {
-                    "id": 244,
-                    "name": "OLS",
-                    "description": "the symbol used in formulas for ordinary least squares",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -182,
-                "to_phrase": {
-                    "id": 182,
-                    "name": "ordinary least squares",
-                    "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
+                "id": 157,
+                "protection": 3,
+                "name": "thousand",
+                "description": "to specify numbers in thousand",
+                "type_id": 6,
+                "class": "word"
             },
             {
                 "id": 466,
@@ -32623,6 +32636,19 @@
                 "id": 2553,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
+                "type_id": 2,
+                "class": "triple"
+            },
+            {
+                "id": 1974,
+                "name": "kWh\/kWp\u00b7a",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 2554,
+                "name": "kilowatthours per kilowatt peak and year",
+                "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
                 "class": "triple"
             },
@@ -32761,23 +32787,77 @@
                 "class": "triple"
             },
             {
-                "id": 469,
-                "name": "NZD",
-                "description": "ISO 4217 alphabetic code for the New Zealand dollar.",
-                "type_id": 1,
-                "class": "word"
+                "id": 474,
+                "name": "NZD is symbol for New Zealand dollar",
+                "from_id": 469,
+                "from_phrase": {
+                    "id": 469,
+                    "name": "NZD",
+                    "description": "ISO 4217 alphabetic code for the New Zealand dollar.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -352,
+                "to_phrase": {
+                    "id": 352,
+                    "name": "New Zealand dollar",
+                    "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
             },
             {
-                "id": 244,
-                "name": "OLS",
-                "description": "the symbol used in formulas for ordinary least squares",
-                "type_id": 1,
-                "class": "word"
-            },
-            {
-                "id": 182,
-                "name": "ordinary least squares",
-                "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
+                "id": 223,
+                "name": "OLS is symbol for ordinary least squares",
+                "from_id": 244,
+                "from_phrase": {
+                    "id": 244,
+                    "name": "OLS",
+                    "description": "the symbol used in formulas for ordinary least squares",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -182,
+                "to_phrase": {
+                    "id": 182,
+                    "name": "ordinary least squares",
+                    "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
                 "class": "triple"
             },
             {
@@ -33299,6 +33379,43 @@
                 "class": "triple"
             },
             {
+                "id": 2603,
+                "name": "share is symbol for share (ratio)",
+                "from_id": 307,
+                "from_phrase": {
+                    "id": 307,
+                    "name": "share",
+                    "description": "attributable proportion of a whole, 0..1",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -2556,
+                "to_phrase": {
+                    "id": 2556,
+                    "name": "share (ratio)",
+                    "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
+                    "type_id": 9,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
                 "id": 579,
                 "name": "S\/ is symbol for Peruvian sol",
                 "from_id": 513,
@@ -33411,117 +33528,23 @@
                 "class": "triple"
             },
             {
-                "id": 119,
-                "name": "tn (scaling)",
-                "description": "tn as the symbol for trillion",
-                "from_id": 278,
-                "from_phrase": {
-                    "id": 278,
-                    "name": "tn",
-                    "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": 275,
-                "to_phrase": {
-                    "id": 275,
-                    "name": "trillion",
-                    "description": "the scaling factor of 10^12",
-                    "type_id": 6,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "class": "triple"
+                "id": 469,
+                "name": "NZD",
+                "description": "ISO 4217 alphabetic code for the New Zealand dollar.",
+                "type_id": 1,
+                "class": "word"
             },
             {
-                "id": 120,
-                "name": "tn (weight)",
-                "description": "tn as the symbol for tonne",
-                "from_id": 278,
-                "from_phrase": {
-                    "id": 278,
-                    "name": "tn",
-                    "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": 125,
-                "to_phrase": {
-                    "id": 125,
-                    "protection": 3,
-                    "name": "tonne",
-                    "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
-                    "type_id": 2,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "class": "triple"
+                "id": 244,
+                "name": "OLS",
+                "description": "the symbol used in formulas for ordinary least squares",
+                "type_id": 1,
+                "class": "word"
             },
             {
-                "id": 405,
-                "name": "total is symbol for total",
-                "from_id": 387,
-                "from_phrase": {
-                    "id": 387,
-                    "name": "total",
-                    "description": "the whole amount or count, e.g. the total number of possible outcomes",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": 387,
-                "to_phrase": {
-                    "id": 387,
-                    "name": "total",
-                    "description": "the whole amount or count, e.g. the total number of possible outcomes",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
+                "id": 182,
+                "name": "ordinary least squares",
+                "description": "Ordinary least squares is a type of linear least squares method for choosing the unknown parameters in a linear regression model.",
                 "class": "triple"
             },
             {
@@ -33659,6 +33682,20 @@
                 "class": "word"
             },
             {
+                "id": 307,
+                "name": "share",
+                "description": "attributable proportion of a whole, 0..1",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 2556,
+                "name": "share (ratio)",
+                "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
+                "type_id": 9,
+                "class": "triple"
+            },
+            {
                 "id": 513,
                 "name": "S\/",
                 "description": "Symbol or abbreviation for the Peruvian sol.",
@@ -33688,33 +33725,118 @@
                 "class": "word"
             },
             {
-                "id": 278,
-                "name": "tn",
-                "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only",
-                "type_id": 1,
-                "class": "word"
+                "id": 119,
+                "name": "tn (scaling)",
+                "description": "tn as the symbol for trillion",
+                "from_id": 278,
+                "from_phrase": {
+                    "id": 278,
+                    "name": "tn",
+                    "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": 275,
+                "to_phrase": {
+                    "id": 275,
+                    "name": "trillion",
+                    "description": "the scaling factor of 10^12",
+                    "type_id": 6,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "class": "triple"
             },
             {
-                "id": 275,
-                "name": "trillion",
-                "description": "the scaling factor of 10^12",
-                "type_id": 6,
-                "class": "word"
+                "id": 120,
+                "name": "tn (weight)",
+                "description": "tn as the symbol for tonne",
+                "from_id": 278,
+                "from_phrase": {
+                    "id": 278,
+                    "name": "tn",
+                    "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": 125,
+                "to_phrase": {
+                    "id": 125,
+                    "protection": 3,
+                    "name": "tonne",
+                    "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
+                    "type_id": 2,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "class": "triple"
             },
             {
-                "id": 125,
-                "protection": 3,
-                "name": "tonne",
-                "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
-                "type_id": 2,
-                "class": "word"
-            },
-            {
-                "id": 387,
-                "name": "total",
-                "description": "the whole amount or count, e.g. the total number of possible outcomes",
-                "type_id": 1,
-                "class": "word"
+                "id": 405,
+                "name": "total is symbol for total",
+                "from_id": 387,
+                "from_phrase": {
+                    "id": 387,
+                    "name": "total",
+                    "description": "the whole amount or count, e.g. the total number of possible outcomes",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": 387,
+                "to_phrase": {
+                    "id": 387,
+                    "name": "total",
+                    "description": "the whole amount or count, e.g. the total number of possible outcomes",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "class": "triple"
             },
             {
                 "id": 532,
@@ -34125,6 +34247,35 @@
                     "class": "triple"
                 },
                 "class": "triple"
+            },
+            {
+                "id": 278,
+                "name": "tn",
+                "description": "the ambiguous symbol for trillion and for tonne, which a page uses for one of them only",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 275,
+                "name": "trillion",
+                "description": "the scaling factor of 10^12",
+                "type_id": 6,
+                "class": "word"
+            },
+            {
+                "id": 125,
+                "protection": 3,
+                "name": "tonne",
+                "description": "A metric unit of mass equal to 1,000 kilograms, also called a metric ton.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 387,
+                "name": "total",
+                "description": "the whole amount or count, e.g. the total number of possible outcomes",
+                "type_id": 1,
+                "class": "word"
             },
             {
                 "id": 494,

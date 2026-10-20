@@ -258,14 +258,19 @@ class use_case_ui_tests
         $t->assert_text_not_contains($test_name, $fields, 'value="' . words::PCT_ID . '"');
         // a share is written into a field with the percent decimals of the user e.g. 1.00 and 0.90,
         // so all options of a selector of shares have the same number of decimals
-        $dec_list = new ui_list();
-        $pct_val = $dto_in->val_lst->get_by_names([word_names::CITY, word_names::BE]);
         $test_name = 'the field value of a share has the percent decimals of the user';
-        $t->assert($test_name, $html->number_value($pct_val->number(), $dec_list->field_decimals($pct_val, $msg)), '1.00');
+        $list = new ui_list();
+        $pct_val = $dto_in->val_lst->get_by_names([word_names::CITY, word_names::BE]);
+        $t->assert($test_name, $html->number_value($pct_val->number(), $list->field_decimals($pct_val, $msg)), '1.00');
+        // negative: the decimals are a minimum, because the field number is the input of the
+        // calculation and two rounded options could even get the same value
+        $test_name = '... but a share with more decimals is not rounded';
+        $t->assert($test_name, $html->number_value(values::SAMPLE_FLOAT, $list->field_decimals($pct_val, $msg)),
+            (string)values::SAMPLE_FLOAT);
         // negative: another number is written as it is
-        $inh_val = $dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
         $test_name = '... and another number without added decimals';
-        $t->assert($test_name, $html->number_value($inh_val->number(), $dec_list->field_decimals($inh_val, $msg)),
+        $inh_val = $dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
+        $t->assert($test_name, $html->number_value($inh_val->number(), $list->field_decimals($inh_val, $msg)),
             (string)values::CITY_ZH_INHABITANTS_2019);
         // a unit is shown by its symbol e.g. "kWh/a" for kilowatthours per year like behind a
         // number, so also the symbol "€" of Euro for the unit EUR that stands for Euro
@@ -273,20 +278,37 @@ class use_case_ui_tests
         $unit_val = new test_lib()->ui_value($t_val->value_mio_eur());
         $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
         $phr_lst_keep = $ui_sys->phr_lst;
-        $ui_sys->phr_lst = new test_phrases($t)->list_unit_symbol_cache_ui();
-        $t->assert($test_name, $dec_list->unit_name($unit_val, $msg), word_names::EURO_SIGN);
+        $ui_sys->phr_lst = $t_phr->list_unit_symbol_cache_ui();
+        $t->assert($test_name, $list->unit_name($unit_val, $msg), word_names::EURO_SIGN);
+        $test_name = '... because the unit EUR is a symbol of Euro';
+        $eur_phr = $unit_val->phr_lst()->get_by_name(word_names::EUR, $msg);
+        $t->assert($test_name, $eur_phr->symbol_owner()->name(), word_names::EURO);
+        $test_name = '... whose symbol is the unit text';
+        $t->assert($test_name, $eur_phr->unit_text($msg), word_names::EURO_SIGN);
         // negative: without the symbol triple in any cache the unit is named
         $test_name = '... and the name of a unit without a symbol';
         $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
         $ui_sys->phr_lst = new phrase_list_ui();
-        $t->assert($test_name, $dec_list->unit_name($unit_val, $msg), word_names::EUR);
+        $t->assert($test_name, $list->unit_name($unit_val, $msg), word_names::EUR);
+        // negative: without the triple the unit is no symbol of another phrase
+        $test_name = '... which is its own symbol owner';
+        $t->assert($test_name, $eur_phr->symbol_owner()->name(), word_names::EUR);
         // negative: a field shows the stored ratio e.g. 0.35, so "%" would read as 0.35 %
         $test_name = '... but the name and not the symbol of percent';
-        $ui_sys->phr_lst = new test_phrases($t)->list_percent_symbol_cache_ui();
-        $t->assert($test_name, $dec_list->unit_name($pct_val, $msg), words::PCT);
+        $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
+        $t->assert($test_name, $list->unit_name($pct_val, $msg), words::PCT);
+        // a qualified percent unit has a symbol that names the stored ratio
+        $test_name = '... and the symbol of a qualified percent unit e.g. share (ratio)';
+        $ui_sys->phr_lst = $t_phr->list_share_symbol_cache_ui();
+        $share_val = new test_lib()->ui_value($t_val->value_share());
+        $t->assert($test_name, $list->unit_name($share_val, $msg), word_names::SHARE);
+        // negative: the symbol of the ratio is not written behind the number times 100 e.g. "35share"
+        $test_name = '... which is not the percent symbol of the number';
+        $t->assert($test_name, $share_val->percent_symbol($msg), '');
+        $test_name = 'an entered number and phrase of the url are shown again';
+        // the caches of the page again after the symbol tests above
         $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
         $ui_sys->phr_lst = $phr_lst_keep;
-        $test_name = 'an entered number and phrase of the url are shown again';
         $entered = [$num_name => 5, $sel_name => word_names::ZH_ID];
         $fields_url = $page->process_catch_fields(components::TEST_INPUT_FIELDS_NAME, null, $entered, $wrd, $dto_in, $form, $msg);
         $t->assert_text_contains($test_name, $fields_url, 'value="5"');
