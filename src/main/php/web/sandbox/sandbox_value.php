@@ -762,8 +762,8 @@ class sandbox_value extends sandbox
     {
         $pct_phr = $this->grp->phr_lst()->percent_phrase($msg);
         $result = '';
-        // a qualified percent unit e.g. share (ratio) has a symbol for the stored ratio, not for the number times 100
-        if ($pct_phr != null and !$pct_phr->is_triple()) {
+        // the symbol of a ratio unit e.g. "share" is not for the number times 100
+        if ($pct_phr != null and !$pct_phr->is_ratio_unit($msg)) {
             $result = $pct_phr->symbol_name($msg);
         }
         return $result;

@@ -431,6 +431,19 @@ class phrase extends combine_named
     }
 
     /**
+     * a ratio unit is a percent typed triple e.g. "share (ratio)": stored like a percent, but its
+     * symbol e.g. "share" names the ratio 0..1 and not the number times 100 like the "%" of the
+     * percent word, which is a word; the triple is the qualifier that makes the difference,
+     * because the percent word has no code id to compare with
+     *
+     * @return bool true if the number with this phrase is a ratio whose symbol is shown as the unit
+     */
+    function is_ratio_unit(user_message $msg): bool
+    {
+        return $this->is_percent($msg) and $this->is_triple();
+    }
+
+    /**
      * the unit of a number in a field or a table cell, shortened by its symbol like behind a number
      *
      * @return string the symbol of this unit e.g. "kWh/a" or "€" for "EUR", else the name of this phrase

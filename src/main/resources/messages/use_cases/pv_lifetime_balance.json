@@ -372,6 +372,15 @@
     },
     {
       "name": "ratio"
+    },
+    {
+      "name": "maximum"
+    },
+    {
+      "name": "g/kWh"
+    },
+    {
+      "name": "kg/kWh"
     }
   ],
   "triples": [
@@ -959,13 +968,6 @@
       "to": "calculator label"
     },
     {
-      "name": "PV embodied intensity label",
-      "description": "PV life-cycle emissions",
-      "from": "PV embodied intensity",
-      "verb": "has a",
-      "to": "calculator label"
-    },
-    {
       "name": "day share label",
       "description": "Load share during PV hours",
       "from": "day share",
@@ -1281,14 +1283,21 @@
       "to": "PV installation assumption PV yield"
     },
     {
-      "name": "PV installation assumption PV embodied intensity",
+      "name": "PV installation assumption PV in Switzerland",
       "from": "PV installation assumptions",
       "verb": "has a",
-      "to": "PV embodied intensity"
+      "to": "PV in Switzerland"
     },
     {
-      "name": "PV installation assumption PV embodied intensity order",
-      "from": "PV installation assumption PV embodied intensity",
+      "name": "PV installation assumption PV in Switzerland label",
+      "description": "PV life-cycle emissions",
+      "from": "PV installation assumption PV in Switzerland",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "PV installation assumption PV in Switzerland order",
+      "from": "PV installation assumption PV in Switzerland",
       "verb": "is follower of",
       "to": "PV installation assumption lifetime"
     },
@@ -1309,7 +1318,7 @@
       "name": "PV installation assumption consumption mix order",
       "from": "PV installation assumption consumption mix",
       "verb": "is follower of",
-      "to": "PV installation assumption PV embodied intensity"
+      "to": "PV installation assumption PV in Switzerland"
     },
     {
       "name": "PV installation assumption replacement mix",
@@ -1883,6 +1892,97 @@
       "from": "share",
       "verb": "is symbol for",
       "to": "share (ratio)"
+    },
+    {
+      "from": "g/kWh",
+      "verb": "is symbol for",
+      "to": "gram per kWh"
+    },
+    {
+      "from": "kg/kWh",
+      "verb": "is symbol for",
+      "to": "kg per kWh"
+    },
+    {
+      "name": "field limit up",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "maximum"
+    },
+    {
+      "name": "consumption mix input year",
+      "description": "the Swiss consumption mix of the page is the annual mix of 2018 and not the monthly mix or the avoided emission of another use case",
+      "from": "consumption mix",
+      "verb": "has a",
+      "to": "2018"
+    },
+    {
+      "name": "consumption mix field value phrase",
+      "from": "consumption mix input year",
+      "verb": "can be",
+      "to": "field value phrases"
+    },
+    {
+      "name": "PV in Switzerland input year",
+      "description": "the life cycle emission of the page is the 2023 update and not the 2018 figure of KBOB",
+      "from": "PV in Switzerland",
+      "verb": "has a",
+      "to": "2023"
+    },
+    {
+      "name": "PV in Switzerland field value phrase",
+      "from": "PV in Switzerland input year",
+      "verb": "can be",
+      "to": "field value phrases"
+    },
+    {
+      "name": "production mix order",
+      "description": "the residual mix is the first option of the replacement mix selector",
+      "from": "production mix",
+      "verb": "is follower of",
+      "to": "residual mix"
+    },
+    {
+      "name": "PV installation assumption PV yield hint",
+      "description": "Lifetime average incl. 0.7 %/a degradation",
+      "from": "PV installation assumption PV yield",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption lifetime hint",
+      "description": "Reference lifetime used in the LCA",
+      "from": "PV installation assumption lifetime",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption PV in Switzerland hint",
+      "description": "Swiss 3 kWp mono-Si pitched roof, 2023 update; converted to a fixed amount per kWp",
+      "from": "PV installation assumption PV in Switzerland",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption consumption mix hint",
+      "description": "2018 consumer mix, low voltage",
+      "from": "PV installation assumption consumption mix",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption day share hint",
+      "description": "Household; raise for home office or a heat pump running at noon",
+      "from": "PV installation assumption day share",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption battery production emission hint",
+      "description": "Literature spans ~37–212 kg CO₂-eq per kWh capacity",
+      "from": "PV installation assumption battery production emission",
+      "verb": "has a",
+      "to": "calculator hint"
     }
   ],
   "formulas": [
@@ -2506,7 +2606,7 @@
         "household consumption",
         "assumed",
         "confidence",
-        "percent"
+        "share (ratio)"
       ],
       "number": "0.6",
       "description": "a rough split, the hourly profile of a household is well known but varies a lot between households"
@@ -2527,7 +2627,7 @@
         "round-trip efficiency",
         "assumed",
         "confidence",
-        "percent"
+        "share (ratio)"
       ],
       "number": "0.7",
       "description": "manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
@@ -2953,6 +3053,86 @@
       ],
       "number": "100",
       "description": "the household consumption is entered in steps of 100 kWh"
+    },
+    {
+      "words": [
+        "PV yield",
+        "field step"
+      ],
+      "number": "10",
+      "description": "the specific yield is entered in steps of 10 kWh per kWp and year"
+    },
+    {
+      "words": [
+        "lifetime",
+        "field step"
+      ],
+      "number": "1",
+      "description": "the lifetime is entered in years"
+    },
+    {
+      "words": [
+        "PV in Switzerland",
+        "field step"
+      ],
+      "number": "0.1",
+      "description": "the life cycle emission is entered with one decimal like the IEA PVPS fact sheet"
+    },
+    {
+      "words": [
+        "consumption mix",
+        "field step"
+      ],
+      "number": "1",
+      "description": "the consumption mix is entered in gram per kWh"
+    },
+    {
+      "words": [
+        "day share",
+        "field limit down"
+      ],
+      "number": "0",
+      "description": "a household without consumption during the PV hours"
+    },
+    {
+      "words": [
+        "day share",
+        "field limit up"
+      ],
+      "number": "1",
+      "description": "the whole consumption during the PV hours"
+    },
+    {
+      "words": [
+        "day share",
+        "field step"
+      ],
+      "number": "0.05",
+      "description": "the day share is entered in steps of five percent"
+    },
+    {
+      "words": [
+        "round-trip efficiency",
+        "field step"
+      ],
+      "number": "0.01",
+      "description": "the round-trip efficiency is entered in steps of one percent"
+    },
+    {
+      "words": [
+        "battery production emission",
+        "field step"
+      ],
+      "number": "5",
+      "description": "the battery production emission is entered in steps of 5 kg per kWh"
+    },
+    {
+      "words": [
+        "battery lifetime",
+        "field step"
+      ],
+      "number": "1",
+      "description": "the battery lifetime is entered in years"
     },
     {
       "words": ["example PV installation", "PV production", "January", "kWh", "modelled"],

@@ -280,11 +280,12 @@ class use_case_ui_tests
         $phr_lst_keep = $ui_sys->phr_lst;
         $ui_sys->phr_lst = $t_phr->list_unit_symbol_cache_ui();
         $t->assert($test_name, $list->unit_name($unit_val, $msg), word_names::EURO_SIGN);
+        // the null safe calls report a missing unit phrase as a failed assert and not as a fatal
         $test_name = '... because the unit EUR is a symbol of Euro';
         $eur_phr = $unit_val->phr_lst()->get_by_name(word_names::EUR, $msg);
-        $t->assert($test_name, $eur_phr->symbol_owner()->name(), word_names::EURO);
+        $t->assert($test_name, $eur_phr?->symbol_owner()->name(), word_names::EURO);
         $test_name = '... whose symbol is the unit text';
-        $t->assert($test_name, $eur_phr->unit_text($msg), word_names::EURO_SIGN);
+        $t->assert($test_name, $eur_phr?->unit_text($msg), word_names::EURO_SIGN);
         // negative: without the symbol triple in any cache the unit is named
         $test_name = '... and the name of a unit without a symbol';
         $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
@@ -292,7 +293,9 @@ class use_case_ui_tests
         $t->assert($test_name, $list->unit_name($unit_val, $msg), word_names::EUR);
         // negative: without the triple the unit is no symbol of another phrase
         $test_name = '... which is its own symbol owner';
-        $t->assert($test_name, $eur_phr->symbol_owner()->name(), word_names::EUR);
+        $t->assert($test_name, $eur_phr?->symbol_owner()->name(), word_names::EUR);
+        $test_name = '... and its name is the unit text';
+        $t->assert($test_name, $eur_phr?->unit_text($msg), word_names::EUR);
         // negative: a field shows the stored ratio e.g. 0.35, so "%" would read as 0.35 %
         $test_name = '... but the name and not the symbol of percent';
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
@@ -305,6 +308,11 @@ class use_case_ui_tests
         // negative: the symbol of the ratio is not written behind the number times 100 e.g. "35share"
         $test_name = '... which is not the percent symbol of the number';
         $t->assert($test_name, $share_val->percent_symbol($msg), '');
+        $test_name = 'the percent triple share (ratio) is a ratio unit';
+        $t->assert($test_name, $share_val->phr_lst()->percent_phrase($msg)?->is_ratio_unit($msg), true);
+        // negative: the percent word is no ratio unit, because its symbol "%" is for the number times 100
+        $test_name = '... but not the percent word';
+        $t->assert($test_name, $pct_val->phr_lst()->percent_phrase($msg)?->is_ratio_unit($msg), false);
         $test_name = 'an entered number and phrase of the url are shown again';
         // the caches of the page again after the symbol tests above
         $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;

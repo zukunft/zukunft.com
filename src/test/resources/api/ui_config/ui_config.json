@@ -29924,7 +29924,7 @@
                 "class": "triple"
             },
             {
-                "id": 2602,
+                "id": 2605,
                 "name": "a is symbol for year (duration unit)",
                 "from_id": 1123,
                 "from_phrase": {
@@ -31202,6 +31202,43 @@
                 "class": "triple"
             },
             {
+                "id": 2557,
+                "name": "g\/kWh is symbol for gram per kWh",
+                "from_id": 1976,
+                "from_phrase": {
+                    "id": 1976,
+                    "name": "g\/kWh",
+                    "description": null,
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -1963,
+                "to_phrase": {
+                    "id": 1963,
+                    "name": "gram per kWh",
+                    "description": "the unit of the emission intensity of electricity",
+                    "type_id": 2,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
+            },
+            {
                 "id": 452,
                 "name": "HK$ is symbol for Hong Kong dollar",
                 "from_id": 462,
@@ -31573,45 +31610,6 @@
                 "class": "triple"
             },
             {
-                "id": 15,
-                "name": "kg (unit symbol)",
-                "from_id": 28,
-                "from_phrase": {
-                    "id": 28,
-                    "protection": 3,
-                    "name": "kg",
-                    "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
-                    "type_id": 2,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": 27,
-                "to_phrase": {
-                    "id": 27,
-                    "protection": 3,
-                    "name": "kilogram",
-                    "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015\u00d710\u221234 when expressed in the unit J\u22c5s, which is equal to kg\u22c5m2\u22c5s\u22121, where the metre and the second are defined in terms of c and \u0394\u03bdCs.",
-                    "type_id": 2,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "class": "triple"
-            },
-            {
                 "id": 506,
                 "name": "COP",
                 "description": "ISO 4217 alphabetic code for the Colombian peso.",
@@ -31714,6 +31712,19 @@
                 "class": "triple"
             },
             {
+                "id": 1976,
+                "name": "g\/kWh",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 1963,
+                "name": "gram per kWh",
+                "description": "the unit of the emission intensity of electricity",
+                "type_id": 2,
+                "class": "triple"
+            },
+            {
                 "id": 462,
                 "name": "HK$",
                 "description": "Symbol or abbreviation for the Hong Kong dollar.",
@@ -31810,20 +31821,80 @@
                 "class": "word"
             },
             {
-                "id": 28,
-                "protection": 3,
-                "name": "kg",
-                "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
-                "type_id": 2,
-                "class": "word"
+                "id": 2607,
+                "name": "kg\/kWh is symbol for kg per kWh",
+                "from_id": 1977,
+                "from_phrase": {
+                    "id": 1977,
+                    "name": "kg\/kWh",
+                    "description": null,
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -2524,
+                "to_phrase": {
+                    "id": 2524,
+                    "name": "kg per kWh",
+                    "description": "the unit of the production emission of a battery per kWh of storage capacity",
+                    "type_id": 2,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
             },
             {
-                "id": 27,
-                "protection": 3,
-                "name": "kilogram",
-                "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015\u00d710\u221234 when expressed in the unit J\u22c5s, which is equal to kg\u22c5m2\u22c5s\u22121, where the metre and the second are defined in terms of c and \u0394\u03bdCs.",
-                "type_id": 2,
-                "class": "word"
+                "id": 15,
+                "name": "kg (unit symbol)",
+                "from_id": 28,
+                "from_phrase": {
+                    "id": 28,
+                    "protection": 3,
+                    "name": "kg",
+                    "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
+                    "type_id": 2,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": 27,
+                "to_phrase": {
+                    "id": 27,
+                    "protection": 3,
+                    "name": "kilogram",
+                    "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015\u00d710\u221234 when expressed in the unit J\u22c5s, which is equal to kg\u22c5m2\u22c5s\u22121, where the metre and the second are defined in terms of c and \u0394\u03bdCs.",
+                    "type_id": 2,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "class": "triple"
             },
             {
                 "id": 304,
@@ -32052,7 +32123,7 @@
                 "class": "triple"
             },
             {
-                "id": 2600,
+                "id": 2603,
                 "name": "kWh\/a is symbol for kilowatthours per year",
                 "from_id": 1973,
                 "from_phrase": {
@@ -32089,7 +32160,7 @@
                 "class": "triple"
             },
             {
-                "id": 2601,
+                "id": 2604,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
                 "from_id": 1974,
                 "from_phrase": {
@@ -32497,78 +32568,33 @@
                 "class": "triple"
             },
             {
-                "id": 604,
-                "name": "NT$ is symbol for New Taiwan dollar",
-                "from_id": 476,
-                "from_phrase": {
-                    "id": 476,
-                    "name": "NT$",
-                    "description": "Symbol or abbreviation for the New Taiwan dollar.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -408,
-                "to_phrase": {
-                    "id": 408,
-                    "name": "New Taiwan dollar",
-                    "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
+                "id": 1977,
+                "name": "kg\/kWh",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 2524,
+                "name": "kg per kWh",
+                "description": "the unit of the production emission of a battery per kWh of storage capacity",
+                "type_id": 2,
                 "class": "triple"
             },
             {
-                "id": 476,
-                "name": "NZ$ is symbol for New Zealand dollar",
-                "from_id": 470,
-                "from_phrase": {
-                    "id": 470,
-                    "name": "NZ$",
-                    "description": "Symbol or abbreviation for the New Zealand dollar.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -352,
-                "to_phrase": {
-                    "id": 352,
-                    "name": "New Zealand dollar",
-                    "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
-                "class": "triple"
+                "id": 28,
+                "protection": 3,
+                "name": "kg",
+                "description": "The symbol for the kilogram. The kilogram was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 27,
+                "protection": 3,
+                "name": "kilogram",
+                "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015\u00d710\u221234 when expressed in the unit J\u22c5s, which is equal to kg\u22c5m2\u22c5s\u22121, where the metre and the second are defined in terms of c and \u0394\u03bdCs.",
+                "type_id": 2,
+                "class": "word"
             },
             {
                 "id": 388,
@@ -32761,29 +32787,77 @@
                 "class": "word"
             },
             {
-                "id": 476,
-                "name": "NT$",
-                "description": "Symbol or abbreviation for the New Taiwan dollar.",
-                "type_id": 1,
-                "class": "word"
-            },
-            {
-                "id": 408,
-                "name": "New Taiwan dollar",
-                "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
+                "id": 604,
+                "name": "NT$ is symbol for New Taiwan dollar",
+                "from_id": 476,
+                "from_phrase": {
+                    "id": 476,
+                    "name": "NT$",
+                    "description": "Symbol or abbreviation for the New Taiwan dollar.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -408,
+                "to_phrase": {
+                    "id": 408,
+                    "name": "New Taiwan dollar",
+                    "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
                 "class": "triple"
             },
             {
-                "id": 470,
-                "name": "NZ$",
-                "description": "Symbol or abbreviation for the New Zealand dollar.",
-                "type_id": 1,
-                "class": "word"
-            },
-            {
-                "id": 352,
-                "name": "New Zealand dollar",
-                "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
+                "id": 476,
+                "name": "NZ$ is symbol for New Zealand dollar",
+                "from_id": 470,
+                "from_phrase": {
+                    "id": 470,
+                    "name": "NZ$",
+                    "description": "Symbol or abbreviation for the New Zealand dollar.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -352,
+                "to_phrase": {
+                    "id": 352,
+                    "name": "New Zealand dollar",
+                    "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
                 "class": "triple"
             },
             {
@@ -33379,7 +33453,7 @@
                 "class": "triple"
             },
             {
-                "id": 2603,
+                "id": 2606,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 307,
                 "from_phrase": {
@@ -33453,78 +33527,29 @@
                 "class": "triple"
             },
             {
-                "id": 13,
-                "name": "s (unit symbol)",
-                "from_id": 23,
-                "from_phrase": {
-                    "id": 23,
-                    "protection": 3,
-                    "name": "s",
-                    "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 \u00d7 60 \u00d7 60 = 86400).",
-                    "type_id": 2,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": 22,
-                "to_phrase": {
-                    "id": 22,
-                    "name": "second",
-                    "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
+                "id": 476,
+                "name": "NT$",
+                "description": "Symbol or abbreviation for the New Taiwan dollar.",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 408,
+                "name": "New Taiwan dollar",
+                "description": "The New Taiwan dollar (symbol: NT$; currency code: TWD) is the official currency of the Republic of China (Taiwan). It is divided into 100 cents and is issued by the Central Bank of the Republic of China. It replaced the old Taiwan dollar in 1949.",
                 "class": "triple"
             },
             {
-                "id": 510,
-                "name": "THB is symbol for Thai baht",
-                "from_id": 484,
-                "from_phrase": {
-                    "id": 484,
-                    "name": "THB",
-                    "description": "ISO 4217 alphabetic code for the Thai baht.",
-                    "type_id": 1,
-                    "plural": null,
-                    "impact": null,
-                    "class": "word"
-                },
-                "verb_id": {
-                    "name": "is symbol for",
-                    "code_id": "symbol",
-                    "description": "is used as a symbol for",
-                    "plural": "are symbols for",
-                    "reverse": "can have symbol",
-                    "rev_plural": "can have symbols",
-                    "name_in_formula": null,
-                    "usage": null,
-                    "impact": null,
-                    "id": 18
-                },
-                "to_id": -369,
-                "to_phrase": {
-                    "id": 369,
-                    "name": "Thai baht",
-                    "description": "The Thai baht (symbol: \u0e3f; currency code: THB) is the official currency of Thailand. It is divided into 100 satang and is issued by the Bank of Thailand. The baht traces its origins to a traditional unit of weight used for measuring silver.",
-                    "type_id": null,
-                    "usage": null,
-                    "impact": null,
-                    "class": "triple"
-                },
+                "id": 470,
+                "name": "NZ$",
+                "description": "Symbol or abbreviation for the New Zealand dollar.",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 352,
+                "name": "New Zealand dollar",
+                "description": "The New Zealand dollar (symbol: NZ$; currency code: NZD) is the official currency of New Zealand and several Pacific island states (Cook Islands, Niue, Tokelau, Pitcairn Islands). It is divided into 100 cents and is informally known as the 'Kiwi dollar'. It is issued by the Reserve Bank of New Zealand.",
                 "class": "triple"
             },
             {
@@ -33703,26 +33728,79 @@
                 "class": "word"
             },
             {
-                "id": 23,
-                "protection": 3,
-                "name": "s",
-                "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 \u00d7 60 \u00d7 60 = 86400).",
-                "type_id": 2,
-                "class": "word"
+                "id": 13,
+                "name": "s (unit symbol)",
+                "from_id": 23,
+                "from_phrase": {
+                    "id": 23,
+                    "protection": 3,
+                    "name": "s",
+                    "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 \u00d7 60 \u00d7 60 = 86400).",
+                    "type_id": 2,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": 22,
+                "to_phrase": {
+                    "id": 22,
+                    "name": "second",
+                    "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "class": "triple"
             },
             {
-                "id": 22,
-                "name": "second",
-                "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
-                "type_id": 1,
-                "class": "word"
-            },
-            {
-                "id": 484,
-                "name": "THB",
-                "description": "ISO 4217 alphabetic code for the Thai baht.",
-                "type_id": 1,
-                "class": "word"
+                "id": 510,
+                "name": "THB is symbol for Thai baht",
+                "from_id": 484,
+                "from_phrase": {
+                    "id": 484,
+                    "name": "THB",
+                    "description": "ISO 4217 alphabetic code for the Thai baht.",
+                    "type_id": 1,
+                    "plural": null,
+                    "impact": null,
+                    "class": "word"
+                },
+                "verb_id": {
+                    "name": "is symbol for",
+                    "code_id": "symbol",
+                    "description": "is used as a symbol for",
+                    "plural": "are symbols for",
+                    "reverse": "can have symbol",
+                    "rev_plural": "can have symbols",
+                    "name_in_formula": null,
+                    "usage": null,
+                    "impact": null,
+                    "id": 18
+                },
+                "to_id": -369,
+                "to_phrase": {
+                    "id": 369,
+                    "name": "Thai baht",
+                    "description": "The Thai baht (symbol: \u0e3f; currency code: THB) is the official currency of Thailand. It is divided into 100 satang and is issued by the Bank of Thailand. The baht traces its origins to a traditional unit of weight used for measuring silver.",
+                    "type_id": null,
+                    "usage": null,
+                    "impact": null,
+                    "class": "triple"
+                },
+                "class": "triple"
             },
             {
                 "id": 119,
@@ -34247,6 +34325,28 @@
                     "class": "triple"
                 },
                 "class": "triple"
+            },
+            {
+                "id": 23,
+                "protection": 3,
+                "name": "s",
+                "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 \u00d7 60 \u00d7 60 = 86400).",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 22,
+                "name": "second",
+                "description": "Ambiguous word: either a unit to measure a duration or an ordinal position in a ranking (first, second, third, ...)",
+                "type_id": 1,
+                "class": "word"
+            },
+            {
+                "id": 484,
+                "name": "THB",
+                "description": "ISO 4217 alphabetic code for the Thai baht.",
+                "type_id": 1,
+                "class": "word"
             },
             {
                 "id": 278,

@@ -2067,10 +2067,7 @@ class ui_list extends ui_base
     {
         $result = '';
         foreach ($val->phr_lst()->lst() as $phr) {
-            if ($result == '' and $phr->is_measure($msg)) {
-                $result = $phr->unit_text($msg);
-            } elseif ($result == '' and $phr->is_percent($msg) and $phr->is_triple()) {
-                // a qualified percent unit e.g. share (ratio) has a symbol that names the stored ratio
+            if ($result == '' and ($phr->is_measure($msg) or $phr->is_ratio_unit($msg))) {
                 $result = $phr->unit_text($msg);
             } elseif ($result == '' and $phr->is_percent($msg)) {
                 // not the symbol "%" of the percent word, because a field shows the stored ratio e.g. 0.35 and not 35

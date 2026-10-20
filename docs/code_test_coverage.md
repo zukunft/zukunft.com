@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-786 of 6192 public functions have at least 2 unit test calls; the 5406 functions below do not
+786 of 6193 public functions have at least 2 unit test calls; the 5407 functions below do not
 
 ## main backend
 
@@ -4703,6 +4703,7 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- is_or_can_be - 0 unit test calls
     \-- is_percent - 0 unit test calls shared by 7 classes
     \-- is_quality - 0 unit test calls shared by 3 classes
+    \-- is_ratio_unit - 0 unit test calls
     \-- is_same - 6 unit test calls shared by 14 classes
     \-- is_scaling - 5 unit test calls shared by 6 classes
     \-- is_time - 0 unit test calls shared by 8 classes
@@ -4726,8 +4727,9 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- similar - 1 unit test calls shared by 3 classes
     \-- stands_for - 0 unit test calls shared by 2 classes
     \-- symbol_name - 0 unit test calls
+    \-- symbol_owner - 0 unit test calls
     \-- tooltip - 0 unit test calls shared by 2 classes
-    \-- unit_text - 1 unit test calls
+    \-- unit_text - 0 unit test calls
     \-- url_mapper - 42 unit test calls shared by 27 classes
     \-- wrd_lst - 0 unit test calls shared by 6 classes
 \-- phrase_list
@@ -4770,7 +4772,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- parent_triples - 0 unit test calls
     \-- parent_triples_ex_verbs - 0 unit test calls
     \-- parents - 0 unit test calls shared by 7 classes
-    \-- percent_phrase - 0 unit test calls
     \-- phrase_selector - 0 unit test calls shared by 6 classes
     \-- plural - 0 unit test calls
     \-- remove - 3 unit test calls shared by 9 classes

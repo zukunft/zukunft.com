@@ -1213,6 +1213,8 @@ fix the '// TODO add json_fields::VIEW_VALIDATION' in src/main/php/cfg/import/im
 5. add a small sample import file with a view-validation section and a $dto unit test in import_tests.php: one positive (the rendered view matches) and one negative (a wrong expected ".md" reports the mismatch via $msg)
    open questions for review: render the view against the imported $dto only or the database; which user context; is html_to_markdown the right normalisation or should both text and markdown be supported
 
+a triple whose "from" is a triple defined later in the same json file fails the import: e.g. "PV installation assumption PV in Switzerland" "has a" "calculator label" placed before the triple "PV installation assumption PV in Switzerland" in pv_lifetime_balance.json logs "triple phrase from id is 0" (triple.php, TRIPLE_PHRASE_WITHOUT_DB_ID) and "Cannot find word or triple" (triple_list::report_missing). `triple_list::save` already repeats the add in levels up to `$max_trp_levels`, so a forward reference should be resolved by a later level; find why the triple of the later level is not linked to the referencing triple (`triples_to_add_to_db`, `fill_by_name` with the cache, `get_ready`) and add a unit test with a forward reference between two triples. Until then a referenced triple must be placed before the triple that uses it.
+
 ### user frontend
 
 fill the placeholders

@@ -8,46 +8,11 @@ the differences of `pv_lifetime_balance.html` to `pv_lifetime_balance_sample.htm
 the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
 renderer, never by adapting the sample
 
-1. units - try to solve only by changing the json files - assumptions, one row each:
-   - specific yield: step 10 and the hint
-     "Lifetime average incl. 0.7 %/a degradation [1]" instead of "[2]"
-   - lifetime: the hint "Reference lifetime used in the LCA [1]"
-   - PV life-cycle emissions: the measured 35.8 g/kWh with step 0.1 and the hint "Swiss 3 kWp
-     mono-Si pitched roof, 2023 update [1]; converted to a fixed amount per kWp" (empty today)
-   - Swiss consumer mix, annual: measured 128 g/kWh (BAFU 2018) with the hint "2018 consumer
-     mix, low voltage [2]" instead of the assumed 79.2 of `pv_switzerland_co2.json`
-   - replacement mix: the residual mix first and selected, the option labels with the number
-     and the source ("European residual mix — 523 g/kWh [4]", "ENTSO-E production mix 2022 —
-     ~395 g/kWh (midpoint of 350–440) [3]") and no hint below the selector
-   - load share during PV hours: step 0.05, min 0, max 1 and the hint "Household; raise for
-     home office or a heat pump running at noon"
-   - battery production emissions: the tag "assumed 0.5" with the confidence, step 5 and the
-     hint "Literature spans ~37–212 kg CO₂-eq per kWh capacity [5][6]"
-   - battery lifetime: the tag "assumed 0.6"
-   - the three derived assumptions (production mix 395, residual mix 523, east-west yield
-     factor 0.85) are not shown, because they are options of the selectors already
-2. Autarky numbers - try to solve mainly by changing the json files - main table, numbers: the per year column of "Self-consumption rate" (49 %) and "Autarky"
+1. Autarky numbers - try to solve mainly by changing the json files - main table, numbers: the per year column of "Self-consumption rate" (49 %) and "Autarky"
    (84 %) and both columns of "vs. replacement mix" (113.8 t, 3'794 kg) are empty
-3. formula sample - add parameter 'show formula sample' to the field 
-   and create a sample based on the formula and the database values -   
-   table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
-   kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
-   the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
-   of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
-4. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
-   the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
-   Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
-5. notes: only the three notes of the page with their own titles and sources ("How the CO₂
-   saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
-   instead of the description of every formula (19 notes with the formula name in `b`)
-6. sources - just add sources - more sources is an excepted difference: the seven sources of the sample in the order of their first use ([1] IEA PVPS,
-   [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
-   [7] gruenes.haus) with their full citation as the link text and `target="_blank"
-   rel="noopener"`; today five sources with the short source name, gruenes.haus first and
-   the two battery sources missing
-7. number format - allow to set a target number of digits per value per view, 
+2. number format - allow to set a target number of digits per value per view,
    but allow absolut and relative exceptions.  
-   if a number is higher than the number of target number of decimals 
+   if a number is higher than the number of target number of decimals
    and there is a formula to scale the number down, use if
    e.g. if the target number of digits is 4 and the value 123'456 kg should be shown
    and there is a scale kg to tonne (t) formula, use it and show 123.4 t;
@@ -57,6 +22,40 @@ renderer, never by adapting the sample
    the lifetime column shows kg results in t with one decimal (10.5 t, 2.0 t,
    18.4 t, 13.1 t, 113.8 t, -2.9 t) and the per year column the numbers without decimals (247,
    701, 349, 67, 614, 436, -98 kg), the percent with a blank before "%" ("49 %")
+3. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
+   the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
+   Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
+4. assumptions - the parts that the json cannot solve:
+    - the tags "assumed 0.5" of the battery production emissions and "assumed 0.6" of the
+      battery lifetime: the confidence value has the phrases of the value without its unit (a
+      value has one unit only), so the lookup of the confidence must ignore the unit phrase
+    - the source numbers in a hint: "Swiss 3 kWp mono-Si pitched roof, 2023 update [1];
+      converted to a fixed amount per kWp" with the number inside the hint, and the two sources
+      "[5][6]" of the battery production emissions
+    - replacement mix: the option labels with the number and the source ("European residual mix
+      — 523 g/kWh [4]", "ENTSO-E production mix 2022 — ~395 g/kWh (midpoint of 350–440) [3]")
+      and the residual mix as the first option: the triple "production mix order" (production
+      mix is follower of residual mix) is in the json, but the selector does not use it
+    - the three derived assumptions (production mix 395, residual mix 523, east-west yield
+      factor 0.85) are not shown, because they are options of the selectors already
+    - the input of the load share during PV hours has no `step="0.05" min="0" max="1"`, although
+      the json has the field step and both field limits of "day share"; the field steps of the
+      other inputs are shown, so the property lookup fails for the value group of the day share
+5. formula sample - add parameter 'show formula sample' to the field 
+   and create a sample based on the formula and the database values -   
+   table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
+   kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
+   the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
+   of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
+6. notes: only the three notes of the page with their own titles and sources ("How the CO₂
+   saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
+   instead of the description of every formula (19 notes with the formula name in `b`)
+7. sources - just add sources - more sources is an excepted difference:   
+   the seven sources of the sample in the order of their first use ([1] IEA PVPS,
+   [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
+   [7] gruenes.haus) with their full citation as the link text and `target="_blank"
+   rel="noopener"`; today five sources with the short source name, gruenes.haus first and
+   the two battery sources missing
 8. the comparison: let the use case test assert the generated page against the sample with
    a normalisation of the differences that are design and not content: the html ids and
    names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
