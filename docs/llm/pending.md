@@ -9,10 +9,10 @@ goal: every public function of `docs/code_test_coverage.md` has at least two uni
 `bin/code_test_coverage.php` and is never edited by hand, so each step below changes the tests
 (or the counter) and the developer regenerates the report to see the gap shrink
 
-starting point: 1058 of 6200 public functions are covered; of the 4937 gaps 3314 are in the
-main backend, 1437 in the frontend and 186 in shared, 444 functions have one call (87 of
-them have a name of their own, so only the negative test is missing; the other 357 share
-their name and need two calls per class, see step 2), and the 205 functions that no code
+starting point: 1125 of 6200 public functions are covered; of the 4870 gaps 3275 are in the
+main backend, 1415 in the frontend and 180 in shared, 382 functions have one call (23 of
+them have a name of their own, see step 1; the other 359 share their name and need two
+calls per class, see step 2), and the 205 functions that no code
 calls are listed in the section "never called" at the end of the report, for the developer
 to decide per function whether it is removed or kept
 
@@ -32,9 +32,10 @@ rules for every step:
   cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
 - the LLM never runs the tests; the developer runs them and regenerates the report
 
-1. the functions with one call and a name of their own that a unit test without database
-   cannot give a second test: the developer regenerates the report and checks that only these
-   are left; the ones that need the database move to step 5 (`value_base::save_as_default`,
+1. the functions with one call and a name of their own: the getters that only an assert calls
+   (`component::get_row_phrase_id`, backend `data_object::group_list`, web
+   `user_message::get_last_info`) get their own positive and negative test; the others cannot
+   get a second test in a unit test without database: the ones that need the database move to step 5 (`value_base::save_as_default`,
    `view::load_by_term`, web `db_object::add_via_api`, `component::log_link`,
    `config_numbers::load_cfg`, `db_cache_page::del_all`, `type_lists::load_cached`,
    `system_object::system_user` and `user_log`), the ones without a failure branch to step 6

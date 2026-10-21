@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1125 of 6200 public functions have at least 2 unit test calls; the 4870 functions below do not; the 205 functions of the last section are called nowhere
+1126 of 6200 public functions have at least 2 unit test calls; the 4869 functions below do not; the 205 functions of the last section are called nowhere
 
 ## main backend
 
@@ -3995,7 +3995,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- edit_link - 0 unit test calls shared by 3 classes
     \-- expression_latex_link - 4 unit test calls shared by 3 classes
     \-- expression_link - 2 unit test calls shared by 2 classes
-    \-- expression_named_link - 1 unit test calls
     \-- formula_type_selector - 2 unit test calls shared by 2 classes
     \-- get_usr_text - 0 unit test calls shared by 2 classes
     \-- has_verb - 1 unit test calls shared by 3 classes

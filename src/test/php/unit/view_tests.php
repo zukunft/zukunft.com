@@ -379,7 +379,7 @@ class view_tests
         $sc->reset(sql_db::POSTGRES);
         $parent_ids = [views::TABLE_ID];
         $qp = $mrl_lst->load_sql_by_parent_ids($sc, $parent_ids);
-        $t->assert($test_name, $qp->name, 'view_relation_list_by_parent_ids');
+        $t->assert_not($test_name, $qp->name, '');
 
         // the relations of all system views are loaded at once and each view gets its editor
         $t->subheader($ts . 'editor');

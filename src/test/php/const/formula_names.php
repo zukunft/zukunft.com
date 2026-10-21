@@ -58,7 +58,9 @@ class formula_names
     const string SCALE_TO_SEC_LATEX = '\text{s} = 60 \cdot \text{min}';
     const string SCALE_TO_SEC_LATEX_NUMBER = '60';
     const string SCALE_TO_SEC_EXP_REF_SHORT_SYMBOL = '{w24}={w}*60';
-    const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={wO}*60';
+    // a term id of the database expression that is not a number
+    const string REF_ID_NOT_A_NUMBER = 'wO';
+    const string SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER = '{w24}={' . self::REF_ID_NOT_A_NUMBER . '}*60';
     const string SCALE_TO_SEC_EXP_REF_SYMBOL_NOT_VALID = '{w24}={d1}*60';
     const string SCALE_TO_SEC_EXP_PHRASE_ID_NOT_VALID = '{wO}={w104}*60';
     const string SCALE_TO_SEC_COM = 'to convert times in minutes to seconds and the other way round';

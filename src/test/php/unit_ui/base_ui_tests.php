@@ -111,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -1632,7 +1633,7 @@ class base_ui_tests
         // negative: a url key without a pod mapping is reported as missing
         $test_name = 'pod url conversion reports a url key without a pod mapping';
         $pod_msg = new user_message_ui();
-        $no_map_url = [url_var::MASK => views::WORD_ID, 'zzz' => '1'];
+        $no_map_url = [url_var::MASK => views::WORD_ID, test_const::URL_KEY_UNKNOWN => '1'];
         $url_map->standard_url_to_pod($no_map_url, $pod_msg);
         $t->assert_true($test_name, $pod_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 

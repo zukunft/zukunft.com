@@ -295,7 +295,9 @@ class result_tests
         // negative: the fallback load by group in the big table is not the one of the standard table
         $test_name = '... but the fallback load by group in the big table reads another table';
         $sc->reset(sql_db::POSTGRES);
-        $qp_grp_big = $t_res->result_prime()->load_sql_by_grp_moved($sc, $res_grp->grp(), sql_type::BIG);
+        $res_prime = $t_res->result_prime();
+        $grp_moved = $res_grp->grp();
+        $qp_grp_big = $res_prime->load_sql_by_grp_moved($sc, $grp_moved, sql_type::BIG);
         $t->assert_not($test_name, $qp_grp_big->sql, $qp_grp->sql);
         // negative: without the fallback the load reads the table of the own phrases
         $test_name = 'the normal load by id does not read the standard table';

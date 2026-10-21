@@ -96,6 +96,7 @@ class formula_list_read_tests
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_word_ref($wrd_hand, $msg);
         $t->assert($test_name, $frm_lst->names(), []);
+        $msg->reset();
 
         // test loading the formulas that use the results related to the word second
         $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
@@ -127,6 +128,7 @@ class formula_list_read_tests
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_verb_ref($vrb_alias, $msg);
         $t->assert($test_name, $frm_lst->names(), []);
+        $msg->reset();
 
         // test loading the formulas that use the results of a given formula
         $test_name = 'formulas that use the formula "this" are at least "increase"';
@@ -142,6 +144,7 @@ class formula_list_read_tests
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_formula_ref($frm_hour, $msg);
         $t->assert($test_name, $frm_lst->names(), []);
+        $msg->reset();
 
         $test_name = 'load formulas staring with i';
         $frm_lst = new formula_list($t->usr1);

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -316,7 +317,7 @@ class triple_tests
         $trp_ui->url_mapper([
             url_var::ID => 1,
             url_var::NAME => triple_names::SYSTEM_TEST_ADD,
-            url_var::PHRASE_FROM => 'phrase name that does not exist'
+            url_var::PHRASE_FROM => test_const::PHRASE_NOT_EXISTING
         ], $map_msg, $dto_ui);
         $t->assert_true($test_name, $map_msg->has_msg_id(msg_id::PHRASE_NAME_NOT_FOUND));
 
@@ -333,7 +334,7 @@ class triple_tests
         $test_name = 'an unknown from phrase name is reported to the user';
         $trp_ui = new triple_ui();
         $from_msg = new user_message_ui();
-        $trp_ui->set_from_by_id('phrase name that does not exist', $from_msg, $dto_ui);
+        $trp_ui->set_from_by_id(test_const::PHRASE_NOT_EXISTING, $from_msg, $dto_ui);
         $t->assert_true($test_name, $from_msg->has_msg_id(msg_id::PHRASE_NAME_NOT_FOUND));
 
         $t->subheader($ts . 'frontend phrases_related round-trip');

@@ -119,10 +119,12 @@ class import_tests
         $yml_arr = [words::TOOLTIP_COMMENT => word_names::MATH_COM];
         $dto = $imp->get_data_object_yaml($yml_arr, $msg);
         $t->assert($test_name, $dto->word_list()->count(), 0);
+        $msg->reset();
 
         $test_name = 'an empty word list creates no sql function';
         $sql_lst = $dto->word_list()->sql_insert_call_with_par($sc, $msg);
         $t->assert($test_name, $sql_lst->count(), 0);
+        $msg->reset();
 
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);

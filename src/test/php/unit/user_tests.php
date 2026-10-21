@@ -290,7 +290,8 @@ class user_tests
         $test_name = 'the public core api json of an ip user has no name';
         $usr_ip_core = $t_usr->user_ip();
         $usr_ip_core_api = json_decode($usr_ip_core->api_json_core([], $msg), true);
-        $t->assert($test_name, $usr_ip_core_api[json_fields::NAME] ?? null, '');
+        $t->assert($test_name, $usr_ip_core_api[json_fields::NAME], '');
+        $msg->reset();
 
 
         $t->subheader($ts . 'change permission');

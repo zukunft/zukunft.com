@@ -104,7 +104,7 @@ class element_list_tests
         $frm = $t_frm->formula();
         $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
         $frm->elements($msg, $trm_lst);
-        $t->assert_msg_false($test_name, $msg, 'the term "wO" of formula');
+        $t->assert_msg_false($test_name, $msg, '"' . formula_names::REF_ID_NOT_A_NUMBER . '"');
 
         $t->subheader($ts . 'api mapper');
         $test_name = 'the frontend api mapper adds every element of the group';

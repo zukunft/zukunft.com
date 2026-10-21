@@ -125,8 +125,8 @@ class formula_ui_tests
 
         // the expression on the formula page shows each term as a link and drops the double
         // quotes that delimit a term name in the expression, e.g. percent = ( this - prior ) / prior
-        $exp_html = $frm_increase_linked->expression_named_link();
         $test_name = 'the expression with term links shows each term as a link';
+        $exp_html = $frm_increase_linked->expression_named_link();
         $t->assert_text_contains($test_name, $exp_html, '>' . word_names::THIS_NAME . '</a>');
         $test_name = 'the expression with term links drops the quotes around a linked term name';
         $t->assert_text_not_contains($test_name, $exp_html,

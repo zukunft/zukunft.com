@@ -52,6 +52,10 @@ class test_const
     // a type name that no type list has, to test that an unknown type of an import is reported
     // with its name and does not end up as a not-found marker in the type field
     const string TYPE_NOT_IN_LIST = 'System Test type that does not exist';
+    // a phrase name that is never added, to test that an unknown name posted by a form is reported
+    const string PHRASE_NOT_EXISTING = 'System Test phrase that does not exist';
+    // a url key that no url mapper knows, to test that a missing mapping is reported
+    const string URL_KEY_UNKNOWN = 'zzz';
     // the id of the factory link objects e.g. formula link, component link, term view and view relation,
     // used by a page url of an existing link, which the url mapper needs to map the linked objects
     const int LINK_ID = 1;
