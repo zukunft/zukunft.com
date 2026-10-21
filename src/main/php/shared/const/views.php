@@ -106,6 +106,10 @@ class views
     const string COMPARISON_TABLE = 'comparison_table';
     const int COMPARISON_TABLE_ID = 199;
     const string COMPARISON_TABLE_NAME = 'Comparison table';
+    // the view of the use case cbam_calculator.json, selected by its name only as well
+    const string CBAM_TREE_CALCULATOR_NAME = 'CBAM Part Tree Calculator';
+    // the view of the use case portfolio_split_calculator.json, selected by its name only as well
+    const string PORTFOLIO_SPLIT_CALCULATOR_NAME = 'Portfolio Split Calculator';
     // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
     const string TABLE_EDITOR = 'table_editor';
     const int TABLE_EDITOR_ID = 193;

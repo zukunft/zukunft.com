@@ -462,6 +462,14 @@ class triple_names
     const string EXAMPLE_PV_INSTALLATION = 'example PV installation';
     // the phrase that the worked example is built from and that has the calculator triples of the page
     const string PV_INSTALLATION = 'PV installation';
+    // the shipment of the part tree example of the use case cbam_calculator.json, selected by the name only
+    const string EXAMPLE_TUBE_IMPORT = 'example tube import';
+    // the worked example of the use case portfolio_split_calculator.json, selected by the name only
+    const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
+    // the beneficiary whose allocation the use case portfolio_split_calculator.json models
+    const string FIRST_CHILD_PORTFOLIO = 'first child portfolio';
+    // an input of the use case cbam_calculator.json that two results of its chain depend on
+    const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 625;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';

@@ -114,6 +114,8 @@ class system_views_read_tests
         $this->run_use_cases($t, $cfg);
         // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t);
+        $this->run_cbam_tree_calculator($t, $cfg);
+        $this->run_portfolio_split_calculator($t, $cfg);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -519,6 +521,34 @@ class system_views_read_tests
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
+    }
+
+    /**
+     * the CBAM calculator use case brings its own view as well; the page is written to the use
+     * case folder next to the hand made sample page (CBAM_tree_calculator_sample.html)
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_cbam_tree_calculator(test_cleanup $t, data_object_ui $cfg): void
+    {
+        $t->assert_view_by_name(views::CBAM_TREE_CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_TUBE_IMPORT, $cfg, test_paths::HTML . test_paths::USE_CASES . cfg_files::CBAM_TREE_CALCULATOR);
+    }
+
+    /**
+     * the portfolio split use case brings its own view as well; the page is written to the use
+     * case folder next to the hand made sample page (portfolio_split_calculator_sample.html)
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param data_object_ui $cfg the stable test context of context()
+     * @return void
+     */
+    function run_portfolio_split_calculator(test_cleanup $t, data_object_ui $cfg): void
+    {
+        $t->assert_view_by_name(views::PORTFOLIO_SPLIT_CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PORTFOLIO_SPLIT, $cfg, test_paths::HTML . test_paths::USE_CASES . cfg_files::PORTFOLIO_SPLIT_CALCULATOR);
     }
 
     /**

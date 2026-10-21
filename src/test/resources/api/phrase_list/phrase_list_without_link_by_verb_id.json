@@ -31,11 +31,23 @@
         "class": "triple"
     },
     {
+        "id": 2595,
+        "name": "bond (finance)",
+        "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
+        "class": "triple"
+    },
+    {
         "id": 190,
         "name": "canton",
         "description": "a member state of the Swiss federation",
         "type_id": 1,
         "class": "word"
+    },
+    {
+        "id": 2491,
+        "name": "CBAM good",
+        "description": "a good listed in Annex I of the CBAM regulation, whose import into the EU needs CBAM certificates for its embedded emission",
+        "class": "triple"
     },
     {
         "id": 2360,
@@ -60,6 +72,11 @@
         "id": 1090,
         "name": "climate solution",
         "description": "A mitigation option that reduces global greenhouse gas emissions, ranked here by effort return score.",
+        "class": "triple"
+    },
+    {
+        "id": 2516,
+        "name": "CN code",
         "class": "triple"
     },
     {
@@ -350,6 +367,12 @@
         "id": 227,
         "name": "solution",
         "description": "a homogeneous mixture of a solute dissolved in a solvent",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 1629,
+        "name": "stock",
         "type_id": 1,
         "class": "word"
     },
