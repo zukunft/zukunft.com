@@ -183,6 +183,7 @@ class test_pinned_ids
         [word_names::BE, word_names::BE_ID],
         [word_names::GE, word_names::GE_ID],
         [word_names::INHABITANTS, word_names::INHABITANT_ID],
+        [word_names::FIFTEEN_YEAR, word_names::FIFTEEN_YEAR_ID],
         [word_names::YEAR_2013, word_names::YEAR_2013_ID],
         [word_names::YEAR_2014, word_names::YEAR_2014_ID],
         [word_names::YEAR_2015, word_names::YEAR_2015_ID],

@@ -248,6 +248,26 @@ class value_list_ui_tests
         $test_name = 'the oldest year group is behind the more tail';
         $t->assert_text_not_contains($test_name, $many_html, word_names::YEAR_2019);
 
+        // the bounds of a range are shown only if the page asks for them (url_var::DISPLAY_LIST_RANGE)
+        // and then in the format of the start page behind their centre value
+        $test_name = 'without the range the bounds of a grouped list are left out';
+        $mr_plain = $lib->html_to_text($t_val->value_list_range_ui()->list_most_relevant($msg_ui));
+        $t->assert_text_not_contains($test_name, $mr_plain, triple_names::SYSTEM_VARIANCE_LOW);
+        $t->assert_text_not_contains($test_name, $mr_plain, '0.88');
+        $test_name = '... but the centre value is shown';
+        $t->assert_text_contains($test_name, $mr_plain, '2.2' . sandbox_value_ui::QUALITY_MARK_ASSUMED);
+        $test_name = 'with the range the bounds are shown behind their centre value';
+        $mr_range = $lib->html_to_text($t_val->value_list_range_ui()->list_most_relevant(
+            $msg_ui, with_range: true));
+        $t->assert_text_contains($test_name, $mr_range, ' (0.88 – 5.5)');
+        $test_name = '... and not as values of their own';
+        $t->assert_text_not_contains($test_name, $mr_range, triple_names::SYSTEM_VARIANCE_HIGH);
+        $test_name = 'a bound without its centre value is shown like a value';
+        $mr_bounds = $lib->html_to_text($t_val->value_list_bounds_only_ui()->list_most_relevant(
+            $msg_ui, with_range: true));
+        $t->assert_text_contains($test_name, $mr_bounds, triple_names::SYSTEM_VARIANCE_LOW);
+        $t->assert_text_not_contains($test_name, $mr_bounds, ' (0.88');
+
         $t->subheader($ts . 'columns');
         $col_html = $t_val->value_list_most_relevant_ui()->columns_by_phrase($msg_ui);
         $test_name = 'the columns are combined to one wrapping row';
@@ -264,6 +284,13 @@ class value_list_ui_tests
             substr_count($col_html, 'class="col"') <= position_types::MAX_SIDE_COLUMNS);
         $test_name = 'the columns of an empty value list render nothing';
         $t->assert($test_name, new value_list_ui()->columns_by_phrase($msg_ui), '');
+        $test_name = 'without the range the value columns leave out the bounds';
+        $col_plain = $lib->html_to_text($t_val->value_list_range_ui()->columns_by_phrase($msg_ui));
+        $t->assert_text_not_contains($test_name, $col_plain, '0.88');
+        $test_name = 'with the range the value columns show the bounds behind their centre value';
+        $col_range = $lib->html_to_text($t_val->value_list_range_ui()->columns_by_phrase(
+            $msg_ui, with_range: true));
+        $t->assert_text_contains($test_name, $col_range, ' (0.88 – 5.5)');
 
         $t->subheader($ts . 'table with related columns');
         // the row limit is checked below, so the column checks ask for every row; else the value

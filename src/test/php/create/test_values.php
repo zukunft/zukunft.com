@@ -1311,6 +1311,24 @@ class test_values extends test_objects
     }
 
     /**
+     * the low and high potential loss of value_list_range without their centre value, so that
+     * a list can be tested that has bounds without a centre to show them behind
+     *
+     * @return value_list_ui the two bounds of the potential loss for frontend unit testing
+     */
+    function value_list_bounds_only_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $lst = new value_list($this->env->usr1);
+        foreach ($this->value_list_range()->lst() as $val) {
+            if (array_intersect($val->grp()->phrase_list()->names(), triples::VARIANCE_BOUNDS) != []) {
+                $lst->add($val);
+            }
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the potential loss of global warming in two units, with the numbers of solution_prio.json:
      * the absolute loss in trillion EUR and the loss as a share of the global happy time points,
      * so that a table with one column per unit can be tested

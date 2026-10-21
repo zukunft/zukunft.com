@@ -573,6 +573,14 @@ so every selection is a cached page of its own like the more version of a list.
 A page that is not known renders the "…" as plain text, the same gap as for the
 list tail.
 
+The grouped value and result lists of the word and triple views
+(`value_list::list_most_relevant`, `columns_by_phrase`) follow the same
+`dlr` switch, but default to off: without `dlr=1` the values tagged
+`variance low (system)` or `variance high (system)` are left out; with it each
+bound is shown behind its centre value in the format of the table cell,
+e.g. `-1.04% (-1.25% – -0.87%)`. A bound without a centre value is shown like a
+value, so that nothing is lost.
+
 A tier also says on which screen a column is shown: the css class of
 `value_list::column_style` hides a main column on a small screen
 (`styles::COL_MAIN`), a minor column below a wide screen (`COL_MINOR`) and a

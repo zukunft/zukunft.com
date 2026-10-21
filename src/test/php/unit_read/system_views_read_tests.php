@@ -201,6 +201,10 @@ class system_views_read_tests
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
         // inhabitants is the example for the related formula list (e.g. the "increase" formula)
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::INHABITANT_ID, $cfg);
+        // the values of 15-year have a variance range, which is shown only if the url asks for it
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::FIFTEEN_YEAR_ID, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::FIFTEEN_YEAR_ID, $cfg,
+            [url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
         $t->assert_view(views::WORD_ADD_DETAIL, $t->usr1, new word($t->usr1), word_names::MATH_ID);
         // the one field form that adds a word just by its name
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));

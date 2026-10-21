@@ -1,5 +1,13 @@
 # pending - list of planned llm prompts with prio 1
 
+## cleanup
+
+make a plan how to reduce the missing test coverage listed here docs/code_test_coverage.md
+
+classify all TODO that does not yet have a Prio 
+
+make a plan how solve the Prio 0 TODOs
+
 ## PV lifetime balance page
 
 ### remaining

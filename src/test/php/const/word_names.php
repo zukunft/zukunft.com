@@ -252,6 +252,9 @@ class word_names
     const int INHABITANT_ID = 201;
     // TODO add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
+    // the word of solution_prio.json whose values of populism have a variance range
+    const string FIFTEEN_YEAR = '15-year';
+    const int FIFTEEN_YEAR_ID = 256;
     const string YEAR_2013 = '2013';
     const int YEAR_2013_ID = 385;
     const string YEAR_2014 = '2014';

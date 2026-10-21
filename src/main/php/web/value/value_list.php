@@ -428,6 +428,8 @@ class value_list extends ListBase
      * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each value line
      * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
+     * @param bool $with_range true to show the range behind each number like the start page,
+     *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code to display the grouped values to the user
      */
     function list_most_relevant(
@@ -435,11 +437,13 @@ class value_list extends ListBase
         phrase_list  $context_phr_lst = new phrase_list(),
         array        $url_arr = [],
         string       $style = '',
-        ?int         $limit = null
+        ?int         $limit = null,
+        bool         $with_range = false
     ): string
     {
         $result = '';
-        if (!$this->is_empty()) {
+        $val_lst = $this->range_list($with_range);
+        if (!$val_lst->is_empty()) {
             $html = new html_base();
             // the limit is a page total: however the values are grouped, the page never shows
             // more values than the configured number, so that the user messages below the view
@@ -449,10 +453,10 @@ class value_list extends ListBase
                 $limit = $this->configured_limit($msg);
             }
             // the values still to be placed; each section consumes the values it groups
-            $pool = $this->lst();
-            [$time_html, $pool, $limit] = $this->time_groups($pool, $context_phr_lst, $msg, $url_arr, $limit);
-            [$phrase_html, $pool, $limit] = $this->relevant_phrase_groups($pool, $msg, $context_phr_lst, $url_arr, $limit);
-            $rest_html = $this->impact_group($pool, $msg, $context_phr_lst, $url_arr, $limit);
+            $pool = $val_lst->without_shown_bounds();
+            [$time_html, $pool, $limit] = $val_lst->time_groups($pool, $context_phr_lst, $msg, $url_arr, $limit);
+            [$phrase_html, $pool, $limit] = $val_lst->relevant_phrase_groups($pool, $msg, $context_phr_lst, $url_arr, $limit);
+            $rest_html = $val_lst->impact_group($pool, $msg, $context_phr_lst, $url_arr, $limit);
             // the whole grouped list is one 'value-list' container div; the caller style (e.g. the
             // list width) is added as a second css class of that container
             $cls = $style != '' ? styles::VALUE_LIST . ' ' . $style : styles::VALUE_LIST;
@@ -572,28 +576,33 @@ class value_list extends ListBase
      *
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
      * @param array $url_arr the url vars of the calling page for the back link
+     * @param bool $with_range true to show the range behind each number like the start page,
+     *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code of the value columns or '' if this list is empty
      */
     function columns_by_phrase(
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
-        array        $url_arr = []
+        array        $url_arr = [],
+        bool         $with_range = false
     ): string
     {
         $result = '';
-        if (!$this->is_empty()) {
+        $val_lst = $this->range_list($with_range);
+        if (!$val_lst->is_empty()) {
             $html = new html_base();
+            $pool = $val_lst->without_shown_bounds();
             // a column phrase needs to be used by at least two values, else the column shows one line
-            [$phr_by_id, $val_phr_ids] = $this->phrase_ranking(
-                $this->lst(), $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
+            [$phr_by_id, $val_phr_ids] = $val_lst->phrase_ranking(
+                $pool, $msg, $context_phr_lst, config::MIN_PHRASE_GROUP - 1);
             $col_lst = [];
-            $remaining = $this->lst();
+            $remaining = $pool;
             foreach ($phr_by_id as $id => $phr) {
                 // no break in the loop, so the free column count is checked per phrase
                 if (count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
-                    [$members, $rest] = $this->split_by_phrase($remaining, $id, $val_phr_ids);
+                    [$members, $rest] = $val_lst->split_by_phrase($remaining, $id, $val_phr_ids);
                     if ($members != []) {
-                        $col_lst[] = $this->group_block($phr, $members, $context_phr_lst, $msg, $url_arr);
+                        $col_lst[] = $val_lst->group_block($phr, $members, $context_phr_lst, $msg, $url_arr);
                         $remaining = $rest;
                     }
                 }
@@ -601,7 +610,7 @@ class value_list extends ListBase
             // the values that share no column phrase fill the last free column,
             // limited like every column to the configured number of values
             if ($remaining != [] and count($col_lst) < position_types::MAX_SIDE_COLUMNS) {
-                $col_lst[] = $this->impact_group(
+                $col_lst[] = $val_lst->impact_group(
                     $remaining, $msg, $context_phr_lst, $url_arr, $this->configured_limit($msg));
             }
             $result = $html->div_row_wrapping_cols($col_lst, $msg);
@@ -1763,13 +1772,7 @@ class value_list extends ListBase
             $txt = $val->value_edit($msg, $url_arr);
             $key = $this->variance_key($val);
             if (array_key_exists($key, $bound)) {
-                // a range normally has both bounds, but a missing one leaves its place empty
-                $low = $bound[$key][triples::SYSTEM_VARIANCE_LOW] ?? null;
-                $high = $bound[$key][triples::SYSTEM_VARIANCE_HIGH] ?? null;
-                // a bound has the quality of its centre value, which shows the mark once
-                $low_txt = $low?->value_edit_link($msg, $url_arr) ?? '';
-                $high_txt = $high?->value_edit_link($msg, $url_arr) ?? '';
-                $txt .= self::RANGE_START . $low_txt . self::RANGE_SEP . $high_txt . self::RANGE_END;
+                $txt .= $this->range_html($bound[$key], $msg, $url_arr);
                 unset($bound[$key]);
             }
             foreach ($conf_lst as $conf_key => $conf_val) {
@@ -1794,6 +1797,25 @@ class value_list extends ListBase
         }
         $title = implode(', ', array_unique($title_lst));
         return $html->td(implode(', ', $txt_lst), $style, 0, $title);
+    }
+
+    /**
+     * the range shown behind a centre value e.g. " (-1.25% – -0.87%)", the shared format of the
+     * table cells and the grouped value lists
+     *
+     * @param array $bound the bounds of one centre value keyed by the variance bound triple name
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html of the range in brackets
+     */
+    private function range_html(array $bound, user_message $msg, array $url_arr): string
+    {
+        // a range normally has both bounds, but a missing one leaves its place empty
+        $low = $bound[triples::SYSTEM_VARIANCE_LOW] ?? null;
+        $high = $bound[triples::SYSTEM_VARIANCE_HIGH] ?? null;
+        // a bound has the quality of its centre value, which shows the mark once
+        $low_txt = $low?->value_edit_link($msg, $url_arr) ?? '';
+        $high_txt = $high?->value_edit_link($msg, $url_arr) ?? '';
+        return self::RANGE_START . $low_txt . self::RANGE_SEP . $high_txt . self::RANGE_END;
     }
 
     /**
@@ -2599,8 +2621,93 @@ class value_list extends ListBase
     {
         $html = new html_base();
         $name = $html->span($val->phrase_link_list($msg, $context_phr_lst), styles::VALUE_NAME);
-        $num = $html->span($val->value_edit($msg, $url_arr) . $val->number_symbols($msg), styles::VALUE_NUM);
+        $num_txt = $val->value_edit($msg, $url_arr) . $val->number_symbols($msg)
+            . $this->range_of($val, $msg, $url_arr);
+        $num = $html->span($num_txt, styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
+        return $result;
+    }
+
+    /**
+     * @param bool $with_range true if the bounds of a range are shown behind their centre value
+     * @return value_list this list with the ranges, or a copy without the variance bounds
+     */
+    private function range_list(bool $with_range): value_list
+    {
+        $result = $this;
+        if (!$with_range) {
+            $centre_lst = [];
+            foreach ($this->lst() as $val) {
+                if ($this->variance_bound($val) == '') {
+                    $centre_lst[] = $val;
+                }
+            }
+            $result = new value_list();
+            $result->set_lst($centre_lst);
+        }
+        return $result;
+    }
+
+    /**
+     * the values that a grouped list shows as an item of their own: a bound that has its centre
+     * value in this list is shown behind that centre (see range_of), a bound without a centre is
+     * shown like a value, so that nothing is lost
+     *
+     * @return array the values and results of this list without the bounds shown behind a centre
+     */
+    private function without_shown_bounds(): array
+    {
+        $centre_keys = [];
+        foreach ($this->lst() as $val) {
+            if ($this->variance_bound($val) == '') {
+                $centre_keys[] = $this->variance_key($val);
+            }
+        }
+        $result = [];
+        foreach ($this->lst() as $val) {
+            if (!$this->is_shown_bound($val, $centre_keys)) {
+                $result[] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value or result to check
+     * @param array $centre_keys the variance keys of the centre values of this list
+     * @return bool true if the value is a variance bound whose centre value is in this list
+     */
+    private function is_shown_bound(sandbox_value $val, array $centre_keys): bool
+    {
+        $is_bound = ($this->variance_bound($val) != '');
+        return ($is_bound and in_array($this->variance_key($val), $centre_keys));
+    }
+
+    /**
+     * the range of a centre value in the format of the start page e.g. " (-1.25% – -0.87%)"
+     *
+     * @param sandbox_value $val the centre value or result whose bounds are looked up in this list
+     * @param array $url_arr the url vars of the calling page for the back link
+     * @return string the html of the range or '' if this list has no bound of the value
+     */
+    private function range_of(sandbox_value $val, user_message $msg, array $url_arr): string
+    {
+        // a bound without a centre is shown like a value and never gets the range of its sibling
+        if ($this->variance_bound($val) != '') {
+            return '';
+        }
+        $key = $this->variance_key($val);
+        $bound = [];
+        foreach ($this->lst() as $bnd) {
+            $var_bound = $this->variance_bound($bnd);
+            if ($var_bound != '' and $this->variance_key($bnd) == $key) {
+                $bound[$var_bound] = $bnd;
+            }
+        }
+        $result = '';
+        if ($bound != []) {
+            $result = $this->range_html($bound, $msg, $url_arr);
+        }
         return $result;
     }
 

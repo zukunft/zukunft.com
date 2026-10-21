@@ -1381,13 +1381,15 @@ class ui_list extends ui_base
      *
      * @param word|db_object|type_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
      * @return string the html code to show the list of values
      */
     function values_by_word(
         word|db_object|type_object|null $dbo,
         user_message                    $msg,
         ?data_object                    $dto = null,
-        ?int                            $style_id = null
+        ?int                            $style_id = null,
+        array                           $url_arr = []
     ): string
     {
         $val_lst = $this->value_related_list($dbo, $msg, $dto);
@@ -1396,7 +1398,7 @@ class ui_list extends ui_base
         // values" component that the default word view uses
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true, $url_arr);
     }
 
     /**
@@ -1407,19 +1409,21 @@ class ui_list extends ui_base
      * @param word|db_object|type_object|null $dbo the object the values are related to
      * @param data_object|null $dto the data cache used to fill the value list until the backend answers
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
      * @return string the html code to show the grouped list of values
      */
     function values_most_relevant(
         word|db_object|type_object|null $dbo,
         user_message                    $msg,
         ?data_object                    $dto = null,
-        ?int                            $style_id = null
+        ?int                            $style_id = null,
+        array                           $url_arr = []
     ): string
     {
         $val_lst = $this->value_related_list($dbo, $msg, $dto);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true, $url_arr);
     }
 
     /**
@@ -1429,12 +1433,14 @@ class ui_list extends ui_base
      *
      * @param word|db_object|type_object|null $dbo the phrase the values are related to
      * @param data_object|null $dto the data cache used until the backend has returned the values
+     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
      * @return string the html code of the value columns or '' if the phrase has no values
      */
     function values_in_columns(
         word|db_object|type_object|null $dbo,
         user_message                    $msg,
-        ?data_object                    $dto = null
+        ?data_object                    $dto = null,
+        array                           $url_arr = []
     ): string
     {
         $result = '';
@@ -1445,7 +1451,7 @@ class ui_list extends ui_base
             if ($val_lst != null) {
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
-                $result = $val_lst->columns_by_phrase($msg, $phr_lst);
+                $result = $val_lst->columns_by_phrase($msg, $phr_lst, [], $this->range_requested($url_arr));
             }
         }
         return $result;
@@ -3321,13 +3327,15 @@ class ui_list extends ui_base
      *
      * @param triple|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
      * @return string the html code to show the list of values
      */
     function values_by_triple(
         triple|db_object|null $dbo,
         user_message          $msg,
         ?data_object          $dto = null,
-        ?int                  $style_id = null
+        ?int                  $style_id = null,
+        array                 $url_arr = []
     ): string
     {
         $val_lst = $dto->val_lst?->filter($msg, $dbo);
@@ -3338,7 +3346,7 @@ class ui_list extends ui_base
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         // show the grouped list (list_most_relevant) like the default word view
-        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true, $url_arr);
     }
 
     /**
@@ -3608,6 +3616,7 @@ class ui_list extends ui_base
      * @param value_list $val_lst
      * @param phrase_list $phr_lst
      * @param int|null $style_id id
+     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
      * @return string the html code to show the list of values
      */
     private function value_list(
@@ -3615,7 +3624,8 @@ class ui_list extends ui_base
         phrase_list  $phr_lst,
         user_message $msg,
         ?int         $style_id = null,
-        bool         $most_relevant = false
+        bool         $most_relevant = false,
+        array        $url_arr = []
     ): string
     {
         global $ui_sys;
@@ -3626,7 +3636,8 @@ class ui_list extends ui_base
         }
         // the "most relevant" component groups the values, the plain one just sorts them by impact
         if ($most_relevant) {
-            $result = $val_lst->list_most_relevant($msg, $phr_lst, [], $style_txt);
+            $result = $val_lst->list_most_relevant($msg, $phr_lst, [], $style_txt,
+                null, $this->range_requested($url_arr));
         } else {
             $result = $val_lst->list($msg, $phr_lst, [], $style_txt);
         }
@@ -3739,12 +3750,14 @@ class ui_list extends ui_base
      * @param db_object|combine_named|null $dbo the term whose related results should be listed
      * @param user_message $msg to report a problem of reading the config or a symbol
      * @param data_object|null $cfg the request cache with the preloaded results
+     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
      * @return string the html code of the grouped results or '' if the cache has no result
      */
     function results_related(
         db_object|combine_named|null $dbo,
         user_message                 $msg,
-        ?data_object                 $cfg = null
+        ?data_object                 $cfg = null,
+        array                        $url_arr = []
     ): string
     {
         $result = '';
@@ -3754,9 +3767,19 @@ class ui_list extends ui_base
             if ($dbo::class == word::class or $dbo::class == triple::class) {
                 $phr_lst->add_phrase($dbo->phrase());
             }
-            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg);
+            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg, $this->range_requested($url_arr));
         }
         return $result;
+    }
+
+    /**
+     * @param array $url_arr the url parameters of the page
+     * @return bool true if the page asks for the range behind each number, false for the numbers only
+     */
+    private function range_requested(array $url_arr): bool
+    {
+        $range = $url_arr[url_var::DISPLAY_LIST_RANGE] ?? url_var::FALSE;
+        return ($range == url_var::TRUE);
     }
 
     /**
@@ -3767,12 +3790,18 @@ class ui_list extends ui_base
      *
      * @param result_list $res_lst the results to show
      * @param phrase_list $phr_lst the phrases assumed by the reader e.g. the phrases of the page
+     * @param bool $with_range true to show the range behind each number, false for the numbers only
      * @return string the html code of the grouped results, '' if the list is empty
      */
-    private function result_list_grouped(result_list $res_lst, phrase_list $phr_lst, user_message $msg): string
+    private function result_list_grouped(
+        result_list  $res_lst,
+        phrase_list  $phr_lst,
+        user_message $msg,
+        bool         $with_range = false
+    ): string
     {
         $html = new html_base();
-        $result = $res_lst->list_most_relevant($msg, $phr_lst);
+        $result = $res_lst->list_most_relevant($msg, $phr_lst, [], '', $with_range);
         // the same block div as the value list, so that each result stays on one line
         if ($result != '') {
             $result = $html->div($result, view_styles::COL_SM_12);
