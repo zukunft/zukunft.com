@@ -6865,6 +6865,8 @@
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
     \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
+    \-- calculator_needed_results - section for function calculator_needed_results missing in /component/execute/ui_list
+            .php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -9526,6 +9528,8 @@
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
     \-- calculator_script
         \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
+    \-- calculator_needed_results
+        \-- ui_list - the results that the calculator script calculates: the result of each cell and the results
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple

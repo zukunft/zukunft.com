@@ -3044,7 +3044,7 @@ class ui_list extends ui_base
     {
         global $ui_sys;
         $html = new html_base();
-        $res_plan = $this->calculator_result_plan($lst, $dto);
+        $res_plan = $this->calculator_needed_results($this->calculator_result_plan($lst, $dto), $this->cell_plan);
         $inp_plan = $this->calculator_input_plan($calc, $dbo, $dto, $msg);
         $used_ids = $this->calculator_used_ids($res_plan, $inp_plan, $this->cell_plan);
         $plan = [
@@ -3064,6 +3064,46 @@ class ui_list extends ui_base
     }
 
     /**
+     * the results that the calculator script calculates: the result of each cell and the results
+     * that these use, also over several steps; the request cache holds also results that no cell
+     * shows e.g. of another phrase, which are left out, so that the page depends only on the
+     * results that it shows
+     *
+     * @param array $res_plan per html id of a result the tokens of its calculation (see calculator_result_plan)
+     * @param array $cell_plan per html id of a cell its number and format (see calculator_cell_format)
+     * @return array the part of the result plan that the cells need, sorted by the html id
+     */
+    function calculator_needed_results(array $res_plan, array $cell_plan): array
+    {
+        $needed = [];
+        $open = array_column($cell_plan, self::CALC_CELL_NUMBER);
+        while ($open != []) {
+            $num_id = array_pop($open);
+            if (array_key_exists($num_id, $res_plan) and !array_key_exists($num_id, $needed)) {
+                $needed[$num_id] = true;
+                $open = array_merge($open, $this->calculator_token_refs($res_plan[$num_id]));
+            }
+        }
+        // the result plan is sorted by the html id, which the intersection keeps
+        return array_intersect_key($res_plan, $needed);
+    }
+
+    /**
+     * @param array $tokens the tokens of the calculation of one result (see formula_calc::tokens)
+     * @return array the html ids of the values and results that the calculation uses
+     */
+    private function calculator_token_refs(array $tokens): array
+    {
+        $result = [];
+        foreach ($tokens as $token) {
+            if (array_key_exists(formula_calc::TOKEN_REF, $token)) {
+                $result[] = $token[formula_calc::TOKEN_REF];
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the html ids of the numbers that the calculator script reads: each result, each operand of
      * a result, the number of each input and the number of each cell; the request cache holds
      * also values that the page does not use e.g. of a related phrase, which are left out, so
@@ -3079,10 +3119,8 @@ class ui_list extends ui_base
         $result = [];
         foreach ($res_plan as $res_id => $tokens) {
             $result[$res_id] = true;
-            foreach ($tokens as $token) {
-                if (array_key_exists(formula_calc::TOKEN_REF, $token)) {
-                    $result[$token[formula_calc::TOKEN_REF]] = true;
-                }
+            foreach ($this->calculator_token_refs($tokens) as $ref_id) {
+                $result[$ref_id] = true;
             }
         }
         foreach ($inp_plan as $num_id) {

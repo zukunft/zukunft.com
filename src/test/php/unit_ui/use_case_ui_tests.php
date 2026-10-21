@@ -767,6 +767,27 @@ class use_case_ui_tests
         $t->assert_false($test_name, array_key_exists($unused_val->html_id(), $unused_plan[ui_list::CALC_NUMBERS]));
         $test_name = '... while the numbers that the page uses stay';
         $t->assert($test_name, (string)$unused_plan[ui_list::CALC_NUMBERS][$canton_key], (string)values::SAMPLE_INT);
+        // the browser calculates only the results that a cell shows and the results these use, so a
+        // result of the request cache that no cell needs is not written into the page
+        [$shown_res, $operand_res] = $t_res->result_list_solution_prio_first_row_ui()->lst();
+        $unused_res = $t_res->result_list_zh_city_ui()->lst()[0];
+        $all_res_plan = [
+            $shown_res->html_id() => [[formula_calc::TOKEN_REF => $operand_res->html_id()]],
+            $operand_res->html_id() => [[formula_calc::TOKEN_REF => $canton_key]],
+            $unused_res->html_id() => [[formula_calc::TOKEN_REF => $canton_key]],
+        ];
+        $cell_plan = [$shown_res->html_id() => [ui_list::CALC_CELL_NUMBER => $shown_res->html_id()]];
+        $needed_plan = $js_list->calculator_needed_results($all_res_plan, $cell_plan);
+        $test_name = 'the calculator calculates the result of a cell';
+        $t->assert_true($test_name, array_key_exists($shown_res->html_id(), $needed_plan));
+        $test_name = '... and the result that this result uses';
+        $t->assert_true($test_name, array_key_exists($operand_res->html_id(), $needed_plan));
+        // negative: a result that no cell shows and no shown result uses is left out
+        $test_name = '... but not a result that no cell needs';
+        $t->assert_false($test_name, array_key_exists($unused_res->html_id(), $needed_plan));
+        // negative: a page without cells calculates no result
+        $test_name = 'a calculator without cells calculates no result';
+        $t->assert($test_name, $js_list->calculator_needed_results($all_res_plan, []), []);
         $test_name = '... and the script that repeats the calculation behind the data';
         $t->assert_text_contains($test_name, $script, '<script src="' . files::CALCULATOR_SCRIPT . '"></script>');
         // config.yaml allows javascript for the calculator, so also a pod without the config value

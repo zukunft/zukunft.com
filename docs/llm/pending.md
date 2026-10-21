@@ -1,5 +1,11 @@
 # pending - list of planned llm prompts with prio 1
 
+## speed up
+
+### calculator 
+
+...
+
 ## cleanup
 
 ### test coverage
