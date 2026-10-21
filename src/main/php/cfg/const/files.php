@@ -373,9 +373,6 @@ class files
         // start page data and no use case, but appended after the use cases above, so
         // that it shifts the database id of no phrase that a test pins
         self::PROBLEM_MAIN_REASONS_FILE,
-        // appended after the start page data for the same reason: a new use case file is always
-        // added at the end of this list, because its phrases get the next free ids
-        self::PV_LIFETIME_BALANCE_FILE,
         self::CBAM_CALCULATOR_FILE,
         self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
     ];
