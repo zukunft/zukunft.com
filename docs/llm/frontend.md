@@ -31,13 +31,14 @@ calculator script, so that the results change as soon as an input changes:
   (`ui_list::calculator_script`, `html_base::script_data`): the numbers by their html
   id (`sandbox_value::html_id`), only those that a result, an input or a cell reads
   (`ui_list::calculator_used_ids`), so that a value of the request cache that the page
-  does not use never changes the page, the calculation of each result that a cell shows
-  or that such a result uses (`ui_list::calculator_needed_results`), so that a result of
-  another phrase in the request cache never changes the page either, as tokens
+  does not use never changes the page, the calculation of each result as tokens
   (`formula_calc::tokens`: numbers, `+ - * /`, brackets and the html id of each
   operand, the same operands that the page calculation of PHP uses), the number that
   each input sets and the number and format of each cell. A formula text is never
   written into the page as script, so a formula cannot inject code.
+- Only the results that a cell shows or that such a result uses are calculated
+  (`ui_list::calculator_needed_results`), so that a result of another phrase in the
+  request cache never changes the page.
 - The script is one static file, `src/main/resources/script/calculator.js`
   (`files::CALCULATOR_SCRIPT`), loaded with `<script src>`; it has no inline handler
   and evaluates only the tokens with the grammar of `shared/calc/arithmetic.php`.

@@ -746,11 +746,6 @@ class use_case_ui_tests
         sort($sorted_keys);
         $test_name = '... sorted by the html id';
         $t->assert_true($test_name, count($num_keys) > 1 and $num_keys === $sorted_keys);
-        $res_keys = array_keys($plan[ui_list::CALC_RESULTS]);
-        $sorted_keys = $res_keys;
-        sort($sorted_keys);
-        $test_name = '... also the results';
-        $t->assert_true($test_name, $res_keys === $sorted_keys);
         $test_name = '... the number that each cell shows';
         $t->assert($test_name, $plan[ui_list::CALC_CELLS][$canton_key][ui_list::CALC_CELL_NUMBER], $canton_key);
         $test_name = '... the value of each number field';
@@ -769,6 +764,7 @@ class use_case_ui_tests
         $t->assert($test_name, (string)$unused_plan[ui_list::CALC_NUMBERS][$canton_key], (string)values::SAMPLE_INT);
         // the browser calculates only the results that a cell shows and the results these use, so a
         // result of the request cache that no cell needs is not written into the page
+        $test_name = 'the calculator calculates the result of a cell';
         [$shown_res, $operand_res] = $t_res->result_list_solution_prio_first_row_ui()->lst();
         $unused_res = $t_res->result_list_zh_city_ui()->lst()[0];
         $all_res_plan = [
@@ -776,15 +772,27 @@ class use_case_ui_tests
             $operand_res->html_id() => [[formula_calc::TOKEN_REF => $canton_key]],
             $unused_res->html_id() => [[formula_calc::TOKEN_REF => $canton_key]],
         ];
+        // calculator_result_plan sorts its plan by the html id
+        ksort($all_res_plan);
         $cell_plan = [$shown_res->html_id() => [ui_list::CALC_CELL_NUMBER => $shown_res->html_id()]];
         $needed_plan = $js_list->calculator_needed_results($all_res_plan, $cell_plan);
-        $test_name = 'the calculator calculates the result of a cell';
         $t->assert_true($test_name, array_key_exists($shown_res->html_id(), $needed_plan));
         $test_name = '... and the result that this result uses';
         $t->assert_true($test_name, array_key_exists($operand_res->html_id(), $needed_plan));
         // negative: a result that no cell shows and no shown result uses is left out
         $test_name = '... but not a result that no cell needs';
         $t->assert_false($test_name, array_key_exists($unused_res->html_id(), $needed_plan));
+        $test_name = '... sorted by the html id';
+        $res_keys = array_keys($needed_plan);
+        $sorted_keys = $res_keys;
+        sort($sorted_keys);
+        $t->assert_true($test_name, count($res_keys) > 1 and $res_keys === $sorted_keys);
+        // negative: two results that use each other must not loop forever and are taken once each
+        $test_name = 'results that use each other are calculated once each';
+        $cycle_plan = $all_res_plan;
+        $cycle_plan[$operand_res->html_id()] = [[formula_calc::TOKEN_REF => $shown_res->html_id()]];
+        $cycle_needed = $js_list->calculator_needed_results($cycle_plan, $cell_plan);
+        $t->assert($test_name, array_keys($cycle_needed), $res_keys);
         // negative: a page without cells calculates no result
         $test_name = 'a calculator without cells calculates no result';
         $t->assert($test_name, $js_list->calculator_needed_results($all_res_plan, []), []);

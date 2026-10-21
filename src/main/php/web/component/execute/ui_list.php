@@ -3044,7 +3044,8 @@ class ui_list extends ui_base
     {
         global $ui_sys;
         $html = new html_base();
-        $res_plan = $this->calculator_needed_results($this->calculator_result_plan($lst, $dto), $this->cell_plan);
+        $all_plan = $this->calculator_result_plan($lst, $dto);
+        $res_plan = $this->calculator_needed_results($all_plan, $this->cell_plan);
         $inp_plan = $this->calculator_input_plan($calc, $dbo, $dto, $msg);
         $used_ids = $this->calculator_used_ids($res_plan, $inp_plan, $this->cell_plan);
         $plan = [
@@ -3079,13 +3080,24 @@ class ui_list extends ui_base
         $open = array_column($cell_plan, self::CALC_CELL_NUMBER);
         while ($open != []) {
             $num_id = array_pop($open);
-            if (array_key_exists($num_id, $res_plan) and !array_key_exists($num_id, $needed)) {
+            if ($this->calculator_is_new_result($num_id, $res_plan, $needed)) {
                 $needed[$num_id] = true;
                 $open = array_merge($open, $this->calculator_token_refs($res_plan[$num_id]));
             }
         }
         // the result plan is sorted by the html id, which the intersection keeps
         return array_intersect_key($res_plan, $needed);
+    }
+
+    /**
+     * @param string $num_id the html id of a number that a cell shows or a result uses
+     * @param array $res_plan per html id of a result the tokens of its calculation
+     * @param array $needed the html ids of the results found so far, so that a cycle ends
+     * @return bool true if the number is a result that has not been found yet
+     */
+    private function calculator_is_new_result(string $num_id, array $res_plan, array $needed): bool
+    {
+        return array_key_exists($num_id, $res_plan) and !array_key_exists($num_id, $needed);
     }
 
     /**
