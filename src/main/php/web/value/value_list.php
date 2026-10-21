@@ -125,7 +125,7 @@ class value_list extends ListBase
     const int LIMIT_ALL = 0;
     // the column tiers of a table to show: the number says how many tiers of
     // triples::SYSTEM_COLUMN_TIERS are left out from the bottom, so a higher number is a
-    // narrower table and zero shows every tier, every unit and the ranges; the menu of the
+    // narrower table and zero shows every tier, every unit and the variance; the menu of the
     // "..." header selects one of them (docs/llm/frontend.md)
     const int COLUMN_TIERS_ALL = 0;
     const int COLUMN_TIERS_EX_MARGINAL = 1;
@@ -138,10 +138,10 @@ class value_list extends ListBase
         self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR,
         self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL,
     ];
-    // the probability range of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
-    const string RANGE_START = ' (';
-    const string RANGE_SEP = ' – ';
-    const string RANGE_END = ')';
+    // the variance of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
+    const string VARIANCE_START = ' (';
+    const string VARIANCE_SEP = ' – ';
+    const string VARIANCE_END = ')';
     // joins the phrase id and a counter to the id of a further column of the same phrase in
     // another unit, so that the id can never clash with a phrase id
     const string UNIT_COLUMN_SEP = '|';
@@ -149,6 +149,10 @@ class value_list extends ListBase
     // per phrase id true if the phrase is a unit (see is_unit), because a table asks it for each
     // phrase of each value in several steps, but the phrases of a table are only a few hundred
     private array $unit_by_id = [];
+
+    // true if the list shows the variance behind each number (see variance_list), so that the
+    // "... and n more" link opens the next version of the list with the variance too
+    public bool $with_variance = false;
 
     /*
      * set and get
@@ -354,6 +358,8 @@ class value_list extends ListBase
      * @param string $style to define e.g. the width of the list
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
+     * @param bool $with_variance true to show the variance behind each number like the start page,
+     *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code to display the values to the user
      */
     function list(
@@ -362,7 +368,8 @@ class value_list extends ListBase
         array        $url_arr = [],
         string       $style = '',
         ?int         $limit = null,
-        ?int         $page = null
+        ?int         $page = null,
+        bool         $with_variance = false
     ): string
     {
         $html = new html_base();
@@ -375,16 +382,18 @@ class value_list extends ListBase
             if ($limit == null) {
                 $limit = $this->configured_limit($msg);
             }
+            $val_lst = $this->variance_list($with_variance);
+            $pool = $val_lst->without_shown_bounds();
 
             $i = 0;
-            foreach ($this->lst() as $val) {
+            foreach ($pool as $val) {
                 if ($i <= $limit) {
                     if ($i < $limit) {
-                        $result .= $this->value_line($val, $msg, $context_phr_lst, $url_arr);
+                        $result .= $val_lst->value_line($val, $msg, $context_phr_lst, $url_arr);
                     } else {
-                        $diff = $this->count() - $i;
+                        $diff = count($pool) - $i;
                         if ($diff > 0) {
-                            $result .= ' ' . $this->more_tail($diff, $context_phr_lst);
+                            $result .= ' ' . $val_lst->more_tail($diff, $context_phr_lst);
                         }
                     }
                     $i++;
@@ -399,6 +408,7 @@ class value_list extends ListBase
      * value (as an edit link) on the right; the shared line renderer of list() and list_most_relevant()
      *
      * @param value $val the value to render
+     * @param user_message $msg to report a problem of the value display
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and therefore left out of the line
      * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value line
@@ -411,7 +421,7 @@ class value_list extends ListBase
         // a phrase with a symbol e.g. the factor is not named but shown behind the number as "x",
         // and the symbol link stays outside the value link (see sandbox_value::number_symbols)
         $line = $val->phrase_link_list($msg, $context_phr_lst) . ' ' . $val->value_edit($msg, $url_arr)
-            . $val->number_symbols($msg);
+            . $val->number_symbols($msg) . $this->variance_of($val, $msg, $url_arr);
         $row = $html->span($line, styles::TEXT_NOWRAP) . $html->lf();
         return $row;
     }
@@ -428,7 +438,7 @@ class value_list extends ListBase
      * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each value line
      * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the width of the list
-     * @param bool $with_range true to show the range behind each number like the start page,
+     * @param bool $with_variance true to show the variance behind each number like the start page,
      *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code to display the grouped values to the user
      */
@@ -438,11 +448,11 @@ class value_list extends ListBase
         array        $url_arr = [],
         string       $style = '',
         ?int         $limit = null,
-        bool         $with_range = false
+        bool         $with_variance = false
     ): string
     {
         $result = '';
-        $val_lst = $this->range_list($with_range);
+        $val_lst = $this->variance_list($with_variance);
         if (!$val_lst->is_empty()) {
             $html = new html_base();
             // the limit is a page total: however the values are grouped, the page never shows
@@ -576,7 +586,7 @@ class value_list extends ListBase
      *
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
      * @param array $url_arr the url vars of the calling page for the back link
-     * @param bool $with_range true to show the range behind each number like the start page,
+     * @param bool $with_variance true to show the variance behind each number like the start page,
      *                         false to leave out the variance bounds and show the numbers only
      * @return string the html code of the value columns or '' if this list is empty
      */
@@ -584,11 +594,11 @@ class value_list extends ListBase
         user_message $msg,
         phrase_list  $context_phr_lst = new phrase_list(),
         array        $url_arr = [],
-        bool         $with_range = false
+        bool         $with_variance = false
     ): string
     {
         $result = '';
-        $val_lst = $this->range_list($with_range);
+        $val_lst = $this->variance_list($with_variance);
         if (!$val_lst->is_empty()) {
             $html = new html_base();
             $pool = $val_lst->without_shown_bounds();
@@ -651,7 +661,7 @@ class value_list extends ListBase
      *                       self::COLUMN_TIERS_ALL for every column; a simple table shows the
      *                       tiers above with one unit each and the "..." header whose menu
      *                       selects the columns
-     * @param bool $with_range true to show the probability range behind each number by default,
+     * @param bool $with_variance true to show the variance behind each number by default,
      *                         false for the numbers only; the url of the page overrides both defaults
      * @param bool $value_rows_only true to leave out the rows without a number in a shown column,
      *                              so that the table has no empty row e.g. the ranking of the
@@ -669,22 +679,20 @@ class value_list extends ListBase
         array        $url_array = [],
         bool         $col_values_only = false,
         int          $col_tiers = self::COLUMN_TIERS_ALL,
-        bool         $with_range = true,
+        bool         $with_variance = true,
         bool         $value_rows_only = false
     ): string
     {
         $result = '';
-        // the url of the page says whether the ranges are shown, e.g. after the "..." click on a
+        // the url of the page says whether the variance is shown, e.g. after the "..." click on a
         // simple table, and wins over the default of the caller
-        if (array_key_exists(url_var::DISPLAY_LIST_RANGE, $url_array)) {
-            $with_range = ($url_array[url_var::DISPLAY_LIST_RANGE] == url_var::TRUE);
-        }
+        $with_variance = url_var::show_variance($url_array, $with_variance);
         if (!$this->is_empty()) {
             $html = new html_base();
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, $col_tiers, $value_rows_only);
             $result = $this->table_html($model, $msg, $context_phr_lst, $rel_lst,
-                $url_array, $with_range, $with_border);
+                $url_array, $with_variance, $with_border);
             if ($with_header) {
                 $result = $this->table_header($model, $context_phr_lst) . $result;
             }
@@ -846,7 +854,7 @@ class value_list extends ListBase
      * the rows and columns of the table of table_by_related_columns before they are rendered,
      * shared by the html table and the svg chart (the parameters are the ones of the table)
      *
-     * @return table_model the rows, columns, units and ranges of the table
+     * @return table_model the rows, columns, units and variance of the table
      */
     private function table_model(
         user_message $msg,
@@ -889,7 +897,7 @@ class value_list extends ListBase
      * @param bool $col_values_only true to leave out the values that fit no column
      * @param int $col_tiers the number of column tiers left out from the bottom
      * @param bool $value_rows_only true to drop a row without a number in a shown column
-     * @return table_model the rows, columns, units and ranges of the table
+     * @return table_model the rows, columns, units and variance of the table
      */
     private function table_model_of_columns(
         user_message $msg,
@@ -1179,7 +1187,7 @@ class value_list extends ListBase
             // the cell, e.g. the gain of the solution for the whole problem beside the gain for
             // the reason shown, is left out, so that a cell never shows two numbers of one thing;
             // two values with the same row, column and phrases are shown in the same cell instead
-            // of the second one replacing the first, because a range bound is shown behind its centre;
+            // of the second one replacing the first, because a variance bound is shown behind its centre;
             // a confidence value often names less than the value it qualifies, e.g. no solution,
             // so it stays in the cell to be the tooltip of that value (see qualifies)
             $other_phrase = $this->names_other_phrase($phr_cell, $phr_cells[$row_key] ?? []);
@@ -1272,7 +1280,7 @@ class value_list extends ListBase
      * @param phrase_list $context_phr_lst the phrases assumed by the reader e.g. the phrase of the page
      * @param phrase_list|null $rel_lst the phrases related to the page phrase with the definitions
      * @param array $url_array the url parameters of the page that shows the table
-     * @param bool $with_range true to show the probability range behind each number
+     * @param bool $with_variance true to show the variance behind each number
      * @param bool $with_border false for the borderless table
      * @return string the html code of the table
      */
@@ -1282,7 +1290,7 @@ class value_list extends ListBase
         phrase_list  $context_phr_lst,
         ?phrase_list $rel_lst,
         array        $url_array,
-        bool         $with_range,
+        bool         $with_variance,
         bool         $with_border
     ): string
     {
@@ -1334,13 +1342,13 @@ class value_list extends ListBase
                 // a phrase column names a phrase of the row, a value column its values
                 if (array_key_exists($col_id, $model->col_phr)) {
                     $row .= $this->cell($model->cells[$row_key][$col_id] ?? [],
-                        $msg, $url_array, $col_style[$col_id], $with_range);
+                        $msg, $url_array, $col_style[$col_id], $with_variance);
                 } else {
                     $row .= $html->td($this->phrase_cell($model, $row_key, $col_id, $url_array, $rel_lst), $col_style[$col_id]);
                 }
             }
             if ($rest_col) {
-                $row .= $this->cell($model->cells[$row_key][''] ?? [], $msg, $url_array, '', $with_range);
+                $row .= $this->cell($model->cells[$row_key][''] ?? [], $msg, $url_array, '', $with_variance);
             }
             // the cell below the "..." header, which the menu of that header covers
             $row .= $html->td('');
@@ -1466,7 +1474,7 @@ class value_list extends ListBase
      * of solution_prio.json names the unit in the column header instead
      *
      * a marker like "low", "high" or "assumed" says how a number is stated and not what it is
-     * about, so it names no row either; a range bound is shown behind its centre value (see
+     * about, so it names no row either; a variance bound is shown behind its centre value (see
      * cell) and the estimate qualifier as the tooltip of the cell
      *
      * a phrase that every value carries describes the whole table, so the header names it once
@@ -1723,7 +1731,7 @@ class value_list extends ListBase
      *
      * @param phrase $phr the phrase to check
      * @param user_message $msg to report a missing phrase type list
-     * @return bool true for a range bound tag, the confidence or a value quality, which is shown
+     * @return bool true for a variance bound tag, the confidence or a value quality, which is shown
      *              as a mark behind the number (see sandbox_value::quality_mark)
      */
     private function is_marker(phrase $phr, user_message $msg): bool
@@ -1756,14 +1764,14 @@ class value_list extends ListBase
         user_message $msg,
         array        $url_arr,
         string       $style,
-        bool         $with_range = true
+        bool         $with_variance = true
     ): string
     {
         $html = new html_base();
         [$centre_lst, $bound, $conf_lst, $title_lst] = $this->sort_cell_values($val_lst, $msg);
-        // a simple table shows the numbers only, so the bounds of the range are left out here
+        // a simple table shows the numbers only, so the variance bounds are left out here
         // and shown by the full table that the "..." header links to
-        if (!$with_range) {
+        if (!$with_variance) {
             $bound = [];
         }
         $txt_lst = [];
@@ -1772,7 +1780,7 @@ class value_list extends ListBase
             $txt = $val->value_edit($msg, $url_arr);
             $key = $this->variance_key($val);
             if (array_key_exists($key, $bound)) {
-                $txt .= $this->range_html($bound[$key], $msg, $url_arr);
+                $txt .= $this->variance_html($bound[$key], $msg, $url_arr);
                 unset($bound[$key]);
             }
             foreach ($conf_lst as $conf_key => $conf_val) {
@@ -1800,26 +1808,27 @@ class value_list extends ListBase
     }
 
     /**
-     * the range shown behind a centre value e.g. " (-1.25% – -0.87%)", the shared format of the
+     * the variance shown behind a centre value e.g. " (-1.25% – -0.87%)", the shared format of the
      * table cells and the grouped value lists
      *
      * @param array $bound the bounds of one centre value keyed by the variance bound triple name
+     * @param user_message $msg to report a problem of the value display
      * @param array $url_arr the url vars of the calling page for the back link
-     * @return string the html of the range in brackets
+     * @return string the html of the variance in brackets
      */
-    private function range_html(array $bound, user_message $msg, array $url_arr): string
+    private function variance_html(array $bound, user_message $msg, array $url_arr): string
     {
-        // a range normally has both bounds, but a missing one leaves its place empty
+        // a variance normally has both bounds, but a missing one leaves its place empty
         $low = $bound[triples::SYSTEM_VARIANCE_LOW] ?? null;
         $high = $bound[triples::SYSTEM_VARIANCE_HIGH] ?? null;
         // a bound has the quality of its centre value, which shows the mark once
         $low_txt = $low?->value_edit_link($msg, $url_arr) ?? '';
         $high_txt = $high?->value_edit_link($msg, $url_arr) ?? '';
-        return self::RANGE_START . $low_txt . self::RANGE_SEP . $high_txt . self::RANGE_END;
+        return self::VARIANCE_START . $low_txt . self::VARIANCE_SEP . $high_txt . self::VARIANCE_END;
     }
 
     /**
-     * sort the values of a cell into the centre values, the range bounds, the confidence values
+     * sort the values of a cell into the centre values, the variance bounds, the confidence values
      * and the qualifiers shown as the tooltip of the cell
      *
      * @param array $val_lst the values of the cell
@@ -1915,7 +1924,7 @@ class value_list extends ListBase
 
     /**
      * @param sandbox_value $val the value or result to key
-     * @return string the names of the unit phrases of the value, encoded like the range key, so
+     * @return string the names of the unit phrases of the value, encoded like the variance key, so
      *                that the values of one measure share the key e.g. "trillion EUR"
      */
     private function unit_key(sandbox_value $val, user_message $msg): string
@@ -2613,6 +2622,7 @@ class value_list extends ListBase
      * the number on the right; the shared item renderer of group_block and impact_group
      *
      * @param sandbox_value $val the value or result to render
+     * @param user_message $msg to report a problem of the value display
      * @param phrase_list $context_phr_lst the phrases assumed by the reader and left out of the name
      * @param array $url_arr the url vars of the calling page for the back link
      * @return string the html code of one value list item
@@ -2622,35 +2632,34 @@ class value_list extends ListBase
         $html = new html_base();
         $name = $html->span($val->phrase_link_list($msg, $context_phr_lst), styles::VALUE_NAME);
         $num_txt = $val->value_edit($msg, $url_arr) . $val->number_symbols($msg)
-            . $this->range_of($val, $msg, $url_arr);
+            . $this->variance_of($val, $msg, $url_arr);
         $num = $html->span($num_txt, styles::VALUE_NUM);
         $result = $html->list_item($name . $num);
         return $result;
     }
 
     /**
-     * @param bool $with_range true if the bounds of a range are shown behind their centre value
-     * @return value_list this list with the ranges, or a copy without the variance bounds
+     * @param bool $with_variance true if the variance bounds are shown behind their centre value
+     * @return value_list a copy of this list that knows whether the variance is shown, with the
+     *                    variance bounds only if they are
      */
-    private function range_list(bool $with_range): value_list
+    private function variance_list(bool $with_variance): value_list
     {
-        $result = $this;
-        if (!$with_range) {
-            $centre_lst = [];
-            foreach ($this->lst() as $val) {
-                if ($this->variance_bound($val) == '') {
-                    $centre_lst[] = $val;
-                }
+        $shown_lst = [];
+        foreach ($this->lst() as $val) {
+            if ($with_variance or $this->variance_bound($val) == '') {
+                $shown_lst[] = $val;
             }
-            $result = new value_list();
-            $result->set_lst($centre_lst);
         }
+        $result = new value_list();
+        $result->set_lst($shown_lst);
+        $result->with_variance = $with_variance;
         return $result;
     }
 
     /**
      * the values that a grouped list shows as an item of their own: a bound that has its centre
-     * value in this list is shown behind that centre (see range_of), a bound without a centre is
+     * value in this list is shown behind that centre (see variance_of), a bound without a centre is
      * shown like a value, so that nothing is lost
      *
      * @return array the values and results of this list without the bounds shown behind a centre
@@ -2684,15 +2693,16 @@ class value_list extends ListBase
     }
 
     /**
-     * the range of a centre value in the format of the start page e.g. " (-1.25% – -0.87%)"
+     * the variance of a centre value in the format of the start page e.g. " (-1.25% – -0.87%)"
      *
      * @param sandbox_value $val the centre value or result whose bounds are looked up in this list
+     * @param user_message $msg to report a problem of the value display
      * @param array $url_arr the url vars of the calling page for the back link
-     * @return string the html of the range or '' if this list has no bound of the value
+     * @return string the html of the variance or '' if this list has no bound of the value
      */
-    private function range_of(sandbox_value $val, user_message $msg, array $url_arr): string
+    private function variance_of(sandbox_value $val, user_message $msg, array $url_arr): string
     {
-        // a bound without a centre is shown like a value and never gets the range of its sibling
+        // a bound without a centre is shown like a value and never gets the variance of its sibling
         if ($this->variance_bound($val) != '') {
             return '';
         }
@@ -2706,7 +2716,7 @@ class value_list extends ListBase
         }
         $result = '';
         if ($bound != []) {
-            $result = $this->range_html($bound, $msg, $url_arr);
+            $result = $this->variance_html($bound, $msg, $url_arr);
         }
         return $result;
     }
@@ -2871,7 +2881,7 @@ class value_list extends ListBase
 
     /**
      * the "..." header of a table that opens the menu to select the columns shown: one entry
-     * per column tier and each of them once with and once without the probability range, so
+     * per column tier and each of them once with and once without the variance, so
      * that the reader reaches every version of the table from every version
      * (docs/llm/frontend.md "... more is always a link"); plain text if the page is not known
      *
@@ -2983,27 +2993,27 @@ class value_list extends ListBase
      * @param array $url_array the url parameters of the page that shows the table
      * @param int $tiers the column tiers of this entry e.g. self::COLUMN_TIERS_ALL
      * @param msg_id $tier_msg the name of the column tiers e.g. "all columns"
-     * @param bool $with_range true for the entry that shows the range behind each number
+     * @param bool $with_variance true for the entry that shows the variance behind each number
      * @return string the html code of the menu entry
      */
     private function columns_menu_item(
         array  $url_array,
         int    $tiers,
         msg_id $tier_msg,
-        bool   $with_range
+        bool   $with_variance
     ): string
     {
         $html = new html_base();
         $url_pars = html_base::page_url_array($url_array);
         // the two vars are removed first, so that a page that already selects columns creates
         // the same url as a page that does not, which keeps one cached page per selection
-        unset($url_pars[url_var::DISPLAY_LIST_COLUMNS], $url_pars[url_var::DISPLAY_LIST_RANGE]);
+        unset($url_pars[url_var::DISPLAY_LIST_COLUMNS], $url_pars[url_var::DISPLAY_LIST_VARIANCE]);
         $url_pars[url_var::DISPLAY_LIST_COLUMNS] = $tiers;
-        $url_pars[url_var::DISPLAY_LIST_RANGE] = $with_range ? url_var::TRUE : url_var::FALSE;
+        $url_pars[url_var::DISPLAY_LIST_VARIANCE] = $with_variance ? url_var::TRUE : url_var::FALSE;
         $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
         $name = $tier_msg->text();
-        if ($with_range) {
-            $name .= ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text();
+        if ($with_variance) {
+            $name .= ' ' . msg_id::TABLE_COLUMNS_WITH_VARIANCE->text();
         }
         return $html->list_item($html->ref($url, $name));
     }
@@ -3064,10 +3074,15 @@ class value_list extends ListBase
         $txt = msg_id::THREE_POINTS->text() . ' ' . msg_id::AND_MORE_BEFORE->text() . ' '
             . $diff . ' ' . msg_id::MORE->text();
         $phr = $context_phr_lst->lst()[0] ?? null;
+        // the next version of a list with the variance shows the variance too
+        $variance_par = '';
+        if ($this->with_variance) {
+            $variance_par = url_var::DISPLAY_LIST_VARIANCE . url_var::EQ . url_var::TRUE;
+        }
         if ($more_url != '') {
             $result = $html->ref($more_url, $txt);
         } elseif ($phr != null) {
-            $result = $html->ref($html->url_back(views::PHRASE_VALUES_ID, $phr->id()), $txt);
+            $result = $html->ref($html->url_back(views::PHRASE_VALUES_ID, $phr->id(), [], $variance_par), $txt);
         } else {
             $result = $txt;
         }

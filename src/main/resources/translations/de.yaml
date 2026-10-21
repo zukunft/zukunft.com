@@ -849,7 +849,7 @@ messages:
   table_columns_main: "Hauptspalten"
   table_columns_minor: "Nebenspalten"
   table_columns_all: "alle"
-  table_columns_with_range: "+ Bereich"
+  table_columns_with_variance: "+ Varianz"
   table_menu_columns: "Spalten und Werte"
   table_menu_as: "als"
   table_as_table: "Tabelle"

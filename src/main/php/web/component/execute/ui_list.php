@@ -1381,7 +1381,7 @@ class ui_list extends ui_base
      *
      * @param word|db_object|type_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
-     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the list of values
      */
     function values_by_word(
@@ -1409,7 +1409,7 @@ class ui_list extends ui_base
      * @param word|db_object|type_object|null $dbo the object the values are related to
      * @param data_object|null $dto the data cache used to fill the value list until the backend answers
      * @param int|null $style_id the optional list column style
-     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the grouped list of values
      */
     function values_most_relevant(
@@ -1433,7 +1433,7 @@ class ui_list extends ui_base
      *
      * @param word|db_object|type_object|null $dbo the phrase the values are related to
      * @param data_object|null $dto the data cache used until the backend has returned the values
-     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code of the value columns or '' if the phrase has no values
      */
     function values_in_columns(
@@ -1451,7 +1451,8 @@ class ui_list extends ui_base
             if ($val_lst != null) {
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
-                $result = $val_lst->columns_by_phrase($msg, $phr_lst, [], $this->range_requested($url_arr));
+                $with_variance = url_var::show_variance($url_arr);
+                $result = $val_lst->columns_by_phrase($msg, $phr_lst, [], $with_variance);
             }
         }
         return $result;
@@ -1473,7 +1474,7 @@ class ui_list extends ui_base
      * @param bool $col_values_only true to leave out the values that share no column phrase, so
      *                              that the table stays a grid of its columns (see value_list)
      * @param int $col_tiers the number of column tiers left out by default (see value_list)
-     * @param bool $with_range true to show the probability ranges by default (see value_list)
+     * @param bool $with_variance true to show the variance by default (see value_list)
      * @param bool $value_rows_only true to leave out the rows without a number (see value_list)
      * @param phrase_list|null $add_lst phrases that only the cells need, e.g. the list children
      *                                  that ", ..." counts; null if the cached phrases are enough
@@ -1490,7 +1491,7 @@ class ui_list extends ui_base
         array                                  $url_array = [],
         bool                                   $col_values_only = false,
         int                                    $col_tiers = value_list::COLUMN_TIERS_ALL,
-        bool                                   $with_range = true,
+        bool                                   $with_variance = true,
         bool                                   $value_rows_only = false,
         ?phrase_list                           $add_lst = null,
         array                                  $col_names = []
@@ -1554,7 +1555,7 @@ class ui_list extends ui_base
                     // same page with the next list size
                     $result = $tbl_lst->table_by_related_columns(
                         $msg, $phr_lst, $col_order, $with_header, $with_border, $rel_lst,
-                        null, $url_array, $col_values_only, $col_tiers, $with_range,
+                        null, $url_array, $col_values_only, $col_tiers, $with_variance,
                         $value_rows_only);
                     log_debug('table of ' . $tbl_lst->count() . ' numbers created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 } else {
@@ -3043,10 +3044,13 @@ class ui_list extends ui_base
     {
         global $ui_sys;
         $html = new html_base();
+        $res_plan = $this->calculator_result_plan($lst, $dto);
+        $inp_plan = $this->calculator_input_plan($calc, $dbo, $dto, $msg);
+        $used_ids = $this->calculator_used_ids($res_plan, $inp_plan, $this->cell_plan);
         $plan = [
-            self::CALC_NUMBERS => $this->calculator_number_plan($lst),
-            self::CALC_RESULTS => $this->calculator_result_plan($lst, $dto),
-            self::CALC_INPUTS => $this->calculator_input_plan($calc, $dbo, $dto, $msg),
+            self::CALC_NUMBERS => $this->calculator_number_plan($lst, $used_ids),
+            self::CALC_RESULTS => $res_plan,
+            self::CALC_INPUTS => $inp_plan,
             self::CALC_CELLS => $this->cell_plan,
             self::CALC_FORMAT => [
                 // without a loaded config the format of the page cells, the shared defaults
@@ -3060,14 +3064,47 @@ class ui_list extends ui_base
     }
 
     /**
-     * @param value_list $lst the values and the results of the page
-     * @return array per html id the number of the value or result, without a value that has no number
+     * the html ids of the numbers that the calculator script reads: each result, each operand of
+     * a result, the number of each input and the number of each cell; the request cache holds
+     * also values that the page does not use e.g. of a related phrase, which are left out, so
+     * that the page depends only on the numbers it shows or calculates
+     *
+     * @param array $res_plan per html id of a result the tokens of its calculation (see calculator_result_plan)
+     * @param array $inp_plan per name of an input field the html id of its number (see calculator_input_plan)
+     * @param array $cell_plan per html id of a cell its number and format (see calculator_cell_format)
+     * @return array the used html ids as keys
      */
-    private function calculator_number_plan(value_list $lst): array
+    private function calculator_used_ids(array $res_plan, array $inp_plan, array $cell_plan): array
+    {
+        $result = [];
+        foreach ($res_plan as $res_id => $tokens) {
+            $result[$res_id] = true;
+            foreach ($tokens as $token) {
+                if (array_key_exists(formula_calc::TOKEN_REF, $token)) {
+                    $result[$token[formula_calc::TOKEN_REF]] = true;
+                }
+            }
+        }
+        foreach ($inp_plan as $num_id) {
+            $result[$num_id] = true;
+        }
+        foreach ($cell_plan as $cell) {
+            $result[$cell[self::CALC_CELL_NUMBER]] = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @param value_list $lst the values and the results of the page
+     * @param array $used_ids the html ids of the numbers that the script reads as keys (see calculator_used_ids)
+     * @return array per html id the number of the value or result, without a value that has no
+     *               number or that the script does not read
+     */
+    private function calculator_number_plan(value_list $lst, array $used_ids): array
     {
         $result = [];
         foreach ($lst->lst() as $val) {
-            if ($val->number() !== null) {
+            if ($val->number() !== null and array_key_exists($val->html_id(), $used_ids)) {
                 $result[$val->html_id()] = $val->number();
             }
         }
@@ -3327,7 +3364,7 @@ class ui_list extends ui_base
      *
      * @param triple|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
-     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the list of values
      */
     function values_by_triple(
@@ -3361,13 +3398,15 @@ class ui_list extends ui_base
      * @param user_message $msg to report an unexpected selection object
      * @param data_object|null $dto the data cache used if the value has not been loaded for its page
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the similar values or the message that the value has no similar values
      */
     function values_similar(
         value|db_object|null $dbo,
         user_message         $msg,
         ?data_object         $dto = null,
-        ?int                 $style_id = null
+        ?int                 $style_id = null,
+        array                $url_arr = []
     ): string
     {
         global $mtr;
@@ -3389,7 +3428,7 @@ class ui_list extends ui_base
                 log_err_msg_ui('the value cache is missing to select the similar values', $msg);
             } else {
                 // the value itself is the context of the column, so its phrases are left out
-                $result = $this->value_list($val_lst, $dbo->grp->phr_lst(), $msg, $style_id, true);
+                $result = $this->value_list($val_lst, $dbo->grp->phr_lst(), $msg, $style_id, true, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NO_SIMILAR_VALUES);
                 }
@@ -3408,9 +3447,15 @@ class ui_list extends ui_base
      * @param value|db_object|null $dbo the value whose results should be listed
      * @param user_message $msg to report an unexpected selection object
      * @param data_object|null $dto the data cache used if the value has not been loaded for its page
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the results of the value or the message that the value is not used for results
      */
-    function results_by_value(value|db_object|null $dbo, user_message $msg, ?data_object $dto = null): string
+    function results_by_value(
+        value|db_object|null $dbo,
+        user_message         $msg,
+        ?data_object         $dto = null,
+        array                $url_arr = []
+    ): string
     {
         global $mtr;
 
@@ -3429,7 +3474,7 @@ class ui_list extends ui_base
                 log_err_msg_ui('the result cache is missing to select the results', $msg);
             } else {
                 // the value itself is the context of the column, so its phrases are left out
-                $result = $this->result_list_grouped($res_lst, $dbo->grp->phr_lst(), $msg);
+                $result = $this->result_list_grouped($res_lst, $dbo->grp->phr_lst(), $msg, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS);
                 }
@@ -3448,9 +3493,15 @@ class ui_list extends ui_base
      * @param result|db_object|null $dbo the result whose used values should be listed
      * @param user_message $msg to report a missing list or an unexpected selection object
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the used values or the message that no value has been used
      */
-    function values_used(result|db_object|null $dbo, user_message $msg, ?int $style_id = null): string
+    function values_used(
+        result|db_object|null $dbo,
+        user_message          $msg,
+        ?int                  $style_id = null,
+        array                 $url_arr = []
+    ): string
     {
         global $mtr;
 
@@ -3464,7 +3515,7 @@ class ui_list extends ui_base
             // column of a word, see formula_list)
             if ($dbo->values_used != null) {
                 // the result itself is the context of the column, so its phrases are left out
-                $result = $this->value_list($dbo->values_used, $dbo->grp->phr_lst(), $msg, $style_id, true);
+                $result = $this->value_list($dbo->values_used, $dbo->grp->phr_lst(), $msg, $style_id, true, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NO_VALUES_USED);
                 }
@@ -3512,9 +3563,10 @@ class ui_list extends ui_base
      *
      * @param result|db_object|null $dbo the result whose used results should be listed
      * @param user_message $msg to report a missing list or an unexpected selection object
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the used results or the message that no other result has been used
      */
-    function results_used(result|db_object|null $dbo, user_message $msg): string
+    function results_used(result|db_object|null $dbo, user_message $msg, array $url_arr = []): string
     {
         global $mtr;
 
@@ -3526,7 +3578,7 @@ class ui_list extends ui_base
             // result shows no column instead of a message about a list that is not known here
             if ($dbo->results_used != null) {
                 // the result itself is the context of the column, so its phrases are left out
-                $result = $this->result_list_grouped($dbo->results_used, $dbo->grp->phr_lst(), $msg);
+                $result = $this->result_list_grouped($dbo->results_used, $dbo->grp->phr_lst(), $msg, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NO_RESULTS_USED);
                 }
@@ -3545,13 +3597,15 @@ class ui_list extends ui_base
      * @param user_message $msg to report a missing cache or an unexpected selection object
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the values of the source or the message that the source is not used for values
      */
     function values_by_source(
         source|db_object|null $dbo,
         user_message          $msg,
         ?data_object          $dto = null,
-        ?int                  $style_id = null
+        ?int                  $style_id = null,
+        array                 $url_arr = []
     ): string
     {
         global $mtr;
@@ -3573,7 +3627,7 @@ class ui_list extends ui_base
                 log_err_msg_ui('the value cache is missing to select the values of a source', $msg);
             } else {
                 // the source is the context of the page, so no phrase is left out of the value lines
-                $result = $this->value_list($val_lst, new phrase_list(), $msg, $style_id, true);
+                $result = $this->value_list($val_lst, new phrase_list(), $msg, $style_id, true, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES);
                 }
@@ -3616,7 +3670,7 @@ class ui_list extends ui_base
      * @param value_list $val_lst
      * @param phrase_list $phr_lst
      * @param int|null $style_id id
-     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the list of values
      */
     private function value_list(
@@ -3634,12 +3688,12 @@ class ui_list extends ui_base
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
+        $with_variance = url_var::show_variance($url_arr);
         // the "most relevant" component groups the values, the plain one just sorts them by impact
         if ($most_relevant) {
-            $result = $val_lst->list_most_relevant($msg, $phr_lst, [], $style_txt,
-                null, $this->range_requested($url_arr));
+            $result = $val_lst->list_most_relevant($msg, $phr_lst, [], $style_txt, null, $with_variance);
         } else {
-            $result = $val_lst->list($msg, $phr_lst, [], $style_txt);
+            $result = $val_lst->list($msg, $phr_lst, [], $style_txt, null, null, $with_variance);
         }
         // wrap the value lines in a block div so each value stays on one line;
         // as a LIST_GROUP component the related-value list is emitted without an
@@ -3750,7 +3804,7 @@ class ui_list extends ui_base
      * @param db_object|combine_named|null $dbo the term whose related results should be listed
      * @param user_message $msg to report a problem of reading the config or a symbol
      * @param data_object|null $cfg the request cache with the preloaded results
-     * @param array $url_arr the url parameters of the page, which say whether the ranges are shown
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code of the grouped results or '' if the cache has no result
      */
     function results_related(
@@ -3767,19 +3821,9 @@ class ui_list extends ui_base
             if ($dbo::class == word::class or $dbo::class == triple::class) {
                 $phr_lst->add_phrase($dbo->phrase());
             }
-            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg, $this->range_requested($url_arr));
+            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg, $url_arr);
         }
         return $result;
-    }
-
-    /**
-     * @param array $url_arr the url parameters of the page
-     * @return bool true if the page asks for the range behind each number, false for the numbers only
-     */
-    private function range_requested(array $url_arr): bool
-    {
-        $range = $url_arr[url_var::DISPLAY_LIST_RANGE] ?? url_var::FALSE;
-        return ($range == url_var::TRUE);
     }
 
     /**
@@ -3790,18 +3834,19 @@ class ui_list extends ui_base
      *
      * @param result_list $res_lst the results to show
      * @param phrase_list $phr_lst the phrases assumed by the reader e.g. the phrases of the page
-     * @param bool $with_range true to show the range behind each number, false for the numbers only
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code of the grouped results, '' if the list is empty
      */
     private function result_list_grouped(
         result_list  $res_lst,
         phrase_list  $phr_lst,
         user_message $msg,
-        bool         $with_range = false
+        array        $url_arr = []
     ): string
     {
         $html = new html_base();
-        $result = $res_lst->list_most_relevant($msg, $phr_lst, [], '', $with_range);
+        $with_variance = url_var::show_variance($url_arr);
+        $result = $res_lst->list_most_relevant($msg, $phr_lst, [], '', $with_variance);
         // the same block div as the value list, so that each result stays on one line
         if ($result != '') {
             $result = $html->div($result, view_styles::COL_SM_12);
@@ -3965,7 +4010,7 @@ class ui_list extends ui_base
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
         // no column stays on the page of the problem instead of adding a row here; by default
         // only the mayor columns with the numbers are shown and the "..." header leads to the
-        // full table with every column and the range of each number; a row whose numbers are
+        // full table with every column and the variance of each number; a row whose numbers are
         // all in a column left out is no part of the ranking either, e.g. the reward ratio row
         // of a problem, so the ranking shows the rows with a number only
         return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array,

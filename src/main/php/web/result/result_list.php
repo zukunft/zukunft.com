@@ -315,7 +315,7 @@ class result_list extends sandbox_list_value
      * @param phrase_list $context_phr_lst phrases assumed by the reader and left out of each result line
      * @param array $url_arr the url vars of the calling page for the back link
      * @param string $style to define e.g. the list width
-     * @param bool $with_range true to show the range behind each number, false for the numbers only
+     * @param bool $with_variance true to show the variance behind each number, false for the numbers only
      * @return string the html code of the grouped results (see value_list::list_most_relevant)
      */
     function list_most_relevant(
@@ -323,12 +323,12 @@ class result_list extends sandbox_list_value
         phrase_list  $context_phr_lst = new phrase_list(),
         array        $url_arr = [],
         string       $style = '',
-        bool         $with_range = false
+        bool         $with_variance = false
     ): string
     {
         $val_lst = new value_list();
         $val_lst->set_lst($this->lst());
-        return $val_lst->list_most_relevant($msg, $context_phr_lst, $url_arr, $style, null, $with_range);
+        return $val_lst->list_most_relevant($msg, $context_phr_lst, $url_arr, $style, null, $with_variance);
     }
 
 

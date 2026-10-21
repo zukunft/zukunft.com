@@ -6,7 +6,7 @@
     ----------------------------------------
 
     the "... more" tail raises the rows shown, the "..." header selects the column tiers with
-    or without the ranges and the form of the ranking (table, chart or both); every combination
+    or without the variance and the form of the ranking (table, chart or both); every combination
     that the sub menus offer is rendered from the unit fixtures and compared with a fixed html
     page in src/test/resources/web/html/start_page/, so a change of the ranking is checked fast
     and without a database (see docs/llm/testing.md)
@@ -121,13 +121,13 @@ class start_page_ui_tests
         sort($problems);
         $files = [];
         foreach ($rows as $size) {
-            foreach ($columns as [$tiers, $range]) {
+            foreach ($columns as [$tiers, $variance]) {
                 foreach ($forms as $form) {
-                    $url_array = $this->selection_url($size, $tiers, $range, $form);
+                    $url_array = $this->selection_url($size, $tiers, $variance, $form);
                     $file_name = $this->selection_file($url_array);
                     $page_html = $list->start_list($dto_ui, $msg, $url_array);
                     $t->html_start_page_test($html->text_h2($file_name) . $page_html, $file_name, $msg);
-                    $this->assert_selection($t, $page_html, $file_name, $size, $tiers, $range, $form, $problems, $msg);
+                    $this->assert_selection($t, $page_html, $file_name, $size, $tiers, $variance, $form, $problems, $msg);
                     $files[] = test_paths::RESOURCE . test_paths::HTML . test_paths::START_PAGE . $file_name . test_files::HTML;
                     $msg->reset();
                 }
@@ -141,11 +141,11 @@ class start_page_ui_tests
      *
      * @param int|null $size the rows shown or null for the default
      * @param int|null $tiers the column tiers left out (value_list_ui::COLUMN_TIERS_*) or null for the default
-     * @param string|null $range url_var::TRUE to show the ranges, url_var::FALSE for the numbers only or null for the default
+     * @param string|null $variance url_var::TRUE to show the variance, url_var::FALSE for the numbers only or null for the default
      * @param table_forms|null $form the form of the ranking or null for the table
      * @return array the url vars of the start page with the selections
      */
-    private function selection_url(?int $size, ?int $tiers, ?string $range, ?table_forms $form): array
+    private function selection_url(?int $size, ?int $tiers, ?string $variance, ?table_forms $form): array
     {
         $result = [url_var::MASK => views::START_ID];
         if ($size !== null) {
@@ -153,7 +153,7 @@ class start_page_ui_tests
         }
         if ($tiers !== null) {
             $result[url_var::DISPLAY_LIST_COLUMNS] = $tiers;
-            $result[url_var::DISPLAY_LIST_RANGE] = $range;
+            $result[url_var::DISPLAY_LIST_VARIANCE] = $variance;
         }
         if ($form != null) {
             $result[url_var::DISPLAY_LIST_AS] = $form->value;
@@ -163,7 +163,7 @@ class start_page_ui_tests
 
     /**
      * @param array $url_array the url vars of a selection
-     * @return string the snapshot name, e.g. "start_page_dls_20_dlc_0_dlr_1_dla_chart", so that the
+     * @return string the snapshot name, e.g. "start_page_dls_20_dlc_0_dlv_1_dla_chart", so that the
      *                file of a selection can be found by its url
      */
     private function selection_file(array $url_array): string
@@ -179,14 +179,14 @@ class start_page_ui_tests
 
     /**
      * the checks of one selection that do not depend on the snapshot: the parts that the form
-     * shows, the rows that the size shows, the range and the main columns that are selected
+     * shows, the rows that the size shows, the variance and the main columns that are selected
      *
      * @param test_cleanup $t the test environment
      * @param string $page_html the rendered ranking
      * @param string $file_name the snapshot name, which names the selection in the test name
      * @param int|null $size the rows shown or null for the default
      * @param int|null $tiers the column tiers left out or null for the default
-     * @param string|null $range url_var::TRUE if the ranges are selected
+     * @param string|null $variance url_var::TRUE if the variance is selected
      * @param table_forms|null $form the form of the ranking or null for the table
      * @param array $problems the names of every problem of the ranking, sorted
      * @param user_message $msg the messages of the rendering, which explain a missing table or chart
@@ -197,7 +197,7 @@ class start_page_ui_tests
         string       $file_name,
         ?int         $size,
         ?int         $tiers,
-        ?string      $range,
+        ?string      $variance,
         ?table_forms $form,
         array        $problems,
         user_message $msg
@@ -231,8 +231,8 @@ class start_page_ui_tests
         }
         // the ranges are shown in the table only, the range bars of a chart show them always
         if ($form == null) {
-            $test_name = $file_name . ' shows the range only if selected';
-            $t->assert($test_name, str_contains($page_html, value_list_ui::RANGE_SEP), $range == url_var::TRUE);
+            $test_name = $file_name . ' shows the variance only if selected';
+            $t->assert($test_name, str_contains($page_html, value_list_ui::VARIANCE_SEP), $variance == url_var::TRUE);
             // the reason columns are the main columns, which only the mayor table leaves out
             $test_name = $file_name . ' shows the main columns only if selected';
             $t->assert($test_name, str_contains($page_html, styles::COL_MAIN),

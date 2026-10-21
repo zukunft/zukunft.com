@@ -7,7 +7,7 @@
 
     renders the rows and columns of a table_model (see value_list::table_to_svg) as one of the
     chart types of shared/enum/chart_types.php: the range bars show one number per row with
-    its probability range, the scatter plot places each row by two of its numbers; every row
+    its variance, the scatter plot places each row by two of its numbers; every row
     carries the numbers of all value columns of the table as its tooltip, so the chart tells
     the reader the same as the table
 
@@ -256,7 +256,7 @@ class table_chart
 
     /**
      * one row per table row with a dot for the number of the plotted column and a bar for its
-     * range, in the order of the table or else the biggest number on top (see bar_rows)
+     * variance, in the order of the table or else the biggest number on top (see bar_rows)
      *
      * @param table_model $model the rows and columns of the table
      * @param int|string $col_id the id of the plotted value column
@@ -352,8 +352,8 @@ class table_chart
      * @param table_model $model the rows and columns of the table
      * @param string $row_key the key of the row
      * @param sandbox_value $centre the number shown as the dot
-     * @param sandbox_value|null $low the low bound of the range or null if the number has none
-     * @param sandbox_value|null $high the high bound of the range or null if the number has none
+     * @param sandbox_value|null $low the variance low of the number or null if the number has none
+     * @param sandbox_value|null $high the variance high of the number or null if the number has none
      * @param array $scale the scale of the plot (see scale)
      * @param float $y the top of the row in pixel
      * @param user_message $msg to report a problem while formatting a number
@@ -373,7 +373,7 @@ class table_chart
         $html = new html_base();
         $mid_y = $y + self::BAR_ROW_HEIGHT / 2;
         $x = $this->pos($scale, $centre->number());
-        // a number without a range gets a bar of the width of the dot
+        // a number without a variance gets a bar of the width of the dot
         $x_low = ($low?->number() !== null) ? $this->pos($scale, $low->number()) : $x - self::DOT_RADIUS;
         $x_high = ($high?->number() !== null) ? $this->pos($scale, $high->number()) : $x + self::DOT_RADIUS;
         // not "row" like the reference svg, because the page css of bootstrap gives every child
@@ -853,7 +853,7 @@ class table_chart
 
     /**
      * the tooltip of a row: the phrases of the row and per value column its number with the
-     * unit and the range, e.g. "health" plus "loss: 5.5a trillion EUR (2.2 – 13.75)"
+     * unit and the variance, e.g. "health" plus "loss: 5.5a trillion EUR (2.2 – 13.75)"
      *
      * @param table_model $model the rows and columns of the table
      * @param string $row_key the key of the row
@@ -901,8 +901,8 @@ class table_chart
                 $result .= ' ' . $unit;
             }
             if ($low != null or $high != null) {
-                $result .= value_list::RANGE_START . ($low?->value($msg) ?? '')
-                    . value_list::RANGE_SEP . ($high?->value($msg) ?? '') . value_list::RANGE_END;
+                $result .= value_list::VARIANCE_START . ($low?->value($msg) ?? '')
+                    . value_list::VARIANCE_SEP . ($high?->value($msg) ?? '') . value_list::VARIANCE_END;
             }
         }
         return $result;

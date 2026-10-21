@@ -1573,7 +1573,7 @@ class frontend
         $list_size = $url_array[url_var::DISPLAY_LIST_SIZE] ?? '';
         $list_page = $url_array[url_var::DISPLAY_LIST_PAGE] ?? '';
         $list_cols = $url_array[url_var::DISPLAY_LIST_COLUMNS] ?? '';
-        $list_range = $url_array[url_var::DISPLAY_LIST_RANGE] ?? '';
+        $list_variance = $url_array[url_var::DISPLAY_LIST_VARIANCE] ?? '';
         $list_as = $url_array[url_var::DISPLAY_LIST_AS] ?? '';
         // a request without a view and without an object shows the default start view, so cache it
         // under the start view key so the bare landing page (view.php with no mask) and an explicit
@@ -1590,7 +1590,7 @@ class frontend
         foreach ($url_array as $url_key => $url_val) {
             $is_key_param = in_array($url_key, [url_var::MASK, url_var::ID, url_var::USER_TO_EDIT, url_var::LANGUAGE,
                 url_var::DISPLAY_LIST_SIZE, url_var::DISPLAY_LIST_PAGE,
-                url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_RANGE, url_var::DISPLAY_LIST_AS,
+                url_var::DISPLAY_LIST_COLUMNS, url_var::DISPLAY_LIST_VARIANCE, url_var::DISPLAY_LIST_AS,
                 ...table_orders::URL_VARS,
                 url_var::SESSION_TOKEN, url_var::DEBUG, url_var::NO_CACHE, url_var::USER]);
             $is_show_step = ($url_key == url_var::STEP and $url_val == url_var::STEP_BASE);
@@ -1645,8 +1645,8 @@ class frontend
             if ($list_cols != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_COLUMNS . url_var::EQ . $list_cols;
             }
-            if ($list_range != '') {
-                $result .= url_var::ADD . url_var::DISPLAY_LIST_RANGE . url_var::EQ . $list_range;
+            if ($list_variance != '') {
+                $result .= url_var::ADD . url_var::DISPLAY_LIST_VARIANCE . url_var::EQ . $list_variance;
             }
             if ($list_as != '') {
                 $result .= url_var::ADD . url_var::DISPLAY_LIST_AS . url_var::EQ . $list_as;

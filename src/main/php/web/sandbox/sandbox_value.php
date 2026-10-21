@@ -530,7 +530,7 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * the number as a link without the quality mark, e.g. for a bound of a probability range,
+     * the number as a link without the quality mark, e.g. for a variance bound,
      * which has the quality of its centre value, so that the mark is shown only once behind
      * the centre value (see value_list::cell); not named value_link, because value::value_link
      * links the class name page and would overwrite it

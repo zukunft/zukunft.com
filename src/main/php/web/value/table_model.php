@@ -7,7 +7,7 @@
 
     built once by value_list::table_model from the values and the column definitions, so that
     the html table (value_list::table_by_related_columns) and the svg chart
-    (value_list::table_to_svg) show the same rows, columns, units and ranges
+    (value_list::table_to_svg) show the same rows, columns, units and variance
 
 
     This file is part of zukunft.com - calc with words

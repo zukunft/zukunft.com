@@ -431,7 +431,7 @@ messages:
   table_columns_main: "main"
   table_columns_minor: "minor"
   table_columns_all: "all"
-  table_columns_with_range: "+ range"
+  table_columns_with_variance: "+ variance"
   table_menu_columns: "columns and values"
   table_menu_as: "as"
   table_as_table: "table"

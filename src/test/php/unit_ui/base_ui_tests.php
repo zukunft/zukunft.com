@@ -334,14 +334,14 @@ class base_ui_tests
         $url_array = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_PAGE => 1];
         $t->assert($test_name, $ui->url_cache_key($url_array),
             'm=' . views::START_ID . '&id=0&' . url_var::DISPLAY_LIST_PAGE . '=1');
-        // the full table with every column and the ranges is a view-only state like the list size
+        // the full table with every column and the variance is a view-only state like the list size
         $test_name = 'the full table of the start page is cached under its own key';
         $url_array = [url_var::MASK => views::START_ID,
             url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
-            url_var::DISPLAY_LIST_RANGE => url_var::TRUE];
+            url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE];
         $t->assert($test_name, $ui->url_cache_key($url_array), 'm=' . views::START_ID . '&id=0&'
             . url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL . '&'
-            . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+            . url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE);
         // the order of the rows is a view-only state as well, so each order is cached on its own
         $test_name = 'the sorted table of the start page is cached under its own key';
         $prime_order = table_orders::NUMERIC_ASC->url_value(12);
@@ -358,13 +358,22 @@ class base_ui_tests
         // and the mapping of the page object would report the missing id (see frontend::url_object_values)
         $test_name = 'the list size is a control var';
         $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_SIZE, url_var::CONTROL_VARS));
-        $test_name = '... like the list page, the columns and the ranges';
+        $test_name = '... like the list page, the columns and the variance';
         $t->assert_true($test_name, in_array(url_var::DISPLAY_LIST_PAGE, url_var::CONTROL_VARS)
             and in_array(url_var::DISPLAY_LIST_COLUMNS, url_var::CONTROL_VARS)
-            and in_array(url_var::DISPLAY_LIST_RANGE, url_var::CONTROL_VARS));
+            and in_array(url_var::DISPLAY_LIST_VARIANCE, url_var::CONTROL_VARS));
         $test_name = '... and the three row orders, which the page links repeat as page vars';
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::CONTROL_VARS), []);
         $t->assert($test_name, array_diff(table_orders::URL_VARS, url_var::PAGE_VARS), []);
+        $test_name = 'a url with dlv=1 shows the variance';
+        $variance_on = [url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE];
+        $t->assert_true($test_name, url_var::show_variance($variance_on));
+        $test_name = 'a url with dlv=0 hides the variance although the default shows it';
+        $variance_off = [url_var::DISPLAY_LIST_VARIANCE => url_var::FALSE];
+        $t->assert_false($test_name, url_var::show_variance($variance_off, true));
+        $test_name = 'a url without dlv returns the default';
+        $t->assert_false($test_name, url_var::show_variance([]));
+        $t->assert_true($test_name, url_var::show_variance([], true));
         // e.g. view.php?m=126&1=calculation shows one top level key of the settings and no object
         $test_name = 'the search and the scope of a page are control vars';
         $t->assert_true($test_name, in_array(url_var::PATTERN, url_var::CONTROL_VARS)

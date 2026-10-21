@@ -29,7 +29,9 @@ calculator script, so that the results change as soon as an input changes:
 
 - The page gives the browser its calculation as **data**, never as code
   (`ui_list::calculator_script`, `html_base::script_data`): the numbers by their html
-  id (`sandbox_value::html_id`), the calculation of each result as tokens
+  id (`sandbox_value::html_id`), only those that a result, an input or a cell reads
+  (`ui_list::calculator_used_ids`), so that a value of the request cache that the page
+  does not use never changes the page, the calculation of each result as tokens
   (`formula_calc::tokens`: numbers, `+ - * /`, brackets and the html id of each
   operand, the same operands that the page calculation of PHP uses), the number that
   each input sets and the number and format of each cell. A formula text is never
@@ -535,8 +537,8 @@ highest tier, e.g. `potential gain in EUR can be mayor column (system)` and
 `potential gain in htp can be minor column (system)` (`phrase_list::column_tier`),
 and among units of the same tier the unit that most numbers of the column have,
 so that one bigger number in another unit cannot hide the unit of every other row
-(`value_list::split_by_unit`) — and each cell the number without its probability range; the
-full version shows every tier, every unit and the range behind each number. A
+(`value_list::split_by_unit`) — and each cell the number without its variance; the
+full version shows every tier, every unit and the variance behind each number. A
 further unit of a column states the same measure a second way, so it is a minor
 column at most (`value_list::column_tier`), and it is shown only if it has a
 number in every row of its first unit, e.g. the potential loss of a problem in
@@ -566,20 +568,20 @@ out from the bottom, so it names one entry per tier
 `COLUMN_TIERS_EX_MINOR` (2, "main") → `COLUMN_TIERS_EX_MARGINAL` (1, "minor")
 → `COLUMN_TIERS_ALL` (0, "all"). The entry is named by the tier alone, because
 the menu header says what is selected. Each entry exists twice, once with
-`url_var::DISPLAY_LIST_RANGE` (`dlr`, `display_list_range`) off and once on
-(`msg_id::TABLE_COLUMNS_WITH_RANGE`), so every version of the table is one
+`url_var::DISPLAY_LIST_VARIANCE` (`dlv`, `display_list_variance`) off and once on
+(`msg_id::TABLE_COLUMNS_WITH_VARIANCE`), so every version of the table is one
 click away. Both vars are `url_var::PAGE_VARS` and part of the page cache key,
 so every selection is a cached page of its own like the more version of a list.
 A page that is not known renders the "…" as plain text, the same gap as for the
 list tail.
 
-The grouped value and result lists of the word and triple views
-(`value_list::list_most_relevant`, `columns_by_phrase`) follow the same
-`dlr` switch, but default to off: without `dlr=1` the values tagged
-`variance low (system)` or `variance high (system)` are left out; with it each
-bound is shown behind its centre value in the format of the table cell,
-e.g. `-1.04% (-1.25% – -0.87%)`. A bound without a centre value is shown like a
-value, so that nothing is lost.
+The value and result lists of the word, triple, value, result and source pages
+(`value_list::list`, `list_most_relevant`, `columns_by_phrase`) follow the same
+`dlv` switch (`url_var::show_variance`), but default to off: without `dlv=1` the values
+tagged `variance low (system)` or `variance high (system)` are left out; with it
+each bound is shown behind its centre value in the format of the table cell,
+e.g. `-1.04% (-1.25% – -0.87%)`, and the "… and n more" link keeps `dlv=1`. A
+bound without a centre value is shown like a value, so that nothing is lost.
 
 A tier also says on which screen a column is shown: the css class of
 `value_list::column_style` hides a main column on a small screen
@@ -662,13 +664,13 @@ of the table.
 
 `value_list::table_to_svg` draws the table of `table_by_related_columns` as an
 inline svg. Both build the same `table_model` (`value_list::table_model`: the
-rows, columns, units and ranges before anything is rendered), so a chart never
+rows, columns, units and variance before anything is rendered), so a chart never
 shows a row or a number that the table does not have, and the parameters of the
 chart are the ones of the table. `chart_types` says only how the rows are drawn
 (`web/value/table_chart.php`):
 
 - `RANGE_BARS` — one row per table row, the biggest number on top, with a dot
-  for the number and a bar for its probability range; a log scale is used when
+  for the number and a bar for its variance; a log scale is used when
   the numbers differ by more than `table_chart::LOG_RATIO`, so the small
   problems stay visible beside the big ones.
 - `SCATTER` — one numbered point per table row placed by two numbers of the

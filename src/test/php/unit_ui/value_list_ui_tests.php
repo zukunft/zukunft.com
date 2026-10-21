@@ -248,23 +248,23 @@ class value_list_ui_tests
         $test_name = 'the oldest year group is behind the more tail';
         $t->assert_text_not_contains($test_name, $many_html, word_names::YEAR_2019);
 
-        // the bounds of a range are shown only if the page asks for them (url_var::DISPLAY_LIST_RANGE)
+        // the variance bounds are shown only if the page asks for them (url_var::DISPLAY_LIST_VARIANCE)
         // and then in the format of the start page behind their centre value
-        $test_name = 'without the range the bounds of a grouped list are left out';
-        $mr_plain = $lib->html_to_text($t_val->value_list_range_ui()->list_most_relevant($msg_ui));
+        $test_name = 'without the variance the bounds of a grouped list are left out';
+        $mr_plain = $lib->html_to_text($t_val->value_list_variance_ui()->list_most_relevant($msg_ui));
         $t->assert_text_not_contains($test_name, $mr_plain, triple_names::SYSTEM_VARIANCE_LOW);
         $t->assert_text_not_contains($test_name, $mr_plain, '0.88');
         $test_name = '... but the centre value is shown';
         $t->assert_text_contains($test_name, $mr_plain, '2.2' . sandbox_value_ui::QUALITY_MARK_ASSUMED);
-        $test_name = 'with the range the bounds are shown behind their centre value';
-        $mr_range = $lib->html_to_text($t_val->value_list_range_ui()->list_most_relevant(
-            $msg_ui, with_range: true));
-        $t->assert_text_contains($test_name, $mr_range, ' (0.88 – 5.5)');
+        $test_name = 'with the variance the bounds are shown behind their centre value';
+        $mr_variance = $lib->html_to_text($t_val->value_list_variance_ui()->list_most_relevant(
+            $msg_ui, with_variance: true));
+        $t->assert_text_contains($test_name, $mr_variance, ' (0.88 – 5.5)');
         $test_name = '... and not as values of their own';
-        $t->assert_text_not_contains($test_name, $mr_range, triple_names::SYSTEM_VARIANCE_HIGH);
+        $t->assert_text_not_contains($test_name, $mr_variance, triple_names::SYSTEM_VARIANCE_HIGH);
         $test_name = 'a bound without its centre value is shown like a value';
         $mr_bounds = $lib->html_to_text($t_val->value_list_bounds_only_ui()->list_most_relevant(
-            $msg_ui, with_range: true));
+            $msg_ui, with_variance: true));
         $t->assert_text_contains($test_name, $mr_bounds, triple_names::SYSTEM_VARIANCE_LOW);
         $t->assert_text_not_contains($test_name, $mr_bounds, ' (0.88');
 
@@ -284,13 +284,13 @@ class value_list_ui_tests
             substr_count($col_html, 'class="col"') <= position_types::MAX_SIDE_COLUMNS);
         $test_name = 'the columns of an empty value list render nothing';
         $t->assert($test_name, new value_list_ui()->columns_by_phrase($msg_ui), '');
-        $test_name = 'without the range the value columns leave out the bounds';
-        $col_plain = $lib->html_to_text($t_val->value_list_range_ui()->columns_by_phrase($msg_ui));
+        $test_name = 'without the variance the value columns leave out the bounds';
+        $col_plain = $lib->html_to_text($t_val->value_list_variance_ui()->columns_by_phrase($msg_ui));
         $t->assert_text_not_contains($test_name, $col_plain, '0.88');
-        $test_name = 'with the range the value columns show the bounds behind their centre value';
-        $col_range = $lib->html_to_text($t_val->value_list_range_ui()->columns_by_phrase(
-            $msg_ui, with_range: true));
-        $t->assert_text_contains($test_name, $col_range, ' (0.88 – 5.5)');
+        $test_name = 'with the variance the value columns show the bounds behind their centre value';
+        $col_variance = $lib->html_to_text($t_val->value_list_variance_ui()->columns_by_phrase(
+            $msg_ui, with_variance: true));
+        $t->assert_text_contains($test_name, $col_variance, ' (0.88 – 5.5)');
 
         $t->subheader($ts . 'table with related columns');
         // the row limit is checked below, so the column checks ask for every row; else the value
@@ -338,55 +338,55 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $tbl_cut,
             '<th>' . msg_id::FORM_SUB_TITLE_VALUES->text() . '</th>');
 
-        // a value tagged "low" or "high" is a bound of the probability range of the value with
+        // a value tagged "low" or "high" is a bound of the variance of the value with
         // the same phrases, so it is shown behind that centre value instead of in a row of its
         // own, and the qualifier "assumed" names no row either, so the problem keeps one row
         // (see the view-validation of solution_prio.json)
-        $tbl_range = $t_val->value_list_range_ui()->table_by_related_columns($msg_ui);
+        $tbl_variance = $t_val->value_list_variance_ui()->table_by_related_columns($msg_ui);
         // the values are assumed, so the centre value is followed by the "a" mark, which the
         // bounds share with it and do not repeat (see sandbox_value::quality_mark)
         $centre_txt = '2.2' . sandbox_value_ui::QUALITY_MARK_ASSUMED;
-        $test_name = 'the range bounds are shown behind their centre value';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), $centre_txt . ' (0.88 – 5.5)');
+        $test_name = 'the variance bounds are shown behind their centre value';
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_variance), $centre_txt . ' (0.88 – 5.5)');
         // the four loss values (centre, both bounds and the confidence) share one row; the gain
         // is carried by one value only, so it heads no column and names a row of its own, which
         // is the header row plus two rows
         $test_name = '... so the bounds and the qualifier name no row of their own';
-        $t->assert($test_name, substr_count($tbl_range, '<' . html_base::TR . '>'), 3);
+        $t->assert($test_name, substr_count($tbl_variance, '<' . html_base::TR . '>'), 3);
         $test_name = '... and a value without a source is followed by the "-" mark';
-        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_range), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
+        $t->assert_text_contains($test_name, $lib->html_to_text($tbl_variance), '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
         $test_name = '... and a value without bounds is shown without brackets';
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range),
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_variance),
             '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ' (');
         // a simple table shows the numbers only and the "..." header links to the same page with
-        // the ranges switched on, which wins over the default of the caller
-        $tbl_plain = $t_val->value_list_range_ui()->table_by_related_columns(
+        // the variance switched on, which wins over the default of the caller
+        $tbl_plain = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
             [url_var::MASK => views::START_ID], false, value_list_ui::COLUMN_TIERS_ALL, false);
-        $test_name = 'without the range the centre value is shown alone';
+        $test_name = 'without the variance the centre value is shown alone';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_plain), '2.2');
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), $centre_txt . ' (');
-        $test_name = '... and the "..." header links to the page with the ranges';
-        $t->assert_text_contains($test_name, $tbl_plain, url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
-        $tbl_url = $t_val->value_list_range_ui()->table_by_related_columns(
+        $test_name = '... and the "..." header links to the page with the variance';
+        $t->assert_text_contains($test_name, $tbl_plain, url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE);
+        $tbl_url = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
-            [url_var::DISPLAY_LIST_RANGE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
-        $test_name = 'the url switches the range on although the caller has switched it off';
+            [url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
+        $test_name = 'the url switches the variance on although the caller has switched it off';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_url), $centre_txt . ' (0.88 – 5.5)');
         $test_name = 'the estimate qualifier of a value is the tooltip of its cell';
-        $t->assert_text_contains($test_name, $tbl_range, 'title="' . word_names::ASSUMED . ', ');
+        $t->assert_text_contains($test_name, $tbl_variance, 'title="' . word_names::ASSUMED . ', ');
         // a value tagged "confidence" says how sure the value with the same subject is, so it is
         // the tooltip of that value and no value or row of its own
         $test_name = 'the confidence of a value is the tooltip of its cell';
-        $t->assert_text_contains($test_name, $tbl_range, word_names::CONFIDENCE . ' ');
+        $t->assert_text_contains($test_name, $tbl_variance, word_names::CONFIDENCE . ' ');
         $test_name = '... and not a value of the cell';
-        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_range), '5.5), ');
+        $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_variance), '5.5), ');
         // the confidence is a share, so its unit differs from the unit of the loss, but it still
         // follows the loss instead of opening a column of its own unit
         $unit_sep = ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ';
         $test_name = '... nor a column of its own unit';
         $t->assert($test_name, substr_count(
-            $lib->html_to_text($lib->str_left_of($tbl_range, '</tr>')), word_names::LOSS . $unit_sep), 1);
+            $lib->html_to_text($lib->str_left_of($tbl_variance, '</tr>')), word_names::LOSS . $unit_sep), 1);
 
         // a confidence value often names less than the value it qualifies, e.g. the confidence of
         // the loss of a problem qualifies the loss of the solution of that problem, which names
@@ -526,7 +526,7 @@ class value_list_ui_tests
         // carry, e.g. "potential loss" for the values with "potential" and "loss"; it takes those
         // values before the column of one of its parts, because it names more of their phrases
         $rel_lst = $t_phr->list_columns_potential_loss_ui();
-        $tbl_parts = $t_val->value_list_range_ui()->table_by_related_columns(
+        $tbl_parts = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $hdr_parts = $lib->html_to_text($lib->str_left_of($tbl_parts, '</tr>'));
         $test_name = 'a column of two phrases takes the values that carry both';
@@ -537,7 +537,7 @@ class value_list_ui_tests
         // negative: without the column of the two phrases the values stay in the column of the
         // one phrase they carry
         $rel_lst = $t_phr->list_columns_loss_ui();
-        $tbl_one = $t_val->value_list_range_ui()->table_by_related_columns(
+        $tbl_one = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $hdr_one = $lib->html_to_text($lib->str_left_of($tbl_one, '</tr>'));
         $test_name = 'without the column of two phrases the column of the one phrase is used';
@@ -742,7 +742,7 @@ class value_list_ui_tests
             '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
 
         // the "..." header opens the menu that selects the columns, so it offers every column
-        // tier and each of them once with and once without the ranges
+        // tier and each of them once with and once without the variance
         $page_url = [url_var::MASK => views::START_ID];
         $tbl_menu = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
@@ -754,17 +754,17 @@ class value_list_ui_tests
         foreach (value_list_ui::COLUMN_TIER_NAMES as $tiers => $msg_tier) {
             $test_name = 'the column menu offers ' . $msg_tier->text();
             $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu), $msg_tier->text());
-            // the entry of one tier without and the entry with the range of each number
+            // the entry of one tier without and the entry with the variance of each number
             $t->assert_text_contains($test_name, $tbl_menu,
                 url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
-                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::FALSE);
+                . url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::FALSE);
             $t->assert_text_contains($test_name, $tbl_menu,
                 url_var::DISPLAY_LIST_COLUMNS . '=' . $tiers . '&amp;'
-                . url_var::DISPLAY_LIST_RANGE . '=' . url_var::TRUE);
+                . url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE);
         }
-        $test_name = '... and names the entry with the range';
+        $test_name = '... and names the entry with the variance';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu),
-            msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_RANGE->text());
+            msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_VARIANCE->text());
         // the menu selects the columns and the form of the table, each below its own sub header
         $test_name = 'the menu tooltip names the columns and the form';
         $t->assert_text_contains($test_name, $tbl_menu, 'title="' . msg_id::TABLE_COLUMNS_TIP->text() . '"');
@@ -1097,6 +1097,22 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $tail_plain, url_var::MASK . '=' . views::PHRASE_VALUES_ID);
         $test_name = 'without a page phrase the more count is still shown';
         $t->assert_text_contains($test_name, $tail_plain, msg_id::MORE->text());
+        $variance_par = url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE;
+        $test_name = 'the more tail of a list without the variance does not ask for it';
+        $t->assert_text_not_contains($test_name, $tail_html, $variance_par);
+        $test_name = 'the more tail of a list with the variance opens the next version with the variance';
+        $tail_variance = $t_val->list_all_ui($msg)->list($msg_ui, $phr_lst_context_ui, [], '', 1, null, true);
+        $t->assert_text_contains($test_name, $tail_variance, $variance_par);
+        $test_name = '... and the more tail of a grouped list too';
+        $tail_grouped = $t_val->list_all_ui($msg)->list_most_relevant(
+            $msg_ui, $phr_lst_context_ui, limit: 1, with_variance: true);
+        $t->assert_text_contains($test_name, $tail_grouped, $variance_par);
+        $test_name = 'without the variance the plain list leaves out the bounds';
+        $lst_plain = $lib->html_to_text($t_val->value_list_variance_ui()->list($msg_ui));
+        $t->assert_text_not_contains($test_name, $lst_plain, '0.88');
+        $test_name = 'with the variance the plain list shows the bounds behind their centre value';
+        $lst_variance = $lib->html_to_text($t_val->value_list_variance_ui()->list($msg_ui, with_variance: true));
+        $t->assert_text_contains($test_name, $lst_variance, ' (0.88 – 5.5)');
 
         // the tail tells the user that the list is shortened, so it must be the last entry
         // and it must only be there if the list really does not show every value
@@ -1122,12 +1138,12 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $svg_bars, triple_names::GLOBAL_WARMING, word_names::POPULISM);
         $test_name = '... and the solution of the problem in the tooltip';
         $t->assert_text_contains($test_name, $svg_bars, triple_names::REDUCE_EMISSIONS);
-        // the range of a number is the bar behind the dot and the bounds are named in the
+        // the variance of a number is the bar behind the dot and the bounds are named in the
         // tooltip like in the table cell, with the assumed mark behind the centre number
-        $svg_range = $t_val->value_list_range_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui);
-        $test_name = 'the range bounds are named in the tooltip like in the table';
+        $svg_range = $t_val->value_list_variance_ui()->table_to_svg(chart_types::RANGE_BARS, $msg_ui);
+        $test_name = 'the variance bounds are named in the tooltip like in the table';
         $t->assert_text_contains($test_name, $svg_range, $centre_txt . ' ' . word_names::TRILLION . ' '
-            . word_names::EUR . value_list_ui::RANGE_START . '0.88' . value_list_ui::RANGE_SEP . '5.5' . value_list_ui::RANGE_END);
+            . word_names::EUR . value_list_ui::VARIANCE_START . '0.88' . value_list_ui::VARIANCE_SEP . '5.5' . value_list_ui::VARIANCE_END);
         $test_name = '... and drawn as the bar of the row';
         $t->assert($test_name, substr_count($svg_range, 'class="rng"'), 1);
         $test_name = 'the ranking is drawn as a scatter plot of the gain against the loss';
@@ -1143,7 +1159,7 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $svg_points,
             word_names::GAIN . ' ' . msg_id::CHART_VERSUS->text() . ' ' . word_names::LOSS);
         // negative: a column that the table does not have is reported instead of plotting another
-        $svg_none = $t_val->value_list_range_ui()->table_to_svg(
+        $svg_none = $t_val->value_list_variance_ui()->table_to_svg(
             chart_types::RANGE_BARS, $msg_ui, chart_cols: [word_names::PI]);
         $test_name = 'a column that the table does not have draws no chart';
         $t->assert($test_name, $svg_none, '');

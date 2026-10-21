@@ -756,6 +756,17 @@ class use_case_ui_tests
         $test_name = '... the value of each number field';
         $t->assert($test_name, $plan[ui_list::CALC_INPUTS][$inh_name],
             $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->html_id());
+        // negative: the browser reads only the numbers that a result, an input or a cell uses, so a
+        // value of the request cache that the page does not use e.g. a value of a related phrase
+        // that another test has added is not written into the page and the page does not change
+        $unused_val = $t_val->value_ch_ui();
+        $js_lst->add($unused_val, $msg);
+        $unused_script = $js_list->calculator_script($js_calc, $wrd, $js_lst, $dto_res, $msg);
+        $unused_plan = json_decode($lib->str_left_of($lib->str_right_of($unused_script, ui_list::CALC_DATA_ID . '">'), '</script>'), true);
+        $test_name = '... but not a number that no result, input or cell uses';
+        $t->assert_false($test_name, array_key_exists($unused_val->html_id(), $unused_plan[ui_list::CALC_NUMBERS]));
+        $test_name = '... while the numbers that the page uses stay';
+        $t->assert($test_name, (string)$unused_plan[ui_list::CALC_NUMBERS][$canton_key], (string)values::SAMPLE_INT);
         $test_name = '... and the script that repeats the calculation behind the data';
         $t->assert_text_contains($test_name, $script, '<script src="' . files::CALCULATOR_SCRIPT . '"></script>');
         // config.yaml allows javascript for the calculator, so also a pod without the config value

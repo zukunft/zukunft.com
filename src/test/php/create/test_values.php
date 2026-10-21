@@ -692,6 +692,16 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_ui the inhabitants of Switzerland for frontend unit testing e.g. as a value
+     *                  of the request cache that a calculator page does not use
+     */
+    function value_ch_ui(): value_ui
+    {
+        $tl = new test_lib();
+        return $tl->ui_value($this->value_ch());
+    }
+
+    /**
      * @return value with the inhabitants of Switzerland
      *               but with "million" missing the scaling type to test the scaling type check
      */
@@ -1097,13 +1107,13 @@ class test_values extends test_objects
     }
 
     /**
-     * the ranking values with the loss of the reason, the range of the loss of the first problem
+     * the ranking values with the loss of the reason, the variance of the loss of the first problem
      * and per problem a number in each minor and marginal column, so that every selection of the
      * start page sub menus shows its own columns: the main tier the reason columns, the minor
      * tier the loss in percent of the GDP and of the htp, the initial effort and the loss
-     * reduction, the full table the reward ratio, and the range selection the bounds
+     * reduction, the full table the reward ratio, and the variance selection the bounds
      *
-     * @return value_list the ranking values plus the numbers of every column tier and the range bounds
+     * @return value_list the ranking values plus the numbers of every column tier and the variance bounds
      */
     function value_list_start_page(): value_list
     {
@@ -1229,15 +1239,15 @@ class test_values extends test_objects
     }
 
     /**
-     * the potential loss of global warming with the bounds of its probability range and its
+     * the potential loss of global warming with the bounds of its variance and its
      * confidence and the potential gain of its solution without bounds, with the numbers of
-     * solution_prio.json, so that the range display of a value table can be tested: the bounds
+     * solution_prio.json, so that the variance display of a value table can be tested: the bounds
      * are tagged "low" and "high", the confidence "confidence" and the loss is an estimate, so
      * it carries "assumed"
      *
      * @return value_list the centre, low and high potential loss, its confidence and the gain
      */
-    function value_list_range(): value_list
+    function value_list_variance(): value_list
     {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
@@ -1302,16 +1312,16 @@ class test_values extends test_objects
     }
 
     /**
-     * @return value_list_ui the potential loss with its range for frontend unit testing
+     * @return value_list_ui the potential loss with its variance for frontend unit testing
      */
-    function value_list_range_ui(): value_list_ui
+    function value_list_variance_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_range(), [api_types::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list_variance(), [api_types::INCL_PHRASES]);
     }
 
     /**
-     * the low and high potential loss of value_list_range without their centre value, so that
+     * the low and high potential loss of value_list_variance without their centre value, so that
      * a list can be tested that has bounds without a centre to show them behind
      *
      * @return value_list_ui the two bounds of the potential loss for frontend unit testing
@@ -1320,12 +1330,21 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         $lst = new value_list($this->env->usr1);
-        foreach ($this->value_list_range()->lst() as $val) {
-            if (array_intersect($val->grp()->phrase_list()->names(), triples::VARIANCE_BOUNDS) != []) {
+        foreach ($this->value_list_variance()->lst() as $val) {
+            if ($this->is_variance_bound($val)) {
                 $lst->add($val);
             }
         }
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param value $val the value to check
+     * @return bool true if the value is tagged as the low or high bound of a variance
+     */
+    private function is_variance_bound(value $val): bool
+    {
+        return array_intersect($val->grp()->phrase_list()->names(), triples::VARIANCE_BOUNDS) != [];
     }
 
     /**
