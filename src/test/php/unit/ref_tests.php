@@ -228,8 +228,8 @@ class ref_tests
         $t->assert($test_name, $form->show_ref_url($ref_plain), $t->labeled(msg_id::FORM_FIELD_URL, ''));
         $test_name = 'a ref without a source shows only the source label';
         $t->assert($test_name, $form->show_ref_source($ref_plain), $t->labeled(msg_id::FORM_SELECT_SOURCE, ''));
-        $ref_empty = new ref_ui();
         $test_name = 'a new ref shows only the phrase label';
+        $ref_empty = new ref_ui();
         $t->assert($test_name, $form->show_ref_phrase($ref_empty), $t->labeled(msg_id::FORM_SELECT_PHRASE, ''));
         $test_name = 'a new ref shows only the reference type label';
         $t->assert($test_name, $form->show_ref_type($ref_empty), $t->labeled(msg_id::FORM_SELECT_REF_TYPE, ''));

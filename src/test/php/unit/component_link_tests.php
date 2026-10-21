@@ -153,9 +153,8 @@ class component_link_tests
         $lnk_plain_ui = new component_link_ui($t_cmp->component_link()->api_json());
         // every test fixture has a position type, so it is removed for the test
         $lnk_plain_ui->pos_type_id = null;
-        $t->assert_text_contains($test_name,
-            $form->form_component_pos_type($lnk_plain_ui, views::COMPONENT_LINK_ADD, $ui_sys->typ_lst_cache),
-            '<option value="0" selected>');
+        $pos_plain_html = $form->form_component_pos_type($lnk_plain_ui, views::COMPONENT_LINK_ADD, $ui_sys->typ_lst_cache);
+        $t->assert_text_contains($test_name, $pos_plain_html, '<option value="0" selected>');
 
     }
 

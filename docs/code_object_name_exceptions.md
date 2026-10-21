@@ -106,6 +106,7 @@ change_values_time_norm: $chg, $log
 change_values_time_prime: $chg, $log
 changes_big: $chg, $log, $log_named
 changes_norm: $chg, $log, $log_named
+code_test_coverage: $cov
 coding_rule_tests: $t_code
 component_exe: $cmp, $cmp_all, $cmp_as, $cmp_city, $cmp_lnk_ui, $cmp_lnk_url_ui, $cmp_map_ui, $cmp_no_frm_ui, $cmp_own, $cmp_tbl, $cmp_ui, $cmp_zero_ui, $dbo_ui
 component_link: $cmp_lnk, $cmp_lnk_ui, $dbo, $dbo_ui, $lnk, $lnk_new, $lnk_plain_ui, $lnk_tab, $lnk_ui, $lnk_url, $new_lnk, $obj, $vcl

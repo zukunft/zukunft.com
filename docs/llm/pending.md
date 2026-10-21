@@ -9,10 +9,11 @@ goal: every public function of `docs/code_test_coverage.md` has at least two uni
 `bin/code_test_coverage.php` and is never edited by hand, so each step below changes the tests
 (or the counter) and the developer regenerates the report to see the gap shrink
 
-starting point: 792 of 6196 public functions are covered; of the 5404 gaps 2215 are in the
-main backend, 968 in the frontend and 157 in shared, 521 functions have one call (only the
-negative test is missing), and 211 of the uncovered functions with a name of their own are
-called nowhere in `src/main/php`, `src/test/php` or `http/`
+starting point: 811 of 6200 public functions are covered; of the 5389 gaps 3566 are in the
+main backend, 1609 in the frontend and 214 in shared, 508 functions have one call (only the
+negative test is missing; 142 of them have a name of their own), and the functions that no
+code calls are listed in the section "never called" at the end of the report, for the
+developer to decide per function whether it is removed or kept
 
 rules for every step:
 - one class (or one shared function name) per prompt, so that each diff stays reviewable
@@ -30,34 +31,32 @@ rules for every step:
   cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
 - the LLM never runs the tests; the developer runs them and regenerates the report
 
-1. list the functions that nothing calls: the 211 never-called functions go to a new section at the end of
-   `docs/code_test_coverage.md` grouped by class, for the developer to decide per function
-   whether it is removed or kept; a function that is called by name (a callable, a property
-   hook, a `$var->$name()` call) is marked as such, because a text search does not find it
-2. add the missing negative test of the 521 functions with one call, class by class, starting
-   with the classes that have most of them; this is the cheapest step, because the positive
-   test and its fixture exist already
-3. cover the functions that many classes share, in the order of the number of classes:
+1. add the missing negative test of the 508 functions with one call, class by class, starting
+   with the classes that have most of them (`html_base` 12, `ui_list` 11, `system_page` 9,
+   `phrase_list` 5); this is the cheapest step, because the positive test and its fixture
+   exist already; the tested call sits before the assert line, because a call on the line
+   after a multi-line `$t->assert…(` is behind the last assert of the block and not counted
+2. cover the functions that many classes share, in the order of the number of classes:
    `api_mapper` (104 classes), `reset` (67), `api_json_array` (61), `export_json` (49),
    `add` (47), `dsp_id` and `default_id` (46), `load_sql` (45), `db_fields_changed` (44),
    `db_fields_all` (43), `import_mapper` and `load_dummy` (38, 37), `name_field` (36),
    `fill` (36), `delta` (32); one prompt per function name, which adds one positive and one
    negative block per class to the test file of that class
-4. cover the classes without database and frontend first, because their tests are fast and
+3. cover the classes without database and frontend first, because their tests are fast and
    need no fixture: `library` (104 gaps), `html_base` (139), `sql_creator` (85),
-   `sql_type_list` (51), then the frontend forms and lists (`system_form` 104, `db_object` 68,
+   `sql_type_list` (51), then the frontend forms and lists (`system_form` 89, `db_object` 68,
    `phrase_list` 57, `triple` 53, `phrase` 52)
-5. cover the backend model classes with the unit test factories (no database): `sandbox`
+4. cover the backend model classes with the unit test factories (no database): `sandbox`
    (142), `sandbox_multi` (132), `phrase_list` (102), `triple` (100), `user` (99), `phrase`
    (85), `word` (77), `sandbox_value` (77), `group` (75), `sandbox_link` (73), `ref` (64),
    `component` (62), `value_base` (61), `formula_map` (61), `data_object` (61)
-6. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (132)
-   and the `load_*` functions that are left after step 3
-7. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
+5. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (132)
+   and the `load_*` functions that are left after step 2
+6. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
    `application` (`start`, `start_api`, `open_db`, `end`): either a test of the request
    lifecycle covers them, or the counter gets a named exception list with the reason per
    function, which `docs/llm/testing.md` documents and which must stay short
-8. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
+7. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
    with a const in `src/test/php/const/` and fails if it drops, so a new function without
    tests is reported at once; the const is raised after each step
 
