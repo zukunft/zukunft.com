@@ -334,6 +334,21 @@ class result_ui_tests
         $test_name = '... shows the result with its default view';
         $res_back = $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::RESULT_ID);
         $t->assert_text_contains($test_name, $res_html, $res_back);
+
+        $t->subheader($ts . 'api mapper');
+        // a formula id without the nested formula is enough to link the formula
+        $test_name = 'the formula id of the api json is the formula of the result';
+        $res_json = json_decode($t_res->result_simple()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]), true);
+        $res_json[json_fields::FORMULA_ID] = formula_names::SCALE_TO_SEC_ID;
+        $res = new result();
+        $res->api_mapper($res_json, $msg);
+        $t->assert($test_name, $res->frm?->id(), formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+        $test_name = 'the mapper reports a result without id';
+        unset($res_json[json_fields::ID]);
+        $res = new result();
+        $t->assert_false($test_name, $res->api_mapper($res_json, $msg));
+        $msg->reset();
     }
 
 }

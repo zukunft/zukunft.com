@@ -460,6 +460,35 @@ class user_tests
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_STATUS));
 
 
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the user mapper sets the name';
+        $json_usr = new user();
+        $json_usr->api_mapper(json_decode($t_usr->user_sys_normal()->api_json(), true), $msg);
+        $t->assert($test_name, $json_usr->name(), users::SYSTEM_TEST_NORMAL_NAME);
+        $msg->reset();
+
+        // negative: the profile is a critical field, so a json without it never keeps a higher profile
+        $test_name = 'the user mapper sets the normal profile if the json has none';
+        $api_json = json_decode($t_usr->user_sys_admin()->api_json(), true);
+        unset($api_json[json_fields::PROFILE_ID]);
+        $json_usr = new user();
+        $json_usr->api_mapper($api_json, $msg);
+        $t->assert($test_name, $json_usr->profile_id, user_profiles::NORMAL_ID);
+        $msg->reset();
+
+        $test_name = 'the message mapper sets the user';
+        $map_msg = new user_message();
+        $map_msg->api_mapper([json_fields::USER => json_decode($t->usr1->api_json(), true)]);
+        $t->assert($test_name, $map_msg->usr?->name(), $t->usr1->name());
+
+        // negative: a json without a user leaves the message without a user
+        $test_name = 'the message mapper leaves a missing user empty';
+        $map_msg = new user_message();
+        $map_msg->api_mapper([]);
+        $t->assert_null($test_name, $map_msg->usr?->name());
+
+
         $t->subheader($ts . 'last used ip saved on login');
 
         // a logged in user connecting from a new ip must get its last used ip updated in the user

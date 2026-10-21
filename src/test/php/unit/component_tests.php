@@ -281,6 +281,21 @@ class component_tests
         $title = $page->title_for_phrase(msg_id::SYSTEM_TITLE_TABLE_EDITOR);
         $t->assert_text_not_contains($test_name, $title, $mtr->txt(msg_id::FOR));
 
+        $t->subheader($ts . 'component api mapper');
+
+        // the frontend sends the component as api json, so the mapper must take the name of it
+        $test_name = 'the api mapper sets the name of a component';
+        $msg = new user_message($t->usr1);
+        $cmp_map = new component($t->usr1);
+        $cmp_map->api_mapper($t_cmp->component()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $cmp_map->name(), components::WORD_NAME);
+
+        // the ui message links a component to a system message, so a normal user must not set it
+        $test_name = 'the api mapper refuses the ui message code id of a normal user';
+        $usr_msg_map = new user_message($t->usr_normal);
+        $t->assert_false($test_name, $cmp_map->api_mapper([json_fields::ID => components::WORD_ID, json_fields::UI_MSG_CODE_ID => msg_id::PLEASE_SELECT->value], $usr_msg_map));
+        $usr_msg_map->reset();
+
         $t->subheader($ts . 'component frontend');
         $t->assert_api_to_ui($cmp, new component_ui());
 

@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -81,6 +82,19 @@ class word_list_ui_tests
         $test_page .= $html->form(views::WORD_LIST, $from_rows);
 
         $t->html_page_test($test_page, '', 'word_list', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'api mapper');
+
+        // each word of the api json is added to the list
+        $test_name = 'the api mapper adds the words of the api json';
+        $wrd_lst_map = new word_list_ui();
+        $wrd_lst_map->api_mapper(json_decode($t_wrd->word_list_short()->api_json(), true));
+        $t->assert($test_name, $wrd_lst_map->count(), $t_wrd->word_list_short()->count());
+
+        // the id is mandatory, so a word of the api json without the id is reported
+        $test_name = 'the api mapper reports a word without the id';
+        $wrd_lst_map = new word_list_ui();
+        $t->assert_false($test_name, $wrd_lst_map->api_mapper([[json_fields::NAME => word_names::MATH]])->is_ok());
     }
 
 }

@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
@@ -113,6 +114,19 @@ class reference_ui_tests
         $t->assert($test_name, $ref_new->phrase()->id(), 0);
         $test_name = 'the phrase of a linked reference is the linked phrase';
         $t->assert_true($test_name, $ref->phrase()->id() != 0);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend reference takes the external key of the api message
+        $test_name = 'the api mapper sets the external key of a reference';
+        $ref_map = new ref();
+        $ref_map->api_mapper(json_decode($t_ref->reference()->api_json(), true), $msg);
+        $t->assert($test_name, $ref_map->external_key(), refs::PI_KEY);
+
+        // the id is mandatory, because without it a save would add a new reference
+        $test_name = 'a reference json without an id is refused';
+        $t->assert_false($test_name, $ref_map->api_mapper([json_fields::EXTERNAL_KEY => refs::PI_KEY], $msg));
+        $msg->reset();
 
         $t->subheader($ts . 'source select');
 

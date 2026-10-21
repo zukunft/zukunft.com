@@ -56,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
@@ -90,7 +91,7 @@ class result_tests
 
     function run(test_cleanup $t): void
     {
-
+        global $sys;
 
         // init
         $msg = new user_message();
@@ -205,6 +206,32 @@ class result_tests
         $t->subheader($ts . 'result base object handling');
         $res = $t_res->result_main_filled();
         $t->assert_reset($res);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the number of the api json is the number of the result';
+        $res = new result($t->usr1);
+        $res->api_mapper($t_res->result_simple()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $res->number(), results::TV_INT);
+        $msg->reset();
+        $test_name = 'a text as the number of a result is refused';
+        $res_json = $t_res->result_simple_1()->api_json_array([], $msg);
+        $res_json[json_fields::NUMBER] = word_names::MATH;
+        $res = new result($t->usr1);
+        $t->assert_false($test_name, $res->api_mapper($res_json, $msg));
+        $msg->reset();
+        // the sandbox part maps the share type that all values and results have
+        $test_name = 'the sandbox value part of the mapper sets the share type of the result';
+        $shr_id = $sys->typ_lst->shr_typ->id(share_types::GROUP);
+        $res_json = $t_res->result_simple_1()->api_json_array([], $msg);
+        $res_json[json_fields::SHARE] = $shr_id;
+        $res = new result($t->usr1);
+        $res->api_mapper($res_json, $msg);
+        $t->assert($test_name, $res->share_id(), $shr_id);
+        $msg->reset();
+        $test_name = 'the sandbox value part of the mapper clears the share type of a former mapping';
+        $res->api_mapper($t_res->result_simple_1()->api_json_array([], $msg), $msg);
+        $t->assert_null($test_name, $res->share_id());
+        $msg->reset();
 
         // the result table must always fit the source group, because the source_group_id column
         // of the prime and main tables is a bigint, of the standard table char(112) and of the

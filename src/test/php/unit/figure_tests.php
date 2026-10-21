@@ -33,6 +33,7 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\results;
@@ -122,6 +123,20 @@ class figure_tests
         $fig = $t_fig->figure_result();
         $t->assert_api($fig, 'figure_result_without_phrases');
         $t->assert_api($fig, 'figure_result_with_phrases', [api_types::INCL_PHRASES]);
+
+        $t->subheader($ts . 'api mapper');
+        // a positive id is the id of a value
+        $test_name = 'the api json of a value figure is mapped to the value';
+        $fig = new figure($t->usr1);
+        $fig->api_mapper($t_fig->figure_value($msg)->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $fig->obj_id(), values::PI_SYMBOL_ID);
+        $msg->reset();
+        $test_name = 'a value figure with a text as the number is refused';
+        $fig_json = $t_fig->figure_value($msg)->api_json_array([], $msg);
+        $fig_json[json_fields::NUMBER] = values::TEXT;
+        $fig = new figure($t->usr1);
+        $t->assert_false($test_name, $fig->api_mapper($fig_json, $msg));
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

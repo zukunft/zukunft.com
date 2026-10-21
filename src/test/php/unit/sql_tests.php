@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
@@ -54,9 +55,11 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -70,6 +73,7 @@ class sql_tests
 
         // init
         $sc = new sql_creator();
+        $msg = new user_message();
         $t->name = 'sql->';
 
 
@@ -226,6 +230,21 @@ class sql_tests
         $t->assert_text_contains($test_name, $mysql_like, phrase::FLD_NAME . ' ' . sql::LIKE_LOWER_CASE . ' ?');
         $test_name = ' ... without the postgres ILIKE';
         $t->assert_text_not_contains($test_name, $mysql_like, sql::LIKE_NO_UP_CASE);
+
+        $t->subheader($ts . 'message api mapper');
+
+        $test_name = 'the sql message mapper sets the user';
+        $sql_msg = new sql_message();
+        $sql_msg->api_mapper([json_fields::USER => json_decode($t->usr1->api_json(), true)], $msg);
+        $t->assert($test_name, $sql_msg->usr?->name(), $t->usr1->name());
+        $msg->reset();
+
+        // negative: a json without a user leaves the sql message without a user
+        $test_name = 'the sql message mapper leaves a missing user empty';
+        $sql_msg = new sql_message();
+        $sql_msg->api_mapper([], $msg);
+        $t->assert_null($test_name, $sql_msg->usr?->name());
+        $msg->reset();
 
     }
 

@@ -776,11 +776,10 @@ class use_case_ui_tests
         $msg->reset();
         // negative: a phrase without calculator triples has no table, and an offline page without values no numbers
         $test_name = 'a calculator without columns and rows shows no table';
-        $calc_list = new ui_list();
         $calc_empty = new calculator($wrd->phrase(), new phrase_list_ui());
-        $t->assert($test_name, $calc_list->calculation_table($calc_empty, $wrd, new value_list_ui(), $msg), '');
+        $t->assert($test_name, $list->calculation_table($calc_empty, $wrd, new value_list_ui(), $msg), '');
         $test_name = 'an offline page without values has no calculator numbers';
-        $t->assert($test_name, $calc_list->calculator_numbers($wrd, $dto_off, $msg)->count(), 0);
+        $t->assert($test_name, $list->calculator_numbers($wrd, $dto_off, $msg)->count(), 0);
         $msg->reset();
         // with javascript for the calculator the page gets its calculation as data and the script
         // that repeats it in the browser when an input changes (docs/llm/frontend.md)

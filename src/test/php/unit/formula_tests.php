@@ -151,6 +151,17 @@ class formula_tests
         $t->assert_api_json($frm);
         $frm->include();
         $t->assert_api($frm, 'formula_body');
+        $test_name = 'the latex of the api json is the latex of the formula';
+        $frm = new formula($t->usr1);
+        $frm->api_mapper([json_fields::ID => formula_names::SCALE_TO_SEC_ID, json_fields::LATEX => formula_names::SCALE_TO_SEC_LATEX], $msg);
+        $t->assert($test_name, $frm->get_latex(), formula_names::SCALE_TO_SEC_LATEX);
+        $msg->reset();
+        // the frontend sends 0 if no view is selected
+        $test_name = 'the view id 0 of the api json links no view to the formula';
+        $frm = new formula($t->usr1);
+        $frm->api_mapper([json_fields::ID => formula_names::SCALE_TO_SEC_ID, json_fields::VIEW => 0], $msg);
+        $t->assert($test_name, $frm->get_view_id(), 0);
+        $msg->reset();
 
         $t->subheader($ts . 'frontend');
         $frm = $t_frm->formula();

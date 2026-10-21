@@ -199,6 +199,21 @@ class view_tests
         $msk_posted->url_mapper([url_var::CODE_ID => ''], new user_message_ui());
         $t->assert_true($test_name, $msk_posted->code_id === null);
 
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend sends the view as api json, so the mapper must take the name of it
+        $test_name = 'the api mapper sets the name of a view';
+        $msg = new user_message($t->usr1);
+        $msk_map = new view($t->usr1);
+        $msk_map->api_mapper($t_msk->view_filled_included()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $msk_map->name(), views::START_NAME);
+
+        // a normal user must not plant a system code id via the api
+        $test_name = 'the api mapper refuses the view code id of a normal user';
+        $usr_msg_map = new user_message($t->usr_normal);
+        $t->assert_false($test_name, $msk_map->api_mapper([json_fields::ID => views::START_ID, json_fields::CODE_ID => views::START_CODE], $usr_msg_map));
+        $usr_msg_map->reset();
+
         $t->subheader($ts . 'base view of a change mask');
         $test_name = 'the word edit mask shows the word view';
         $t->assert($test_name, new views()->id_to_base_id(views::WORD_EDIT_ID), views::WORD_ID);
@@ -320,6 +335,20 @@ class view_tests
         $t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
 
         // sql write delete is already tested in the horizontal tests
+
+        $t->subheader($ts . 'api mapper');
+
+        // the api json of a view relation carries only the id of the parent view
+        $test_name = 'the api mapper sets the parent view of a view relation';
+        $mrl_map = new view_relation($t->usr1);
+        $mrl_map->api_mapper($t_msk->view_relation_filled_included()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $mrl_map->parent()?->id(), views::WORD_EDIT_ID);
+
+        // a view relation json without the parent id must not keep the parent of the previous mapping
+        $test_name = 'a view relation json without a parent id leaves the parent view empty';
+        $mrl_map->api_mapper([json_fields::ID => $mrl->id()], $msg);
+        $t->assert_true($test_name, $mrl_map->parent() === null);
+        $msg->reset();
 
 
         /*

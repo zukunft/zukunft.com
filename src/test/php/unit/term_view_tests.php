@@ -179,6 +179,12 @@ class term_view_tests
         $test_name = '... and the mapped term is the word';
         $t->assert_true($test_name, $lnk->term()->is_word());
 
+        // a term view json without the term id must not keep the term of the previous mapping
+        $test_name = 'a term view json without a term id leaves the term empty';
+        $lnk->api_mapper([json_fields::ID => $trm_msk->id()], $msg);
+        $t->assert_true($test_name, $lnk->term() === null);
+        $msg->reset();
+
         $t->subheader($ts . 'triple api');
         $lnk = $t_lnk->term_view();
         //$t->assert_api_json($lnk);

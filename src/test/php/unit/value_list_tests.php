@@ -49,6 +49,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
@@ -179,6 +181,15 @@ class value_list_tests
         $api_json = $t_val->value_list($msg)->api_json();
         $val_lst_ui = new value_list_ui($api_json);
         $t->assert_json_string($test_name, $val_lst_ui->api_json(), $api_json);
+        $test_name = 'the api mapper adds every value of the api json';
+        $val_lst = new value_list($t->usr1);
+        $val_lst->api_mapper($t_val->value_list($msg)->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $val_lst->count(), $t_val->value_list($msg)->count());
+        $msg->reset();
+        $test_name = 'the api mapper refuses a value with a text as the number';
+        $val_lst = new value_list($t->usr1);
+        $t->assert_false($test_name, $val_lst->api_mapper([[json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT]], $msg));
+        $msg->reset();
 
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';

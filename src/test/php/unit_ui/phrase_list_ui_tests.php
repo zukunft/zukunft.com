@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -68,6 +69,19 @@ class phrase_list_ui_tests
         $db_lst = $t_phr->phrase_list();
         $lst = new phrase_list($db_lst->api_json());
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
+
+        $t->subheader($ts . 'api mapper');
+
+        // each phrase of the api json is added to the list
+        $test_name = 'the api mapper adds the phrases of the api json';
+        $phr_lst_map = new phrase_list();
+        $phr_lst_map->api_mapper(json_decode($db_lst->api_json(), true));
+        $t->assert($test_name, $phr_lst_map->names(), $db_lst->names());
+
+        // without the class the mapper cannot know if a phrase is a word or a triple, so it reports it
+        $test_name = 'the api mapper reports a phrase without the class';
+        $phr_lst_map = new phrase_list();
+        $t->assert_false($test_name, $phr_lst_map->api_mapper([[json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH]])->is_ok());
 
         // create the phrase list test set
         $form = 'phrase_list_ui_test';

@@ -9,9 +9,9 @@ goal: every public function of `docs/code_test_coverage.md` has at least two uni
 `bin/code_test_coverage.php` and is never edited by hand, so each step below changes the tests
 (or the counter) and the developer regenerates the report to see the gap shrink
 
-starting point: 870 of 6200 public functions are covered; of the 5125 gaps 3423 are in the
-main backend, 1507 in the frontend and 195 in shared, 450 functions have one call (84 of
-them have a name of their own, so only the negative test is missing; the other 366 share
+starting point: 1058 of 6200 public functions are covered; of the 4937 gaps 3314 are in the
+main backend, 1437 in the frontend and 186 in shared, 444 functions have one call (87 of
+them have a name of their own, so only the negative test is missing; the other 357 share
 their name and need two calls per class, see step 2), and the 205 functions that no code
 calls are listed in the section "never called" at the end of the report, for the developer
 to decide per function whether it is removed or kept
@@ -32,14 +32,14 @@ rules for every step:
   cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
 - the LLM never runs the tests; the developer runs them and regenerates the report
 
-1. add the missing negative test of the 84 functions with one call and a name of their own,
+1. add the missing negative test of the 87 functions with one call and a name of their own,
    class by class, starting with the classes that have most of them (`data_object`,
    `formula_list`, `formula_map`, `result`, `user` and `sys_log_list` with 3 each, then the
    classes with 2 or 1); this is the cheapest step, because the positive test and its
    fixture exist already; the tested call sits before the assert line, because a call on the
    line after a multi-line `$t->assert…(` is behind the last assert of the block and not counted
 2. cover the functions that many classes share, in the order of the number of classes:
-   `api_mapper` (104 classes), `reset` (67), `api_json_array` (61), `export_json` (49),
+   `reset` (67 classes), `api_json_array` (61), `export_json` (49),
    `add` (47), `dsp_id` and `default_id` (46), `load_sql` (45), `db_fields_changed` (44),
    `db_fields_all` (43), `import_mapper` and `load_dummy` (38, 37), `name_field` (36),
    `fill` (36), `delta` (32); one prompt per function name, which adds one positive and one

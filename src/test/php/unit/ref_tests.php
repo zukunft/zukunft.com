@@ -47,6 +47,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -186,6 +187,34 @@ class ref_tests
         $t->assert_api_json($ref);
         $ref = $t_ref->reference_plus();
         $t->assert_api($ref);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend sends the reference as api json, so the mapper must take the external key
+        $test_name = 'the api mapper sets the external key of a reference';
+        $msg = new user_message($t->usr1);
+        $ref_map = new ref($t->usr1);
+        $ref_map->api_mapper($t_ref->reference()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $ref_map->get_external_key(), refs::PI_KEY);
+
+        // an empty phrase id of e.g. an add form must not link the reference to a phrase
+        $test_name = 'the api mapper ignores a phrase id of zero';
+        $ref_map->api_mapper([json_fields::ID => refs::PI_ID, json_fields::PHRASE_ID => 0], $msg);
+        $t->assert($test_name, $ref_map->phrase_id(), 0);
+        $msg->reset();
+
+        // the base url of a reference type is part of the pod setup, so a trusted source sets it
+        $test_name = 'the trusted api mapper sets the base url of a reference type';
+        $ref_typ = new ref_type();
+        $ref_typ->api_mapper([json_fields::ID => ref_types::WIKIDATA_ID, json_fields::URL => refs::PI_URL], $msg, true);
+        $t->assert($test_name, $ref_typ->url, refs::PI_URL);
+
+        // ... but never an api message of a frontend
+        $test_name = 'the untrusted api mapper ignores the base url of a reference type';
+        $ref_typ = new ref_type();
+        $ref_typ->api_mapper([json_fields::ID => ref_types::WIKIDATA_ID, json_fields::URL => refs::PI_URL], $msg);
+        $t->assert_null($test_name, $ref_typ->url);
+        $msg->reset();
 
         $t->subheader($ts . 'frontend');
         $ref = $t_ref->reference_plus();

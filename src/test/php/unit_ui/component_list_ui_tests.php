@@ -41,7 +41,9 @@ include_once paths::SHARED_ENUM . 'messages.php';
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -71,6 +73,19 @@ class component_list_ui_tests
         $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'component_list', 'component_list', $msg_ui);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the api message of a component list is mapped to one frontend component per entry
+        $test_name = 'the api mapper adds each component of the api message to the list';
+        $cmp_lst = new component_list();
+        $cmp_lst->api_mapper(json_decode($t_cmp->component_list()->api_json(), true));
+        $t->assert($test_name, $cmp_lst->count(), $t_cmp->component_list()->count());
+
+        // a list entry without an id is reported, so the caller can show the problem
+        $test_name = 'a component list entry without an id is reported';
+        $cmp_lst = new component_list();
+        $t->assert_false($test_name, $cmp_lst->api_mapper([[json_fields::NAME => components::WORD_NAME]])->is_ok());
     }
 
 }

@@ -36,6 +36,9 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\figure\figure;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -57,6 +60,20 @@ class figure_ui_tests
         $test_page .= 'with tooltip: ' . $fig->display($msg_ui) . '<br>';
         $test_page .= 'with link: ' . $fig->display_linked($msg_ui) . '<br>';
         $t->html_page_test($test_page, 'figure', 'figure', $msg_ui);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api json of a value figure is mapped to the value';
+        $fig_json = json_decode($t_fig->figure_value($msg)->api_json([api_types::INCL_PHRASES]), true);
+        $fig = new figure();
+        $fig->api_mapper($fig_json, $msg_ui);
+        $t->assert($test_name, $fig->obj_id(), values::PI_SYMBOL_ID);
+        $msg_ui->reset();
+        // the class tells if the figure is a value or a result
+        $test_name = 'the mapper reports a figure without class';
+        unset($fig_json[json_fields::OBJECT_CLASS]);
+        $fig = new figure();
+        $t->assert_false($test_name, $fig->api_mapper($fig_json, $msg_ui));
+        $msg_ui->reset();
     }
 
 }
