@@ -182,7 +182,7 @@ class term_view_tests
         // a term view json without the term id must not keep the term of the previous mapping
         $test_name = 'a term view json without a term id leaves the term empty';
         $lnk->api_mapper([json_fields::ID => $trm_msk->id()], $msg);
-        $t->assert_true($test_name, $lnk->term() === null);
+        $t->assert_null($test_name, $lnk->term()?->dsp_id());
         $msg->reset();
 
         $t->subheader($ts . 'triple api');

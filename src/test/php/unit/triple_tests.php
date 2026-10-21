@@ -243,7 +243,8 @@ class triple_tests
         // a triple without the from phrase is incomplete, so the mapper reports the missing from phrase
         $test_name = 'the api mapper reports a missing from phrase';
         $trp_map = new triple($t->usr1);
-        $t->assert_false($test_name, $trp_map->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID, json_fields::FROM => null], $msg));
+        $api_json = [json_fields::ID => triple_names::MATH_CONST_ID, json_fields::FROM => null];
+        $t->assert_false($test_name, $trp_map->api_mapper($api_json, $msg));
         $msg->reset();
 
         $t->subheader($ts . 'frontend');
@@ -327,6 +328,13 @@ class triple_tests
         $t->assert_false($test_name, $trp_ui->input_valid($val_msg, url_var::CRUD_UPDATE));
         $test_name = '... and the user is told that both phrases are needed';
         $t->assert_true($test_name, $val_msg->has_msg_id(msg_id::TRIPLE_PHRASES_MISSING));
+
+        // negative: an unknown phrase name posted as the from phrase is reported to the user
+        $test_name = 'an unknown from phrase name is reported to the user';
+        $trp_ui = new triple_ui();
+        $from_msg = new user_message_ui();
+        $trp_ui->set_from_by_id('phrase name that does not exist', $from_msg, $dto_ui);
+        $t->assert_true($test_name, $from_msg->has_msg_id(msg_id::PHRASE_NAME_NOT_FOUND));
 
         $t->subheader($ts . 'frontend phrases_related round-trip');
         // build a target phrase ("Pi") that should appear in the triple's related list, and

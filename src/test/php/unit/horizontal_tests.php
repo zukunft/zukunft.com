@@ -63,6 +63,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::USER . 'user_message.php';
+include_once test_paths::CREATE . 'test_groups.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::UTILS . 'test_api.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
@@ -294,6 +296,14 @@ class horizontal_tests
             $api_json_ex = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
+
+        // negative: a group without a name and without phrases has no key for the import cache
+        $test_name = 'a group without a key is not added to the import cache';
+        $t_grp = new test_groups($t);
+        $dto = new data_object($t->usr1);
+        $dto->add_group($t_grp->group_without_key(), $msg);
+        $t->assert($test_name, $dto->group_list()->count(), 0);
+        $msg->reset();
 
         // restore the normal usr1 so the following tests run with the email profile user again
         $t->usr1 = $usr1_saved;

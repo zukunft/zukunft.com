@@ -196,6 +196,15 @@ class ref_tests
         $ref_map = new ref($t->usr1);
         $ref_map->api_mapper($t_ref->reference()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $ref_map->get_external_key(), refs::PI_KEY);
+        $msg->reset();
+
+        $test_name = 'the api mapper ignores an empty external key';
+        $ref_no_key = new ref($t->usr1);
+        $api_json = [json_fields::ID => refs::PI_ID, json_fields::EXTERNAL_KEY => ''];
+        $ref_no_key->api_mapper($api_json, $msg);
+        $ext_key = $ref_no_key->get_external_key();
+        $t->assert_null($test_name, $ext_key);
+        $msg->reset();
 
         // an empty phrase id of e.g. an add form must not link the reference to a phrase
         $test_name = 'the api mapper ignores a phrase id of zero';
@@ -208,6 +217,7 @@ class ref_tests
         $ref_typ = new ref_type();
         $ref_typ->api_mapper([json_fields::ID => ref_types::WIKIDATA_ID, json_fields::URL => refs::PI_URL], $msg, true);
         $t->assert($test_name, $ref_typ->url, refs::PI_URL);
+        $msg->reset();
 
         // ... but never an api message of a frontend
         $test_name = 'the untrusted api mapper ignores the base url of a reference type';

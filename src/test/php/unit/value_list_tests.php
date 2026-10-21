@@ -188,7 +188,8 @@ class value_list_tests
         $msg->reset();
         $test_name = 'the api mapper refuses a value with a text as the number';
         $val_lst = new value_list($t->usr1);
-        $t->assert_false($test_name, $val_lst->api_mapper([[json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT]], $msg));
+        $api_json = [[json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT]];
+        $t->assert_false($test_name, $val_lst->api_mapper($api_json, $msg));
         $msg->reset();
 
         $t->subheader($ts . 'sql creation value list');

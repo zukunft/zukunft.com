@@ -94,7 +94,8 @@ class word_list_ui_tests
         // the id is mandatory, so a word of the api json without the id is reported
         $test_name = 'the api mapper reports a word without the id';
         $wrd_lst_map = new word_list_ui();
-        $t->assert_false($test_name, $wrd_lst_map->api_mapper([[json_fields::NAME => word_names::MATH]])->is_ok());
+        $api_json = [[json_fields::NAME => word_names::MATH]];
+        $t->assert_false($test_name, $wrd_lst_map->api_mapper($api_json)->is_ok());
     }
 
 }

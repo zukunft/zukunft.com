@@ -380,6 +380,11 @@ class db_cache_tests
         $test_name = 'an empty token leaves the page unchanged on save';
         $t->assert($test_name, db_cache_page::strip_session_token($page, ''), $page);
 
+        // negative: only the token of the rendering session is replaced
+        $test_name = 'the token of another session leaves the page unchanged on save';
+        $stored_other = db_cache_page::strip_session_token($page, $other);
+        $t->assert($test_name, $stored_other, $page);
+
 
         $t->subheader($ts . 'user message swap');
 

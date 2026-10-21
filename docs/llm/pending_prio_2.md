@@ -1734,3 +1734,21 @@ each point needs a source change and a test that shows the bug first
 - `web/group/group::api_array` sends the name only if the description is set
 - `cfg/phrase/phrase_type::row_mapper_typ_obj` assigns instead of compares the scale
   (`if ($db_row[self::FLD_SCALE] = 'NULL')`)
+
+## functions with one unit test call
+
+found while adding the missing negative tests (see docs/llm/pending.md, test coverage step 1);
+each point needs a source change before the second test can be written
+
+- the failure is only a `log_err`, which a unit test counts as a system error, instead of a
+  message on `$msg`: `cfg/db/sql_creator::create_db_role` (unknown db type),
+  `cfg/word/word_list::get_grp` (empty list)
+- `cfg/import/import_convert_xbrl::convert_folder_to_file` throws a RuntimeException for a missing
+  folder or a failed write instead of reporting it
+- `cfg/import/import_file::import_config_yaml` returns the message unchanged for a user who is
+  neither admin nor system, so the refusal is not reported
+- `cfg/formula/formula_map::get_ref_text` converts only if the dirty flag is set, which only
+  `set_user_text` sets while it already runs and reports the same conversion
+- the counter counts a call in a commented-out line or block, so `cfg/view/view::load_by_term`
+  (`unit_read/view_read_tests.php`) and `cfg/word/word_list::get_grp` (`unit_ui/value_ui_tests.php`)
+  look tested but have no active test

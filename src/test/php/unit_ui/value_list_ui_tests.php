@@ -154,7 +154,8 @@ class value_list_ui_tests
         $t->assert($test_name, $val_lst_ui->count(), $t_val->value_list_math()->count());
         $test_name = 'the api mapper reports a value without id';
         $val_lst_ui = new value_list_ui();
-        $t->assert_false($test_name, $val_lst_ui->api_mapper([[json_fields::NUMBER => values::PI]])->is_ok());
+        $api_json = [[json_fields::NUMBER => values::PI]];
+        $t->assert_false($test_name, $val_lst_ui->api_mapper($api_json)->is_ok());
 
         $t->subheader($ts . 'user config');
 

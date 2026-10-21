@@ -158,6 +158,11 @@ class user_tests
         $t->assert($test_name, $usr_log->session_start->getTimestamp(), $first_start->getTimestamp());
         $test_name = '... but moves the end to the second request';
         $t->assert($test_name, $usr_log->session_end->getTimestamp(), (int)($start + test_users::TV_USER_LOG_SEC));
+        // negative: a read request of the open session leaves the update count unchanged
+        $test_name = 'a read request of the open session is not counted as update';
+        $usr_log_read = $t_usr->user_log_open();
+        $usr_log_read->count_request(users::SYSTEM_TEST_ID, $start, $start + test_users::TV_USER_LOG_SEC, false);
+        $t->assert($test_name, $usr_log_read->updated, 0);
 
         $t->subheader($ts . 'log session gap');
         // the config.yaml gap is the same as the fallback
@@ -281,6 +286,11 @@ class user_tests
         $t->assert($test_name, $usr_core_api[json_fields::NAME] ?? '', users::TEST_USER_NAME);
         $test_name = 'the public core api json does not contain the email';
         $t->assert_false($test_name, key_exists(json_fields::EMAIL, $usr_core_api));
+        // negative: an ip user has no name, so the public core api json shows an empty name
+        $test_name = 'the public core api json of an ip user has no name';
+        $usr_ip_core = $t_usr->user_ip();
+        $usr_ip_core_api = json_decode($usr_ip_core->api_json_core([], $msg), true);
+        $t->assert($test_name, $usr_ip_core_api[json_fields::NAME] ?? null, '');
 
 
         $t->subheader($ts . 'change permission');
@@ -417,6 +427,12 @@ class user_tests
         $chg_lst = $upd_usr->db_fields_changed($db_usr, $msg);
         $test_name = 'a new password hash is saved';
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_PASSWORD));
+        // negative: the stored hash set again is no change
+        $test_name = 'the stored password hash set again is not saved';
+        $same_pw_usr = $t_usr->sandbox_user();
+        $same_pw_usr->set_password_hash(user::DUMMY_PW_HASH);
+        $chg_lst_same = $same_pw_usr->db_fields_changed($db_usr, $msg);
+        $t->assert_false($test_name, $chg_lst_same->has_name(user_db::FLD_PASSWORD));
 
         // a used activation key is cleared with '' (see frontend::action_login_activate),
         // so the clearing is still detected and written

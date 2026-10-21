@@ -117,7 +117,8 @@ class phrase_tests
         // a negative phrase id is a triple, so a triple json without the from phrase is reported
         $test_name = 'the api mapper reports a triple phrase without the from phrase';
         $phr_map = new phrase($t->usr1);
-        $t->assert_false($test_name, $phr_map->api_mapper([json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null], $msg));
+        $api_json = [json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null];
+        $t->assert_false($test_name, $phr_map->api_mapper($api_json, $msg));
         $msg->reset();
 
         $t->subheader($ts . 'html frontend');

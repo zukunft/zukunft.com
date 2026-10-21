@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -80,6 +81,12 @@ class element_list_tests
         $elm_type_id = $sys->typ_lst->elm_typ->id(element_types::WORD_SELECTOR);
         $this->assert_sql_by_frm_and_type_id($t, $sc, $elm_lst, $frm->id(), $elm_type_id, $test_name);
 
+        // without a formula id the query has no name, so that the caller does not send it to the database
+        $test_name = 'sql to load the elements of a formula without id is not prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $elm_lst->load_sql_by_frm_and_type_id($sc, 0, $elm_type_id);
+        $t->assert($test_name, $qp->name, '');
+
         $test_name = 'sql to delete a list of elements';
         $elm_lst = $t_frm->element_list();
         $this->assert_sql_del_by_id_lst($t, $sc, $elm_lst, $test_name);
@@ -93,6 +100,12 @@ class element_list_tests
         $target = '"minute" (element_id 1/100) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
+        $test_name = 'element list reports a term id that is not a number';
+        $frm = $t_frm->formula();
+        $frm->ref_text = formula_names::SCALE_TO_SEC_EXP_REF_ID_NOT_A_NUMBER;
+        $frm->elements($msg, $trm_lst);
+        $t->assert_msg_false($test_name, $msg, 'the term "wO" of formula');
+
         $t->subheader($ts . 'api mapper');
         $test_name = 'the frontend api mapper adds every element of the group';
         $elm_grp_ui = new element_group_ui();
@@ -102,7 +115,8 @@ class element_list_tests
         $elm_json = $t_frm->element()->api_json_array([], $msg);
         unset($elm_json[json_fields::ID]);
         $elm_grp_ui = new element_group_ui();
-        $t->assert_false($test_name, $elm_grp_ui->api_mapper([json_fields::LIST_ELEMENTS => [$elm_json]])->is_ok());
+        $api_json = [json_fields::LIST_ELEMENTS => [$elm_json]];
+        $t->assert_false($test_name, $elm_grp_ui->api_mapper($api_json)->is_ok());
 
     }
 

@@ -212,6 +212,7 @@ class source_tests
         $src_map = new source($t->usr1);
         $src_map->api_mapper($t_src->source_filled_included()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $src_map->url, sources::BFS_ULR);
+        $msg->reset();
 
         // the api sends a zero view id if no default view is selected, which must not set a view
         $test_name = 'the api mapper ignores a default view id of zero';

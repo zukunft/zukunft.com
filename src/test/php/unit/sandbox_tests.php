@@ -262,7 +262,7 @@ class sandbox_tests
 
         // backend sandbox_code_id: the code id is only set for a requesting user with the privilege
         $test_name = 'the code id part of the mapper sets the code id';
-        $wrd_map->api_mapper($wrd_json, new user_message($t->usr_system));
+        $wrd_map->api_mapper($wrd_json, new user_message($t->usr_dev));
         $t->assert($test_name, $wrd_map->get_code_id(), word_names::MATH);
         $test_name = '... but not for a message without a requesting user';
         $msg_no_usr = new user_message();

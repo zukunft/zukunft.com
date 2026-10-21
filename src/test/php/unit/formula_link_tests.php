@@ -202,7 +202,8 @@ class formula_link_tests
         // the formula is expected as a json object, not only by its id
         $test_name = 'an api message with only an id as the formula is refused';
         $lnk_new = new formula_link($t->usr1);
-        $t->assert_false($test_name, $lnk_new->api_mapper([json_fields::ID => 0, json_fields::FORMULA => formula_names::SCALE_TO_SEC_ID], $msg));
+        $api_json = [json_fields::ID => 0, json_fields::FORMULA => formula_names::SCALE_TO_SEC_ID];
+        $t->assert_false($test_name, $lnk_new->api_mapper($api_json, $msg));
         $msg->reset();
         // a formula link type can be limited to one formula
         $test_name = 'the api mapper sets the formula of a formula link type';

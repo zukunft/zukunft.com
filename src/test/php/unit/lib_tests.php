@@ -725,7 +725,7 @@ class lib_tests
         $result = $lib->str_split_for_humans($test_text);
         $target = ['this', ' text', ' is', ' expected', ' to', ' be', ' split', ' into', ' words'];
         $t->assert($test_name, $result, $target);
-        // the code branch: a long text without a space is no prose, so it is split into chars
+        // the char branch: a long text without a space is no prose, so it is split into chars
         $test_name = 'str_split_for_humans, chars';
         $test_text = 'SplitToCharBecauseNoWordIsExpectedSoLong';
         $result = $lib->str_split_for_humans($test_text);

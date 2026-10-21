@@ -211,6 +211,11 @@ class config_tests
         $test_name = 'a text config value is read from the cached json';
         $t->assert($test_name, $cfg_cached->language(), language_codes::SYS);
 
+        // a config without the language value falls back to the system language
+        $test_name = 'a config without a language uses the system language';
+        $lan_code = $t_val->config_empty()->language();
+        $t->assert($test_name, $lan_code, language_codes::SYS);
+
         // the html page cache (db_cache_pages) has its own pod switch
         $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
         $test_name = 'the html pages are cached if the pod setting is true';
@@ -318,6 +323,10 @@ class config_tests
         // negative: without a database value there is nothing to overwrite
         $test_name = '... but a setting without a database value has no id';
         $t->assert_false($test_name, array_key_exists(json_fields::ID, $default_node));
+        // negative: a config.yaml without a key has no node, even if the database has values
+        $test_name = 'an empty config.yaml has no node';
+        $empty_nodes = $cft->nodes([], $t_cft->cfg());
+        $t->assert($test_name, $empty_nodes, []);
         // the loaded value objects of a fresh database load, which has no lookup rows of the cached json
         $names = config_numbers::CACHE_PAGES_ALLOWED_NAMES;
         $obj_lookup = $t_val->config_cache_switch($names, true)->exact_lookup();

@@ -1629,6 +1629,12 @@ class base_ui_tests
         $url_map->url_to_standard($lib->url_array($url), $msg);
         $err_msg = $msg->var_message_text();
         $t->assert($test_name, $err_msg, 'url mapper for "debug" is missing, url mapper for "id" is missing, url mapper for "mapping_missing" is missing');
+        // negative: a url key without a pod mapping is reported as missing
+        $test_name = 'pod url conversion reports a url key without a pod mapping';
+        $pod_msg = new user_message_ui();
+        $no_map_url = [url_var::MASK => views::WORD_ID, 'zzz' => '1'];
+        $url_map->standard_url_to_pod($no_map_url, $pod_msg);
+        $t->assert_true($test_name, $pod_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 
     }
 

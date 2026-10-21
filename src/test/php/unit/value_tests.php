@@ -228,7 +228,8 @@ class value_tests
         $msg->reset();
         $test_name = 'the base part of the mapper refuses a timestamp that is not a time';
         $val = new value($t->usr1);
-        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIMESTAMP => values::TEXT], $msg));
+        $api_json = [json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIMESTAMP => values::TEXT];
+        $t->assert_false($test_name, $val->api_mapper($api_json, $msg));
         $msg->reset();
         $test_name = 'the number of the api json is the number of the value';
         $val = new value($t->usr1);
@@ -237,7 +238,8 @@ class value_tests
         $msg->reset();
         $test_name = 'a text as the number of a value is refused';
         $val = new value($t->usr1);
-        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT], $msg));
+        $api_json = [json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT];
+        $t->assert_false($test_name, $val->api_mapper($api_json, $msg));
         $msg->reset();
         $test_name = 'the text of the api json is the text of the value';
         $val = new value_text($t->usr1);
@@ -268,7 +270,8 @@ class value_tests
         $msg->reset();
         $test_name = 'a text that is not a time is refused as the time of a value';
         $val = new value_time($t->usr1);
-        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIME_VALUE => values::TEXT], $msg));
+        $api_json = [json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIME_VALUE => values::TEXT];
+        $t->assert_false($test_name, $val->api_mapper($api_json, $msg));
         $msg->reset();
 
         $t->subheader($ts . 'union row mapping');

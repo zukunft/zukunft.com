@@ -122,6 +122,7 @@ class reference_ui_tests
         $ref_map = new ref();
         $ref_map->api_mapper(json_decode($t_ref->reference()->api_json(), true), $msg);
         $t->assert($test_name, $ref_map->external_key(), refs::PI_KEY);
+        $msg->reset();
 
         // the id is mandatory, because without it a save would add a new reference
         $test_name = 'a reference json without an id is refused';
@@ -156,6 +157,11 @@ class reference_ui_tests
         $test_name = '... and sends no source as the pre value';
         $t->assert_text_contains($test_name, $sel_no_src,
             $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
+
+        // negative: a reference whose api message names no source has no source object
+        $test_name = 'a reference without a source has no source';
+        $no_src = $ref->source();
+        $t->assert_null($test_name, $no_src?->name());
 
         $t->subheader($ts . 'view tab box');
 

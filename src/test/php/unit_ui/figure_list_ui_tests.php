@@ -69,7 +69,8 @@ class figure_list_ui_tests
         $t->subheader($ts . 'api mapper');
         $test_name = 'the api mapper adds every figure of the api json';
         $lst = new figure_list();
-        $lst->api_mapper(json_decode($t_fig->figure_list($msg)->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]), true));
+        $fig_lst_json = $t_fig->figure_list($msg)->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $lst->api_mapper(json_decode($fig_lst_json, true));
         $t->assert($test_name, $lst->count(), $t_fig->figure_list($msg)->count());
         $test_name = 'the api mapper reports a figure without class';
         $fig_json = json_decode($t_fig->figure_value($msg)->api_json([api_types::INCL_PHRASES]), true);

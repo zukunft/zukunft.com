@@ -48,10 +48,12 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_link_write_tests
@@ -63,6 +65,7 @@ class formula_link_write_tests
         // init
         $t_db = new test_db_load($t);
         $t_frm = new test_formulas($t);
+        $t_usr = new test_users($t);
         $msg = new user_message($t->usr1);
 
         // start the test section (ts)
@@ -82,6 +85,12 @@ class formula_link_write_tests
         $test_name = 'link phrase "' . $wrd->name() . '" to a formula "' . $frm->name() . '" using the formula function link_phr';
         $result = $frm->link_phrase_and_save($wrd->phrase(), $msg);
         $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+
+        $test_name = 'an ip user cannot link a phrase to a formula';
+        $ip_msg = new user_message($t_usr->user_ip_loaded());
+        $frm_scale = $t_frm->formula();
+        $frm_scale->link_phrase_and_save($wrd->phrase(), $ip_msg);
+        $t->assert_msg_false($test_name, $ip_msg, msg_id::CHANGE_BLOCKED_FOR_IP_USER->text());
 
         // ... check the correct logging
         $phr = new phrase($t->usr1);

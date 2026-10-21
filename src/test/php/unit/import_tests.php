@@ -115,6 +115,15 @@ class import_tests
         // building the sql insert calls from the imported data takes longer than a normal unit function
         $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc, $msg)->count(), 1, $t::TIMEOUT_LIMIT_FILE);
 
+        $test_name = 'YAML that starts with a tooltip imports no word';
+        $yml_arr = [words::TOOLTIP_COMMENT => word_names::MATH_COM];
+        $dto = $imp->get_data_object_yaml($yml_arr, $msg);
+        $t->assert($test_name, $dto->word_list()->count(), 0);
+
+        $test_name = 'an empty word list creates no sql function';
+        $sql_lst = $dto->word_list()->sql_insert_call_with_par($sc, $msg);
+        $t->assert($test_name, $sql_lst->count(), 0);
+
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);
         $json_array = json_decode($json_str, true);
@@ -677,6 +686,10 @@ class import_tests
         $keywords = [...array_keys(triples::CALCULATOR_LISTS), ...array_keys(triples::CALCULATOR_PROPERTIES)];
         $repeated = array_values(array_intersect($keywords, array_column($json_array[json_fields::TRIPLES], json_fields::NAME)));
         $t->assert($test_name, $repeated, $keywords);
+        // negative: a triple that the file does not define is not in the import
+        $test_name = '... but has no triple of another use case';
+        $trp_none = $dto->get_triple_by_name(triple_names::PI, $msg);
+        $t->assert_null($test_name, $trp_none?->name());
 
         // the CBAM calculator use case chains the embedded emission, the free allocation
         // adjustment, the carbon price deduction, the obligation and the cost of an import, so

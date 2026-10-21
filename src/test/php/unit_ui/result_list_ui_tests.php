@@ -89,11 +89,13 @@ class result_list_ui_tests
         $t->subheader($ts . 'api mapper');
         $test_name = 'the api mapper adds every result of the api json';
         $lst = new result_list();
-        $lst->api_mapper(json_decode($t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]), true));
+        $res_lst_json = $t_res->result_list()->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $lst->api_mapper(json_decode($res_lst_json, true));
         $t->assert($test_name, $lst->count(), $t_res->result_list()->count());
         $test_name = 'the api mapper reports a result without id';
         $lst = new result_list();
-        $t->assert_false($test_name, $lst->api_mapper([[json_fields::NUMBER => results::TV_INT]])->is_ok());
+        $api_json = [[json_fields::NUMBER => results::TV_INT]];
+        $t->assert_false($test_name, $lst->api_mapper($api_json)->is_ok());
     }
 
 }

@@ -292,6 +292,11 @@ class result_tests
         $sc->reset(sql_db::POSTGRES);
         $res_most_grp = $t_res->result();
         $t->assert($test_name, $qp_grp->sql, $res_most_grp->load_sql_by_grp($sc, $res_most_grp->grp())->sql);
+        // negative: the fallback load by group in the big table is not the one of the standard table
+        $test_name = '... but the fallback load by group in the big table reads another table';
+        $sc->reset(sql_db::POSTGRES);
+        $qp_grp_big = $t_res->result_prime()->load_sql_by_grp_moved($sc, $res_grp->grp(), sql_type::BIG);
+        $t->assert_not($test_name, $qp_grp_big->sql, $qp_grp->sql);
         // negative: without the fallback the load reads the table of the own phrases
         $test_name = 'the normal load by id does not read the standard table';
         $sc->reset(sql_db::POSTGRES);
@@ -363,6 +368,11 @@ class result_tests
         [, $any_after] = $res_src->used_phrase_selection($msg);
         $t->assert_true($test_name, $any_after);
         $msg->reset();
+        // negative: an empty source group replaces the phrases of the old one
+        $test_name = '... and the phrases of the old source group are dropped';
+        $res_drop = $t_res->result_main_max();
+        $res_drop->set_src_grp(new group($t->usr1));
+        $t->assert($test_name, $res_drop->source_group()->phrase_list()->names(), []);
 
         // negative: a result saved without the source group (e.g. imported without a context) falls
         // back to its own phrases, where any match makes a number related, so that the page of
@@ -374,6 +384,10 @@ class result_tests
         $test_name = '... where a number with any of them is related';
         $t->assert_true($test_name, $any_fallback);
         $msg->reset();
+        // negative: the source group of such a result names no phrase
+        $test_name = '... because its source group is empty';
+        $src_names = $res_no_src->source_group()->phrase_list()->names();
+        $t->assert($test_name, $src_names, []);
 
         // a calculation that has used nothing sends the empty lists, because only an empty list
         // tells the page that nothing has been used, whereas a missing list says that the result

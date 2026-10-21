@@ -77,7 +77,8 @@ class triple_list_ui_tests
         // the id is mandatory, so a triple of the api json without the id is reported
         $test_name = 'the api mapper reports a triple without the id';
         $trp_lst_map = new triple_list();
-        $t->assert_false($test_name, $trp_lst_map->api_mapper([[json_fields::NAME => triple_names::MATH_CONST]])->is_ok());
+        $api_json = [[json_fields::NAME => triple_names::MATH_CONST]];
+        $t->assert_false($test_name, $trp_lst_map->api_mapper($api_json)->is_ok());
 
         // create the triple list test set
         $lst = new triple_list();

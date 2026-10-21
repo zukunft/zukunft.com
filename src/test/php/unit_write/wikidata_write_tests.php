@@ -53,6 +53,8 @@ class wikidata_write_tests
     const string USD_KEY = 'Q4917';
     // the wikidata id of the price property used as a property capture example
     const string PRICE_PROPERTY = 'P2284';
+    // a wikidata property id that does not exist used for the negative property tests
+    const string UNKNOWN_PROPERTY = 'P999999999';
     // the wikidata id and the expected names used to test the conversion of the US dollar price into euro
     const string EURO_KEY = 'Q4916';
     const string PRICE_NAME = 'price';
@@ -98,6 +100,14 @@ class wikidata_write_tests
         $json = $imp->get_property_json(self::PRICE_PROPERTY);
         $msg = $imp->store_text(self::PRICE_PROPERTY, $json);
         $t->assert_true($test_name . ' ' . $msg->all_message_text(), $msg->is_ok());
+
+        $test_name = 'an unknown wikidata property returns no json';
+        $bad_json = $imp->get_property_json(self::UNKNOWN_PROPERTY);
+        $t->assert($test_name, $bad_json, '');
+
+        $test_name = 'store of an empty wikidata json fails';
+        $bad_msg = $imp->store_text(self::UNKNOWN_PROPERTY, '');
+        $t->assert_msg_false($test_name, $bad_msg, 'no data received from wikidata for ' . self::UNKNOWN_PROPERTY);
 
         // and the captured json file contains the requested property id
         // only checked if wikidata could be reached so that an offline test run continues with a warning

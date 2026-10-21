@@ -578,6 +578,11 @@ class word_ui_tests
         $sel = $dto->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
         $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
         $t->assert_text_contains($test_name, $sel->display(), $more_html);
+        // negative: a page without formulas offers no formula to select
+        $test_name = 'a formula selector without formulas has no option';
+        $dto_no_frm = new data_object();
+        $sel_empty = $dto_no_frm->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
+        $t->assert($test_name, $sel_empty->lst, []);
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related($msg, $wrd_company_rel);

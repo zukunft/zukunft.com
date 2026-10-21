@@ -988,15 +988,16 @@ class value_ui_tests
         // the sandbox value part maps the number and the phrases that all values and results have
         $test_name = 'the sandbox value part of the mapper sets the number of the value';
         $val_ui_map = new value();
-        $val_ui_map->api_mapper(json_decode($t_val->value_pi()->api_json([api_types::INCL_PHRASES], $msg), true), $msg_ui);
+        $val_json = json_decode($t_val->value_pi()->api_json([api_types::INCL_PHRASES], $msg), true);
+        $val_ui_map->api_mapper($val_json, $msg_ui);
         $t->assert($test_name, $val_ui_map->number(), values::PI);
         $msg_ui->reset();
         $test_name = 'the sandbox value part of the mapper reports a value without phrases';
         $val_ui_map = new value();
-        $t->assert_false($test_name, $val_ui_map->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::PI], $msg_ui));
+        $api_json = [json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::PI];
+        $t->assert_false($test_name, $val_ui_map->api_mapper($api_json, $msg_ui));
         $msg_ui->reset();
         $test_name = 'the source id of the api json is the source of the value';
-        $val_json = json_decode($t_val->value_pi()->api_json([api_types::INCL_PHRASES], $msg), true);
         $val_json[json_fields::SOURCE_ID] = sources::BFS_ID;
         $val_ui_map = new value();
         $val_ui_map->api_mapper($val_json, $msg_ui);

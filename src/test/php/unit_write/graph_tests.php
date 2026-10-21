@@ -141,6 +141,12 @@ class graph_tests
         $t->assert_text_contains($test_name . word_names::CANTON, $result, word_names::COMPANY);
         $t->assert_text_contains($test_name . word_names::COMPANY, $result, word_names::COMPANY);
 
+        // negative: a list without triples has no phrase parts
+        $test_name = 'a triple list without triples has no phrase parts';
+        $trp_lst_empty = new triple_list($t->usr1);
+        $empty_parts = $trp_lst_empty->phrase_parts();
+        $t->assert($test_name, $empty_parts->names(), []);
+
     }
 
 }

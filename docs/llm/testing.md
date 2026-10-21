@@ -248,6 +248,9 @@ for a different user only for a specific reason:
   case for `set_code_id`: `user::can_set_code_id()` allows the system, test, log
   and dev profiles but **not** admin, and `$t->usr1` carries the test profile, so
   the normal user already sets a `code_id` — pass `$t->usr1` there too.
+  Exception: in the unit run without database (`all_unit_tests`) `$t->usr1` has
+  the email profile, so a unit test that needs `can_set_code_id()` passes
+  `$t->usr_dev` as the requesting user of the message.
 
 Never create a test object as **`$t->usr_system`**. The system user (id 1) is for
 exercising *system-level functions*, not for owning ordinary test data. A word

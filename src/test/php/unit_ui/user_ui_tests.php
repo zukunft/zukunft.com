@@ -251,6 +251,13 @@ class user_ui_tests
             $usr_sys_ui, $t_log->log_list_word_changes_ui(), $msg, true);
         $t->assert_text_not_contains($test_name, $one_obj_html, $mtr->txt(msg_id::CHANGE_LOG_TBL_TYPE));
 
+        // negative: an object that is not yet in the database has no change log, so the tab is dropped
+        $test_name = 'an object without a database id has no changes tab';
+        $new_usr_ui = new user_ui();
+        $word_log = $t_log->log_list_word_changes_ui();
+        $new_obj_html = $log->change_log_table_pure($new_usr_ui, $word_log, $msg, true);
+        $t->assert($test_name, $new_obj_html, '');
+
         // the name of the changed object links to the default page of the object, so that the user
         // can open it from the user page instead of having to search it by name
         $test_name = 'the name of the changed word links to the word default page';
@@ -707,6 +714,12 @@ class user_ui_tests
             $mtr->txt(msg_id::RESET_MAIL_HELLO) . mail_sender::CRLF . mail_sender::CRLF . $mtr->txt(msg_id::SIGNUP_MAIL_KEY_INTRO));
         $test_name = '... without a single line feed';
         $t->assert_false($test_name, preg_match('/[^\r]\n/', $mail_txt) === 1);
+        // negative: a text that has crlf line ends already gets no second carriage return
+        $test_name = '... and a text with crlf line ends gets no double carriage return';
+        $crlf_subject = $mtr->txt(msg_id::SIGNUP_MAIL_SUBJECT);
+        $crlf_body = $mtr->txt(msg_id::RESET_MAIL_HELLO) . mail_sender::CRLF . $mtr->txt(msg_id::SIGNUP_MAIL_KEY_INTRO);
+        $crlf_mail_txt = mail_sender::smtp_message(users::SYSTEM_SIGNUP_EMAIL, users::TEST_SIGNUP_EMAIL, $crlf_subject, $crlf_body);
+        $t->assert_text_not_contains($test_name, $crlf_mail_txt, "\r\r\n");
 
         $t->subheader($ts . 'popup form');
 

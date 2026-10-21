@@ -95,6 +95,13 @@ class component_link_list_tests
         $db_con->db_type = sql_db::POSTGRES;
         $t->assert($test_name, $lst->load_sql_by_view_ids($db_con->sql_creator(), [])->name, '');
 
+        // ... but with a view id the query is named, so that the caller sends it to the database
+        $test_name = 'the component link list query of a view id list is prepared';
+        $t_msk = new test_views($t);
+        $view_ids = [$t_msk->view()->id()];
+        $qp = $lst->load_sql_by_view_ids($db_con->sql_creator(), $view_ids);
+        $t->assert_not($test_name, $qp->name, '');
+
 
         $t->subheader($ts . 'split by view');
 

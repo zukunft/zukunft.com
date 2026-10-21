@@ -370,6 +370,11 @@ class system_tests
         $test_name = 'info messages keep the message ok';
         $t->assert_true($test_name, $two_msg->is_ok());
 
+        $test_name = 'an info without id adds no text';
+        $no_id_msg = new user_message($t->usr1);
+        $no_id_msg->add_info_id(null);
+        $t->assert($test_name, $no_id_msg->all_message_text(), '');
+
 
         $t->subheader($ts . 'system config sql');
 

@@ -503,6 +503,10 @@ class use_case_ui_tests
         $test_name = 'the rows of a row group follow the order chain';
         $t->assert($test_name, array_map(fn($item) => $item->name(), $rows), [
             triple_names::CALC_ZH_ROW_BE, triple_names::CALC_ZH_ROW_INHABITANTS]);
+        // negative: the row group has no filter, so it has no sub-items with the filter verb
+        $test_name = 'a row group has no filter sub-items';
+        $grp_flt = $calc->sub_items($grp, verbs::WITH_ID);
+        $t->assert($test_name, $grp_flt, []);
         $test_name = 'a row built from the group phrase shows the other phrase';
         $t->assert($test_name, $calc->label($rows[0], $grp), word_names::BE);
         $test_name = 'a row shows the label of its phrase and never the label of its filter phrase';
@@ -763,6 +767,12 @@ class use_case_ui_tests
         $no_val_phr_lst = $t_phr->list_global_problems_ui();
         $dto_lst->add_values_of($no_val_phr_lst, new value_list_ui(), $msg);
         $t->assert_true($test_name, $dto_lst->has_values_of($no_val_phr_lst));
+        // negative: phrases that the online cache has asked already are not loaded again
+        $test_name = 'an online cache loads asked phrases not again';
+        $val_count = $dto_lst->val_lst->count();
+        $dto_lst->load_values_of($no_val_phr_lst, $msg);
+        $t->assert($test_name, $dto_lst->val_lst->count(), $val_count);
+        $msg->reset();
         // negative: a new value list holds none of the asked phrases
         $test_name = 'a new value list holds the values of no asked phrases';
         $dto_lst->set_value_list($zh_val_lst);

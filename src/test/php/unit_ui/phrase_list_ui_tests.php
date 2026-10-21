@@ -81,7 +81,8 @@ class phrase_list_ui_tests
         // without the class the mapper cannot know if a phrase is a word or a triple, so it reports it
         $test_name = 'the api mapper reports a phrase without the class';
         $phr_lst_map = new phrase_list();
-        $t->assert_false($test_name, $phr_lst_map->api_mapper([[json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH]])->is_ok());
+        $api_json = [[json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH]];
+        $t->assert_false($test_name, $phr_lst_map->api_mapper($api_json)->is_ok());
 
         // create the phrase list test set
         $form = 'phrase_list_ui_test';

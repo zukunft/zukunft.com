@@ -261,6 +261,10 @@ class word_list_tests
         $t->assert_contains_not($test_name, $filtered->names(), word_names::E_SYMBOL);
         $test_name = 'filtered word list by name still contains ' . word_names::PI_SYMBOL;
         $t->assert_contains($test_name, $filtered->names(), word_names::PI_SYMBOL);
+        // negative: a name that is not in the list removes no word
+        $test_name = 'filter by a name not in the list keeps all words';
+        $filtered_none = $wrd_lst->filter_by_name([word_names::PI]);
+        $t->assert($test_name, $filtered_none->names(), $wrd_lst->names());
 
         // time list
         $wrd_lst = new word_list($t->usr1);

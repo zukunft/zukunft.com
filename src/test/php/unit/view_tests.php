@@ -207,11 +207,13 @@ class view_tests
         $msk_map = new view($t->usr1);
         $msk_map->api_mapper($t_msk->view_filled_included()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $msk_map->name(), views::START_NAME);
+        $msg->reset();
 
         // a normal user must not plant a system code id via the api
         $test_name = 'the api mapper refuses the view code id of a normal user';
         $usr_msg_map = new user_message($t->usr_normal);
-        $t->assert_false($test_name, $msk_map->api_mapper([json_fields::ID => views::START_ID, json_fields::CODE_ID => views::START_CODE], $usr_msg_map));
+        $api_json = [json_fields::ID => views::START_ID, json_fields::CODE_ID => views::START_CODE];
+        $t->assert_false($test_name, $msk_map->api_mapper($api_json, $usr_msg_map));
         $usr_msg_map->reset();
 
         $t->subheader($ts . 'base view of a change mask');
@@ -343,11 +345,12 @@ class view_tests
         $mrl_map = new view_relation($t->usr1);
         $mrl_map->api_mapper($t_msk->view_relation_filled_included()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $mrl_map->parent()?->id(), views::WORD_EDIT_ID);
+        $msg->reset();
 
         // a view relation json without the parent id must not keep the parent of the previous mapping
         $test_name = 'a view relation json without a parent id leaves the parent view empty';
         $mrl_map->api_mapper([json_fields::ID => $mrl->id()], $msg);
-        $t->assert_true($test_name, $mrl_map->parent() === null);
+        $t->assert_null($test_name, $mrl_map->parent()?->dsp_id());
         $msg->reset();
 
 
@@ -371,6 +374,12 @@ class view_tests
         $t->assert($test_name, $mrl_lst->load_sql_by_ids($sc, [])->name, '');
         $test_name = '... nor of an empty parent view id list';
         $t->assert($test_name, $mrl_lst->load_sql_by_parent_ids($sc, [])->name, '');
+
+        $test_name = 'the view relation list query of a parent view id is prepared';
+        $sc->reset(sql_db::POSTGRES);
+        $parent_ids = [views::TABLE_ID];
+        $qp = $mrl_lst->load_sql_by_parent_ids($sc, $parent_ids);
+        $t->assert($test_name, $qp->name, 'view_relation_list_by_parent_ids');
 
         // the relations of all system views are loaded at once and each view gets its editor
         $t->subheader($ts . 'editor');

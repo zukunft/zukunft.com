@@ -134,7 +134,8 @@ class formula_ui_tests
         // a name that matches no term of the term list keeps its quotes, so the user sees
         // which name of the expression is not resolved to a term
         $test_name = 'a term name without a matching term keeps the quotes';
-        $t->assert_text_contains($test_name, $frm_increase->expression_named_link(),
+        $exp_unlinked = $frm_increase->expression_named_link();
+        $t->assert_text_contains($test_name, $exp_unlinked,
             chars::TERM_DELIMITER . word_names::THIS_NAME . chars::TERM_DELIMITER);
 
         // the validated expression beside the expression field of the formula form shows the same
@@ -557,6 +558,10 @@ class formula_ui_tests
         $t->assert_text_not_contains($test_name, $lnk_title, $mtr->txt(msg_id::FORM_TITLE_CONFIRM_ADD));
         $test_name = 'the change table of a formula link does not repeat the link';
         $t->assert_text_not_contains($test_name, $lnk_chg_html, $lnk_txt);
+
+        $test_name = 'a human url key has no human key of its own';
+        $no_human_key = url_var::std_to_human(url_var::NAME_HUMAN);
+        $t->assert($test_name, $no_human_key, '');
 
         // a formula added from a word page carries the phrase as '7'-prefixed link var, so the new
         // formula gets its link with the same confirm; a link var that a link may not name is dropped

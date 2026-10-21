@@ -32,27 +32,34 @@ rules for every step:
   cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
 - the LLM never runs the tests; the developer runs them and regenerates the report
 
-1. add the missing negative test of the 87 functions with one call and a name of their own,
-   class by class, starting with the classes that have most of them (`data_object`,
-   `formula_list`, `formula_map`, `result`, `user` and `sys_log_list` with 3 each, then the
-   classes with 2 or 1); this is the cheapest step, because the positive test and its
-   fixture exist already; the tested call sits before the assert line, because a call on the
-   line after a multi-line `$t->assert…(` is behind the last assert of the block and not counted
+1. the functions with one call and a name of their own that a unit test without database
+   cannot give a second test: the developer regenerates the report and checks that only these
+   are left; the ones that need the database move to step 5 (`value_base::save_as_default`,
+   `view::load_by_term`, web `db_object::add_via_api`, `component::log_link`,
+   `config_numbers::load_cfg`, `db_cache_page::del_all`, `type_lists::load_cached`,
+   `system_object::system_user` and `user_log`), the ones without a failure branch to step 6
+   (`frontend::activation_url`, `html_base::p`, `import_convert_xbrl::instance_file_name`,
+   `change_log_list::load_sql_by_user_value`, `phrase::value_selection`), and the ones that
+   need a source change are listed in `docs/llm/pending_prio_2.md` ("functions with one unit
+   test call"); a function whose only counted call is a test factory of the same name
+   (e.g. `test_users::system_user`) or a commented-out line gets a real positive test too
 2. cover the functions that many classes share, in the order of the number of classes:
-   `reset` (67 classes), `api_json_array` (61), `export_json` (49),
-   `add` (47), `dsp_id` and `default_id` (46), `load_sql` (45), `db_fields_changed` (44),
-   `db_fields_all` (43), `import_mapper` and `load_dummy` (38, 37), `name_field` (36),
-   `fill` (36), `delta` (32); one prompt per function name, which adds one positive and one
-   negative block per class to the test file of that class
+   `api_json_array` (61 classes), `export_json` (49), `add` (47), `dsp_id` and `default_id`
+   (46), `load_sql` (45), `db_fields_changed` (44), `db_fields_all` (43), `import_mapper`
+   (38), `load_dummy` and `api_array` (37), `name_field` and `fill` (36), `delta` (32),
+   `diff_msg` (28), `url_mapper` and `save` (27); one prompt per function name, which adds one
+   positive and one negative block per class to the test file of that class; `reset` (67
+   classes) is not listed as a gap, because the counter also counts every `$msg->reset()` of
+   the test blocks, so the reset of each class still gets its own positive and negative test
 3. cover the classes without database and frontend first, because their tests are fast and
-   need no fixture: `library` (104 gaps), `html_base` (139), `sql_creator` (85),
-   `sql_type_list` (51), then the frontend forms and lists (`system_form` 89, `db_object` 68,
-   `phrase_list` 57, `triple` 53, `phrase` 52)
+   need no fixture: `library` (94 gaps), `html_base` (114), `sql_creator` (80),
+   `sql_type_list` (50), then the frontend forms and lists (`system_form` 87, `db_object` 66,
+   `phrase_list` 53, `triple` 52, `phrase` 48)
 4. cover the backend model classes with the unit test factories (no database): `sandbox`
-   (142), `sandbox_multi` (132), `phrase_list` (102), `triple` (100), `user` (99), `phrase`
-   (85), `word` (77), `sandbox_value` (77), `group` (75), `sandbox_link` (73), `ref` (64),
-   `component` (62), `value_base` (61), `formula_map` (61), `data_object` (61)
-5. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (132)
+   (134), `sandbox_multi` (123), `triple` (97), `user` (95), `phrase_list` (92), `phrase`
+   (78), `group` (72), `word` (69), `sandbox_value` (69), `sandbox_link` (69), `ref` (60),
+   `data_object` (58), `formula_map` (57), `component` (55), `value_base` (55)
+5. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (122)
    and the `load_*` functions that are left after step 2
 6. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
    `application` (`start`, `start_api`, `open_db`, `end`): either a test of the request

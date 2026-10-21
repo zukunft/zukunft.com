@@ -289,11 +289,13 @@ class component_tests
         $cmp_map = new component($t->usr1);
         $cmp_map->api_mapper($t_cmp->component()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $cmp_map->name(), components::WORD_NAME);
+        $msg->reset();
 
         // the ui message links a component to a system message, so a normal user must not set it
         $test_name = 'the api mapper refuses the ui message code id of a normal user';
         $usr_msg_map = new user_message($t->usr_normal);
-        $t->assert_false($test_name, $cmp_map->api_mapper([json_fields::ID => components::WORD_ID, json_fields::UI_MSG_CODE_ID => msg_id::PLEASE_SELECT->value], $usr_msg_map));
+        $api_json = [json_fields::ID => components::WORD_ID, json_fields::UI_MSG_CODE_ID => msg_id::PLEASE_SELECT->value];
+        $t->assert_false($test_name, $cmp_map->api_mapper($api_json, $usr_msg_map));
         $usr_msg_map->reset();
 
         $t->subheader($ts . 'component frontend');
@@ -475,6 +477,13 @@ class component_tests
         $cmp_db = $t_cmp->component();
         $cmp_db->set_row_phrase($t_phr->canton());
         $t->assert_false($test_name, $this->no_upd_diff($cmp_db, $cmp_row, $t->usr1)->is_ok());
+
+        // null removes the phrase that selects the table rows
+        $test_name = 'remove the row phrase';
+        $cmp_no_row = $t_cmp->component();
+        $cmp_no_row->set_row_phrase($t_phr->year());
+        $cmp_no_row->set_row_phrase(null);
+        $t->assert($test_name, $cmp_no_row->get_row_phrase_id(), 0);
 
     }
 

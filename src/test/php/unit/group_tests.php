@@ -187,6 +187,10 @@ class group_tests
         $t->assert($test_name, $grp_id->get_array('3-/-/_0_F_'), $grp_id->get_array('3-/-/+0+F+'));
         $grp_id = 0;
 
+        $test_name = 'the pattern of another phrase is not found in the group id';
+        $other_pattern = '~' . group_id_url::phrase_pattern('0V+') . '~';
+        $t->assert_false($test_name, preg_match($other_pattern, '1-0U+') == 1);
+
         // the prime and big check of a group follow the database id like the table selection, because the phrase
         // list of a loaded group can be incomplete, and only a group without an id is checked by its phrase list
         $test_name = 'a group with the text id of 16 phrases is not prime although its phrase list has one phrase';

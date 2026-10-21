@@ -96,6 +96,18 @@ class figure_list_tests
         $t->assert_false($test_name, $fig_lst->api_mapper([$fig_json], $msg));
         $msg->reset();
 
+        $t->subheader($ts . 'get');
+        $test_name = 'the first id is the id of the first figure';
+        $fig_lst = $t_fig->figure_list($msg);
+        $first_id = $fig_lst->get_first_id($msg);
+        $t->assert($test_name, $first_id, $t_fig->figure_value($msg)->id());
+        $msg->reset();
+        $test_name = 'an empty figure list has no first id';
+        $fig_lst = new figure_list($t->usr1);
+        $first_id = $fig_lst->get_first_id($msg);
+        $t->assert($test_name, $first_id, 0);
+        $msg->reset();
+
 
         $t->subheader($ts . 'html frontend');
 

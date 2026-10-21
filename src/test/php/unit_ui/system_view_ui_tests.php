@@ -132,6 +132,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -512,6 +513,11 @@ class system_view_ui_tests
         $test_name = '... but in orange if the request has an issue';
         $saved_msg->add_id(msg_id::CONFIG_NOT_LOADED);
         $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION . '"');
+        // negative: an empty text is no info, so it never adds an empty success bar
+        $test_name = 'an empty text is not added as info';
+        $empty_msg = new user_message();
+        $empty_msg->add_info('');
+        $t->assert($test_name, $empty_msg->get_last_info(), '');
         // e.g. the refused save of a setting of the pod, which the backend reports without vars
         $test_name = 'a message without vars of a write is kept when merged into the message of the request';
         $refused_msg = new user_message();
@@ -614,8 +620,18 @@ class system_view_ui_tests
         $test_name = 'logout action resets backend user to anonymous';
         $t->assert($test_name, $logout_backend->has_db_id(), false);
 
+        $test_name = '... but the logged in user keeps the database id';
+        $logged_in = $t->usr1->has_db_id();
+        $t->assert_true($test_name, $logged_in);
+
         $test_name = 'logout action resets the message user to ip-only';
         $t->assert($test_name, $logout_msg->usr->is_ip_only(), true);
+
+        // negative: the logged in test user is known by more than the ip address
+        // (the normal profile of a new user is the ip-only profile)
+        $test_name = 'the logged in test user is not ip-only';
+        $usr1_ui = $tl->cast_user($t->usr1);
+        $t->assert($test_name, $usr1_ui->is_ip_only(), false);
 
         // test that the logout page shows the success message
         global $mtr;
@@ -790,6 +806,7 @@ class system_view_ui_tests
     private function assert_admin_dashboard(test_cleanup $t, frontend $ui, user_ui $usr_sys_ui): void
     {
         global $mtr;
+        global $ui_sys;
         $ts = 'unit ui system views ';
         $t->subheader($ts . 'admin dashboard');
         $t_adm = new test_admin_dashboard($t);
@@ -885,6 +902,22 @@ class system_view_ui_tests
             test_admin_dashboard::LOGIN_ATTACKED);
         $t->assert('... which counts each try', $groups[0][sys_log_list::GROUP_COUNT], sys_log_list::login_fail_limit($msg));
         $t->assert('the other entries are not failed logins', $dto->adm_sys_log->login_fails(false)->count(), 6);
+        // negative: the entries that are not failed logins contain no failed login and so no group
+        $test_name = 'the other entries contain no failed login';
+        $other_lst = $dto->adm_sys_log->login_fails(false);
+        $no_fail_lst = $other_lst->login_fails(true);
+        $t->assert($test_name, $no_fail_lst->count(), 0);
+        $test_name = '... and so no group of failed logins';
+        $no_fail_groups = $other_lst->login_fail_groups();
+        $t->assert($test_name, count($no_fail_groups), 0);
+        // negative: a pod without a config falls back to the shared limit of failed logins
+        $test_name = 'without a config the failed login limit is the fallback';
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = null;
+        $no_cfg_limit = sys_log_list::login_fail_limit($msg);
+        $ui_sys->cfg = $cfg_keep;
+        $t->assert($test_name, $no_cfg_limit, def::FALLBACK_MAX_LOGIN);
+        $msg->reset();
         [$direct, $behind] = $this->admin_split($page->admin_login_fails($msg, true, $dto->adm_sys_log));
         $t->assert_text_contains('the name with the limit of failed logins is shown directly', $direct, test_admin_dashboard::LOGIN_ATTACKED);
         $t->assert_text_not_contains('... but not the typo', $direct, test_admin_dashboard::LOGIN_TYPO);
@@ -913,6 +946,15 @@ class system_view_ui_tests
         $t->assert_false('a user one request below the threshold is not critical', $usr_log_sum->is_critical($limits));
         $usr_log_sum->update_ms = $limits[json_fields::UPDATE_MS];
         $t->assert_true('... but a user with the update time threshold is', $usr_log_sum->is_critical($limits));
+
+        // negative: a pod without a config falls back to the shared thresholds of a critical user
+        $test_name = 'without a config the request threshold is the fallback';
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = null;
+        $no_cfg_limits = user_log_sum_list::critical_limits($msg);
+        $ui_sys->cfg = $cfg_keep;
+        $t->assert($test_name, $no_cfg_limits[json_fields::REQUESTS], def::FALLBACK_USER_LOG_MAX_REQUESTS);
+        $msg->reset();
 
         $test_name = 'the summed sessions mapper accepts the sessions of a user';
         $usr_log_sum = new user_log_sum();

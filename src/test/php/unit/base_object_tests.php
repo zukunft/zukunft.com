@@ -193,6 +193,12 @@ class base_object_tests
         $t->assert_null($test_name, $lst->get(word_names::YEAR_2021_ID));
         $test_name = 'first object is returned';
         $t->assert($test_name, $lst->get_first_object()->id(), word_names::MATH_ID);
+
+        $test_name = 'an empty list has no first object';
+        $empty_lst = new ListOfIdObjects();
+        $first_obj = $empty_lst->get_first_object();
+        $t->assert_null($test_name, $first_obj);
+
         $test_name = 'diff can remove first two';
         $del_lst = new ListOfIdObjects([$t_wrd->word(), $t_wrd->word_inhabitant()]);
         $t->assert($test_name, $lst->diff($del_lst)->ids(), [word_names::ZH_ID,word_names::YEAR_2020_ID]);
@@ -301,6 +307,11 @@ class base_object_tests
         $t->assert_null($test_name, $lst->get_by_code_id(phrase_types::CALC));
         $test_name = 'id_by_code_id returns the id from object name';
         $t->assert($test_name, $lst->id_by_code_id(phrase_types::MEASURE), phrase_types::MEASURE_ID);
+
+        $test_name = 'id_by_code_id returns zero if the code id is missing';
+        $missing_id = $lst->id_by_code_id(phrase_types::CALC);
+        $t->assert($test_name, $missing_id, 0);
+
         $test_name = 'id_by_code_id returns zero if name is missing';
         $t->assert($test_name, $lst->id_by_name(phrase_types::CALC), 0);
         $test_name = 'add_obj_by_name can add objects without id';

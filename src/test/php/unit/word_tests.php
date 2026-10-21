@@ -404,6 +404,12 @@ class word_tests
         $t->assert($test_name . ' and the protection', $url_arr[url_var::PROTECTION], protection_types::ADMIN_ID);
         $t->assert($test_name . ' and the owner', $url_arr[url_var::OWNER], users::SYSTEM_TEST_NAME);
 
+        // negative: an empty owner name e.g. of a page url without owner leaves the owner unknown
+        $test_name = 'an empty owner name leaves the owner unknown';
+        $wrd_no_owner = $t_wrd->word_dsp();
+        $wrd_no_owner->set_owner_name('');
+        $t->assert($test_name, $wrd_no_owner->owner_name(), '');
+
         $test_name = 'the url array of a word contains the plural, usage, impact and default view';
         $wrd_ui->plural = word_names::MATH_PLURAL;
         $wrd_ui->usage = test_const::DUMMY_USAGE_WORD;

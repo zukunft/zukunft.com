@@ -145,6 +145,10 @@ class sys_log_tests
         // negative: after a new line the step time starts again and is not the runtime
         $test_name = '... and starts again with the next line';
         $t->assert_true($test_name, (float)$log_txt->since_last() < self::STEP_PAUSE_SEC);
+        // negative: an empty text gets no time stamped line
+        $test_name = 'an empty text has no time stamp line';
+        $stamped_empty = $log_txt->time_stamp_lines('');
+        $t->assert($test_name, $stamped_empty, '');
 
         $t->subheader($ts . 'sys_log insert throttle');
 
@@ -258,6 +262,11 @@ class sys_log_tests
         $test_name = '... and no longer in the category that has counted it';
         $t->assert_text_contains($test_name, $sys_tim_lst->report(),
             system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC - self::TV_STEP_LOAD_TYPES_SEC, 4) . ' sec');
+        // negative: a time of zero is not moved, so the new category is not created
+        $test_name = 'a time of zero is not moved';
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $sys_tim_lst->move(0.0, system_time_type::DB_READ, system_time_type::API_WAIT);
+        $t->assert_text_not_contains($test_name, $sys_tim_lst->report(), system_time_type::API_WAIT . ': ');
         // the steps that the backend has named in the json of its answer split the api wait
         $sys_tim_lst = new system_time_list();
         $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::API_WAIT);
@@ -292,6 +301,9 @@ class sys_log_tests
         $t->assert_text_not_contains($test_name, $sys_tim_lst->report(), system_time_list::GROUP_REST);
         $test_name = '... also not in the report of the section';
         $t->assert_text_not_contains($test_name, $sys_tim_lst->section_report(), system_time_list::GROUP_REST);
+        $test_name = '... and has no line of small steps';
+        $small_name = system_time_list::small_steps_name();
+        $t->assert_text_not_contains($test_name, $sys_tim_lst->report(), $small_name);
         // the render time of each component type splits the url to html time in the same way
         $sys_tim_lst = new system_time_list();
         $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::URL_TO_HTML);

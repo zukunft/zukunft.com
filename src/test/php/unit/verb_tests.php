@@ -122,6 +122,11 @@ class verb_tests
 
         $this->assert_verb($t, verbs::IS, $t_trp->triple_pi_name(), word_names::PI . ' (' . triple_names::MATH_CONST . ')');
         $this->assert_verb($t, verbs::PART, $t_trp->triple(), word_names::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . word_names::MATH);
+        // negative: without the linked phrases and a given name no name is generated
+        $test_name = 'a triple without linked phrases has no generated name';
+        $trp_name_only = $t_trp->triple_name_only();
+        $name_generated = $trp_name_only->generate_name();
+        $t->assert($test_name, $name_generated, '');
 
 
         // start the test section (ts)

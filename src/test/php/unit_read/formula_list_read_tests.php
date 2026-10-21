@@ -41,9 +41,11 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_list_read_tests
@@ -88,6 +90,13 @@ class formula_list_read_tests
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::SCALE_TO_SEC]);
         */
 
+        $test_name = 'no formula uses the word "hand"';
+        $wrd_hand = new word($t->usr1);
+        $wrd_hand->load_by_name(word_names::HAND, $msg);
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_by_word_ref($wrd_hand, $msg);
+        $t->assert($test_name, $frm_lst->names(), []);
+
         // test loading the formulas that use the results related to the word second
         $test_name = 'formulas that use the word "second" are at least "scale minute to sec"';
         $trp_sec = new triple($t->usr1);
@@ -112,6 +121,13 @@ class formula_list_read_tests
         $frm_lst->load_by_verb_ref($vrb_time_step, $msg);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::PRIOR]);
 
+        $test_name = 'no formula uses the verb "is alias of"';
+        $vrb_alias = new verb();
+        $vrb_alias->load_by_name(verbs::ALIAS_NAME, $msg);
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_by_verb_ref($vrb_alias, $msg);
+        $t->assert($test_name, $frm_lst->names(), []);
+
         // test loading the formulas that use the results of a given formula
         $test_name = 'formulas that use the formula "this" are at least "increase"';
         $frm_this = new formula($t->usr1);
@@ -119,6 +135,13 @@ class formula_list_read_tests
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_formula_ref($frm_this, $msg);
         $t->assert_contains($test_name, $frm_lst->names(), [formula_names::INCREASE]);
+
+        $test_name = 'no formula uses the formula "scale hour to sec"';
+        $frm_hour = new formula($t->usr1);
+        $frm_hour->load_by_name(formula_names::SCALE_HOUR, $msg);
+        $frm_lst = new formula_list($t->usr1);
+        $frm_lst->load_by_formula_ref($frm_hour, $msg);
+        $t->assert($test_name, $frm_lst->names(), []);
 
         $test_name = 'load formulas staring with i';
         $frm_lst = new formula_list($t->usr1);

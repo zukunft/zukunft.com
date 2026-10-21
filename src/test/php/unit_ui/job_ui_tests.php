@@ -133,6 +133,11 @@ class job_ui_tests
         $test_name = 'the open jobs are on top of the completed job';
         $open_first = array_map(fn(job $job) => $job->id(), $job_lst->pending_first());
         $t->assert($test_name, implode(',', $open_first), '2,1,3');
+        // negative: a user without a job has no job to put on top
+        $test_name = 'an empty job list has no open job on top';
+        $no_job_lst = new job_list();
+        $no_open_first = $no_job_lst->pending_first();
+        $t->assert($test_name, $no_open_first, []);
 
         $t->subheader($ts . 'api mapper');
 
@@ -140,6 +145,16 @@ class job_ui_tests
         $job = new job();
         $job->api_mapper(json_decode($t_job->job()->api_json(), true), $msg);
         $t->assert($test_name, $job->priority(), job_statuum::PRIO_HIGHEST);
+        $msg->reset();
+
+        // negative: a job json without a priority leaves the job without priority
+        $test_name = 'the job mapper sets no priority if the json has none';
+        $api_json = json_decode($t_job->job()->api_json(), true);
+        unset($api_json[json_fields::PRIORITY]);
+        $job = new job();
+        $job->api_mapper($api_json, $msg);
+        $job_prio = $job->priority();
+        $t->assert($test_name, $job_prio, 0);
         $msg->reset();
 
         // negative: the id is mandatory, so a job json without it is reported

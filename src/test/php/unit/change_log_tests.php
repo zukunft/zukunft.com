@@ -280,6 +280,11 @@ class change_log_tests
         $t->assert_text_contains($test_name, $qp_order->sql,
             change_log::FLD_TIME . ' ' . sql::ORDER_DESC
             . ', ' . sql_db::STD_TBL . '.' . change_log::FLD_ID);
+        // only a value or result change is selected by the group id, a word by its row id
+        $test_name = 'the last changes of a word are not selected by a group id';
+        $sc->reset(sql_db::POSTGRES);
+        $qp_wrd = $log_lst->load_sql_obj_last($sc, word::class, 1, $t->usr1);
+        $t->assert_text_not_contains($test_name, $qp_wrd->sql, group_fields::FLD_ID);
         $test_name = 'get the latest changes of an user';
         $test_name = 'get the latest 5 changes of an user';
         $test_name = 'get the second last change of an user';
