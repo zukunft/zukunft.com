@@ -302,6 +302,9 @@ class use_case_ui_tests
         $test_name = '... but the name and not the symbol of percent';
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $t->assert($test_name, $list->unit_name($pct_val, $msg), words::PCT);
+        // the symbol of the percent word is shown behind the number times 100 instead
+        $test_name = '... which is the percent symbol of the number';
+        $t->assert($test_name, $pct_val->percent_symbol($msg), word_names::PERCENT_SYMBOL);
         // a qualified percent unit has a symbol that names the stored ratio
         $test_name = '... and the symbol of a qualified percent unit e.g. share (ratio)';
         $ui_sys->phr_lst = $t_phr->list_share_symbol_cache_ui();
@@ -531,6 +534,9 @@ class use_case_ui_tests
         $dto_calc->phr_lst = $cac;
         $t->assert($test_name, $page->calculator_title(new test_triples($t)->zh_city_ui(), $dto_calc),
             $html->block(html_base::H4, triple_names::CALC_ZH_LABEL_COM) . $html->p(triple_names::CALC_ZH_HINT_COM));
+        // negative: a page without a phrase has no calculator title
+        $test_name = '... and a page without a phrase has no calculator title';
+        $t->assert($test_name, $page->calculator_title(null, $dto_calc), '');
 
         $t->subheader($ts . 'calculator input');
         // the inputs of Zurich (city) are the inputs of Zurich, the phrase it is built from: the
@@ -767,6 +773,14 @@ class use_case_ui_tests
         $dto_off->online = false;
         $dto_off->load_values_of($zh_phr_lst, $msg);
         $t->assert_false($test_name, $dto_off->has_values_of($zh_phr_lst));
+        $msg->reset();
+        // negative: a phrase without calculator triples has no table, and an offline page without values no numbers
+        $test_name = 'a calculator without columns and rows shows no table';
+        $calc_list = new ui_list();
+        $calc_empty = new calculator($wrd->phrase(), new phrase_list_ui());
+        $t->assert($test_name, $calc_list->calculation_table($calc_empty, $wrd, new value_list_ui(), $msg), '');
+        $test_name = 'an offline page without values has no calculator numbers';
+        $t->assert($test_name, $calc_list->calculator_numbers($wrd, $dto_off, $msg)->count(), 0);
         $msg->reset();
         // with javascript for the calculator the page gets its calculation as data and the script
         // that repeats it in the browser when an input changes (docs/llm/frontend.md)

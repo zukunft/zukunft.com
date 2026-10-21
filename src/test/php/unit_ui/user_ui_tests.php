@@ -511,6 +511,8 @@ class user_ui_tests
         $t->assert_text_contains($test_name, $html->ref($page_url, word_names::MATH), $usr_url);
         $test_name = '... and in the form';
         $t->assert_text_contains($test_name, $html->form_start(views::WORD_EDIT), $html->form_hidden(url_var::USER, (string)users::DEV_ID));
+        $test_name = '... as the hidden user field of the form';
+        $t->assert($test_name, $html->form_user(), $html->form_hidden(url_var::USER, (string)users::DEV_ID));
         $test_name = 'the back key and a value u are not taken as the user id';
         $back_url = $page_url . url_var::ADD . url_var::BACK . $usr_url . url_var::ADD . url_var::ACTION . url_var::EQ . url_var::CRUD_UPDATE;
         $t->assert($test_name, $html->url_with_user($back_url), $back_url . url_var::ADD . $usr_url);
@@ -526,6 +528,8 @@ class user_ui_tests
         $t->assert($test_name, $html->url_with_user($page_url), $page_url);
         $test_name = '... and the form of an ip only user has no user field';
         $t->assert($test_name, $html->form_user(), '');
+        $test_name = '... so the form of an ip only user starts without a user field';
+        $t->assert_text_not_contains($test_name, $html->form_start(views::WORD_EDIT), html_base::NAME . '="' . url_var::USER . '"');
         // the system users see the standard data by default, so their urls name no user
         $ui_sys->usr = $sys_ui;
         $test_name = 'the page url of the system user carries no user id';

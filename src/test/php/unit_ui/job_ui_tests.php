@@ -125,6 +125,9 @@ class job_ui_tests
         $test_name = 'the jobs of a user have no upgrade button';
         $usr_html = $page->user_jobs($msg_usr, 0, true, $job_lst);
         $t->assert_text_not_contains($test_name, $usr_html, $upgrade_prefix . '1');
+        // negative: a user without a job gets the hint instead of an empty table
+        $test_name = 'a user without a job gets the no jobs hint';
+        $t->assert_text_contains($test_name, $page->user_jobs($msg_usr, 0, true, new job_list()), $mtr->txt(msg_id::INFO_NO_JOBS));
         $test_name = 'the open jobs are on top of the completed job';
         $open_first = array_map(fn(job $job) => $job->id(), $job_lst->pending_first());
         $t->assert($test_name, implode(',', $open_first), '2,1,3');

@@ -133,8 +133,8 @@ class term_list_ui_tests
 
         // the search pattern is user input reflected into the search result title
         // (system_page::search_title), so it must be html-escaped to prevent a reflected xss
-        $search_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => 'impact']);
         $test_name = 'the search result title shows the pattern';
+        $search_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => 'impact']);
         $t->assert_text_contains($test_name, $search_title, 'impact');
         $xss_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => '<script>alert(1)</script>']);
         $test_name = 'the search result title escapes a script tag in the pattern';

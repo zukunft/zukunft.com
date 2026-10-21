@@ -280,8 +280,8 @@ class component_ui_tests
         // the component default page lists the views that use the component; the views come from
         // the request cache that also provides the views for the page rendering itself
         $list = new ui_list();
-        $views_html = $list->component_views($cmp_filled, $msg);
         $test_name = 'the views that use the component are listed';
+        $views_html = $list->component_views($cmp_filled, $msg);
         $t->assert_text_contains($test_name, $views_html, views::START_NAME);
         $test_name = 'the listed views link to the view default page';
         $t->assert_text_contains($test_name, $views_html, url_var::MASK . '=' . views::VIEW_DEFAULT_ID);

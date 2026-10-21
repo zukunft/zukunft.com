@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\word\word;
@@ -241,8 +242,8 @@ class word_ui_tests
         $t->html_page_test($test_page, 'word html components', 'word', $msg, $base_url, $lan);
 
         $t->subheader($ts . 'values in columns');
-        $col_html = $list->values_in_columns($wrd_zh, $msg, $dto);
         $test_name = 'the values are shown in a wrapping column row';
+        $col_html = $list->values_in_columns($wrd_zh, $msg, $dto);
         $t->assert_text_contains($test_name, $col_html, 'class="row');
         $test_name = 'the phrase of the page is not repeated as a column headline';
         $t->assert_text_not_contains($test_name, $col_html, styles::VALUE_GROUP_TITLE . '">' . word_names::ZH);
@@ -298,8 +299,8 @@ class word_ui_tests
         $t->assert($test_name, $list->parents_of_word($trp_chf, $msg, new phrase_list()), '');
 
         $t->subheader($ts . 'aliases and symbols');
-        $alias_html = $list->phrase_aliases($wrd_eur_rel, $msg);
         $test_name = 'one alias is shown with the singular text';
+        $alias_html = $list->phrase_aliases($wrd_eur_rel, $msg);
         $t->assert_text_contains($test_name, $alias_html, $mtr->txt(msg_id::PHRASE_ALIAS));
         $test_name = 'the alias line is not broken across lines';
         $t->assert_text_contains($test_name, $alias_html, styles::TEXT_NOWRAP);
@@ -362,6 +363,11 @@ class word_ui_tests
         $t->assert_text_not_contains($test_name, $eur_html, styles::DEFINE_PHRASE_PANE);
         $test_name = 'without an alias nothing is shown';
         $t->assert($test_name, $list->phrase_aliases($trp_chf_rel, $msg), '');
+        // negative: the symbol line and the related phrases of a phrase without relations stay empty
+        $test_name = 'without a symbol nothing is shown';
+        $t->assert($test_name, $list->phrase_symbols($wrd_zh, $msg, new phrase_list()), '');
+        $test_name = 'without related phrases no other related phrase is shown';
+        $t->assert($test_name, $list->phrases_related_ex_symbols($wrd_zh, $msg, new phrase_list()), '');
 
         $t->subheader($ts . 'phrase type');
         $test_name = 'the phrase type name is shown';
@@ -529,6 +535,12 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $ip_val_html, $icon_grey);
         $test_name = 'the value add icon of a user without login asks for a login';
         $t->assert_text_contains($test_name, $ip_val_html, $mtr->txt(msg_id::VALUE_ADD_BLOCKED));
+        // negative: a phrase without a db id cannot be linked or preset, so it gets no add icon
+        $test_name = 'a phrase that is not yet saved gets no formula add icon';
+        $phr_unsaved = new phrase();
+        $t->assert($test_name, $list->formula_add_link($phr_unsaved, $page_url), '');
+        $test_name = '... and no value add icon';
+        $t->assert($test_name, $list->value_add_link($phr_unsaved, $msg, $page_url), '');
         $test_name = 'the define icon of a user without login is grey';
         $ip_define_html = $list->phrases_related_ex_subtitle($wrd_currency_rel, $msg, null, $ctg_dto, true, $url_arr);
         $t->assert_text_contains($test_name, $ip_define_html, $icon_grey);

@@ -348,6 +348,26 @@ class expression_tests
         $result = $phr_lst->dsp_id();
         $target = 'phrase_id ' . word_names::ONE_ID . ' for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
+        $test_name = '... and the calculation part has the millions as element group';
+        $elm_scale_lst = $exp_scale->element_grp_lst($msg, $t_trm->term_list_all());
+        $t->assert_text_contains($test_name, $elm_scale_lst->dsp_id(), '(' . word_names::MIO_ID . ')');
+        $msg->reset();
+
+        // negative: a text without the equal sign is reported and has neither a result nor a calculation part
+        $test_name = 'an expression without an equal sign is reported';
+        $exp_no_calc = new expression($frm);
+        $exp_no_calc->set_user_text('"' . words::PERCENT . '"', $msg, $trm_lst);
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+        $test_name = '... and has no calculation part';
+        $t->assert($test_name, $exp_no_calc->r_part($msg), '');
+        $test_name = '... and no result part';
+        $t->assert($test_name, $exp_no_calc->res_part($msg), '');
+        $test_name = '... and no terms';
+        $t->assert($test_name, $exp_no_calc->term_id_list_all($msg)->count(), 0);
+        $msg->reset();
+        $test_name = 'a text without a phrase has no phrase ids';
+        $t->assert($test_name, $exp_no_calc->phr_id_lst('')->lst, []);
 
     }
 
