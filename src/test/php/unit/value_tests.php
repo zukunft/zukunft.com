@@ -812,8 +812,10 @@ class value_tests
         // TODO move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
         // the value has no source, so the link is followed by the grey "-" mark (see sandbox_value::quality_mark)
-        $t->assert('value edit link', $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>' . $val_ui->quality_mark());
-        $t->assert_text_contains('... with the mark of the missing source', $val_ui->quality_mark(), msg_id::QUALITY_MARK_NO_SOURCE->text());
+        $test_name = 'value edit link';
+        $t->assert($test_name, $val_ui->value_edit($msg_ui), '<a href="' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::VALUE_DEFAULT_ID . '&amp;id=5">3.14</a>' . $val_ui->quality_mark());
+        $test_name = '... with the mark of the missing source';
+        $t->assert_text_contains($test_name, $val_ui->quality_mark(), msg_id::QUALITY_MARK_NO_SOURCE->text());
 
         $t->subheader($ts . 'convert and api');
 

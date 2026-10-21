@@ -170,8 +170,8 @@ class view_ui_tests
         // the components come from the request cache that also provides the views for the page
         // rendering itself, because the page url only carries the view id
         $list = new ui_list();
-        $cmp_html = $list->view_components($msk, $msg);
         $test_name = 'the components of the start view are listed';
+        $cmp_html = $list->view_components($msk, $msg);
         $t->assert_text_contains($test_name, $cmp_html, components::WORD_NAME);
         $test_name = 'the listed components link to the component default page';
         $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_DEFAULT_ID);

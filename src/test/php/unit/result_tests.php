@@ -382,6 +382,9 @@ class result_tests
         $t->assert_true($test_name, $res->set_grp_by_row(
             [result_fields::FLD_ID => $grp->id()], $msg, result_fields::FLD_ID, $phr_id_flds));
         $t->assert($test_name . ' id', $res->grp()->id(), $grp->id());
+        // negative: a range that ends before it starts names no id column
+        $test_name = 'an empty range of phrase positions has no id field';
+        $t->assert($test_name, $res->id_fields_main(2, 1), []);
         $test_name = 'a row with the phrase id columns sets the same group as the key would';
         $grp = $t_grp->group_prime_3();
         $db_row = [result_fields::FLD_ID => ''];

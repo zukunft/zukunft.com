@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 
+use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value as value_db_class;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -513,6 +514,15 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $geo_html, values::GEO);
         $test_name = '... and no number field';
         $t->assert_text_not_contains($test_name, $geo_html, $number_field);
+        // the typed getters return the field of the own type only, so a number value has no time and no geolocation
+        $test_name = 'a time value has a time';
+        $t->assert_true($test_name, $val_time->time_value() != null);
+        $test_name = '... but no geolocation';
+        $t->assert_null($test_name, $val_time->geo_value());
+        $test_name = 'a geo value has the geolocation';
+        $t->assert($test_name, $val_geo->geo_value(), values::GEO);
+        $test_name = '... but no time';
+        $t->assert_null($test_name, $val_geo->time_value()?->format(DateTimeInterface::ATOM));
         // the changed text, time or geolocation of the url is sent to the backend and saved with the typed value class
         $test_name = 'a changed text of the url is sent to the backend as text value';
         $map = new MapObject();
@@ -797,8 +807,8 @@ class value_ui_tests
 
         // the results column lists the results that use the value like a value list, each with
         // its phrase and its formatted number
-        $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
         $test_name = 'the results of a value are shown with their phrase and their number';
+        $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
         $t->assert_text_order($test_name, $res_html, word_names::MATH, results::TV_INT_FORM);
 
         // a value that is not used for results says so instead of showing an empty table

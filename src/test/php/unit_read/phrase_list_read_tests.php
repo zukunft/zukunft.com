@@ -106,6 +106,9 @@ class phrase_list_read_tests
         $t->assert_contains($test_name, $result, $id_lst);
         $result = json_encode($result);
         $t->assert_text_contains($test_name, $result, '1');
+        // negative: an empty list has no ids
+        $test_name = 'an empty phrase list has no ids';
+        $t->assert($test_name, new phrase_list($t->usr1)->obj_id_lst(), []);
         $test_name = 'Switzerland is part of the phrase list staring with S';
         $switzerland = new phrase($t->usr1);
         $switzerland->load_by_name(words::CH, $msg);
@@ -275,6 +278,12 @@ class phrase_list_read_tests
         // negative: a word has no sides, so it is kept as it is
         $test_name = '... while a word of the same list is unchanged';
         $t->assert($test_name, $lst->get_by_name(word_names::LOSS, $msg)?->id(), word_names::LOSS_ID);
+        // negative: a list of words has no triple sides to load, so the list stays as it is
+        $test_name = 'a list of words loads no triple sides';
+        $wrd_only_lst = new phrase_list($t->usr1);
+        $wrd_only_lst->load_names_by_ids(new phr_ids([word_names::LOSS_ID]), $msg);
+        $wrd_only_lst->load_triple_sides($msg);
+        $t->assert($test_name, $wrd_only_lst->names(), [word_names::LOSS]);
 
 
         $t->subheader($ts . 'categories');

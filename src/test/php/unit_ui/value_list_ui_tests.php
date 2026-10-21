@@ -778,6 +778,9 @@ class value_list_ui_tests
             msg_id::TABLE_AS_TABLE_CHART->text());
         // the form shown is not offered again: the table page offers the chart and the table
         // with the chart, the chart page the table and the table with the chart
+        // negative: without the url of the page no version can be linked, so the header is plain text
+        $test_name = 'the column menu of an unknown page is the plain three points';
+        $t->assert($test_name, $t_val->value_list_defined_columns_ui()->columns_menu([]), msg_id::THREE_POINTS->text());
         $chart_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value];
         $chart_menu = $t_val->value_list_defined_columns_ui()->columns_menu($chart_url);
         foreach (table_forms::cases() as $form) {

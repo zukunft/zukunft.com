@@ -91,15 +91,18 @@ class value_list_tests
         $test_name = 'test the grp_ids function';
         $val_ids = $t_val->value_list($msg)->grp_ids()->dsp_id();
         $t->assert($test_name, $val_ids, 'π (unit symbol) / Zurich city inhabitants (2019)');
+        // negative: an empty list has no group
+        $test_name = 'an empty value list has no group';
+        $t->assert($test_name, new value_list($t->usr1)->grp_ids()->count(), 0);
 
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list($msg)->filter_by_time($msg, $t_phr->phrase_list());
 
         $t->subheader($ts . 'sort value list');
         // the factory adds the low impact value first and the high impact value second
+        $test_name = 'sort by impact descending puts the high impact value first';
         $impact_lst = $t_val->value_list_zh_impact();
         $impact_lst->sort();
-        $test_name = 'sort by impact descending puts the high impact value first';
         $t->assert($test_name, $impact_lst->lst()[0]->impact(), impacts::HIGH);
         $test_name = 'sort by impact descending keeps the low impact value last';
         $t->assert($test_name, $impact_lst->lst()[1]->impact(), impacts::LOW);
@@ -130,6 +133,12 @@ class value_list_tests
         $empty_lst = new value_list($t->usr1);
         $empty_lst->sort();
         $t->assert($test_name, $empty_lst->count(), 0);
+
+        $t->subheader($ts . 'numbers');
+        $test_name = 'the numbers of a value list are in the order of the list';
+        $t->assert($test_name, implode(',', $num_lst->numbers()), '8,2');
+        $test_name = '... and an empty value list has no number';
+        $t->assert($test_name, $empty_lst->numbers(), []);
 
         $t->subheader($ts . 'keep most relevant');
         // the factory adds the low impact value first and the high impact value second

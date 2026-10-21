@@ -33,7 +33,7 @@ group: $db_grp, $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_big, $grp_
 import: $imp_cnt
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_new, $job_newer, $job_older, $job_oldest, $job_upd
 language: $dbo, $dbo_ui, $lan_by_id, $obj, $src
-phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_msk, $phr_new, $phr_no_name, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
+phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_loaded, $phr_msk, $phr_new, $phr_no_name, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_unsaved, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_empty, $ref_filled, $ref_new, $ref_obj, $ref_plain, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $res_zero, $result, $rst
@@ -81,7 +81,7 @@ api_type_list: $api_typ_lst, $typ_lst, $with_related, $without_related
 arithmetic: $calc
 button_dsp: $btn
 calc_internal: $calc
-calculator: $calc, $calc_be, $calc_in, $js_calc
+calculator: $calc, $calc_be, $calc_empty, $calc_in, $js_calc
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
@@ -130,7 +130,7 @@ element_group_list: $result
 element_list: $db_lst, $elm_lst, $frm_elm_lst, $result
 element_type: $elm_typ
 export_type_list: $exp_typ
-expression: $exp, $exp_db, $exp_pe, $exp_scale, $exp_sector
+expression: $exp, $exp_db, $exp_no_calc, $exp_pe, $exp_scale, $exp_sector
 figure_list: $fig_lst, $fig_lst_ui, $lst
 formula_calc: $calc
 formula_dsp: $frm_html
@@ -161,7 +161,7 @@ list_sort: $lst
 message: $ui_msg
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $kept, $kinds, $listed, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $rm_lst, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $time_lst, $tree, $typ_lst, $unit_lst, $zh_lst, $zh_part, $zh_reversed
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $kept, $kinds, $listed, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $rm_lst, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $time_lst, $tree, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ
@@ -247,7 +247,7 @@ ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port
 ui_link: $link
-ui_list: $js_list, $list, $lst_ui
+ui_list: $calc_list, $js_list, $list, $lst_ui
 ui_preview: $preview
 ui_rank: $rank
 ui_select: $select
