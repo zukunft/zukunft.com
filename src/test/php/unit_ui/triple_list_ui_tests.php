@@ -42,7 +42,9 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -63,6 +65,19 @@ class triple_list_ui_tests
         $db_lst = $t_trp->triple_list_short();
         $lst = new triple_list($db_lst->api_json());
         $t->assert('HTML triple list names match backend names', $lst->names(), $db_lst->names());
+
+        $t->subheader($ts . 'api mapper');
+
+        // each triple of the api json is added to the list
+        $test_name = 'the api mapper adds the triples of the api json';
+        $trp_lst_map = new triple_list();
+        $trp_lst_map->api_mapper(json_decode($db_lst->api_json(), true));
+        $t->assert($test_name, $trp_lst_map->names(), $db_lst->names());
+
+        // the id is mandatory, so a triple of the api json without the id is reported
+        $test_name = 'the api mapper reports a triple without the id';
+        $trp_lst_map = new triple_list();
+        $t->assert_false($test_name, $trp_lst_map->api_mapper([[json_fields::NAME => triple_names::MATH_CONST]])->is_ok());
 
         // create the triple list test set
         $lst = new triple_list();

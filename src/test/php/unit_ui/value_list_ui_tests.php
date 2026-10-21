@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_forms;
 use Zukunft\ZukunftCom\main\php\shared\enum\table_orders;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -145,6 +146,15 @@ class value_list_ui_tests
             value_list_ui::LIMIT_ALL, [], false, false, [word_names::GAIN, word_names::LOSS]);
         $test_page .= 'as scatter plot: ' . $html->lf() . $svg_points . '<br>';
         $t->html_page_test($test_page, 'value_list', 'value_list', $msg_ui);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api mapper adds every value of the api json';
+        $val_lst_ui = new value_list_ui();
+        $val_lst_ui->api_mapper($t_val->value_list_math()->api_json_array([api_types::INCL_PHRASES], $msg));
+        $t->assert($test_name, $val_lst_ui->count(), $t_val->value_list_math()->count());
+        $test_name = 'the api mapper reports a value without id';
+        $val_lst_ui = new value_list_ui();
+        $t->assert_false($test_name, $val_lst_ui->api_mapper([[json_fields::NUMBER => values::PI]])->is_ok());
 
         $t->subheader($ts . 'user config');
 

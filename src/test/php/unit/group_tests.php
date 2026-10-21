@@ -58,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -260,6 +261,22 @@ class group_tests
         $grp = $t_grp->group_e();
         $t->assert($test_name, $grp->name_given(), '');
         $t->assert($test_name, $grp->name(), triple_names::E);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the name of the api json is the name given by the user
+        $test_name = 'the api mapper sets the given name of the group';
+        $grp_map = new group($t->usr1);
+        $grp_map->api_mapper($t_grp->group()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $grp_map->name_given(), groups::TN_READ);
+        $msg->reset();
+
+        // a group of the api json without a name is named only by its phrases
+        $test_name = 'the api mapper leaves the given name empty without a name in the api json';
+        $grp_map = new group($t->usr1);
+        $grp_map->api_mapper([json_fields::ID => $t_grp->group()->id()], $msg);
+        $t->assert($test_name, $grp_map->name_given(), '');
+        $msg->reset();
 
         // a list e.g. of an import holds a group by its name, because the id needs the ids of the phrases
         $t->subheader($ts . 'list ready');

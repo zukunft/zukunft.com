@@ -45,6 +45,8 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list as figure_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -80,6 +82,19 @@ class figure_list_tests
         $fig_lst = $t_fig->figure_list($msg);
         $t->assert_api($fig_lst, 'figure_list_without_phrases');
         $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_types::INCL_PHRASES]);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api mapper adds every figure of the api json';
+        $fig_lst = new figure_list($t->usr1);
+        $fig_lst->api_mapper($t_fig->figure_list($msg)->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $fig_lst->count(), $t_fig->figure_list($msg)->count());
+        $msg->reset();
+        $test_name = 'the api mapper refuses a figure with a text as the number';
+        $fig_json = $t_fig->figure_value($msg)->api_json_array([], $msg);
+        $fig_json[json_fields::NUMBER] = values::TEXT;
+        $fig_lst = new figure_list($t->usr1);
+        $t->assert_false($test_name, $fig_lst->api_mapper([$fig_json], $msg));
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

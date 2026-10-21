@@ -39,6 +39,8 @@ include_once html_paths::SYSTEM . 'job_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\job;
@@ -131,6 +133,34 @@ class job_ui_tests
         $test_name = 'the open jobs are on top of the completed job';
         $open_first = array_map(fn(job $job) => $job->id(), $job_lst->pending_first());
         $t->assert($test_name, implode(',', $open_first), '2,1,3');
+
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the job mapper sets the priority';
+        $job = new job();
+        $job->api_mapper(json_decode($t_job->job()->api_json(), true), $msg);
+        $t->assert($test_name, $job->priority(), job_statuum::PRIO_HIGHEST);
+        $msg->reset();
+
+        // negative: the id is mandatory, so a job json without it is reported
+        $test_name = 'the job mapper reports a json without id';
+        $api_json = json_decode($t_job->job()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $job = new job();
+        $t->assert_false($test_name, $job->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $test_name = 'the job list mapper adds the jobs';
+        $job_lst = new job_list();
+        $job_lst->api_mapper(json_decode($t_job->job_list()->api_json(), true));
+        $t->assert($test_name, $job_lst->count(), $t_job->job_list()->count());
+
+        // negative: a job without id is reported via the returned message
+        $test_name = 'the job list mapper reports a job without id';
+        $api_json = json_decode($t_job->job_list()->api_json(), true);
+        unset($api_json[0][json_fields::ID]);
+        $job_lst = new job_list();
+        $t->assert_false($test_name, $job_lst->api_mapper($api_json)->is_ok());
     }
 
 }

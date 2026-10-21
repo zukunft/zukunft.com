@@ -913,6 +913,17 @@ class system_view_ui_tests
         $t->assert_false('a user one request below the threshold is not critical', $usr_log_sum->is_critical($limits));
         $usr_log_sum->update_ms = $limits[json_fields::UPDATE_MS];
         $t->assert_true('... but a user with the update time threshold is', $usr_log_sum->is_critical($limits));
+
+        $test_name = 'the summed sessions mapper accepts the sessions of a user';
+        $usr_log_sum = new user_log_sum();
+        $api_json = [json_fields::ID => test_admin_dashboard::LOAD_LIGHT_ID, json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME];
+        $t->assert_true($test_name, $usr_log_sum->api_mapper($api_json));
+
+        // negative: summed sessions without a user id belong to no user
+        $test_name = 'the summed sessions mapper refuses sessions without a user id';
+        $usr_log_sum = new user_log_sum();
+        $api_json = [json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME];
+        $t->assert_false($test_name, $usr_log_sum->api_mapper($api_json));
     }
 
     /**

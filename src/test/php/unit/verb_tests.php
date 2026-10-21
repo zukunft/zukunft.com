@@ -100,6 +100,24 @@ class verb_tests
         $t->assert_api_to_ui($vrb, new verb_ui());
 
 
+        $t->subheader($ts . 'api mapper');
+        $msg = new user_message();
+
+        // the reverse name is a language form of the verb, so the api json of the filled verb sets it
+        $test_name = 'the api mapper sets the reverse name of the verb';
+        $vrb_map = new verb();
+        $vrb_map->api_mapper($t_vrb->verb_is_filled()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $vrb_map->reverse, verbs::IS_REVERSE);
+        $msg->reset();
+
+        // the code id links the verb to the program code, so an untrusted api json cannot set it
+        $test_name = 'the api mapper ignores the code id of an untrusted api json';
+        $vrb_map = new verb();
+        $vrb_map->api_mapper($t_vrb->verb()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $vrb_map->get_code_id(), '');
+        $msg->reset();
+
+
         $t->subheader($ts . 'triple usage');
 
         $this->assert_verb($t, verbs::IS, $t_trp->triple_pi_name(), word_names::PI . ' (' . triple_names::MATH_CONST . ')');

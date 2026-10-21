@@ -48,9 +48,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -100,6 +104,22 @@ class phrase_tests
         $phr = $t_phr->phrase();
         $t->assert_api($phr, 'phrase_body');
 
+        $t->subheader($ts . 'api mapper');
+        $msg = new user_message();
+
+        // a positive phrase id is a word, so the mapper fills the phrase with the word of the api json
+        $test_name = 'the api mapper sets the word of the phrase';
+        $phr_map = new phrase($t->usr1);
+        $phr_map->api_mapper($t_phr->phrase()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $phr_map->name(), word_names::MATH);
+        $msg->reset();
+
+        // a negative phrase id is a triple, so a triple json without the from phrase is reported
+        $test_name = 'the api mapper reports a triple phrase without the from phrase';
+        $phr_map = new phrase($t->usr1);
+        $t->assert_false($test_name, $phr_map->api_mapper([json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null], $msg));
+        $msg->reset();
+
         $t->subheader($ts . 'html frontend');
         $phr = $t_wrd->word()->phrase();
         $t->assert_api_to_ui($phr, new phrase_ui());
@@ -126,6 +146,22 @@ class phrase_tests
         $phr_typ = $sys->typ_lst->phr_typ->get_by_code_id(phrase_type_shared::PERCENT);
         // an own file, because phrase_type.json is the default type of the api get test
         $t->assert_api($phr_typ, 'phrase_type_percent');
+
+        $t->subheader($ts . 'api mapper');
+
+        // the symbol is the own field of the phrase type mapper e.g. the percent sign
+        $test_name = 'the api mapper sets the symbol of the phrase type';
+        $phr_typ_map = new phrase_type(phrase_type_shared::PERCENT);
+        $phr_typ_map->api_mapper([json_fields::ID => $phr_typ->id(), json_fields::SYMBOL => word_names::PERCENT_SYMBOL], $msg);
+        $t->assert($test_name, $phr_typ_map->symbol, word_names::PERCENT_SYMBOL);
+        $msg->reset();
+
+        // an empty symbol of the api json is not a symbol, so it leaves the symbol unset
+        $test_name = 'the api mapper ignores an empty symbol';
+        $phr_typ_map = new phrase_type(phrase_type_shared::PERCENT);
+        $phr_typ_map->api_mapper([json_fields::ID => $phr_typ->id(), json_fields::SYMBOL => ''], $msg);
+        $t->assert_null($test_name, $phr_typ_map->symbol);
+        $msg->reset();
 
 
         $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');

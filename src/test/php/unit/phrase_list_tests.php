@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -238,6 +239,22 @@ class phrase_list_tests
 
         $phr_lst = $t_phr->phrase_list_api();
         $t->assert_api($phr_lst);
+
+        $t->subheader($ts . 'api mapper');
+
+        // each phrase of the api json is added to the list
+        $test_name = 'the api mapper adds the phrases of the api json';
+        $phr_lst_map = new phrase_list($t->usr1);
+        $phr_lst_map->api_mapper($t_phr->phrase_list_one()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $phr_lst_map->names(), $t_phr->phrase_list_one()->names());
+        $msg->reset();
+
+        // a phrase that cannot be mapped e.g. a triple without the from phrase is not added
+        $test_name = 'the api mapper does not add a phrase that cannot be mapped';
+        $phr_lst_map = new phrase_list($t->usr1);
+        $phr_lst_map->api_mapper([[json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null]], $msg);
+        $t->assert($test_name, $phr_lst_map->count(), 0);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

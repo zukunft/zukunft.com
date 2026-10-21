@@ -1699,3 +1699,38 @@ found 2026-10-14 when the user_log table and its writer in application::end_api 
 - view_relation_list::load_sql() selects no user number fields, so a load by ids gives the row mapper
   no start_pos (PHP warning "Undefined array key"); the load by parent ids adds them on its own,
   the common load_sql should add them like component_link_list, which changes the by_ids fixtures
+
+## api mapper
+
+found while adding the api_mapper unit tests (see docs/llm/pending.md, test coverage step 2);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `web/sandbox/combine_object::api_mapper` and
+  `web/sandbox/ListBase::api_mapper` are stubs that call `log_err`, so a unit test would count a
+  system error; ListBase::api_mapper also returns a user_message and takes no `$msg`
+- not testable without a change: `cfg/element/element::api_mapper` returns true for a missing id,
+  class or formula (only `log_warning`, nothing on `$msg`), and `validate_type` calls `dsp_id()` on a
+  null term for an unknown class, which is a fatal error
+- `cfg/sandbox/sandbox_value::api_mapper` passes the last update string to `set_last_update(?DateTime)`
+  (TypeError for a json with a last update) and the following `sandbox_multi::api_mapper` resets it
+- `cfg/value/value_time`: `api_json_array` writes a DateTime into TIME_VALUE, `api_mapper` expects a text
+- `cfg/formula/figure::api_mapper` and `cfg/phrase/phrase::api_mapper` select value/result resp.
+  word/triple by the sign of the id only, although the json names the class; a phrase without id is
+  only logged and the message stays ok
+- `cfg/component/component_link::api_mapper` ignores `json_fields::LINK_ID`, so the single layer json
+  of a link sets the link id to the component id
+- a missing key is read without a check: `cfg/language/language` (LOCAL_NAME, USAGE),
+  `cfg/formula/formula_link_type` (PHRASE_TYPE_ID), `cfg/formula/figure` (ID), `web/phrase/term`
+  (OBJECT_CLASS), `web/view/view_base` (checks the id of the outer json instead of the nested one)
+- `web/types/type_object::api_mapper` sets the not nullable name and code id to null for a json
+  without them (TypeError)
+- `cfg/user/user` json_mapper maps a null date as now, because `user_message::api_array` and
+  `sql_message::api_array` send the unfiltered user json; `sql_message::api_mapper` keeps the user only
+  if the message of the caller is ok
+- `cfg/sandbox/sandbox_value_list::api_mapper` passes the json array as a message text var
+  (Array to string conversion)
+- `cfg/value/value_base::api_mapper` resets again after the parent mapper
+- `web/sandbox/ListBase::api_mapper_list` adds an object even if its mapping failed
+- `web/group/group::api_array` sends the name only if the description is set
+- `cfg/phrase/phrase_type::row_mapper_typ_obj` assigns instead of compares the scale
+  (`if ($db_row[self::FLD_SCALE] = 'NULL')`)

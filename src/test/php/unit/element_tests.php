@@ -33,14 +33,22 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once html_paths::ELEMENT . 'element.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\element\element as element_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -50,6 +58,8 @@ class element_tests
     {
 
         // init
+        $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
         $t->name = 'element->';
@@ -86,6 +96,24 @@ class element_tests
         $elm = $t_frm->element();
         $elm->id = 1;
         $t->assert_api_json($elm);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api mapper sets the formula of the element';
+        $elm_map = new element($t->usr1);
+        $elm_map->api_mapper($t_frm->element()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $elm_map->frm->id(), formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+        $test_name = 'the frontend api mapper sets the id of the element';
+        $elm_ui = new element_ui();
+        $elm_ui->api_mapper(json_decode($t_frm->element()->api_json([], $msg), true), $msg_ui);
+        $t->assert($test_name, $elm_ui->id(), $t_frm->element()->id());
+        $msg_ui->reset();
+        $test_name = 'the frontend api mapper refuses an element without id';
+        $elm_json = json_decode($t_frm->element()->api_json([], $msg), true);
+        unset($elm_json[json_fields::ID]);
+        $elm_ui = new element_ui();
+        $t->assert_false($test_name, $elm_ui->api_mapper($elm_json, $msg_ui));
+        $msg_ui->reset();
 
         // JSON export list
         // TODO Prio 1 activate or deprecate

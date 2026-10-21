@@ -33,14 +33,18 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once html_paths::ELEMENT . 'element_group.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
+use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -88,6 +92,17 @@ class element_list_tests
         $result = $elm_lst->dsp_id();
         $target = '"minute" (element_id 1/100) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the frontend api mapper adds every element of the group';
+        $elm_grp_ui = new element_group_ui();
+        $elm_grp_ui->api_mapper([json_fields::LIST_ELEMENTS => $t_frm->element_list()->api_json_array([], $msg)]);
+        $t->assert($test_name, $elm_grp_ui->count(), $t_frm->element_list()->count());
+        $test_name = 'the frontend api mapper reports an element without id';
+        $elm_json = $t_frm->element()->api_json_array([], $msg);
+        unset($elm_json[json_fields::ID]);
+        $elm_grp_ui = new element_group_ui();
+        $t->assert_false($test_name, $elm_grp_ui->api_mapper([json_fields::LIST_ELEMENTS => [$elm_json]])->is_ok());
 
     }
 

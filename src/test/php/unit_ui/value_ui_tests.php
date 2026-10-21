@@ -516,7 +516,7 @@ class value_ui_tests
         $t->assert_text_not_contains($test_name, $geo_html, $number_field);
         // the typed getters return the field of the own type only, so a number value has no time and no geolocation
         $test_name = 'a time value has a time';
-        $t->assert_true($test_name, $val_time->time_value() != null);
+        $t->assert($test_name, $val_time->time_value()?->getTimestamp(), strtotime(values::TIME));
         $test_name = '... but no geolocation';
         $t->assert_null($test_name, $val_time->geo_value());
         $test_name = 'a geo value has the geolocation';
@@ -982,6 +982,31 @@ class value_ui_tests
         } else {
             $ui_sys->usr = $usr_tab_keep;
         }
+
+
+        $t->subheader($ts . 'api mapper');
+        // the sandbox value part maps the number and the phrases that all values and results have
+        $test_name = 'the sandbox value part of the mapper sets the number of the value';
+        $val_ui_map = new value();
+        $val_ui_map->api_mapper(json_decode($t_val->value_pi()->api_json([api_types::INCL_PHRASES], $msg), true), $msg_ui);
+        $t->assert($test_name, $val_ui_map->number(), values::PI);
+        $msg_ui->reset();
+        $test_name = 'the sandbox value part of the mapper reports a value without phrases';
+        $val_ui_map = new value();
+        $t->assert_false($test_name, $val_ui_map->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::PI], $msg_ui));
+        $msg_ui->reset();
+        $test_name = 'the source id of the api json is the source of the value';
+        $val_json = json_decode($t_val->value_pi()->api_json([api_types::INCL_PHRASES], $msg), true);
+        $val_json[json_fields::SOURCE_ID] = sources::BFS_ID;
+        $val_ui_map = new value();
+        $val_ui_map->api_mapper($val_json, $msg_ui);
+        $t->assert($test_name, $val_ui_map->source_id(), sources::BFS_ID);
+        $msg_ui->reset();
+        $test_name = 'the mapper reports a value without id';
+        unset($val_json[json_fields::ID]);
+        $val_ui_map = new value();
+        $t->assert_false($test_name, $val_ui_map->api_mapper($val_json, $msg_ui));
+        $msg_ui->reset();
 
 
         // TODO review

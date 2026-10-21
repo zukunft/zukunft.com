@@ -229,6 +229,22 @@ class triple_tests
         $t->assert($test_name, $trp->get_to()?->id() ?? 0, 0);
         $test_name = 'api_mapper with a null from/verb/to keeps the id';
         $t->assert($test_name, $trp->id(), triple_names::MATH_CONST_ID);
+        $msg->reset();
+
+        $t->subheader($ts . 'api mapper');
+
+        // the to phrase of the api json is given by its id, so the mapper sets the to phrase by the id
+        $test_name = 'the api mapper sets the to phrase of the triple';
+        $trp_map = new triple($t->usr1);
+        $trp_map->api_mapper($t_trp->triple()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $trp_map->get_to()->id(), word_names::MATH_ID);
+        $msg->reset();
+
+        // a triple without the from phrase is incomplete, so the mapper reports the missing from phrase
+        $test_name = 'the api mapper reports a missing from phrase';
+        $trp_map = new triple($t->usr1);
+        $t->assert_false($test_name, $trp_map->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID, json_fields::FROM => null], $msg));
+        $msg->reset();
 
         $t->subheader($ts . 'frontend');
         $trp = $t_trp->triple_pi();

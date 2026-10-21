@@ -769,6 +769,22 @@ class word_ui_tests
         $t->assert($test_name, $wrd_map->name(), '');
 
 
+        $t->subheader($ts . 'api mapper');
+
+        // the plural is the own field of the word mapper, so the api json of the filled word sets it
+        $test_name = 'the api mapper sets the plural of the word';
+        $wrd_map = new word();
+        $wrd_map->api_mapper(json_decode($t_wrd->word_filled()->api_json([api_types::TEST_MODE]), true), $msg);
+        $t->assert($test_name, $wrd_map->plural, word_names::MATH_PLURAL);
+        $msg->reset();
+
+        // the id is mandatory, so an api json without the id is reported
+        $test_name = 'the api mapper reports a word without the id';
+        $wrd_map = new word();
+        $t->assert_false($test_name, $wrd_map->api_mapper([json_fields::NAME => word_names::MATH], $msg));
+        $msg->reset();
+
+
         $t->subheader($ts . 'view tab box');
 
         // the 'my' tab shows the fields the session user has overwritten in user_words as a

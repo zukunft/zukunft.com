@@ -90,6 +90,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_log_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -718,6 +719,37 @@ class user_ui_tests
         $t->assert($test_name, $preview->popup_class(), '');
 
         $t->html_page_test($test_page, 'user', 'user', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the user mapper sets the name';
+        $usr_ui = new user_ui();
+        $usr_ui->api_mapper(json_decode($t_usr->user_sys_normal()->api_json(), true), $msg);
+        $t->assert($test_name, $usr_ui->name(), users::SYSTEM_TEST_NORMAL_NAME);
+        $msg->reset();
+
+        // negative: the id is mandatory, so a user json without it is reported
+        $test_name = 'the user mapper reports a json without id';
+        $api_json = json_decode($t_usr->user_sys_normal()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $usr_ui = new user_ui();
+        $t->assert_false($test_name, $usr_ui->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $test_name = 'the message mapper sets the user';
+        $map_msg = new user_message();
+        $map_msg->api_mapper([json_fields::USER => json_decode($t_usr->user_sys_normal()->api_json(), true)], $msg);
+        $t->assert($test_name, $map_msg->usr?->name(), users::SYSTEM_TEST_NORMAL_NAME);
+        $msg->reset();
+
+        // negative: a message user without id is not mapped, so the message keeps no user
+        $test_name = 'the message mapper skips a user without id';
+        $api_json = json_decode($t_usr->user_sys_normal()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $map_msg = new user_message();
+        $map_msg->api_mapper([json_fields::USER => $api_json], $msg);
+        $t->assert_null($test_name, $map_msg->usr?->name());
+        $msg->reset();
     }
 
 }

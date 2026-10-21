@@ -44,8 +44,11 @@ include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdNamedCodeObjects;
@@ -341,6 +344,34 @@ class base_object_tests
         $test_name = 'unset by name can empty the list';
         $lst->unset_by_name(phrase_types::NORMAL_NAME);
         $t->assert_true($test_name, $lst->is_empty());
+
+        // the id base classes are only reached through a concrete child, so each block maps
+        // the api json of a test object and checks the id that the base class maps
+        $t->subheader($ts . 'api mapper');
+        $msg_be = new user_message($t->usr1);
+
+        // db_object_seq_id: the id of a sandbox object is mapped and a json without id leaves it at zero
+        $test_name = 'the seq id part of the mapper sets the id';
+        $wrd_map = new word($t->usr1);
+        $wrd_map->api_mapper($t_wrd->word()->api_json_array([], $msg_be), $msg_be);
+        $t->assert($test_name, $wrd_map->id(), word_names::MATH_ID);
+        $msg_be->reset();
+        $test_name = '... and a json without the id leaves the id at zero';
+        $wrd_map->api_mapper([json_fields::NAME => word_names::MATH], $msg_be);
+        $t->assert($test_name, $wrd_map->id(), 0);
+        $msg_be->reset();
+
+        // db_id_object_non_sandbox: the id of a user is mapped and a json without id leaves it at zero
+        $test_name = 'the non sandbox id part of the mapper sets the user id';
+        $json_usr = new user();
+        $json_usr->api_mapper([json_fields::ID => $t->usr1->id()], $msg_be);
+        $t->assert($test_name, $json_usr->id(), $t->usr1->id());
+        $msg_be->reset();
+        $test_name = '... and a json without the id leaves the user id at zero';
+        $json_usr = new user();
+        $json_usr->api_mapper([json_fields::NAME => $t->usr1->name()], $msg_be);
+        $t->assert($test_name, $json_usr->id(), 0);
+        $msg_be->reset();
 
 
 

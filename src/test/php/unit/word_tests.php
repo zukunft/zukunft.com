@@ -300,6 +300,23 @@ class word_tests
         $wrd = $t_wrd->word();
         $t->assert_api($wrd, 'word_body');
 
+        $t->subheader($ts . 'api mapper');
+        $msg = new user_message($t->usr1);
+
+        // the plural is the own field of the word mapper, so the api json of the filled word sets it
+        $test_name = 'the api mapper sets the plural of the word';
+        $wrd_map = new word($t->usr1);
+        $wrd_map->api_mapper($t_wrd->word_filled()->api_json_array([api_types::TEST_MODE], $msg), $msg);
+        $t->assert($test_name, $wrd_map->plural, word_names::MATH_PLURAL);
+        $msg->reset();
+
+        // an empty plural of the api json is not a plural, so it leaves the plural unset
+        $test_name = 'the api mapper ignores an empty plural';
+        $wrd_map = new word($t->usr1);
+        $wrd_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::PLURAL => ''], $msg);
+        $t->assert_null($test_name, $wrd_map->plural);
+        $msg->reset();
+
         $t->subheader($ts . 'api/word handler reads the ?incl_related URL param into the api_type_list');
         // the api/word/index.php GET handler now opts into api_types::INCL_RELATED only when
         // ?incl_related is truthy on the URL — this keeps single-word fetches cheap by default

@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -139,6 +140,21 @@ class verb_ui_tests
         $vrb_unused = new verb($t_vrb->verb()->api_json());
         $t->assert($test_name, $list->triple_list($vrb_unused, $msg, $cfg, $url_arr),
             $mtr->txt(msg_id::NOT_USED_FOR_TRIPLES));
+
+        $t->subheader($ts . 'api mapper');
+
+        // the reverse name is a language form of the verb, so the api json of the filled verb sets it
+        $test_name = 'the api mapper sets the reverse name of the verb';
+        $vrb_map = new verb();
+        $vrb_map->api_mapper(json_decode($t_vrb->verb_is_filled()->api_json(), true), $msg);
+        $t->assert($test_name, $vrb_map->reverse, verbs::IS_REVERSE);
+        $msg->reset();
+
+        // the name is mandatory for a verb, so an api json without the name is reported
+        $test_name = 'the api mapper reports a verb without the name';
+        $vrb_map = new verb();
+        $t->assert_false($test_name, $vrb_map->api_mapper([json_fields::ID => verbs::IS_ID], $msg));
+        $msg->reset();
     }
 
 }

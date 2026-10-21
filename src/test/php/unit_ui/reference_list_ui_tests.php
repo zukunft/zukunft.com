@@ -46,7 +46,9 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
@@ -98,6 +100,19 @@ class reference_list_ui_tests
         $test_name = 'no add link for a phrase without id';
         $phr_new = new word_ui($t_wrd->word_incomplete()->api_json())->phrase();
         $t->assert($test_name, $lst->add_link($phr_new), '');
+
+        $t->subheader($ts . 'api mapper');
+
+        // the api message of a reference list is mapped to one frontend reference per entry
+        $test_name = 'the api mapper adds each reference of the api message to the list';
+        $ref_lst = new ref_list();
+        $ref_lst->api_mapper(json_decode($t_ref->ref_list_math()->api_json(), true));
+        $t->assert($test_name, $ref_lst->count(), $t_ref->ref_list_math()->count());
+
+        // a list entry without an id is reported, so the caller can show the problem
+        $test_name = 'a reference list entry without an id is reported';
+        $ref_lst = new ref_list();
+        $t->assert_false($test_name, $ref_lst->api_mapper([[json_fields::EXTERNAL_KEY => refs::PI_KEY]])->is_ok());
     }
 
 }

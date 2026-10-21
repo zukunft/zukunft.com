@@ -219,6 +219,58 @@ class value_tests
         $t->assert($test_name, $val->get_source_id(), sources::BFS_ID);
         $msg->reset();
 
+        $t->subheader($ts . 'api mapper');
+        // the base part maps the fields that all value types share
+        $test_name = 'the base part of the mapper sets the id of the value';
+        $val = new value($t->usr1);
+        $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID], $msg);
+        $t->assert($test_name, $val->id(), values::PI_SYMBOL_ID);
+        $msg->reset();
+        $test_name = 'the base part of the mapper refuses a timestamp that is not a time';
+        $val = new value($t->usr1);
+        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIMESTAMP => values::TEXT], $msg));
+        $msg->reset();
+        $test_name = 'the number of the api json is the number of the value';
+        $val = new value($t->usr1);
+        $val->api_mapper($t_val->value_pi()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $val->number(), values::PI);
+        $msg->reset();
+        $test_name = 'a text as the number of a value is refused';
+        $val = new value($t->usr1);
+        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT], $msg));
+        $msg->reset();
+        $test_name = 'the text of the api json is the text of the value';
+        $val = new value_text($t->usr1);
+        $val->api_mapper($t_val->text_value()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $val->get_value(), values::TEXT);
+        $msg->reset();
+        // the mapper resets the value first, so a former text is never kept
+        $test_name = 'an api json without a text clears the text of the value';
+        $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID], $msg);
+        $t->assert_null($test_name, $val->get_value());
+        $msg->reset();
+        $test_name = 'the geolocation of the api json is the geolocation of the value';
+        $val = new value_geo($t->usr1);
+        $val->api_mapper($t_val->geo_value()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $val->get_value(), values::GEO);
+        $msg->reset();
+        $test_name = 'an api json without a geolocation clears the geolocation of the value';
+        $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID], $msg);
+        $t->assert_null($test_name, $val->get_value());
+        $msg->reset();
+        // the api json carries the time as a text
+        $test_name = 'the time of the api json is the time of the value';
+        $time_json = $t_val->time_value()->api_json_array([], $msg);
+        $time_json[json_fields::TIME_VALUE] = values::TIME;
+        $val = new value_time($t->usr1);
+        $val->api_mapper($time_json, $msg);
+        $t->assert($test_name, $val->get_value()?->getTimestamp(), strtotime(values::TIME));
+        $msg->reset();
+        $test_name = 'a text that is not a time is refused as the time of a value';
+        $val = new value_time($t->usr1);
+        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIME_VALUE => values::TEXT], $msg));
+        $msg->reset();
+
         $t->subheader($ts . 'union row mapping');
         // a value list is loaded with one union query over the prime, most and big value tables
         // (see value_list::load_sql_by_phr), so a prime row arrives with an empty group_id and

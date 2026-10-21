@@ -42,7 +42,9 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -71,6 +73,15 @@ class formula_list_ui_tests
         $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'formula_list', 'formula_list', $msg);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api mapper adds every formula of the api json';
+        $lst = new formula_list_ui();
+        $lst->api_mapper(json_decode($t_frm->formula_list_short()->api_json(), true));
+        $t->assert($test_name, $lst->count(), $t_frm->formula_list_short()->count());
+        $test_name = 'the api mapper reports a formula without id';
+        $lst = new formula_list_ui();
+        $t->assert_false($test_name, $lst->api_mapper([[json_fields::NAME => formula_names::SCALE_TO_SEC]])->is_ok());
     }
 
 }

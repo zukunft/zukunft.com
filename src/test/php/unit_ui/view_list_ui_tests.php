@@ -38,6 +38,8 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_list.php';
 
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -71,6 +73,19 @@ class view_list_ui_tests
         $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'view_list', 'view_list', $msg, $base_url, $lan);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the api message of a view list is mapped to one frontend view per entry
+        $test_name = 'the api mapper adds each view of the api message to the list';
+        $msk_lst = new view_list();
+        $msk_lst->api_mapper(json_decode($t_msk->view_list()->api_json(), true));
+        $t->assert($test_name, $msk_lst->count(), $t_msk->view_list()->count());
+
+        // a list entry without an id is reported, so the caller can show the problem
+        $test_name = 'a view list entry without an id is reported';
+        $msk_lst = new view_list();
+        $t->assert_false($test_name, $msk_lst->api_mapper([[json_fields::NAME => views::START_NAME]])->is_ok());
     }
 
 }

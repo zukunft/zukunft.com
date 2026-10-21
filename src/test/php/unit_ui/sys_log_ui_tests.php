@@ -41,7 +41,9 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
+use Zukunft\ZukunftCom\main\php\web\log\log as log_ui;
 use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\system\system_time as system_time_ui;
 use Zukunft\ZukunftCom\main\php\web\system\system_time_list as system_time_list_ui;
@@ -402,6 +404,52 @@ class sys_log_ui_tests
         $test_page .= $html->text_h2('admin dashboard errors') . $unassigned . $pending;
 
         $t->html_page_test($test_page, 'sys_log', 'sys_log');
+
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the system log mapper sets the text';
+        $slg_ui = new sys_log_ui();
+        $slg_ui->api_mapper($t_sys->sys_log()->api_json_array([], $msg), $msg_ui);
+        $t->assert($test_name, $slg_ui->text(), sys_log_tests::TV_LOG_TEXT);
+        $msg_ui->reset();
+
+        // negative: the id is mandatory, so a system log json without it is reported
+        $test_name = 'the system log mapper reports a json without id';
+        $api_json = $t_sys->sys_log()->api_json_array([], $msg);
+        unset($api_json[json_fields::ID]);
+        $slg_ui = new sys_log_ui();
+        $t->assert_false($test_name, $slg_ui->api_mapper($api_json, $msg_ui));
+        $msg_ui->reset();
+
+        // the log part of the mapper is shared by all log entries, so it is tested with a system log json
+        $test_name = 'the log part of the mapper sets the user id';
+        $log_ui = new log_ui();
+        $log_ui->api_mapper($t_sys->sys_log()->api_json_array([], $msg), $msg_ui);
+        $t->assert($test_name, $log_ui->user_id(), $t->usr1->id());
+        $msg_ui->reset();
+
+        // negative: a log json without a username leaves the username empty
+        $test_name = 'the log part of the mapper leaves a missing username empty';
+        $api_json = $t_sys->sys_log()->api_json_array([], $msg);
+        unset($api_json[json_fields::USER_NAME]);
+        $log_ui = new log_ui();
+        $log_ui->api_mapper($api_json, $msg_ui);
+        $t->assert_null($test_name, $log_ui->user_name());
+        $msg_ui->reset();
+
+        $test_name = 'the request time mapper sets the url';
+        $sys_tim = new system_time_ui();
+        $sys_tim->api_mapper($t_sys->system_time_api_json()[0], $msg_ui);
+        $t->assert($test_name, $sys_tim->url, sys_log_tests::TV_URL);
+        $msg_ui->reset();
+
+        // negative: the id is mandatory, so a request time json without it is reported
+        $test_name = 'the request time mapper reports a json without id';
+        $api_json = $t_sys->system_time_api_json()[0];
+        unset($api_json[json_fields::ID]);
+        $sys_tim = new system_time_ui();
+        $t->assert_false($test_name, $sys_tim->api_mapper($api_json, $msg_ui));
+        $msg_ui->reset();
     }
 
 }

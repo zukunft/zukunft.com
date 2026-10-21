@@ -73,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
@@ -81,17 +82,23 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -115,6 +122,7 @@ class sandbox_tests
         $t_trp = new test_triples($t);
         $t_msk = new test_views($t);
         $t_cmp = new test_components($t);
+        $t_val = new test_values($t);
         $lib = new library();
 
         // start the test section (ts)
@@ -212,6 +220,153 @@ class sandbox_tests
         $test_name = 'add the same component without a db id again is rejected';
         $result = $lst->add(0, $t_msk->view(), $t_cmp->by_name(components::TEST_VALUES_NAME), 1);
         $t->assert_false($test_name, $result);
+
+        // the sandbox base classes are only reached through a concrete child, so each block maps
+        // the api json of a factory object and checks the field that the base class maps
+        $t->subheader($ts . 'api mapper');
+        $msg = new user_message($t->usr1);
+        $msg_ui = new user_message_ui();
+
+        // backend sandbox: the share type is mapped and a leftover of an earlier mapping is reset
+        $test_name = 'the sandbox part of the mapper sets the share type';
+        $wrd = $t_wrd->word_filled();
+        $wrd_json = $wrd->api_json_array([api_types::TEST_MODE], $msg);
+        $wrd_map = new word($t->usr1);
+        $wrd_map->api_mapper($wrd_json, $msg);
+        $t->assert($test_name, $wrd_map->share_id(), $wrd->share_id());
+        $msg->reset();
+        $test_name = '... and resets a share type left over from an earlier mapping';
+        $wrd_map->api_mapper($t_wrd->word()->api_json_array([], $msg), $msg);
+        $t->assert_null($test_name, $wrd_map->share_id());
+        $msg->reset();
+
+        // backend sandbox_named: the name is mapped, but an empty description is not taken
+        $test_name = 'the named part of the mapper sets the name';
+        $wrd_map->api_mapper($wrd_json, $msg);
+        $t->assert($test_name, $wrd_map->name(), word_names::MATH);
+        $msg->reset();
+        $test_name = '... but not an empty description';
+        $wrd_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::DESCRIPTION => ''], $msg);
+        $t->assert_null($test_name, $wrd_map->get_description());
+        $msg->reset();
+
+        // backend sandbox_typed: the type is mapped and a json without type leaves it empty
+        $test_name = 'the typed part of the mapper sets the type';
+        $wrd_map->api_mapper($wrd_json, $msg);
+        $t->assert($test_name, $wrd_map->type_id($msg), $wrd->type_id($msg));
+        $msg->reset();
+        $test_name = '... and a json without type leaves the type empty';
+        $wrd_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH], $msg);
+        $t->assert_null($test_name, $wrd_map->type_id($msg));
+        $msg->reset();
+
+        // backend sandbox_code_id: the code id is only set for a requesting user with the privilege
+        $test_name = 'the code id part of the mapper sets the code id';
+        $wrd_map->api_mapper($wrd_json, new user_message($t->usr_system));
+        $t->assert($test_name, $wrd_map->get_code_id(), word_names::MATH);
+        $test_name = '... but not for a message without a requesting user';
+        $msg_no_usr = new user_message();
+        $wrd_map->api_mapper($wrd_json, $msg_no_usr);
+        $t->assert_null($test_name, $wrd_map->get_code_id());
+
+        // backend sandbox_link: the predicate is mapped and a json without it leaves it empty
+        $test_name = 'the link part of the mapper sets the predicate';
+        $lnk = $t_cmp->component_link_filled_included();
+        $lnk_new = new component_link($t->usr1);
+        $lnk_new->api_mapper($lnk->api_json_array([api_types::LINK_DETAILS], $msg), $msg);
+        $t->assert($test_name, $lnk_new->predicate_id(), $lnk->predicate_id());
+        $msg->reset();
+        $test_name = '... and a json without predicate leaves the predicate empty';
+        $lnk_new->api_mapper([json_fields::ID => $lnk->id()], $msg);
+        $t->assert_null($test_name, $lnk_new->predicate_id());
+        $msg->reset();
+
+        // backend sandbox_link_named: the name of the link is mapped, but an empty description is not taken
+        $test_name = 'the named link part of the mapper sets the name';
+        $trp = $t_trp->triple();
+        $trp_map = new triple($t->usr1);
+        $trp_map->api_mapper($trp->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $trp_map->name(), triple_names::MATH_CONST);
+        $msg->reset();
+        $test_name = '... but not an empty description of the link';
+        $trp_map->api_mapper([json_fields::ID => triple_names::MATH_CONST_ID, json_fields::DESCRIPTION => ''], $msg);
+        $t->assert_null($test_name, $trp_map->get_description());
+        $msg->reset();
+
+        // backend sandbox_multi: the share type of a value is mapped and a leftover is reset
+        $test_name = 'the multi part of the mapper sets the share type of a value';
+        $val = $t_val->value_shared($t_val->value_pi_math());
+        $val_api = new value($t->usr1);
+        $val_api->api_mapper($val->api_json_array([api_types::INCL_PHRASES], $msg), $msg);
+        $t->assert($test_name, $val_api->share_id(), $val->share_id());
+        $msg->reset();
+        $test_name = '... and resets a share type of a value left over from an earlier mapping';
+        $val_api->api_mapper($t_val->value_pi_math()->api_json_array([api_types::INCL_PHRASES], $msg), $msg);
+        $t->assert_null($test_name, $val_api->share_id());
+        $msg->reset();
+
+        // frontend db_object: the id is mandatory
+        $test_name = 'the frontend db object part of the mapper sets the id';
+        $wrd_ui = new word_ui();
+        $wrd_ui->api_mapper($wrd_json, $msg_ui);
+        $t->assert($test_name, $wrd_ui->id(), word_names::MATH_ID);
+        $msg_ui->reset();
+        $test_name = '... and a json without the id is refused';
+        $wrd_no_id_json = $wrd_json;
+        unset($wrd_no_id_json[json_fields::ID]);
+        $t->assert_false($test_name, $wrd_ui->api_mapper($wrd_no_id_json, $msg_ui));
+        $msg_ui->reset();
+
+        // frontend sandbox: the excluded flag is mapped and a json without it includes the object
+        $test_name = 'the frontend sandbox part of the mapper sets the excluded flag';
+        $wrd_ui->api_mapper($wrd_json, $msg_ui);
+        $t->assert_true($test_name, $wrd_ui->is_excluded());
+        $msg_ui->reset();
+        $test_name = '... and a json without the flag includes the object again';
+        $wrd_ui->api_mapper($t_wrd->word()->api_json_array([], $msg), $msg_ui);
+        $t->assert_false($test_name, $wrd_ui->is_excluded());
+        $msg_ui->reset();
+
+        // frontend sandbox_named: the name is mandatory
+        $test_name = 'the frontend named part of the mapper sets the name';
+        $wrd_ui->api_mapper($wrd_json, $msg_ui);
+        $t->assert($test_name, $wrd_ui->name(), word_names::MATH);
+        $msg_ui->reset();
+        $test_name = '... and a json without the name is refused';
+        $t->assert_false($test_name, $wrd_ui->api_mapper([json_fields::ID => word_names::MATH_ID], $msg_ui));
+        $msg_ui->reset();
+
+        // frontend sandbox_typed: the type is mapped and a json without type leaves it empty
+        $test_name = 'the frontend typed part of the mapper sets the type';
+        $wrd_ui->api_mapper($wrd_json, $msg_ui);
+        $t->assert($test_name, $wrd_ui->type_id($msg_ui), $wrd->type_id($msg));
+        $msg_ui->reset();
+        $test_name = '... and a json without type leaves the frontend type empty';
+        $wrd_ui->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH], $msg_ui);
+        $t->assert_null($test_name, $wrd_ui->type_id($msg_ui));
+        $msg_ui->reset();
+
+        // frontend sandbox_code_id: the code id is mapped and a json without it leaves it empty
+        $test_name = 'the frontend code id part of the mapper sets the code id';
+        $wrd_ui->api_mapper($wrd_json, $msg_ui);
+        $t->assert($test_name, $wrd_ui->code_id, word_names::MATH);
+        $msg_ui->reset();
+        $test_name = '... and a json without code id leaves the frontend code id empty';
+        $wrd_ui->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH], $msg_ui);
+        $t->assert_null($test_name, $wrd_ui->code_id);
+        $msg_ui->reset();
+
+        // frontend sandbox_link: the predicate is mapped, so that it is sent back to the backend
+        $test_name = 'the frontend link part of the mapper sets the predicate';
+        $lnk_ui = new component_link_ui();
+        $lnk_ui->api_mapper($lnk->api_json_array([api_types::LINK_DETAILS], $msg), $msg_ui);
+        $t->assert($test_name, $lnk_ui->api_array([], $msg_ui)[json_fields::PREDICATE_ID], $lnk->predicate_id());
+        $msg_ui->reset();
+        $test_name = '... and a json without predicate sends no predicate back';
+        $lnk_ui = new component_link_ui();
+        $lnk_ui->api_mapper([json_fields::ID => $lnk->id()], $msg_ui);
+        $t->assert_false($test_name, array_key_exists(json_fields::PREDICATE_ID, $lnk_ui->api_array([], $msg_ui)));
+        $msg_ui->reset();
 
         // TODO review the tests below e.g. by using the test section ($ts) and $test_name like above
         $t->subheader($ts . 'functions that does not need a database connection');

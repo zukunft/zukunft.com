@@ -37,6 +37,8 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
@@ -96,6 +98,21 @@ class group_ui_tests
         $rm_lst->add_phrase($phr_add);
         $grp_lst->phr_lst()->remove($rm_lst);
         $t->assert_true($test_name, $grp_lst->phr_lst()->has_id(word_names::TEST_ADD_ID));
+
+        $t->subheader($ts . 'api mapper');
+
+        // the name of the api json is the name given by the user
+        $test_name = 'the api mapper sets the name of the group';
+        $grp_map = new group();
+        $grp_map->api_mapper(json_decode($t_grp->group_zh()->api_json(), true), $msg);
+        $t->assert($test_name, $grp_map->name(), groups::ZH_CITY_INHABITANTS);
+        $msg->reset();
+
+        // without the id the api json is used as the phrase list of the group, so a phrase without the id is reported
+        $test_name = 'the api mapper reports a phrase of the group without the id';
+        $grp_map = new group();
+        $t->assert_false($test_name, $grp_map->api_mapper([[json_fields::NAME => word_names::MATH]], $msg));
+        $msg->reset();
     }
 
 }

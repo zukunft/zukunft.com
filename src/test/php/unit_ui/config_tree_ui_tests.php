@@ -85,6 +85,28 @@ class config_tree_ui_tests
             json_fields::CONFIG_CHILDREN => [test_config_trees::SEC, [json_fields::NAME => test_config_trees::MAX_DELAY]]]);
         $t->assert($test_name, array_map(fn(config_node $child) => $child->name, $cfn->children), [test_config_trees::MAX_DELAY]);
 
+        $test_name = 'the node mapper sets the value id';
+        $cfn = new config_node();
+        $cfn->api_mapper([json_fields::NAME => test_config_trees::MAX_DELAY, json_fields::ID => test_config_trees::MAX_DELAY_ID]);
+        $t->assert($test_name, $cfn->id, test_config_trees::MAX_DELAY_ID);
+
+        // negative: a malformed id names no value to overwrite, so the node has the id 0 of no value
+        $test_name = 'the node mapper ignores a malformed value id';
+        $cfn = new config_node();
+        $cfn->api_mapper([json_fields::NAME => test_config_trees::MAX_DELAY, json_fields::ID => [test_config_trees::MAX_DELAY_ID]]);
+        $t->assert($test_name, $cfn->id, 0);
+
+        $test_name = 'the tree mapper adds the top level keys';
+        $cft = new config_tree();
+        $cft->api_mapper([[json_fields::NAME => test_config_trees::SYSTEM], [json_fields::NAME => test_config_trees::USER]]);
+        $t->assert($test_name, array_map(fn(config_node $node) => $node->name, $cft->nodes), [test_config_trees::SYSTEM, test_config_trees::USER]);
+
+        // negative: a top level entry that is no node is skipped instead of stopping the page
+        $test_name = 'the tree mapper skips an entry that is no node';
+        $cft = new config_tree();
+        $cft->api_mapper([test_config_trees::SEC, [json_fields::NAME => test_config_trees::USER]]);
+        $t->assert($test_name, array_map(fn(config_node $node) => $node->name, $cft->nodes), [test_config_trees::USER]);
+
         $t->subheader($ts . 'search');
 
         $test_name = 'the search finds the keys by their name ignoring the case';
