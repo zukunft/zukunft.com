@@ -103,7 +103,7 @@ class source_tests
         $t->assert_sql_standard_by_name($sc, $src);
 
         $t->subheader($ts . 'sql write insert');
-        // TODO test the log version for db write
+        // TODO Prio 2 test the log version for db write
         $src = $t_src->source_reserved();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);

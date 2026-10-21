@@ -223,11 +223,11 @@ class api_tests
         // the admin dashboard of the own frontend gets the system log only for an admin
         $t->assert_api_sys_log_list_admin_only();
         // $t->assert_rest(new word($usr, words::TN_READ));
-        // TODO add value_list tests for prime, normal and big value tables
-        // TODO add a test case for empty list, no key found, and more  values than the page size
+        // TODO Prio 2 add value_list tests for prime, normal and big value tables
+        // TODO Prio 2 add a test case for empty list, no key found, and more  values than the page size
         //$t->assert_api_get_list(value_list::class, values::PI_ID);
-        // TODO add result_list tests
-        // TODO add figure_list tests
+        // TODO Prio 2 add result_list tests
+        // TODO Prio 2 add figure_list tests
 
 
         $t->subheader($ts . 'api config');
@@ -247,8 +247,8 @@ class api_tests
         // TODO Prio 2 activate
         //$t->assert($test_name, $cfg->get_by([words::POD, words::URL]), def::POD_NAME);
 
-        // TODO get frontend configuration values and check if frontend and user config contains less values
-        // TODO check if requesting an unknown config part returns an error message
+        // TODO Prio 2 get frontend configuration values and check if frontend and user config contains less values
+        // TODO Prio 2 check if requesting an unknown config part returns an error message
 
 
         $t->subheader($ts . 'api frontend config');
@@ -392,7 +392,7 @@ class api_tests
     }
 
     /*
-     * TODO
+     * TODO Prio 2
      * add the word type "key"
      * "key" forces the creation of an internal value table
      *
@@ -463,7 +463,7 @@ class api_tests
         $target = '';
         $t->assert($test_name, $result, $target);
 
-        // TODO $test_name = 'check if an api tag for each controller exists';
+        // TODO Prio 2 $test_name = 'check if an api tag for each controller exists';
 
         // the openapi internal consistency is checked via the online swagger test
     }

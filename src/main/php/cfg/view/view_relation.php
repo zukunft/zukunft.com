@@ -163,7 +163,7 @@ class view_relation extends sandbox_link
 
     /**
      * map the database fields to the object fields
-     * TODO get the related view objects from the cache if possible
+     * TODO Prio 2 get the related view objects from the cache if possible
      *
      * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object is loaded
@@ -545,7 +545,7 @@ class view_relation extends sandbox_link
 
     /**
      * @return array with the all field names that the user can change for this object
-     * TODO move to the highest object level
+     * TODO Prio 2 move to the highest object level
      */
     protected function all_sandbox_fields(): array
     {
@@ -680,7 +680,7 @@ class view_relation extends sandbox_link
 
     /**
      * create the common part of an SQL statement to retrieve a view relation from the database
-     * TODO move to the highest object level
+     * TODO Prio 2 move to the highest object level
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
@@ -703,8 +703,8 @@ class view_relation extends sandbox_link
     }
 
     /**
-     * TODO move inner part to view as "load_remaining"
-     * TODO add a bool var "is_loaded" to db_object
+     * TODO Prio 2 move inner part to view as "load_remaining"
+     * TODO Prio 2 add a bool var "is_loaded" to db_object
      *      to indicate is the object has just been created and might be incomplete
      *      or if loaded from the db and is expected to have all vars in line with the db
      * @param user_message $msg to collect the message due to missing links

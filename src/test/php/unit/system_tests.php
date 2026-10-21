@@ -137,7 +137,7 @@ class system_tests
     function run(test_cleanup $t): void
     {
 
-        // TODO move system user to a test object vars
+        // TODO Prio 2 move system user to a test object vars
         global $sys;
         global $mtr;
         global $cfg;
@@ -169,7 +169,7 @@ class system_tests
         $t->subheader($ts . 'debug functions');
 
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
-        // TODO check that all objects are included in this list
+        // TODO Prio 2 check that all objects are included in this list
         $t_wrd = new test_words($t);
         $t_vrb = new test_verbs($t);
         $t_trp = new test_triples($t);

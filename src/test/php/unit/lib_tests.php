@@ -742,7 +742,7 @@ class lib_tests
         $test_text = 'the expected json key "sys_log" is missing';
         $test_name = "... and a diff with a json scalar is a message and no fatal type error";
         $t->assert_true($test_name, $lib->diff_msg($test_text, '"sys_log"') != '');
-        /* TODO activate
+        /* TODO Prio 2 activate
         $test_text = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Title</title></head><body></body></html>';
         $result = $lib->str_split_for_humans($test_text);
         $target = ['json_tag' => 'text'];
@@ -763,7 +763,7 @@ class lib_tests
         $test_result = "";
         $test_target = "1";
         $result = $lib->diff_msg($test_result, $test_target);
-        // TODO check why this differs in php 8.2
+        // TODO Prio 2 check why this differs in php 8.2
         if ($result == '//-1////+//') {
             $target = '//-1////+//';
         } else {
@@ -878,7 +878,7 @@ class lib_tests
         $test_target = $t->file('/web/system/target_long.sql');
         $result = $lib->diff_msg($test_result, $test_target);
         $target = "6185//- values';////+ values numeric value';//8843//+ phrases numeric value'; COMMENT ON COLUMN user_values_big.user_id// and 8038 more";
-        // TODO speed up
+        // TODO Prio 2 speed up
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_FILE);
 
         $test_name = $tb . 'with position in long html string';

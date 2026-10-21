@@ -140,7 +140,7 @@ class unit_env
     }
 
     /**
-     * TODO check usr profile
+     * TODO Prio 2 check usr profile
      * create the system user list for the unit tests without database connection
      * @param user $usr the user who has requested the system user dummy list, which must be a system test admin user
      */

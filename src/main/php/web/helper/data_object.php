@@ -93,7 +93,7 @@ class data_object
      *  object vars
      */
 
-    // TODO measure and optimize memory versus speed
+    // TODO Prio 3 measure and optimize memory versus speed
     //      by keeping either separate lists
     //      or generate always the word or triple list from the phrase list
     //      or generate always the phrase list from the word or triple list

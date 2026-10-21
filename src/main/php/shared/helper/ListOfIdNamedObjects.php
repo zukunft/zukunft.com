@@ -168,7 +168,7 @@ class ListOfIdNamedObjects extends ListOfIdObjects
 
     /**
      * select an item by name
-     * TODO add unit tests
+     * TODO Prio 2 add unit tests
      *
      * @param string $name the unique name of the object that should be returned
      * @return object|null the found named object or null if no id is found
@@ -304,7 +304,7 @@ class ListOfIdNamedObjects extends ListOfIdObjects
     }
 
     /**
-     * TODO add a unit test
+     * TODO Prio 2 add a unit test
      * @returns array with all unique ids of this list with the keys within this list
      */
     protected function name_pos_lst(): array

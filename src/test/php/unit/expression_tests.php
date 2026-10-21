@@ -227,8 +227,8 @@ class expression_tests
         $msg->reset();
 
         // test the element group list of the right side
-        // TODO check with cantons of switzerland
-        // TODO check if adjustment overwrite from some parts works
+        // TODO Prio 2 check with cantons of switzerland
+        // TODO Prio 2 check if adjustment overwrite from some parts works
         //      e.g. if the total needs to be adjusted, because
         //      the sum of tax payers of all cantons can be higher than
         //      the total number of tax payers in Switzerland
@@ -301,7 +301,7 @@ class expression_tests
         $target = '"' . formula_names::PRIOR . '","' . formula_names::THIS_NAME . '"';
         $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
-        // TODO element_special_following_frm
+        // TODO Prio 2 element_special_following_frm
         //$target = '"time_prior","time_this"';
 
         $test_name = 'test the formula element group creation';

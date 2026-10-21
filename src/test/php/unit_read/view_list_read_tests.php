@@ -64,7 +64,7 @@ class view_list_read_tests
         $msk_lst = new view_list($t->usr1);
         $msk_lst->load_names($pattern, $msg);
         $t->assert_contains($test_name, $msk_lst->names(), views::TEST_ALL_NAME);
-        // TODO do not exclude all system views
+        // TODO Prio 2 do not exclude all system views
         //      e.g. allow the user to select the system default view Word aka TN_READ
         //      but do not allow to select system forms aka TN_FORM
         $test_name = 'system view are not included in the normal view list';
@@ -90,7 +90,7 @@ class view_list_read_tests
         $t->assert_contains_not($test_name, $msk_typ_lst->ids(), views::WORD_ID);
 
         $test_name = 'loading the api message creation of the api index file for ';
-        // TODO add this to all db read tests for all API call functions
+        // TODO Prio 2 add this to all db read tests for all API call functions
         $result = json_decode($msk_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(view_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
@@ -104,7 +104,7 @@ class view_list_read_tests
         $t->assert_contains($test_name, $msk_lst->names(), views::START_NAME);
 
         // test load by view list by ids
-        /* TODO activate
+        /* TODO Prio 1 activate
         $test_name = 'load views by ids';
         $wrd_lst = new view_list($t->usr1);
         $wrd_lst->load_by_ids(array(1,3));

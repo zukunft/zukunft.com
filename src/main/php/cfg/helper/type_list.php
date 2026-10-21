@@ -416,7 +416,7 @@ class type_list extends ListOfIdNamedCodeObjects
      * a 'database type' is a group of type used for the same objects
      * e.g. a db_type is phrase_type or view type
      *
-     * TODO create a warning if number of rows is above the sql_db::ROW_MAX limit
+     * TODO Prio 2 create a warning if number of rows is above the sql_db::ROW_MAX limit
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $class the class of the related object e.g. phrase_type or formula_type
@@ -430,7 +430,7 @@ class type_list extends ListOfIdNamedCodeObjects
             $class = $this->list_class_to_type($class);
         }
         $qp = $this->load_sql($sc, $class);
-        // TODO add a warning if the list gets (too) long
+        // TODO Prio 2 add a warning if the list gets (too) long
         $sc->set_page(sql_db::ROW_MAX, 0);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -573,7 +573,7 @@ class type_list extends ListOfIdNamedCodeObjects
                 } elseif ($class == db_cache_status::class) {
                     $type_name = strval($db_row[db_cache_status::FLD_NAME]);
                 } else {
-                    // TODO use a unique type name for each type
+                    // TODO Prio 2 use a unique type name for each type
                     if (array_key_exists(fields::FLD_TYPE_NAME, $db_row)) {
                         $type_name = strval($db_row[fields::FLD_TYPE_NAME]);
                     } else {

@@ -1312,7 +1312,7 @@ class system_view_ui_tests
     private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object|combine_object|phrase_list
     {
         // select the backend object to display
-        // TODO add any missing system views like
+        // TODO Prio 2 add any missing system views like
         //      term_view_links, formula_link, component_links, styles, view_types,
         //      time_series, geo and text values, ip ranges, language, pod,
         //      add types (phrase_type, formula_type, formula_link_types, source_types,

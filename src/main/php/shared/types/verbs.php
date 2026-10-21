@@ -50,7 +50,7 @@ class verbs
     // *_NAME the name of the verb that is shown to the user
     // *_ID the fixed database id of the verb due to the initial database load
     // *_COM the tooltip description for the verb
-    // TODO add a check if all verbs have a const und linked functionalities
+    // TODO Prio 2 add a check if all verbs have a const und linked functionalities
     const string NOT_SET = "not_set";
     const string NOT_SET_NAME = "not set";
     const int NOT_SET_ID = 1;

@@ -143,7 +143,7 @@ class db_object_seq_id extends db_object
         $this->id = 0;
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
             if (array_key_exists($id_fld, $db_row)) {
-                // TODO check that $this->reset() is removed from all load function and only this reset is used
+                // TODO Prio 2 check that $this->reset() is removed from all load function and only this reset is used
                 $this->reset(true);
                 if ($db_row[$id_fld] != 0) {
                     $this->id = $db_row[$id_fld];
@@ -175,7 +175,7 @@ class db_object_seq_id extends db_object
 
     /**
      * the common part of the sql_insert and sql_update functions
-     * TODO include the sql statements to log the changes
+     * TODO Prio 2 include the sql statements to log the changes
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -522,7 +522,7 @@ class db_object_seq_id extends db_object
         CombineObject|db_object_seq_id $result
     ): CombineObject|db_object_seq_id
     {
-        // TODO move to the calling function
+        // TODO Prio 2 move to the calling function
         // $result = $this->clone_reset(true);
         // the database id mus always be identical to the original db row
         $result->id = $std_obj->id();
@@ -1088,7 +1088,7 @@ class db_object_seq_id extends db_object
         $qp_log = $log->sql_insert_log(
             $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
 
-        // TODO get the fields used in the change log sql from the sql
+        // TODO Prio 2 get the fields used in the change log sql from the sql
         $func_body_change .= ' ' . $qp_log->sql . ';';
 
         // add the row id of the standard table for user overwrites

@@ -70,8 +70,8 @@ if ($db_con->is_open()) {
     $result = ''; // reset the json message string
 
     // get the parameters
-    // TODO use a json with the ids
-    // TODO add load by formula and source
+    // TODO Prio 2 use a json with the ids
+    // TODO Prio 2 add load by formula and source
     $id_lst = $_GET[url_var::ID_LST] ?? '';
     $phr_ids = $_GET[api::JSON_LIST_PHRASE_IDS] ?? '';
 

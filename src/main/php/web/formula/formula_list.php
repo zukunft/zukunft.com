@@ -128,7 +128,7 @@ class formula_list extends ListBase
     /**
      * get the default formula
      * TODO Prio 1 review and check if null is not the better value
-     * TODO if a phrase can be ranked use the ranking formula
+     * TODO Prio 2 if a phrase can be ranked use the ranking formula
      * @param sandbox $sbx the object to which the default formula should be found
      * @return int the formula id if no formula has been selected until now
      */
@@ -235,7 +235,7 @@ class formula_list extends ListBase
         $html = new html_base();
         $cols = '';
         $this->sort_by_impact();
-        // TODO check if and why the next line makes sense
+        // TODO Prio 2 check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $frm) {
             $lnk = $frm->name_link($url_arr);
@@ -255,7 +255,7 @@ class formula_list extends ListBase
 
         // list all related formula results
         if ($this->lst() != null) {
-            // TODO add usort to base_list
+            // TODO Prio 2 add usort to base_list
             $lst = $this->lst();
             usort($lst, array(formula::class, "cmp"));
             $this->set_lst($lst);

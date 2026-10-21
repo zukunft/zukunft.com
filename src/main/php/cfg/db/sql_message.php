@@ -360,7 +360,7 @@ class sql_message extends Message
     /**
      * to offer the user to see more details without a retry
      * more than one message text can be added to a user message result
-     * TODO replace with add_id add_id_with_vars
+     * TODO Prio 2 replace with add_id add_id_with_vars
      *
      * @param string $msg_text the message text to add
      * @return void is never expected to fail
@@ -566,7 +566,7 @@ class sql_message extends Message
     }
 
     /**
-     * TODO should be deprecated once the msg_id is used for all messages
+     * TODO Prio 2 should be deprecated once the msg_id is used for all messages
      * @return string with the latest added message text
      */
     function get_last_message(): string

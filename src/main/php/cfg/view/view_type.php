@@ -41,7 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class view_type extends type_object
 {
 
-    // TODO used the const from the shared view_type
+    // TODO Prio 2 used the const from the shared view_type
     // list of the view types that have a coded functionality
     const string DEFAULT = "default";
     const string ENTRY = "entry";

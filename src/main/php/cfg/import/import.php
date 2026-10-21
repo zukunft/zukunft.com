@@ -550,7 +550,7 @@ class import
             if ($usr_import == null) {
                 if ($key == json_fields::USERS) {
                     foreach ($json_obj as $user) {
-                        // TODO check if the constructor is always used
+                        // TODO Prio 2 check if the constructor is always used
                         $usr_import = new user;
                         if ($usr_import->import_obj($user, $msg, null, null, $this->usr)) {
                             $this->users_done++;
@@ -598,24 +598,24 @@ class import
                 // format (see docs/llm/json_structure.md), so it is never checked against the
                 // program version; it is accepted here, so that it is not an unknown element
             } elseif ($key == json_fields::POD) {
-                // TODO set the source pod
+                // TODO Prio 2 set the source pod
                 // a standard export carries these metadata sections; not importing them yet is a known
                 // limitation, so only log it for the admin - do not warn the user on every import
                 log_warning('import of pod details not yet implemented');
             } elseif ($key == json_fields::TIME) {
-                // TODO set the time of the export
+                // TODO Prio 2 set the time of the export
                 log_warning('import of time not yet implemented');
             } elseif ($key == json_fields::SELECTION) {
-                // TODO set the selection as context
+                // TODO Prio 2 set the selection as context
                 log_warning('import of selection not yet implemented');
             } elseif ($key == json_fields::DESCRIPTION) {
-                // TODO remember the description for the log
+                // TODO Prio 2 remember the description for the log
                 log_warning('import of description not yet implemented');
             } elseif ($key == json_fields::USER_NAME) {
-                // TODO set the user that has created the export
+                // TODO Prio 2 set the user that has created the export
                 log_warning('import of a single user not yet implemented');
             } elseif ($key == json_fields::USERS) {
-                // TODO import the users (but only by a user with the privileges)
+                // TODO Prio 2 import the users (but only by a user with the privileges)
                 log_warning('import of users not yet implemented');
             } elseif ($key == json_fields::LIST_VERBS) {
                 $this->step_start(msg_id::SAVE_LIST, verb::class, $sec_cnt, $sec_est);
@@ -737,7 +737,7 @@ class import
                 }
             } elseif ($key == json_fields::VALUE_LIST) {
                 $this->step_start(msg_id::SAVE_LIST, value::class, $sec_cnt, $sec_est);
-                // TODO add a unit test
+                // TODO Prio 2 add a unit test
                 foreach ($json_obj as $value) {
                     $val = new value_list($this->usr);
                     if ($val->import_obj($value, $msg, $dto)) {
@@ -775,7 +775,7 @@ class import
                 }
             } elseif ($key == json_fields::CALC_VALIDATION) {
                 $this->step_start(msg_id::SAVE_SINGLE, result::class, $sec_cnt, $sec_est);
-                // TODO add a unit test
+                // TODO Prio 2 add a unit test
                 foreach ($json_obj as $json_res) {
                     $res = new result($this->usr);
                     if ($res->import_obj($json_res, $msg)) {
@@ -789,8 +789,8 @@ class import
                 }
             } elseif ($key == json_fields::VIEW_VALIDATION) {
                 $this->step_start(msg_id::SAVE_SINGLE, view::class, $sec_cnt, $sec_est);
-                // TODO switch to view usr_msg
-                // TODO add a unit test
+                // TODO Prio 2 switch to view usr_msg
+                // TODO Prio 2 add a unit test
                 foreach ($json_obj as $value) {
                     $msk = new view($this->usr);
                     if ($msk->import_obj($value, $msg)) {
@@ -996,7 +996,7 @@ class import
                 $this->dto_get_view_relations($mrl_array, $dto, $msg, $msk_per_sec);
                 $this->step_end($dto->view_relation_list()->count(), $msk_per_sec);
             }
-            // TODO add json_fields::VIEW_VALIDATION
+            // TODO Prio 2 add json_fields::VIEW_VALIDATION
         }
 
         // check that the pre-calculated results can be reproduced
@@ -1157,7 +1157,7 @@ class import
         // to avoid high adjustments on the beginning of the process
         $factor_used = $pct_remaining + ($factor * $pct_done);
 
-        // TODO remove
+        // TODO Prio 2 remove
         /*
         echo 'done in pct: ' . round($pct_done * 100, 1)
             . ' (' . round($this->done_time_main_step, 4) .'+' . round($this->done_time_step, 4) .'+' . round($est_step_time_done, 4) .') '
@@ -1288,11 +1288,11 @@ class import
                 ]);
             }
         }
-        // TODO add json_fields::POD
-        // TODO add json_fields::TIME
-        // TODO add json_fields::SELECTION
-        // TODO add json_fields::DESCRIPTION
-        // TODO add json_fields::USER_NAME
+        // TODO Prio 2 add json_fields::POD
+        // TODO Prio 2 add json_fields::TIME
+        // TODO Prio 2 add json_fields::SELECTION
+        // TODO Prio 2 add json_fields::DESCRIPTION
+        // TODO Prio 2 add json_fields::USER_NAME
         return $msg;
     }
 
@@ -1820,7 +1820,7 @@ class import
             $phr_lst->add($trp->phrase());
         }
         if ($val != null) {
-            // TODO add any last phrase to the value phrase list
+            // TODO Prio 2 add any last phrase to the value phrase list
             $val = new value($this->usr);
             $val->set_source($src);
             $val->set_phrase_lst($phr_lst);
@@ -1927,7 +1927,7 @@ class import
                     $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $msg, $wrd, $trp, $val, $src);
                 } else {
                     // remember the value
-                    // TODO add percent, geo and time
+                    // TODO Prio 2 add percent, geo and time
                     if (is_string($value)) {
                         $val = new value_text($this->usr);
                     } else {

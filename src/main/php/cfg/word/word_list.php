@@ -7,10 +7,10 @@
 
     actually only used for phrase splitting; in most other cases phrase_list is used
 
-    TODO: check the consistence usage of the parameter $back
-    TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a company" is true
-    TODO: add bool $incl_alias to include all alias words that are of the ids
-    TODO: look at a word list and remove the general word, if there is a more specific word also part of the list
+    TODO Prio 2 check the consistence usage of the parameter $back
+    TODO Prio 2 add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a company" is true
+    TODO Prio 2 add bool $incl_alias to include all alias words that are of the ids
+    TODO Prio 3 look at a word list and remove the general word, if there is a more specific word also part of the list
           e.g. remove "country", but keep "Switzerland"
 
     The main sections of this object are
@@ -153,14 +153,14 @@ class word_list extends sandbox_list_named
      * load
      */
 
-    // TODO add a list of word where the user has changed the standard
+    // TODO Prio 3 add a list of word where the user has changed the standard
 
     /**
      * load words with the given pattern
      *
      * @param string $pattern the text part that should be used to select the words
      * @return bool true if at least one word has been loaded
-     * TODO filter by type while loading e.g. to exclude formula words
+     * TODO Prio 2 filter by type while loading e.g. to exclude formula words
      */
     function load_like(string $pattern, user_message $msg): bool
     {
@@ -195,7 +195,7 @@ class word_list extends sandbox_list_named
 
     /**
      * load a list of words by the phrase group id
-     * TODO needs to be checked if really needed
+     * TODO Prio 2 needs to be checked if really needed
      *
      * @param int|string $grp_id the id of the phrase group
      * @return bool true if at least one word found
@@ -409,7 +409,7 @@ class word_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load all changes of one user on words
-     * TODO build a general user change selection
+     * TODO Prio 2 build a general user change selection
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @param user $usr the user for whom the changes should be loaded
@@ -902,7 +902,7 @@ class word_list extends sandbox_list_named
 
     /**
      * diff as a function, because it seems the array_diff does not work for an object list
-     * TODO rename to del or intersect
+     * TODO Prio 2 rename to del or intersect
      *
      * e.g. if the $this word list is "January, February, March, April, May, June, July, August, September, October, November, December"
      * and the $del_wrd_lst is "May, June, July, August"
@@ -995,7 +995,7 @@ class word_list extends sandbox_list_named
 
     /**
      * sort a word list by name
-     * TODO use the user:sandbox_list_named function
+     * TODO Prio 2 use the user:sandbox_list_named function
      */
     function wlsort(user_message $msg): array
     {
@@ -1228,7 +1228,7 @@ class word_list extends sandbox_list_named
         }
 
         /*
-        TODO check if a new group is not created
+        TODO Prio 2 check if a new group is not created
         $result = $grp->get_id();
         if ($result->id() > 0) {
           zu_debug('word_list->get_grp <'.$result->id.'> for "'.$this->name().'" and user '.$this->get_user()->name);
@@ -1443,7 +1443,7 @@ class word_list extends sandbox_list_named
 
         foreach ($this->lst() as $wrd) {
             // $wrd_ui = $wrd->dsp_obj();
-            // TODO review $view = $wrd_ui->get_view();
+            // TODO Prio 2 review $view = $wrd_ui->get_view();
             $view = $wrd->get_view($msg);
             if (isset($view)) {
                 $is_in_list = false;
@@ -1476,7 +1476,7 @@ class word_list extends sandbox_list_named
         $max_wrd = new word($this->get_user());
         if (count($this->lst()) > 0) {
             foreach ($this->lst() as $wrd) {
-                // TODO replaced by "is following"
+                // TODO Prio 2 replaced by "is following"
                 if ($wrd->name() > $max_wrd->name()) {
                     log_debug('select (' . $wrd->name() . ' instead of ' . $max_wrd->name() . ')');
                     $max_wrd = clone $wrd;

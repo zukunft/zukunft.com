@@ -368,7 +368,7 @@ class sandbox_tests
         $t->assert_false($test_name, array_key_exists(json_fields::PREDICATE_ID, $lnk_ui->api_array([], $msg_ui)));
         $msg_ui->reset();
 
-        // TODO review the tests below e.g. by using the test section ($ts) and $test_name like above
+        // TODO Prio 2 review the tests below e.g. by using the test section ($ts) and $test_name like above
         $t->subheader($ts . 'functions that does not need a database connection');
 
         $test_name = 'a missing selector overwrite is reported to the user via the message object';
@@ -404,7 +404,7 @@ class sandbox_tests
         $result = $src1->is_same($src2);
         $t->assert("two sources are supposed to be the same if the id id empty", $result, true);
 
-        // TODO review test (start with test_name="" and move the creation to the test object creation)
+        // TODO Prio 2 review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word
         $wrd1 = new word($t->usr1);
         $wrd1->id = 1;
@@ -1216,7 +1216,7 @@ class sandbox_tests
         $t->assert($test_name, $lib->trim($created_sql), $lib->trim($expected_sql));
 
         // the phrase load word link query by ...
-        // TODO check if and how GROUP BY t2.word_id, l.verb_id can / should be added
+        // TODO Prio 3 check if and how GROUP BY t2.word_id, l.verb_id can / should be added
         $db_con->db_type = sql_db::POSTGRES;
         $sql_where = sql_db::LNK_TBL . '.to_phrase_id   = 3';
         $sql_type = 'AND l.verb_id = 2';

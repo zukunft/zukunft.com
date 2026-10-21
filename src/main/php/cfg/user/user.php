@@ -7,10 +7,10 @@
 
     $usr is the suggested var name
 
-    TODO make sure that no right gain is possible
-    TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
-    TODO log the access attempts to objects with a restricted access
-    TODO build a process so that a user can request access to an object with restricted access
+    TODO Prio 1 make sure that no right gain is possible
+    TODO Prio 2 move the non functional user parameters to hidden words to be able to reuse the standard view functionality
+    TODO Prio 2 log the access attempts to objects with a restricted access
+    TODO Prio 2 build a process so that a user can request access to an object with restricted access
 
     if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
     if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
@@ -262,13 +262,13 @@ class user extends db_id_object_non_sandbox
     public ?view $msk = null;              // the last view used by the user
     public ?source $src = null;            // the last source used by the user
 
-    // TODO move to user config e.g. by using the key word "pod-user-config"
+    // TODO Prio 2 move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;      // the decimal point char for this user
     public ?string $thousand_sep = null;   // the thousand separator user for this user
     public ?int $percent_decimals = null;  // the number of decimals for this user
 
 
-    // TODO add set and get
+    // TODO Prio 2 add set and get
     // e.g. only admin are allowed to see other user parameters
     public ?user $viewer = null;           // the user who wants to access this user
 
@@ -632,7 +632,7 @@ class user extends db_id_object_non_sandbox
 
     /**
      * the common mapping part for the api and import mapper
-     * TODO add api type to force to include the related objects in the json message
+     * TODO Prio 2 add api type to force to include the related objects in the json message
      *
      * @param array $json
      * @param user_message $msg with the requesting user to collect the message for the user
@@ -1180,7 +1180,7 @@ class user extends db_id_object_non_sandbox
     /**
      * load a user by id from the database
      *
-     * TODO make sure that it is always checked if the requesting user has the sufficient permissions
+     * TODO Prio 1 make sure that it is always checked if the requesting user has the sufficient permissions
      *  param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
      *
      * @param int $id of the user that should be loaded
@@ -1652,7 +1652,7 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * TODO return a translatable msg_id instead of a string
+     * TODO Prio 2 return a translatable msg_id instead of a string
      * @returns string the active session user object
      */
     function get(user_message $msg): string
@@ -1740,7 +1740,7 @@ class user extends db_id_object_non_sandbox
      * create the core system users
      * BUT only if the user table is empty
      * fixed code to create the initial system user
-     * TODO move to system_user
+     * TODO Prio 2 move to system_user
      * @param user_message $msg OK if the system users have been created
      * @return bool true if the system users have been created
      */
@@ -1999,7 +1999,7 @@ class user extends db_id_object_non_sandbox
     /**
      * check if the user is allowed to permit other user to have the given profile
      * this function is part of the profile list because the profile list is already a cached object
-     * TODO add the missing profiles and use the profile level as a second line of defence
+     * TODO Prio 2 add the missing profiles and use the profile level as a second line of defence
      *
      * @param int $profile_id the profile that should be set
      * @return bool
@@ -2134,7 +2134,7 @@ class user extends db_id_object_non_sandbox
         }
         // the development users can change the code id ...
         if ($this->is_developer()) {
-            // TODO review
+            // TODO Prio 1 review
             // ... but only in the deployed development branch
             // if (!$env->is_development()) {
             $result = true;
@@ -2241,7 +2241,7 @@ class user extends db_id_object_non_sandbox
             if ($msg->is_ok()) {
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
-                // TODO use the right level of the profile
+                // TODO Prio 1 use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
                     $this->save_user($msg, $usr_req);
                 }
@@ -2537,7 +2537,7 @@ class user extends db_id_object_non_sandbox
      */
     function never_used(): bool
     {
-        // TODO just read the change log
+        // TODO Prio 2 just read the change log
         //      and because the change log is expected to be complete
         //      if the change log for this user is empty
         //      it can be assumed that the user has never done any relevant change
@@ -2823,7 +2823,7 @@ class user extends db_id_object_non_sandbox
     }
 
     // remember the last source that the user has used
-    // TODO add the database field
+    // TODO Prio 2 add the database field
     function set_verb($vrb_id): bool
     {
         log_debug('(' . $this->id . ',s' . $vrb_id . ')');
@@ -3396,7 +3396,7 @@ class user extends db_id_object_non_sandbox
         $lib = new library();
         $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
-        // TODO check if the prepared function already exists and if yes, skip the query recreation
+        // TODO Prio 2 check if the prepared function already exists and if yes, skip the query recreation
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
@@ -3538,7 +3538,7 @@ class user extends db_id_object_non_sandbox
             $lib = new library();
             $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
-            // TODO check if the prepared function already exists and if yes, skip the query recreation
+            // TODO Prio 2 check if the prepared function already exists and if yes, skip the query recreation
 
             // create the main query parameter object and set the query name
             $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
@@ -3897,7 +3897,7 @@ class user extends db_id_object_non_sandbox
             );
         }
 
-        // TODO a profile with more permissions can only be set by a user that has the permission to do so
+        // TODO Prio 1 a profile with more permissions can only be set by a user that has the permission to do so
         if ($obj->profile_id() !== $this->profile_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -3939,7 +3939,7 @@ class user extends db_id_object_non_sandbox
                 $obj->code_id
             );
         }
-        // TODO the confirmation levels should created and be added
+        // TODO Prio 2 the confirmation levels should created and be added
         // the confirmation type should only be changed by the system based on the confirmation process
         // like the password a null in-memory type can only mean "not specified" (e.g. a user rebuilt
         // from an api json without the field), so a null never overwrites the stored type
@@ -4208,7 +4208,7 @@ class user extends db_id_object_non_sandbox
                         $usr_log->del_by_user($this->id, $del_msg);
                         $msg->merge($del_msg);
                         if ($del_msg->is_ok()) {
-                            // TODO check if there are related log entries and if yes exclude it instead of delete
+                            // TODO Prio 1 check if there are related log entries and if yes exclude it instead of delete
                             parent::del_exe($msg);
                         } else {
                             // the user row is not deleted, because its remaining rows would block it

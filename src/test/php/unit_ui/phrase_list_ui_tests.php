@@ -112,7 +112,7 @@ class phrase_list_ui_tests
         $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $msg);
 
         /*
-         * TODO add a phrase selector if the phrase list is short and add an test
+         * TODO Prio 3 add a phrase selector if the phrase list is short and add an test
         // test the phrase selector
         $form_name = 'test_phrase_selector';
         $pos = 1;

@@ -7,7 +7,7 @@
 
     Compared to groups a phrase list is a memory only object that cannot be saved to the database
 
-    TODO
+    TODO Prio 2
         add function to
              selects out of a word list the most important word
              e.g. given the word list "Turnover, Nestlé, 2014, GAAP", "Turnover" and "Nestlé" is selected,
@@ -251,7 +251,7 @@ class phrase_list extends sandbox_list_named
     /**
      * load the phrases including the related word or triple object
      * by the given id list from the database
-     * TODO make it optional to include excluded phrases
+     * TODO Prio 2 make it optional to include excluded phrases
      *
      * @param phr_ids $ids phrase ids that should be loaded
      * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
@@ -335,8 +335,8 @@ class phrase_list extends sandbox_list_named
     /**
      * create an SQL statement to retrieve a list of phrase objects
      * by the name pattern from the database
-     * TODO add limit and page
-     * TODO add read test that formula link words are excluded
+     * TODO Prio 2 add limit and page
+     * TODO Prio 2 add read test that formula link words are excluded
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $pattern phrase names that should be loaded
@@ -592,7 +592,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * import a phrase list from an inner part of a JSON array object
-     * TODO replace it with the phrase list save function
+     * TODO Prio 2 replace it with the phrase list save function
      *
      * @param array $json_obj an array with the data of the json object
      * @param user_message $msg to enrich with warnings, problems and solutions
@@ -611,11 +611,11 @@ class phrase_list extends sandbox_list_named
                 $phr = new phrase($this->get_user());
                 if ($msg->is_ok()) {
                     if ($db_con->is_open()) {
-                        // TODO prevent that this happens at all
+                        // TODO Prio 2 prevent that this happens at all
                         if (is_array($phr_name)) {
                             $lib = new library();
                             log_err_msg($lib->dsp_array($phr_name) . ' is expected to be a string', $msg);
-                            // TODO remove this fallback solution
+                            // TODO Prio 2 remove this fallback solution
                             if (count($phr_name) == 1) {
                                 $phr_name = $phr_name[0];
                             }
@@ -624,7 +624,7 @@ class phrase_list extends sandbox_list_named
                             $phr->load_by_name($phr_name, $msg);
                             if ($phr->id() == 0) {
                                 // for new phrase use the word object
-                                // TODO add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
+                                // TODO Prio 2 add a test case if a triple with the name exists but the triple is based on other phrases than the given phrase
                                 //      e.g. 1. create triple with "1967 "is a" "(year of definition)" but has the name "2019 (year of definition)" and a value with the phrase "1967 (year of definition)" is supposed to be added
                                 $wrd = new word($this->get_user());
                                 $wrd->load_by_name($phr_name, $msg);
@@ -651,7 +651,7 @@ class phrase_list extends sandbox_list_named
         }
 
         // save the word in the database
-        // TODO check why this is needed
+        // TODO Prio 2 check why this is needed
         if ($msg->is_ok() and $db_con->is_open()) {
             $this->save($msg);
         }
@@ -849,7 +849,7 @@ class phrase_list extends sandbox_list_named
 
             if (!$accumulated_list->is_empty()) {
 
-                // TODO review this temp fix
+                // TODO Prio 2 review this temp fix
                 // to not include the direct linked "parents" because they are not real parents
                 if ($direction == foaf_direction::DOWN) {
                     // load the linking triples but only if the verb suggest it
@@ -1992,7 +1992,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get all phrases of this phrase list that have at least one time term
-     * TODO to be replaced by time_lst
+     * TODO Prio 2 to be replaced by time_lst
      * @return array of time phrases
      */
     function time_lst_old(user_message $msg): array
@@ -2014,7 +2014,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get all words of this phrase list that have at least one time term
-     * TODO use a phrase list instead of a word list because the same word can be of type time and id
+     * TODO Prio 2 use a phrase list instead of a word list because the same word can be of type time and id
      * @return word_list the list object of the time words (not the time phrases!)
      */
     function time_word_list(user_message $msg): word_list
@@ -2107,7 +2107,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get the most useful time for the given words
-     * TODO: review
+     * TODO Prio 2 review
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null with the most useful time phrase
      */
@@ -2208,7 +2208,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * sort the phrase object list by name
-     * TODO use the sort function of the named list
+     * TODO Prio 2 use the sort function of the named list
      * TODO Prio 1 check if a unit test exists
      * @return array list with the phrases (not a phrase list object!) sorted by name
      */
@@ -2428,7 +2428,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * save all changes of the phrase list to the database
-     * TODO speed up by creation one SQL statement
+     * TODO Prio 2 speed up by creation one SQL statement
      *
      * @param user_message $msg the message that should be shown to the user if something went wrong
      * @param import|null $imp the import object with the estimate of the total save time
@@ -2549,7 +2549,7 @@ class phrase_list extends sandbox_list_named
     /**
      * @return array with all phrase names in alphabetic order
      * this function is called from dsp_id, so no call of another function is allowed
-     * TODO move to a parent object for phrase list and term list
+     * TODO Prio 2 move to a parent object for phrase list and term list
      */
     function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
@@ -2936,7 +2936,7 @@ class phrase_list extends sandbox_list_named
                         $phr->load_by_name($phr->name(), $msg);
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
-                    // TODO check if old can ge removed: if ($phr->id() > 0) {
+                    // TODO Prio 2 check if old can ge removed: if ($phr->id() > 0) {
                     if (get_class($phr->obj()) == word::class) {
                         $wrd_lst->add($phr->obj());
                     } elseif (get_class($phr->obj()) == triple::class) {

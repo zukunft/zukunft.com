@@ -264,7 +264,7 @@ class verb_list extends type_list
 
     /**
      * adding the verbs used for unit tests to the dummy list
-     * TODO use always the verb_api name const
+     * TODO Prio 2 use always the verb_api name const
      */
     function load_dummy(): void
     {
@@ -778,7 +778,7 @@ class verb_list extends type_list
                         $id = $vrb->id() * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
-                        $select_row[] = $vrb->usage; // TODO separate the backward usage or separate the reverse form
+                        $select_row[] = $vrb->usage; // TODO Prio 2 separate the backward usage or separate the reverse form
                         $combined_list[$id] = $select_row;
                     }
                 }

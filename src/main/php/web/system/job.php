@@ -93,7 +93,7 @@ class job extends db_object
     function api_mapper(array $json_array, user_message $msg): bool
     {
         parent::api_mapper($json_array, $msg);
-        // TODO use empty date instead?
+        // TODO Prio 3 use empty date instead?
         $request_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME_REQUEST, $json_array)) {
             try {
@@ -293,7 +293,7 @@ class job extends db_object
     {
         $html = new html_base();
         $result = '';
-        // TODO replace with the user date format setting,
+        // TODO Prio 2 replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
         $result .= $html->td($this->request_time()->format(DateTimeInterface::ATOM));
@@ -368,7 +368,7 @@ class job extends db_object
     function header(bool $with_actions = false): string
     {
         $html = new html_base();
-        // TODO replace with language specific headers
+        // TODO Prio 2 replace with language specific headers
         $result = $html->th('request time');
         $result .= $html->th('start time');
         $result .= $html->th('end time');

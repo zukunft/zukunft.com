@@ -138,7 +138,7 @@ class value_list extends sandbox_value_list
 
     /**
      * fill the value list based on a database records
-     * TODO replace $ext with sql_tbl_typ
+     * TODO Prio 2 replace $ext with sql_tbl_typ
      *
      * @param array $db_rows is an array of an array with the database values
      * @param user_message $msg to enrich with problems and suggested solutions
@@ -225,7 +225,7 @@ class value_list extends sandbox_value_list
 
     /**
      * get the first value of the list that is related to all given phrase names
-     * TODO use a memory db
+     * TODO Prio 3 use a memory db
      * @param array $names list of phrase names
      * @return value_base|null this first matching value or null if no value is found
      */
@@ -258,8 +258,8 @@ class value_list extends sandbox_value_list
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
      *
-     *  TODO use order by in query
-     *  TODO use limit and page in query
+     *  TODO Prio 2 use order by in query
+     *  TODO Prio 2 use limit and page in query
      *
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param bool $or if true all values are returned that are linked to any phrase of the list
@@ -281,8 +281,8 @@ class value_list extends sandbox_value_list
      * load a list of values that are related to the given phrase
      * e.g. for "city" all values directly related to the phrase city are returned
      *
-     * TODO use order by in query
-     * TODO use limit and page in query
+     * TODO Prio 2 use order by in query
+     * TODO Prio 2 use limit and page in query
      *
      * @param phrase $phr phrase list to which all related values should be loaded
      * @return bool true if at least one value has been loaded
@@ -458,8 +458,8 @@ class value_list extends sandbox_value_list
     /**
      * create an SQL statement to retrieve a list of values by a list of phrases from the database
      * return all values that match at least one phrase of the list
-     * TODO add ORDER BY (relevance of value)
-     * TODO use LIMIT and PAGE
+     * TODO Prio 2 add ORDER BY (relevance of value)
+     * TODO Prio 2 use LIMIT and PAGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -798,7 +798,7 @@ class value_list extends sandbox_value_list
     }
 
     /**
-     * TODO the second row should be 4, 0 not 0,4
+     * TODO Prio 1 the second row should be 4, 0 not 0,4
      * @param array $ids
      * @return array
      */
@@ -868,7 +868,7 @@ class value_list extends sandbox_value_list
 
     /**
      * create an SQL statement to retrieve a list of values by the id from the database
-     * TODO links and select all phrase ids
+     * TODO Prio 2 links and select all phrase ids
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $ids value ids that should be loaded
@@ -917,7 +917,7 @@ class value_list extends sandbox_value_list
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
-                // TODO move to the calling function
+                // TODO Prio 2 move to the calling function
                 if ($usr_tbl) {
                     $sc_par_lst->add(sql_type::USER);
                 }
@@ -1018,7 +1018,7 @@ class value_list extends sandbox_value_list
 
     /**
      * create an SQL statement to retrieve a list of values by a list of group ids from the database
-     * TODO check if this not the same as the load_sql_by_ids function
+     * TODO Prio 2 check if this not the same as the load_sql_by_ids function
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -1041,7 +1041,7 @@ class value_list extends sandbox_value_list
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
-                // TODO move to the calling function
+                // TODO Prio 2 move to the calling function
                 if ($usr_tbl) {
                     $sc_par_lst->add(sql_type::USER);
                 }
@@ -1769,7 +1769,7 @@ class value_list extends sandbox_value_list
     /**
      * check the consistency for all values
      * so get the words and triples linked from the word group
-     * TODO split into smaller sections by adding LIMIT to the query and start a loop
+     * TODO Prio 2 split into smaller sections by adding LIMIT to the query and start a loop
      */
     function check_all(): bool
     {
@@ -1850,7 +1850,7 @@ class value_list extends sandbox_value_list
 
             // update the existing values
 
-            // TODO loop over the values and check if all needed functions exist
+            // TODO Prio 2 loop over the values and check if all needed functions exist
             //      create the missing functions
             //      create blocks of update function calls
         }

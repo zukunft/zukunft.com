@@ -70,9 +70,9 @@ $msg_ui = new user_message_ui();  // frontend entry point
 
 // prepare for static pages
 // merge POST into GET so form submissions (e.g. login) reach url_to_action
-// TODO llm: add other actions or maybe use $_REQUEST ?
-// TODO llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
-// TODO llm: if the lan is given use it for $mtr
+// TODO Prio 3 llm: add other actions or maybe use $_REQUEST ?
+// TODO Prio 2 llm: norm the url_array based on static function and const e.g. convert mask_id=login to m=61 but do not convert mask_id that does not have a const
+// TODO Prio 2 llm: if the lan is given use it for $mtr
 $url_array = empty($_POST) ? $_GET : array_merge($_GET, $_POST);
 if (!empty($_POST)) {
     // redact the unhashed password before logging so a login post never leaks it into the log
@@ -85,8 +85,8 @@ if ($debug > 10) {
     log_debug('url array: ' . library::dsp_array($url_array, true));
 }
 
-// TODO llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
-// TODO llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
+// TODO Prio 2 llm: if the request is a static page (views::STATIC_VIEWS), just show it e.g. from the html file stored in the root folder /login or /start and skip the database opening and closing
+// TODO Prio 2 llm: create a process to refresh the static pages for via /http/update_static.php script that cal also be called by an admin user or a scheduled batch job (make sure that no other files are overwritten and that this cannot be user for code injections)
 
 
 // open database

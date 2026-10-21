@@ -117,7 +117,7 @@ class graph_tests
         $lnk_lst->load_by_phr_lst($phr_lst, $msg, null, foaf_direction::UP, $msg);
         //$lnk_lst->wrd_lst = $phr_lst->wrd_lst_all();
         $result = $lnk_lst->name();
-        // TODO to be reviewed
+        // TODO Prio 2 to be reviewed
         $target = word_names::ZH;
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 

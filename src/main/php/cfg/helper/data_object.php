@@ -1761,7 +1761,7 @@ class data_object
 
     /**
      * add or update all users to the database
-     * TODO add the requesting user to prevent access right gains
+     * TODO Prio 1 add the requesting user to prevent access right gains
      * @param import $imp the import object that includes the start time of the import
      * @param user_message $msg ok or the error message for the user with the suggested solution
      */
@@ -2074,7 +2074,7 @@ class data_object
     }
 
     /**
-     * TODO add the missing lists and vars of the dto object
+     * TODO Prio 2 add the missing lists and vars of the dto object
      * reports the difference to the given data object as human-readable messages
      * @param data_object $dto which might have some differences
      * @return user_message all differences as a human-readable text

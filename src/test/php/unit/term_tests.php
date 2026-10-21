@@ -213,8 +213,8 @@ class term_tests
         $t->subheader($ts . 'sql query');
 
         // check the creation of the prepared sql statements to load a term by id or name
-        // TODO use assert_load_sql_id for all objects
-        // TODO use assert_load_sql_name for all named objects
+        // TODO Prio 2 use assert_load_sql_id for all objects
+        // TODO Prio 2 use assert_load_sql_name for all named objects
         $trm = new term($t->usr1);
         $t->assert_sql_by_id($sc, $trm);
         $t->assert_sql_by_name($sc, $trm);

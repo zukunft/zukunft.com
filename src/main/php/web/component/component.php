@@ -144,7 +144,7 @@ class component extends sandbox_code_id
     public ?phrase $wrd_col2 = null;    // the phrase to select the sub table columns
 
     // vars from the link
-    // TODO move these vars to the frontend component link object
+    // TODO Prio 2 move these vars to the frontend component link object
     public int $pos_type_id = position_types::DEFAULT_ID;
     public ?int $style_id = null;
     public ?int $row_phrase = null;
@@ -345,7 +345,7 @@ class component extends sandbox_code_id
      */
 
     /**
-     * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * TODO Prio 2 all set_from_json_array functions should only use json_fields not api::FLD
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
@@ -444,7 +444,7 @@ class component extends sandbox_code_id
     }
 
     /**
-     * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * TODO Prio 2 all set_from_json_array functions should only use json_fields not api::FLD
      * TODO Prio 2 move $typ_lst array convert to one place
      * TODO Prio 2 review $typ_lst->flat_link() ID switches
      * create an array for the api json message

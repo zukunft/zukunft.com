@@ -289,7 +289,7 @@ class phrase extends combine_named
         $result = false;
         $this->set_obj_id(0);
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            /* TODO try to used the object mapper
+            /* TODO Prio 2 try to used the object mapper
             if (array_key_exists(phrase::FLD_ID, $db_row)) {
                 $this->set_obj_from_id($db_row[phrase::FLD_ID]);
                 if ($this->type() == word::class) {
@@ -430,7 +430,7 @@ class phrase extends combine_named
      */
     function set_id(int $id): void
     {
-        // TODO check if not set_id should be used
+        // TODO Prio 2 check if not set_id should be used
         $this->set_obj_id(abs($id));
     }
 
@@ -1075,7 +1075,7 @@ class phrase extends combine_named
             $trp = new triple($this->get_user());
             $result = $trp->load_by_id($this->obj_id(), $msg);
             $this->obj = $trp;
-            // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj()->name
+            // TODO Prio 3 check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj()->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->get_user());
@@ -1137,7 +1137,7 @@ class phrase extends combine_named
 
     /**
      * to enable the recursive function in work_link
-     * TODO add a list of triple already split to detect endless loops
+     * TODO Prio 1 add a list of triple already split to detect endless loops
      */
     function wrd_lst(user_message $msg): word_list
     {
@@ -1189,9 +1189,9 @@ class phrase extends combine_named
 
     /**
      * if there is just one formula linked to the phrase, get it
-     * TODO separate the query parameter creation and add a unit test
-     * TODO allow also to retrieve a list of formulas
-     * TODO get the user-specific list of formulas
+     * TODO Prio 2 separate the query parameter creation and add a unit test
+     * TODO Prio 2 allow also to retrieve a list of formulas
+     * TODO Prio 2 get the user-specific list of formulas
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function formula(user_message $msg): formula
@@ -1493,7 +1493,7 @@ class phrase extends combine_named
         return $result;
     }
 
-    // TODO deprecate and replace by phase list functions
+    // TODO Prio 2 deprecate and replace by phase list functions
     // SQL to list the user phrases (related to a type if needed)
     function sql_list($type): string
     {
@@ -1505,7 +1505,7 @@ class phrase extends combine_named
         $sql_type_where = '';
 
         // if no phrase type is define, list all words and triples
-        // TODO: but if word has several types don't offer to the user to select the simple word
+        // TODO Prio 2 but if word has several types don't offer to the user to select the simple word
         //                                                      ^
         $sql_words = 'SELECT DISTINCT w.word_id AS id, 
                              ' . $db_con->get_usr_field("word_name", "w", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
@@ -1704,8 +1704,8 @@ class phrase extends combine_named
     /**
      * @return phrase the following phrase based on the predefined verb following
      * e.g. the year 2020 if the given year phrase is 2019
-     * TODO add to triple and review
-     * TODO create unit tests
+     * TODO Prio 2 add to triple and review
+     * TODO Prio 2 create unit tests
      */
     function next(user_message $msg): phrase
     {
@@ -1733,8 +1733,8 @@ class phrase extends combine_named
 
     /**
      * return the follow word id based on the predefined verb following
-     * TODO add to triple and review
-     * TODO create unit tests
+     * TODO Prio 2 add to triple and review
+     * TODO Prio 2 create unit tests
      */
     function prior(user_message $msg): word
     {

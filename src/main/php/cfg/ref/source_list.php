@@ -227,7 +227,7 @@ class source_list extends sandbox_list_named
      */
     function save(user_message $msg, ?import $imp = null): bool
     {
-        // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+        // TODO Prio 2 create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
         return parent::save_block_wise(
             $imp,
             words::SOURCES,

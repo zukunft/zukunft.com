@@ -215,7 +215,7 @@ class value_read_tests
         }
 
 
-        // TODO add time, test and geo value read tests
+        // TODO Prio 2 add time, test and geo value read tests
 
         /*
         $test_name = 'load the latest value by phrase group';

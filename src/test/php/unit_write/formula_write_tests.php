@@ -103,14 +103,14 @@ class formula_write_tests
         $test_name = 'add formula ' . formula_names::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
         $t->assert_write_via_func_or_sql($test_name, $t_frm->formula_add_by_func(), true);
 
-        // TODO remove
+        // TODO Prio 2 remove
         $t->write_named_cleanup(new formula($t->usr1), formula_names::SYSTEM_TEST_ADD);
 
         $t->subheader($ts . 'sandbox for ' . formula_names::SYSTEM_TEST_ADD);
         // TODO Prio 0 activate
         //$t->assert_write_named($t_frm->formula_filled_add(), formula_names::SYSTEM_TEST_ADD);
 
-        // TODO remove
+        // TODO Prio 2 remove
         $t->write_named_cleanup(new formula($t->usr1), formula_names::SYSTEM_TEST_ADD);
         $t->write_named_cleanup(new word($t->usr1), formula_names::SYSTEM_TEST_ADD);
 
@@ -188,14 +188,14 @@ class formula_write_tests
 
                 $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2019), $msg);
                 $time_phr = $phr_lst->time_useful($msg);
-                // TODO review
+                // TODO Prio 2 review
                 if ($time_phr == null) {
                     $time_phr = $t_wrd->word_2019()->phrase();
                 }
                 $val = $elm_frm->calc_predefined($phr_lst, $time_phr, $msg);
                 $result = $val->number();
                 $target = word_names::YEAR_2019;
-                // TODO: get the best matching number
+                // TODO Prio 2 get the best matching number
                 //$t->assert('formula->special_result for "'.$elm_frm->name.'"', $result, $target);
 
                 if (count($frm_lst->lst()) > 1) {
@@ -265,7 +265,7 @@ class formula_write_tests
 
         // test the calculation of one value
         $phr_lst = new phrase_list($t->usr1);
-        // TODO check why is this word MIO is needed??
+        // TODO Prio 2 check why is this word MIO is needed??
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::MIO), $msg);
         $frm = $t_db->load_formula(formula_names::SYSTEM_TEST_ADD);
         // calculate one value via the split path: load_data_for_calc fills the cache and to_num_new computes
@@ -303,8 +303,8 @@ class formula_write_tests
         $t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target, $t::TIMEOUT_LIMIT_CALC);
 
         // test the scaling mainly to check the scaling handling of the results later
-        // TODO remove any scaling words from the phrase list if the result word is of type scaling
-        // TODO automatically check the fastest way to scale and avoid double scaling calculations
+        // TODO Prio 2 remove any scaling words from the phrase list if the result word is of type scaling
+        // TODO Prio 3 automatically check the fastest way to scale and avoid double scaling calculations
         $frm_scale_mio_to_one = $t_db->load_formula(formula_names::SYSTEM_TEST_SCALE_MIO);
         $res_lst = $frm_scale_mio_to_one->calc($phr_lst, $msg);
         if ($res_lst != null) {
@@ -317,7 +317,7 @@ class formula_write_tests
 
         // test the scaling back to a thousand
         $phr_lst = new phrase_list($t->usr1);
-        // TODO check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
+        // TODO Prio 2 check why is this word ONE needed?? scale shout assume one if no scaling word is set or implied
         //$phr_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_2020));
         $phr_lst->load_by_names(array(words::CH, word_names::INHABITANTS, word_names::YEAR_2020, word_names::ONE), $msg);
         $frm_scale_one_to_k = $t_db->load_formula(formula_names::SYSTEM_TEST_SCALE_TO_K);
@@ -330,7 +330,7 @@ class formula_write_tests
         }
         $target = 8670.3;
         // TODO Prio 1 activate
-        // TODO if possible move as many tests as possible to unit tests
+        // TODO Prio 2 if possible move as many tests as possible to unit tests
         //$t->assert('formula->calc "' . $frm->name() . '" for a tern list ' . $phr_lst->dsp_id(), $result, $target);
 
         // load the test ids
@@ -352,7 +352,7 @@ class formula_write_tests
         $t->assert('formula->name for ' . $frm->dsp_id(), $result, $target);
 
         // ... in HTML format
-        // TODO test without preloaded term list
+        // TODO Prio 2 test without preloaded term list
         $trm_lst = $t_trm->term_list_increase();
         $trm_lst_ui = new term_list_ui($trm_lst->api_json());
         $result = $frm_html->dsp_text($msg_ui, [], $trm_lst_ui);
@@ -369,7 +369,7 @@ class formula_write_tests
         $t->assert('formula->display for ' . $frm->dsp_id(), $result, $target);
 
         // ... the formula result selected by the word and in percent
-        // TODO defined the criteria for selecting the result
+        // TODO Prio 2 defined the criteria for selecting the result
         $wrd = new word($t->usr1);
         $wrd->load_by_name(words::CH, $msg);
         /*
@@ -378,7 +378,7 @@ class formula_write_tests
         $t->assert('formula->dsp_result for ' . $frm->dsp_id() . ' and ' . $wrd->name(), $result, $target);
         */
 
-        /* TODO reactivate
+        /* TODO Prio 2 reactivate
         $result = $frm->btn_edit();
         $target = '<a href="/http/formula_edit.php?id=52&back=" title="Change formula increase"><img src="/src/main/resources/images/button_edit.svg" alt="Change formula increase"></a>';
         $target = 'data-icon="edit"';
@@ -394,7 +394,7 @@ class formula_write_tests
         //$t->dsp_contains(', formula->dsp_hist for ' . $frm->dsp_id(), $target, $result);
 
         //$result = $frm_html->dsp_hist_links($page, $size, $call, $back);
-        // TODO fix it
+        // TODO Prio 2 fix it
         //$target = 'link';
         $target = 'table';
         //$result = $hist_page;
@@ -528,7 +528,7 @@ class formula_write_tests
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"System Test Formula Renamed description"';
         $t->assert('formula->load description for "' . formula_names::SYSTEM_TEST_RENAMED . '" logged', $result, $target);
         $result = $t->log_last_by_field($frm_reloaded, $msg, formula_fields::FLD_TYPE, $frm_reloaded->id(), true);
-        // TODO review what is correct
+        // TODO Prio 2 review what is correct
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' changed ' . $usr_marker . 'to this from calc';
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"' . word_names::THIS_NAME . '"';
         $target = new DateTime(change_log_named::TEST_TIME)->format('d-m-Y H:i') . ' ' . users::SYSTEM_TEST_NAME . ' added ' . $usr_marker . '"4"';
@@ -627,7 +627,7 @@ class formula_write_tests
 
         // check for formulas also that
 
-        // TODO check if the word assignment can be done for each user
+        // TODO Prio 2 check if the word assignment can be done for each user
 
         // cleanup - fallback delete
         $t_frm->cleanup($ts);
@@ -653,7 +653,7 @@ class formula_write_tests
         $wrd->load_by_id($wrd_share->id(), $msg);
         $frm_lst = new formula_list($t->usr1);
         $frm_lst->load_by_phr($wrd->phrase(), $msg);
-        // TODO fix it
+        // TODO Prio 2 fix it
         //$result = $frm_lst->display();
         //$target = formulas::TN_RATIO;
         // $t->dsp_contains(', formula_list->load formula for word "' . $wrd->dsp_id() . '" should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);

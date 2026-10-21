@@ -102,7 +102,7 @@ class type_tests
         $ts = 'unit type ';
         $t->header($ts);
 
-        // TODO job_types
+        // TODO Prio 2 job_types
 
         $t->subheader($ts . 'types json cache round trip');
         // the backend can load all types with one cached json instead of one select per list,

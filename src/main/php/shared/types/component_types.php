@@ -1043,7 +1043,7 @@ class component_types
 
     // list of the component types used for unit testing
     // in order of const definition which should be also the thematic order
-    // TODO align with component_types.csv
+    // TODO Prio 2 align with component_types.csv
     const array TEST_TYPES = array(
         [self::PHRASE_NAME, self::PHRASE_NAME_ID],
         [self::CALC_SHEET, self::CALC_SHEET_ID],

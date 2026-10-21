@@ -406,7 +406,7 @@ class sandbox_named extends sandbox
 
     /**
      * get the name of the word object
-     * TODO can it be merged with name_or_null() ?
+     * TODO Prio 2 can it be merged with name_or_null() ?
      *
      * @return string|null the name from the object e.g. word using the same function as the phrase and term
      */
@@ -850,7 +850,7 @@ class sandbox_named extends sandbox
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->get_user());
-        // TODO add the table exceptions from sql_db
+        // TODO Prio 2 add the table exceptions from sql_db
         $log->set_action(change_actions::ADD, $msg);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
         $log->set_field($tbl_name . '_name', $msg);
@@ -894,10 +894,10 @@ class sandbox_named extends sandbox
 
     /**
      * create a new named object
-     * TODO do a rollback in case of an
-     * TODO used prepared sql_insert for all fields
-     * TODO use optional sql insert with log
-     * TODO use prepared sql insert
+     * TODO Prio 1 do a rollback in case of an
+     * TODO Prio 2 used prepared sql_insert for all fields
+     * TODO Prio 2 use optional sql insert with log
+     * TODO Prio 2 use prepared sql insert
      *
      * @param user_message $msg with status OK
      *                              or if something went wrong
@@ -1016,7 +1016,7 @@ class sandbox_named extends sandbox
 
     /**
      * check if the id parameters are supposed to be changed
-     * TODO add the link type for word links
+     * TODO Prio 2 add the link type for word links
      * @param sandbox_named|db_object_seq_id $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields has been changed
      */
@@ -1135,7 +1135,7 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * TODO call this check also if a named sandbox object is renamed
+     * TODO Prio 1 call this check also if a named sandbox object is renamed
      * check if an object with the unique key already exists
      * returns null if no similar object is found
      * or returns the object with the same unique key that is not the actual object
@@ -1186,7 +1186,7 @@ class sandbox_named extends sandbox
             // check with the user namespace
             $db_chk->set_user($this->get_user());
             if ($this::class == change::class) {
-                // TODO check if it is working with build in tests
+                // TODO Prio 2 check if it is working with build in tests
                 if ($db_chk->load_by_id($this->id(), $msg)) {
                     if ($db_chk->id() > 0) {
                         log_debug($this->dsp_id() . ' has the same name is the already existing "' . $db_chk->dsp_id() . '" of the user namespace');
@@ -1264,8 +1264,8 @@ class sandbox_named extends sandbox
     /**
      * check if target key value already exists
      * overwritten in the word class for formula link words
-     * TODO load the user value not the standard value but also check the standard value
-     * TODO should not ADDITIONAL the user-specific load be called
+     * TODO Prio 2 load the user value not the standard value but also check the standard value
+     * TODO Prio 2 should not ADDITIONAL the user-specific load be called
      *
      * @return sandbox object with id zero if no object with the same id is found
      */
@@ -1306,8 +1306,8 @@ class sandbox_named extends sandbox
 
     /**
      * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
-     * TODO check if it can be merged with the sandbox function
+     * TODO Prio 2 add qp merge
+     * TODO Prio 2 check if it can be merged with the sandbox function
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
@@ -1346,7 +1346,7 @@ class sandbox_named extends sandbox
 
     /**
      * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
+     * TODO Prio 2 add qp merge
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp

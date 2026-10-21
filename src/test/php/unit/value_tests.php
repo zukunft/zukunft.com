@@ -618,10 +618,10 @@ class value_tests
         $val = $t_val->value_incomplete($msg);
         $t->assert_sql_insert_fail($sc, $val, [sql_type::LOG]);
 
-        // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
-        // TODO for update fill the missing phrase id with zeros because only one row should be updated
-        // TODO add test to change owner of the normal (not user-specific) value
-        // TODO add tests for time, text and geo values
+        // TODO Prio 1 for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
+        // TODO Prio 1 for update fill the missing phrase id with zeros because only one row should be updated
+        // TODO Prio 2 add test to change owner of the normal (not user-specific) value
+        // TODO Prio 2 add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
         $val = $t_val->value($msg);
         $t->assert_sql_update($sc, $val, $db_val);
@@ -842,7 +842,7 @@ class value_tests
         $t->subheader($ts . 'html frontend');
 
         $val = $t_val->value($msg);
-        // TODO add class field to api message
+        // TODO Prio 2 add class field to api message
         $t->assert_api_to_ui($val, new value_ui());
 
         // the value default page also shows the source with a link to the source page
@@ -864,7 +864,7 @@ class value_tests
         $test_name = 'a value without an update time shows no last update line';
         $t->assert($test_name, $form->show_last_update($val_plain), '');
 
-        // TODO move to ui tests
+        // TODO Prio 2 move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
         // the value has no source, so the link is followed by the grey "-" mark (see sandbox_value::quality_mark)
         $test_name = 'value edit link';

@@ -550,7 +550,7 @@ class ui_list extends ui_base
      * the triples that use the given verb as a blank separated list of the triple names with a
      * link to each triple, used by the verb default page and the verb edit and delete pages
      *
-     * TODO move to a component exe part class
+     * TODO Prio 2 move to a component exe part class
      *
      * @param db_object|null $dbo the verb whose triples should be listed
      * @param user_message $msg to report a missing cache or an unexpected selection object
@@ -1269,14 +1269,14 @@ class ui_list extends ui_base
      */
     function link_list_word(db_object $dbo, ?data_object $cfg): string
     {
-        // TODO review
+        // TODO Prio 2 review
         // escape the object name (user input rendered raw by the component arm; stored xss)
         $html = new html_base();
         return 'list of phrases related to ' . $html->esc($dbo->name()) . ' ';
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
     function num_list(): string
@@ -3831,7 +3831,7 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
     function results(): string

@@ -711,7 +711,7 @@
     \-- set_link_type_by_id
         \-- component - set the type of linked components
     \-- set_join
-        \-- component - TODO use a set_join function for all not simple sql joins
+        \-- component - TODO Prio 2 use a set_join function for all not simple sql joins
     \-- get_view
         \-- component_link - rename to standard link from object to view
     \-- view_id
@@ -981,7 +981,7 @@
     \-- is_valid
         \-- verb - @return bool true if the verb object probably has been added to the database
     \-- save
-        \-- verb - TODO return a user message object,
+        \-- verb - TODO Prio 2 return a user message object,
                  so that messages to the user like "use another name" does not case a error log entry
         \-- view - add or update a view in the database or create a user view
     \-- save_component_links
@@ -3050,10 +3050,10 @@
     \-- load_by_obj - section for function load_by_obj is expected to be load in /result/result_list.php
     \-- name - section for function name is expected to be debug in /result/result_list.php
     \-- names - section for function names is expected to be info in /result/result_list.php
-    \-- add_frm_val - section for function add_frm_val not yet defined that it should be TODO check in /result/result_li
-            st.php
-    \-- frm_upd_lst_usr - section for function frm_upd_lst_usr not yet defined that it should be TODO check in /result/r
-            esult_list.php
+    \-- add_frm_val - section for function add_frm_val not yet defined that it should be TODO Prio 2 check in /result/re
+            sult_list.php
+    \-- frm_upd_lst_usr - section for function frm_upd_lst_usr not yet defined that it should be TODO Prio 2 check in /r
+            esult/result_list.php
     \-- frm_upd_lst - section for function frm_upd_lst not yet defined that it should be get the result that needs to be
              recalculated if one formula has been updated in /result/result_list.php
     \-- get_first - section for function get_first is expected to be set and get in /result/result_list.php
@@ -3719,12 +3719,12 @@
             ox/sandbox_value.php
     \-- sql_delete - section for function sql_delete not yet defined that it should be sql write in /sandbox/sandbox_val
             ue.php
-    \-- db_changed - section for function db_changed not yet defined that it should be TODO check if sandbox named funct
-            ion match this logic in /sandbox/sandbox_value.php
-    \-- db_fields_changed_value - section for function db_fields_changed_value not yet defined that it should be TODO ch
-            eck if sandbox named function match this logic in /sandbox/sandbox_value.php
-    \-- db_values_changed_value - section for function db_values_changed_value not yet defined that it should be TODO ch
-            eck if sandbox named function match this logic in /sandbox/sandbox_value.php
+    \-- db_changed - section for function db_changed not yet defined that it should be TODO Prio 2 check if sandbox name
+            d function match this logic in /sandbox/sandbox_value.php
+    \-- db_fields_changed_value - section for function db_fields_changed_value not yet defined that it should be TODO Pr
+            io 2 check if sandbox named function match this logic in /sandbox/sandbox_value.php
+    \-- db_values_changed_value - section for function db_values_changed_value not yet defined that it should be TODO Pr
+            io 2 check if sandbox named function match this logic in /sandbox/sandbox_value.php
     \-- cloned - section for function cloned not yet defined that it should be clone in /sandbox/sandbox_value.php
     \-- updated - section for function updated not yet defined that it should be clone in /sandbox/sandbox_value.php
     \-- is_value_obj - section for function is_value_obj is expected to be info in /sandbox/sandbox_value.php
@@ -4008,11 +4008,12 @@
     \-- phr_names - section for function phr_names not yet defined that it should be info in /value/value_base.php
     \-- check - section for function check not yet defined that it should be check in /value/value_base.php
     \-- is_same_val - section for function is_same_val is expected to be info in /value/value_base.php
-    \-- scale_new - section for function scale_new not yet defined that it should be TODO activate in /value/value_base.
-            php
-    \-- scale - section for function scale not yet defined that it should be TODO activate in /value/value_base.php
-    \-- scale_calc - section for function scale_calc not yet defined that it should be TODO activate in /value/value_bas
-            e.php
+    \-- scale_new - section for function scale_new not yet defined that it should be TODO Prio 1 activate in /value/valu
+            e_base.php
+    \-- scale - section for function scale not yet defined that it should be TODO Prio 1 activate in /value/value_base.p
+            hp
+    \-- scale_calc - section for function scale_calc not yet defined that it should be TODO Prio 1 activate in /value/va
+            lue_base.php
     \-- import_phrase_value - section for function import_phrase_value not yet defined that it should be im- and export 
             in /value/value_base.php
     \-- save_from_api_msg - section for function save_from_api_msg is expected to be save in /value/value_base.php
@@ -5219,7 +5220,8 @@
     \-- import_config_yaml
         \-- import_file - import the initial system configuration
     \-- import_system_data
-        \-- import_file - TODO fill a user_message with the warning and error messages and return true if successful
+        \-- import_file - TODO Prio 2 fill a user_message with the warning and error messages and return true if success
+                ful
     \-- import_pod_config
         \-- import_file - import the default pod base configuration json files
     \-- import_sample_view_data
@@ -5510,7 +5512,7 @@
         \-- change_log_list - create the api json array with one entry per change so that the frontend
         \-- change_value - create an array for the api json message
         \-- ref_list - map the database rows of one load to the refs of this list
-        \-- ref_type - TODO use parent function for setting the name, ...
+        \-- ref_type - TODO Prio 2 use parent function for setting the name, ...
         \-- list_db_read - create an array for the api json message
         \-- system_time - create an array for the api json creation e.g. of the slow requests for the admin dashboard
         \-- user_log_sum - @return array the summed sessions of the user for the api json message to the admin dashboard
@@ -5520,9 +5522,9 @@
     \-- load_dummy
         \-- type_lists - set all type list to dummy fallback values
     \-- load_sql_by_user
-        \-- change_link - TODO make sure that always a order is defined to allow page views
+        \-- change_link - TODO Prio 2 make sure that always a order is defined to allow page views
     \-- load_sql_by_table
-        \-- change_link - TODO make sure that always a order is defined to allow page views
+        \-- change_link - TODO Prio 2 make sure that always a order is defined to allow page views
     \-- load_last_by_user
         \-- change_link - get the last link changed by a user
     \-- add_link_ref
@@ -5607,8 +5609,8 @@
         \-- sql_message - simple return the message text
         \-- user_message - simple return the message text
     \-- get_last_message
-        \-- sql_message - TODO should be deprecated once the msg_id is used for all messages
-        \-- user_message - TODO should be deprecated once the msg_id is used for all messages
+        \-- sql_message - TODO Prio 2 should be deprecated once the msg_id is used for all messages
+        \-- user_message - TODO Prio 2 should be deprecated once the msg_id is used for all messages
     \-- get_row_id
         \-- sql_message - @return int|string the main database row to which this user message is related
         \-- user_message - @return int|string the main database row to which this user message is related
@@ -5634,7 +5636,7 @@
         \-- db_object - TODO Prio 1 make sure that this function is always called before tying to update a database row
         \-- db_object_multi - @return string with the unique database id mainly for child dsp_id() functions
         \-- type_list - @return string the verb list with the internal database ids for debugging
-        \-- change - TODO move to the backend config class
+        \-- change - TODO Prio 2 move to the backend config class
         \-- change_link - @return string with the unique log entry description for debugging
         \-- change_log - @return string with the unique database id mainly for child dsp_id() functions
         \-- change_value - get a list of database field values that have been updated
@@ -5888,7 +5890,7 @@
 \-- review
     \-- element_grp_lst
         \-- expression - a formula element group is a group of words, verbs, phrases or formula
-\-- TODO review
+\-- TODO Prio 2 review
     \-- get_first_id
         \-- figure_list - drop the figures the requesting user may not read, so a figure list returned by the api never
 \-- database link
@@ -5900,7 +5902,7 @@
     \-- get_array
         \-- group_id - get the sorted array of phrase ids from the given group id
     \-- count
-        \-- group_id - TODO use directly the phrase list without converting to a group id and back
+        \-- group_id - TODO Prio 2 use directly the phrase list without converting to a group id and back
     \-- is_valid
         \-- group_id - test if the group id can be used to save a value or result in the database
     \-- table_extension
@@ -6144,7 +6146,7 @@
     \-- dsp
         \-- change - @return string the current change as a human-readable text
     \-- date_time_format
-        \-- change - TODO move to the backend config class
+        \-- change - TODO Prio 2 move to the backend config class
 \-- init
     \-- create_log_references
         \-- change_log - create the change log references (tables, fields and actions)
@@ -8388,14 +8390,14 @@
     \-- dsp_hist - section for function dsp_hist not yet defined that it should be to review in /value/value.php
     \-- dsp_hist_links - section for function dsp_hist_links not yet defined that it should be to review in /value/value
             .php
-    \-- dsp_samples - section for function dsp_samples not yet defined that it should be TODO recreate based on the grou
-            p in /value/value.php
-    \-- dsp_add_fast - section for function dsp_add_fast not yet defined that it should be TODO recreate based on the gr
-            oup in /value/value.php
-    \-- dsp_edit - section for function dsp_edit not yet defined that it should be TODO recreate based on the group in /
-            value/value.php
-    \-- display - section for function display not yet defined that it should be TODO recreate based on the group in /va
-            lue/value.php
+    \-- dsp_samples - section for function dsp_samples not yet defined that it should be TODO Prio 2 recreate based on t
+            he group in /value/value.php
+    \-- dsp_add_fast - section for function dsp_add_fast not yet defined that it should be TODO Prio 2 recreate based on
+             the group in /value/value.php
+    \-- dsp_edit - section for function dsp_edit not yet defined that it should be TODO Prio 2 recreate based on the gro
+            up in /value/value.php
+    \-- display - section for function display not yet defined that it should be TODO Prio 2 recreate based on the group
+             in /value/value.php
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper,
             order of section base has difference at name_link should be before name_tip
 \-- value_list
@@ -8708,14 +8710,14 @@
         \-- data_object - init the data object vars and set the lists based on the given api json
 \-- api
     \-- api_mapper
-        \-- component - TODO all set_from_json_array functions should only use json_fields not api::FLD
+        \-- component - TODO Prio 2 all set_from_json_array functions should only use json_fields not api::FLD
         \-- element - set the vars of this element object based on the api json array
         \-- change_log - set the vars of this object bases on the api json array
         \-- change_log_named - set the vars of this object bases on the api json array
     \-- 1
         \-- sys_log_list - create the api json message string of this list that can be sent to the backend
     \-- api_array
-        \-- component - TODO all set_from_json_array functions should only use json_fields not api::FLD
+        \-- component - TODO Prio 2 all set_from_json_array functions should only use json_fields not api::FLD
         \-- element - create an api json array for the backend based on this frontend object
         \-- formula_link - create an api json array for the backend based on this frontend object
         \-- sandbox - @return array the json message array to send the updated data to the backend
@@ -8915,9 +8917,9 @@
     \-- phrase_selector
         \-- component - to select the word or triple
     \-- btn_add_value
-        \-- phrase_list - TODO review
+        \-- phrase_list - TODO Prio 2 review
     \-- dsp_graph
-        \-- phrase_list - TODO review
+        \-- phrase_list - TODO Prio 2 review
     \-- tbl
         \-- job_list - show all batch_jobs of the list as table row (ex display)
     \-- get_html_header
@@ -9094,7 +9096,7 @@
     \-- tbl
         \-- triple_list - show all triples of the list as table row (ex display)
     \-- graph
-        \-- triple_list - TODO move the relevant parts to other functions
+        \-- triple_list - TODO Prio 2 move the relevant parts to other functions
 \-- set and get
     \-- 1
         \-- phrase_list - set the vars of this phrase list frontend object based on the url array
@@ -9268,7 +9270,7 @@
     \-- get_plural
         \-- combine_named - @return string|null the plural of the word, triple, formula or verb
     \-- set_type_id
-        \-- combine_named - TODO review and use only frontend objects
+        \-- combine_named - TODO Prio 2 review and use only frontend objects
     \-- type_id
         \-- combine_named - @return int|null the type id of the word, triple, formula or verb
     \-- url_mapper
@@ -9407,15 +9409,15 @@
     \-- phrase_name
         \-- ui_base - @return string the name of a phrase and give the user the possibility to change the phrase name
     \-- verb_name
-        \-- ui_base - TODO move to a component exe part class
+        \-- ui_base - TODO Prio 2 move to a component exe part class
     \-- triple_name
-        \-- ui_base - TODO move to a component exe part class
+        \-- ui_base - TODO Prio 2 move to a component exe part class
     \-- value_name
-        \-- ui_base - TODO move to a component exe part class
+        \-- ui_base - TODO Prio 2 move to a component exe part class
     \-- group_name
-        \-- ui_base - TODO move to a component exe part class
+        \-- ui_base - TODO Prio 2 move to a component exe part class
     \-- num_value
-        \-- ui_base - TODO move to a component exe part class
+        \-- ui_base - TODO Prio 2 move to a component exe part class
     \-- main_value
         \-- ui_base - TODO Prio 0 fill with real code
     \-- source_name
@@ -9429,9 +9431,9 @@
     \-- language_name
         \-- ui_base - @param db_object|type_object|null $dbo the language whose name should be shown
     \-- table
-        \-- ui_base - TODO move code from component_dsp_old
+        \-- ui_base - TODO Prio 2 move code from component_dsp_old
     \-- all
-        \-- ui_base - TODO move code from component_dsp_old
+        \-- ui_base - TODO Prio 2 move code from component_dsp_old
     \-- expression
         \-- ui_base - @param db_object|null $dbo the formula whose expression should be displayed
     \-- expression_latex_link
@@ -9443,21 +9445,21 @@
     \-- name
         \-- ui_base - the label points to the field that it validates, so that a click on it opens the field and
     \-- word_children
-        \-- ui_foaf - TODO move code from component_dsp_old
+        \-- ui_foaf - TODO Prio 2 move code from component_dsp_old
     \-- word_parents
-        \-- ui_foaf - TODO move code from component_dsp_old
+        \-- ui_foaf - TODO Prio 2 move code from component_dsp_old
     \-- select_file
         \-- ui_im_export - the html code to select a filename e.g. to upload the file
     \-- select_export_format
         \-- ui_im_export - the html code to select a filename e.g. to upload the file
     \-- json_export
-        \-- ui_im_export - TODO move code from component_dsp_old
+        \-- ui_im_export - TODO Prio 2 move code from component_dsp_old
     \-- xml_export
-        \-- ui_im_export - TODO move code from component_dsp_old
+        \-- ui_im_export - TODO Prio 2 move code from component_dsp_old
     \-- csv_export
-        \-- ui_im_export - TODO move code from component_dsp_old
+        \-- ui_im_export - TODO Prio 2 move code from component_dsp_old
     \-- ods_export
-        \-- ui_im_export - TODO move code from component_dsp_old
+        \-- ui_im_export - TODO Prio 2 move code from component_dsp_old
     \-- phrase_link
         \-- ui_link - @return string show a list of phrases with a suggested link type that might be linked to the objec
                 t
@@ -9500,7 +9502,7 @@
     \-- link_list_word
         \-- ui_list - @param db_object $dbo the word, triple or formula object that should be shown to the user
     \-- num_list
-        \-- ui_list - TODO move code from component_dsp_old
+        \-- ui_list - TODO Prio 2 move code from component_dsp_old
     \-- formulas
         \-- ui_list - HTML for the formulas assigned to the given word, triple or phrase
     \-- value_chart
@@ -9562,7 +9564,7 @@
     \-- result_list
         \-- ui_list - the results of the given formula as a comma separated list of the result names with a
     \-- results
-        \-- ui_list - TODO move code from component_dsp_old
+        \-- ui_list - TODO Prio 2 move code from component_dsp_old
     \-- results_related
         \-- ui_list - show the results related to the given object grouped like the values of a phrase (see
     \-- triples_of_types
@@ -9681,7 +9683,7 @@
     \-- api_call
         \-- rest_call - execute an api call
     \-- calc_sheet
-        \-- sheet - TODO fill it based on the parameters
+        \-- sheet - TODO Prio 2 fill it based on the parameters
     \-- reset
         \-- table - 
     \-- add_column

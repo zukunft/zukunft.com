@@ -433,7 +433,7 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * get the words, formulas, components that needs to be saved to the database
-     * TODO review overwrites and e.g. check word list usage
+     * TODO Prio 2 review overwrites and e.g. check word list usage
      * @param user_message $msg to report an object that is in the list twice
      * @return sandbox_list_named with all named sandbox object that does not yet have a database id
      */
@@ -583,7 +583,7 @@ class sandbox_list_named extends sandbox_list
             $this->name_pos_lst[$obj_to_add->name()] = count($this->lst());
         }
         if (!$this->is_all_name_list_dirty()) {
-            // TODO add handling of excluded named objects
+            // TODO Prio 2 add handling of excluded named objects
             $this->name_pos_lst_all[$obj_to_add->name(true)] = count($this->lst());
         }
         parent::add_direct($obj_to_add);
@@ -918,7 +918,7 @@ class sandbox_list_named extends sandbox_list
         $upd_lst = clone $this;
         $upd_lst->reset();
         foreach ($this->lst() as $sbx) {
-            // TODO test if get_by_obj_id is faster
+            // TODO Prio 3 test if get_by_obj_id is faster
             $db_sbx = $db_lst->get_by_name($sbx->name(), $msg);
             if ($db_sbx != null) {
                 // make sure that only an admin user reduces the protection level
@@ -941,10 +941,10 @@ class sandbox_list_named extends sandbox_list
         $del_lst = clone $this;
         $del_lst->reset();
         foreach ($this->lst() as $sbx) {
-            // TODO test if get_by_obj_id is faster
+            // TODO Prio 3 test if get_by_obj_id is faster
             $db_sbx = $db_lst->get_by_name($sbx->name(true), $msg, true);
             if ($db_sbx != null) {
-                // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other object like values
+                // TODO Prio 2 review not_used so that e.g. words are "not_used" that have an owner but are not used for other object like values
                 // if ($sbx->is_excluded() and $sbx->not_used()) {
                 if ($sbx->is_excluded()) {
                     $del_lst->add($sbx);
@@ -997,8 +997,8 @@ class sandbox_list_named extends sandbox_list
                 $this->insert($db_lst, $msg, $imp, $class);
             }
             // create any missing sql update functions and update the sandbox objects
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
-            // TODO create blocks of update function calls
+            // TODO Prio 2 create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+            // TODO Prio 2 create blocks of update function calls
             if ($msg->is_ok()) {
                 $this->update($db_lst, $msg, $imp, $class, $upd_per_sec);
             }
@@ -1014,7 +1014,7 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create any missing sql functions and queries to save the list objects
-     * TODO create blocks of insert function calls
+     * TODO Prio 2 create blocks of insert function calls
      * *
      * @param word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst filled with the words or triples that are already in the db so a kind of cache
      * @param user_message $msg to collect the error messages
@@ -1063,7 +1063,7 @@ class sandbox_list_named extends sandbox_list
         if (!$add_lst->is_empty()) {
 
             // get the sql call to add the missing objects
-            // TODO use sql_insert ?
+            // TODO Prio 2 use sql_insert ?
             $ins_calls = $add_lst->sql_insert_call_with_par($sc, $msg);
             $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
 
@@ -1108,7 +1108,7 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create any missing sql functions and queries to update the list objects
-     * TODO create blocks of update function calls
+     * TODO Prio 2 create blocks of update function calls
      *
      * @param word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst filled with the objects that are already in the db
      * @param user_message $msg enriched with the reason why the action has failed
@@ -1133,7 +1133,7 @@ class sandbox_list_named extends sandbox_list
             log_err('message  user missing');
         }
 
-        // TODO move this also to the non named objects
+        // TODO Prio 2 move this also to the non named objects
         // on a no update import keep the not empty database fields so that only empty fields are filled up
         if ($imp?->no_upd) {
             foreach ($this->lst() as $sbx) {
@@ -1204,7 +1204,7 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create any missing sql functions and queries to exclude or delete the objects of the list
-     * TODO create blocks of delete function calls
+     * TODO Prio 2 create blocks of delete function calls
      *
      * @param word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst filled with the objects that are already in the db
      * @param user_message $msg enriched with the reason why the action has failed
@@ -1495,7 +1495,7 @@ class sandbox_list_named extends sandbox_list
      */
 
     /**
-     * TODO PRIO 1 review and move away from debug section because it is used in the import
+     * TODO Prio 1 review and move away from debug section because it is used in the import
      * @param bool $ignore_excluded if true also the excluded names are included
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list

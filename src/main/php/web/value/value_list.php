@@ -40,7 +40,7 @@ include_once html_paths::SANDBOX . 'ListBase.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
-// TODO move phr_ids to shared objects
+// TODO Prio 2 move phr_ids to shared objects
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -222,7 +222,7 @@ class value_list extends ListBase
 
     /**
      * get the first value of the list that is related to all given phrase names
-     * TODO use a memory db
+     * TODO Prio 3 use a memory db
      * @param array $names list of phrase names
      * @return value|null this first matching value or null if no value is found
      */
@@ -351,7 +351,7 @@ class value_list extends ListBase
 
     /**
      * create the html code to show a list of values
-     * TODO use a more general parent function
+     * TODO Prio 2 use a more general parent function
      *
      * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
      * @param array $url_arr the url vars of the calling page for the back link
@@ -3230,7 +3230,7 @@ class value_list extends ListBase
 
     /**
      * create the html code to show a list of values where the unit is behind the value
-     * TODO use a more general parent function
+     * TODO Prio 2 use a more general parent function
      *
      * @param int|null $limit the max number of entries to show
      * @param int|null $page the offset if there are more entries that could be shown at once
@@ -3301,14 +3301,14 @@ class value_list extends ListBase
         }
 
         // if no phrase is left for the header, show 'description' as a dummy replacement
-        // TODO make the replacement language and user-specific
+        // TODO Prio 2 make the replacement language and user-specific
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
             $head_text = $header_phrases->name_link();
         }
 
-        // TODO add a button to add a new value using
+        // TODO Prio 2 add a button to add a new value using
         //$btn_new = $common_phrases->btn_add_value();
         $btn_new = '';
 
@@ -3325,7 +3325,7 @@ class value_list extends ListBase
             $row = $html->td($val->grp->phrase_link_list($common_phrases));
             $row .= $html->td($val->value_edit($msg, $url_arr));
             $rows .= $html->tr($row);
-            // TODO add button to delete a value or add a similar value
+            // TODO Prio 2 add button to delete a value or add a similar value
             //$btn_del = $val->btn_del();
             //$btn_add = $val->btn_add();
         }
@@ -3478,7 +3478,7 @@ class value_list extends ListBase
             log_debug('extra phrase, that might need to be added to each table cell: ' . $extra_phrases->dsp_name());
 
             // display the common words
-            // TODO sort the words and use the short form e.g. in mio. CHF instead of in CHF millions
+            // TODO Prio 3 sort the words and use the short form e.g. in mio. CHF instead of in CHF millions
             if (count($common_lst->lst) > 0) {
                 $common_text = '(in ';
                 foreach ($common_lst->lst as $common_word) {
@@ -3509,7 +3509,7 @@ class value_list extends ListBase
 
             // temp: display the word tree
             $last_words = '';
-            $id = 0; // TODO review and rename
+            $id = 0; // TODO Prio 2 review and rename
             foreach ($row_wrd_lst->lst as $sub_wrd) {
                 $wrd_ids = array();
                 $wrd_ids[] = $this->phr->id();
@@ -3566,7 +3566,7 @@ class value_list extends ListBase
                             if ($sub_wrd->id() > 0) {
                                 $add_phr_lst->add($sub_wrd->phrase(), $msg);
                                 $add_phr_ids[] = $sub_wrd->id();
-                                $type_ids[] = $sub_wrd->id(); // TODO check if it should not be $type_word_id
+                                $type_ids[] = $sub_wrd->id(); // TODO Prio 1 check if it should not be $type_word_id
                             }
                             // if values for just one column are added, the column head word id is already in the common id list and due to that does not need to be added
                             if (!in_array($time_wrd->id(), $add_phr_ids) and $time_wrd->id() > 0) {
@@ -3901,7 +3901,7 @@ class value_list extends ListBase
 
         $common_phr_lst = $common_phr_lst->phrase_list($msg);
 
-        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
+        // TODO Prio 2 review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
         /*
         if (get_class($this->phr) == word::class or get_class($this->phr) == word::class) {
             $this->phr = $this->phr->phrase();

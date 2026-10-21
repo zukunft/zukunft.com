@@ -5,7 +5,7 @@
     model/system/sys_log_function.php - to group the system log entries by function
     ---------------------------------
 
-    TODO move to the log folder
+    TODO Prio 2 move to the log folder
 
     This file is part of zukunft.com - calc with words
 

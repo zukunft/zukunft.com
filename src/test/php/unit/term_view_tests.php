@@ -101,7 +101,7 @@ class term_view_tests
         $qp = $lnk_lst->load_sql_by_view($sc, $t_msk->view());
         $t->assert_qp($qp, $sc->db_type, $test_name);
         $t->assert_sql_changing_users_by_ids($sc, $lnk);
-        // TODO check if all links have the check
+        // TODO Prio 2 check if all links have the check
         $t->assert_sql_by_link($sc, $lnk);
         $t->assert_sql_user_changes($sc, $lnk);
 

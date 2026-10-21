@@ -313,10 +313,10 @@ class group_tests
         $msg->reset();
 
         $t->subheader($ts . 'result id');
-        // TODO assign the formula "increase" to the word inhabitants
-        // TODO based on the formula the name of the formula and the phrases on the left side
+        // TODO Prio 2 assign the formula "increase" to the word inhabitants
+        // TODO Prio 2 based on the formula the name of the formula and the phrases on the left side
         //      are always added to the result, so they do not need to be included in the phrase lists
-        // TODO add test to show that the result is always based on a concrete value
+        // TODO Prio 2 add test to show that the result is always based on a concrete value
         //      and not on the value selection phrase list for the formula
         $res_id = new result_id();
         $t->assert('64 bit result_id for the formula increase, '

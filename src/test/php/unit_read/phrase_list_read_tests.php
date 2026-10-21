@@ -212,7 +212,7 @@ class phrase_list_read_tests
         $phr_canton = $t_db->load_phrase(word_names::CANTON, $msg);
         $phr_lst = $phr_canton->all_related($msg);
         $test_name = 'The word canton is related to Switzerland and Zurich';
-        // TODO ABB is not expected to be related even if it is related via zurich and company
+        // TODO Prio 1 ABB is not expected to be related even if it is related via zurich and company
         //      but Switzerland is expected to be related
         //$t->assert_contains($test_name, $phr_lst->names(), array(words::TN_ZH, words::TN_CH));
 

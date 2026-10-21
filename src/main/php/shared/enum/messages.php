@@ -1832,7 +1832,7 @@ enum messages: string
     case ADD_USER_CONFIG_FAILED = 'adding of user configuration failed';
 
     // text to be shown in frontend
-    // TODO add translation
+    // TODO Prio 2 add translation
     case AND_MORE_BEFORE = 'and';
     case OR = 'or';
     case SIGNUP = 'signup';
@@ -2425,7 +2425,7 @@ enum messages: string
     case SHOW_FIELD_ORDER_NBR = 'show_field_order_nbr';
     case SHOW_FIELD_START_POS = 'show_field_start_pos';
 
-    // TODO review
+    // TODO Prio 2 review
     case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
     case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';

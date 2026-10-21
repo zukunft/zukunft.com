@@ -23,8 +23,8 @@
     this has the advantage that no separate table for the group is needed,
     unless a user changed the name of the group or added a description
 
-    TODO move the 32k most often used phrases to a phrase_most view
-    TODO use a 8 byte key for up to 4 most often used phrase group
+    TODO Prio 3 move the 32k most often used phrases to a phrase_most view
+    TODO Prio 3 use a 8 byte key for up to 4 most often used phrase group
 
 
     This file is part of zukunft.com - calc with words
@@ -161,7 +161,7 @@ class group_id extends id
     }
 
     /**
-     * TODO use directly the phrase list without converting to a group id and back
+     * TODO Prio 2 use directly the phrase list without converting to a group id and back
      * @return int the number of phrases of this group id
      */
     function count(int|string $grp_id): int
@@ -244,7 +244,7 @@ class group_id extends id
      */
     function is_prime(int|string $grp_id): bool
     {
-        // TODO check why is_int is not working
+        // TODO Prio 2 check why is_int is not working
         // if (is_int($grp_id)) {
         if (is_numeric($grp_id) and $grp_id < PHP_INT_MAX and $grp_id > PHP_INT_MIN) {
             return true;

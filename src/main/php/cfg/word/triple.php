@@ -395,7 +395,7 @@ class triple extends sandbox_link_named
                     $this->set_verb_id($db_row[verb_db::FLD_ID]);
                 }
             }
-            // TODO use json_fields object
+            // TODO Prio 2 use json_fields object
             if (array_key_exists(triple_fields::FLD_NAME_GIVEN, $db_row)) {
                 $this->name_given = $db_row[triple_fields::FLD_NAME_GIVEN];
             }
@@ -459,7 +459,7 @@ class triple extends sandbox_link_named
             $this->impact = $api_json[fields::FLD_IMPACT];
         }
 
-        // TODO move plural to language forms
+        // TODO Prio 2 move plural to language forms
         /*
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
@@ -573,7 +573,7 @@ class triple extends sandbox_link_named
                     if ($db_con->is_open()) {
                         $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
                         $vrb->set_user($this->get_user());
-                        // TODO remove this exception
+                        // TODO Prio 2 remove this exception
                         $vrb->save($msg);
                     }
                     $dto?->add_verb($vrb, $msg);
@@ -622,7 +622,7 @@ class triple extends sandbox_link_named
             $value = $in_ex_json[json_fields::VIEW];
             $trp_view = new view($this->get_user());
             if ($db_con->is_open()) {
-                // TODO replace all load in the import mapper with get functions
+                // TODO Prio 2 replace all load in the import mapper with get functions
                 $trp_view->load_by_name($value, $msg);
                 if ($trp_view->id() == 0) {
                     $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
@@ -792,7 +792,7 @@ class triple extends sandbox_link_named
      * load the views related to this triple into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; currently the triple's own
      * default view, loaded by id so that it carries the name the api and frontend name_link need
-     * TODO add the default views of the parent phrases once the triple exposes a parents() list,
+     * TODO Prio 2 add the default views of the parent phrases once the triple exposes a parents() list,
      *      mirroring word::load_views_related()
      */
     function load_views_related(user_message $msg): void
@@ -979,7 +979,7 @@ class triple extends sandbox_link_named
             $phr->api_mapper($value, $msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
-                // TODO use phrase cache
+                // TODO Prio 2 use phrase cache
                 $phr->set_id($value);
             }
         } else {
@@ -1512,7 +1512,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * TODO check where the function or the db value should be used
+     * TODO Prio 2 check where the function or the db value should be used
      */
     function name_generated(): ?string
     {
@@ -1883,7 +1883,7 @@ class triple extends sandbox_link_named
     function fill(triple|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
-        // TODO use set and get function to enable phrase fill
+        // TODO Prio 2 use set and get function to enable phrase fill
         $trp = null;
         if ($obj::class == triple::class) {
             $trp = $obj;
@@ -2004,7 +2004,7 @@ class triple extends sandbox_link_named
         }
     }
 
-    // TODO add a function for each type and streamline the call
+    // TODO Prio 3 add a function for each type and streamline the call
 
 
     /*
@@ -2050,7 +2050,7 @@ class triple extends sandbox_link_named
 
     /**
      * @returns term the triple object cast into a term object
-     * TODO remove lines not needed any more
+     * TODO Prio 2 remove lines not needed any more
      */
     function term(): term
     {
@@ -2650,7 +2650,7 @@ class triple extends sandbox_link_named
             $this->set_to($this->get_from());
             $this->set_verb_id($this->get_verb_id() * -1);
             /*
-             * TODO remove
+             * TODO Prio 2 remove
             if ($this->has_verb()) {
                 $this->verb->set_name($this->verb->reverse());
             }
@@ -2850,7 +2850,7 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->not_used (' . $this->id() . ')');
 
-        // TODO review: maybe replace by a database foreign key check
+        // TODO Prio 2 review: maybe replace by a database foreign key check
         return $this->not_changed($msg);
     }
 
@@ -3021,7 +3021,7 @@ class triple extends sandbox_link_named
 
         global $db_con;
 
-        // TODO review: do not set the generated name if it matches the name
+        // TODO Prio 2 review: do not set the generated name if it matches the name
         $this->set_names();
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
@@ -3261,7 +3261,7 @@ class triple extends sandbox_link_named
         } else {
             // add the from and to fields even if the objects are the same in case of an insert exclude to identify the rows
             if ($is_insert) {
-                // TODO check how to handle if the standard
+                // TODO Prio 2 check how to handle if the standard
                 // $sbx can in this case be e.g. the standard object and $this is the object updated by the user
                 if ($this->is_excluded() and !$obj->is_excluded()) {
                     // the verb field is added for triple exclude insert statements
@@ -3286,7 +3286,7 @@ class triple extends sandbox_link_named
                         $obj->get_verb_id(),
                         $sys->typ_lst->vrb
                     );
-                    // TODO check if the excluded field is not already added by the sandbox function
+                    // TODO Prio 2 check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . fields::FLD_EXCLUDED,
@@ -3324,7 +3324,7 @@ class triple extends sandbox_link_named
                 }
             }
         }
-        // TODO check if the excluded field is not already added by the sandbox function
+        // TODO Prio 2 check if the excluded field is not already added by the sandbox function
         if ($obj->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
@@ -3355,7 +3355,7 @@ class triple extends sandbox_link_named
                 $obj->name_given()
             );
         }
-        // TODO add test case
+        // TODO Prio 2 add test case
         // if the user has not changed the name or the give name the generated name does not need to be taken into account
         if (!$usr_tbl and ($obj->name != '' or $obj->name_given() != '')) {
             if ($obj->name_generated() !== $this->name_generated()) {
@@ -3449,7 +3449,7 @@ class triple extends sandbox_link_named
                 $obj->view
             );
         }
-        // TODO add ref list
+        // TODO Prio 2 add ref list
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
@@ -3462,7 +3462,7 @@ class triple extends sandbox_link_named
     /**
      * @return string with the unique id fields
      * TODO Prio 1 never use functions in dsp_id t avoid endless loops
-     * TODO check if $this->load_objects(); needs to be called from the calling function upfront
+     * TODO Prio 2 check if $this->load_objects(); needs to be called from the calling function upfront
      */
     function dsp_id(): string
     {

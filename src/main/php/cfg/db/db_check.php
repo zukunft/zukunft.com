@@ -124,7 +124,7 @@ class db_check
         // check if essential config table exists and if not setup the database
         // because it is assumed that the database structure has not yet been created
         // TODO Prio 0 in prod and test environment do this only is setup flag is on
-        // TODO remove rewrite before moved to PROD
+        // TODO Prio 2 remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name, $msg, 'check if db has table ' . $main_tbl_name)) {
             // if tbe database needs to be created it is a system task independent of the calling user
@@ -168,7 +168,7 @@ class db_check
             $last_check = strtotime($last_consistency_check);
             $check_limit = strtotime("now -1 day");
             if ($last_check < $check_limit) {
-                // TODO open a simple db connection just to write the log entry
+                // TODO Prio 2 open a simple db connection just to write the log entry
                 /*
                 log_info('Last database consistency check has been at ' . date('Y-m-d H:i:s', $last_check)
                     . ' which is more than one day ago at ' . date('Y-m-d H:i:s', $check_limit)
@@ -218,7 +218,7 @@ class db_check
 
         $result = ''; // if empty everything has been fine; if not the message that should be shown to the user
         $process_name = 'db_upgrade_0_0_3'; // the info text that is written to the database execution log
-        // TODO check if change has been successful
+        // TODO Prio 1 check if change has been successful
         // rename word_link to triple
         $result .= $db_con->change_table_name('word_link', 'triple', $msg);
         $result .= $db_con->change_column_name('triple', 'word_link_id', 'triple_id', $msg);
@@ -389,7 +389,7 @@ class db_check
         $result .= $db_con->change_table_name('user_phrase_groups', 'user_' . group::class, $msg);
         $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'phrase_group_id', group_fields::FLD_ID, $msg);
 
-        // TODO set default profile_id in users to 1
+        // TODO Prio 2 set default profile_id in users to 1
         if ($db_con->db_type == sql_db::MYSQL) {
             $sql = 'UPDATE' . ' `users` SET `user_profile_id` = 1 WHERE `user_profile_id`= NULL';
             $result .= $db_con->exe_try('Setting missing user profiles', $sql);
@@ -409,7 +409,7 @@ class db_check
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }
         $result .= $db_con->add_foreign_key('users_fk_2', 'user', 'user_profile_id', 'user_profile', 'user_profile_id', $msg);
-        // TODO change prime key for postgres user_sources, user_values, user_view, user_components and user_component_links
+        // TODO Prio 2 change prime key for postgres user_sources, user_values, user_view, user_components and user_component_links
 
         if ($db_con->db_type == sql_db::MYSQL) {
 
@@ -471,7 +471,7 @@ class db_check
         $cfg->set(config::VERSION_DB, def::PRG_VERSION, $db_con, $msg);
 
 
-        // TODO create table user_value_time_series
+        // TODO Prio 2 create table user_value_time_series
         // check if the config save has been successful
         $db_version = $cfg->get_db(config::VERSION_DB, $db_con, $msg, 'get database version');
         if ($db_version != def::PRG_VERSION) {
@@ -482,7 +482,7 @@ class db_check
         return $result;
     }
 
-    // TODO finish
+    // TODO Prio 2 finish
     function db_move_time_phrase_to_group(user_message $msg): bool
     {
         // get all values where the time word is used

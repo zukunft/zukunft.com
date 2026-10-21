@@ -176,7 +176,7 @@ function log_php_exception_to_error_log(Throwable $e): void
  * a message is shown once the url &debug=N level reaches the given minimum level; pass one of the
  * named url_var::DEBUG_LEVEL_* constants (e.g. DEBUG_LEVEL_DB_WRITE for &debug=6) or, for the deeper
  * call-graph tracing, the depth level a caller wants to become visible at
- * TODO focus debug on time consuming function calls e.g. all database accesses
+ * TODO Prio 2 focus debug on time consuming function calls e.g. all database accesses
  *
  * @param string $msg_text debug information additional to the class and function
  * @param int|null $debug_overwrite the minimum debug level at which the message is shown; null (the default) treats it as a deep call-graph trace shown only above the last named level (from &debug=11, DEBUG_LEVEL_MAX_FIXED + 1), while e.g. DEBUG_LEVEL_DB_WRITE shows it already from &debug=6 upward
@@ -286,7 +286,7 @@ function log_err(string $msg_text,
     if ($sys !== null) {
         $sys->errors++;
     }
-    // TODO move the next lines to a class and a private function "get_function_name"
+    // TODO Prio 2 move the next lines to a class and a private function "get_function_name"
     $lib = new library();
     if ($trace == '') {
         $trace = (new Exception)->getTraceAsString();
@@ -448,7 +448,7 @@ function log_fatal_db(
 
 /**
  * try to write the error message to any possible out device if database connection is lost
- * TODO move to a log class and expose only the interface function
+ * TODO Prio 2 move to a log class and expose only the interface function
  * @param string $msg_text is a short description that is used to group and limit the number of error messages
  * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
  * @param string $function_name is the function name which has most likely caused the error
@@ -595,8 +595,8 @@ function sys_log_insert_allowed(
  * @param string $trace is the complete system trace to get more details
  * @param user|null $usr is the user who has probably seen the error message
  * @return string the text that can be shown to the user in the navigation bar
- * TODO return the link to the log message so that the user can trace the bug fixing
- * TODO check that log_msg is never called from any function used here
+ * TODO Prio 2 return the link to the log message so that the user can trace the bug fixing
+ * TODO Prio 2 check that log_msg is never called from any function used here
  */
 function log_msg(string  $msg_text,
                  string  $msg_description,

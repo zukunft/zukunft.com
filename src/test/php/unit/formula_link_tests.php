@@ -78,7 +78,7 @@ class formula_link_tests
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 
-        // TODO use assert_sql_all if possible
+        // TODO Prio 2 use assert_sql_all if possible
 
         // start the test section (ts)
         $ts = 'unit formula link ';

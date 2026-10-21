@@ -603,8 +603,8 @@ class base_ui_tests
 
         $t->subheader($ts . 'selector');
 
-        // TODO test the creation of a phrase list API JSON
-        // TODO create a selector using a list an with a simple test page header an footer
+        // TODO Prio 2 test the creation of a phrase list API JSON
+        // TODO Prio 2 create a selector using a list an with a simple test page header an footer
         /*
         $sel = new html_selector();
         $sel->label = 'Test:';
@@ -829,14 +829,14 @@ class base_ui_tests
 
         $t->subheader($ts . 'list');
 
-        // TODO create and set the model objects and
+        // TODO Prio 2 create and set the model objects and
         //      create the api object using the api_obj() function
         //      create and set the dsp object based on the api json
 
         $lst = new verb_list($t->usr1);
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::PART_NAME));
-        // TODO use set_from_json to set the display object
+        // TODO Prio 2 use set_from_json to set the display object
         $vrb_lst_ui = new verb_list_ui();
         $vrb_lst_ui->set_from_json_array($lst->api_json_array([], $msg), $msg_ui);
         $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $msg_ui);
@@ -855,7 +855,7 @@ class base_ui_tests
 
 
 
-        // TODO review
+        // TODO Prio 2 review
 
         global $sys;
         $html = new html_base();
@@ -929,7 +929,7 @@ class base_ui_tests
         $result = (new button($url, $url_arr))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
-        // TODO move e.g. because the edit word button is tested already in the unit tests of the object
+        // TODO Prio 2 move e.g. because the edit word button is tested already in the unit tests of the object
 
         $url = $html->url_back(views::WORD_DEL_ID);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';

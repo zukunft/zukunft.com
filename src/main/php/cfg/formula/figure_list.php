@@ -193,7 +193,7 @@ class figure_list extends sandbox_list
         return $qp;
     }
 
-    // TODO use cache to improve speed
+    // TODO Prio 2 use cache to improve speed
     function load_phrases(user_message $msg): void
     {
         foreach ($this->lst() as $fig) {
@@ -250,7 +250,7 @@ class figure_list extends sandbox_list
      */
 
     /*
-     * TODO review
+     * TODO Prio 2 review
      */
     function get_first_id(user_message $msg): int|string
     {

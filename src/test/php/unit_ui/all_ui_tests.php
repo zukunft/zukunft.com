@@ -146,7 +146,7 @@ class all_ui_tests extends all_unit_tests
 
         new localhost_ui_tests()->run($t);
 
-        // TODO compare with run_ui_test in all_unit_read_tests
+        // TODO Prio 2 compare with run_ui_test in all_unit_read_tests
         //new start_ui_tests()->run($t);
         // test all relevant system views (to deprecate? - new in horizontal_test.php)
         new spacial_cases_ui_tests()->run($t, $ui);

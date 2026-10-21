@@ -372,7 +372,7 @@ class view_relation_list extends sandbox_link_list
 
     /**
      * simple but slow function to add of update all list items in the database
-     * TODO faster mass db update
+     * TODO Prio 2 faster mass db update
      *
      * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine

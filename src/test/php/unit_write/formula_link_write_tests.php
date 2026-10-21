@@ -142,13 +142,13 @@ class formula_link_write_tests
         // ... check if the link is shown correctly also for the second user
         // ... the second user has excluded the word at this point,
         //     so even if the word is linked the word link is nevertheless false
-        // TODO add a check that the word is linked if the second user activates the word
+        // TODO Prio 2 add a check that the word is linked if the second user activates the word
         $frm = new formula($t->usr2);
         $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
-        // TODO fix it
+        // TODO Prio 1 fix it
         //$t->assert('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value update has been triggered
@@ -168,7 +168,7 @@ class formula_link_write_tests
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last($msg, true);
-        // TODO fix it
+        // TODO Prio 1 fix it
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . word_names::TEST_ADD . '';
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' ';
         $t->assert('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $result, $target);
@@ -286,7 +286,7 @@ class formula_link_write_tests
         $phr_lst->load_names_by_ids($phr_ids, $msg);
         $result = $phr_lst->dsp_id();
         $target = words::YEAR_CAP;
-        // TODO fix it
+        // TODO Prio 1 fix it
         // $t->dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
     }

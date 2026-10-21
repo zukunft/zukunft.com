@@ -179,7 +179,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * TODO PRIO 1
+     * TODO Prio 1
      * @return triple as it is returned at the moment via phrase list api, means without links
      */
     function triple_api(): triple
@@ -478,7 +478,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * TODO PRIO 1
+     * TODO Prio 1
      * @return triple pi as it is returned at the moment via phrase list api, means without links
      */
     function triple_pi_api(): triple

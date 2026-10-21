@@ -129,8 +129,8 @@ class component_exe extends component
 
     /**
      * create the html code of this component filled with the data from the given database object ($dbo)
-     * TODO the html form field name should always be an url var name
-     * TODO use the style id of the component instead of having a function parameter
+     * TODO Prio 2 the html form field name should always be an url var name
+     * TODO Prio 2 use the style id of the component instead of having a function parameter
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param user_message $msg to collect the messages for the user
@@ -169,7 +169,7 @@ class component_exe extends component
         $result = '';
 
         // get the default values
-        // TODO call only when needed
+        // TODO Prio 2 call only when needed
         $phr_lst = new phrase_list();
         $phr_lst->load_fallback($msg);
         if ($cfg != null) {
@@ -615,7 +615,7 @@ class component_exe extends component
         };
         $this->log_debug($this->dsp_id() . ' created');
 
-        // TODO review
+        // TODO Prio 2 review
         if (str_starts_with($result, 'program code for component')) {
             $this->log_err($result);
         }

@@ -156,7 +156,7 @@ class result_tests
 
         $t->subheader($ts . 'result sql write');
         // result changes are not logged because potentially they can be reproduced
-        // TODO check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
+        // TODO Prio 2 check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
         $res_prime = $t_res->result_prime();
         $res_prime_max = $t_res->result_prime_max();
         $res_main = $t_res->result_main();
@@ -177,7 +177,7 @@ class result_tests
         $res = $t_res->result_incomplete();
         $t->assert_sql_insert_fail($sc, $res);
         // TODO Prio 0 activate db write
-        // TODO add tests for text, time and geo values
+        // TODO Prio 2 add tests for text, time and geo values
         $res = $t_res->result();
         $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
         $db_res_prime_max = $res_prime_max->cloned(results::TV_FLOAT);

@@ -1010,7 +1010,7 @@ class value_ui_tests
         $msg_ui->reset();
 
 
-        // TODO review
+        // TODO Prio 2 review
 
 
         // start the test section (ts)
@@ -1127,7 +1127,7 @@ class value_ui_tests
         $wrd_col = new word($t->usr1);
         $wrd_col->load_by_name(words::TN_CASH_FLOW);
         $val_lst = new value_list_dsp();
-        // TODO review
+        // TODO Prio 2 review
         //$val_lst->set_phr($wrd->phrase());
         $result = $val_lst->dsp_table($wrd_col, [url_var::MASK => views::PHRASE_ID, url_var::ID => $wrd->id()], $msg_ui);
         $target = values::TV_NESN_SALES_2016_FORMATTED;

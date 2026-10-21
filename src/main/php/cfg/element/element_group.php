@@ -117,7 +117,7 @@ class element_group extends list_db_write
         return $lib->dsp_array($this->names());
     }
 
-    // TODO handle multi entry cases if needed
+    // TODO Prio 2 handle multi entry cases if needed
     function id(): int
     {
         if (count($this->lst()) == 1) {
@@ -293,7 +293,7 @@ class element_group extends list_db_write
             // e.g. if the user has overwritten a result use the user overwrite
             log_debug('load word value for ' . $val_phr_lst->dsp_id());
             $wrd_val = new value($this->usr);
-            // TODO create $wrd_val->load_best();
+            // TODO Prio 2 create $wrd_val->load_best();
             // the load result and not isset(), because load_by_grp sets the group also if no
             // value is found, which would add a figure without a number
             if ($wrd_val->load_by_grp($val_phr_grp, $msg)) {
@@ -314,7 +314,7 @@ class element_group extends list_db_write
                 // get the word group result, which means a formula result
                 log_debug('load result for ' . $val_phr_lst->dsp_name());
                 $grp_res = new result($this->usr);
-                /* TODO review
+                /* TODO Prio 2 review
                 $grp_res->load_by_grp($val_phr_grp);
                 */
                 // save the value to the result; never compare the id with a number, because php

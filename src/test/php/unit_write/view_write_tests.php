@@ -110,17 +110,17 @@ class view_write_tests
         //$result = $msk->display($wrd, $back);
         // check if the view contains the word name
         $target = words::CH;
-        // TODO review and activate
+        // TODO Prio 2 review and activate
         //$t->dsp_contains(', view->display "' . $msk->name() . '" for "' . $wrd->name() . '" contains', $target, $result, $t::TIMEOUT_LIMIT_LONG);
         // check if the view contains at least one value
         $target = 'back=' . $wrd->id() . '">8.67</a>';
-        /* TODO fix the result display
+        /* TODO Prio 2 fix the result display
         $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         // check if the view contains at least the main formulas
         $target = 'System Test Word Increase';
         $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         */
-        /* TODO fix the result loading
+        /* TODO Prio 2 fix the result loading
         $target = 'back='.$wrd->id.'">0.75%</a>';
         $t->dsp_contains(', view->display "' . $msk->name . '" for "' . $wrd->name() . '" contains', $result, $target);
         */

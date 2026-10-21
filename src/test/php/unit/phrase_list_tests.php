@@ -74,8 +74,8 @@ class phrase_list_tests
 
     /**
      * execute all phrase list unit tests and return the test result
-     * TODO create a common test result object to return
-     * TODO capsule all unit tests in a class like this example
+     * TODO Prio 2 create a common test result object to return
+     * TODO Prio 2 capsule all unit tests in a class like this example
      */
     function run(test_cleanup $t): void
     {
@@ -167,7 +167,7 @@ class phrase_list_tests
         $wrd_lst = $phr_lst->wrd_lst_all($msg);
         $t->assert($test_name, $wrd_lst->count(), 4);
 
-        // TODO add assume time sql statement test
+        // TODO Prio 2 add assume time sql statement test
 
         $test_name = 'get this year from a list of years';
         $phr_lst = $t_phr->years();
@@ -182,7 +182,7 @@ class phrase_list_tests
         $test_name = '... which is reported';
         $t->assert_false($test_name, $msg->is_ok());
         $msg->reset();
-        // TODO mix it with months and quarters to select the best matching and automatic estimations
+        // TODO Prio 3 mix it with months and quarters to select the best matching and automatic estimations
 
         // the triples of a phrase list are the phrases that are no word
         $test_name = 'the triples of a phrase list are selected';

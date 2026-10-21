@@ -5,7 +5,7 @@
     web/phrase/phrase_list.php - create the html code to display a phrase list
     --------------------------
 
-    TODO create a value matrix based on this phrase list
+    TODO Prio 3 create a value matrix based on this phrase list
 
 
     This file is part of zukunft.com - calc with words
@@ -201,7 +201,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
 
-        // TODO move the
+        // TODO Prio 2 move the
         $api = new rest_call();
         $data = array();
         $data[url_var::PHRASE] = $phr->id();
@@ -517,7 +517,7 @@ class phrase_list extends sandbox_list_named
     {
         $result = false;
 
-        // TODO move the
+        // TODO Prio 2 move the
         $api = new rest_call();
         $data = array();
         $data[url_var::FORMULAS] = $frm->id();
@@ -572,7 +572,7 @@ class phrase_list extends sandbox_list_named
     function result_phrases_most_relevant(): phrase_list
     {
         $phr = new phrase_list();
-        // TODO review temp solution
+        // TODO Prio 2 review temp solution
         //$phr->load_by_name();
         return $phr;
     }
@@ -1529,7 +1529,7 @@ class phrase_list extends sandbox_list_named
     /**
      * get the most useful time for the given phrases
      * similar to the backend function with the same name
-     * TODO: review
+     * TODO Prio 2 review
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return phrase|null with the most useful time phrase
      */
@@ -1566,7 +1566,7 @@ class phrase_list extends sandbox_list_named
                         $phr->load($msg);
                         log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
                     }
-                    // TODO check if old can ge removed: if ($phr->id() > 0) {
+                    // TODO Prio 2 check if old can ge removed: if ($phr->id() > 0) {
                     if (get_class($phr->obj()) == word::class) {
                         $wrd_lst->add($phr->obj(), $msg);
                     } elseif (get_class($phr->obj()) == triple::class) {
@@ -1776,7 +1776,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * @returns string the html code to display the phrases for a sentence start
-     * TODO replace adding the s with a language specific functions that can include exceptions
+     * TODO Prio 2 replace adding the s with a language specific functions that can include exceptions
      */
     private function InitCap(): string
     {
@@ -2070,7 +2070,7 @@ class phrase_list extends sandbox_list_named
     {
         $phr = null;
         if ($this->count() > 1) {
-            // TODO get from frontend config
+            // TODO Prio 2 get from frontend config
             // $is_dominant_pct = $ui_sys->cfg->get(config::MIN_PCT_OF_PHRASES_TO_PRESELECT, $db_con);
             $is_dominant_pct = 0.3;
             $count_lst = array_count_values($this->id_lst());
@@ -2189,7 +2189,7 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * offer the user to add a new value for these phrases
      * similar to value.php/btn_add
      * @param array $url_arr the url vars of the calling page for the back link
@@ -2216,7 +2216,7 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * shows all phrases that are part of a list
      * e.g. used to display all phrases linked to a word
      * @param array $url_arr the url vars of the calling page for the back link

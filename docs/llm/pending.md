@@ -9,12 +9,12 @@ goal: every public function of `docs/code_test_coverage.md` has at least two uni
 `bin/code_test_coverage.php` and is never edited by hand, so each step below changes the tests
 (or the counter) and the developer regenerates the report to see the gap shrink
 
-starting point: 1125 of 6200 public functions are covered; of the 4870 gaps 3275 are in the
-main backend, 1415 in the frontend and 180 in shared, 382 functions have one call (23 of
+starting point: 1126 of 6200 public functions are covered; of the 4869 gaps 3275 are in the
+main backend, 1414 in the frontend and 180 in shared, 381 functions have one call (22 of
 them have a name of their own, see step 1; the other 359 share their name and need two
-calls per class, see step 2), and the 205 functions that no code
-calls are listed in the section "never called" at the end of the report, for the developer
-to decide per function whether it is removed or kept
+calls per class, see step 2), and the 205 functions that no code calls are listed in the
+section "never called" at the end of the report, for the developer to decide per function
+whether it is removed or kept
 
 rules for every step:
 - one class (or one shared function name) per prompt, so that each diff stays reviewable
@@ -35,8 +35,9 @@ rules for every step:
 1. the functions with one call and a name of their own: the getters that only an assert calls
    (`component::get_row_phrase_id`, backend `data_object::group_list`, web
    `user_message::get_last_info`) get their own positive and negative test; the others cannot
-   get a second test in a unit test without database: the ones that need the database move to step 5 (`value_base::save_as_default`,
-   `view::load_by_term`, web `db_object::add_via_api`, `component::log_link`,
+   get a second test in a unit test without database: the ones that need the database move
+   to step 5 (`value_base::save_as_default`, `view::load_by_term`, web
+   `db_object::add_via_api`, `component::log_link`,
    `config_numbers::load_cfg`, `db_cache_page::del_all`, `type_lists::load_cached`,
    `system_object::system_user` and `user_log`), the ones without a failure branch to step 6
    (`frontend::activation_url`, `html_base::p`, `import_convert_xbrl::instance_file_name`,
@@ -72,9 +73,117 @@ rules for every step:
 
 ### TODO
 
-classify all TODO that does not yet have a Prio 
+goal: no `TODO Prio 0` is left in the code; each one is either solved (the comment is removed
+together with the fix) or, if the work shows that it is less urgent, given a Prio 1, 2 or 3
+with a concrete text
 
-make a plan how solve the Prio 0 TODOs
+starting point: 158 `TODO Prio 0` in src, test, http and api (the paths below are relative to
+`src/main/php/` resp. `src/test/php/`)
+
+rules for every step:
+- one step or one class per prompt, so that each diff stays reviewable
+- the test comes first: a fix gets a positive and a negative unit test (`docs/llm/coding.md`,
+  "Testing rules"); a fix that cannot be tested without the database goes to `unit_read` /
+  `unit_write`
+- a solved TODO is removed, never rewritten to "done"; a TODO that is only partly solved keeps
+  the open part with a new priority
+- an activated test that fails is not switched off again: the cause is fixed, or the test gets
+  a `TODO Prio 1` with the reported diff
+- the LLM never runs the tests; the developer runs them and reports the result
+
+1. triage the bare "review" TODOs, because they do not say what is wrong: read the code, then
+   replace each by a concrete TODO with a Prio 1, 2 or 3, or solve it if it is a one-line fix:
+   `cfg/db/sql_db.php:1282`, `cfg/phrase/phrase.php:931`, `cfg/phrase/term.php:1418`,
+   `cfg/result/result.php:2021` and `:2049`, `cfg/user/user.php:2213`,
+   `web/component/execute/system_form.php:2826`, `web/frontend.php:701`,
+   `unit_write/group_write_tests.php:130`, `unit_write/triple_write_tests.php:387`,
+   `unit_write/word_write_tests.php:403`, and `cfg/value/value_list.php:1309` ("review error")
+2. report every failure instead of failing silently (top rule 3):
+   - read an optional array key with `key_exists`: `cfg/result/result.php:1676`,
+     `cfg/sandbox/sandbox_multi.php:1667`, `cfg/system/ip_range.php:323`,
+     `cfg/verb/verb.php:706`, `cfg/view/view.php:565`
+   - turn the warnings back into errors: `cfg/phrase/phrase_list.php:2309`,
+     `web/phrase/phrase_list.php:2174`
+   - return or report the failure to the caller: `cfg/db/sql_db.php:3408` (return false),
+     `cfg/db/sql_db.php:4748` and `cfg/import/import_file.php:85` (take the `user_message` of
+     the caller), `cfg/sandbox/sandbox_typed.php:140` (a not mapped row on `$msg`),
+     `cfg/view/term_view.php:563` (use a `msg_id`), `cfg/formula/formula_map.php:698` and
+     `shared/calc/expression.php:214` (the ref text check with the user message)
+   - log a missing mapper overwrite: `web/sandbox/ListBase.php:121`, `utils/test_lib.php:311`
+   - one message per request: `http/about.php:45` (all frontend calls),
+     `cfg/component/component_link_list.php:479` (the reset of all lists),
+     `utils/test_cleanup.php:290` (a local message for each del call), and the shared message
+     status const of `cfg/db/sql_message.php:232` and `cfg/user/user_message.php:238`
+3. close the gaps in security and data correctness of the backend:
+   - `cfg/db/db_check.php:126`: in prod and test the setup runs only if the setup flag is on
+   - `cfg/db/sql_par.php:168`: the unique check includes the keys
+   - `cfg/user/user.php:237`: every user field is saved and in the api message, and
+     `:732` / `:2280` write each DateTime as `DateTimeInterface::ATOM` with `?` for null
+   - `cfg/word/triple.php:572`: the mapper does not save, the save moves to `import_obj`
+   - `cfg/sandbox/sandbox.php:1180`, `:1181`, `:1433`: the removed `load_owner` and the
+     component `reload_phrases` are called where the load needs them
+   - `cfg/helper/db_object_seq_id_user.php:143`, `cfg/helper/type_list.php:316` (save a new
+     type), `cfg/sandbox/sandbox_list.php:370` (fill), `cfg/phrase/phrase_list.php:1533` (the
+     time type check), `cfg/log/change_link.php:386` and `:412`,
+     `cfg/view/view_relation.php:571` (the export if requested), `cfg/sandbox/sandbox.php:3282`
+     (use it for the import)
+   - the usage field is maintained by the backend, so that the workaround of
+     `unit_workflow/triple_url_tests.php:494` and `unit_workflow/word_url_tests.php:758` is
+     removed
+   - the type cache: `cfg/formula/formula_link_type.php:199` and `:253`,
+     `cfg/helper/type_lists.php:288`, `web/sandbox/sandbox.php:123` (the dto cache in the api
+     mapper)
+4. activate the disabled tests, one test file per prompt, and fix what they report:
+   - the unit tests that only need a db write: `unit/group_tests.php:378`,
+     `unit/result_tests.php:179`, `:188`, `:199`, `unit/triple_tests.php:121`,
+     `unit/value_tests.php:580`
+   - `unit_write/triple_write_tests.php` (`:163`, `:208`, `:240`, `:262` "fix it" and `:364`),
+     `all_unit_write_tests.php:152`, `api_write_tests.php:88`, `element_group_write_tests.php:197`,
+     `element_write_tests.php:125`, `expression_write_tests.php:157`,
+     `formula_trigger_tests.php:137`, `formula_write_tests.php:110`, `import_write_tests.php:339`,
+     `term_write_tests.php:95`, `view_relation_write_tests.php:57` and `:76`,
+     `xbrl_write_tests.php:88` and `:95`
+   - `unit_read/formula_list_read_tests.php:83`, `unit_read/value_list_read_tests.php:79` (load
+     both values), `unit_api/api_tests.php:215`, `unit_ui/localhost_ui_tests.php:114`
+   - the disabled source parts: `cfg/const/files.php:317`, `web/component/component.php:994`,
+     `cfg/sandbox/sandbox.php:4523` (activate or remove)
+5. replace the frontend stubs by real code, so that each system page shows its content:
+   `web/component/execute/system_page.php` (the 14 "fill with real code" and `:561` the title
+   of a search result), `ui_base.php:117`, `ui_list.php:4000`, `ui_rank.php:61` and `:71`,
+   `system_form.php:3005` (wire up the request action) and `:672` (system to web language),
+   `web/formula/formula.php:911` (the formula links in the mask), `web/value/value.php:1372`
+   (the source selector) and `:1015` (the database part moves to the backend),
+   `web/view/view_exe.php:770` (tooltip and url), `web/system/sys_log.php:71` (the missing
+   backend fields), `web/helper/data_object.php:285` (the missing objects e.g. view_link_list),
+   `web/word/word.php:288` (all fields in the url); each page gets its html snapshot test
+6. add the missing unit tests (together with step 1 of "test coverage"):
+   `cfg/phrase/phrase_list.php:2247` and `:2265`, `cfg/sandbox/sandbox.php:2539`,
+   `cfg/word/triple.php:2229` and `:2250`, `shared/helper/ListOfIdNamedCodeObjects.php:204` and
+   `:276`, `shared/helper/ListOfIdNamedObjects.php:206`, `shared/json_fields.php:63`,
+   `unit/base_object_tests.php:389` (add and unset), `unit/element_list_tests.php:95` (fail
+   cases), `unit/type_tests.php:402` and `:403` (language, position and system time types),
+   `utils/test_base.php:3259` (the test view relation)
+7. deprecate, merge and rename, each with the callers in the same prompt:
+   - deprecate: `web/frontend.php:839` (`$usr_backend`), `web/user/user.php:148`,
+     `cfg/formula/formula_map.php:224`, `cfg/formula/formula_list.php:847` (remove),
+     `web/html/html_base.php:939` (use `url_new`), `:2527`
+   - merge: `cfg/application.php:337` with `frontend.php`, `cfg/user/user.php:1586`
+   - one way for all: `web/html/html_base.php:1911` (all input fields),
+     `web/html/html_selector.php:118`, `web/types/type_list.php:529` (the var order of all
+     selectors), `cfg/helper/type_list.php:391` (the load_sql overwrites),
+     `cfg/phrase/phrase_type.php:143` (one field conversion), `cfg/user/user.php:627` (an object
+     mapper library), `cfg/component/component_type_list.php:53` (load_dummy)
+   - consts and config: `shared/const/views.php:1334` (a key value map),
+     `shared/helper/Config.php:77` and `:81` (only the fallback of config.yaml),
+     `shared/types/component_types.php:362`
+   - rename: `web/helper/data_object.php:213` (`$typ_lst`), `unit_write/expression_write_tests.php:114`
+     (`user_text`)
+   - the test factories: `create/test_formulas.php:335`, `create/test_triples.php:285` and
+     `:307` (a to_url function), `create/test_verbs.php:112` (a real filled verb),
+     `create/test_views.php:556`, `unit_read/all_unit_read_tests.php:97`,
+     `unit/coding_rule_tests.php:1073`
+   - the rule of `cfg/word/triple.php:375` ("explicit is better than implicit") is added to
+     `docs/llm/coding.md` with this case as the sample
 
 ## speed up
 

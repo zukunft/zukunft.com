@@ -106,19 +106,19 @@ class value_list_ui_tests
         $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json());
 
         // create the value list and the table to display the results
-        // TODO move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
-        // TODO format numbers
-        // TODO use one phrase for city of Zurich
-        // TODO optional "(in mio)" formatting for scale words
-        // TODO move time words to column headline
-        // TODO use language based plural for inhabitant
-        // TODO if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
-        // TODO if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
-        // TODO add buttons to or empty cells for easy adding new related values
+        // TODO Prio 3 move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
+        // TODO Prio 2 format numbers
+        // TODO Prio 3 use one phrase for city of Zurich
+        // TODO Prio 3 optional "(in mio)" formatting for scale words
+        // TODO Prio 3 move time words to column headline
+        // TODO Prio 3 use language based plural for inhabitant
+        // TODO Prio 3 if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
+        // TODO Prio 3 if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
+        // TODO Prio 3 add buttons to or empty cells for easy adding new related values
         $lst_zh_ui = $t_val->value_list_zh_ui();
         $lst_math_ui = $t_val->value_list_math_ui();
 
-        // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
+        // TODO Prio 2 add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
         $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($msg_ui, $phr_lst_context_ui) . '<br>';
@@ -1194,11 +1194,11 @@ class value_list_ui_tests
         $test_name = 'an empty value list has no table model for the charts';
         $t->assert_null($test_name, new value_list_ui()->chart_model($msg_ui));
 
-        // TODO add a test that if a view contains beside the "2023 (year)"
+        // TODO Prio 2 add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"
         //      the "(year)" is not shown to the user, because the user will assume i
 
-        // TODO add s test that if a view contains the word "city"
+        // TODO Prio 2 add s test that if a view contains the word "city"
         //      or many cities and never a "canton"
         //      and the phrase "Zurich (city)" is shown
         //      only "Zurich" without "(city)" is used

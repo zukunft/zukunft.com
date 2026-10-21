@@ -178,7 +178,7 @@ class json_fields
     // json field names of the api json messages
     // which is supposed to be the same as the corresponding var of the api object
     // so that no additional mapping is needed
-    // TODO check if api objects can be deprecated
+    // TODO Prio 2 check if api objects can be deprecated
     // and used in the backend to create the json for the frontend
     // and used in the frontend for the field selection
     const string ID = 'id'; // the unique database id used to save the changes

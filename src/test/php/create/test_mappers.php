@@ -1400,7 +1400,7 @@ class test_mappers
     }
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask

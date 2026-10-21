@@ -69,7 +69,7 @@ class db_object_multi extends db_object_key
 
     // database fields that are used in all model objects
     // the database id is the unique prime key
-    // TODO actually not needed on this level, because the id may be generated and remembered in a linked object e.g. the group
+    // TODO Prio 3 actually not needed on this level, because the id may be generated and remembered in a linked object e.g. the group
     public int|string $id {
         // get @return int the database id which is not 0 if the object has been saved
         // the internal null value is used to detect if database saving has been tried
@@ -292,7 +292,7 @@ class db_object_multi extends db_object_key
         db_object_multi $result
     ): db_object_multi
     {
-        // TODO move to the calling function
+        // TODO Prio 2 move to the calling function
         // $result = $this->clone_reset(true);
         // the database id mus always be identical to the original db row
         $result->id = $std_obj->id();

@@ -84,7 +84,7 @@ class source_read_tests
         $t->assert($test_name . $src_lst->dsp_id(), $src_lst->name(), '"' . sources::WIKIDATA . '"');
 
         $test_name = 'loading the api message creation of the api index file for ';
-        // TODO add this to all db read tests for all API call functions
+        // TODO Prio 2 add this to all db read tests for all API call functions
         $result = json_decode($src_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(source_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);

@@ -101,7 +101,7 @@ if ($usr->id() > 0) {
 
             // if adding was successful ...
             if (str_replace('1', '', $add_result) == '') {
-                // TODO call the dsp_edit view and set the new view as the default view for the sample term
+                // TODO Prio 3 call the dsp_edit view and set the new view as the default view for the sample term
                 // display the calling view (or call the view component edit
                 $result .= $html->dsp_go_back($back, $usr);
             } else {

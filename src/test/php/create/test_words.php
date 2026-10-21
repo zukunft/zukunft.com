@@ -912,8 +912,8 @@ class test_words extends test_objects
         return $wrd;
     }
 
-// TODO explain for each test object for which test it is used
-// TODO rename because in the test object "$t->" the prefix dummy is not needed
+// TODO Prio 3 explain for each test object for which test it is used
+// TODO Prio 2 rename because in the test object "$t->" the prefix dummy is not needed
     function word_this(): word
     {
         $wrd = new word($this->env->usr1);

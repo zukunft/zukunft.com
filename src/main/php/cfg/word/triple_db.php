@@ -125,7 +125,7 @@ class triple_db
         triple_fields::FLD_COND_ID
     );
     // list of the link database field names
-    // TODO use this name for all links
+    // TODO Prio 2 use this name for all links
     const array FLD_NAMES_LINK = array(
         triple_fields::FLD_FROM,
         verb_db::FLD_ID,

@@ -2131,8 +2131,8 @@ class system_form extends component
      * all are used to select a phrase
      * but depending on the code_id different url fields and labels are used
      *
-     * TODO move form_select_phrase_to to a const
-     * TODO remove fixed pattern
+     * TODO Prio 2 move form_select_phrase_to to a const
+     * TODO Prio 2 remove fixed pattern
      *
      * @param db_object|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
@@ -2147,7 +2147,7 @@ class system_form extends component
     ): string
     {
         $lib = new library();
-        // TODO use a pattern base on user entry
+        // TODO Prio 2 use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
             $pattern = words::MATH;
@@ -2198,7 +2198,7 @@ class system_form extends component
 
     /**
      * create the HTML code to select one or more words or triples
-     * TODO review
+     * TODO Prio 2 review
      *
      * @param db_object|triple|sandbox_list $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
@@ -2213,7 +2213,7 @@ class system_form extends component
     ): string
     {
         $lib = new library();
-        // TODO use a pattern base on user entry
+        // TODO Prio 2 use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
             $pattern = words::MATH;
@@ -2279,7 +2279,7 @@ class system_form extends component
     ): string
     {
         $lib = new library();
-        // TODO use a pattern base on user entry
+        // TODO Prio 2 use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
             $pattern = words::MATH;
@@ -2327,7 +2327,7 @@ class system_form extends component
     ): string
     {
         $lib = new library();
-        // TODO use a pattern base on user entry
+        // TODO Prio 2 use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
             $pattern = words::MATH;

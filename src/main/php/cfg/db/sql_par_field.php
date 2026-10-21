@@ -7,7 +7,7 @@
 
     $fld is the suggested var name
 
-    TODO split to a sql_par_field_log and a sql_par_field object
+    TODO Prio 2 split to a sql_par_field_log and a sql_par_field object
 
 
     This file is part of zukunft.com - calc with words

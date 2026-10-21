@@ -229,7 +229,7 @@ class horizontal_tests
         foreach (def::MAIN_CLASSES as $class) {
             $dto = new data_object($t->usr1);
             $msg = new user_message($t->usr1);
-            // TODO add test to im- and export objects with the owner and a user that differs from the owner
+            // TODO Prio 2 add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t_map->class_to_filled_object($class);
             // remember the db id, because the db id is never included in the export
@@ -266,7 +266,7 @@ class horizontal_tests
                 $dto->add_view($filled_obj->parent(), $msg);
                 $dto->add_view($filled_obj->child(), $msg);
             } elseif ($class == component::class) {
-                // TODO Prion 1 review and at least prevent the potential polymorph warning in the IDE
+                // TODO Prio 1 review and at least prevent the potential polymorph warning in the IDE
                 // the import resolves the row and column phrase names via the import cache
                 $dto->add_phrase($filled_obj->row_phrase, $msg);
                 $dto->add_phrase($filled_obj->col_phrase, $msg);

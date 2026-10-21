@@ -733,7 +733,7 @@ class expression extends shared_expression
 
     /*
      * filter elements
-     * TODO to move to element list
+     * TODO Prio 2 to move to element list
      */
 
     /**
@@ -1085,7 +1085,7 @@ class expression extends shared_expression
     /**
      * similar to phr_lst, but
      * e.g. for "sales" "differentiator" "country" all "country" words should be included
-     * TODO should also include the words implied by the verbs
+     * TODO Prio 2 should also include the words implied by the verbs
      */
     function phr_verb_lst(user_message $msg): phrase_list
     {
@@ -1117,7 +1117,7 @@ class expression extends shared_expression
                 log_err('Formula element ' . $elm->dsp_id() . ' has an unexpected type.', 'expression->phr_verb_lst');
             }
         }
-        // TODO check if the phrases are already loaded
+        // TODO Prio 2 check if the phrases are already loaded
         //$phr_lst->load();
         log_debug($lib->dsp_count($phr_lst->lst()));
         return $phr_lst;

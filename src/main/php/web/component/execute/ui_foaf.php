@@ -36,7 +36,7 @@ class ui_foaf
 {
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
     function word_children(): string
@@ -45,7 +45,7 @@ class ui_foaf
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
     function word_parents(): string

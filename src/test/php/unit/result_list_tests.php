@@ -99,7 +99,7 @@ class result_list_tests
         $res_lst = new result_list($t->usr1);
         $grp = new group($t->usr1);
         $grp->set_id(2);
-        // TODO list the results for all users, formulas and sources
+        // TODO Prio 2 list the results for all users, formulas and sources
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $grp);
 
         // sql to load a list of results by the source phrase group id
@@ -140,7 +140,7 @@ class result_list_tests
     /**
      * result list by formula
      * SQL statement creation test
-     * TODO align the other assert sql function to this e.g. use sql
+     * TODO Prio 2 align the other assert sql function to this e.g. use sql
      *
      * not using assert_load_sql because unique for result list
      *
@@ -211,7 +211,7 @@ class result_list_tests
     /**
      * result list by source
      * SQL statement creation test
-     * TODO align the other assert sql function to this e.g. use sql
+     * TODO Prio 2 align the other assert sql function to this e.g. use sql
      *
      * not using assert_load_sql because unique for result list
      *

@@ -88,7 +88,7 @@ class user extends db_object
      * const
      */
 
-    // TODO allow only admin users to add or change other users
+    // TODO Prio 1 allow only admin users to add or change other users
     // curl views
     const string VIEW_ADD = views::USER_ADD;
     const string VIEW_EDIT = views::USER_EDIT;
@@ -453,7 +453,7 @@ class user extends db_object
         return $this->trm;
     }
 
-    // TODO restrict the access to the unhashed password
+    // TODO Prio 1 restrict the access to the unhashed password
     function password(): string|null
     {
         return $this->password;
@@ -958,7 +958,7 @@ class user extends db_object
 
     /**
      * display the latest changes of the user
-     * TODO add display the latest changes by a user
+     * TODO Prio 2 add display the latest changes by a user
      * @param array $url_arr the url vars of the calling page for the back link of the undo buttons
      */
     function dsp_changes(int $size, int $page, user_message $msg, array $url_arr = []): string

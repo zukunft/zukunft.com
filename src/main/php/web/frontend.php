@@ -606,7 +606,7 @@ class frontend
 
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                // TODO cache the system config json and detect
+                // TODO Prio 2 cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
                 $cfg->load_cfg($sys_msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
@@ -646,7 +646,7 @@ class frontend
         $result = '';
 
         // resume session (based on cookies)
-        // TODO review session start and end calls
+        // TODO Prio 2 review session start and end calls
         // enforce tls (prod/test) then harden the session cookie before the session starts
         server_guard::enforce_tls();
         server_guard::harden_session();
@@ -751,7 +751,7 @@ class frontend
 
     /**
      * load the frontend cache from a dummy api message instead of an api call
-     * TODO move to test to avoid usage of backend in frontend
+     * TODO Prio 2 move to test to avoid usage of backend in frontend
      *
      * @param user_message_ui $msg_ui the backend user used for the import e.g. of the system views
      * @param string $api_msg the cache api message that the caller reads from the test resource,
@@ -987,8 +987,8 @@ class frontend
 
     /**
      * create the HTML code based on the given url
-     * TODO for the confirm action highlight the changes
-     * TODO add the db update via api
+     * TODO Prio 2 for the confirm action highlight the changes
+     * TODO Prio 2 add the db update via api
      *
      * @param array $url_array the parsed url as an array
      * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user (null for an anonymous request)
@@ -1256,7 +1256,7 @@ class frontend
         // an edit or del mask is the view that the user has requested, so it is never overwritten here
         // and only a view that the user has selected for the object needs to be saved
         if (in_array($view_id, views::EDIT_DEL_MASKS_IDS)) {
-            // TODO move as much a possible to backend functions
+            // TODO Prio 2 move as much a possible to backend functions
             if ($dbo->id() === 0 or $dbo->id() === '' or $dbo->id() === null) {
                 $result .= log_err("id of " . library::class_to_name($dbo::class) . " is empty", "view.php", '',
                     (new Exception)->getTraceAsString());
@@ -1268,10 +1268,10 @@ class frontend
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id != 0) {
-            // TODO first create the frontend object and call from the frontend object the api
-            // TODO for system views avoid the backend call by using the cache from the frontend
-            // TODO get the system view from the preloaded cache
-            // TODO use the frontend not the backend cache
+            // TODO Prio 2 first create the frontend object and call from the frontend object the api
+            // TODO Prio 2 for system views avoid the backend call by using the cache from the frontend
+            // TODO Prio 2 get the system view from the preloaded cache
+            // TODO Prio 2 use the frontend not the backend cache
             $msk_ui = $this->dto->typ_lst_cache->get_view_by_id($view_id);
             if ($msk_ui == null) {
                 $result .= log_err('No view for "' . $view_id . '" found.',
@@ -2920,7 +2920,7 @@ class frontend
     private
     function log_info(string $msg): string
     {
-        // TODO actually sent the message to the server
+        // TODO Prio 2 actually sent the message to the server
         return 'Info message to backend: ' . $msg;
     }
 

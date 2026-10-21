@@ -144,7 +144,7 @@ class word_list_tests
         $t->subheader($ts . 'modify and filter word lists');
 
         // create words for unit testing
-        // TODO used create dummy functions
+        // TODO Prio 2 used create dummy functions
         $wrd1 = new word($t->usr1);
         $wrd1->id = 1;
         $wrd1->set_name('word1');
@@ -303,7 +303,7 @@ class word_list_tests
         $json = $wrd_lst->export_json($msg, []);
         $json_expected = json_decode(file_get_contents(test_files::WORD_LIST));
         $result = $lib->json_is_similar($json, $json_expected);
-        // TODO remove, for faster debugging only
+        // TODO Prio 2 remove, for faster debugging only
         $json_expected_txt = json_encode($json_expected);
         $json_actual_txt = json_encode($json);
         $t->assert('JSON export word list', $result, true);

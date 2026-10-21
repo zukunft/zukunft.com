@@ -83,7 +83,7 @@ class import_file
     /**
      * import a single json file
      * TODO Prio 0 add user_message as a parameter
-     * TODO set $direct by default to false
+     * TODO Prio 2 set $direct by default to false
      *
      * @param string $filename
      * @param user $usr the user who has requested the import (only used for direct import of the system users)
@@ -220,7 +220,7 @@ class import_file
 
     /**
      * import the initial system configuration
-     * TODO validate the import by comparing the import with the api message to tne frontend
+     * TODO Prio 2 validate the import by comparing the import with the api message to tne frontend
      *
      * @param user $usr who has triggered the function
      * @param bool $validate if true, the import is validated even if the number of the values matches
@@ -327,8 +327,8 @@ class import_file
     }
 
     /**
-     * TODO fill a user_message with the warning and error messages and return true if successful
-     * TODO add a check bottom for admin to reload the system configuration
+     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
+     * TODO Prio 3 add a check bottom for admin to reload the system configuration
      * import zukunft.com system data and data used for unit tests via json file
      * for an import it can be assumed that this type configuration is loaded
      * @param user $usr the owner of the initial system data

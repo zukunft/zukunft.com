@@ -136,14 +136,14 @@ class change_value extends change_log
      * object vars
      */
 
-    // additional to user_log TODO change to float|int|null
+    // additional to user_log TODO Prio 2 change to float|int|null
     public string|float|int|DateTime|null $old_value = null; // the field value before the user change
     public string|float|int|DateTime|null $new_value = null; // the field value after the user change
     public string|float|int|DateTime|null $std_value = null; // the standard field value for all users that does not have changed it
 
     public int|string|null $group_id = null;  // the reference id of the row in the database table
 
-    // TODO deprecate
+    // TODO Prio 2 deprecate
     public ?int $old_id = null;                     // the reference id before the user change e.g. for fields using a sub table such as status
     public ?int $new_id = null;                     // the reference id after the user change e.g. for fields using a sub table such as status
     public ?int $std_id = null;                     // the standard reference id for all users that does not have changed it
@@ -188,7 +188,7 @@ class change_value extends change_log
             } else {
                 log_warning('Cannot get table id from ' . $fld_tbl->name);
             }
-            // TODO check if not the complete user should be loaded
+            // TODO Prio 3 check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
                 if ($db_row[user_db::FLD_ID] == $usr->id) {

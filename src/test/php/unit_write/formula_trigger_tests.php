@@ -128,7 +128,7 @@ class formula_trigger_tests
         } else {
             $result = '';
         }
-        // TODO check why the data in PROD is strange
+        // TODO Prio 2 check why the data in PROD is strange
         if ($result == values::SALES_INCREASE_2017_FORM) {
             $target = values::SALES_INCREASE_2017_FORM;
         } else {

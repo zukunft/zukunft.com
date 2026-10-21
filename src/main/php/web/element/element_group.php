@@ -106,7 +106,7 @@ class element_group extends ListBase
         return $lib->dsp_array($this->names());
     }
 
-    // TODO handle multi entry cases if needed
+    // TODO Prio 3 handle multi entry cases if needed
     function id(string $code_id = ''): int
     {
         if (count($this->lst()) == 1) {
@@ -235,7 +235,7 @@ class element_group extends ListBase
             // e.g. if the user has overwritten a result use the user overwrite
             log_debug('load word value for ' . $val_phr_lst->dsp_id());
             $wrd_val = new value();
-            // TODO create $wrd_val->load_best();
+            // TODO Prio 2 create $wrd_val->load_best();
             $wrd_val->load_by_grp($val_phr_grp, $msg);
 
             if ($wrd_val->isset()) {
@@ -256,7 +256,7 @@ class element_group extends ListBase
                 // get the word group result, which means a formula result
                 log_debug('load result for ' . $val_phr_lst->dsp_name());
                 $grp_res = new result();
-                /* TODO review
+                /* TODO Prio 2 review
                 $grp_res->load_by_grp($val_phr_grp);
                 */
                 if ($val_time_phr == null) {
@@ -291,7 +291,7 @@ class element_group extends ListBase
 
     /**
      * recreate the element group symbol based on the element list ($this->lst)
-     * repeat of the backend function, so TODO move to shared library
+     * repeat of the backend function, so TODO Prio 2 move to shared library
      */
     function build_symbol(): string
     {
@@ -394,7 +394,7 @@ class element_group extends ListBase
             $result .= $fig_ui->display_linked($msg, $url_arr);
         }
 
-        // TODO: show the time phrase only if it differs from the main time phrase
+        // TODO Prio 3 show the time phrase only if it differs from the main time phrase
 
         // display alternative values
 

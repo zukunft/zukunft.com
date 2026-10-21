@@ -698,7 +698,7 @@ class sandbox_value extends sandbox
 
     /**
      * @returns string the html code to display the value with reference links
-     * TODO create a popup with the details e.g. the values of other users
+     * TODO Prio 3 create a popup with the details e.g. the values of other users
      */
     function value_linked(): string
     {
@@ -717,7 +717,7 @@ class sandbox_value extends sandbox
         $cfg = $ui_sys->cfg;
         $result = '';
 
-        // TODO check that the phrases are set
+        // TODO Prio 1 check that the phrases are set
 
         if (!$this->is_null()) {
             if ($this->is_percent($msg)) {

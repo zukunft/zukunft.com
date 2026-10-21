@@ -5,9 +5,9 @@
     web/types/type_list.php - parent object for all preloaded types used in the html frontend
     -----------------------
 
-    TODO move the global vars to vars within the cache
-    TODO add a garbage collection
-    TODO add a momory usage check
+    TODO Prio 2 move the global vars to vars within the cache
+    TODO Prio 2 add a garbage collection
+    TODO Prio 2 add a momory usage check
 
 
     This file is part of zukunft.com - calc with words
@@ -634,7 +634,7 @@ class type_lists
         }
     }
 
-    // TODO add similar functions for all cache types
+    // TODO Prio 2 add similar functions for all cache types
     function get_html_by_id(int $id, user_message $msg): string
     {
         $result = '';

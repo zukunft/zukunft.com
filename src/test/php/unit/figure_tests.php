@@ -98,7 +98,7 @@ class figure_tests
         $fig = $t_fig->figure_value($msg);
         $t->assert('figure value symbol', $fig->get_symbol(), "");
         $fig = $t_fig->figure_result();
-        // TODO review
+        // TODO Prio 2 review
         //$t->assert('figure result symbol', $fig->get_symbol(), "{f1}");
 
 

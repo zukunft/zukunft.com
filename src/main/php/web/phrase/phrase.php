@@ -175,7 +175,7 @@ class phrase extends combine_named
         $vars[json_fields::DESCRIPTION] = $this->get_description();
         $vars[json_fields::TYPE] = $this->type_id($msg);
         $vars[json_fields::PLURAL] = $this->get_plural();
-        // TODO add exclude field and move to a parent object?
+        // TODO Prio 2 add exclude field and move to a parent object?
         if ($this->obj()?->share_id() != null) {
             $vars[json_fields::SHARE] = $this->obj()?->share_id();
         }
@@ -898,7 +898,7 @@ class phrase extends combine_named
 
     /**
      * to enable the recursive function in work_link
-     * TODO add a list of triple already split to detect endless loops
+     * TODO Prio 2 add a list of triple already split to detect endless loops
      */
     function wrd_lst(user_message $msg): word_list
     {

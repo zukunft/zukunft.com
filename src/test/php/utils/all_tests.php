@@ -21,7 +21,7 @@
     - check the correct setup of the base words, numbers and formulas
     - always synthetic reserved words and values are used for testing that are defined in each class and are removed after the tests
 
-    TODO
+    TODO Prio 2
     - move the tests to classes and call all tests with test.php but stop in case of an error
     - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "company"
     - before starting the system test, check that really no user has used any test name and if create a warning and stop the test

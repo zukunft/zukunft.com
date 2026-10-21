@@ -2053,7 +2053,7 @@ class coding_rule_tests
 
     /**
      * check if all used classes are also included once within the same file
-     * TODO add a child parent list and make sure that a parent never includes a child object
+     * TODO Prio 2 add a child parent list and make sure that a parent never includes a child object
      *      but the child always includes the parent
      *      and make sure that all not needed deactivated includes are removed
      *
@@ -2242,10 +2242,10 @@ class coding_rule_tests
      * check if the functions in the classes are grouped by sections
      * if the sections of all classes are in the same order
      * and if the sections are described in the class header
-     * TODO check that all sections have a description in the header
-     * TODO check that the sections match the order in the header
-     * TODO check that the header section list match the general order
-     * TODO check that no function is in an unexpected section
+     * TODO Prio 2 check that all sections have a description in the header
+     * TODO Prio 2 check that the sections match the order in the header
+     * TODO Prio 2 check that the header section list match the general order
+     * TODO Prio 2 check that no function is in an unexpected section
      *
      * @param string $base_path path name of the folder with the php scripts that should be checked
      * @param string $obj_grp_txt nae of the object group e.g. "main backend" or "html frontend"

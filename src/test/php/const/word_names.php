@@ -250,7 +250,7 @@ class word_names
     const string GE = 'Geneva';
     const int GE_ID = 196;
     const int INHABITANT_ID = 201;
-    // TODO add test to search for words in all language forms e.g. plural
+    // TODO Prio 2 add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     // the word of solution_prio.json whose values of populism have a variance range
     const string FIFTEEN_YEAR = '15-year';

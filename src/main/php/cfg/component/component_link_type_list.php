@@ -5,7 +5,7 @@
     model/component/component_link_type_list.php - to define the behaviour if a component is linked to a view
     --------------------------------------------
 
-    TODO check if really needed
+    TODO Prio 2 check if really needed
 
     This file is part of zukunft.com - calc with words
 

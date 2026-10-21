@@ -365,7 +365,7 @@ class test_terms
 
     /**
      * create a huge list of terms for speed testing
-     * TODO review
+     * TODO Prio 2 review
      * @returns term_list a dummy term list for unit tests
      */
     function list_huge(test_cleanup $t, int $size): term_list

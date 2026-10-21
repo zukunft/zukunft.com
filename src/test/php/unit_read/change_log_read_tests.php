@@ -92,8 +92,8 @@ class change_log_read_tests
         $t->subheader($ts . 'user load');
 
         // prepare the objects for the tests
-        // TODO use these test functions for all dummy object creations
-        // TODO remove dummy from name because this is anyway know by the $test class
+        // TODO Prio 2 use these test functions for all dummy object creations
+        // TODO Prio 2 remove dummy from name because this is anyway know by the $test class
         $wrd = $t_wrd->word();
         $vrb = $t_vrb->verb();
         $trp = $t_trp->triple_pi();
@@ -129,7 +129,7 @@ class change_log_read_tests
         $t->assert('triple name change', $result, true);
 
         // check loading of given name changes of triples
-        // TODO replace with triple name ?
+        // TODO Prio 3 replace with triple name ?
         $lst = new change_log_list();
         $result = $lst->load_by_fld_of_trp( $trp, $t->usr1, $msg, change_fields::FLD_GIVEN_NAME );
         // TODO Prio 1 activate
@@ -150,7 +150,7 @@ class change_log_read_tests
         $t->assert('value change', $result, true);
 
         // ... and if the first entry is the update Pi probably because not all decimals can be saved in the database
-        // TODO review
+        // TODO Prio 2 review
         //$first_change = $lst->lst()[0];
         //$t->assert('first value change is updating Pi', $first_change->old_value, values::TV_READ_SHORT);
         //$t->assert('... to empty', $first_change->new_value, values::TV_READ_SHORT);
@@ -227,7 +227,7 @@ class change_log_read_tests
         $t->assert('first view component change is setting', $first_change->old_value, '');
         $t->assert('... the name', $first_change->new_value, components::WORD_NAME);
 
-        // TODO add ref
+        // TODO Prio 2 add ref
 
         $t->subheader($ts . 'API unit db tests');
 

@@ -20,7 +20,7 @@
     - message:           add message function that might be overwritten by a child object for a more precise message
     - debug:             internal support functions for debugging
 
-    TODO  if a link is owned by someone, who has deleted it, it can be changed by anyone else
+    TODO Prio 1  if a link is owned by someone, who has deleted it, it can be changed by anyone else
           or another way to formulate this: if the owner deletes a link, the ownership should be move to the remaining users
           force to remove all user settings to be able to delete a link as an admin
 
@@ -230,7 +230,7 @@ class component_link extends sandbox_link
     {
         parent::__construct($usr);
 
-        // TODO deprecate and use the object name instead
+        // TODO Prio 2 deprecate and use the object name instead
         $lib = new library();
         $this->from_name = $lib->class_to_name(view::class);
         $this->to_name = $lib->class_to_name(component::class);
@@ -1352,7 +1352,7 @@ class component_link extends sandbox_link
      */
 
     // move one view component
-    // TODO load to list once, resort and write all positions with one SQL statement
+    // TODO Prio 2 load to list once, resort and write all positions with one SQL statement
     private function move($direction, user_message $msg): bool
     {
         $result = false;
@@ -1382,7 +1382,7 @@ class component_link extends sandbox_link
                 // correct any wrong order numbers e.g. a missing number
                 $order_number_corrected = false;
                 log_debug('component_link->move check order numbers for ' . $this->get_view()->dsp_id());
-                // TODO define the common sorting start number, which is 1 and not 0
+                // TODO Prio 2 define the common sorting start number, which is 1 and not 0
                 $order_nbr = component_link::START_ORDER_NBR;
                 if ($this->get_view()->cmp_lnk_lst != null) {
                     foreach ($this->get_view()->cmp_lnk_lst->lst() as $cmp_lnk) {
@@ -1422,13 +1422,13 @@ class component_link extends sandbox_link
                 log_debug('component_link->move order numbers checked for ' . $this->get_view()->dsp_id());
 
                 // actually move the selected component
-                // TODO what happens if the another user has deleted some components?
+                // TODO Prio 2 what happens if the another user has deleted some components?
                 $order_nbr = 1;
                 $prev_entry = null;
                 $prev_entry_down = false;
                 if ($this->get_view()->cmp_lnk_lst != null) {
                     foreach ($this->get_view()->cmp_lnk_lst->lst() as $cmp_lnk) {
-                        // get the component link (TODO add the order number to the entry lst, so that this loading is not needed)
+                        // get the component link (TODO Prio 2 add the order number to the entry lst, so that this loading is not needed)
                         //$cmp_lnk = new component_link($this->get_user());
                         //$msk = new view($this->get_user());
                         //$msk->load_by_id($this->get_view_id());
@@ -1642,7 +1642,7 @@ class component_link extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            // TODO easy move to id function of type list
+            // TODO Prio 2 easy move to id function of type list
             if ($this->get_style_id() < 0) {
                 $msg->add(msg_id::COMPONENT_LINK_STYLE_MISSING, [
                     msg_id::VAR_TYPE => $this->get_style_id(),

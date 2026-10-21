@@ -122,7 +122,7 @@ class sys_log_list
 
     /**
      * set the vars of these list display objects bases on the api json array
-     * TODO can be moved to list_dsp as soon as all list api message include the header
+     * TODO Prio 2 can be moved to list_dsp as soon as all list api message include the header
      * @param array $json_array an api list json message
      * @param user_message $msg ok or a warning e.g. if the server version does not match
      * @return bool true if there are no errors

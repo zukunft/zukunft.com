@@ -330,7 +330,7 @@ class sandbox_list_named extends sandbox_list
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_name($sbx_new->name(), $msg);
-                // TODO check if and how a sync of the objects can be done
+                // TODO Prio 2 check if and how a sync of the objects can be done
                 if ($sbx_old == null) {
                     $this->add($sbx_new, $msg);
                 }
@@ -416,7 +416,7 @@ class sandbox_list_named extends sandbox_list
      */
 
     /**
-     * TODO add a unit test
+     * TODO Prio 2 add a unit test
      * @returns array with all unique names of this list with the keys within this list
      */
     protected function name_pos_lst(): array

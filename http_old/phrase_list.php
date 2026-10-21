@@ -71,7 +71,7 @@ if ($usr->id() > 0) {
     $msg = '';
 
     // prepare the display
-    // TODO use view_shared::PHRASE_LIST instead of WORD_ADD
+    // TODO Prio 3 use view_shared::PHRASE_LIST instead of WORD_ADD
     $msk_db = new view($usr);
     $msk_db->load_by_code_id(view_shared::WORD_ADD_DETAIL);
     $msk = new view_ui($msk_db->api_json());
@@ -121,7 +121,7 @@ if ($usr->id() > 0) {
             $trm->load_by_name($wrd->name());
             if ($trm->id_obj() > 0) {
                 /*
-                // TODO: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
+                // TODO Prio 3 if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
                 if (substr($id_txt, 0, strlen(chars::MAKER_FORMULA_START)) == chars::MAKER_FORMULA_START) {
                   // maybe ask for confirmation
                   // change the link type to "formula link"

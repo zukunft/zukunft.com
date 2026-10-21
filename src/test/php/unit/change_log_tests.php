@@ -164,7 +164,7 @@ class change_log_tests
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
-        // TODO add auto increment test for all mysql tables
+        // TODO Prio 2 add auto increment test for all mysql tables
 
         $t->subheader($ts . 'group name sql setup for values related to up to 16 phrases');
         $log = $t_log->log_norm();
@@ -346,13 +346,13 @@ class change_log_tests
         $t->assert($test_name, $api[json_fields::ID] ?? null, 0);
 
         // sql to load a log entry by field and row id
-        // TODO check that user-specific changes are included in the list of changes
+        // TODO Prio 2 check that user-specific changes are included in the list of changes
         $log = new change($t->usr1);
         $this->assert_sql_by_field_row($t, $db_con, $log);
 
         // sql to load a log entry by field and row id
-        // TODO check that user-specific changes are included in the list of changes
-        // TODO add tests for all value types
+        // TODO Prio 2 check that user-specific changes are included in the list of changes
+        // TODO Prio 2 add tests for all value types
         $this->assert_sql_by_field_row($t, $db_con, new change_values_prime($t->usr1));
 
         // sql to load a field by field name and table id

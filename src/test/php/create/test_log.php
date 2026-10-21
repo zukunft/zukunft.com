@@ -1374,8 +1374,8 @@ class test_log
     /**
      * @return change_log_list a list of change log entries with some dummy values
      *
-     * TODO add at least one sample for rename and delete
-     * TODO add at least one sample for verb, triple, value, formula, source, ref, view and component
+     * TODO Prio 2 add at least one sample for rename and delete
+     * TODO Prio 2 add at least one sample for verb, triple, value, formula, source, ref, view and component
      */
     function log_list_short(): change_log_list
     {
@@ -1389,8 +1389,8 @@ class test_log
     /**
      * @return change_log_list a list of change log entries with some dummy values
      *
-     * TODO add at least one sample for rename and delete
-     * TODO add at least one sample for verb, triple, value, formula, source, ref, view and component
+     * TODO Prio 2 add at least one sample for rename and delete
+     * TODO Prio 2 add at least one sample for verb, triple, value, formula, source, ref, view and component
      */
     function log_list_named(): change_log_list
     {

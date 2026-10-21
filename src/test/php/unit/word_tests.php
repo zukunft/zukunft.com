@@ -542,7 +542,7 @@ class word_tests
 
         $t->subheader($ts . 'im- and export');
 
-        // TODO check that all objects have a im and export test
+        // TODO Prio 2 check that all objects have a im and export test
         $t->assert_ex_and_import($t_wrd->word(), $t->usr_system);
         $t->assert_ex_and_import($t_wrd->word_filled(), $t->usr_system);
         $json_file = 'unit/word/second.json';

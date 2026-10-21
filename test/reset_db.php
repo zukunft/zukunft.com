@@ -5,7 +5,7 @@
     reset_db.php - drop and recreate the database.
     ------------
 
-    TODO FOR DEVELOPMENT ONLY! Remove completely before production.
+    TODO Prio 1 FOR DEVELOPMENT ONLY! Remove completely before production.
 
 
     This file is part of zukunft.com - calc with words

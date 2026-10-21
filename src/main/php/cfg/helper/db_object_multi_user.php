@@ -6,7 +6,7 @@
     -------------------------------------
 
     same as db_id_object_user but for database object that have custom prime id
-    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
+    TODO Prio 3 should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
 
     This file is part of zukunft.com - calc with words

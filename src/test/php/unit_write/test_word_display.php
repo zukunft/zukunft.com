@@ -114,7 +114,7 @@ function run_word_display_test(all_tests $t): void
     $target = $lib->trim_html($target);
     // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has follower', $result, $target_part_is_followed);
-    // TODO use complete link instead of id and name
+    // TODO Prio 2 use complete link instead of id and name
     // TODO Prio 2 activate
     //$t->assert_text_contains($t->name . ' has 2020 id', $result, $wrd_2020->id());
     //$t->assert_text_contains($t->name . ' has 2020 name', $result, words::TN_2020);
@@ -154,7 +154,7 @@ function run_word_display_test(all_tests $t): void
     */
     $target = word_names::YEAR_2020;
     $target = word_names::ZH;
-    // TODO add a sample
+    // TODO Prio 2 add a sample
     //$result = $wrd_ZH->dsp_val_list($wrd_year, $wrd_year->is_mainly(), 0);
     //$t->assert('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $result, $target, $t::TIMEOUT_LIMIT_PAGE);
     //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
@@ -180,10 +180,10 @@ function run_word_display_test(all_tests $t): void
     $t->subheader($ts . 'selector');
 
     // for testing the selector display a company selector and select ABB
-    // TODO fix second run
+    // TODO Prio 1 fix second run
     $phr_corp = $t_db->load_phrase(word_names::COMPANY, $msg);
     $phr_ZH_INS = $t_db->load_phrase(triple_names::COMPANY_ZURICH, $msg);
-    /* TODO base it on the api
+    /* TODO Prio 2 base it on the api
     $sel = new html_selector;
     $sel->form = 'test_form';
     $sel->name = 'select_company';

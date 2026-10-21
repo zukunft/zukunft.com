@@ -251,7 +251,7 @@ class user_tests
         $t->assert_sql_delete($sc, $usr_test, [sql_type::LOG]);
 
         $test_usr_list = new user_list($usr_test);
-        // TODO include all value tables
+        // TODO Prio 2 include all value tables
         $this->assert_sql_count_changes($t, $db_con, $test_usr_list);
         $this->assert_sql_count_user_rows($t, $db_con, $test_usr_list);
 
@@ -286,11 +286,11 @@ class user_tests
         $t->assert($test_name, $usr_core_api[json_fields::NAME] ?? '', users::TEST_USER_NAME);
         $test_name = 'the public core api json does not contain the email';
         $t->assert_false($test_name, key_exists(json_fields::EMAIL, $usr_core_api));
-        // negative: an ip user has no name, so the public core api json shows an empty name
+        // negative: an ip user has no name, and the api message drops the empty name
         $test_name = 'the public core api json of an ip user has no name';
         $usr_ip_core = $t_usr->user_ip();
         $usr_ip_core_api = json_decode($usr_ip_core->api_json_core([], $msg), true);
-        $t->assert($test_name, $usr_ip_core_api[json_fields::NAME], '');
+        $t->assert_false($test_name, key_exists(json_fields::NAME, $usr_ip_core_api));
         $msg->reset();
 
 

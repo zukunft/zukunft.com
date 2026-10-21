@@ -782,7 +782,7 @@ class word extends sandbox_code_id
      *
      * @param string $type the ENUM string of the fixed type
      * @returns bool true if the word has the given type
-     * TODO Switch to php 8.1 and real ENUM
+     * TODO Prio 2 Switch to php 8.1 and real ENUM
      */
     function is_type(string $type, user_message $msg): bool
     {
@@ -894,7 +894,7 @@ class word extends sandbox_code_id
     }
 
     /*
-     * TODO deprecate the following functions
+     * TODO Prio 2 deprecate the following functions
      */
 
 

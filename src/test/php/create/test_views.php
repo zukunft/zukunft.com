@@ -466,7 +466,7 @@ class test_views extends test_objects
     }
 
     /**
-     * TODO add the relevance to test the sorting
+     * TODO Prio 2 add the relevance to test the sorting
      * @return view_list with a longer list of suggested views for a word
      */
     function view_list_word_long(): view_list

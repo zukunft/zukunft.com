@@ -164,7 +164,7 @@ class sandbox_list extends list_db_write
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = $db_obj->clone_reset(true);
                     $obj_to_add->row_mapper_sandbox($db_row, $msg);
-                    // TODO check if object direct should be used to save time
+                    // TODO Prio 3 check if object direct should be used to save time
                     $this->add_obj($obj_to_add);
                     $result = true;
                 }

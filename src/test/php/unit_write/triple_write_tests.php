@@ -356,11 +356,11 @@ class triple_write_tests
         //$t_db->test_triple($msg, triple_names::COMPANY_ZURICH, verbs::PART_NAME, triple_names::CITY_ZH, triple_names::SYSTEM_TEST_EXCLUDED, triple_names::SYSTEM_TEST_EXCLUDED);
 
         $t_db->test_triple($msg, word_names::ABB, verbs::IS, word_names::COMPANY, triple_names::COMPANY_ABB);
-        // TODO check why it is possible to create a triple with the same name as a word
+        // TODO Prio 1 check why it is possible to create a triple with the same name as a word
         //$t->test_triple(w$msg, ords::TN_VESTAS, verbs::IS_A, TEST_WORD, words::TN_VESTAS, words::TN_VESTAS);
         $t_db->test_triple($msg, word_names::VESTAS, verbs::IS, word_names::COMPANY, triple_names::COMPANY_VESTAS, triple_names::COMPANY_VESTAS);
         $t_db->test_triple($msg, word_names::YEAR_2014, verbs::FOLLOW, word_names::YEAR_2013, triple_names::YEAR_2013_FOLLOW);
-        // TODO check direction
+        // TODO Prio 2 check direction
         // TODO Prio 0 activate
         //$t_db->test_triple(triple_names::INCOME_TAX, verbs::PART_NAME, triple_names::CASH_FLOW_STATEMENT, triple_names::TAXES_OF_CF);
 

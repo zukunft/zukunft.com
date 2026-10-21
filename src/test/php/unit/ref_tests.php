@@ -144,7 +144,7 @@ class ref_tests
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql delete');
-        // TODO log deleting the link by logging the change of the external link to empty
+        // TODO Prio 1 log deleting the link by logging the change of the external link to empty
         $t->assert_sql_delete($sc, $ref);
         $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 

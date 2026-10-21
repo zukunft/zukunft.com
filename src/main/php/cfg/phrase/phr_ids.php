@@ -101,7 +101,7 @@ class phr_ids
     }
 
     /**
-     * TODO check if not the id convert function needs to be used
+     * TODO Prio 2 check if not the id convert function needs to be used
      * @return trm_ids with the term ids
      */
     function trm_ids(): trm_ids

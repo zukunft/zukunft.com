@@ -81,7 +81,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 class html_base
 {
 
-    // TODO move all html const used in zukunft.com to html_names
+    // TODO Prio 2 move all html const used in zukunft.com to html_names
 
     // fixed elements
     const string TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
@@ -125,7 +125,7 @@ class html_base
     const string BS_BTN_IMPORT = 'btn-outline-secondary';
     const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
-    // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
+    // TODO Prio 3 move the user interface setting to the user page, so that he can define which UI he wants to use
     const int UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
     const string METHOD_POST = 'post';
@@ -493,7 +493,7 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        // TODO switch the view mask to a suggested related view
+        // TODO Prio 3 switch the view mask to a suggested related view
         $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $edt_id, $edt_name) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
@@ -2704,7 +2704,7 @@ class html_base
 
     /**
      * translate and create the html code for a label
-     * TODO use if if possible
+     * TODO Prio 3 use if if possible
      * @param msg_id $msg_id message id that should be translated to the text to be shown as a label
      * @param string $for the url id of the html form field
      * @return string the html code to show the label
@@ -3153,9 +3153,9 @@ class html_base
 
     /**
      *display a progress bar
-     * TODO create a auto refresh page for async processes and the HTML front end without JavaScript
-     * TODO create a db table, where the async process can drop the status
-     * TODO add the refresh frequency setting to the general and user settings
+     * TODO Prio 2 create a auto refresh page for async processes and the HTML front end without JavaScript
+     * TODO Prio 2 create a db table, where the async process can drop the status
+     * TODO Prio 3 add the refresh frequency setting to the general and user settings
      */
     function ui_progress($id, $value, $max, $text): string
     {
@@ -3170,7 +3170,7 @@ class html_base
 
     /**
      * wrap the html tag around html code
-     * TODO: to be adjusted depending on the display language
+     * TODO Prio 2 to be adjusted depending on the display language
      * @param string $txt the html code
      * @param string $lan the language code of the text
      * @return string the wrapped code

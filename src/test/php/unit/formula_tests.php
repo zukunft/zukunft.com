@@ -5,7 +5,7 @@
     test/unit/formula.php - unit testing of the formula database and map functions
     ---------------------
 
-    TODO move the sql tests to a separate class
+    TODO Prio 2 move the sql tests to a separate class
   
 
     This file is part of zukunft.com - calc with words
@@ -390,7 +390,7 @@ class formula_tests
     }
 
     /**
-     * TODO check the diff to assert_sql_user_changes
+     * TODO Prio 2 check the diff to assert_sql_user_changes
      *
      * @param test_cleanup $t the test environment
      * @param formula $frm the user sandbox object e.g. a word
