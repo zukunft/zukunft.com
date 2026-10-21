@@ -7149,6 +7149,11 @@
     \-- ref_list - section for function ref_list not yet defined that it should be set and get in /helper/data_object.ph
             p
     \-- value_list - section for function value_list is expected to be related in /helper/data_object.php
+    \-- load_values_of - section for function load_values_of is expected to be load in /helper/data_object.php
+    \-- has_values_of - section for function has_values_of not yet defined that it should be set and get in /helper/data
+            _object.php
+    \-- add_values_of - section for function add_values_of not yet defined that it should be set and get in /helper/data
+            _object.php
     \-- formula_link_list - section for function formula_link_list not yet defined that it should be set and get in /hel
             per/data_object.php
     \-- has_results_of - section for function has_results_of not yet defined that it should be set and get in /helper/da
@@ -9146,6 +9151,12 @@
         \-- data_object - set the value_list of this data object
     \-- value_list
         \-- data_object - @return value_list with the value of this data object
+    \-- load_values_of
+        \-- data_object - add the values of any of the given phrases to the value list, loaded once per request,
+    \-- has_values_of
+        \-- data_object - @param phrase_list $phr_lst the phrases of a value load
+    \-- add_values_of
+        \-- data_object - add the loaded values of a phrase list to the value list, which can hold other values already
     \-- set_formula_link_list
         \-- data_object - set the formula_link_list of this data object
     \-- formula_link_list

@@ -4,7 +4,59 @@
 
 ### calculator 
 
-...
+goal: `view.php?m=16&id=-2573` (pv lifetime balance) is created in less than 3 seconds; the
+debug=9 log shows 77 seconds, of which about 75 are spent waiting for about 250 api calls
+
+where the time goes (debug=9 log):
+- 53 s: about 170 `api/valueList/?phrase_ids=…` calls, one per cell, of only about 40 different
+  phrase id sets, e.g. `-2544,-2551,-2573,-2542` is asked more than 20 times; the first pass
+  (12.8 s → 52.2 s) runs while "calculator input" renders, the second pass (62.0 s → 76.2 s)
+  while "calculation result" renders, so every cell is loaded at least twice
+- 11 s: the 13 `api/phraseList/?k=<input name>&pd=up&px=2` calls of the input names and their
+  `valueList` calls, made three times (6.2 s, 52.7 s and 59.5 s)
+- a set that contains phrase 289 takes 1.2 s instead of 0.5 s on the first pass
+- 3.3 s: the frontend bootstrap: the components of the 195 system views (1.0 s),
+  `api/config/?1=frontend` (1.3 s) and `api/triple/?ir=1&id=2573` (1.0 s)
+- 5 s: frontend php between the calls (3.3 s before the second input name pass, about 1 s
+  after the last call of each of the two components)
+- the page is written to the cache as `db_cache_page_id 0`
+
+rules for every step:
+- one step per prompt; measure before and after with the same debug=9 url and write the two
+  times into the commit message
+- every cache entry is keyed by the complete key (all sorted phrase ids, the full name), never
+  a prefix or a hash, and by the user; a known empty answer is cached too, so it is not asked
+  again (`docs/llm/coding.md`, cache rule)
+- the double calculation check stays: the cached numbers are the numbers of this request only,
+  a save still recalculates in the backend
+- a new api parameter gets its `url_var` with the `*_HUMAN` twin, an api fixture and a unit
+  test with a positive and a negative case
+- the LLM never runs the tests; the developer runs them and the debug=9 url
+
+1. request cache for the values of a phrase id set: `data_object` keeps the value list of each
+   loaded phrase id set (key: the sorted ids), and the cell lookup asks the cache before
+   `api/valueList`, so each of the about 40 sets is loaded once; expected: 53 s → about 15 s
+2. one request cache per page: "calculator input", "calculation result" and "title
+   calculator" use the same `data_object`, so the second value pass and the second and third
+   input name pass are gone; expected: a further 15 s less
+3. load all cells in one call: the calculation plan collects every phrase id set of the page
+   first and `api/valueList` gets a new parameter for a list of phrase id sets, so the about 40
+   remaining calls become one; expected: about 15 s → below 1 s
+4. load the input names in one call: `api/phraseList` takes a list of names (`k`) instead of
+   one name per call, and the values of the found phrases come with the call of step 3
+5. find out why a value set that contains phrase 289 takes 1.2 s: read the prepared statement
+   behind `api/valueList/?phrase_ids=` and its sql fixture, list the indexes that it can use and
+   suggest the missing one; the developer checks the plan with `explain` (no temp sql script by
+   the LLM)
+6. frontend bootstrap: load the components of the system view of the request only, not of all
+   195 system views, and find out why `api/config/?1=frontend` and `api/triple/?ir=1` take more
+   than 1 s each (the other calls take 0.13 s)
+7. after steps 1 to 4 measure again and look at the remaining php time of the two components
+   (`calculator_numbers`, `calculation_table`, `formula_calc::result`): a number that is
+   calculated more than once per page is calculated once
+8. page cache: find out why the page is inserted as `db_cache_page_id 0` and whether the next
+   request of the same url gets the page from the cache; if not, fix the insert, so that a
+   second request takes less than 0.2 s
 
 ## cleanup
 

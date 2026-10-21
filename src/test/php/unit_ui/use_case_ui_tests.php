@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -725,6 +726,48 @@ class use_case_ui_tests
         $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
         $test_name = '... and a result that the cache has already is not added again';
         $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
+        // many cells and results of a calculator page ask the values of the same phrases, so the
+        // request cache loads the values of the same phrases once
+        $test_name = 'the values of phrases are not loaded if the cache has not asked them yet';
+        $zh_phr_lst = $t_phr->list_zh_ui();
+        $t->assert_false($test_name, $dto_lst->has_values_of($zh_phr_lst));
+        $test_name = '... but after their load';
+        $zh_val_lst = $t_val->value_list_zh_ui();
+        $dto_lst->add_values_of($zh_phr_lst, $zh_val_lst, $msg);
+        $t->assert_true($test_name, $dto_lst->has_values_of($zh_phr_lst));
+        $test_name = '... also if the same phrases are asked in another order';
+        $zh_reversed = new phrase_list_ui();
+        foreach (array_reverse($zh_phr_lst->lst()) as $phr) {
+            $zh_reversed->add_phrase($phr);
+        }
+        $t->assert_true($test_name, $dto_lst->has_values_of($zh_reversed));
+        $test_name = '... with the loaded values in the value list';
+        $t->assert($test_name, (string)$dto_lst->val_lst->count(), (string)$zh_val_lst->count());
+        // negative: the cache key is the complete list of phrases, so a part of the list is asked again
+        $test_name = '... but not for a part of the phrases';
+        $zh_part = new phrase_list_ui();
+        $zh_part->add_phrase($zh_phr_lst->lst()[0]);
+        $t->assert_false($test_name, $dto_lst->has_values_of($zh_part));
+        // negative: a value that the cache has already is not added a second time
+        $test_name = '... and a value that the cache has already is not added again';
+        $dto_lst->add_values_of($zh_part, $zh_val_lst, $msg);
+        $t->assert($test_name, (string)$dto_lst->val_lst->count(), (string)$zh_val_lst->count());
+        // an empty answer is kept too, so that phrases without values are not asked again
+        $test_name = 'phrases without values are not asked again';
+        $no_val_phr_lst = $t_phr->list_global_problems_ui();
+        $dto_lst->add_values_of($no_val_phr_lst, new value_list_ui(), $msg);
+        $t->assert_true($test_name, $dto_lst->has_values_of($no_val_phr_lst));
+        // negative: a new value list holds none of the asked phrases
+        $test_name = 'a new value list holds the values of no asked phrases';
+        $dto_lst->set_value_list($zh_val_lst);
+        $t->assert_false($test_name, $dto_lst->has_values_of($zh_phr_lst));
+        // negative: without the api the cache asks nothing and remembers nothing
+        $test_name = 'an offline cache loads no values';
+        $dto_off = new data_object();
+        $dto_off->online = false;
+        $dto_off->load_values_of($zh_phr_lst, $msg);
+        $t->assert_false($test_name, $dto_off->has_values_of($zh_phr_lst));
+        $msg->reset();
         // with javascript for the calculator the page gets its calculation as data and the script
         // that repeats it in the browser when an input changes (docs/llm/frontend.md)
         $lib = new library();

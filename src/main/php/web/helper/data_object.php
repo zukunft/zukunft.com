@@ -57,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::WORD . 'word_list.php';
 //include_once html_paths::WORD . 'triple_list.php';
+include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED . 'json_fields.php';
 
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
@@ -179,8 +181,12 @@ class data_object
     public value_list $val_lst {
         set(value_list $value) {
             $this->val_lst = $value;
+            // a new list holds none of the loaded values of a phrase list
+            $this->val_phr_keys = [];
         }
     }
+    // the sorted phrase ids of each phrase list whose values are in the value list (see add_values_of)
+    private array $val_phr_keys = [];
     public formula_list $frm_lst;
     // the phrases used as the to side of the "is a" triples, i.e. the categories a word can be defined as
     public phrase_list $ctg_lst;
@@ -410,6 +416,59 @@ class data_object
     function value_list(): value_list
     {
         return $this->val_lst;
+    }
+
+    /**
+     * add the values of any of the given phrases to the value list, loaded once per request,
+     * because many cells and results of a calculator page ask the values of the same phrases
+     *
+     * @param phrase_list $phr_lst the phrases whose values should be loaded
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    function load_values_of(phrase_list $phr_lst, user_message $msg): void
+    {
+        if ($this->online and !$this->has_values_of($phr_lst)) {
+            $val_lst = new value_list();
+            $val_lst->load_by_phr_lst($phr_lst, $msg);
+            // also an empty answer is kept, so that phrases without values are not asked again
+            $this->add_values_of($phr_lst, $val_lst, $msg);
+        }
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases of a value load
+     * @return bool true if the values of exactly these phrases, in any order, are in the value list
+     */
+    function has_values_of(phrase_list $phr_lst): bool
+    {
+        return array_key_exists($this->values_key($phr_lst), $this->val_phr_keys);
+    }
+
+    /**
+     * add the loaded values of a phrase list to the value list, which can hold other values already
+     *
+     * @param phrase_list $phr_lst the phrases whose values have been loaded
+     * @param value_list $val_lst the loaded values, also if empty
+     * @param user_message $msg to report a problem of the merge
+     * @return void
+     */
+    function add_values_of(phrase_list $phr_lst, value_list $val_lst, user_message $msg): void
+    {
+        $this->val_phr_keys[$this->values_key($phr_lst)] = true;
+        // add skips a value that the list has already
+        $this->val_lst->merge($val_lst, $msg);
+    }
+
+    /**
+     * @param phrase_list $phr_lst the phrases of a value load
+     * @return string all phrase ids sorted, so that the same phrases in another order give the same key
+     */
+    private function values_key(phrase_list $phr_lst): string
+    {
+        $ids = $phr_lst->ids();
+        sort($ids);
+        return implode(chars::SEPARATOR, $ids);
     }
 
     /**

@@ -154,8 +154,6 @@ class ui_list extends ui_base
     const string CALC_POSITIVE = 'positive';
     const string CALC_NEGATIVE = 'negative';
 
-    // the results whose context values this renderer has loaded, so a context is loaded once per page
-    private array $ctx_loaded = [];
     // per html id of a number how often a calculator cell of this renderer has shown it (see calculator_cell_id)
     private array $cell_counts = [];
     // per calculator cell id that this renderer has written the number and the format of the cell
@@ -1944,13 +1942,10 @@ class ui_list extends ui_base
      */
     private function add_field_values(phrase $phr, data_object $dto, user_message $msg): void
     {
-        if ($dto->online and $dto->val_lst->get_by_names([$phr->name()]) == null) {
+        if ($dto->val_lst->get_by_names([$phr->name()]) == null) {
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($phr);
-            $val_lst = new value_list();
-            if ($val_lst->load_by_phr_lst($phr_lst, $msg)) {
-                $dto->val_lst->merge($val_lst, $msg);
-            }
+            $dto->load_values_of($phr_lst, $msg);
         }
     }
 
@@ -2319,17 +2314,15 @@ class ui_list extends ui_base
     private function add_context_values(result $res, data_object $dto, user_message $msg): void
     {
         $ctx = $res->src_grp?->phr_lst();
-        if ($dto->online and $ctx != null and !in_array($res->id(), $this->ctx_loaded)) {
-            $this->ctx_loaded[] = $res->id();
+        if ($ctx != null) {
             $phr_lst = new phrase_list();
             foreach ($ctx->lst() as $phr) {
                 if (!$this->is_marker($phr, $msg)) {
                     $phr_lst->add_phrase($phr);
                 }
             }
-            $val_lst = new value_list();
-            if (!$phr_lst->is_empty() and $val_lst->load_by_phr_lst($phr_lst, $msg)) {
-                $dto->val_lst->merge($val_lst, $msg);
+            if (!$phr_lst->is_empty()) {
+                $dto->load_values_of($phr_lst, $msg);
             }
         }
     }
