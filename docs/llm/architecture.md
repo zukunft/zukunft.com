@@ -507,6 +507,12 @@ of the full word wins. So use the spelled-out object name in `load_by_*` and
 similar verbs (`load_by_phrase`, not `load_by_phr`); reserve the abbreviations
 for variables.
 
+**Name a function by the specific thing it does** — `url_var::show_variance($url)`,
+not a generic `url_var::flag($url, url_var::DISPLAY_LIST_VARIANCE)`. The call site
+then reads as the purpose, and a code search for the purpose finds every caller
+at once. A generic helper is only added when several specific functions share
+its body, and then it stays behind them.
+
 **Name a thing by the broadest concept that already covers its parts** — don't
 enumerate items that a single term already implies. A list shown "without
 subtitles" needs no "and symbols" suffix because the subtitle category already

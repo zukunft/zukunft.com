@@ -114,14 +114,14 @@ class localhost_ui_tests
         // TODO Prio 0 activate
         //$t->assert_text_contains($test_name, $page, $mtr->txt(msg_id::FORM_VERB_ADD_TITLE), test_base::TIMEOUT_LOCALHOST);
 
-        // the start page with the main columns and the ranges of its table shows the real
+        // the start page with the main columns and the variance of its table shows the real
         // ranking data imported before this test, which the unit fixtures of the start page do
         // not carry, so this snapshot is the only one of views_by_id that is fetched from the pod
-        $test_name = 'start page with the main columns and ranges by url matches the snapshot';
+        $test_name = 'start page with the main columns and variance by url matches the snapshot';
         $url = api::URL_DEV . views::START_ID
             . url_var::ADD . url_var::DISPLAY_LIST_SIZE . url_var::EQ . Config::LIMIT_MORE_LIST
             . url_var::ADD . url_var::DISPLAY_LIST_COLUMNS . url_var::EQ . value_list::COLUMN_TIERS_EX_MINOR
-            . url_var::ADD . url_var::DISPLAY_LIST_RANGE . url_var::EQ . url_var::TRUE;
+            . url_var::ADD . url_var::DISPLAY_LIST_VARIANCE . url_var::EQ . url_var::TRUE;
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = (string)file_get_contents($url);
         $sys->times->switch();

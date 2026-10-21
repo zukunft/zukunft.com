@@ -61,6 +61,10 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
+// the frontend path consts for the http scripts that the never called list scans (mirrors test/test_const.php)
+const WEB_CONST = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
+include_once WEB_CONST . 'paths.php';
+
 // set the path const for the test code (mirrors test/test_const.php)
 const TEST_PATH = paths::SRC . 'test' . DIRECTORY_SEPARATOR;
 const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;

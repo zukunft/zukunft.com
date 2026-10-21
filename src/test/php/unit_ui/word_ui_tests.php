@@ -731,6 +731,9 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $simple_html, $back_mask);
         $test_name = '... and the add button is a save submit';
         $t->assert_text_contains($test_name, $simple_html, 'name="' . url_var::POST_SUBMIT . '"');
+        // negative: a new word has no id yet, so the simple add form never posts one
+        $test_name = 'the simple add form does not post an id';
+        $t->assert_text_not_contains($test_name, $simple_form->form_word_add_simple(), 'name="' . url_var::ID . '"');
 
         $t->subheader($ts . 'url mapper');
 

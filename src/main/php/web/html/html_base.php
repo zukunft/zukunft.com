@@ -2815,14 +2815,24 @@ class html_base
      * @param float|null $max the highest number accepted, null for no limit
      * @param float|null $step the increment of the number, null for any number
      * @param string $form_name the form that the input joins by its form attribute, '' for the surrounding form
+     * @param int|null $decimals the minimum decimals of the shown number e.g. 2 for a share, null for the number as it is
      * @return string the html code of the number input
      */
-    function input_number(string $name, ?float $value, ?float $min, ?float $max, ?float $step, string $form_name = ''): string
+    function input_number(
+        string $name,
+        ?float $value,
+        ?float $min,
+        ?float $max,
+        ?float $step,
+        string $form_name = '',
+        ?int   $decimals = null
+    ): string
     {
         $attr = ' ' . self::TYPE . '="number" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
         foreach (['value' => $value, 'min' => $min, 'max' => $max, 'step' => $step] as $key => $num) {
             if ($num !== null) {
-                $attr .= ' ' . $key . '="' . $this->number_attr($num) . '"';
+                // only the shown number gets the decimals e.g. 0.90 for a share
+                $attr .= ' ' . $key . '="' . $this->number_value($num, $key == 'value' ? $decimals : null) . '"';
             }
         }
         if ($form_name != '') {
@@ -2832,12 +2842,35 @@ class html_base
     }
 
     /**
+     * the number as an html attribute needs it; the decimals are a minimum, so that a field or an
+     * option never holds a rounded copy of the number, which would be the input of the calculation
+     *
      * @param float $num a number
-     * @return string the number without trailing zeros and with a point, as an html attribute needs it
+     * @param int|null $decimals the minimum number of decimals e.g. 2 for a share, null for the number as it is
+     * @return string the number with a point, with at least the decimals e.g. "1.00" and "0.855",
+     *                or else without trailing zeros e.g. "0.5"
      */
-    private function number_attr(float $num): string
+    function number_value(float $num, ?int $decimals = null): string
     {
-        return rtrim(rtrim(sprintf('%.12F', $num), '0'), '.');
+        $result = rtrim(rtrim(sprintf('%.12F', $num), '0'), '.');
+        if ($decimals !== null and $this->decimals($result) < $decimals) {
+            $result = number_format($num, $decimals, '.', '');
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $num_txt a number with a point and without trailing zeros e.g. "0.855"
+     * @return int the number of decimals e.g. 3, 0 for a number without a point
+     */
+    private function decimals(string $num_txt): int
+    {
+        $pos = strpos($num_txt, '.');
+        $result = 0;
+        if ($pos !== false) {
+            $result = strlen($num_txt) - $pos - 1;
+        }
+        return $result;
     }
 
     function div_form(string $text, string $style = ''): string

@@ -349,6 +349,14 @@ class component_tests
         $msk_html = $form->form_view($cmp_ui, views::COMPONENT_ADD, $msg_ui, $t_msk->view_list_ui());
         $t->assert_text_contains($test_name, $msk_html, 'name="' . url_var::VIEW . '"');
         $t->assert_text_not_contains($test_name, $lnk_html, 'name="' . url_var::VIEW . '"');
+        // negative: each selector posts only its own url var
+        $test_name = 'the view selector of the form does not post the view to link';
+        $t->assert_text_not_contains($test_name,
+            $form->form_view($cmp_ui, views::COMPONENT_ADD, $msg_ui, $t_msk->view_list_ui()),
+            'name="' . url_var::COMPONENT_LINK . '"');
+        $test_name = 'the linked views of a component do not post the view of the form';
+        $lnk_only_html = $form->form_table_linked_view($cmp_ui, views::COMPONENT_ADD, $msg_ui, $t_msk->view_list_ui());
+        $t->assert_text_not_contains($test_name, $lnk_only_html, 'name="' . url_var::VIEW . '"');
 
         // the ui message links posted by the component form are mapped to the frontend object;
         // like every edit form the url carries the id of the changed component, because an url

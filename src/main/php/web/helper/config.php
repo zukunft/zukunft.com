@@ -40,8 +40,10 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::MODEL_HELPER . 'system_object.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
@@ -53,7 +55,9 @@ include_once html_paths::SHARED . 'url_var.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -75,6 +79,14 @@ class config extends value_list
     const int LIMIT_SEARCH_LIST = shared_config::LIMIT_SEARCH_LIST;
     const int LIMIT_PHRASE_PRELOAD = shared_config::LIMIT_PHRASE_PRELOAD;
     const string DEFAULT_FRONTEND_TYPE = shared_config::DEFAULT_FRONTEND_TYPE;
+    // the config.yaml key of each precision tier (number format > digits) with its fallback number of digits
+    const array DIGITS_FALLBACK = [
+        words::DEFAULT => shared_config::DEFAULT_DIGITS,
+        words::PRECISE => shared_config::PRECISE_DIGITS,
+        triples::VERY_PRECISE => shared_config::VERY_PRECISE_DIGITS,
+        words::ROUGH => shared_config::ROUGH_DIGITS,
+        triples::VERY_ROUGH => shared_config::VERY_ROUGH_DIGITS,
+    ];
 
 
     /*
@@ -111,6 +123,20 @@ class config extends value_list
     function percent_decimals(): int
     {
         return shared_config::DEFAULT_PERCENT_DECIMALS;
+    }
+
+    /**
+     * the full precision tier has no number of digits, because it shows all decimals
+     *
+     * @param string $tier the config.yaml key of the precision tier e.g. words::PRECISE
+     * @return int the number of digits shown of a number of the tier (config.yaml number format > digits),
+     *             the shared config const of the tier if config.yaml has none, and of the default tier for an unknown tier
+     */
+    function digits(string $tier = words::DEFAULT): int
+    {
+        $tier = array_key_exists($tier, self::DIGITS_FALLBACK) ? $tier : words::DEFAULT;
+        $val = $this->get_by_names_specific([triples::NUMBER_FORMAT, words::DIGITS, $tier]);
+        return $val?->number() === null ? self::DIGITS_FALLBACK[$tier] : (int)$val->number();
     }
 
     function dec_point(): string
@@ -182,6 +208,26 @@ class config extends value_list
             $num = $default;
         }
         return $num;
+    }
+
+    /**
+     * the config value with all the names and the fewest other phrases, because the path of a
+     * value may contain a name of a sibling key too e.g. "default" in "user > default > frontend"
+     * of every precision tier, so the first match would depend on the order of the list
+     *
+     * @param array $names the phrase names that the config value must have
+     * @return value|null the most specific config value or null if no value has all the names
+     */
+    private function get_by_names_specific(array $names): ?value
+    {
+        $result = null;
+        foreach ($this->lst() as $val) {
+            if ($val->match_all($names) and ($result == null
+                    or count($val->phr_lst()->names()) < count($result->phr_lst()->names()))) {
+                $result = $val;
+            }
+        }
+        return $result;
     }
 
 }

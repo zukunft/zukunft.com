@@ -777,6 +777,28 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list the request cache that knows the symbol "share" of the percent unit share (ratio)
+     */
+    function list_share_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_share()->phrase());
+        $lst->add($t_trp->share_ratio()->phrase());
+        $lst->add($t_trp->share_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbol of the share unit
+     */
+    function list_share_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_share_symbol_cache());
+    }
+
+    /**
      * @return phrase_list_ui the frontend request cache that knows the symbol of the factor
      */
     function list_factor_symbol_cache_ui(): phrase_list_ui

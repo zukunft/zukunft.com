@@ -141,6 +141,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -189,6 +192,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "citizen participation",
       "from": "participation",
@@ -435,12 +450,12 @@
     {"words": ["voter turnout", "world", "2023", "percent"], "number": "0.555", "source": "International IDEA (2024) The Global State of Democracy 2024", "description": "the global average percentage of the voting age population who vote, 10 percentage points less than in 2008; not attributed to the lack of citizen participation by the source"},
     {"words": ["election result rejection", "world", "2020-2024", "percent"], "number": "0.2", "source": "International IDEA (2024) The Global State of Democracy 2024", "description": "roughly one in five elections in which at least one losing candidate or party rejected the result; not attributed to the lack of citizen participation by the source"},
     {"words": ["public overspending due to citizen participation", "mandatory fiscal referendum", "Swiss canton", "1980-1998", "percent"], "number": "0.19", "source": "Feld & Matsusaka (2003)", "description": "the median canton with a mandatory referendum on new spending above 2.5 million Swiss francs spends 19 percent less than a canton without it"},
-    {"words": ["budget misallocation due to citizen participation", "participatory budgeting", "health", "sanitation", "budget share", "Brazil", "1990-2004", "percent", "low"], "number": "0.02", "source": "Gonçalves (2014)", "description": "participatory budgeting raises the share of the municipal budget spent on health and sanitation by 2 to 3 percentage points, i.e. this share is lower without it"},
-    {"words": ["budget misallocation due to citizen participation", "participatory budgeting", "health", "sanitation", "budget share", "Brazil", "1990-2004", "percent", "high"], "number": "0.03", "source": "Gonçalves (2014)", "description": "3 percentage points, 20 to 30 percent of the sample mean of this budget share in 1990"},
-    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "infant mortality per 1000 live births", "Brazil", "1990-2004", "low"], "number": "1", "source": "Gonçalves (2014)", "description": "the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants"},
-    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "infant mortality per 1000 live births", "Brazil", "1990-2004", "high"], "number": "2", "source": "Gonçalves (2014)", "description": "the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants"},
-    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "Brazil", "1990-2004", "percent", "low"], "number": "0.05", "source": "Gonçalves (2014)", "description": "the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990"},
-    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "Brazil", "1990-2004", "percent", "high"], "number": "0.1", "source": "Gonçalves (2014)", "description": "the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990"},
+    {"words": ["budget misallocation due to citizen participation", "participatory budgeting", "health", "sanitation", "budget share", "Brazil", "1990-2004", "percent", "variance low (system)"], "number": "0.02", "source": "Gonçalves (2014)", "description": "participatory budgeting raises the share of the municipal budget spent on health and sanitation by 2 to 3 percentage points, i.e. this share is lower without it"},
+    {"words": ["budget misallocation due to citizen participation", "participatory budgeting", "health", "sanitation", "budget share", "Brazil", "1990-2004", "percent", "variance high (system)"], "number": "0.03", "source": "Gonçalves (2014)", "description": "3 percentage points, 20 to 30 percent of the sample mean of this budget share in 1990"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "infant mortality per 1000 live births", "Brazil", "1990-2004", "variance low (system)"], "number": "1", "source": "Gonçalves (2014)", "description": "the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "infant mortality per 1000 live births", "Brazil", "1990-2004", "variance high (system)"], "number": "2", "source": "Gonçalves (2014)", "description": "the municipalities that adopted participatory budgeting registered a drop of 1 to 2 infant deaths for every 1000 infants"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "Brazil", "1990-2004", "percent", "variance low (system)"], "number": "0.05", "source": "Gonçalves (2014)", "description": "the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990"},
+    {"words": ["infant mortality due to citizen participation", "participatory budgeting", "Brazil", "1990-2004", "percent", "variance high (system)"], "number": "0.1", "source": "Gonçalves (2014)", "description": "the drop of the infant mortality with participatory budgeting is about 5 to 10 percent of the infant mortality rate in 1990"},
     {"words": ["life satisfaction loss due to citizen participation", "direct democracy", "Switzerland", "1992", "percentage point per index point"], "number": "2.8", "source": "Frey & Stutzer (2000)", "description": "one point less on the index of the direct democratic rights of a canton (1 to 6) lowers the share of the persons with a very high satisfaction with life by 2.8 percentage points"},
     {"words": ["life satisfaction loss due to citizen participation", "direct democracy", "Geneva", "Basel-Landschaft", "1992", "percent"], "number": "0.11", "source": "Frey & Stutzer (2000)", "description": "the residents of Geneva (index 1.75) have an 11 percentage points lower probability to be completely satisfied with their life than the residents of Basel-Landschaft (index 5.69)"},
     {"words": ["tax evasion due to citizen participation", "direct democracy", "Swiss canton", "percent"], "number": "0.08", "source": "Times Higher Education (1997) More say, less evasion", "description": "the tax cheating in the Swiss cantons with direct democracy is 8 percent lower than in the cantons with a more traditional representative democracy; a secondary report, the peer-reviewed Feld & Frey (2002) state 1500 Swiss francs per taxpayer less tax evasion in the direct democratic cantons"}

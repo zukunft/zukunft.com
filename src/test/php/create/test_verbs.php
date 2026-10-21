@@ -156,6 +156,14 @@ class test_verbs extends test_objects
     }
 
     /**
+     * @return verb the "must be one of" verb of the qualifier triples (e.g. "share (ratio)")
+     */
+    function verb_must_be_one_of(): verb
+    {
+        return new verb(verbs::MUST_BE_ONE_OF_ID, verbs::MUST_BE_ONE_OF_NAME, verbs::MUST_BE_ONE_OF);
+    }
+
+    /**
      * @return verb the "in" verb used by unit prefix triples (e.g. "in USD")
      */
     function verb_in(): verb

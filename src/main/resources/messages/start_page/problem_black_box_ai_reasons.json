@@ -193,6 +193,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -245,6 +248,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "artificial intelligence",
       "from": "intelligence",
@@ -477,12 +492,12 @@
     {"words": ["AI incident due to black-box AI", "world", "2024"], "number": "233", "source": "Stanford AI Index 2026 Responsible AI", "description": "the AI incidents reported to the AI Incident Database; all reported incidents of deployed AI systems, not only of black box systems"},
     {"words": ["AI incident due to black-box AI", "world", "2025"], "number": "362", "source": "Stanford AI Index 2026 Responsible AI", "description": "the AI incidents reported to the AI Incident Database; all reported incidents of deployed AI systems, not only of black box systems"},
     {"words": ["mistake due to black-box AI", "work", "employee", "world", "2025", "percent"], "number": "0.56", "source": "Gillespie et al. (2025) Trust, attitudes and use of AI", "description": "the share of the employees in 47 countries who report that they have made mistakes in their work due to AI"},
-    {"words": ["compliance cost due to black-box AI", "high-risk AI", "European Union", "2025", "million", "EUR", "low"], "number": "100", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the total aggregate cost of compliance by 2025; the source states no centre value"},
-    {"words": ["compliance cost due to black-box AI", "high-risk AI", "European Union", "2025", "million", "EUR", "high"], "number": "500", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the total aggregate cost of compliance by 2025; the source states no centre value"},
-    {"words": ["compliance cost due to black-box AI", "high-risk AI", "investment", "European Union", "percent", "low"], "number": "0.04", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the compliance cost amounts to up to 4-5 percent of the investment in high-risk AI"},
-    {"words": ["compliance cost due to black-box AI", "high-risk AI", "investment", "European Union", "percent", "high"], "number": "0.05", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the compliance cost amounts to up to 4-5 percent of the investment in high-risk AI"},
-    {"words": ["compliance cost due to black-box AI", "verification cost", "high-risk AI", "investment", "European Union", "percent", "low"], "number": "0.02", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the verification costs could amount to another 2-5 percent of the investment in high-risk AI"},
-    {"words": ["compliance cost due to black-box AI", "verification cost", "high-risk AI", "investment", "European Union", "percent", "high"], "number": "0.05", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the verification costs could amount to another 2-5 percent of the investment in high-risk AI"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "European Union", "2025", "million", "EUR", "variance low (system)"], "number": "100", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the total aggregate cost of compliance by 2025; the source states no centre value"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "European Union", "2025", "million", "EUR", "variance high (system)"], "number": "500", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the total aggregate cost of compliance by 2025; the source states no centre value"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "investment", "European Union", "percent", "variance low (system)"], "number": "0.04", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the compliance cost amounts to up to 4-5 percent of the investment in high-risk AI"},
+    {"words": ["compliance cost due to black-box AI", "high-risk AI", "investment", "European Union", "percent", "variance high (system)"], "number": "0.05", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the compliance cost amounts to up to 4-5 percent of the investment in high-risk AI"},
+    {"words": ["compliance cost due to black-box AI", "verification cost", "high-risk AI", "investment", "European Union", "percent", "variance low (system)"], "number": "0.02", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the verification costs could amount to another 2-5 percent of the investment in high-risk AI"},
+    {"words": ["compliance cost due to black-box AI", "verification cost", "high-risk AI", "investment", "European Union", "percent", "variance high (system)"], "number": "0.05", "source": "European Commission (2021) AI Act impact assessment SWD(2021) 85", "description": "the verification costs could amount to another 2-5 percent of the investment in high-risk AI"},
     {"words": ["childcare benefits scandal", "victim", "parent", "Netherlands", "2025", "person"], "number": "43753", "source": "UHT (2026) 22e Voortgangsrapportage Hersteloperatie Toeslagen", "description": "the parents recognised as victims until 31 December 2025; not attributed to black-box AI by the source"},
     {"words": ["childcare benefits scandal", "compensation", "average", "parent", "Netherlands", "2025", "EUR"], "number": "40400", "source": "UHT (2026) 22e Voortgangsrapportage Hersteloperatie Toeslagen", "description": "the average compensation granted to a recognised parent until 31 December 2025, at least 30000 EUR; not attributed to black-box AI by the source"},
     {"words": ["childcare benefits scandal", "budget", "Netherlands", "2020-2028", "billion", "EUR"], "number": "11.287", "source": "UHT (2026) 22e Voortgangsrapportage Hersteloperatie Toeslagen", "description": "the budget processed and reserved for the recovery operation from 2020 to 2028, 11287 million EUR after the second supplementary budget 2025; not attributed to black-box AI by the source"}

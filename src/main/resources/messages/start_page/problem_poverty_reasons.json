@@ -131,6 +131,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -168,6 +171,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "child poverty",
       "from": "poverty",
@@ -366,8 +381,8 @@
   "values": [
     {"words": ["social cost due to poverty", "child poverty", "United States", "2015", "billion", "EUR"], "number": "952.4", "source": "McLaughlin & Rank (2018)", "description": "1029.8 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["social cost due to poverty", "child poverty", "United States", "2015", "percent", "GDP"], "number": "0.054", "source": "McLaughlin & Rank (2018)"},
-    {"words": ["social cost due to poverty", "child poverty", "United States", "annual", "billion", "EUR", "low"], "number": "739.8", "source": "National Academies (2019) A Roadmap to Reducing Child Poverty", "description": "800 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["social cost due to poverty", "child poverty", "United States", "annual", "billion", "EUR", "high"], "number": "1017.3", "source": "National Academies (2019) A Roadmap to Reducing Child Poverty", "description": "1100 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to poverty", "child poverty", "United States", "annual", "billion", "EUR", "variance low (system)"], "number": "739.8", "source": "National Academies (2019) A Roadmap to Reducing Child Poverty", "description": "800 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to poverty", "child poverty", "United States", "annual", "billion", "EUR", "variance high (system)"], "number": "1017.3", "source": "National Academies (2019) A Roadmap to Reducing Child Poverty", "description": "1100 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["social cost due to poverty", "public", "United Kingdom", "2016", "billion", "EUR"], "number": "89.68", "source": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty", "description": "78 billion GBP per year of public spending and lost tax revenue at the ECB 2023 average of 0.86979 GBP per EUR"},
     {"words": ["social cost due to poverty", "public", "United Kingdom", "2016", "percent", "GDP"], "number": "0.04", "source": "Joseph Rowntree Foundation (2016) Counting the cost of UK poverty", "description": "78 billion GBP per year of public spending and lost tax revenue"},
     {"words": ["crime due to poverty", "social cost", "child poverty", "United States", "2015", "percent"], "number": "0.39", "source": "McLaughlin & Rank (2018)", "description": "the share of crime and incarceration in the cost of the child poverty"},
@@ -383,8 +398,8 @@
     {"words": ["stunting due to poverty", "child", "world", "2022", "percent"], "number": "0.223", "source": "UNICEF WHO World Bank (2023) Joint Child Malnutrition Estimates", "description": "share of the children under 5"},
     {"words": ["stunting due to poverty", "GDP per capita change", "world", "percent"], "number": "-0.07", "source": "Galasso & Wagstaff (2019)", "description": "the average income loss per person caused by the workers who were stunted as children"},
     {"words": ["hunger due to poverty", "world", "2023", "million", "person"], "number": "733", "source": "FAO et al. (2024) SOFI 2024"},
-    {"words": ["hunger due to poverty", "world", "2023", "million", "person", "low"], "number": "713", "source": "FAO et al. (2024) SOFI 2024"},
-    {"words": ["hunger due to poverty", "world", "2023", "million", "person", "high"], "number": "757", "source": "FAO et al. (2024) SOFI 2024"},
+    {"words": ["hunger due to poverty", "world", "2023", "million", "person", "variance low (system)"], "number": "713", "source": "FAO et al. (2024) SOFI 2024"},
+    {"words": ["hunger due to poverty", "world", "2023", "million", "person", "variance high (system)"], "number": "757", "source": "FAO et al. (2024) SOFI 2024"},
     {"words": ["household air pollution due to poverty", "cooking", "world", "billion", "person"], "number": "2.1", "source": "WHO Household air pollution fact sheet", "description": "people cooking on open fires or inefficient stoves"},
     {"words": ["household air pollution due to poverty", "deaths", "world", "2021", "million", "person"], "number": "2.9", "source": "WHO Household air pollution fact sheet"},
     {"words": ["unsafe WASH due to poverty", "deaths", "world", "2019", "million", "person"], "number": "1.4", "source": "WHO (2023) Burden of disease attributable to unsafe WASH"},

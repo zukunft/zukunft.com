@@ -245,14 +245,14 @@ enum messages: string
     case MORE = 'more';
     case AND_MORE = '... more';
     // the tooltip and the entries of the "..." header menu of a table, which selects the
-    // column tiers to show and whether each number is shown with its probability range
+    // column tiers to show and whether each number is shown with its variance
     case TABLE_COLUMNS_TIP = 'table_columns_tip';
     case TABLE_COLUMNS_MAYOR = 'table_columns_mayor';
     case TABLE_COLUMNS_MAIN = 'table_columns_main';
     case TABLE_COLUMNS_MINOR = 'table_columns_minor';
     case TABLE_COLUMNS_ALL = 'table_columns_all';
-    // added to the entry above for the same columns with the probability range of each number
-    case TABLE_COLUMNS_WITH_RANGE = 'table_columns_with_range';
+    // added to the entry above for the same columns with the variance of each number
+    case TABLE_COLUMNS_WITH_VARIANCE = 'table_columns_with_variance';
     // the sub headers of the "..." menu and the entries that select the form of the table (table_forms)
     case TABLE_MENU_COLUMNS = 'table_menu_columns';
     case TABLE_MENU_AS = 'table_menu_as';

@@ -143,6 +143,18 @@ class component_link_tests
         $lnk_typ_html = $form->form_component_link_type($lnk_ui, views::COMPONENT_LINK_ADD, $ui_sys->typ_lst_cache);
         $t->assert_text_contains($test_name, $lnk_typ_html, 'name="' . url_var::COMPONENT_LINK_TYPE . '"');
         $t->assert_text_not_contains($test_name, $pos_html, 'name="' . url_var::COMPONENT_LINK_TYPE . '"');
+        // negative: the link type field posts only its own url var, and a link without a position
+        // type has no default to preselect, so the selector asks the user to pick one
+        $test_name = 'the link type field does not post the position type';
+        $t->assert_text_not_contains($test_name,
+            $form->form_component_link_type($lnk_ui, views::COMPONENT_LINK_ADD, $ui_sys->typ_lst_cache),
+            'name="' . url_var::POSITION_TYPE . '"');
+        $test_name = 'a link without a position type preselects the please select entry';
+        $lnk_plain_ui = new component_link_ui($t_cmp->component_link()->api_json());
+        // every test fixture has a position type, so it is removed for the test
+        $lnk_plain_ui->pos_type_id = null;
+        $pos_plain_html = $form->form_component_pos_type($lnk_plain_ui, views::COMPONENT_LINK_ADD, $ui_sys->typ_lst_cache);
+        $t->assert_text_contains($test_name, $pos_plain_html, '<option value="0" selected>');
 
     }
 

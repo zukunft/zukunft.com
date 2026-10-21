@@ -477,13 +477,13 @@ class component_exe extends component
             component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_PHRASES_RELATED_EX_SUBTITLE => $list->phrases_related_ex_subtitle($dbo, $msg, $cfg->phrase_list(), $cfg, $test_mode, $url_arr),
             component_types::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo, $msg, $cfg, $url_arr),
-            component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $msg, $cfg),
-            component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $msg, $cfg),
-            component_types::LIST_VALUES_SIMILAR => $list->values_similar($dbo, $msg, $cfg, $style_id),
-            component_types::LIST_RESULTS_BY_VALUE => $list->results_by_value($dbo, $msg, $cfg),
-            component_types::LIST_VALUES_USED => $list->values_used($dbo, $msg, $style_id),
+            component_types::LIST_VALUES_BY_TRIPLE => $list->values_by_triple($dbo, $msg, $cfg, null, $url_arr),
+            component_types::LIST_VALUES_BY_SOURCE => $list->values_by_source($dbo, $msg, $cfg, null, $url_arr),
+            component_types::LIST_VALUES_SIMILAR => $list->values_similar($dbo, $msg, $cfg, $style_id, $url_arr),
+            component_types::LIST_RESULTS_BY_VALUE => $list->results_by_value($dbo, $msg, $cfg, $url_arr),
+            component_types::LIST_VALUES_USED => $list->values_used($dbo, $msg, $style_id, $url_arr),
             component_types::LIST_FORMULAS_USED => $list->formulas_used($dbo, $msg),
-            component_types::LIST_RESULTS_USED => $list->results_used($dbo, $msg),
+            component_types::LIST_RESULTS_USED => $list->results_used($dbo, $msg, $url_arr),
             component_types::LIST_FORMULAS_OF_VERB => $list->formula_list($dbo, $msg, $cfg),
             component_types::LIST_FORMULAS_OF_PARENTS => $list->formulas_of_parents($dbo),
             component_types::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo, $msg, $cfg, $test_mode),
@@ -551,7 +551,7 @@ class component_exe extends component
             component_types::SOURCE_URL_LINK => $form->show_source_url($dbo),
             component_types::REFERENCE_NAME => $base->reference_name($dbo),
             component_types::LANGUAGE_NAME => $base->language_name($dbo),
-            component_types::RESULTS_RELATED => $list->results_related($dbo, $msg, $cfg),
+            component_types::RESULTS_RELATED => $list->results_related($dbo, $msg, $cfg, $url_arr),
             component_types::PHRASES_RELATED => $list->phrases_related($msg, $dbo, $cfg),
             component_types::BUTTON_REQUEST => $form->button_request(),
             component_types::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $log_lst, $msg, $url_arr, $test_mode),
@@ -571,9 +571,9 @@ class component_exe extends component
 
             // table
             component_types::VALUES_ALL => $base->all(),
-            component_types::VALUES_RELATED => $list->values_by_word($dbo, $msg, $cfg, $style_id),
-            component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id),
-            component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg),
+            component_types::VALUES_RELATED => $list->values_by_word($dbo, $msg, $cfg, $style_id, $url_arr),
+            component_types::VALUES_MOST_RELEVANT => $list->values_most_relevant($dbo, $msg, $cfg, $style_id, $url_arr),
+            component_types::VALUES_IN_COLUMNS => $list->values_in_columns($dbo, $msg, $cfg, $url_arr),
             component_types::TABLE_WITH_RELATED_COLUMNS => $list->table_with_related_columns(
                 $this->table_phrase($dbo, $cfg, $msg), $msg, $cfg, false, true, $url_arr),
             component_types::TABLE_WITH_OWN_COLUMNS => $list->table_with_related_columns(
@@ -595,7 +595,7 @@ class component_exe extends component
             component_types::FORM_LIST_FORMULAS => $list->formulas($dbo, $msg, $cfg, $test_mode, $url_arr),
             // the formula results type shows the results related to the given word or term
             // like the results_related type, so the same renderer is used for both
-            component_types::FORMULA_RESULTS => $list->results_related($dbo, $msg, $cfg),
+            component_types::FORMULA_RESULTS => $list->results_related($dbo, $msg, $cfg, $url_arr),
             component_types::WORDS_DOWN => $foaf->word_children($dbo),
             component_types::WORDS_UP => $foaf->word_parents($dbo),
 

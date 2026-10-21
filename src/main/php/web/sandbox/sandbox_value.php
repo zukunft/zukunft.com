@@ -530,7 +530,7 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * the number as a link without the quality mark, e.g. for a bound of a probability range,
+     * the number as a link without the quality mark, e.g. for a variance bound,
      * which has the quality of its centre value, so that the mark is shown only once behind
      * the centre value (see value_list::cell); not named value_link, because value::value_link
      * links the class name page and would overwrite it
@@ -760,7 +760,13 @@ class sandbox_value extends sandbox
      */
     function percent_symbol(user_message $msg): string
     {
-        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name($msg) ?? '';
+        $pct_phr = $this->grp->phr_lst()->percent_phrase($msg);
+        $result = '';
+        // the symbol of a ratio unit e.g. "share" is not for the number times 100
+        if ($pct_phr != null and !$pct_phr->is_ratio_unit($msg)) {
+            $result = $pct_phr->symbol_name($msg);
+        }
+        return $result;
     }
 
     /**

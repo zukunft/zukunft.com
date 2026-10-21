@@ -357,6 +357,30 @@
     },
     {
       "name": "sign"
+    },
+    {
+      "name": "kWh/a"
+    },
+    {
+      "name": "kWh/kWp·a"
+    },
+    {
+      "name": "duration unit"
+    },
+    {
+      "name": "a"
+    },
+    {
+      "name": "ratio"
+    },
+    {
+      "name": "maximum"
+    },
+    {
+      "name": "g/kWh"
+    },
+    {
+      "name": "kg/kWh"
     }
   ],
   "triples": [
@@ -944,13 +968,6 @@
       "to": "calculator label"
     },
     {
-      "name": "PV embodied intensity label",
-      "description": "PV life-cycle emissions",
-      "from": "PV embodied intensity",
-      "verb": "has a",
-      "to": "calculator label"
-    },
-    {
       "name": "day share label",
       "description": "Load share during PV hours",
       "from": "day share",
@@ -1266,14 +1283,21 @@
       "to": "PV installation assumption PV yield"
     },
     {
-      "name": "PV installation assumption PV embodied intensity",
+      "name": "PV installation assumption PV in Switzerland",
       "from": "PV installation assumptions",
       "verb": "has a",
-      "to": "PV embodied intensity"
+      "to": "PV in Switzerland"
     },
     {
-      "name": "PV installation assumption PV embodied intensity order",
-      "from": "PV installation assumption PV embodied intensity",
+      "name": "PV installation assumption PV in Switzerland label",
+      "description": "PV life-cycle emissions",
+      "from": "PV installation assumption PV in Switzerland",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "PV installation assumption PV in Switzerland order",
+      "from": "PV installation assumption PV in Switzerland",
       "verb": "is follower of",
       "to": "PV installation assumption lifetime"
     },
@@ -1294,7 +1318,7 @@
       "name": "PV installation assumption consumption mix order",
       "from": "PV installation assumption consumption mix",
       "verb": "is follower of",
-      "to": "PV installation assumption PV embodied intensity"
+      "to": "PV installation assumption PV in Switzerland"
     },
     {
       "name": "PV installation assumption replacement mix",
@@ -1816,6 +1840,149 @@
       "from": "PV installation detail column consumption mix",
       "verb": "with",
       "to": "gram per kWh"
+    },
+    {
+      "name": "kilowatthours per year",
+      "description": "the unit of an annual electricity amount e.g. the household consumption",
+      "from": "kWh",
+      "verb": "per",
+      "to": "year",
+      "type": "measure_unit"
+    },
+    {
+      "from": "kWh/a",
+      "verb": "is symbol for",
+      "to": "kilowatthours per year"
+    },
+    {
+      "name": "kilowatthours per kilowatt peak and year",
+      "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
+      "from": "kWh per kWp",
+      "verb": "per",
+      "to": "year",
+      "type": "measure_unit"
+    },
+    {
+      "from": "kWh/kWp·a",
+      "verb": "is symbol for",
+      "to": "kilowatthours per kilowatt peak and year"
+    },
+    {
+      "name": "year (duration unit)",
+      "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
+      "from": "year",
+      "verb": "must be one of",
+      "to": "duration unit",
+      "type": "measure_unit"
+    },
+    {
+      "from": "a",
+      "verb": "is symbol for",
+      "to": "year (duration unit)"
+    },
+    {
+      "name": "share (ratio)",
+      "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
+      "from": "share",
+      "verb": "must be one of",
+      "to": "ratio",
+      "type": "percent"
+    },
+    {
+      "from": "share",
+      "verb": "is symbol for",
+      "to": "share (ratio)"
+    },
+    {
+      "from": "g/kWh",
+      "verb": "is symbol for",
+      "to": "gram per kWh"
+    },
+    {
+      "from": "kg/kWh",
+      "verb": "is symbol for",
+      "to": "kg per kWh"
+    },
+    {
+      "name": "field limit up",
+      "from": "process catch field (system)",
+      "verb": "has a",
+      "to": "maximum"
+    },
+    {
+      "name": "consumption mix input year",
+      "description": "the Swiss consumption mix of the page is the annual mix of 2018 and not the monthly mix or the avoided emission of another use case",
+      "from": "consumption mix",
+      "verb": "has a",
+      "to": "2018"
+    },
+    {
+      "name": "consumption mix field value phrase",
+      "from": "consumption mix input year",
+      "verb": "can be",
+      "to": "field value phrases"
+    },
+    {
+      "name": "PV in Switzerland input year",
+      "description": "the life cycle emission of the page is the 2023 update and not the 2018 figure of KBOB",
+      "from": "PV in Switzerland",
+      "verb": "has a",
+      "to": "2023"
+    },
+    {
+      "name": "PV in Switzerland field value phrase",
+      "from": "PV in Switzerland input year",
+      "verb": "can be",
+      "to": "field value phrases"
+    },
+    {
+      "name": "production mix order",
+      "description": "the residual mix is the first option of the replacement mix selector",
+      "from": "production mix",
+      "verb": "is follower of",
+      "to": "residual mix"
+    },
+    {
+      "name": "PV installation assumption PV yield hint",
+      "description": "Lifetime average incl. 0.7 %/a degradation",
+      "from": "PV installation assumption PV yield",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption lifetime hint",
+      "description": "Reference lifetime used in the LCA",
+      "from": "PV installation assumption lifetime",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption PV in Switzerland hint",
+      "description": "Swiss 3 kWp mono-Si pitched roof, 2023 update; converted to a fixed amount per kWp",
+      "from": "PV installation assumption PV in Switzerland",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption consumption mix hint",
+      "description": "2018 consumer mix, low voltage",
+      "from": "PV installation assumption consumption mix",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption day share hint",
+      "description": "Household; raise for home office or a heat pump running at noon",
+      "from": "PV installation assumption day share",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation assumption battery production emission hint",
+      "description": "Literature spans ~37–212 kg CO₂-eq per kWh capacity",
+      "from": "PV installation assumption battery production emission",
+      "verb": "has a",
+      "to": "calculator hint"
     }
   ],
   "formulas": [
@@ -1967,7 +2134,7 @@
     {
       "name": "lifetime total formula",
       "description": "the total of an annual number over the lifetime of the installation, e.g. the PV production or the export; the result carries the lifetime word in place of the annual word of the input, and the years are the lifetime of the PV installation",
-      "expression": "\"lifetime\" = \"annual\" * \"year\"",
+      "expression": "\"lifetime\" = \"annual\" * \"year (duration unit)\"",
       "assigned": [
         "annual"
       ]
@@ -1975,7 +2142,7 @@
     {
       "name": "annual share formula",
       "description": "the share of one year of a CO2-eq total over the lifetime, e.g. the embodied emission of the PV system or the net avoided emission; the result carries the annual word, and the years are the lifetime of the PV installation",
-      "expression": "\"annual\" = \"CO2-eq\" / \"year\"",
+      "expression": "\"annual\" = \"CO2-eq\" / \"year (duration unit)\"",
       "assigned": [
         "CO2-eq"
       ]
@@ -2092,7 +2259,7 @@
         "example PV installation",
         "household consumption",
         "annual",
-        "kWh",
+        "kilowatthours per year",
         "assumed"
       ],
       "number": "4500",
@@ -2182,7 +2349,7 @@
       "words": [
         "PV yield",
         "annual",
-        "kWh per kWp",
+        "kilowatthours per kilowatt peak and year",
         "2023"
       ],
       "number": "976",
@@ -2193,7 +2360,7 @@
       "words": [
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "number": "30",
       "source": "IEA PVPS Task 12 fact sheet 2023",
@@ -2426,7 +2593,7 @@
         "example PV installation",
         "day share",
         "household consumption",
-        "percent",
+        "share (ratio)",
         "assumed"
       ],
       "number": "0.35",
@@ -2439,7 +2606,7 @@
         "household consumption",
         "assumed",
         "confidence",
-        "percent"
+        "share (ratio)"
       ],
       "number": "0.6",
       "description": "a rough split, the hourly profile of a household is well known but varies a lot between households"
@@ -2448,7 +2615,7 @@
       "words": [
         "battery",
         "round-trip efficiency",
-        "percent",
+        "share (ratio)",
         "assumed"
       ],
       "number": "0.9",
@@ -2460,7 +2627,7 @@
         "round-trip efficiency",
         "assumed",
         "confidence",
-        "percent"
+        "share (ratio)"
       ],
       "number": "0.7",
       "description": "manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
@@ -2490,7 +2657,7 @@
       "words": [
         "battery",
         "battery lifetime",
-        "year",
+        "year (duration unit)",
         "assumed"
       ],
       "number": "15",
@@ -2888,6 +3055,86 @@
       "description": "the household consumption is entered in steps of 100 kWh"
     },
     {
+      "words": [
+        "PV yield",
+        "field step"
+      ],
+      "number": "10",
+      "description": "the specific yield is entered in steps of 10 kWh per kWp and year"
+    },
+    {
+      "words": [
+        "lifetime",
+        "field step"
+      ],
+      "number": "1",
+      "description": "the lifetime is entered in years"
+    },
+    {
+      "words": [
+        "PV in Switzerland",
+        "field step"
+      ],
+      "number": "0.1",
+      "description": "the life cycle emission is entered with one decimal like the IEA PVPS fact sheet"
+    },
+    {
+      "words": [
+        "consumption mix",
+        "field step"
+      ],
+      "number": "1",
+      "description": "the consumption mix is entered in gram per kWh"
+    },
+    {
+      "words": [
+        "day share",
+        "field limit down"
+      ],
+      "number": "0",
+      "description": "a household without consumption during the PV hours"
+    },
+    {
+      "words": [
+        "day share",
+        "field limit up"
+      ],
+      "number": "1",
+      "description": "the whole consumption during the PV hours"
+    },
+    {
+      "words": [
+        "day share",
+        "field step"
+      ],
+      "number": "0.05",
+      "description": "the day share is entered in steps of five percent"
+    },
+    {
+      "words": [
+        "round-trip efficiency",
+        "field step"
+      ],
+      "number": "0.01",
+      "description": "the round-trip efficiency is entered in steps of one percent"
+    },
+    {
+      "words": [
+        "battery production emission",
+        "field step"
+      ],
+      "number": "5",
+      "description": "the battery production emission is entered in steps of 5 kg per kWh"
+    },
+    {
+      "words": [
+        "battery lifetime",
+        "field step"
+      ],
+      "number": "1",
+      "description": "the battery lifetime is entered in years"
+    },
+    {
       "words": ["example PV installation", "PV production", "January", "kWh", "modelled"],
       "number": "207.4",
       "description": "the monthly dispatch of the page as described at the annual direct use: the PV production of a month is the annual production times the monthly share of the PV production, the household consumption the annual consumption times its monthly share, the direct use the smaller of the PV production and the day share of the consumption, the battery charge the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; stored as modelled values, because the dispatch needs a minimum function; the battery discharge, the export and the grid import of a month are results of the formulas"
@@ -2949,7 +3196,7 @@
         "assumed",
         "PV yield",
         "annual",
-        "kWh per kWp",
+        "kilowatthours per kilowatt peak and year",
         "2023",
         "yield factor",
         "east-west",
@@ -2972,7 +3219,7 @@
         "kWh",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "lifetime total formula",
       "words": [
@@ -2992,7 +3239,7 @@
         "modelled",
         "battery",
         "round-trip efficiency",
-        "percent",
+        "share (ratio)",
         "assumed"
       ],
       "formula": "battery discharge formula",
@@ -3029,6 +3276,7 @@
         "household consumption",
         "annual",
         "kWh",
+        "kilowatthours per year",
         "assumed",
         "direct use",
         "modelled",
@@ -3070,7 +3318,7 @@
         "kWh",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "lifetime total formula",
       "words": [
@@ -3095,6 +3343,7 @@
       "words": [
         "example PV installation",
         "self-consumption share",
+        "annual",
         "percent"
       ],
       "number": "0.49"
@@ -3107,6 +3356,7 @@
         "household consumption",
         "annual",
         "kWh",
+        "kilowatthours per year",
         "assumed",
         "modelled"
       ],
@@ -3114,6 +3364,7 @@
       "words": [
         "example PV installation",
         "autarky",
+        "annual",
         "percent"
       ],
       "number": "0.84"
@@ -3127,10 +3378,10 @@
         "2023",
         "PV yield",
         "annual",
-        "kWh per kWp",
+        "kilowatthours per kilowatt peak and year",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "PV embodied intensity formula",
       "words": [
@@ -3333,14 +3584,14 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "emission payback formula",
       "words": [
         "example PV installation",
         "emission payback",
         "consumption mix",
-        "year"
+        "year (duration unit)"
       ],
       "number": "12.12"
     },
@@ -3355,14 +3606,14 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "emission payback formula",
       "words": [
         "example PV installation",
         "emission payback",
         "PV-weighted consumption mix",
-        "year"
+        "year (duration unit)"
       ],
       "number": "14.65"
     },
@@ -3377,14 +3628,14 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "emission payback formula",
       "words": [
         "example PV installation",
         "emission payback",
         "residual mix",
-        "year"
+        "year (duration unit)"
       ],
       "number": "2.97"
     },
@@ -3397,7 +3648,7 @@
         "modelled",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "lifetime total formula",
       "words": [
@@ -3416,7 +3667,7 @@
         "kWh",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "lifetime total formula",
       "words": [
@@ -3435,7 +3686,7 @@
         "kWh",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "lifetime total formula",
       "words": [
@@ -3454,7 +3705,7 @@
         "kWh",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "lifetime total formula",
       "words": [
@@ -3473,7 +3724,7 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "annual share formula",
       "words": [
@@ -3493,7 +3744,7 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "annual share formula",
       "words": [
@@ -3514,7 +3765,7 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "annual share formula",
       "words": [
@@ -3536,7 +3787,7 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "annual share formula",
       "words": [
@@ -3558,7 +3809,7 @@
         "CO2-eq",
         "PV installation",
         "lifetime",
-        "year"
+        "year (duration unit)"
       ],
       "formula": "annual share formula",
       "words": [
@@ -3578,7 +3829,7 @@
       "number": "247.09"
     },
     {
-      "context": ["example PV installation", "battery losses", "annual", "kWh", "PV installation", "lifetime", "year"],
+      "context": ["example PV installation", "battery losses", "annual", "kWh", "PV installation", "lifetime", "year (duration unit)"],
       "formula": "lifetime total formula",
       "words": ["example PV installation", "battery losses", "lifetime", "kWh"],
       "number": "7412.7"
@@ -3590,7 +3841,7 @@
       "number": "-2948.83"
     },
     {
-      "context": ["example PV installation", "battery effect", "consumption mix", "kg", "CO2-eq", "PV installation", "lifetime", "year"],
+      "context": ["example PV installation", "battery effect", "consumption mix", "kg", "CO2-eq", "PV installation", "lifetime", "year (duration unit)"],
       "formula": "annual share formula",
       "words": ["example PV installation", "battery effect", "consumption mix", "annual", "kg", "CO2-eq"],
       "number": "-98.29"
@@ -3614,51 +3865,51 @@
       "number": "82897.38"
     },
     {
-      "context": ["example PV installation", "gross avoided emission", "production mix", "PV embodied emission", "battery embodied emission", "kg", "CO2-eq", "PV installation", "lifetime", "year"],
+      "context": ["example PV installation", "gross avoided emission", "production mix", "PV embodied emission", "battery embodied emission", "kg", "CO2-eq", "PV installation", "lifetime", "year (duration unit)"],
       "formula": "emission payback formula",
-      "words": ["example PV installation", "emission payback", "production mix", "year"],
+      "words": ["example PV installation", "emission payback", "production mix", "year (duration unit)"],
       "number": "3.93"
     },
     {
-      "context": ["example PV installation", "net avoided emission", "production mix", "kg", "CO2-eq", "PV installation", "lifetime", "year"],
+      "context": ["example PV installation", "net avoided emission", "production mix", "kg", "CO2-eq", "PV installation", "lifetime", "year (duration unit)"],
       "formula": "annual share formula",
       "words": ["example PV installation", "net avoided emission", "production mix", "annual", "kg", "CO2-eq"],
       "number": "2763.25"
     },
-    {"context": ["example PV installation", "battery charge", "January", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "January", "kWh"], "number": "44.91"},
+    {"context": ["example PV installation", "battery charge", "January", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "January", "kWh"], "number": "44.91"},
     {"context": ["example PV installation", "PV production", "January", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "January", "kWh"], "number": "0"},
     {"context": ["example PV installation", "household consumption", "January", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "January", "kWh"], "number": "247.59"},
-    {"context": ["example PV installation", "battery charge", "February", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "February", "kWh"], "number": "208.413"},
+    {"context": ["example PV installation", "battery charge", "February", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "February", "kWh"], "number": "208.413"},
     {"context": ["example PV installation", "PV production", "February", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "February", "kWh"], "number": "0"},
     {"context": ["example PV installation", "household consumption", "February", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "February", "kWh"], "number": "54.84"},
-    {"context": ["example PV installation", "battery charge", "March", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "March", "kWh"], "number": "263.25"},
+    {"context": ["example PV installation", "battery charge", "March", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "March", "kWh"], "number": "263.25"},
     {"context": ["example PV installation", "PV production", "March", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "March", "kWh"], "number": "229.43"},
     {"context": ["example PV installation", "household consumption", "March", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "March", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "April", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "April", "kWh"], "number": "234"},
+    {"context": ["example PV installation", "battery charge", "April", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "April", "kWh"], "number": "234"},
     {"context": ["example PV installation", "PV production", "April", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "April", "kWh"], "number": "526.56"},
     {"context": ["example PV installation", "household consumption", "April", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "April", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "May", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "May", "kWh"], "number": "219.375"},
+    {"context": ["example PV installation", "battery charge", "May", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "May", "kWh"], "number": "219.375"},
     {"context": ["example PV installation", "PV production", "May", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "May", "kWh"], "number": "675.13"},
     {"context": ["example PV installation", "household consumption", "May", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "May", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "June", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "June", "kWh"], "number": "204.75"},
+    {"context": ["example PV installation", "battery charge", "June", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "June", "kWh"], "number": "204.75"},
     {"context": ["example PV installation", "PV production", "June", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "June", "kWh"], "number": "740.73"},
     {"context": ["example PV installation", "household consumption", "June", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "June", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "July", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "July", "kWh"], "number": "204.75"},
+    {"context": ["example PV installation", "battery charge", "July", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "July", "kWh"], "number": "204.75"},
     {"context": ["example PV installation", "PV production", "July", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "July", "kWh"], "number": "782.21"},
     {"context": ["example PV installation", "household consumption", "July", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "July", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "August", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "August", "kWh"], "number": "204.75"},
+    {"context": ["example PV installation", "battery charge", "August", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "August", "kWh"], "number": "204.75"},
     {"context": ["example PV installation", "PV production", "August", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "August", "kWh"], "number": "657.77"},
     {"context": ["example PV installation", "household consumption", "August", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "August", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "September", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "September", "kWh"], "number": "219.375"},
+    {"context": ["example PV installation", "battery charge", "September", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "September", "kWh"], "number": "219.375"},
     {"context": ["example PV installation", "PV production", "September", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "September", "kWh"], "number": "467.73"},
     {"context": ["example PV installation", "household consumption", "September", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "September", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "October", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "October", "kWh"], "number": "248.625"},
+    {"context": ["example PV installation", "battery charge", "October", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "October", "kWh"], "number": "248.625"},
     {"context": ["example PV installation", "PV production", "October", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "October", "kWh"], "number": "170.6"},
     {"context": ["example PV installation", "household consumption", "October", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "October", "kWh"], "number": "0"},
-    {"context": ["example PV installation", "battery charge", "November", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "November", "kWh"], "number": "126.6615"},
+    {"context": ["example PV installation", "battery charge", "November", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "November", "kWh"], "number": "126.6615"},
     {"context": ["example PV installation", "PV production", "November", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "November", "kWh"], "number": "0"},
     {"context": ["example PV installation", "household consumption", "November", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "November", "kWh"], "number": "151.21"},
-    {"context": ["example PV installation", "battery charge", "December", "kWh", "modelled", "battery", "round-trip efficiency", "percent", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "December", "kWh"], "number": "44.91"},
+    {"context": ["example PV installation", "battery charge", "December", "kWh", "modelled", "battery", "round-trip efficiency", "share (ratio)", "assumed"], "formula": "battery discharge formula", "words": ["example PV installation", "battery discharge", "December", "kWh"], "number": "44.91"},
     {"context": ["example PV installation", "PV production", "December", "kWh", "direct use", "battery charge", "modelled"], "formula": "export formula", "words": ["example PV installation", "export", "December", "kWh"], "number": "0"},
     {"context": ["example PV installation", "household consumption", "December", "kWh", "modelled", "direct use", "battery discharge"], "formula": "grid import formula", "words": ["example PV installation", "grid import", "December", "kWh"], "number": "247.59"},
     {

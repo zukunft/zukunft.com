@@ -103,7 +103,7 @@ class triples
     const string PHRASE_DISTRIBUTION = 'phrase distribution';
     // the value quality of a number taken from a peer reviewed study, shown as "+" behind the number
     const string PEER_REVIEWED = 'peer reviewed by quality journal';
-    // the factor that turns the centre of an estimate into a bound of its probability range
+    // the factor that turns the centre of an estimate into a bound of its variance
     const string PROBABILITY_RANGE_FACTOR = 'probability range factor';
     const string RESPONSE_TIME = 'response time';
     const string ROW_LIMIT = 'row limit';
@@ -168,6 +168,33 @@ class triples
     const string SYSTEM_SORT_ORDER_CODE_ID = 'system_sort_order';
     const string SYSTEM_SORT_ORDER_DEFAULT = 'default sort order (system)';
     const string SYSTEM_SORT_ORDER_DEFAULT_CODE_ID = 'system_sort_order_default';
+    // the number of digits shown of a number, defined in base_phrases.json like the column tiers:
+    // a view, a value or a result is assigned to a precision tier with "<phrase> can be <tier>",
+    // the default tier is used if none is assigned; the number of digits of each tier is set in
+    // config.yaml (number format > digits) with the shared config consts as fallback, except for
+    // the full precision tier, which always shows all decimals
+    const string SYSTEM_DIGITS = 'digits (system)';
+    const string SYSTEM_DIGITS_CODE_ID = 'system_digits';
+    const string SYSTEM_DIGITS_DEFAULT = 'default digits (system)';
+    const string SYSTEM_DIGITS_DEFAULT_CODE_ID = 'system_digits_default';
+    const string SYSTEM_DIGITS_HIGH = 'high precision digits (system)';
+    const string SYSTEM_DIGITS_HIGH_CODE_ID = 'system_digits_high';
+    const string SYSTEM_DIGITS_VERY_HIGH = 'very high precision digits (system)';
+    const string SYSTEM_DIGITS_VERY_HIGH_CODE_ID = 'system_digits_very_high';
+    const string SYSTEM_DIGITS_FULL = 'full precision digits (system)';
+    const string SYSTEM_DIGITS_FULL_CODE_ID = 'system_digits_full';
+    const string SYSTEM_DIGITS_LOW = 'low precision digits (system)';
+    const string SYSTEM_DIGITS_LOW_CODE_ID = 'system_digits_low';
+    const string SYSTEM_DIGITS_VERY_LOW = 'very low precision digits (system)';
+    const string SYSTEM_DIGITS_VERY_LOW_CODE_ID = 'system_digits_very_low';
+    // the high and the low bound of the variance of a value, defined in base_phrases.json; a value
+    // with one of these phrases is a bound of the value with the same other phrases
+    // (see the view-validation of solution_prio.json)
+    const string SYSTEM_VARIANCE_HIGH = 'variance high (system)';
+    const string SYSTEM_VARIANCE_HIGH_CODE_ID = 'system_variance_high';
+    const string SYSTEM_VARIANCE_LOW = 'variance low (system)';
+    const string SYSTEM_VARIANCE_LOW_CODE_ID = 'system_variance_low';
+    const array VARIANCE_BOUNDS = [self::SYSTEM_VARIANCE_LOW, self::SYSTEM_VARIANCE_HIGH];
     // an input field of the process catch views, defined in process_catch_fields.json like the
     // column tiers: the field of a question phrase is a phrase of a use case file that gets its
     // label, value phrases, unit and type by triples to these properties, and its limits, step and
@@ -358,6 +385,9 @@ class triples
     const string USE_JAVASCRIPT = 'use javascript';
     const string VALUE_LIST = 'value list';
     const string VALUE_TABLE = 'value table';
+    // config keys of the digit tiers (config.yaml number format > digits)
+    const string VERY_PRECISE = 'very precise';
+    const string VERY_ROUGH = 'very rough';
     const string WEB_MOBILE = 'web mobile';
     const string WHAT_LIMIT = 'what limit';
     const string WORD_CHANGES = 'word changes';

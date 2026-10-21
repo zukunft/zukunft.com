@@ -276,7 +276,7 @@ zukunft.com:
               name: "Global problems"
               tooltip: "the global issues that are expected to cause the damage with the suggested solution to solve the problem"
             pv:
-              url: "/http/view.php?m=4&id=1954"
+              url: "http://localhost/http/view.php?m=16&id=-2573"
               name: "Photovoltaic calculator"
               tooltip: "calculate the effects of photovoltaic"
             panels:
@@ -657,6 +657,23 @@ zukunft.com:
               percent decimal:
                 sys-conf-value: 2
                 tooltip-comment: "the default number of decimal places of a percent value"
+              digits:
+                tooltip-comment: "the number of digits shown of a number per precision tier; a view, a value or a result uses the default tier unless it can be a tier of digits (system); the full precision tier always shows all decimals"
+                default:
+                  sys-conf-value: 4
+                  tooltip-comment: "the number of digits shown of a number by default"
+                precise:
+                  sys-conf-value: 8
+                  tooltip-comment: "the number of digits for views, values or results that need more precision"
+                very precise:
+                  sys-conf-value: 12
+                  tooltip-comment: "the number of digits for views, values or results that need even more precision"
+                rough:
+                  sys-conf-value: 3
+                  tooltip-comment: "the number of digits for views, values or results that are used only as an indication"
+                very rough:
+                  sys-conf-value: 2
+                  tooltip-comment: "the number of digits for views, values or results that are used just as a rough indication"
     select:
       initial:
         entries: 5

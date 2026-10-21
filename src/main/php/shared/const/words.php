@@ -132,7 +132,7 @@ class words
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 460;
+    const int CHF_ID = 466;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -160,6 +160,8 @@ class words
     const string DELAY = 'delay';
     const string DELETE = 'delete';
     const string DETAIL = 'detail';
+    // config key: the number of digits shown of a number (config.yaml number format > digits)
+    const string DIGITS = 'digits';
     const string ELEMENTS = 'elements';
     const string ENTRIES = 'entries';
     const string ENTRY = 'entry';
@@ -175,9 +177,10 @@ class words
     const string FORMAT = 'format';
     const string FORMULAS = 'formulas';
     const string FREEZE = 'freeze';
+    const string FULL = 'full';
     const string FUTURE = 'future';
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 269;
+    const int HAPPY_ID = 278;
     const string HARDWARE = 'hardware';
     const string HTML = 'html';
     const string IMPACT = 'impact';
@@ -223,18 +226,19 @@ class words
     const string PATH = 'path';
     const string PCT = 'percent';
     const int PCT_ID = 160;
-    // the words that tag a value as a bound of the probability range of the value with the same
-    // phrases (see the view-validation of solution_prio.json), and the qualifier of an estimate
-    const string LOW = 'low';
-    const string HIGH = 'high';
+    // the qualifier of an estimate
     const string ASSUMED = 'assumed';
     // the word that tags the confidence that the range of a value contains the true value
     const string CONFIDENCE = 'confidence';
-    const array RANGE_WORDS = [self::LOW, self::HIGH];
     // the qualifiers of a value that a table shows as the tooltip of the cell
     const array QUALIFIERS = [self::ASSUMED];
-    // the words that describe how a number is stated instead of what it is about
-    const array VALUE_MARKERS = [self::LOW, self::HIGH, self::ASSUMED, self::CONFIDENCE];
+    // the phrases that describe how a number is stated instead of what it is about
+    const array VALUE_MARKERS = [
+        triples::SYSTEM_VARIANCE_LOW,
+        triples::SYSTEM_VARIANCE_HIGH,
+        self::ASSUMED,
+        self::CONFIDENCE
+    ];
     const string PEERS = 'peers';
     const string PERCENT = 'percent';
     const string PERIOD = 'period';
@@ -244,7 +248,8 @@ class words
     const string POINT = 'point';
     const int POINT_ID = 208;
     const string POINTS = 'points';
-    const int POINTS_ID = 271;
+    const int POINTS_ID = 280;
+    const string PRECISE = 'precise';
     const string PREDICTION = 'prediction';
     const string PRELOAD = 'preload';
     const string PRESELECT = 'preselect';
@@ -259,6 +264,7 @@ class words
     const string RESULTS = 'results';
     const string RETRY = 'retry';
     const string RISK = 'risk';
+    const string ROUGH = 'rough';
     const string ROW = 'row';
     const string SAME = 'same';
     const string SEC = 'sec';
@@ -290,7 +296,7 @@ class words
     const string TOOLTIP = 'tooltip';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 387;
+    const int TOTAL_ID = 393;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
@@ -303,8 +309,9 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 800;
+    const int VERBS_ID = 806;
     const string VERSION = 'version';
+    const string VERY = 'very';
     const string VIEW = 'view';
     const string VIEWS = 'views';
     const string WARNING = 'warning';

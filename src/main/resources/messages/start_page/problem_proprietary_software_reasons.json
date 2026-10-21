@@ -204,6 +204,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "2012",
       "type": "time"
     },
@@ -224,6 +227,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "proprietary software",
       "from": "software",
@@ -421,19 +436,19 @@
     {"words": ["licence price change due to proprietary software", "Microsoft 365 F3", "2026", "percent"], "number": "0.25", "source": "Microsoft (2025) Microsoft 365 packaging and pricing updates 2026", "description": "from 8.00 to 10.00 USD per user and month from 1 July 2026"},
     {"words": ["hardware upgrade due to proprietary software", "avoidable", "public sector", "Munich", "2012", "million", "EUR"], "number": "4.7", "source": "Le Monde Informatique (2012) Munich LiMux cost comparison", "description": "the hardware upgrades that a migration to Windows 7 would have needed and that LiMux avoided, because it runs on the existing hardware"},
     {"words": ["vendor lock-in due to proprietary software", "switching cost", "public sector", "Schleswig-Holstein", "2026", "million", "EUR"], "number": "9", "source": "Schleswig-Holstein (2025) Digitale Souveränität ist möglich und wirtschaftlich", "description": "the one-time investment planned for 2026 for the migration of the workplaces and the development of the open-source solutions"},
-    {"words": ["open-source software value", "European Union", "2018", "billion", "EUR", "low"], "number": "65", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the impact of open-source software on the economy of all EU member states; a benefit of open-source software, i.e. a value that proprietary software would not create, not a cost of proprietary software"},
-    {"words": ["open-source software value", "European Union", "2018", "billion", "EUR", "high"], "number": "95", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the impact of open-source software on the economy of all EU member states; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software value", "European Union", "2018", "billion", "EUR", "variance low (system)"], "number": "65", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the impact of open-source software on the economy of all EU member states; a benefit of open-source software, i.e. a value that proprietary software would not create, not a cost of proprietary software"},
+    {"words": ["open-source software value", "European Union", "2018", "billion", "EUR", "variance high (system)"], "number": "95", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the impact of open-source software on the economy of all EU member states; a benefit of open-source software, not a cost of proprietary software"},
     {"words": ["open-source software", "software investment", "European Union", "2018", "billion", "EUR"], "number": "1", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "around 1 billion EUR invested in open-source software by the companies located in the EU, the input that created the impact of 65 to 95 billion EUR"},
-    {"words": ["open-source software", "contribution", "GDP change", "European Union", "annual", "percent", "low"], "number": "0.004", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"},
-    {"words": ["open-source software", "contribution", "GDP change", "European Union", "annual", "percent", "high"], "number": "0.006", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software", "contribution", "GDP change", "European Union", "annual", "percent", "variance low (system)"], "number": "0.004", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software", "contribution", "GDP change", "European Union", "annual", "percent", "variance high (system)"], "number": "0.006", "source": "Blind et al. (2021) The impact of Open Source Software and Hardware on the EU economy", "description": "the additional GDP per year if the open-source contributions increase by 10 percent; a benefit of open-source software, not a cost of proprietary software"},
     {"words": ["open-source software value", "demand", "world", "trillion", "EUR"], "number": "8.138", "source": "Hoffmann, Nagle & Zhou (2024) The Value of Open Source Software", "description": "the avoidable cost: what the firms would have to spend if each had to rebuild the open-source software it uses, a hypothetical replacement cost and not a measured loss; 8.8 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["open-source software", "software spending", "world", "factor"], "number": "3.5", "source": "Hoffmann, Nagle & Zhou (2024) The Value of Open Source Software", "description": "firms would need to spend 3.5 times more on software than they currently do if open-source software did not exist; an avoidable cost, not a cost of proprietary software"},
-    {"words": ["open-source software value", "Apache", "United States", "billion", "EUR", "low"], "number": "1.85", "source": "Greenstein & Nagle (2014)", "description": "the value of Apache that the US statistics of the software investment do not measure; 2 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["open-source software value", "Apache", "United States", "billion", "EUR", "high"], "number": "11.1", "source": "Greenstein & Nagle (2014)", "description": "the value of Apache that the US statistics of the software investment do not measure; 12 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["open-source software value", "Apache", "software investment", "United States", "percent", "low"], "number": "0.013", "source": "Greenstein & Nagle (2014)", "description": "the unmeasured value of Apache as share of the stock of prepackaged software in the US private fixed investment"},
-    {"words": ["open-source software value", "Apache", "software investment", "United States", "percent", "high"], "number": "0.087", "source": "Greenstein & Nagle (2014)", "description": "the unmeasured value of Apache as share of the stock of prepackaged software in the US private fixed investment"},
-    {"words": ["open-source software", "productivity change", "percent", "low"], "number": "0.00002", "source": "Nagle (2019) Open Source Software and Firm Productivity", "description": "the increase of the value-added productivity per 1 percent more use of free open-source software, for firms with an ecosystem of complementary capabilities; a benefit of open-source software, not a cost of proprietary software"},
-    {"words": ["open-source software", "productivity change", "percent", "high"], "number": "0.00008", "source": "Nagle (2019) Open Source Software and Firm Productivity", "description": "the increase of the value-added productivity per 1 percent more use of free open-source software, for firms with an ecosystem of complementary capabilities; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software value", "Apache", "United States", "billion", "EUR", "variance low (system)"], "number": "1.85", "source": "Greenstein & Nagle (2014)", "description": "the value of Apache that the US statistics of the software investment do not measure; 2 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["open-source software value", "Apache", "United States", "billion", "EUR", "variance high (system)"], "number": "11.1", "source": "Greenstein & Nagle (2014)", "description": "the value of Apache that the US statistics of the software investment do not measure; 12 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["open-source software value", "Apache", "software investment", "United States", "percent", "variance low (system)"], "number": "0.013", "source": "Greenstein & Nagle (2014)", "description": "the unmeasured value of Apache as share of the stock of prepackaged software in the US private fixed investment"},
+    {"words": ["open-source software value", "Apache", "software investment", "United States", "percent", "variance high (system)"], "number": "0.087", "source": "Greenstein & Nagle (2014)", "description": "the unmeasured value of Apache as share of the stock of prepackaged software in the US private fixed investment"},
+    {"words": ["open-source software", "productivity change", "percent", "variance low (system)"], "number": "0.00002", "source": "Nagle (2019) Open Source Software and Firm Productivity", "description": "the increase of the value-added productivity per 1 percent more use of free open-source software, for firms with an ecosystem of complementary capabilities; a benefit of open-source software, not a cost of proprietary software"},
+    {"words": ["open-source software", "productivity change", "percent", "variance high (system)"], "number": "0.00008", "source": "Nagle (2019) Open Source Software and Firm Productivity", "description": "the increase of the value-added productivity per 1 percent more use of free open-source software, for firms with an ecosystem of complementary capabilities; a benefit of open-source software, not a cost of proprietary software"},
     {"words": ["security incident", "Microsoft", "organization", "world", "2023"], "number": "22", "source": "CSRB (2024) Review of the Summer 2023 Microsoft Exchange Online Intrusion", "description": "the enterprise organizations whose Exchange Online mailboxes Storm-0558 compromised in May and June 2023, plus 503 related personal accounts; not attributed to proprietary software by the source, which names the cascade of security failures at Microsoft as the cause"},
     {"words": ["security incident", "Microsoft", "email", "United States", "2023"], "number": "60000", "source": "CSRB (2024) Review of the Summer 2023 Microsoft Exchange Online Intrusion", "description": "approximately 60'000 emails downloaded from the US State Department alone; not attributed to proprietary software by the source"},
     {"words": ["IT outage", "CrowdStrike", "Fortune 500", "cost", "United States", "2024", "billion", "EUR"], "number": "4.994", "source": "Parametrix (2024) CrowdStrike's impact on the Fortune 500", "description": "the direct financial loss of the US Fortune 500 companies excluding Microsoft; 5.4 billion USD at the ECB 2023 average of 1.0813 USD per EUR; not attributed to proprietary software by the source, which names the faulty CrowdStrike update as the cause"}

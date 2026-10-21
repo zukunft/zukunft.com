@@ -347,6 +347,18 @@ class calculator
     }
 
     /**
+     * the phrase whose numbers a row shows: the option that the page phrase uses if the phrase
+     * is a selector, so that the row follows the selector e.g. residual mix for replacement mix
+     *
+     * @param phrase|null $phr the phrase of a row e.g. replacement mix
+     * @return phrase|null the used option e.g. residual mix, else the phrase itself
+     */
+    function chosen(?phrase $phr): ?phrase
+    {
+        return $phr == null ? null : ($this->used(array_column($this->options($phr), 0)) ?? $phr);
+    }
+
+    /**
      * the phrases whose general triples the page reads by rule 6 and 8: the phrase of each item,
      * of each row, detail column and extra row, the filter phrase of a row and the other phrase
      * of a row built from the phrase of its group; so that the request cache can be filled with

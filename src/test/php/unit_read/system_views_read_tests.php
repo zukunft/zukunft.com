@@ -148,7 +148,7 @@ class system_views_read_tests
     /**
      * the entry view shows the global problems as a simple table with the short list,
      * with the more list that a "... more" click requests with the next list size, and as the
-     * full table with every column and the ranges that the "..." header links to
+     * full table with every column and the variance that the "..." header links to
      *
      * @param test_cleanup $t the test environment with the test users
      * @return void
@@ -164,22 +164,22 @@ class system_views_read_tests
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
-                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+                url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE]);
         // the full table with the short list, and the two switches on their own: the mayor
-        // columns with the ranges, and the mayor columns explicitly without the ranges
+        // columns with the variance, and the mayor columns explicitly without the variance
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             $cfg, [url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_ALL,
-                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+                url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
-                url_var::DISPLAY_LIST_RANGE => url_var::TRUE]);
+                url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE]);
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MAIN,
-                url_var::DISPLAY_LIST_RANGE => url_var::FALSE]);
+                url_var::DISPLAY_LIST_VARIANCE => url_var::FALSE]);
         // the steps between the mayor columns and the full table, which the "..." clicks
-        // request: one tier is added per step, but still one unit per column and no range
+        // request: one tier is added per step, but still one unit per column and no variance
         $t->assert_view(views::START_CODE, $t->usr1, new triple($t->usr1), triple_names::GLOBAL_PROBLEM_ID,
             $cfg, [url_var::DISPLAY_LIST_SIZE => Config::LIMIT_MORE_LIST,
                 url_var::DISPLAY_LIST_COLUMNS => value_list_ui::COLUMN_TIERS_EX_MINOR]);
@@ -201,6 +201,10 @@ class system_views_read_tests
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), words::CHF_ID, $cfg);
         // inhabitants is the example for the related formula list (e.g. the "increase" formula)
         $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::INHABITANT_ID, $cfg);
+        // the values of 15-year have a variance, which is shown only if the url asks for it
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::FIFTEEN_YEAR_ID, $cfg);
+        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), word_names::FIFTEEN_YEAR_ID, $cfg,
+            [url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE]);
         $t->assert_view(views::WORD_ADD_DETAIL, $t->usr1, new word($t->usr1), word_names::MATH_ID);
         // the one field form that adds a word just by its name
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));

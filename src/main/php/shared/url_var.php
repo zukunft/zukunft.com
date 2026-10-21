@@ -126,7 +126,7 @@ class url_var
     const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
     const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
     const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the "..." header lowers step by step from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
-    const string DISPLAY_LIST_RANGE = 'dlr'; // 1 to show the probability range behind each number of a table, 0 for the numbers only
+    const string DISPLAY_LIST_VARIANCE = 'dlv'; // 1 to show the variance low and high behind each number of a list or table, 0 for the numbers only
     const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the "..." header
     const string TAB = 'tb'; // the number of the selected tab of a page with tabs e.g. of the process catch detail page, starting with 1
     const string PLACE = 'loc'; // the place name or postal code entered in the geolocator e.g. 8000
@@ -296,7 +296,7 @@ class url_var
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string TRUE = '1';
-    // the switched off value of a url flag e.g. DISPLAY_LIST_RANGE for a table without the ranges
+    // the switched off value of a url flag e.g. DISPLAY_LIST_VARIANCE for a table without the variance
     const string FALSE = '0';
 
     // enum for self::STEP and the next step of the action
@@ -371,7 +371,7 @@ class url_var
         self::DISPLAY_LIST_SIZE,
         self::DISPLAY_LIST_PAGE,
         self::DISPLAY_LIST_COLUMNS,
-        self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_VARIANCE,
         self::DISPLAY_LIST_AS,
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
@@ -382,12 +382,12 @@ class url_var
     // the page vars where a zero is a value and not the "not set" default, so that
     // page_url_array keeps them: a list size of zero is value_list::LIMIT_ALL, i.e. the user
     // has expanded the list to every row, which a back link must repeat, and the same holds for
-    // every column tier and for the ranges switched off; for every other page var a zero names
+    // every column tier and for the variance switched off; for every other page var a zero names
     // nothing (no view, no object, the first list page) and is dropped
     const array PAGE_VARS_KEEP_ZERO = [
         self::DISPLAY_LIST_SIZE,
         self::DISPLAY_LIST_COLUMNS,
-        self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_VARIANCE,
     ];
 
     // the prefix chars that move a normal url key into another part of the url: the vars of the link
@@ -441,7 +441,7 @@ class url_var
         self::DISPLAY_LIST_SIZE,
         self::DISPLAY_LIST_PAGE,
         self::DISPLAY_LIST_COLUMNS,
-        self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_VARIANCE,
         self::DISPLAY_LIST_AS,
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
@@ -555,7 +555,7 @@ class url_var
     const string DISPLAY_LIST_SIZE_HUMAN = 'display_list_size'; // the number of list rows shown on a page
     const string DISPLAY_LIST_PAGE_HUMAN = 'display_list_page'; // the page of a list longer than the size
     const string DISPLAY_LIST_COLUMNS_HUMAN = 'display_list_columns'; // the number of column tiers of a table shown
-    const string DISPLAY_LIST_RANGE_HUMAN = 'display_list_range'; // 1 to show the probability ranges of a table
+    const string DISPLAY_LIST_VARIANCE_HUMAN = 'display_list_variance'; // 1 to show the variance of the numbers of a list or table
     const string DISPLAY_LIST_AS_HUMAN = 'display_list_as'; // the form of a table: table, chart or table_chart
     const string TAB_HUMAN = 'tab'; // the number of the selected tab of a page
     const string PLACE_HUMAN = 'place'; // the place name or postal code entered in the geolocator
@@ -811,7 +811,7 @@ class url_var
         [self::DISPLAY_LIST_SIZE_HUMAN, self::DISPLAY_LIST_SIZE],
         [self::DISPLAY_LIST_PAGE_HUMAN, self::DISPLAY_LIST_PAGE],
         [self::DISPLAY_LIST_COLUMNS_HUMAN, self::DISPLAY_LIST_COLUMNS],
-        [self::DISPLAY_LIST_RANGE_HUMAN, self::DISPLAY_LIST_RANGE],
+        [self::DISPLAY_LIST_VARIANCE_HUMAN, self::DISPLAY_LIST_VARIANCE],
         [self::DISPLAY_LIST_AS_HUMAN, self::DISPLAY_LIST_AS],
         [self::TAB_HUMAN, self::TAB],
         [self::PLACE_HUMAN, self::PLACE],
@@ -1120,6 +1120,22 @@ class url_var
     {
         $id_var = self::id_var($url_array[self::MASK] ?? 0);
         return $url_array[$id_var] ?? $url_array[self::ID] ?? 0;
+    }
+
+    /**
+     * true if the page should show the variance behind each number (see DISPLAY_LIST_VARIANCE)
+     *
+     * @param array $url_array the url of a request e.g. [DISPLAY_LIST_VARIANCE => TRUE]
+     * @param bool $default the result if the url does not say whether to show the variance
+     * @return bool true if the url switches the variance on, false if it switches it off
+     */
+    static function show_variance(array $url_array, bool $default = false): bool
+    {
+        $result = $default;
+        if (array_key_exists(self::DISPLAY_LIST_VARIANCE, $url_array)) {
+            $result = ($url_array[self::DISPLAY_LIST_VARIANCE] == self::TRUE);
+        }
+        return $result;
     }
 
     /**

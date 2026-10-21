@@ -49,7 +49,10 @@ include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'values.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -73,7 +76,10 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -311,12 +317,25 @@ class test_values extends test_objects
     function value_mio_eur(): value
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         return $this->value_for_phrases([
             $t_wrd->word()->phrase(),
             $t_wrd->word_assumed()->phrase(),
-            $t_wrd->word_high()->phrase(),
+            $t_trp->variance_high()->phrase(),
             $t_wrd->word_million()->phrase(),
             $t_wrd->word_eur()->phrase()]);
+    }
+
+    /**
+     * @return value in the percent unit share (ratio), which a field shows with its symbol "share"
+     */
+    function value_share(): value
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_trp->share_ratio()->phrase()]);
     }
 
     /**
@@ -670,6 +689,16 @@ class test_values extends test_objects
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group_ch();
         return new value($this->env->usr1, values::CH_INHABITANTS_2019_IN_MIO, $grp);
+    }
+
+    /**
+     * @return value_ui the inhabitants of Switzerland for frontend unit testing e.g. as a value
+     *                  of the request cache that a calculator page does not use
+     */
+    function value_ch_ui(): value_ui
+    {
+        $tl = new test_lib();
+        return $tl->ui_value($this->value_ch());
     }
 
     /**
@@ -1078,13 +1107,13 @@ class test_values extends test_objects
     }
 
     /**
-     * the ranking values with the loss of the reason, the range of the loss of the first problem
+     * the ranking values with the loss of the reason, the variance of the loss of the first problem
      * and per problem a number in each minor and marginal column, so that every selection of the
      * start page sub menus shows its own columns: the main tier the reason columns, the minor
      * tier the loss in percent of the GDP and of the htp, the initial effort and the loss
-     * reduction, the full table the reward ratio, and the range selection the bounds
+     * reduction, the full table the reward ratio, and the variance selection the bounds
      *
-     * @return value_list the ranking values plus the numbers of every column tier and the range bounds
+     * @return value_list the ranking values plus the numbers of every column tier and the variance bounds
      */
     function value_list_start_page(): value_list
     {
@@ -1092,8 +1121,8 @@ class test_values extends test_objects
         $t_trp = new test_triples($this->env);
         $lst = $this->value_list_solution_prio_reason();
         $loss_phr = $this->solution_prio_loss_phrases($t_trp->global_warming()->phrase(), false);
-        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_low()->phrase()]), 25));
-        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_high()->phrase()]), 40));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_trp->variance_low()->phrase()]), 25));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_trp->variance_high()->phrase()]), 40));
         $pct = $t_wrd->word_percent()->phrase();
         $loss = $t_trp->potential_loss()->phrase();
         foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , $gain_nbr, $is_assumed]) {
@@ -1210,15 +1239,15 @@ class test_values extends test_objects
     }
 
     /**
-     * the potential loss of global warming with the bounds of its probability range and its
+     * the potential loss of global warming with the bounds of its variance and its
      * confidence and the potential gain of its solution without bounds, with the numbers of
-     * solution_prio.json, so that the range display of a value table can be tested: the bounds
+     * solution_prio.json, so that the variance display of a value table can be tested: the bounds
      * are tagged "low" and "high", the confidence "confidence" and the loss is an estimate, so
      * it carries "assumed"
      *
      * @return value_list the centre, low and high potential loss, its confidence and the gain
      */
-    function value_list_range(): value_list
+    function value_list_variance(): value_list
     {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
@@ -1227,8 +1256,8 @@ class test_values extends test_objects
         $loss_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
             $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase(),
             $t_wrd->word_assumed()->phrase()];
-        $low_phr = array_merge($loss_phr, [$t_wrd->word_low()->phrase()]);
-        $high_phr = array_merge($loss_phr, [$t_wrd->word_high()->phrase()]);
+        $low_phr = array_merge($loss_phr, [$t_trp->variance_low()->phrase()]);
+        $high_phr = array_merge($loss_phr, [$t_trp->variance_high()->phrase()]);
         // the confidence is a share, so it names no unit of the loss but the percent format
         $conf_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
             $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase(),
@@ -1283,12 +1312,39 @@ class test_values extends test_objects
     }
 
     /**
-     * @return value_list_ui the potential loss with its range for frontend unit testing
+     * @return value_list_ui the potential loss with its variance for frontend unit testing
      */
-    function value_list_range_ui(): value_list_ui
+    function value_list_variance_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_range(), [api_types::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list_variance(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the low and high potential loss of value_list_variance without their centre value, so that
+     * a list can be tested that has bounds without a centre to show them behind
+     *
+     * @return value_list_ui the two bounds of the potential loss for frontend unit testing
+     */
+    function value_list_bounds_only_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $lst = new value_list($this->env->usr1);
+        foreach ($this->value_list_variance()->lst() as $val) {
+            if ($this->is_variance_bound($val)) {
+                $lst->add($val);
+            }
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param value $val the value to check
+     * @return bool true if the value is tagged as the low or high bound of a variance
+     */
+    private function is_variance_bound(value $val): bool
+    {
+        return array_intersect($val->grp()->phrase_list()->names(), triples::VARIANCE_BOUNDS) != [];
     }
 
     /**
@@ -1573,6 +1629,29 @@ class test_values extends test_objects
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_for_phrases([$t_trp->config_use_javascript()->phrase(),
             $t_trp->config_for_calculator()->phrase()], 0));
+        return $lst;
+    }
+
+    /**
+     * the config of a pod that overwrites the digits of the default and of the precise tier
+     * (config.yaml number format > digits) by one more digit than the fallback; both have the
+     * path of a user default value, so the path of the precise tier contains the default key too
+     *
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_config_digits(): value_list
+    {
+        $t_phr = new test_phrases($this->env);
+        $path = [words::DEFAULT, triples::NUMBER_FORMAT, words::DIGITS];
+        $lst = new value_list($this->env->usr1);
+        // the precise tier first, so that a first match would read it also for the default tier;
+        // set directly like config_cache_switch, because add() skips a value without a group name
+        $lst->set_lst([
+            new value($this->env->usr1, shared_config::PRECISE_DIGITS + 1,
+                $t_phr->list_cache_switch([...$path, words::PRECISE])->get_grp_id(false)),
+            new value($this->env->usr1, shared_config::DEFAULT_DIGITS + 1,
+                $t_phr->list_cache_switch($path)->get_grp_id(false)),
+        ]);
         return $lst;
     }
 

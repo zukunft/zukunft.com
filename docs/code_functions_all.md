@@ -6455,6 +6455,8 @@
             lator.php
     \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
             tor.php
+    \-- chosen - section for function chosen not yet defined that it should be texts and flags in /component/execute/cal
+            culator.php
     \-- phrases - section for function phrases not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
 \-- system_form
@@ -6851,9 +6853,11 @@
             st.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
+    \-- unit_name - section for function unit_name missing in /component/execute/ui_list.php
     \-- formula_notes - section for function formula_notes missing in /component/execute/ui_list.php
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
+    \-- field_decimals - section for function field_decimals missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
@@ -6861,6 +6865,8 @@
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
     \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
+    \-- calculator_needed_results - section for function calculator_needed_results missing in /component/execute/ui_list
+            .php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
     \-- values_by_triple - section for function values_by_triple missing in /component/execute/ui_list.php
     \-- values_similar - section for function values_similar missing in /component/execute/ui_list.php
@@ -7106,6 +7112,7 @@
             .php
     \-- percent_decimals - section for function percent_decimals not yet defined that it should be interface in /helper/
             config.php
+    \-- digits - section for function digits not yet defined that it should be interface in /helper/config.php
     \-- dec_point - section for function dec_point not yet defined that it should be interface in /helper/config.php
     \-- thousand_sep - section for function thousand_sep not yet defined that it should be interface in /helper/config.p
             hp
@@ -7142,6 +7149,11 @@
     \-- ref_list - section for function ref_list not yet defined that it should be set and get in /helper/data_object.ph
             p
     \-- value_list - section for function value_list is expected to be related in /helper/data_object.php
+    \-- load_values_of - section for function load_values_of is expected to be load in /helper/data_object.php
+    \-- has_values_of - section for function has_values_of not yet defined that it should be set and get in /helper/data
+            _object.php
+    \-- add_values_of - section for function add_values_of not yet defined that it should be set and get in /helper/data
+            _object.php
     \-- formula_link_list - section for function formula_link_list not yet defined that it should be set and get in /hel
             per/data_object.php
     \-- has_results_of - section for function has_results_of not yet defined that it should be set and get in /helper/da
@@ -7442,6 +7454,8 @@
             ents used in zukunft.com in /html/html_base.php
     \-- input_number - section for function input_number not yet defined that it should be base elements - functions for
              all html elements used in zukunft.com in /html/html_base.php
+    \-- number_value - section for function number_value not yet defined that it should be base elements - functions for
+             all html elements used in zukunft.com in /html/html_base.php
     \-- div_form - section for function div_form not yet defined that it should be base elements - functions for all htm
             l elements used in zukunft.com in /html/html_base.php
     \-- div_row - section for function div_row not yet defined that it should be base elements - functions for all html 
@@ -7590,6 +7604,8 @@
     \-- is_word - section for function is_word is expected to be info in /phrase/phrase.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/phrase.php
     \-- number_symbol - section for function number_symbol not yet defined that it should be info in /phrase/phrase.php
+    \-- symbol_owner - section for function symbol_owner not yet defined that it should be info in /phrase/phrase.php
+    \-- unit_text - section for function unit_text not yet defined that it should be info in /phrase/phrase.php
     \-- symbol_name - section for function symbol_name not yet defined that it should be info in /phrase/phrase.php
     \-- stands_for - section for function stands_for not yet defined that it should be info in /phrase/phrase.php
     \-- tooltip - section for function tooltip not yet defined that it should be info in /phrase/phrase.php
@@ -9135,6 +9151,12 @@
         \-- data_object - set the value_list of this data object
     \-- value_list
         \-- data_object - @return value_list with the value of this data object
+    \-- load_values_of
+        \-- data_object - add the values of any of the given phrases to the value list, loaded once per request,
+    \-- has_values_of
+        \-- data_object - @param phrase_list $phr_lst the phrases of a value load
+    \-- add_values_of
+        \-- data_object - add the loaded values of a phrase list to the value list, which can hold other values already
     \-- set_formula_link_list
         \-- data_object - set the formula_link_list of this data object
     \-- formula_link_list
@@ -9495,12 +9517,16 @@
         \-- ui_list - the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
     \-- input_fields
         \-- ui_list - the input fields of a page (process_catch_fields.json): a phrase of the values of the page
+    \-- unit_name
+        \-- ui_list - @param sandbox_value $val a value of the page
     \-- formula_notes
         \-- ui_list - the notes of a page: the descriptions of the formulas that calculate the results of the
     \-- assumption_fields
         \-- ui_list - the assumptions of a page: the values that the calculation of the results of the page uses
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+    \-- field_decimals
+        \-- ui_list - @param sandbox_value $val the value that a field shows
     \-- calculation_table
         \-- ui_list - the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
     \-- calculation_detail_tables
@@ -9513,6 +9539,8 @@
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
     \-- calculator_script
         \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
+    \-- calculator_needed_results
+        \-- ui_list - the results that the calculator script calculates: the result of each cell and the results
     \-- sources_used
         \-- ui_list - the sources of the values of the page phrase as a list with a link to the source url, e.g. the
     \-- values_by_triple
@@ -9753,6 +9781,8 @@
         \-- calculator - @param phrase $phr e.g. month or replacement mix
     \-- used
         \-- calculator - @param phrase[] $phr_lst e.g. the option phrases of a selector
+    \-- chosen
+        \-- calculator - the phrase whose numbers a row shows: the option that the page phrase uses if the phrase
     \-- phrases
         \-- calculator - the phrases whose general triples the page reads by rule 6 and 8: the phrase of each item,
 \-- optional with show password but without auto fill
@@ -10097,12 +10127,12 @@
     \-- percent_decimals
         \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
                  the
+    \-- digits
+        \-- config - the full precision tier has no number of digits, because it shows all decimals
     \-- dec_point
-        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
-                 the
+        \-- config - the full precision tier has no number of digits, because it shows all decimals
     \-- thousand_sep
-        \-- config - the view that adds a value for the given frontend type: a pure html frontend selects the phrases of
-                 the
+        \-- config - the full precision tier has no number of digits, because it shows all decimals
     \-- date_time_format
         \-- config - @return string with the date format as requested by the user
 \-- classifications
@@ -10537,10 +10567,12 @@
         \-- html_base - create the HTML code for an input field
     \-- input_number
         \-- html_base - a number input with the limits and the step that the browser enforces, e.g. an input field
+    \-- number_value
+        \-- html_base - the number as an html attribute needs it; the decimals are a minimum, so that a field or an
     \-- div_form
-        \-- html_base - @param float $num a number
+        \-- html_base - @param string $num_txt a number with a point and without trailing zeros e.g. "0.855"
     \-- div_row
-        \-- html_base - @param float $num a number
+        \-- html_base - @param string $num_txt a number with a point and without trailing zeros e.g. "0.855"
     \-- div_col_min_width
         \-- html_base - a column of a row that is moved below the previous column on small screens
     \-- div_row_wrapping_cols

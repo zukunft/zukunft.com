@@ -201,7 +201,7 @@ class start_ui_tests
         // again without the back button
         $test_name = 'the full start page shows the menu too';
         $url_array[url_var::DISPLAY_LIST_COLUMNS] = value_list_ui::COLUMN_TIERS_ALL;
-        $url_array[url_var::DISPLAY_LIST_RANGE] = url_var::TRUE;
+        $url_array[url_var::DISPLAY_LIST_VARIANCE] = url_var::TRUE;
         $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $url_array),
             styles::MENU_COLUMN);
 

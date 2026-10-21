@@ -128,6 +128,23 @@ class coding_rule_tests
         $md_txt = new code_test_coverage()->md();
         $t->assert_file($test_name, $md_txt, test_files::DOCS_TEST_COVERAGE, '', '', $t::TIMEOUT_LIMIT_LONG);
 
+        // the never called list of the coverage report counts the calls and the quoted names
+        // of every function in the code, so that a function that nothing calls is listed
+        $test_name = 'an object call and a static call are counted as a call of the function';
+        $cov = new code_test_coverage();
+        $cnt_lst = [];
+        $name_lst = [];
+        $cov->code_calls(['$wrd->save($msg);', 'user::system();', "\$hooks = ['reset'];", 'function load(): void'],
+            $cnt_lst, $name_lst);
+        $t->assert($test_name, (string)($cnt_lst['save'] ?? 0) . ',' . (string)($cnt_lst['system'] ?? 0), '1,1');
+        $test_name = 'a quoted function name is counted as a name, because a callable or a property hook uses it';
+        $t->assert($test_name, (string)($name_lst['reset'] ?? 0), '1');
+        // negative: a declaration and a quoted name are no calls
+        $test_name = 'a function declaration is not counted as a call';
+        $t->assert_false($test_name, array_key_exists('load', $cnt_lst));
+        $test_name = '... and a quoted name is not counted as a call either';
+        $t->assert_false($test_name, array_key_exists('reset', $cnt_lst));
+
         $this->php_class_name_check($t);
 
         $this->php_include_tests($t, paths::MODEL);
@@ -467,7 +484,7 @@ class coding_rule_tests
         $t->assert($test_name, array_keys($hits), []);
 
         $test_name = 'a probability range factor without a source is not listed';
-        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, words::LOW];
+        $val[json_fields::WORDS] = [words::YEAR, triples::PROBABILITY_RANGE_FACTOR, triples::SYSTEM_VARIANCE_LOW];
         $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
         $t->assert($test_name, array_keys($hits), []);
 

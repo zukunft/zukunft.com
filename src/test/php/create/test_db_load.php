@@ -90,6 +90,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_pinned_ids.php';
 //include_once test_paths::UNIT_WRITE . 'a_selected_test.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
@@ -1560,6 +1561,10 @@ class test_db_load
             if (!$this->csv_check_of_class($class, $csv_db, $csv_file_path)) {
                 $result = false;
             }
+        }
+        // the pinned *_ID consts of the tests after the database and the list.csv files are filled
+        if (!new test_pinned_ids()->check($this->env, $this->rows_after_reset)) {
+            $result = false;
         }
         return $result;
     }

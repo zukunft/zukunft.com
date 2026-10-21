@@ -43,10 +43,12 @@ use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -58,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -74,6 +77,7 @@ use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class use_case_ui_tests
 {
@@ -254,7 +258,67 @@ class use_case_ui_tests
         // negative: the percent of the selector values is a unit and no option
         $test_name = 'a percent phrase of the selector values is not offered as an option';
         $t->assert_text_not_contains($test_name, $fields, 'value="' . words::PCT_ID . '"');
+        // a share is written into a field with the percent decimals of the user e.g. 1.00 and 0.90,
+        // so all options of a selector of shares have the same number of decimals
+        $test_name = 'the field value of a share has the percent decimals of the user';
+        $list = new ui_list();
+        $pct_val = $dto_in->val_lst->get_by_names([word_names::CITY, word_names::BE]);
+        $t->assert($test_name, $html->number_value($pct_val->number(), $list->field_decimals($pct_val, $msg)), '1.00');
+        // negative: the decimals are a minimum, because the field number is the input of the
+        // calculation and two rounded options could even get the same value
+        $test_name = '... but a share with more decimals is not rounded';
+        $t->assert($test_name, $html->number_value(values::SAMPLE_FLOAT, $list->field_decimals($pct_val, $msg)),
+            (string)values::SAMPLE_FLOAT);
+        // negative: another number is written as it is
+        $test_name = '... and another number without added decimals';
+        $inh_val = $dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
+        $t->assert($test_name, $html->number_value($inh_val->number(), $list->field_decimals($inh_val, $msg)),
+            (string)values::CITY_ZH_INHABITANTS_2019);
+        // a unit is shown by its symbol e.g. "kWh/a" for kilowatthours per year like behind a
+        // number, so also the symbol "€" of Euro for the unit EUR that stands for Euro
+        $test_name = 'a field shows the symbol of its unit';
+        $unit_val = new test_lib()->ui_value($t_val->value_mio_eur());
+        $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
+        $phr_lst_keep = $ui_sys->phr_lst;
+        $ui_sys->phr_lst = $t_phr->list_unit_symbol_cache_ui();
+        $t->assert($test_name, $list->unit_name($unit_val, $msg), word_names::EURO_SIGN);
+        // the null safe calls report a missing unit phrase as a failed assert and not as a fatal
+        $test_name = '... because the unit EUR is a symbol of Euro';
+        $eur_phr = $unit_val->phr_lst()->get_by_name(word_names::EUR, $msg);
+        $t->assert($test_name, $eur_phr?->symbol_owner()->name(), word_names::EURO);
+        $test_name = '... whose symbol is the unit text';
+        $t->assert($test_name, $eur_phr?->unit_text($msg), word_names::EURO_SIGN);
+        // negative: without the symbol triple in any cache the unit is named
+        $test_name = '... and the name of a unit without a symbol';
+        $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
+        $ui_sys->phr_lst = new phrase_list_ui();
+        $t->assert($test_name, $list->unit_name($unit_val, $msg), word_names::EUR);
+        // negative: without the triple the unit is no symbol of another phrase
+        $test_name = '... which is its own symbol owner';
+        $t->assert($test_name, $eur_phr?->symbol_owner()->name(), word_names::EUR);
+        $test_name = '... and its name is the unit text';
+        $t->assert($test_name, $eur_phr?->unit_text($msg), word_names::EUR);
+        // negative: a field shows the stored ratio e.g. 0.35, so "%" would read as 0.35 %
+        $test_name = '... but the name and not the symbol of percent';
+        $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
+        $t->assert($test_name, $list->unit_name($pct_val, $msg), words::PCT);
+        // a qualified percent unit has a symbol that names the stored ratio
+        $test_name = '... and the symbol of a qualified percent unit e.g. share (ratio)';
+        $ui_sys->phr_lst = $t_phr->list_share_symbol_cache_ui();
+        $share_val = new test_lib()->ui_value($t_val->value_share());
+        $t->assert($test_name, $list->unit_name($share_val, $msg), word_names::SHARE);
+        // negative: the symbol of the ratio is not written behind the number times 100 e.g. "35share"
+        $test_name = '... which is not the percent symbol of the number';
+        $t->assert($test_name, $share_val->percent_symbol($msg), '');
+        $test_name = 'the percent triple share (ratio) is a ratio unit';
+        $t->assert($test_name, $share_val->phr_lst()->percent_phrase($msg)?->is_ratio_unit($msg), true);
+        // negative: the percent word is no ratio unit, because its symbol "%" is for the number times 100
+        $test_name = '... but not the percent word';
+        $t->assert($test_name, $pct_val->phr_lst()->percent_phrase($msg)?->is_ratio_unit($msg), false);
         $test_name = 'an entered number and phrase of the url are shown again';
+        // the caches of the page again after the symbol tests above
+        $ui_sys->typ_lst_cache->phr_sys = $phr_sys_keep;
+        $ui_sys->phr_lst = $phr_lst_keep;
         $entered = [$num_name => 5, $sel_name => word_names::ZH_ID];
         $fields_url = $page->process_catch_fields(components::TEST_INPUT_FIELDS_NAME, null, $entered, $wrd, $dto_in, $form, $msg);
         $t->assert_text_contains($test_name, $fields_url, 'value="5"');
@@ -516,6 +580,20 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $in_html, 'value="' . values::SAMPLE_FLOAT . '"');
         $test_name = '... and selects the option that the page phrase uses';
         $t->assert_text_contains($test_name, $in_html, ' selected >' . word_names::YEAR_2020 . '</option>');
+        // a result row of a selector phrase e.g. replacement mix shows the numbers of the used option
+        $calc_in = new calculator($dto_in->phr_lst->get_by_name(triple_names::CITY_ZH_NAME, $msg), $dto_in->phr_lst);
+        $test_name = 'a selector phrase stands for the option that the page phrase uses';
+        $t->assert($test_name, $calc_in->chosen($dto_in->phr_lst->get_by_name(word_names::CANTON, $msg))?->name(), word_names::YEAR_2020);
+        // negative: a phrase that is no selector or whose options the page phrase does not use stands for itself
+        $test_name = '... and a phrase without a used option stands for itself';
+        $t->assert($test_name, $calc_in->chosen($dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg))?->name(), word_names::INHABITANTS);
+        // the field gives the selector its layout, so the selector follows its label directly
+        $test_name = '... directly behind its label';
+        $t->assert_text_contains($test_name, $in_html, '</label><select class="form-control" name="'
+            . url_var::NUMERIC_VALUE . $canton_id . '"');
+        // negative: the bootstrap form group around a selector is not used in a calculator field
+        $test_name = '... without a form group around it';
+        $t->assert_text_not_contains($test_name, $in_html, 'form-group');
         $test_name = 'the save button shows the page again with the entered inputs';
         $t->assert_text_contains($test_name, $in_html, '>' . $mtr->txt(msg_id::CALCULATOR_SAVE) . '</button>');
         $t->assert_text_contains($test_name, $in_html, $html->form_hidden(url_var::MASK, views::CALCULATOR));
@@ -600,6 +678,14 @@ class use_case_ui_tests
         $test_name = '... and the hint of a field with a value of a source names its number';
         $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_res, $form, views::CALCULATOR, []),
             $html->span(triple_names::CALC_INHABITANTS_HINT_COM . ' [1]', styles::INPUT_HINT));
+        // negative: the hint of a phrase selector names no source, also if the selected option
+        // has one, because an option is chosen and not measured on the page
+        $opt_val = $dto_res->val_lst->get_by_names([word_names::CANTON, word_names::YEAR_2020]);
+        $opt_val->src = $src;
+        $test_name = '... but the hint of a phrase selector names no source';
+        $t->assert_text_not_contains($test_name, $page->calculator_input($wrd, $msg, $dto_res, $form, views::CALCULATOR, []),
+            $html->span('[1]', styles::INPUT_HINT));
+        $opt_val->src = null;
         // negative: a phrase without calculator triples has no results
         $test_name = 'a phrase without calculator triples shows no calculation result';
         $t->assert($test_name, $page->calculation_result(new test_triples($t)->triple_bern_ui(), $msg, $dto_res), '');
@@ -640,6 +726,48 @@ class use_case_ui_tests
         $dto_lst->add_results_of($zh_city_id, $zh_res_lst);
         $test_name = '... and a result that the cache has already is not added again';
         $t->assert($test_name, (string)$dto_lst->res_lst->count(), (string)$res_count);
+        // many cells and results of a calculator page ask the values of the same phrases, so the
+        // request cache loads the values of the same phrases once
+        $test_name = 'the values of phrases are not loaded if the cache has not asked them yet';
+        $zh_phr_lst = $t_phr->list_zh_ui();
+        $t->assert_false($test_name, $dto_lst->has_values_of($zh_phr_lst));
+        $test_name = '... but after their load';
+        $zh_val_lst = $t_val->value_list_zh_ui();
+        $dto_lst->add_values_of($zh_phr_lst, $zh_val_lst, $msg);
+        $t->assert_true($test_name, $dto_lst->has_values_of($zh_phr_lst));
+        $test_name = '... also if the same phrases are asked in another order';
+        $zh_reversed = new phrase_list_ui();
+        foreach (array_reverse($zh_phr_lst->lst()) as $phr) {
+            $zh_reversed->add_phrase($phr);
+        }
+        $t->assert_true($test_name, $dto_lst->has_values_of($zh_reversed));
+        $test_name = '... with the loaded values in the value list';
+        $t->assert($test_name, (string)$dto_lst->val_lst->count(), (string)$zh_val_lst->count());
+        // negative: the cache key is the complete list of phrases, so a part of the list is asked again
+        $test_name = '... but not for a part of the phrases';
+        $zh_part = new phrase_list_ui();
+        $zh_part->add_phrase($zh_phr_lst->lst()[0]);
+        $t->assert_false($test_name, $dto_lst->has_values_of($zh_part));
+        // negative: a value that the cache has already is not added a second time
+        $test_name = '... and a value that the cache has already is not added again';
+        $dto_lst->add_values_of($zh_part, $zh_val_lst, $msg);
+        $t->assert($test_name, (string)$dto_lst->val_lst->count(), (string)$zh_val_lst->count());
+        // an empty answer is kept too, so that phrases without values are not asked again
+        $test_name = 'phrases without values are not asked again';
+        $no_val_phr_lst = $t_phr->list_global_problems_ui();
+        $dto_lst->add_values_of($no_val_phr_lst, new value_list_ui(), $msg);
+        $t->assert_true($test_name, $dto_lst->has_values_of($no_val_phr_lst));
+        // negative: a new value list holds none of the asked phrases
+        $test_name = 'a new value list holds the values of no asked phrases';
+        $dto_lst->set_value_list($zh_val_lst);
+        $t->assert_false($test_name, $dto_lst->has_values_of($zh_phr_lst));
+        // negative: without the api the cache asks nothing and remembers nothing
+        $test_name = 'an offline cache loads no values';
+        $dto_off = new data_object();
+        $dto_off->online = false;
+        $dto_off->load_values_of($zh_phr_lst, $msg);
+        $t->assert_false($test_name, $dto_off->has_values_of($zh_phr_lst));
+        $msg->reset();
         // with javascript for the calculator the page gets its calculation as data and the script
         // that repeats it in the browser when an input changes (docs/llm/frontend.md)
         $lib = new library();
@@ -661,16 +789,56 @@ class use_case_ui_tests
         sort($sorted_keys);
         $test_name = '... sorted by the html id';
         $t->assert_true($test_name, count($num_keys) > 1 and $num_keys === $sorted_keys);
-        $res_keys = array_keys($plan[ui_list::CALC_RESULTS]);
-        $sorted_keys = $res_keys;
-        sort($sorted_keys);
-        $test_name = '... also the results';
-        $t->assert_true($test_name, $res_keys === $sorted_keys);
         $test_name = '... the number that each cell shows';
         $t->assert($test_name, $plan[ui_list::CALC_CELLS][$canton_key][ui_list::CALC_CELL_NUMBER], $canton_key);
         $test_name = '... the value of each number field';
         $t->assert($test_name, $plan[ui_list::CALC_INPUTS][$inh_name],
             $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->html_id());
+        // negative: the browser reads only the numbers that a result, an input or a cell uses, so a
+        // value of the request cache that the page does not use e.g. a value of a related phrase
+        // that another test has added is not written into the page and the page does not change
+        $unused_val = $t_val->value_ch_ui();
+        $js_lst->add($unused_val, $msg);
+        $unused_script = $js_list->calculator_script($js_calc, $wrd, $js_lst, $dto_res, $msg);
+        $unused_plan = json_decode($lib->str_left_of($lib->str_right_of($unused_script, ui_list::CALC_DATA_ID . '">'), '</script>'), true);
+        $test_name = '... but not a number that no result, input or cell uses';
+        $t->assert_false($test_name, array_key_exists($unused_val->html_id(), $unused_plan[ui_list::CALC_NUMBERS]));
+        $test_name = '... while the numbers that the page uses stay';
+        $t->assert($test_name, (string)$unused_plan[ui_list::CALC_NUMBERS][$canton_key], (string)values::SAMPLE_INT);
+        // the browser calculates only the results that a cell shows and the results these use, so a
+        // result of the request cache that no cell needs is not written into the page
+        $test_name = 'the calculator calculates the result of a cell';
+        [$shown_res, $operand_res] = $t_res->result_list_solution_prio_first_row_ui()->lst();
+        $unused_res = $t_res->result_list_zh_city_ui()->lst()[0];
+        $all_res_plan = [
+            $shown_res->html_id() => [[formula_calc::TOKEN_REF => $operand_res->html_id()]],
+            $operand_res->html_id() => [[formula_calc::TOKEN_REF => $canton_key]],
+            $unused_res->html_id() => [[formula_calc::TOKEN_REF => $canton_key]],
+        ];
+        // calculator_result_plan sorts its plan by the html id
+        ksort($all_res_plan);
+        $cell_plan = [$shown_res->html_id() => [ui_list::CALC_CELL_NUMBER => $shown_res->html_id()]];
+        $needed_plan = $js_list->calculator_needed_results($all_res_plan, $cell_plan);
+        $t->assert_true($test_name, array_key_exists($shown_res->html_id(), $needed_plan));
+        $test_name = '... and the result that this result uses';
+        $t->assert_true($test_name, array_key_exists($operand_res->html_id(), $needed_plan));
+        // negative: a result that no cell shows and no shown result uses is left out
+        $test_name = '... but not a result that no cell needs';
+        $t->assert_false($test_name, array_key_exists($unused_res->html_id(), $needed_plan));
+        $test_name = '... sorted by the html id';
+        $res_keys = array_keys($needed_plan);
+        $sorted_keys = $res_keys;
+        sort($sorted_keys);
+        $t->assert_true($test_name, count($res_keys) > 1 and $res_keys === $sorted_keys);
+        // negative: two results that use each other must not loop forever and are taken once each
+        $test_name = 'results that use each other are calculated once each';
+        $cycle_plan = $all_res_plan;
+        $cycle_plan[$operand_res->html_id()] = [[formula_calc::TOKEN_REF => $shown_res->html_id()]];
+        $cycle_needed = $js_list->calculator_needed_results($cycle_plan, $cell_plan);
+        $t->assert($test_name, array_keys($cycle_needed), $res_keys);
+        // negative: a page without cells calculates no result
+        $test_name = 'a calculator without cells calculates no result';
+        $t->assert($test_name, $js_list->calculator_needed_results($all_res_plan, []), []);
         $test_name = '... and the script that repeats the calculation behind the data';
         $t->assert_text_contains($test_name, $script, '<script src="' . files::CALCULATOR_SCRIPT . '"></script>');
         // config.yaml allows javascript for the calculator, so also a pod without the config value
@@ -683,6 +851,26 @@ class use_case_ui_tests
         $test_name = 'a calculation result without javascript has no script';
         $t->assert_text_not_contains($test_name, $page->calculation_result($wrd, $msg, $dto_res), '<script');
         $ui_sys->cfg = $cfg_keep;
+
+        $t->subheader($ts . 'number format digits');
+        // without a config value each precision tier has the digits of its shared config const
+        $cfg_none = new config_ui();
+        $test_name = 'the default tier has the default digits without a config value';
+        $t->assert($test_name, $cfg_none->digits(), shared_config::DEFAULT_DIGITS);
+        $test_name = '... and each tier the digits of its const';
+        $t->assert($test_name, $cfg_none->digits(triples::VERY_ROUGH), shared_config::VERY_ROUGH_DIGITS);
+        // a pod overwrites the digits in config.yaml; every user default value has "default" in its
+        // path, so also the precise tier matches the names of the default tier
+        $cfg_digits = new config_ui($t_val->value_list_config_digits()->api_json([api_types::INCL_PHRASES]));
+        $test_name = 'the config value overwrites the digits of a tier';
+        $t->assert($test_name, $cfg_digits->digits(words::PRECISE), shared_config::PRECISE_DIGITS + 1);
+        $test_name = '... and the default tier reads its own value, not the first value with its names';
+        $t->assert($test_name, $cfg_digits->digits(), shared_config::DEFAULT_DIGITS + 1);
+        // negative: a tier without a config value keeps its const, an unknown tier gets the default tier
+        $test_name = '... but a tier without a config value keeps the digits of its const';
+        $t->assert($test_name, $cfg_digits->digits(words::ROUGH), shared_config::ROUGH_DIGITS);
+        $test_name = 'an unknown tier has the digits of the default tier';
+        $t->assert($test_name, $cfg_digits->digits(words::DIGITS), shared_config::DEFAULT_DIGITS + 1);
 
         $t->subheader($ts . 'calculator page title');
         // the calculator page is named by the calculator label of the page phrase instead of the view name

@@ -222,6 +222,19 @@ class ref_tests
         $t->assert($test_name, $form->show_last_update($ref_plain), '');
         $test_name = 'a not yet ranked ref shows no impact line';
         $t->assert($test_name, $form->show_impact($ref_plain), '');
+        // negative: the user-settable fields keep their label if the field is not set, so that the
+        // user sees which field is empty; a new reference of an add form has nothing set at all
+        $test_name = 'a ref without an url shows only the url label';
+        $t->assert($test_name, $form->show_ref_url($ref_plain), $t->labeled(msg_id::FORM_FIELD_URL, ''));
+        $test_name = 'a ref without a source shows only the source label';
+        $t->assert($test_name, $form->show_ref_source($ref_plain), $t->labeled(msg_id::FORM_SELECT_SOURCE, ''));
+        $test_name = 'a new ref shows only the phrase label';
+        $ref_empty = new ref_ui();
+        $t->assert($test_name, $form->show_ref_phrase($ref_empty), $t->labeled(msg_id::FORM_SELECT_PHRASE, ''));
+        $test_name = 'a new ref shows only the reference type label';
+        $t->assert($test_name, $form->show_ref_type($ref_empty), $t->labeled(msg_id::FORM_SELECT_REF_TYPE, ''));
+        $test_name = 'a new ref shows only the external key label';
+        $t->assert($test_name, $form->show_ref_key($ref_empty), $t->labeled(msg_id::FORM_FIELD_EXTERNAL_KEY, ''));
         // the phrase of a reference cannot be changed, so the ref edit form has no phrase field
         // and names the word or triple in the form title instead
         $test_name = 'the ref edit form title names the change of a reference';

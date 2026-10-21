@@ -1,18 +1,18 @@
 phrase_id,phrase_name
--615,cash flow statement
--613,income taxes
--612,cash flow
--446,CHF is symbol for Swiss franc
--288,Zurich Insurance
--181,global warming (global problem)
--178,happy time points
--125,education can be global problem
--124,poverty (global problem)
--122,health can be a global problem
--121,populism (global problem)
--116,time points
--113,global warming potential
--112,global warming
+-628,cash flow statement
+-626,income taxes
+-625,cash flow
+-459,CHF is symbol for Swiss franc
+-301,Zurich Insurance
+-197,global warming (global problem)
+-194,happy time points
+-139,education can be global problem
+-138,poverty (global problem)
+-136,health can be a global problem
+-135,populism (global problem)
+-130,time points
+-127,global warming potential
+-126,global warming
 -109,Geneva (city)
 -108,Bern (city)
 -107,Zurich (canton)
@@ -63,32 +63,32 @@ phrase_id,phrase_name
 214,work
 215,world
 217,Zurich
-218,solution
-226,potential
-230,climate
-233,warmer
-237,populism
-253,health
-255,poverty
-257,education
-269,happy
-271,points
-274,htp
-275,trillion
-305,income
-308,tax
-379,2013
-380,2014
-381,2015
-382,2016
-383,2017
-384,2018
-387,total
-446,USD
-460,CHF
-601,ABB
-602,Vestas
-603,sales
-604,cash
-605,statement
-607,parts
+227,solution
+235,potential
+239,climate
+242,warmer
+246,populism
+262,health
+264,poverty
+266,education
+278,happy
+280,points
+283,htp
+284,trillion
+314,income
+317,tax
+385,2013
+386,2014
+387,2015
+388,2016
+389,2017
+390,2018
+393,total
+452,USD
+466,CHF
+607,ABB
+608,Vestas
+609,sales
+610,cash
+611,statement
+613,parts

@@ -688,6 +688,18 @@ edit the file:
 An LLM patching the generated line by hand masks the signal, and the next run
 overwrites the edit anyway.
 
+### The test coverage counter stays simple
+
+`src/test/php/utils/code_test_coverage.php` counts a function call by its name only:
+a call between a `$test_name = …` line and the last assert of the same block counts for
+every class that declares the name, and a function that only a harness helper such as
+`$t->assert_sql_insert($sc, $wrd)` calls is reported as untested. The counter stays this
+simple and human readable on purpose: it is never made exact with a class resolution of
+the caller variable, a map of the harness helpers or an inheritance lookup. A function
+that the counter reports although a helper or a test of a sibling class covers it gets
+its own explicit test, because one extra unit test costs nothing in production, while a
+clever counter costs every reader the time to understand it.
+
 ## Tests that depend on data files must be reproducible from a single point of change
 
 A test relying on a generated artifact — a JSON import file, an SQL snapshot, an
@@ -771,6 +783,19 @@ uses the new type fails with "not found". The csv load also removes the cached
 types api message (`db_cache` type `types`), because the frontend reads the
 types from that message and would miss the new rows until the cache age limit.
 Never derive an id by counting entries in the JSON or by assuming a shift of one.
+At the end of `csv_recreate()` the check `test/php/create/test_pinned_ids.php` takes
+the name or code id of each pinned object, picks its id from the `list.csv` of the
+class and from the database and reports every pinned id that differs together with
+the id to pin. A new `*_ID` const of a seed object is added to the array of its class
+there; the ids of test objects that exist in no database (e.g. `TEST_ADD_ID`) are not.
+Without `files::AUTO_RE_PIN_OBJECT_ID` the check writes `docs/pinned_id_findings.md`
+with a section per class: either "143 words tested, all ids are fine" or each const to
+re-pin with the pinned and the new id, or why it needs a re-pin by hand (several ids in
+the database, a `list.csv` that differs from the database, no single const).
+With the flag the check rewrites the number of each shifted const in its php file
+instead, if the name has exactly one id in the database and the `list.csv` has the same;
+the run still uses the old values, so the tests are run again, the diff of the const
+files is reviewed and the flag is set back to `false`.
 
 Two traps that make the drift look smaller than it is:
 
@@ -1096,11 +1121,11 @@ masks the `url_var::SECRET_VARS`.
 `unit_ui/start_page_ui_tests.php` renders the ranking of the start page from the
 unit fixtures (`test_values::value_list_start_page`) for every combination that
 the sub menus offer: the rows of the "… more" tail (`dls`), the column tiers with
-and without the ranges of the "…" header (`dlc`, `dlr`) and the form of the
+and without the variance of the "…" header (`dlc`, `dlv`) and the form of the
 ranking (`dla`: table, chart or both). Each page is compared with
 `src/test/resources/web/html/start_page/start_page<_var_value…>.html`, named by
 the url vars of the selection, so the file of a page is found from its url
-(`start_page_dls_20_dlc_0_dlr_1_dla_chart.html`); the default of a sub menu has
+(`start_page_dls_20_dlc_0_dlv_1_dla_chart.html`); the default of a sub menu has
 no var. The test needs no database, so it is the fast check of a ranking change;
 the `views_by_id/start_page/` snapshots keep the few full pages with the frame,
 and the details page there is the only one fetched from the pod. A snapshot of a

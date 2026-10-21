@@ -185,6 +185,48 @@
     {
       "name": "Zurich",
       "description": "place name used for both the city and the canton of Zurich; The prefered use for values is City of Zurich or Canton of Zurich."
+    },
+    {
+      "name": "default",
+      "description": "the one used if nothing else is selected"
+    },
+    {
+      "name": "digits",
+      "description": "the number of significant digits shown of a number"
+    },
+    {
+      "name": "precise"
+    },
+    {
+      "name": "rough"
+    },
+    {
+      "name": "very"
+    },
+    {
+      "name": "full"
+    },
+    {
+      "name": "variance",
+      "description": "In probability theory and statistics, variance is the expectation of the squared deviation of a random variable from its mean.",
+      "refs": [
+        {
+          "name": "Variance",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q175199",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "low",
+      "description": "below the usual, the average or the expected level e.g. a low economic mobility"
+    },
+    {
+      "name": "high",
+      "description": "above the usual, the average or the expected level e.g. a high precision"
     }
   ],
   "triples": [
@@ -274,6 +316,112 @@
       "from": "Geneva",
       "verb": "is a",
       "to": "city"
+    },
+    {
+      "name": "zukunft.com system",
+      "description": "keyword for system internal triples such as the column definitions",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system",
+      "code_id": "zukunft_com_system"
+    },
+    {
+      "name": "very precise",
+      "from": "very",
+      "verb": "and",
+      "to": "precise"
+    },
+    {
+      "name": "very rough",
+      "from": "very",
+      "verb": "and",
+      "to": "rough"
+    },
+    {
+      "name": "digits (system)",
+      "description": "keyword for the precision tiers of the number of digits shown of a number; the number of digits of each tier is set in config.yaml",
+      "from": "digits",
+      "verb": "can be",
+      "to": "zukunft.com system",
+      "code_id": "system_digits"
+    },
+    {
+      "name": "default digits (system)",
+      "description": "the default number of digits shown of a number, used if a view, a value or a result has no other tier",
+      "from": "digits (system)",
+      "verb": "can be",
+      "to": "default",
+      "code_id": "system_digits_default"
+    },
+    {
+      "name": "high precision digits (system)",
+      "description": "the number of digits for views, values or results that need more precision",
+      "from": "digits (system)",
+      "verb": "can be",
+      "to": "precise",
+      "code_id": "system_digits_high"
+    },
+    {
+      "name": "very high precision digits (system)",
+      "description": "the number of digits for views, values or results that need even more precision",
+      "from": "digits (system)",
+      "verb": "can be",
+      "to": "very precise",
+      "code_id": "system_digits_very_high"
+    },
+    {
+      "name": "full precision digits (system)",
+      "description": "the full number with all decimal places is always shown",
+      "from": "digits (system)",
+      "verb": "can be",
+      "to": "full",
+      "code_id": "system_digits_full"
+    },
+    {
+      "name": "low precision digits (system)",
+      "description": "the number of digits for views, values or results that are used only as an indication",
+      "from": "digits (system)",
+      "verb": "can be",
+      "to": "rough",
+      "code_id": "system_digits_low"
+    },
+    {
+      "name": "very low precision digits (system)",
+      "description": "the number of digits for views, values or results that are used just as a rough indication",
+      "from": "digits (system)",
+      "verb": "can be",
+      "to": "very rough",
+      "code_id": "system_digits_very_low"
+    },
+    {
+      "name": "variance high (system)",
+      "description": "keyword for the upper bound of the variance of a value; the width of the range is defined by the file that states it",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high",
+      "code_id": "system_variance_high"
+    },
+    {
+      "name": "variance low (system)",
+      "description": "keyword for the lower bound of the variance of a value; the width of the range is defined by the file that states it",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low",
+      "code_id": "system_variance_low"
+    },
+    {
+      "name": "high (variance symbol)",
+      "description": "high as the symbol for the upper bound of the variance of a value",
+      "from": "high",
+      "verb": "is symbol for",
+      "to": "variance high (system)"
+    },
+    {
+      "name": "low (variance symbol)",
+      "description": "low as the symbol for the lower bound of the variance of a value",
+      "from": "low",
+      "verb": "is symbol for",
+      "to": "variance low (system)"
     }
   ]
 }

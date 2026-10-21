@@ -166,7 +166,7 @@ class system_view_ui_tests
     const string START_PAGE_FILE_NAME = 'start_page';
     // added to the snapshot name of a view rendered with the more version of its list
     const string MORE_LIST_FILE_POSTFIX = '_more';
-    // added to the snapshot name of the start page with the main columns and the ranges of its table
+    // added to the snapshot name of the start page with the main columns and the variance of its table
     const string DETAILS_LIST_FILE_POSTFIX = '_details';
     // the start page details list shows the real ranking data of the pod, which the unit fixtures
     // do not carry, so localhost_ui_tests fetches its snapshot from the pod after the db recreate

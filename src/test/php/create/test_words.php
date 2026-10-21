@@ -815,6 +815,26 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "share", the word of the share unit and its symbol (see test_triples::share_ratio)
+     */
+    function word_share(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SHARE_ID, word_names::SHARE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "ratio", the qualifier of the share unit (see test_triples::share_ratio)
+     */
+    function word_ratio(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::RATIO_ID, word_names::RATIO);
+        return $wrd;
+    }
+
+    /**
      * @return word of the master pod name
      */
     function word_zukunft_com(): word
@@ -1342,26 +1362,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::ASSUMED_ID, word_names::ASSUMED);
-        return $wrd;
-    }
-
-    /**
-     * @return word the tag of the lower bound of the probability range of a value
-     */
-    function word_low(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::LOW_ID, word_names::LOW);
-        return $wrd;
-    }
-
-    /**
-     * @return word the tag of the upper bound of the probability range of a value
-     */
-    function word_high(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::HIGH_ID, word_names::HIGH);
         return $wrd;
     }
 
