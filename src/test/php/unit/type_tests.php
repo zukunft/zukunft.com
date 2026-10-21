@@ -73,8 +73,12 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
+use Zukunft\ZukunftCom\main\php\web\types\type_object as type_object_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -90,6 +94,7 @@ class type_tests
         $db_con = new sql_db();
         $t_typ = new test_types($t);
         $msg = new user_message();
+        $msg_ui = new user_message_ui();
         $t->name = 'type->';
         $t->resource_path = 'db/type/';
 
@@ -155,6 +160,81 @@ class type_tests
         $vrb->api_mapper([json_fields::USAGE => 7], $msg, true);
         $test_name = 'a trusted source e.g. the db cached types json sets the verb usage';
         $t->assert($test_name, $vrb->usage, 7);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the type part of the mapper is shared by all types, so it is tested with the sys log status
+        $test_name = 'the type part of the mapper sets the name';
+        $typ = new type_object('');
+        $typ->api_mapper(json_decode($t_typ->sys_log_status()->api_json(), true), $msg);
+        $t->assert($test_name, $typ->name(), sys_log_statuum::OPEN_NAME);
+        $msg->reset();
+
+        // negative: the code id links program code to the type, so an untrusted json never sets it
+        $test_name = 'the type part of the mapper ignores the code id of an untrusted json';
+        $typ = new type_object(null);
+        $typ->api_mapper(json_decode($t_typ->sys_log_status()->api_json(), true), $msg);
+        $t->assert_null($test_name, $typ->code_id);
+        $msg->reset();
+
+        $test_name = 'the user profile mapper sets the right level';
+        $usr_prf = new user_profile('');
+        $usr_prf->api_mapper(json_decode($t_typ->user_profile()->api_json(), true), $msg);
+        $t->assert($test_name, $usr_prf->right_level, user_profiles::NORMAL_LEVEL);
+        $msg->reset();
+
+        // negative: an empty right level is no level, so the profile keeps none
+        $test_name = 'the user profile mapper ignores an empty right level';
+        $usr_prf = new user_profile('');
+        $usr_prf->api_mapper([json_fields::RIGHT_LEVEL => ''], $msg);
+        $t->assert_null($test_name, $usr_prf->right_level);
+        $msg->reset();
+
+        $test_name = 'the sys log status mapper sets the status';
+        $api_json = json_decode($t_typ->sys_log_status()->api_json(), true);
+        $api_json[json_fields::STATUS] = sys_log_statuum::OPEN_ID;
+        $log_sta = new sys_log_status('');
+        $log_sta->api_mapper($api_json, $msg);
+        $t->assert($test_name, $log_sta->status_id, sys_log_statuum::OPEN_ID);
+        $msg->reset();
+
+        // negative: an empty status is no status, so the sys log status keeps none
+        $test_name = 'the sys log status mapper ignores an empty status';
+        $log_sta = new sys_log_status('');
+        $log_sta->api_mapper([json_fields::STATUS => ''], $msg);
+        $t->assert_null($test_name, $log_sta->status_id);
+        $msg->reset();
+
+        $test_name = 'the job status mapper sets the priority';
+        $api_json = json_decode($t_typ->job_status()->api_json(), true);
+        $api_json[json_fields::PRIORITY] = job_statuum::PRIO_HIGHEST;
+        $job_sta = new job_status('');
+        $job_sta->api_mapper($api_json, $msg);
+        $t->assert($test_name, $job_sta->prio, job_statuum::PRIO_HIGHEST);
+        $msg->reset();
+
+        // negative: an empty priority is no priority, so the job status keeps the priority it has
+        $test_name = 'the job status mapper keeps the priority on an empty priority';
+        $job_sta = $t_typ->job_status();
+        $job_sta->prio = job_statuum::PRIO_HIGHEST;
+        $job_sta->api_mapper([json_fields::PRIORITY => ''], $msg);
+        $t->assert($test_name, $job_sta->prio, job_statuum::PRIO_HIGHEST);
+        $msg->reset();
+
+        // the frontend type is filled from the api json of the backend type
+        $test_name = 'the frontend type mapper sets the name';
+        $typ_ui = new type_object_ui(0, sys_log_statuum::OPEN);
+        $typ_ui->api_mapper(json_decode($t_typ->sys_log_status()->api_json(), true), $msg_ui);
+        $t->assert($test_name, $typ_ui->name(), sys_log_statuum::OPEN_NAME);
+        $msg_ui->reset();
+
+        // negative: the id is mandatory, so a type json without it is reported
+        $test_name = 'the frontend type mapper reports a json without id';
+        $api_json = json_decode($t_typ->sys_log_status()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $typ_ui = new type_object_ui(0, sys_log_statuum::OPEN);
+        $t->assert_false($test_name, $typ_ui->api_mapper($api_json, $msg_ui));
+        $msg_ui->reset();
 
         $t->subheader($ts . 'code link csv row mapper');
         // the statuum csv files are found by the status list class,

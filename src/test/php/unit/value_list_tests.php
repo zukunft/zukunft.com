@@ -49,6 +49,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
@@ -91,15 +93,18 @@ class value_list_tests
         $test_name = 'test the grp_ids function';
         $val_ids = $t_val->value_list($msg)->grp_ids()->dsp_id();
         $t->assert($test_name, $val_ids, 'π (unit symbol) / Zurich city inhabitants (2019)');
+        // negative: an empty list has no group
+        $test_name = 'an empty value list has no group';
+        $t->assert($test_name, new value_list($t->usr1)->grp_ids()->count(), 0);
 
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list($msg)->filter_by_time($msg, $t_phr->phrase_list());
 
         $t->subheader($ts . 'sort value list');
         // the factory adds the low impact value first and the high impact value second
+        $test_name = 'sort by impact descending puts the high impact value first';
         $impact_lst = $t_val->value_list_zh_impact();
         $impact_lst->sort();
-        $test_name = 'sort by impact descending puts the high impact value first';
         $t->assert($test_name, $impact_lst->lst()[0]->impact(), impacts::HIGH);
         $test_name = 'sort by impact descending keeps the low impact value last';
         $t->assert($test_name, $impact_lst->lst()[1]->impact(), impacts::LOW);
@@ -130,6 +135,12 @@ class value_list_tests
         $empty_lst = new value_list($t->usr1);
         $empty_lst->sort();
         $t->assert($test_name, $empty_lst->count(), 0);
+
+        $t->subheader($ts . 'numbers');
+        $test_name = 'the numbers of a value list are in the order of the list';
+        $t->assert($test_name, implode(',', $num_lst->numbers()), '8,2');
+        $test_name = '... and an empty value list has no number';
+        $t->assert($test_name, $empty_lst->numbers(), []);
 
         $t->subheader($ts . 'keep most relevant');
         // the factory adds the low impact value first and the high impact value second
@@ -170,6 +181,15 @@ class value_list_tests
         $api_json = $t_val->value_list($msg)->api_json();
         $val_lst_ui = new value_list_ui($api_json);
         $t->assert_json_string($test_name, $val_lst_ui->api_json(), $api_json);
+        $test_name = 'the api mapper adds every value of the api json';
+        $val_lst = new value_list($t->usr1);
+        $val_lst->api_mapper($t_val->value_list($msg)->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $val_lst->count(), $t_val->value_list($msg)->count());
+        $msg->reset();
+        $test_name = 'the api mapper refuses a value with a text as the number';
+        $val_lst = new value_list($t->usr1);
+        $t->assert_false($test_name, $val_lst->api_mapper([[json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT]], $msg));
+        $msg->reset();
 
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';

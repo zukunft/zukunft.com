@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -116,6 +117,30 @@ class source_ui_tests
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::SOURCE_EDIT_ID);
         $test_name = 'the source title has a subtitle for the type, share and protection';
         $t->assert_text_contains($test_name, $ttl_html, styles::SUBTITLE);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend source takes the url of the api message
+        $test_name = 'the api mapper sets the url of a source';
+        $src_map = new source();
+        $src_map->api_mapper(json_decode($t_src->source_reserved()->api_json(), true), $msg);
+        $t->assert($test_name, $src_map->url(), sources::SIB_URL);
+
+        // the id is mandatory, because without it a save would add a new source
+        $test_name = 'a source json without an id is refused';
+        $t->assert_false($test_name, $src_map->api_mapper([json_fields::NAME => sources::SIB], $msg));
+        $msg->reset();
+
+        // the api message of a source list is mapped to one frontend source per entry
+        $test_name = 'the api mapper adds each source of the api message to the list';
+        $src_lst = new source_list();
+        $src_lst->api_mapper(json_decode($t_src->source_list()->api_json(), true));
+        $t->assert($test_name, $src_lst->count(), $t_src->source_list()->count());
+
+        // a list entry without an id is reported, so the caller can show the problem
+        $test_name = 'a source list entry without an id is reported';
+        $src_lst = new source_list();
+        $t->assert_false($test_name, $src_lst->api_mapper([[json_fields::NAME => sources::SIB]])->is_ok());
 
         $t->subheader($ts . 'show fields');
 

@@ -147,6 +147,22 @@ class triple_ui_tests
         $trp_no_verb->verb = null;
         $t->assert_text_not_contains($test_name, $form->title_triple($trp_no_verb, $msg), '>' . verbs::PART_NAME . '</a>');
 
+        $t->subheader($ts . 'api mapper');
+
+        // with the phrases the api json contains the from phrase, so the mapper sets the from phrase with its name
+        $test_name = 'the api mapper sets the from phrase of the triple';
+        $trp_map = new triple();
+        $trp_map->api_mapper(json_decode($t_trp->triple()->api_json([api_types::INCL_PHRASES]), true), $msg);
+        $t->assert($test_name, $trp_map->get_from()?->name(), word_names::CONST_NAME);
+        $msg->reset();
+
+        // the id is mandatory, so an api json without the id is reported
+        $test_name = 'the api mapper reports a triple without the id';
+        $trp_map = new triple();
+        $t->assert_false($test_name, $trp_map->api_mapper([json_fields::NAME => triple_names::MATH_CONST], $msg));
+        $msg->reset();
+
+
         $t->subheader($ts . 'view tab box');
 
         // like on the word page the 'my' tab shows the fields the session user has overwritten

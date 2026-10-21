@@ -234,6 +234,9 @@ class system_view_ui_tests
         $test_name = 'the body of a not yet implemented system view shows the hint';
         $page = new system_page();
         $t->assert_text_contains($test_name, $page->not_yet_available(), $mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
+        // negative: the data and actions are not implemented, so the hint offers no form
+        $test_name = '... and offers no form';
+        $t->assert_text_not_contains($test_name, $page->not_yet_available(), '<' . html_base::FORM);
 
         // the "..." below the title of a default view opens the menu with the other three versions
         $t->subheader($ts . 'related view selector');
@@ -811,20 +814,29 @@ class system_view_ui_tests
         // empty: every column says that it has no entry and has no plus sign
         $dto = $t_adm->dto_empty($ui->dto);
         $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_EMPTY_FILE, 'empty');
+        $test_name = 'an empty response time column says so';
         $col = $page->admin_url_delay($msg, true, $dto->adm_sys_tim_lst);
-        $t->assert_text_contains('an empty response time column says so', $col, $mtr->txt(msg_id::ADMIN_NO_SLOW_REQUESTS));
-        $t->assert_text_not_contains('... and has no plus sign', $col, '<details');
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_SLOW_REQUESTS));
+        $test_name = '... and has no plus sign';
+        $t->assert_text_not_contains($test_name, $col, '<details');
+        $test_name = 'an empty failed login column says so';
         $col = $page->admin_login_fails($msg, true, $dto->adm_sys_log);
-        $t->assert_text_contains('an empty failed login column says so', $col, $mtr->txt(msg_id::ADMIN_NO_LOGIN_FAILS));
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_LOGIN_FAILS));
+        $test_name = 'an empty error column says so';
         $col = $page->admin_errors_unassigned($msg, true, $dto->adm_sys_log);
-        $t->assert_text_contains('an empty error column says so', $col, $mtr->txt(msg_id::ADMIN_NO_ERRORS));
-        $t->assert_text_not_contains('... and has no plus sign', $col, '<details');
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_ERRORS));
+        $test_name = '... and has no plus sign';
+        $t->assert_text_not_contains($test_name, $col, '<details');
+        $test_name = 'an empty job column says so';
         $col = $page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now);
-        $t->assert_text_contains('an empty job column says so', $col, $mtr->txt(msg_id::ADMIN_NO_DELAYED_JOBS));
-        $t->assert_text_not_contains('... without a table like the other columns', $col, '<table');
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_DELAYED_JOBS));
+        $test_name = '... without a table like the other columns';
+        $t->assert_text_not_contains($test_name, $col, '<table');
+        $test_name = 'an empty server time column says so';
         $col = $page->admin_user_load($msg, true, $dto->adm_usr_log_sum_lst);
-        $t->assert_text_contains('an empty server time column says so', $col, $mtr->txt(msg_id::ADMIN_NO_USER_LOAD));
-        $t->assert_text_not_contains('... and has no plus sign', $col, '<details');
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_USER_LOAD));
+        $test_name = '... and has no plus sign';
+        $t->assert_text_not_contains($test_name, $col, '<details');
 
         // mixed: a column without a critical entry says so and shows its entries only behind the plus sign
         $dto = $t_adm->dto_mixed($ui->dto, $msg);
@@ -901,6 +913,17 @@ class system_view_ui_tests
         $t->assert_false('a user one request below the threshold is not critical', $usr_log_sum->is_critical($limits));
         $usr_log_sum->update_ms = $limits[json_fields::UPDATE_MS];
         $t->assert_true('... but a user with the update time threshold is', $usr_log_sum->is_critical($limits));
+
+        $test_name = 'the summed sessions mapper accepts the sessions of a user';
+        $usr_log_sum = new user_log_sum();
+        $api_json = [json_fields::ID => test_admin_dashboard::LOAD_LIGHT_ID, json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME];
+        $t->assert_true($test_name, $usr_log_sum->api_mapper($api_json));
+
+        // negative: summed sessions without a user id belong to no user
+        $test_name = 'the summed sessions mapper refuses sessions without a user id';
+        $usr_log_sum = new user_log_sum();
+        $api_json = [json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME];
+        $t->assert_false($test_name, $usr_log_sum->api_mapper($api_json));
     }
 
     /**

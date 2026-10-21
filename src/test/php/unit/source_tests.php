@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
@@ -203,6 +204,20 @@ class source_tests
         $db_con = new sql_db();
         $src->set_code_id_db(sources::SIB_CODE);
         $t->assert_api_msg($db_con, $src, $msg);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend sends the source as api json, so the mapper must take the url of it
+        $test_name = 'the api mapper sets the url of a source';
+        $src_map = new source($t->usr1);
+        $src_map->api_mapper($t_src->source_filled_included()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $src_map->url, sources::BFS_ULR);
+
+        // the api sends a zero view id if no default view is selected, which must not set a view
+        $test_name = 'the api mapper ignores a default view id of zero';
+        $src_map->api_mapper([json_fields::ID => sources::BFS_ID, json_fields::VIEW => 0], $msg);
+        $t->assert($test_name, $src_map->get_view_id(), 0);
+        $msg->reset();
 
         $t->subheader($ts . 'frontend');
         $src = $t_src->source_reserved();

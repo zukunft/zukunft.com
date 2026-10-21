@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -64,6 +65,17 @@ class figure_list_ui_tests
         $test_page .= 'figure list with tooltip: ' . $lst->display($msg_ui) . '<br>';
         $test_page .= 'figure list with link: ' . $lst->display_linked($msg_ui) . '<br>';
         $t->html_page_test($test_page, 'figure_list', 'figure_list', $msg_ui);
+
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the api mapper adds every figure of the api json';
+        $lst = new figure_list();
+        $lst->api_mapper(json_decode($t_fig->figure_list($msg)->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]), true));
+        $t->assert($test_name, $lst->count(), $t_fig->figure_list($msg)->count());
+        $test_name = 'the api mapper reports a figure without class';
+        $fig_json = json_decode($t_fig->figure_value($msg)->api_json([api_types::INCL_PHRASES]), true);
+        unset($fig_json[json_fields::OBJECT_CLASS]);
+        $lst = new figure_list();
+        $t->assert_false($test_name, $lst->api_mapper([$fig_json])->is_ok());
     }
 
 }

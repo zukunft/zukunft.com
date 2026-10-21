@@ -393,6 +393,9 @@ class base_ui_tests
         // the target is a pure html frontend, so the tab box must not contain javascript
         $test_name = 'tab_box contains no javascript';
         $t->assert_text_not_contains($test_name, $two_tabs, '<script');
+        // negative: an empty change log or view list shows no empty tab
+        $test_name = 'a tab box without content shows no tab';
+        $t->assert($test_name, $html->tab_box(['View' => '', 'Changes' => '']), '');
 
         $t->subheader($ts . 'navbar');
 
@@ -442,6 +445,9 @@ class base_ui_tests
             $test_name = 'the forward page ' . $forward . ' opens the view ' . $msk_id . ' with the url vars of the request';
             $t->assert_file($test_name, $html->forward_page($msk_id), $file);
         }
+        // negative: the session decides who the user is, so the static page never names a user
+        $test_name = 'a forward page names no user';
+        $t->assert_text_not_contains($test_name, $html->forward_page(views::SYSTEM_CONFIG_ID), url_var::USER . url_var::EQ);
 
         // the pinned views of config.yaml are linked on the static start page and each has a static
         // forward page by its url name, which the next run with AUTO_UPDATE_TEST_FILES writes
@@ -536,6 +542,9 @@ class base_ui_tests
         ]);
         $t->assert_text_contains($test_name, $logout_body, htmlspecialchars($val_url));
         $t->assert_text_contains($test_name, $logout_body, $mtr->txt(msg_id::FORM_FIELD_BACK));
+        // negative: without a back target the back button leads to the start page, which names no view
+        $test_name = '... and without a back target to the start page';
+        $t->assert_text_not_contains($test_name, new system_page()->logout_body(), url_var::PAR . url_var::MASK . url_var::EQ);
 
         $test_name = 'on a normal page the login link uses the page as the back target';
         $navbar_normal_page = $html->navbar(views::WORD_ID, [
@@ -679,6 +688,54 @@ class base_ui_tests
         // negative: a <style> tag is a stylesheet and the browser does not show its text
         $test_name = '... and never a style tag';
         $t->assert_text_not_contains($test_name, $err_html, '<style');
+        // negative: the text is shown as it is, so no tag is added to a plain text
+        $test_name = '... and a plain error text gets no tag added';
+        $plain_err_html = $html->dsp_err('plain text');
+        $t->assert_text_contains($test_name, $plain_err_html, '>plain text<');
+        $t->assert_text_not_contains($test_name, $plain_err_html, '<b>');
+
+        $t->subheader($ts . 'html elements');
+
+        // a named button posts its name as a url key and the label is the accessible name of an icon button
+        $test_name = 'a named button posts its name';
+        $post_btn = $html->button_bs('add', '', '', url_var::POST_SUBMIT, 'add a value');
+        $t->assert_text_contains($test_name, $post_btn, html_base::NAME . '="' . url_var::POST_SUBMIT . '"');
+        $t->assert_text_contains($test_name, $post_btn, html_base::ARIA_LABEL . '="add a value"');
+        $test_name = '... and a plain button neither posts a name nor has an accessible name';
+        $plain_btn = $html->button_bs('add');
+        $t->assert_text_not_contains($test_name, $plain_btn, html_base::NAME . '="');
+        $t->assert_text_not_contains($test_name, $plain_btn, html_base::ARIA_LABEL);
+
+        // the submit button posts the submit url var; the shown text is the value and never the name
+        $test_name = 'the submit button posts the submit url var';
+        $t->assert_text_contains($test_name, $html->form_submit('Link'), html_base::NAME . '="' . url_var::POST_SUBMIT . '"');
+        $test_name = '... and never the shown text as the name';
+        $t->assert_text_not_contains($test_name, $html->form_submit('Link'), html_base::NAME . '="Link"');
+
+        // a number input writes only the limits that are given, so the browser enforces no limit by default
+        $test_name = 'a number input writes the given limits';
+        $num_input = $html->input_number(url_var::NUMERIC_VALUE, 0.5, 0, 1, 0.01, 'value_form');
+        $t->assert_text_contains($test_name, $num_input, 'min="0" max="1" step="0.01"');
+        $t->assert_text_contains($test_name, $num_input, html_base::FORM . '="value_form"');
+        $test_name = '... and an input without limits and form has neither';
+        $free_input = $html->input_number(url_var::NUMERIC_VALUE, null, null, null, null);
+        $t->assert_text_not_contains($test_name, $free_input, html_base::VALUE . '=');
+        $t->assert_text_not_contains($test_name, $free_input, 'min=');
+        $t->assert_text_not_contains($test_name, $free_input, html_base::FORM . '=');
+
+        // the link to an object escapes the name, so a name with a tag cannot inject html
+        $test_name = 'the link to an object shows the name';
+        $obj_link = $html->ref_view(views::WORD_ID, word_names::MATH_ID, word_names::MATH);
+        $t->assert_text_contains($test_name, $obj_link, '>' . word_names::MATH . '</' . html_base::A . '>');
+        $test_name = '... and a name with a tag is shown as text, not as html';
+        $tag_link = $html->ref_view(views::WORD_ID, word_names::MATH_ID, '<b>' . word_names::MATH . '</b>');
+        $t->assert_text_not_contains($test_name, $tag_link, '<b>');
+
+        // a heading shows the title and gets a style class only if a style is given
+        $test_name = 'a heading shows the title';
+        $t->assert_text_contains($test_name, $html->text_h2('names'), '>names</');
+        $test_name = '... without a style class if none is given';
+        $t->assert_text_not_contains($test_name, $html->text_h2('names'), html_base::CLASS_HTML . '=');
 
 
         $t->subheader($ts . 'unit html table tests');
@@ -985,6 +1042,9 @@ class base_ui_tests
         parse_str($url_part["query"], $url_array);
         $t->assert($test_name, html_base::back_url_array($url_array),
             ['9m' => '3', '9id' => '123']);
+        // negative: the id 0 of a page without an object names nothing
+        $test_name = '... and a form without a calling page has no hidden back field';
+        $t->assert($test_name, html_base::back_url_array([url_var::ID => '0']), []);
 
         $test_name = 'login url with back part while editing word 123';
         $url_part = parse_url('?m=3&id=123');
@@ -1018,6 +1078,8 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $html->url_back(views::WORD_ADD_DETAIL_ID, 0, []), '9');
         $test_name = 'an old style script url carries the calling page as the back part';
         $t->assert_text_contains($test_name, $html->url_old(rest_ctrl::VIEW, 5, $page_arr), '9m=3&9id=123');
+        $test_name = '... and without an object and a calling page it has no parameter';
+        $t->assert($test_name, $html->url_old(rest_ctrl::VIEW), rest_ctrl::PATH_FIXED . rest_ctrl::VIEW . rest_ctrl::EXT);
         // the group id of a value with more than four phrases contains a '+', which a url reads as a
         // space, so a link writes the id in its short url form, which has a '_' instead of the '+'
         // (see group_id_url), because else the value page finds no value

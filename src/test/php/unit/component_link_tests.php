@@ -45,9 +45,12 @@ use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -129,6 +132,21 @@ class component_link_tests
         $t->subheader($ts . 'component link base object handling');
         $lnk = $t_cmp->component_link_filled();
         $t->assert_reset($lnk);
+
+        $t->subheader($ts . 'component link api mapper');
+
+        // the detailed api json of a component link carries the id of the linked view
+        $test_name = 'the api mapper sets the view of a component link';
+        $msg = new user_message($t->usr1);
+        $lnk_map = new component_link($t->usr1);
+        $lnk_map->api_mapper($t_cmp->component_link()->api_json_array([api_types::LINK_DETAILS], $msg), $msg);
+        $t->assert($test_name, $lnk_map->view_id(), views::START_ID);
+
+        // a component link json without the component id must not keep the previous component
+        $test_name = 'a component link json without a component id links no component';
+        $lnk_map->api_mapper([json_fields::ID => $lnk->id()], $msg);
+        $t->assert($test_name, $lnk_map->component_id(), 0);
+        $msg->reset();
 
         // the add and edit form of a component link shows the position type and the link type,
         // so each posts its own url var, else the form has two link type fields with the same id

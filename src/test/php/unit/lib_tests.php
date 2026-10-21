@@ -59,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_api;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 global $db_con;
@@ -245,6 +246,22 @@ class lib_tests
         $target = $lib->trim_html($text);
         $result = $lib->trim_html($lib->format_html($text));
         $t->assert($test_name, $result, $target);
+        // negative: a text without a tag has nothing to indent, so it is kept as it is
+        $test_name = 'format_html keeps a text without a tag';
+        $t->assert($test_name, $lib->format_html('two words'), 'two words');
+
+        // the sql fixtures of a class are in the folder of the class, a link class shares the folder of its main class
+        $test_name = 'the resource path of a class names the class';
+        $cmp_path = $lib->class_to_resource_path(component::class);
+        $t->assert_text_contains($test_name, $cmp_path, $lib->class_to_name(component::class));
+        $test_name = '... and a formula link has the path of the formula, not of the component';
+        $t->assert_false($test_name, $lib->class_to_resource_path(formula_link::class) == $cmp_path);
+
+        // a cleared link object exports only the json array, a named object only its name
+        $test_name = 'a cleared formula link exports an empty array';
+        $t->assert($test_name, $lib->class_to_empty_json(formula_link::class), test_api::JSON_ARRAY_ONLY);
+        $test_name = '... but a cleared component its name';
+        $t->assert($test_name, $lib->class_to_empty_json(component::class), test_api::JSON_NAME_ONLY);
 
         // only the spaces between the tags are removed, a space within a text is part of the text
         $test_name = 'trim_html keeps a space within a text';
@@ -703,14 +720,17 @@ class lib_tests
 
         // test the diff supporting functions:
         // ... useful text split
+        $test_name = 'str_split_for_humans, words';
         $test_text = 'this text is expected to be split into words';
         $result = $lib->str_split_for_humans($test_text);
         $target = ['this', ' text', ' is', ' expected', ' to', ' be', ' split', ' into', ' words'];
-        $t->assert("str_split_for_humans, words", $result, $target);
+        $t->assert($test_name, $result, $target);
+        // the code branch: a long text without a space is no prose, so it is split into chars
+        $test_name = 'str_split_for_humans, chars';
         $test_text = 'SplitToCharBecauseNoWordIsExpectedSoLong';
         $result = $lib->str_split_for_humans($test_text);
         $target = ['S', 'p', 'l', 'i', 't', 'T', 'o', 'C', 'h', 'a', 'r', 'B', 'e', 'c', 'a', 'u', 's', 'e', 'N', 'o', 'W', 'o', 'r', 'd', 'I', 's', 'E', 'x', 'p', 'e', 'c', 't', 'e', 'd', 'S', 'o', 'L', 'o', 'n', 'g'];
-        $t->assert("str_split_for_humans, chars", $result, $target);
+        $t->assert($test_name, $result, $target);
         $test_text = '{ "json_tag": "text" }';
         $result = $lib->str_split_for_humans($test_text);
         $target = ['json_tag' => 'text'];

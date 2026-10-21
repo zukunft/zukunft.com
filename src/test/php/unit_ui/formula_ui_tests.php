@@ -641,6 +641,19 @@ class formula_ui_tests
             $ui_sys->usr = $usr_lnk_keep;
         }
 
+        $t->subheader($ts . 'api mapper');
+        $test_name = 'the latex of the api json is the latex of the formula';
+        $frm_json = json_decode($t_frm->formula()->api_json(), true);
+        $frm = new formula();
+        $frm->api_mapper($frm_json, $msg);
+        $t->assert($test_name, $frm->get_latex(), formula_names::SCALE_TO_SEC_LATEX);
+        $msg->reset();
+        $test_name = 'the mapper reports a formula without id';
+        unset($frm_json[json_fields::ID]);
+        $frm = new formula();
+        $t->assert_false($test_name, $frm->api_mapper($frm_json, $msg));
+        $msg->reset();
+
         // TODO review
 
         /*

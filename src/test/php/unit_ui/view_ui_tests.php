@@ -128,6 +128,45 @@ class view_ui_tests
         $test_name = 'a view without a type shows no subtitle';
         $t->assert_text_not_contains($test_name, $sfm->title_named($msk, $msg), styles::SUBTITLE);
 
+        $t->subheader($ts . 'api mapper');
+
+        // the view base part of the mapper takes the display style of the api message
+        $test_name = 'the view base part of the mapper sets the style';
+        $msk_map = new view();
+        $msk_map->api_mapper(json_decode($t_msk->view_filled_included()->api_json(), true), $msg);
+        $t->assert($test_name, $msk_map->get_style_id(), view_styles::COL_SM_4_ID);
+
+        // the id is mandatory, because without it a save would add a new view
+        $test_name = 'a view json without an id is refused';
+        $t->assert_false($test_name, $msk_map->api_mapper([json_fields::NAME => views::START_NAME], $msg));
+        $msg->reset();
+
+        // the api message of a view relation carries the id of the parent view
+        $test_name = 'the api mapper sets the parent view of a view relation';
+        $mrl = new view_relation_ui();
+        $mrl->api_mapper(json_decode($t_msk->view_relation_filled_included()->api_json(), true), $msg);
+        $t->assert($test_name, $mrl->parent()?->id(), views::WORD_EDIT_ID);
+
+        // a view relation without a parent view in the api message has no parent view
+        $test_name = 'a view relation json without a parent leaves the parent view empty';
+        $mrl = new view_relation_ui();
+        $mrl->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
+        $t->assert_true($test_name, $mrl->parent() === null);
+        $msg->reset();
+
+        // a page request carries the linked view with its name
+        $test_name = 'the api mapper sets the view of a term view';
+        $trm_msk = new term_view_ui();
+        $trm_msk->api_mapper(json_decode($t_msk->term_view_filled_included()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]), true), $msg);
+        $t->assert($test_name, $trm_msk->view()?->name(), views::MATH_CONST_NAME);
+
+        // a term view without a term in the api message has no term
+        $test_name = 'a term view json without a term leaves the term empty';
+        $trm_msk = new term_view_ui();
+        $trm_msk->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
+        $t->assert_true($test_name, $trm_msk->term_linked() === null);
+        $msg->reset();
+
         $t->subheader($ts . 'show fields');
 
         // the view default page shows the name of the display style (see base_views.json
@@ -170,8 +209,8 @@ class view_ui_tests
         // the components come from the request cache that also provides the views for the page
         // rendering itself, because the page url only carries the view id
         $list = new ui_list();
-        $cmp_html = $list->view_components($msk, $msg);
         $test_name = 'the components of the start view are listed';
+        $cmp_html = $list->view_components($msk, $msg);
         $t->assert_text_contains($test_name, $cmp_html, components::WORD_NAME);
         $test_name = 'the listed components link to the component default page';
         $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_DEFAULT_ID);

@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -112,6 +113,21 @@ class phrase_ui_tests
         $test_page .= 'as table: ' . $list->table_with_related_columns(
                 $trp_problem, $msg, $dto_prio, true, false) . '<br>';
         $t->html_page_test($test_page, 'phrase', 'phrase', $msg);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the class of the api json selects the object, so a triple json fills the phrase with the triple
+        $test_name = 'the api mapper sets the triple of the phrase';
+        $phr_map = new phrase();
+        $phr_map->api_mapper(json_decode($t_trp->triple_pi()->phrase()->api_json(), true), $msg);
+        $t->assert($test_name, $phr_map->name(), triple_names::PI_SYMBOL_NAME);
+        $msg->reset();
+
+        // without the class the mapper cannot know if the phrase is a word or a triple, so it reports it
+        $test_name = 'the api mapper reports a phrase without the class';
+        $phr_map = new phrase();
+        $t->assert_false($test_name, $phr_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH], $msg));
+        $msg->reset();
 
         $t->subheader($ts . 'default view');
         // a phrase with an own view e.g. the calculator of a PV installation is linked to that

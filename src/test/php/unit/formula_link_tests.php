@@ -33,9 +33,12 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+include_once html_paths::FORMULA . 'formula_link.php';
+include_once html_paths::FORMULA . 'formula_link_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -52,6 +55,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
@@ -68,6 +74,7 @@ class formula_link_tests
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
         $msg = new user_message(); // a test is an entry point, so it creates the message the mappers report into
+        $msg_ui = new user_message_ui();
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 
@@ -187,6 +194,45 @@ class formula_link_tests
         $time_id = $sys->typ_lst->frm_lnk_typ->id(formula_link_types::TIME_PERIOD);
         $lnk_new->api_mapper([json_fields::ID => 0, json_fields::PREDICATE_ID => $time_id], $msg);
         $t->assert($test_name, $lnk_new->predicate_id(), $time_id);
+        $test_name = 'the priority of the api message is the order of the formula link';
+        $lnk_new = new formula_link($t->usr1);
+        $lnk_new->api_mapper($t_frm->formula_link()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $lnk_new->order_nbr, test_const::FORMULA_LINK_ORDER_NBR);
+        $msg->reset();
+        // the formula is expected as a json object, not only by its id
+        $test_name = 'an api message with only an id as the formula is refused';
+        $lnk_new = new formula_link($t->usr1);
+        $t->assert_false($test_name, $lnk_new->api_mapper([json_fields::ID => 0, json_fields::FORMULA => formula_names::SCALE_TO_SEC_ID], $msg));
+        $msg->reset();
+        // a formula link type can be limited to one formula
+        $test_name = 'the api mapper sets the formula of a formula link type';
+        $frm_lnk_typ = new formula_link_type('');
+        $frm_lnk_typ->api_mapper([json_fields::ID => $time_id, json_fields::FORMULA_ID => formula_names::SCALE_TO_SEC_ID, json_fields::PHRASE_TYPE_ID => ''], $msg);
+        $t->assert($test_name, $frm_lnk_typ->frm_id, formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+        $test_name = 'an empty formula id leaves a formula link type valid for all formulas';
+        $frm_lnk_typ = new formula_link_type('');
+        $frm_lnk_typ->api_mapper([json_fields::ID => $time_id, json_fields::FORMULA_ID => '', json_fields::PHRASE_TYPE_ID => ''], $msg);
+        $t->assert_null($test_name, $frm_lnk_typ->frm_id);
+        $msg->reset();
+        $test_name = 'the frontend api mapper sets the priority of the formula link';
+        $lnk_ui = new formula_link_ui();
+        $lnk_ui->api_mapper(json_decode($t_frm->formula_link()->api_json([], $msg), true), $msg_ui);
+        $t->assert($test_name, $lnk_ui->order_nbr, test_const::FORMULA_LINK_ORDER_NBR);
+        $msg_ui->reset();
+        $test_name = 'the frontend api mapper refuses a formula link without id';
+        $lnk_json = $t_frm->formula_link()->api_json_array([], $msg);
+        unset($lnk_json[json_fields::ID]);
+        $lnk_ui = new formula_link_ui();
+        $t->assert_false($test_name, $lnk_ui->api_mapper($lnk_json, $msg_ui));
+        $msg_ui->reset();
+        $test_name = 'the frontend api mapper adds every formula link of the list';
+        $lnk_lst_ui = new formula_link_list_ui();
+        $lnk_lst_ui->api_mapper($t_frm->formula_link_list()->api_json_array([], $msg));
+        $t->assert($test_name, $lnk_lst_ui->count(), $t_frm->formula_link_list()->count());
+        $test_name = 'the frontend api mapper reports a formula link without id in the list';
+        $lnk_lst_ui = new formula_link_list_ui();
+        $t->assert_false($test_name, $lnk_lst_ui->api_mapper([$lnk_json])->is_ok());
 
         /*
         $t->subheader($ts . 'im- and export');

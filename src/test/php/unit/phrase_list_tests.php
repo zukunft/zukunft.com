@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -174,7 +175,28 @@ class phrase_list_tests
         $msg = new user_message();
         $phr = $phr_lst->best_matching_time($t_wrd->word_year()->phrase(), $msg, $fix_now);
         $t->assert_text_contains($test_name, $phr->name(), $t_wrd->word_2022()->name());
+        // negative: a phrase that is no time period selects no time and the user is told why
+        $test_name = '... but no time for a phrase that is no time period';
+        $no_time = $phr_lst->best_matching_time($t_wrd->word()->phrase(), $msg, $fix_now);
+        $t->assert_null($test_name, $no_time?->name());
+        $test_name = '... which is reported';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
         // TODO mix it with months and quarters to select the best matching and automatic estimations
+
+        // the triples of a phrase list are the phrases that are no word
+        $test_name = 'the triples of a phrase list are selected';
+        $t->assert($test_name, $t_phr->phrase_list()->triples()->count(), 2);
+        $test_name = '... and a list of words has no triple';
+        $wrd_only_lst = new phrase_list($t->usr1);
+        $wrd_only_lst->add($t_wrd->word()->phrase());
+        $t->assert($test_name, $wrd_only_lst->triples()->count(), 0);
+
+        // a list is loaded if every phrase has an id and a name and every asked id is in the list
+        $test_name = 'a list of phrases with id and name is loaded';
+        $t->assert_true($test_name, $t_phr->phrase_list()->loaded());
+        $test_name = '... but not if an asked phrase is missing';
+        $t->assert_false($test_name, $t_phr->phrase_list()->loaded(new phr_ids([word_names::LOSS_ID])));
 
 
         $t->subheader($ts . 'remove_terms');
@@ -217,6 +239,22 @@ class phrase_list_tests
 
         $phr_lst = $t_phr->phrase_list_api();
         $t->assert_api($phr_lst);
+
+        $t->subheader($ts . 'api mapper');
+
+        // each phrase of the api json is added to the list
+        $test_name = 'the api mapper adds the phrases of the api json';
+        $phr_lst_map = new phrase_list($t->usr1);
+        $phr_lst_map->api_mapper($t_phr->phrase_list_one()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $phr_lst_map->names(), $t_phr->phrase_list_one()->names());
+        $msg->reset();
+
+        // a phrase that cannot be mapped e.g. a triple without the from phrase is not added
+        $test_name = 'the api mapper does not add a phrase that cannot be mapped';
+        $phr_lst_map = new phrase_list($t->usr1);
+        $phr_lst_map->api_mapper([[json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null]], $msg);
+        $t->assert($test_name, $phr_lst_map->count(), 0);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');
@@ -400,6 +438,11 @@ class phrase_list_tests
         $test_name = '... without a message';
         $t->assert($test_name, $msg_ui->is_ok(), true);
         $msg_ui->reset();
+        // an unknown name would ask the backend, which a unit test has not, so only names of the list are tested
+        $test_name = '... and another phrase of the list too';
+        $mayor_found = $phr_lst_ui->load_or_get_by_name(triple_names::SYSTEM_COLUMN_MAYOR, $msg_ui);
+        $t->assert($test_name, $mayor_found?->name(), triple_names::SYSTEM_COLUMN_MAYOR);
+        $msg_ui->reset();
         $test_name = 'a type without sub types is its own sub type';
         $tier = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN_MAYOR, $msg_ui);
         $sub_names = array_map(fn($sub) => $sub->name(), $phr_lst_ui->sub_types($tier, $msg_ui));
@@ -446,6 +489,9 @@ class phrase_list_tests
             $phr_lst_ui->child_names($t_trp->global_problem_ui()->phrase()));
         $test_name = '... and no parent for a phrase that links to nothing';
         $t->assert($test_name, $idx_lst->parent_names($t_trp->global_problem_ui()->phrase()), []);
+        // negative: the index of an empty list knows no link
+        $test_name = 'the copy of an empty list with the link index has no parents';
+        $t->assert($test_name, new phrase_list_ui()->with_link_index()->parent_names($phr), []);
 
 
 

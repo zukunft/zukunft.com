@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::CREATE . 'test_phrases.php';
 
+use DateTimeInterface;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value as value_db_class;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -513,6 +514,15 @@ class value_ui_tests
         $t->assert_text_contains($test_name, $geo_html, values::GEO);
         $test_name = '... and no number field';
         $t->assert_text_not_contains($test_name, $geo_html, $number_field);
+        // the typed getters return the field of the own type only, so a number value has no time and no geolocation
+        $test_name = 'a time value has a time';
+        $t->assert($test_name, $val_time->time_value()?->getTimestamp(), strtotime(values::TIME));
+        $test_name = '... but no geolocation';
+        $t->assert_null($test_name, $val_time->geo_value());
+        $test_name = 'a geo value has the geolocation';
+        $t->assert($test_name, $val_geo->geo_value(), values::GEO);
+        $test_name = '... but no time';
+        $t->assert_null($test_name, $val_geo->time_value()?->format(DateTimeInterface::ATOM));
         // the changed text, time or geolocation of the url is sent to the backend and saved with the typed value class
         $test_name = 'a changed text of the url is sent to the backend as text value';
         $map = new MapObject();
@@ -797,8 +807,8 @@ class value_ui_tests
 
         // the results column lists the results that use the value like a value list, each with
         // its phrase and its formatted number
-        $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
         $test_name = 'the results of a value are shown with their phrase and their number';
+        $res_html = $lst_ui->results_by_value($val_rel, $msg_ui);
         $t->assert_text_order($test_name, $res_html, word_names::MATH, results::TV_INT_FORM);
 
         // a value that is not used for results says so instead of showing an empty table
@@ -972,6 +982,31 @@ class value_ui_tests
         } else {
             $ui_sys->usr = $usr_tab_keep;
         }
+
+
+        $t->subheader($ts . 'api mapper');
+        // the sandbox value part maps the number and the phrases that all values and results have
+        $test_name = 'the sandbox value part of the mapper sets the number of the value';
+        $val_ui_map = new value();
+        $val_ui_map->api_mapper(json_decode($t_val->value_pi()->api_json([api_types::INCL_PHRASES], $msg), true), $msg_ui);
+        $t->assert($test_name, $val_ui_map->number(), values::PI);
+        $msg_ui->reset();
+        $test_name = 'the sandbox value part of the mapper reports a value without phrases';
+        $val_ui_map = new value();
+        $t->assert_false($test_name, $val_ui_map->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::PI], $msg_ui));
+        $msg_ui->reset();
+        $test_name = 'the source id of the api json is the source of the value';
+        $val_json = json_decode($t_val->value_pi()->api_json([api_types::INCL_PHRASES], $msg), true);
+        $val_json[json_fields::SOURCE_ID] = sources::BFS_ID;
+        $val_ui_map = new value();
+        $val_ui_map->api_mapper($val_json, $msg_ui);
+        $t->assert($test_name, $val_ui_map->source_id(), sources::BFS_ID);
+        $msg_ui->reset();
+        $test_name = 'the mapper reports a value without id';
+        unset($val_json[json_fields::ID]);
+        $val_ui_map = new value();
+        $t->assert_false($test_name, $val_ui_map->api_mapper($val_json, $msg_ui));
+        $msg_ui->reset();
 
 
         // TODO review

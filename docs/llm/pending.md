@@ -9,11 +9,12 @@ goal: every public function of `docs/code_test_coverage.md` has at least two uni
 `bin/code_test_coverage.php` and is never edited by hand, so each step below changes the tests
 (or the counter) and the developer regenerates the report to see the gap shrink
 
-starting point: 811 of 6200 public functions are covered; of the 5389 gaps 3566 are in the
-main backend, 1609 in the frontend and 214 in shared, 508 functions have one call (only the
-negative test is missing; 142 of them have a name of their own), and the functions that no
-code calls are listed in the section "never called" at the end of the report, for the
-developer to decide per function whether it is removed or kept
+starting point: 1058 of 6200 public functions are covered; of the 4937 gaps 3314 are in the
+main backend, 1437 in the frontend and 186 in shared, 444 functions have one call (87 of
+them have a name of their own, so only the negative test is missing; the other 357 share
+their name and need two calls per class, see step 2), and the 205 functions that no code
+calls are listed in the section "never called" at the end of the report, for the developer
+to decide per function whether it is removed or kept
 
 rules for every step:
 - one class (or one shared function name) per prompt, so that each diff stays reviewable
@@ -31,13 +32,14 @@ rules for every step:
   cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
 - the LLM never runs the tests; the developer runs them and regenerates the report
 
-1. add the missing negative test of the 508 functions with one call, class by class, starting
-   with the classes that have most of them (`html_base` 12, `ui_list` 11, `system_page` 9,
-   `phrase_list` 5); this is the cheapest step, because the positive test and its fixture
-   exist already; the tested call sits before the assert line, because a call on the line
-   after a multi-line `$t->assert…(` is behind the last assert of the block and not counted
+1. add the missing negative test of the 87 functions with one call and a name of their own,
+   class by class, starting with the classes that have most of them (`data_object`,
+   `formula_list`, `formula_map`, `result`, `user` and `sys_log_list` with 3 each, then the
+   classes with 2 or 1); this is the cheapest step, because the positive test and its
+   fixture exist already; the tested call sits before the assert line, because a call on the
+   line after a multi-line `$t->assert…(` is behind the last assert of the block and not counted
 2. cover the functions that many classes share, in the order of the number of classes:
-   `api_mapper` (104 classes), `reset` (67), `api_json_array` (61), `export_json` (49),
+   `reset` (67 classes), `api_json_array` (61), `export_json` (49),
    `add` (47), `dsp_id` and `default_id` (46), `load_sql` (45), `db_fields_changed` (44),
    `db_fields_all` (43), `import_mapper` and `load_dummy` (38, 37), `name_field` (36),
    `fill` (36), `delta` (32); one prompt per function name, which adds one positive and one
@@ -67,6 +69,41 @@ classify all TODO that does not yet have a Prio
 make a plan how solve the Prio 0 TODOs
 
 ## speed up
+
+### show delay
+
+if the full creation of a page takes longer than the expected response time defined in config.yaml 
+view.php should show an 'Collecting data …' page similar to this, 
+but that includes already the page header and if possible the footer:
+
+<?php
+header('Content-Type: text/html; charset=utf-8');
+header('X-Accel-Buffering: no');   // tell nginx not to buffer this response
+
+while (ob_get_level() > 0) {
+    ob_end_flush();
+}
+?>
+<!doctype html>
+<html>
+<head>
+<style>
+  #loading { font-style: italic; }
+  .done #loading { display: none; }
+</style>
+</head>
+<body>
+<div id="loading">Collecting data …</div>
+<?php
+echo str_repeat(' ', 1024);   // some browsers wait for a minimum number of bytes
+flush();
+
+$result = build_final_page();   // the slow part
+?>
+<style>#loading { display: none; }</style>
+<main><?= $result ?></main>
+</body>
+</html>
 
 ### calculator
 

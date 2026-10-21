@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -133,8 +134,8 @@ class term_list_ui_tests
 
         // the search pattern is user input reflected into the search result title
         // (system_page::search_title), so it must be html-escaped to prevent a reflected xss
-        $search_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => 'impact']);
         $test_name = 'the search result title shows the pattern';
+        $search_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => 'impact']);
         $t->assert_text_contains($test_name, $search_title, 'impact');
         $xss_title = $page->system_tile(msg_id::FORM_TITLE_SEARCH, [url_var::PATTERN => '<script>alert(1)</script>']);
         $test_name = 'the search result title escapes a script tag in the pattern';
@@ -143,6 +144,19 @@ class term_list_ui_tests
         $t->assert_false($test_name, str_contains($xss_title, '<script>'));
 
         $t->html_page_test($test_page, 'term_list', 'term_list', $msg);
+
+        $t->subheader($ts . 'api mapper');
+
+        // each term of the api json is added to the list
+        $test_name = 'the api mapper adds the terms of the api json';
+        $trm_lst_map = new term_list();
+        $trm_lst_map->api_mapper(json_decode($t_trm->term_list()->api_json(), true));
+        $t->assert($test_name, $trm_lst_map->count(), $t_trm->term_list()->count());
+
+        // a value is no term, so the mapper reports the class of the api json
+        $test_name = 'the api mapper reports a class that is not a term';
+        $trm_lst_map = new term_list();
+        $t->assert_false($test_name, $trm_lst_map->api_mapper([[json_fields::ID => word_names::MATH_ID, json_fields::OBJECT_CLASS => json_fields::CLASS_VALUE]])->is_ok());
     }
 
 }
