@@ -110,6 +110,10 @@ class result_ui_tests
         $t->assert_text_contains($test_name, $ttl_html, $res_page->val_formatted($msg));
         $test_name = '... with the link to change the result';
         $t->assert_text_contains($test_name, $ttl_html, url_var::MASK . '=' . views::RESULT_EDIT_ID);
+        // negative: a result without phrases and number has nothing to name, but still no php warning
+        $test_name = 'the title of an empty result shows no number';
+        $t->assert_text_not_contains($test_name, new system_form()->title_value(new result(), $msg),
+            $res_page->val_formatted($msg));
 
         // below the title the page shows the formula with the numbers used and then in latex
         $t->subheader($ts . 'formula with numbers');
@@ -143,6 +147,9 @@ class result_ui_tests
         $grp_html = $form->form_field_group_or_phrases($res_page, '');
         $t->assert_text_contains($test_name, $grp_html, 'name="' . url_var::GROUP_NAME . '"');
         $t->assert_text_not_contains($test_name, $src_html, 'name="' . url_var::GROUP_NAME . '"');
+        // negative: a result without a source group shows an empty field instead of guessing the group
+        $test_name = 'the source group field of a result without a source group has no value';
+        $t->assert_text_not_contains($test_name, $form->form_field_source_group_or_phrases(new result()), 'value=');
 
         // the used lists are slow, so only the result views that show them ask the backend for them
         $t->subheader($ts . 'page request');

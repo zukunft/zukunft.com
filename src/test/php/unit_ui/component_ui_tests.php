@@ -250,6 +250,12 @@ class component_ui_tests
         $test_name = 'a component without a row phrase shows only the row phrase label';
         $t->assert($test_name, $sfm->show_row_phrase($cmp_plain, $ui_sys->phr_lst),
             $t->labeled(msg_id::FORM_SELECT_PHRASE_ROW, ''));
+        $test_name = 'a component without a column phrase shows only the column phrase label';
+        $t->assert($test_name, $sfm->show_col_phrase($cmp_plain, $ui_sys->phr_lst),
+            $t->labeled(msg_id::FORM_SELECT_PHRASE_COL, ''));
+        $test_name = 'a component without a sub column phrase shows only the sub column phrase label';
+        $t->assert($test_name, $sfm->show_col_sub_phrase($cmp_plain, $ui_sys->phr_lst),
+            $t->labeled(msg_id::FORM_SELECT_PHRASE_COL_SUB, ''));
 
         $t->subheader($ts . 'select');
 

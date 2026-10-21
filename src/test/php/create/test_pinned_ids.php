@@ -817,7 +817,24 @@ class test_pinned_ids
             $to_re_pin += count($re_pin_lst);
         }
         if (!test_files::AUTO_RE_PIN_OBJECT_ID) {
-            $t->update_path_file(test_files::DOCS_PINNED_ID_FINDINGS, $this->findings_header($tested, $to_re_pin) . $md_txt);
+            $md_txt = $this->findings_header($tested, $to_re_pin) . $md_txt;
+            // written only on a change, so that an unchanged report never shows up as modified
+            if ($this->findings_changed($md_txt)) {
+                $t->update_path_file(test_files::DOCS_PINNED_ID_FINDINGS, $md_txt);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $md_txt the findings report of this run
+     * @return bool true if the report differs from the file or the file does not exist yet
+     */
+    private function findings_changed(string $md_txt): bool
+    {
+        $result = true;
+        if (file_exists(test_files::DOCS_PINNED_ID_FINDINGS)) {
+            $result = (file_get_contents(test_files::DOCS_PINNED_ID_FINDINGS) !== $md_txt);
         }
         return $result;
     }

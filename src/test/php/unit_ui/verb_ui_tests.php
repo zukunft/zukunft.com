@@ -116,6 +116,9 @@ class verb_ui_tests
         $test_name = 'a verb without a plural reverse name shows only the plural reverse label';
         $t->assert($test_name, $form->show_plural_reverse($vrb_empty),
             $t->labeled(msg_id::FORM_FIELD_PLURAL_REVERSE, ''));
+        $test_name = 'a verb without a plural shows only the plural label';
+        $t->assert($test_name, $form->show_plural($vrb_empty),
+            $t->labeled(msg_id::FORM_FIELD_PLURAL, ''));
 
         $t->subheader($ts . 'triples of a verb');
 

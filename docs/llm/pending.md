@@ -1,63 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## speed up
-
-### calculator 
-
-goal: `view.php?m=16&id=-2573` (pv lifetime balance) is created in less than 3 seconds; the
-debug=9 log shows 77 seconds, of which about 75 are spent waiting for about 250 api calls
-
-where the time goes (debug=9 log):
-- 53 s: about 170 `api/valueList/?phrase_ids=…` calls, one per cell, of only about 40 different
-  phrase id sets, e.g. `-2544,-2551,-2573,-2542` is asked more than 20 times; the first pass
-  (12.8 s → 52.2 s) runs while "calculator input" renders, the second pass (62.0 s → 76.2 s)
-  while "calculation result" renders, so every cell is loaded at least twice
-- 11 s: the 13 `api/phraseList/?k=<input name>&pd=up&px=2` calls of the input names and their
-  `valueList` calls, made three times (6.2 s, 52.7 s and 59.5 s)
-- a set that contains phrase 289 takes 1.2 s instead of 0.5 s on the first pass
-- 3.3 s: the frontend bootstrap: the components of the 195 system views (1.0 s),
-  `api/config/?1=frontend` (1.3 s) and `api/triple/?ir=1&id=2573` (1.0 s)
-- 5 s: frontend php between the calls (3.3 s before the second input name pass, about 1 s
-  after the last call of each of the two components)
-- the page is written to the cache as `db_cache_page_id 0`
-
-rules for every step:
-- one step per prompt; measure before and after with the same debug=9 url and write the two
-  times into the commit message
-- every cache entry is keyed by the complete key (all sorted phrase ids, the full name), never
-  a prefix or a hash, and by the user; a known empty answer is cached too, so it is not asked
-  again (`docs/llm/coding.md`, cache rule)
-- the double calculation check stays: the cached numbers are the numbers of this request only,
-  a save still recalculates in the backend
-- a new api parameter gets its `url_var` with the `*_HUMAN` twin, an api fixture and a unit
-  test with a positive and a negative case
-- the LLM never runs the tests; the developer runs them and the debug=9 url
-
-1. request cache for the values of a phrase id set: `data_object` keeps the value list of each
-   loaded phrase id set (key: the sorted ids), and the cell lookup asks the cache before
-   `api/valueList`, so each of the about 40 sets is loaded once; expected: 53 s → about 15 s
-2. one request cache per page: "calculator input", "calculation result" and "title
-   calculator" use the same `data_object`, so the second value pass and the second and third
-   input name pass are gone; expected: a further 15 s less
-3. load all cells in one call: the calculation plan collects every phrase id set of the page
-   first and `api/valueList` gets a new parameter for a list of phrase id sets, so the about 40
-   remaining calls become one; expected: about 15 s → below 1 s
-4. load the input names in one call: `api/phraseList` takes a list of names (`k`) instead of
-   one name per call, and the values of the found phrases come with the call of step 3
-5. find out why a value set that contains phrase 289 takes 1.2 s: read the prepared statement
-   behind `api/valueList/?phrase_ids=` and its sql fixture, list the indexes that it can use and
-   suggest the missing one; the developer checks the plan with `explain` (no temp sql script by
-   the LLM)
-6. frontend bootstrap: load the components of the system view of the request only, not of all
-   195 system views, and find out why `api/config/?1=frontend` and `api/triple/?ir=1` take more
-   than 1 s each (the other calls take 0.13 s)
-7. after steps 1 to 4 measure again and look at the remaining php time of the two components
-   (`calculator_numbers`, `calculation_table`, `formula_calc::result`): a number that is
-   calculated more than once per page is calculated once
-8. page cache: find out why the page is inserted as `db_cache_page_id 0` and whether the next
-   request of the same url gets the page from the cache; if not, fix the insert, so that a
-   second request takes less than 0.2 s
-
 ## cleanup
 
 ### test coverage
@@ -80,52 +22,42 @@ rules for every step:
 - every feature gets a positive and a negative test, and the negative test asserts the
   reported outcome (`msg_id`, empty or `false`)
 - a call counts only between a `$test_name = …` line and the last `$t->assert…` of the same
-  block, so the tested call stays inside that block and never inside a `$t->assert_…` helper
+  block, so the tested call stays inside that block and never inside a `$t->assert_…` helper;
+  the counter itself stays as simple as it is (`docs/llm/testing.md`, "The test coverage
+  counter stays simple"): a function that only a harness helper calls or that shares its
+  name with other classes gets its own explicit test instead of a smarter counter
 - no source function is changed to make it testable in the same prompt; a function that
   cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
 - the LLM never runs the tests; the developer runs them and regenerates the report
 
-1. make the counter tell real gaps from counting gaps (a change of
-   `src/test/php/utils/code_test_coverage.php` with its own tests in `coding_rule_tests.php`):
-   - a harness assert calls the tested function itself, e.g. `$t->assert_sql_insert($sc, $wrd)`
-     calls `sql_insert`, `$t->assert_api($wrd)` calls the api mapper, so a map from each
-     `assert_*` helper to the functions it calls counts them for the object passed
-     (`assert_qp` 196 uses, `assert_sql_insert` 149, `assert_sql_update` 95,
-     `assert_sql_table_create`, `assert_sql_index_create` and `assert_sql_delete` 73 each,
-     `assert_api` 47, `assert_dsp_id` 44)
-   - a name shared by several classes needs two calls per class, but the count is by name
-     only; counting by the class of the caller variable (its suggested `$abbr`, see
-     `docs/code_object_name_exceptions.md`) lets a call of `$wrd->reset()` count for `word`
-     only
-   - the result is a smaller, honest list; the steps below start from it
-2. list the functions that nothing calls: the 211 never-called functions go to
-   `docs/llm/pending_prio_2.md` grouped by class, for the developer to decide per function
+1. list the functions that nothing calls: the 211 never-called functions go to a new section at the end of
+   `docs/code_test_coverage.md` grouped by class, for the developer to decide per function
    whether it is removed or kept; a function that is called by name (a callable, a property
    hook, a `$var->$name()` call) is marked as such, because a text search does not find it
-3. add the missing negative test of the 521 functions with one call, class by class, starting
+2. add the missing negative test of the 521 functions with one call, class by class, starting
    with the classes that have most of them; this is the cheapest step, because the positive
    test and its fixture exist already
-4. cover the functions that many classes share, in the order of the number of classes:
+3. cover the functions that many classes share, in the order of the number of classes:
    `api_mapper` (104 classes), `reset` (67), `api_json_array` (61), `export_json` (49),
    `add` (47), `dsp_id` and `default_id` (46), `load_sql` (45), `db_fields_changed` (44),
    `db_fields_all` (43), `import_mapper` and `load_dummy` (38, 37), `name_field` (36),
    `fill` (36), `delta` (32); one prompt per function name, which adds one positive and one
    negative block per class to the test file of that class
-5. cover the classes without database and frontend first, because their tests are fast and
+4. cover the classes without database and frontend first, because their tests are fast and
    need no fixture: `library` (104 gaps), `html_base` (139), `sql_creator` (85),
    `sql_type_list` (51), then the frontend forms and lists (`system_form` 104, `db_object` 68,
    `phrase_list` 57, `triple` 53, `phrase` 52)
-6. cover the backend model classes with the unit test factories (no database): `sandbox`
+5. cover the backend model classes with the unit test factories (no database): `sandbox`
    (142), `sandbox_multi` (132), `phrase_list` (102), `triple` (100), `user` (99), `phrase`
    (85), `word` (77), `sandbox_value` (77), `group` (75), `sandbox_link` (73), `ref` (64),
    `component` (62), `value_base` (61), `formula_map` (61), `data_object` (61)
-7. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (132)
-   and the `load_*` functions that are left after step 4
-8. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
+6. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (132)
+   and the `load_*` functions that are left after step 3
+7. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
    `application` (`start`, `start_api`, `open_db`, `end`): either a test of the request
    lifecycle covers them, or the counter gets a named exception list with the reason per
    function, which `docs/llm/testing.md` documents and which must stay short
-9. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
+8. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
    with a const in `src/test/php/const/` and fails if it drops, so a new function without
    tests is reported at once; the const is raised after each step
 
@@ -134,6 +66,101 @@ rules for every step:
 classify all TODO that does not yet have a Prio 
 
 make a plan how solve the Prio 0 TODOs
+
+## speed up
+
+### calculator
+
+goal: `view.php?m=16&id=-2573` (pv lifetime balance) is created in less than 3 seconds; the
+debug=9 log shows 59 seconds (77 before the request cache of the values, commit 5f63abe8b),
+of which about 52 are spent waiting for about 120 api calls
+
+where the time goes (debug=9 log):
+- 34 s: the 40 `api/valueList/?phrase_ids=…` calls of the cells (13.7 s → 47.5 s), each set
+  once now; the 14 sets that contain phrase 289 take 1.2 to 1.4 s each (18 s), the other 26
+  take 0.43 to 0.76 s each (16 s), while a `phraseList` call takes 0.13 s, so the value
+  query is slow on its own, not only with phrase 289
+- 11 s: the 13 input names are looked up three times with
+  `api/phraseList/?k=<input name>&pd=up&px=2` (6.9 s → 12.8 s with the 13 single `valueList`
+  calls of their values, 48.2 s → 50.6 s and 55.4 s → 57.7 s), because
+  `ui_list::add_field_links` loads the related phrases of a name without a cache check; the
+  values of the names are loaded once already
+- 6.5 s: frontend php between the calls: 3.6 s between "calculator input" rendered (51.7 s) and
+  the first call of "calculation result" (55.4 s), 1.1 s and 1.2 s after the last call of each
+  of the two components, 0.5 s before the second input name pass
+- 4.1 s: the frontend bootstrap: the components of the 195 system views (1.2 s),
+  `api/config/?1=frontend` (1.4 s) and `api/triple/?ir=1&id=2573` (1.0 s)
+- 2.5 s: the 6 `api/phraseList/?il=…&pd=up|down` calls of the phrase tree of the page, one per
+  level (4.2 s → 6.7 s)
+- 0.6 s: `api/resultList/?phrase_ids=-2573`
+- the page is written to the cache as `db_cache_page_id 0`
+
+rules for every step:
+- one step per prompt; measure before and after with the same debug=9 url and write the two
+  times into the commit message
+- every cache entry is keyed by the complete key (all sorted phrase ids, the full name), never
+  a prefix or a hash, and by the user; a known empty answer is cached too, so it is not asked
+  again (`docs/llm/coding.md`, cache rule)
+- the double calculation check stays: the cached numbers are the numbers of this request only,
+  a save still recalculates in the backend
+- a new api parameter gets its `url_var` with the `*_HUMAN` twin, an api fixture and a unit
+  test with a positive and a negative case
+- the LLM never runs the tests; the developer runs them and the debug=9 url
+
+done: request cache for the values of a phrase id set (`data_object::load_values_of`, key: the
+sorted ids), so each of the 40 sets is loaded once: 77 s → 59 s
+
+analysed: the value query (`api/valueList/index.php` → `value_list::load_by_phr_lst` with
+`$or = true` → `sandbox_value_list::load_sql_by_phr_lst_multi`, fixture
+`db/value/value_list_by_phr_lst_all_p5.sql`) returns every value of **any** of the given
+phrases, but `formula_calc::value_of` keeps only a value whose phrases are all in the context,
+so a set with `annual` (289, about 350 seeded values) loads, names, serialises and caches about
+400 rows for the handful the page uses; the statement is a union of 5 tables and the 3 group id
+tables (`values_standard`, `values`, `values_big`) are filtered with a regex (`group_id ~`), which
+no btree index serves, so they are scanned on every call; the api logs no step at debug level 9,
+so the split between query, phrase names, json and cache insert is not visible yet
+
+1. load only the values that the context can use: a new statement
+   `load_sql_by_phr_lst_subset` returns the values whose phrases are **all** in the given list:
+   prime tables `phrase_id_1 IN (ids) AND phrase_id_2 IN (ids, 0) AND …` (uses the existing
+   per-column indexes), group id tables one regex `^(key1|key2|…)+$` per row instead of one per
+   phrase; the api gets a url var for the subset mode (with its `*_HUMAN` twin, api fixture and
+   unit test), and only `ui_list::add_context_values` uses it, because the field values and the
+   table loads need any value of a phrase; the developer confirms the cause first with
+   `EXPLAIN (ANALYZE, BUFFERS)` of the prepared statement of the fixture with the ids
+   `289,-2573,807,-2529,-2542` and the row count of the result; expected: 34 s → about 10 s
+   1b. if the regex scans stay the bigger part of the plan: a trigram index
+   (`CREATE EXTENSION pg_trgm; CREATE INDEX … USING gin (group_id gin_trgm_ops)`) on the three
+   group id tables and their `user_values*` twins, which postgres uses for `~`; needs a database
+   upgrade script and the minor version raise (`docs/llm/versions.md`)
+   1c. api timing: `log_debug(…, url_var::DEBUG_LEVEL_MAIN_STEP)` after the load, the phrase
+   names, the json and the cache insert of `api/valueList/index.php`, so that
+   `api/valueList/?phrase_ids=…&debug=9` shows the split like `view.php` does
+2. request cache for the related phrases of a name: `data_object` keeps the phrase list of each
+   `phrase_list::load_related_by_name` call (key: the name, the direction and the levels, like
+   `load_values_of` for the values), and `ui_list::add_field_links` asks the cache first, so
+   the 13 input names are looked up once instead of three times; expected: 11 s → 4 s
+3. load all cells in one call: the calculation plan collects every phrase id set of the page
+   first and `api/valueList` gets a new parameter for a list of phrase id sets, so the 40
+   remaining calls become one; expected: the call overhead of 40 × 0.13 s is gone and the
+   query time of step 1 is paid once
+4. load the input names in one call: `api/phraseList` takes a list of names (`k`) instead of
+   one name per call, and the values of the found phrases come with the call of step 3;
+   expected: 4 s → 0.5 s
+5. frontend php: find out what the 3.6 s between "calculator input" rendered and the first
+   call of "calculation result" do (probably `calculator_numbers` and `calculation_table`
+   repeating the page calculation for the cells, `formula_calc::result` per cell) and the
+   1.1 s and 1.2 s after the last call of each component; a number that is calculated more
+   than once per page is calculated once; expected: 6.5 s → 1 s
+6. frontend bootstrap: load the components of the system view of the request only, not of all
+   195 system views, and find out why `api/config/?1=frontend` and `api/triple/?ir=1` take more
+   than 1 s each (the other calls take 0.13 s); expected: 4.1 s → 1 s
+7. load the phrase tree of the page in one call: `api/phraseList/?il=…&pd=up` takes the
+   levels (`px`) like the name lookup, so the 6 calls of the tree become one or two;
+   expected: 2.5 s → 0.5 s
+8. page cache: find out why the page is inserted as `db_cache_page_id 0` and whether the next
+   request of the same url gets the page from the cache; if not, fix the insert, so that a
+   second request takes less than 0.2 s
 
 ## PV lifetime balance page
 

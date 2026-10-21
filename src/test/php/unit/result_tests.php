@@ -502,6 +502,9 @@ class result_tests
         $res_page = $t_res->result_page_ui();
         $test_name = 'the result page shows the number behind the linked result phrases';
         $t->assert_text_contains($test_name, $form->show_result_value($res_page), ' = ');
+        // negative: a result that has not been calculated yet shows no lonely equal sign
+        $test_name = 'a result without a number shows nothing';
+        $t->assert($test_name, $form->show_result_value(new result_ui()), '');
         $test_name = 'the result page links the formula that calculated the result';
         $t->assert_text_contains($test_name, $form->show_result_formula($res_page), formula_names::SCALE_TO_SEC);
         $test_name = 'the result page shows the time of the last calculation';

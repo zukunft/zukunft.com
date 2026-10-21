@@ -141,6 +141,11 @@ class triple_ui_tests
         $t->assert_text_contains($test_name, $ttl_html, '>' . verbs::PART_NAME . '</a>');
         $test_name = 'the phrase title subheader names the to phrase of the triple';
         $t->assert_text_contains($test_name, $ttl_html, '>' . word_names::MATH . '</a>');
+        // negative: a triple that has not got its verb yet shows the from and to phrase without a verb link
+        $test_name = 'the title subheader of a triple without a verb names no verb';
+        $trp_no_verb = new triple($t_trp->triple()->api_json([api_types::INCL_PHRASES]));
+        $trp_no_verb->verb = null;
+        $t->assert_text_not_contains($test_name, $form->title_triple($trp_no_verb, $msg), '>' . verbs::PART_NAME . '</a>');
 
         $t->subheader($ts . 'view tab box');
 

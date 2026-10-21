@@ -8,7 +8,7 @@ in a test file of the src/test/php/unit* folders; the count is by function name
 and cannot tell the classes apart, so a name that several classes declare needs
 2 calls per class and is listed as shared otherwise
 
-796 of 6200 public functions have at least 2 unit test calls; the 5404 functions below do not
+811 of 6200 public functions have at least 2 unit test calls; the 5389 functions below do not
 
 ## main backend
 
@@ -5050,7 +5050,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- button_save - 0 unit test calls
     \-- form_child_view - 0 unit test calls
     \-- form_component - 0 unit test calls
-    \-- form_component_link_type - 1 unit test calls
     \-- form_component_pos_type - 1 unit test calls
     \-- form_component_style - 0 unit test calls
     \-- form_component_type - 0 unit test calls
@@ -5071,7 +5070,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_field_selection_name - 0 unit test calls
     \-- form_field_selection_text - 0 unit test calls
     \-- form_field_source_group_name - 0 unit test calls
-    \-- form_field_source_group_or_phrases - 1 unit test calls
     \-- form_field_url - 0 unit test calls
     \-- form_field_view_link_priority - 0 unit test calls
     \-- form_formula - 0 unit test calls
@@ -5105,7 +5103,6 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_values - 0 unit test calls
     \-- form_verb - 0 unit test calls
     \-- form_verbs - 0 unit test calls
-    \-- form_view - 1 unit test calls
     \-- form_view_default - 0 unit test calls
     \-- form_view_link_type - 0 unit test calls
     \-- form_view_relation_pos - 0 unit test calls
@@ -5113,31 +5110,19 @@ and cannot tell the classes apart, so a name that several classes declare needs
     \-- form_view_style - 0 unit test calls
     \-- form_view_type - 0 unit test calls
     \-- form_views - 0 unit test calls
-    \-- form_word_add_simple - 1 unit test calls
     \-- row_center - 0 unit test calls shared by 2 classes
     \-- row_end - 1 unit test calls shared by 2 classes
     \-- row_right - 1 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
     \-- show_child_view - 0 unit test calls
-    \-- show_col_phrase - 1 unit test calls
-    \-- show_col_sub_phrase - 1 unit test calls
     \-- show_condition_formula - 0 unit test calls
     \-- show_language_symbol - 0 unit test calls
     \-- show_name_big - 0 unit test calls
     \-- show_name_in_formulas - 0 unit test calls
     \-- show_parent_view - 0 unit test calls
-    \-- show_plural - 1 unit test calls
-    \-- show_ref_key - 1 unit test calls
-    \-- show_ref_phrase - 1 unit test calls
-    \-- show_ref_source - 1 unit test calls
-    \-- show_ref_type - 1 unit test calls
-    \-- show_ref_url - 1 unit test calls
-    \-- show_result_value - 1 unit test calls
     \-- show_usage - 0 unit test calls
     \-- show_weight - 0 unit test calls
     \-- title_formula - 0 unit test calls
-    \-- title_triple - 1 unit test calls
-    \-- title_value - 1 unit test calls
     \-- used_as_text - 0 unit test calls
     \-- used_as_text_link - 0 unit test calls
 \-- system_page

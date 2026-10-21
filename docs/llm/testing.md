@@ -688,6 +688,18 @@ edit the file:
 An LLM patching the generated line by hand masks the signal, and the next run
 overwrites the edit anyway.
 
+### The test coverage counter stays simple
+
+`src/test/php/utils/code_test_coverage.php` counts a function call by its name only:
+a call between a `$test_name = …` line and the last assert of the same block counts for
+every class that declares the name, and a function that only a harness helper such as
+`$t->assert_sql_insert($sc, $wrd)` calls is reported as untested. The counter stays this
+simple and human readable on purpose: it is never made exact with a class resolution of
+the caller variable, a map of the harness helpers or an inheritance lookup. A function
+that the counter reports although a helper or a test of a sibling class covers it gets
+its own explicit test, because one extra unit test costs nothing in production, while a
+clever counter costs every reader the time to understand it.
+
 ## Tests that depend on data files must be reproducible from a single point of change
 
 A test relying on a generated artifact — a JSON import file, an SQL snapshot, an
