@@ -276,7 +276,7 @@ zukunft.com:
               name: "Global problems"
               tooltip: "the global issues that are expected to cause the damage with the suggested solution to solve the problem"
             pv:
-              url: "http://localhost/http/view.php?m=16&id=-2573"
+              url: "http://localhost/http/view.php?m=16&id=-2779"
               name: "Photovoltaic calculator"
               tooltip: "calculate the effects of photovoltaic"
             panels:
