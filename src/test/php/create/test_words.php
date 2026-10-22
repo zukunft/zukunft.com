@@ -634,6 +634,13 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function tonne(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::TONNE_ID, word_names::TONNE);
+        return $wrd;
+    }
+
     function definition(): word
     {
         $wrd = new word($this->env->usr1);

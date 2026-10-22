@@ -266,21 +266,21 @@ class result_ui_tests
         $res = new result($api_json);
         $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
         $phr_lst_keep = $ui_sys->phr_lst;
+        $pct_txt = '1.23' . result::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $test_name = 'percent values use the user config percent decimals';
         $ui_sys->typ_lst_cache->phr_sys = $t_phr->list_percent_symbol_cache_ui();
         $ui_sys->phr_lst = new phrase_list_ui();
-        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->val_formatted($msg), $pct_txt);
         $test_name = '... also if only the phrases of the page know the symbol';
         $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
-        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->val_formatted($msg), $pct_txt);
         // a calculated number is shown in the same format as a measured one, so the cell text of
         // a result is the formatted number and never the raw one
         $test_name = '... and a table cell of a result uses the same format';
-        $t->assert($test_name, $res->value($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->value($msg), $pct_txt);
         $test_name = '... also as the linked number of the cell';
-        $t->assert_text_contains($test_name, $res->value_edit($msg),
-            '>1.23' . word_names::PERCENT_SYMBOL . '<');
+        $t->assert_text_contains($test_name, $res->value_edit($msg), '>' . $pct_txt . '<');
         // negative: with the symbol triple in neither cache the number is shown without the sign
         // instead of falling back to a coded one
         $test_name = '... but without the symbol triple in any cache the sign is missing';

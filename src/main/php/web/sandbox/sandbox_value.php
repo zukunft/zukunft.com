@@ -88,6 +88,8 @@ class sandbox_value extends sandbox
     const string TIME_FORMAT = DateTimeInterface::ATOM;
     // the key of the date text in the json of a DateTime object
     const string JSON_DATETIME_DATE = 'date';
+    // between a number and its unit symbol e.g. "49 %"
+    const string UNIT_SEPARATOR = ' ';
     // the grey superscript behind a number that shows how the number has been found
     // TODO Prio 3 move the config.yaml
     const string QUALITY_MARK_ASSUMED = 'a';
@@ -721,7 +723,12 @@ class sandbox_value extends sandbox
 
         if (!$this->is_null()) {
             if ($this->is_percent($msg)) {
-                $result = round($this->number() * 100, $cfg->percent_decimals()) . $this->percent_symbol($msg);
+                $result = (string)round($this->number() * 100, $cfg->percent_decimals());
+                $symbol = $this->percent_symbol($msg);
+                // the symbol is a unit, so it is shown with a blank like any other unit e.g. "49 %"
+                if ($symbol != '') {
+                    $result .= self::UNIT_SEPARATOR . $symbol;
+                }
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
                     $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());

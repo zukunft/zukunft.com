@@ -35,9 +35,11 @@ namespace Zukunft\ZukunftCom\main\php\shared\const;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::TEST_CONST . 'triple_names.php';
 include_once paths::TEST_CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 
 class values
@@ -49,29 +51,29 @@ class values
     CONST float PI_LONG = 3.14159265358979323846264338327950288419716939937510; // pi
     CONST float PI = 3.1415926535898; // pi
     CONST float PI_SHORT = 3.1415927; // pi
+    // the group of one triple is the triple id with the sign bit of a 16 bit slot, so the group ids
+    // below follow the pinned triple ids, which test_pinned_ids re-baselines when a seed import shifts them
+    const int ONE_TRIPLE_GROUP = 32768;
     // the group id of the pi value keyed by the "π (unit symbol)" triple as used by the unit test fixtures
-    const int PI_ID = 32773;
+    const int PI_ID = self::ONE_TRIPLE_GROUP + triple_names::PI_SYMBOL_ID;
     // the group id of the pi number value in the seeded database,
-    // keyed by the "Pi (math)" triple (see triple_names::PI_ID and the pi value in units.json)
-    const int PI_MATH_ID = 32824;
-    const int PI_SYMBOL_ID = 5;
+    // keyed by the "Pi (math)" triple (see the pi value in units.json)
+    const int PI_MATH_ID = self::ONE_TRIPLE_GROUP + triple_names::PI_ID;
+    const int PI_SYMBOL_ID = triple_names::PI_SYMBOL_ID;
     CONST float SAMPLE_ZERO = 0.0;
     CONST float E = 2.718281828459045235360; // Euler number
     // the group id of the e value in the seeded database, keyed by the "𝑒 (math)" triple like the
     // pi value is keyed by "Pi (math)", because the number is the value of the constant and not of
     // its symbol, which is what makes 𝑒 a related value of pi (see value::load_values_similar)
-    const int E_ID = 32825;
+    const int E_ID = self::ONE_TRIPLE_GROUP + triple_names::E_NUM_ID;
     CONST float E_CONST = 0.57721566490153; // Euler const
     // the group id of the Euler's constant value in the seeded database, keyed by the
     // "Euler's constant" triple (Euler 'name of' constant, see the value in units.json)
-    const int E_CONST_ID = 32771;
+    const int E_CONST_ID = self::ONE_TRIPLE_GROUP + triple_names::EULER_CONST_ID;
     // the group id of the target price earning ratio of companies.json, which is the only seeded
     // value with a share and a protection type that are not the default, so it is the example for
     // the share and protection subtitle of the value default view
-    // the group of one triple is the triple id with the sign bit of a 16 bit slot, so this is a
-    // pinned phrase id and is re-baselined like word_names::*_ID (docs/llm/testing.md):
-    // 32768 + 703 for the "Target Price Earning Ratio" triple
-    const int TARGET_PE_RATIO_ID = 33471;
+    const int TARGET_PE_RATIO_ID = self::ONE_TRIPLE_GROUP + triple_names::TARGET_PE_RATIO_ID;
     const int TRANSITION_OF_CS = 9192631770;
     const int SPEED_OF_LIGHT = 299792458;
     const string SPEED_OF_LIGHT_TXT = "299'792'458";

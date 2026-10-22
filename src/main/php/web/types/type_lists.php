@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 // which the frontend init loads, free of the value and view chain (see web\helper\data_object)
 //include_once html_paths::COMPONENT . 'component.php';
 //include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::FORMULA . 'formula_list.php';
 //include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::REF . 'ref.php';
 //include_once html_paths::REF . 'source.php';
@@ -99,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
@@ -150,6 +152,8 @@ class type_lists
     public ?view_list_ui $msk_sys = null;
     // the phrases of the initial cache load e.g. the symbol triples (see verbs::PRELOAD_VERBS)
     public ?phrase_list_ui $phr_sys = null;
+    // the formulas that convert the measure units of the system phrases e.g. "kg" = "tonne" * 1000
+    public ?formula_list_ui $frm_sys = null;
 
 
     /*
@@ -419,6 +423,12 @@ class type_lists
         } else {
             $this->set_system_phrases([]);
         }
+        // a pod without unit conversions sends no formulas, so every number keeps its unit
+        if (array_key_exists(api::JSON_LIST_SYSTEM_FORMULAS, $json_array)) {
+            $this->set_system_formulas($json_array[api::JSON_LIST_SYSTEM_FORMULAS]);
+        } else {
+            $this->set_system_formulas([]);
+        }
         if (array_key_exists(api::JSON_LIST_SYS_LOG_LEVELS, $json_array)) {
             $this->set_sys_log_levels($json_array[api::JSON_LIST_SYS_LOG_LEVELS], $msg);
         } else {
@@ -631,6 +641,19 @@ class type_lists
         $this->phr_sys = new phrase_list_ui();
         if ($json_array != null) {
             $this->phr_sys->api_mapper($json_array);
+        }
+    }
+
+    /**
+     * set the formulas that convert the measure units of the system phrases e.g. "scale tonne to kg"
+     *
+     * @param array $json_array the formula part of the initial cache api message
+     */
+    function set_system_formulas(array $json_array): void
+    {
+        $this->frm_sys = new formula_list_ui();
+        if ($json_array != []) {
+            $this->frm_sys->api_mapper($json_array);
         }
     }
 

@@ -403,6 +403,8 @@ class json_fields
     const string LIST_SYSTEM_VIEWS = 'system_views';
     // the phrases that the frontend needs on every page e.g. the symbol triples (see verbs::PRELOAD_VERBS)
     const string LIST_SYSTEM_PHRASES = 'system_phrases';
+    // the formulas that convert a measure unit of the system phrases e.g. "kg" = "tonne" * 1000
+    const string LIST_SYSTEM_FORMULAS = 'system_formulas';
 
     /*
      * im- and export - fields used only for the im- and export json messages

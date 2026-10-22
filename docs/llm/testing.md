@@ -825,6 +825,9 @@ the name or code id of each pinned object, picks its id from the `list.csv` of t
 class and from the database and reports every pinned id that differs together with
 the id to pin. A new `*_ID` const of a seed object is added to the array of its class
 there; the ids of test objects that exist in no database (e.g. `TEST_ADD_ID`) are not.
+An id that is built from pinned ids, e.g. the group id of one triple
+(`values::ONE_TRIPLE_GROUP + triple_names::PI_ID`) or an expected group or result key,
+is written as an expression of those consts and never as a number, so that it follows the re-pin.
 Without `files::AUTO_RE_PIN_OBJECT_ID` the check writes `docs/pinned_id_findings.md`
 with a section per class: either "143 words tested, all ids are fine" or each const to
 re-pin with the pinned and the new id, or why it needs a re-pin by hand (several ids in

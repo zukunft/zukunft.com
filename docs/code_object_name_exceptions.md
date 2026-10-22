@@ -161,6 +161,7 @@ language_list: $lst, $ui_lst
 list_sort: $lst
 log: $log_ui
 message: $ui_msg
+number_format: $fmt, $no_cnv
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
 phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $kept, $kinds, $listed, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $rm_lst, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $time_lst, $tree, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed

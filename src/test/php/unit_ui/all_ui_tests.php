@@ -53,6 +53,7 @@ include_once test_paths::UNIT_UI . 'value_ui_tests.php';
 include_once test_paths::UNIT_UI . 'value_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'formula_ui_tests.php';
 include_once test_paths::UNIT_UI . 'formula_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'number_format_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'figure_ui_tests.php';
@@ -126,6 +127,7 @@ class all_ui_tests extends all_unit_tests
         new start_page_ui_tests()->run($t);
         new formula_ui_tests()->run($t);
         new formula_list_ui_tests()->run($t);
+        new number_format_ui_tests()->run($t);
         new result_ui_tests()->run($t);
         new result_list_ui_tests()->run($t);
         new figure_ui_tests()->run($t);

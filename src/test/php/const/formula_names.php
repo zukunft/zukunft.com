@@ -66,6 +66,10 @@ class formula_names
     const string SCALE_TO_SEC_COM = 'to convert times in minutes to seconds and the other way round';
     const string SCALE_TO_SEC_CODE_ID = 'scale_minute_to_sec';
     const int SCALE_TO_SEC_ID = 1;
+    // the unit conversion of units.json that the number format uses to show kg in tonne
+    const string SCALE_TONNE = 'scale tonne to kg';
+    const int SCALE_TONNE_ID = 10;
+    const string SCALE_TONNE_EXP = '"' . word_names::KG . '" = "' . word_names::TONNE . '" * 1000';
     const string SCALE_HOUR = 'scale hour to sec';
     const int SCALE_HOUR_ID = 2;
     const string SCALE_HOUR_EXP = '{w24}={w105}*3600';

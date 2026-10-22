@@ -218,7 +218,8 @@ class value_write_tests
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $result = $val_ui->value($msg_ui);
         $ui_sys->phr_lst = $phr_lst_keep;
-        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . word_names::PERCENT_SYMBOL;
+        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2)
+            . value_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
         // test the scaling of a value

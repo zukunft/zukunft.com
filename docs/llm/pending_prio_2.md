@@ -1708,6 +1708,14 @@ found 2026-10-14 when the user_log table and its writer in application::end_api 
   no start_pos (PHP warning "Undefined array key"); the load by parent ids adds them on its own,
   the common load_sql should add them like component_link_list, which changes the by_ids fixtures
 
+## result id
+
+`cfg/group/result_id::two_int_group_id` builds the 128 bit key from `array_slice($id_lst, 0, 3)` and
+`array_slice($id_lst, 4, 7)`, so the phrase at position 3 is never part of the key, e.g. the year of
+"Zurich (city), Geneva (city), inhabitants, 2020"; two results that differ only in that phrase get the same
+id. The two 64-bit parts are joined as decimal texts without a fixed length, so the key cannot be split
+again. The fix changes the stored result ids; `group_tests` "128 bit result_id" pins the current key.
+
 ## api mapper
 
 found while adding the api_mapper unit tests (see docs/llm/pending.md, test coverage);

@@ -487,6 +487,20 @@ class test_formulas extends test_objects
         return $lst;
     }
 
+    /**
+     * @return formula_list_ui the web formula "kg" = "tonne" * 1000 like the preloaded unit conversions
+     */
+    function formula_list_mass_ui(): formula_list_ui
+    {
+        $frm = new formula_ui();
+        $frm->set_id(formula_names::SCALE_TONNE_ID);
+        $frm->set_name(formula_names::SCALE_TONNE);
+        $frm->set_usr_text(formula_names::SCALE_TONNE_EXP);
+        $lst = new formula_list_ui();
+        $lst->add($frm, new user_message_ui()); // a test builder is an entry point, so it creates the message
+        return $lst;
+    }
+
     function formula_list_ui(): formula_list_ui
     {
         $tl = new test_lib();

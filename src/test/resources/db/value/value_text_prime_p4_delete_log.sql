@@ -29,8 +29,8 @@ SELECT value_text_prime_p4_delete_log
         3::smallint,
         350::smallint,
         'zukunft.com'::text,
-        60799501221199977::bigint,
+        60799501221199978::bigint,
         216::smallint,
         211::smallint,
         207::smallint,
-        -105::smallint);
+        -106::smallint);

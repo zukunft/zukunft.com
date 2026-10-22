@@ -343,6 +343,9 @@ class word_names
     const string KG = 'kg';
     const int KG_ID = 28;
     const string KG_COM = 'The kilogram is the SI base unit of mass.';
+    // the larger mass unit that a column of large kg numbers is shown in (see number_format)
+    const string TONNE = 'tonne';
+    const int TONNE_ID = 125;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 127;
     const string TRANSITION = 'transition';

@@ -48,6 +48,7 @@ include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HELPER . 'number_format.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::LOG . 'change_log_list.php';
@@ -94,6 +95,7 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\number_format;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
@@ -149,6 +151,9 @@ class ui_list extends ui_base
     const string CALC_CELL_UNIT = 'unit';
     const string CALC_CELL_PERCENT = 'percent';
     const string CALC_CELL_SIGNED = 'signed';
+    const string CALC_CELL_FACTOR = 'factor';
+    const string CALC_CELL_DECIMALS = 'decimals';
+    const string CALC_DEC_POINT = 'dec_point';
     const string CALC_THOUSAND_SEP = 'thousand_sep';
     const string CALC_PERCENT_DECIMALS = 'percent_decimals';
     const string CALC_POSITIVE = 'positive';
@@ -2767,18 +2772,19 @@ class ui_list extends ui_base
             foreach ($cols as $col) {
                 $head .= $html->block(html_base::TH, $html->esc($calc->label($col)), styles::CALC_NUMBER);
             }
+            $vals = $this->calculation_table_values($calc, $dbo, $cols, $grps, $lst, $msg);
+            $fmts = $this->calculator_formats(array_merge(...array_values($vals)), true, $msg);
             $rows = '';
-            foreach ($grps as $grp) {
+            foreach ($grps as $g => $grp) {
                 $sec = '<' . html_base::TD . ' colspan="' . (count($cols) + 1) . '">'
                     . $html->esc($calc->label($grp)) . '</' . html_base::TD . '>';
                 $rows .= $html->block(html_base::TR, $sec, styles::CALC_SECTION);
                 $signed = $calc->has_flag($grp, triples::CALCULATOR_SIGNED);
-                foreach ($calc->sub_items($grp, verbs::HAS_ID) as $row) {
-                    $ctx = [$dbo->phrase(), $calc->chosen($calc->item_phrase($row)), $calc->filter($row)];
+                foreach ($calc->sub_items($grp, verbs::HAS_ID) as $r => $row) {
+                    $ctx = $this->calculation_row_context($calc, $dbo, $row);
                     $cells = '';
-                    foreach ($cols as $col) {
-                        $val = $this->calculator_result([...$ctx, $calc->item_phrase($col)], $lst, $msg);
-                        $cells .= $this->calculator_cell($val, $signed, true, $msg);
+                    foreach (array_keys($cols) as $c) {
+                        $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, true, $msg);
                     }
                     $first = $html->esc($calc->label($row, $grp)) . $this->calculator_sub($calc, $row, $ctx, $lst, $msg);
                     $rows .= $this->calculator_row($first, $cells, $calc->has_flag($row, triples::CALCULATOR_HIGHLIGHT));
@@ -2787,6 +2793,90 @@ class ui_list extends ui_base
             $result = $this->calculator_table($head, $rows);
         }
         return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param array $cols the result columns of the calculation table
+     * @param array $grps the row groups of the calculation table
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per row group, row and column the number of the cell or null, so that the format of each column is known before its cells are written
+     */
+    private function calculation_table_values(
+        calculator   $calc,
+        word|triple  $dbo,
+        array        $cols,
+        array        $grps,
+        value_list   $lst,
+        user_message $msg
+    ): array
+    {
+        $result = [];
+        foreach ($grps as $g => $grp) {
+            foreach ($calc->sub_items($grp, verbs::HAS_ID) as $r => $row) {
+                $ctx = $this->calculation_row_context($calc, $dbo, $row);
+                foreach ($cols as $c => $col) {
+                    $result[$g][$r][$c] = $this->calculator_result([...$ctx, $calc->item_phrase($col)], $lst, $msg);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param phrase $row a row item of the calculation table
+     * @return array the phrases that every cell of the row has: the page phrase, the chosen phrase of the row and its filter
+     */
+    private function calculation_row_context(calculator $calc, word|triple $dbo, phrase $row): array
+    {
+        return [$dbo->phrase(), $calc->chosen($calc->item_phrase($row)), $calc->filter($row)];
+    }
+
+    /**
+     * the formats of the number cells of a table: per column the numbers with the same unit share
+     * the unit and the decimals, decided by the largest of them (see number_format)
+     *
+     * @param array $rows per row the number of each column or null for an empty cell
+     * @param bool $with_unit true to convert the unit, false if the header names the unit, so that only the decimals are shared
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per column and unit name the format of the cells
+     */
+    private function calculator_formats(array $rows, bool $with_unit, user_message $msg): array
+    {
+        $groups = [];
+        foreach ($rows as $cells) {
+            foreach ($cells as $c => $val) {
+                if ($val != null and !$val->is_null()) {
+                    $groups[$c][$this->unit_name($val, $msg)][] = $val;
+                }
+            }
+        }
+        $result = [];
+        foreach ($groups as $c => $units) {
+            foreach ($units as $unit_name => $vals) {
+                $result[$c][$unit_name] = $this->calculator_group_format($vals, $with_unit, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $vals the values or results of a column with the same unit
+     * @param bool $with_unit true to convert the unit, false to keep it
+     * @param user_message $msg to report a problem of the phrase types
+     * @return number_format the unit and the decimals of the numbers
+     */
+    private function calculator_group_format(array $vals, bool $with_unit, user_message $msg): number_format
+    {
+        global $ui_sys;
+        $digits = $ui_sys?->cfg?->digits() ?? shared_config::DEFAULT_DIGITS;
+        $unit = $with_unit ? $this->unit_phrase($vals[0], $msg) : null;
+        $nums = array_map(fn(sandbox_value $val) => $val->number(), $vals);
+        return new number_format()->group($nums, $unit, $digits, $msg);
     }
 
     /**
@@ -2816,18 +2906,27 @@ class ui_list extends ui_base
                     foreach ($cols as $col) {
                         $head .= $html->block(html_base::TH, $html->esc($calc->label($col)), styles::CALC_NUMBER);
                     }
-                    $rows = '';
+                    // per row the label, the phrases of its cells and if it is a key row
+                    $rows = [];
                     foreach ($calc->kinds($tbl_phr) as $row_phr) {
-                        $rows .= $this->calculator_detail_row($calc, $calc->phrase_label($row_phr),
-                            [$dbo->phrase(), $row_phr], $cols, false, $lst, $msg);
+                        $rows[] = [$calc->phrase_label($row_phr), [$dbo->phrase(), $row_phr], false];
                     }
                     foreach ($calc->sub_items($tbl, verbs::WITH_ID) as $extra) {
-                        $rows .= $this->calculator_detail_row($calc, $calc->label($extra),
-                            [$dbo->phrase(), $calc->item_phrase($extra)], $cols,
-                            $calc->has_flag($extra, triples::CALCULATOR_HIGHLIGHT), $lst, $msg);
+                        $rows[] = [$calc->label($extra), [$dbo->phrase(), $calc->item_phrase($extra)],
+                            $calc->has_flag($extra, triples::CALCULATOR_HIGHLIGHT)];
+                    }
+                    $vals = [];
+                    foreach ($rows as $row) {
+                        $vals[] = $this->calculator_detail_values($calc, $row[1], $cols, $lst, $msg);
+                    }
+                    // the header names the unit, so only the decimals are shared by a column
+                    $fmts = $this->calculator_formats($vals, false, $msg);
+                    $body = '';
+                    foreach ($rows as $i => $row) {
+                        $body .= $this->calculator_detail_row($row[0], $vals[$i], $fmts, $row[2], $msg);
                     }
                     $result .= $html->block(html_base::H2, $html->esc($calc->label($tbl)))
-                        . $this->calculator_table($head, $rows);
+                        . $this->calculator_table($head, $body);
                 }
             }
         }
@@ -2953,25 +3052,87 @@ class ui_list extends ui_base
 
     /**
      * @param sandbox_value|null $val the number of the cell or null if the page has none
+     * @param array $fmts per unit name the format of the cells of the column (see calculator_formats)
      * @param bool $signed true to show the sign of the number as the positive or negative style
      * @param bool $with_unit true to add the unit e.g. in the main table, but not in a detail table whose header names the unit
      * @param user_message $msg to report a problem of the phrase types
      * @return string the html code of the number cell, empty if the page has no number
      */
-    private function calculator_cell(?sandbox_value $val, bool $signed, bool $with_unit, user_message $msg): string
+    private function calculator_cell(?sandbox_value $val, array $fmts, bool $signed, bool $with_unit, user_message $msg): string
     {
         $html = new html_base();
         $txt = '';
         $id = '';
         if ($val != null and !$val->is_null()) {
-            $txt = $html->esc($with_unit ? $this->calculator_number_text($val, $msg) : $val->val_formatted($msg));
+            $fmt = $fmts[$this->unit_name($val, $msg)];
+            $txt = $html->esc($this->calculator_cell_text($val, $fmt, $with_unit, $msg));
             if ($signed) {
                 $txt = $html->span($txt, $val->number() < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
             }
             $id = $this->calculator_cell_id($val);
-            $this->cell_plan[$id] = $this->calculator_cell_format($val, $signed, $with_unit, $msg);
+            $this->cell_plan[$id] = $this->calculator_cell_format($val, $fmt, $signed, $with_unit, $msg);
         }
         return $html->block(html_base::TD, $txt, styles::CALC_NUMBER, $id);
+    }
+
+    /**
+     * @param sandbox_value $val the number of the cell
+     * @param number_format $fmt the unit and the decimals that the column shows the numbers of this unit with
+     * @param bool $with_unit true to add the unit behind the number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the text of the cell e.g. "10.5 t" for 10'482 kg in a column of tonnes
+     */
+    private function calculator_cell_text(sandbox_value $val, number_format $fmt, bool $with_unit, user_message $msg): string
+    {
+        global $ui_sys;
+        if ($val->is_percent($msg)) {
+            // a percent is formatted with its symbol already
+            $result = $val->val_formatted($msg);
+        } else {
+            $dec_point = $ui_sys?->cfg?->dec_point() ?? shared_config::DEFAULT_DEC_POINT;
+            $thousand_sep = $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP;
+            $result = $fmt->text($val->number(), $dec_point, $thousand_sep);
+            $unit = $this->calculator_cell_unit($val, $fmt, $with_unit, $msg);
+            if ($unit != '') {
+                $result .= ' ' . $unit;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the number of the cell
+     * @param number_format $fmt the format of the column for the unit of the number
+     * @param bool $with_unit false if the header names the unit
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the unit shown behind the number e.g. "t" if the column shows the kg in tonne
+     */
+    private function calculator_cell_unit(sandbox_value $val, number_format $fmt, bool $with_unit, user_message $msg): string
+    {
+        $result = '';
+        if ($with_unit and $fmt->unit != null) {
+            $result = $fmt->unit_text($msg);
+        } elseif ($with_unit) {
+            // a ratio unit e.g. "share" is no measure, so it is never converted
+            $result = $this->unit_name($val, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val a value or result of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return phrase|null the measure unit of the number e.g. "kg", which a column can convert, or null if it has none
+     */
+    private function unit_phrase(sandbox_value $val, user_message $msg): ?phrase
+    {
+        $result = null;
+        foreach ($val->phr_lst()->lst() as $phr) {
+            if ($result == null and $phr->is_measure($msg)) {
+                $result = $phr;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -2995,17 +3156,24 @@ class ui_list extends ui_base
 
     /**
      * @param sandbox_value $val the value or result of a cell
+     * @param number_format $fmt the unit and the decimals that the column shows the number with
      * @param bool $signed true if the cell shows the sign of the number as the positive or negative style
      * @param bool $with_unit true if the cell shows the unit behind the number
      * @param user_message $msg to report a problem of the phrase types
      * @return array how the browser writes a new number into the cell like calculator_cell does
      */
-    private function calculator_cell_format(sandbox_value $val, bool $signed, bool $with_unit, user_message $msg): array
+    private function calculator_cell_format(
+        sandbox_value $val,
+        number_format $fmt,
+        bool          $signed,
+        bool          $with_unit,
+        user_message  $msg
+    ): array
     {
         $is_percent = $val->is_percent($msg);
         $unit = '';
-        if ($with_unit and !$is_percent) {
-            $unit = $this->unit_name($val, $msg);
+        if (!$is_percent) {
+            $unit = $this->calculator_cell_unit($val, $fmt, $with_unit, $msg);
         }
         $percent = null;
         if ($is_percent) {
@@ -3016,6 +3184,8 @@ class ui_list extends ui_base
             self::CALC_CELL_UNIT => $unit,
             self::CALC_CELL_PERCENT => $percent,
             self::CALC_CELL_SIGNED => $signed,
+            self::CALC_CELL_FACTOR => $fmt->factor,
+            self::CALC_CELL_DECIMALS => $fmt->decimals,
         ];
     }
 
@@ -3048,6 +3218,7 @@ class ui_list extends ui_base
             self::CALC_CELLS => $this->cell_plan,
             self::CALC_FORMAT => [
                 // without a loaded config the format of the page cells, the shared defaults
+                self::CALC_DEC_POINT => $ui_sys?->cfg?->dec_point() ?? shared_config::DEFAULT_DEC_POINT,
                 self::CALC_THOUSAND_SEP => $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP,
                 self::CALC_PERCENT_DECIMALS => $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS,
                 self::CALC_POSITIVE => styles::CALC_POSITIVE,
@@ -3259,32 +3430,38 @@ class ui_list extends ui_base
     }
 
     /**
-     * @param calculator $calc the calculator reader of the page
      * @param string $label the label of the row
-     * @param array $ctx the phrases of the row: the page phrase and the row phrase
-     * @param phrase[] $cols the column items of the detail table
+     * @param array $vals per column the number of the cell or null
+     * @param array $fmts per column and unit name the format of the cells (see calculator_formats)
      * @param bool $key true for a key row e.g. the year
-     * @param value_list $lst the values and results of the page
      * @param user_message $msg to report a problem of the phrase types
      * @return string the html code of the row of a detail table
      */
-    private function calculator_detail_row(
-        calculator   $calc,
-        string       $label,
-        array        $ctx,
-        array        $cols,
-        bool         $key,
-        value_list   $lst,
-        user_message $msg
-    ): string
+    private function calculator_detail_row(string $label, array $vals, array $fmts, bool $key, user_message $msg): string
     {
         $cells = '';
-        foreach ($cols as $col) {
-            // the filter of a column e.g. the unit gram per kWh selects its numbers like the filter of a row
-            $val = $this->calculator_result([...$ctx, $calc->item_phrase($col), $calc->filter($col)], $lst, $msg);
-            $cells .= $this->calculator_cell($val, false, false, $msg);
+        foreach ($vals as $c => $val) {
+            $cells .= $this->calculator_cell($val, $fmts[$c] ?? [], false, false, $msg);
         }
         return $this->calculator_row(new html_base()->esc($label), $cells, $key);
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param array $ctx the phrases of the row e.g. the page phrase and the month
+     * @param array $cols the column items of the detail table
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per column the number of the cell of the row or null
+     */
+    private function calculator_detail_values(calculator $calc, array $ctx, array $cols, value_list $lst, user_message $msg): array
+    {
+        $result = [];
+        foreach ($cols as $c => $col) {
+            // the filter of a column e.g. the unit gram per kWh selects its numbers like the filter of a row
+            $result[$c] = $this->calculator_result([...$ctx, $calc->item_phrase($col), $calc->filter($col)], $lst, $msg);
+        }
+        return $result;
     }
 
     /**

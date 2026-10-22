@@ -835,7 +835,7 @@ class base_ui_tests
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $res_canton_html = $res_canton_ui->value_edit($msg_ui);
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2)
-            . word_names::PERCENT_SYMBOL;
+            . value_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
         // the phrases of the test setup are used again for the snapshots below
         $ui_sys->phr_lst = $phr_lst_keep;

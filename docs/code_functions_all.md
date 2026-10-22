@@ -7219,6 +7219,11 @@
              /helper/data_object.php
 \-- mail_sender
     \-- send - section for function send missing in /helper/mail_sender.php
+\-- number_format
+    \-- __construct - section for function __construct is expected to be construct and map in /helper/number_format.php
+    \-- group - section for function group missing in /helper/number_format.php
+    \-- text - section for function text missing in /helper/number_format.php
+    \-- unit_text - section for function unit_text missing in /helper/number_format.php
 \-- url_mapper
     \-- url_to_standard - section for function url_to_standard missing in /helper/url_mapper.php
     \-- standard_url_to_human - section for function standard_url_to_human missing in /helper/url_mapper.php
@@ -9317,6 +9322,8 @@
 \-- 
     \-- __construct
         \-- calculator - @param phrase $phr the phrase of the page e.g. example PV installation
+        \-- number_format - @param formula_list|null $frm_lst the formulas that convert the units; null for the preloade
+                d ones
         \-- table - 
         \-- user_log_display - for a user log it is always needed to know who wants to seen the log
         \-- sandbox_list_value - 
@@ -9647,6 +9654,12 @@
     \-- send
         \-- mail_sender - send a plain text mail via the smtp account of the .env or, without a smtp host,
                  via php mail()
+    \-- group
+        \-- number_format - decide the unit, the factor and the decimals of a group of numbers
+    \-- text
+        \-- number_format - @param float $num a stored number of the group
+    \-- unit_text
+        \-- number_format - @param user_message $msg to report a problem of the symbol lookup
     \-- url_to_standard
         \-- url_mapper - get the standard url array from all allowed url formats
     \-- standard_url_to_human
