@@ -225,6 +225,12 @@ class html_base
     // the start of a page shown while the page is created (see loading_start)
     const string CLASS_LOADING = 'page-loading';
     const string LOADING_ANIMATION = 'page-loading-show';
+    const string CLASS_LOADING_SECONDS = 'page-loading-seconds';
+    const string LOADING_COUNTER = 'page-loading-sec';
+    const string LOADING_COUNT_ANIMATION = 'page-loading-count';
+    // the seconds up to which the loading text counts; not the php max_execution_time, because php
+    // counts only its own cpu time, so a request that waits for the database runs much longer
+    const int LOADING_COUNT_LIMIT = 3600;
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     // green, so that the user sees at once that e.g. a save has worked
     const string CLASS_NOTIFICATION_SUCCESS = 'alert alert-success ' . api::USER_MSG_CLASS;
@@ -654,24 +660,54 @@ class html_base
     /**
      * the start of a page that is sent before the page is created, because the creation can take
      * longer than the expected response time; it becomes visible only after the delay, so for a
-     * fast page the browser keeps showing the previous page; it has no title, so the title of the
-     * page that follows is the title of the document
+     * fast page the browser keeps showing the previous page; it has no title and its header shows
+     * only the logo without the search form, so the page that follows names the document and no
+     * element id is used twice
      *
      * @param float $delay the seconds after which the loading text is shown
-     * @param string $navbar the html code of the navigation bar of the requesting user
+     * @param int $since the seconds since the request start shown when the text appears; counted up each second
      * @return string the html code from the doctype to the loading text and the footer
      */
-    function loading_start(float $delay, string $navbar): string
+    function loading_start(float $delay, int $since): string
     {
         global $mtr;
         $show = self::LOADING_ANIMATION . ' 0s ' . $delay . 's forwards';
         $css = '.' . self::CLASS_LOADING . ' {visibility: hidden; animation: ' . $show . ';}';
         $css .= ' @keyframes ' . self::LOADING_ANIMATION . ' {to {visibility: visible;}}';
+        $loading = $mtr->txt(msg_id::PAGE_LOADING);
+        if ($since < self::LOADING_COUNT_LIMIT) {
+            $css .= $this->loading_count_css($delay, $since, self::LOADING_COUNT_LIMIT);
+            $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SINCE);
+            $loading .= ' ' . $this->span('', self::CLASS_LOADING_SECONDS);
+            $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS);
+        }
         $head = $this->charset() . $this->head_style() . $this->style($css);
-        $txt = $navbar . $this->main($this->p($mtr->txt(msg_id::PAGE_LOADING)));
+        $txt = $this->nav($this->logo(), self::CLASS_NAV);
+        $txt .= $this->main($this->p($loading));
         $txt .= $this->site_footer();
         $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head);
         return $result . '<' . self::BODY . '>' . $this->div($txt, self::CLASS_LOADING);
+    }
+
+    /**
+     * the css that counts the seconds of the loading text without javascript: a registered integer
+     * property is animated in one step per second and shown as a css counter
+     *
+     * @param float $delay the seconds after which the count starts
+     * @param int $since the first number shown
+     * @param int $limit the last number shown
+     * @return string the css rules of the count
+     */
+    private function loading_count_css(float $delay, int $since, int $limit): string
+    {
+        $var = '--' . self::LOADING_COUNTER;
+        $steps = $limit - $since;
+        $count = self::LOADING_COUNT_ANIMATION . ' ' . $steps . 's steps(' . $steps . ') ' . $delay . 's forwards';
+        $css = ' @property ' . $var . " {syntax: '<integer>'; inherits: false; initial-value: " . $since . ';}';
+        $css .= ' .' . self::CLASS_LOADING_SECONDS . ' {animation: ' . $count . ';';
+        $css .= ' counter-reset: ' . self::LOADING_COUNTER . ' var(' . $var . ');}';
+        $css .= ' .' . self::CLASS_LOADING_SECONDS . '::after {content: counter(' . self::LOADING_COUNTER . ');}';
+        return $css . ' @keyframes ' . self::LOADING_COUNT_ANIMATION . ' {to {' . $var . ': ' . $limit . ';}}';
     }
 
     /**

@@ -743,7 +743,7 @@ class base_ui_tests
 
         // the start of a slow page shows the loading text with the footer only after the delay
         $test_name = 'the loading start is shown after the delay';
-        $loading = $html->loading_start(1.5, '');
+        $loading = $html->loading_start(1.5, 2);
         $t->assert_text_contains($test_name, $loading, html_base::LOADING_ANIMATION . ' 0s 1.5s forwards');
         $test_name = '... with the loading text';
         $t->assert_text_contains($test_name, $loading, $mtr->txt(msg_id::PAGE_LOADING));
@@ -754,6 +754,20 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $loading, '<' . html_base::TITLE);
         $test_name = '... and does not close the body';
         $t->assert_text_not_contains($test_name, $loading, '</' . html_base::BODY);
+        $test_name = '... and uses no element id e.g. of the search field of the navbar';
+        $t->assert_text_not_contains($test_name, $loading, ' ' . html_base::ID . '="');
+        // the seconds since the request start are counted up to the count limit, not to the php time limit
+        $test_name = 'the loading text counts the seconds from the given second';
+        $t->assert_text_contains($test_name, $loading, 'initial-value: 2;');
+        $test_name = '... in one step per second up to the count limit';
+        $t->assert_text_contains($test_name, $loading, ' 3598s steps(3598) 1.5s forwards');
+        $t->assert_text_contains($test_name, $loading, html_base::LOADING_COUNTER . ': ' . html_base::LOADING_COUNT_LIMIT . ';');
+        $test_name = '... and shows the count in the text';
+        $t->assert_text_contains($test_name, $loading, html_base::CLASS_LOADING_SECONDS . '"></');
+        // negative: a request that has already reached the count limit shows no count
+        $test_name = 'the loading text has no count at the count limit';
+        $at_limit = $html->loading_start(1.5, html_base::LOADING_COUNT_LIMIT);
+        $t->assert_text_not_contains($test_name, $at_limit, html_base::CLASS_LOADING_SECONDS);
         $test_name = 'the loading end hides the loading start';
         $t->assert_text_contains($test_name, $html->loading_end(), html_base::CLASS_LOADING . ' {display: none;}');
 

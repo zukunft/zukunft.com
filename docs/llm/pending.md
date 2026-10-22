@@ -306,10 +306,11 @@ renderer, never by adapting the sample
    the lifetime column shows kg results in t with one decimal (10.5 t, 2.0 t,
    18.4 t, 13.1 t, 113.8 t, -2.9 t) and the per year column the numbers without decimals (247,
    701, 349, 67, 614, 436, -98 kg), the percent with a blank before "%" ("49 %")
-2. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
+2. save: based on the updated number on the frontend form and the id already included in the frontend, send update api requests to the backend and if success is confirmed show a 'changes saved' message. Maybe break this task into smaller tasks and list them here. 
+3. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
    the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
    Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
-3. assumptions - the parts that the json cannot solve:
+4. assumptions - the parts that the json cannot solve:
     - the tags "assumed 0.5" of the battery production emissions and "assumed 0.6" of the
       battery lifetime: the confidence value has the phrases of the value without its unit (a
       value has one unit only), so the lookup of the confidence must ignore the unit phrase
@@ -325,22 +326,22 @@ renderer, never by adapting the sample
     - the input of the load share during PV hours has no `step="0.05" min="0" max="1"`, although
       the json has the field step and both field limits of "day share"; the field steps of the
       other inputs are shown, so the property lookup fails for the value group of the day share
-4. formula sample - add parameter 'show formula sample' to the field 
+5. formula sample - add parameter 'show formula sample' to the field 
    and create a sample based on the formula and the database values -   
    table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
    kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
    the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
    of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
-5. notes: only the three notes of the page with their own titles and sources ("How the CO₂
+6. notes: only the three notes of the page with their own titles and sources ("How the CO₂
    saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
    instead of the description of every formula (19 notes with the formula name in `b`)
-6. sources - just add sources - more sources is an excepted difference:   
+7. sources - just add sources - more sources is an excepted difference:   
    the seven sources of the sample in the order of their first use ([1] IEA PVPS,
    [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
    [7] gruenes.haus) with their full citation as the link text and `target="_blank"
    rel="noopener"`; today five sources with the short source name, gruenes.haus first and
    the two battery sources missing
-7. the comparison: let the use case test assert the generated page against the sample with
+8. the comparison: let the use case test assert the generated page against the sample with
    a normalisation of the differences that are design and not content: the html ids and
    names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
    attributes and the save form, the cell ids, and the calculator data with `calculator.js`

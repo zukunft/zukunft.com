@@ -1303,12 +1303,18 @@ class frontend
                     $html = new html_base();
                     $result .= $html->header($title, $msg_ui, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
+                        $logged_in = $usr !== null && !$usr->is_ip_only();
                         // the editor of the view as defined by a view relation e.g. the table editor
                         $msk_edt = null;
                         if ($msk_ui->editor_id != null) {
                             $msk_edt = $this->dto->typ_lst_cache->get_view_by_id($msk_ui->editor_id);
                         }
-                        $result .= $this->user_navbar($usr, $view_id, $url_array, $msk_edt);
+                        $result .= $html->navbar($view_id, $url_array,
+                            $logged_in ? $usr->name() : null,
+                            $logged_in ? $usr->navbar_role() : null,
+                            ($logged_in and $usr->is_admin()),
+                            $msk_edt?->id() ?? 0,
+                            $msk_edt?->name() ?? '');
                     }
                     $result .= $html->main($dsp_text);
                     $result .= $this->user_msg_html($msg_ui);
@@ -1329,53 +1335,33 @@ class frontend
      * > target); it shows the loading text only if the page is not complete by then
      *
      * @param user_message_ui $msg_ui the message of this request that names the requesting user
+     * @param float $start_time the start of the request, from which the loading text counts the seconds
      * @return void
      */
-    function send_loading_start(user_message_ui $msg_ui): void
+    function send_loading_start(user_message_ui $msg_ui, float $start_time): void
     {
         // e.g. nginx would otherwise hold back the start until the page is complete
         header(self::HEADER_NO_BUFFERING);
         while (ob_get_level() > 0) {
             ob_end_flush();
         }
-        echo $this->loading_start($msg_ui);
+        echo $this->loading_start($msg_ui, $start_time);
         flush();
     }
 
     /**
-     * @param user_message_ui $msg_ui the message of this request that names the requesting user
-     * @return string the html start of the page with the navbar of the user and the loading text
+     * the html start of the page with the logo, the loading text and the footer
+     * @param user_message_ui $msg_ui to report a problem of reading the config
+     * @param float $start_time the start of the request, so that the count includes the setup before this start
+     * @return string the html start of the page that is shown after the expected response time
      */
-    function loading_start(user_message_ui $msg_ui): string
+    function loading_start(user_message_ui $msg_ui, float $start_time): string
     {
         global $ui_sys;
         $names = [triples::RESPONSE_TIME, words::TARGET, words::FRONTEND, words::BEHAVIOUR];
-        $delay = $ui_sys->cfg->get_by($names, $msg_ui, def::FALLBACK_RESPONSE_TIME_TARGET);
-        $navbar = $this->user_navbar($msg_ui->usr);
-        return new html_base()->loading_start((float)$delay, $navbar);
-    }
-
-    /**
-     * @param user_ui|null $usr the requesting user; null or an ip user gets the navbar without login
-     * @param int $view_id the id of the shown view used for the back and view change links
-     * @param array $url_array the url of the request passed through for the back links
-     * @param view_ui|null $msk_edt the editor of the shown view e.g. the table editor
-     * @return string the html code of the navigation bar
-     */
-    private function user_navbar(
-        ?user_ui $usr,
-        int      $view_id = 0,
-        array    $url_array = [],
-        ?view_ui $msk_edt = null
-    ): string
-    {
-        $logged_in = $usr !== null && !$usr->is_ip_only();
-        return new html_base()->navbar($view_id, $url_array,
-            $logged_in ? $usr->name() : null,
-            $logged_in ? $usr->navbar_role() : null,
-            ($logged_in and $usr->is_admin()),
-            $msk_edt?->id() ?? 0,
-            $msk_edt?->name() ?? '');
+        $delay = (float)$ui_sys->cfg->get_by($names, $msg_ui, def::FALLBACK_RESPONSE_TIME_TARGET);
+        $since = (int)round(microtime(true) - $start_time + $delay);
+        return new html_base()->loading_start($delay, $since);
     }
 
 

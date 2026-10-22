@@ -4709,7 +4709,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- frontend
     \-- activation_url - 1 unit test calls
     \-- get_user - 1 unit test calls shared by 17 classes
-    \-- loading_start - 1 unit test calls shared by 2 classes
+    \-- loading_start - 2 unit test calls shared by 2 classes
 \-- group
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- is_id_set - 4 unit test calls shared by 6 classes
@@ -4722,7 +4722,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- form_end - 2 unit test calls shared by 2 classes
     \-- list - 8 unit test calls shared by 7 classes
     \-- loading_end - 1 unit test calls
-    \-- loading_start - 1 unit test calls shared by 2 classes
+    \-- loading_start - 2 unit test calls shared by 2 classes
     \-- p - 1 unit test calls
     \-- row_end - 1 unit test calls shared by 2 classes
     \-- row_right - 1 unit test calls shared by 2 classes

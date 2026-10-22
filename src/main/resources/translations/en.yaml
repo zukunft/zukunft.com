@@ -546,6 +546,8 @@ messages:
   open_source: "Open Source"
   footer_data_licence: "All structured data is available under the"
   page_loading: "Collecting data …"
+  page_loading_since: "since"
+  page_loading_seconds: "sec"
   footer_licence_unless: "Licence unless otherwise stated and the"
   footer_of_version: "of this version"
   footer_under_the: "under the"

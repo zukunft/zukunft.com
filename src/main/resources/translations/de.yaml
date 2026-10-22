@@ -12,6 +12,8 @@ messages:
   program_code: "Programmcode"
   footer_data_licence: "Alle strukturierten Daten stehen unter der"
   page_loading: "Daten werden gesammelt …"
+  page_loading_since: "seit"
+  page_loading_seconds: "Sek."
   footer_licence_unless: "Lizenz, sofern nicht anders angegeben, und der"
   footer_of_version: "dieser Version"
   footer_under_the: "unter der"

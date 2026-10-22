@@ -2489,6 +2489,9 @@ enum messages: string
     case FOOTER_DATA_LICENCE = 'footer_data_licence';
     // shown while a slow page is still being created
     case PAGE_LOADING = 'page_loading';
+    // around the counted seconds of the loading text e.g. "since 3 sec"
+    case PAGE_LOADING_SINCE = 'page_loading_since';
+    case PAGE_LOADING_SECONDS = 'page_loading_seconds';
     case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
     case FOOTER_OF_VERSION = 'footer_of_version';
     case FOOTER_UNDER_THE = 'footer_under_the';

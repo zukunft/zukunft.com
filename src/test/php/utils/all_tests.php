@@ -276,6 +276,9 @@ class all_tests extends all_unit_write_tests
             // if an error has stopped these tests, their snapshots are from the last run, so a check
             // would report the pages of the old code instead of a problem of this run
             if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST and WORKFLOW_TEST and WRITE_TEST) {
+                // the file refresh and the type list check above have no assertion of their own, so
+                // their duration is not charged to the first snapshot check as a false timeout
+                $this->reset_section_timer();
                 new coding_rule_tests()->run_html_snapshots($this);
             }
         }

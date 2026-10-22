@@ -10276,7 +10276,7 @@
     \-- send_loading_start
         \-- frontend - send the start of the page at once, because the creation of the page can take longer than
     \-- loading_start
-        \-- frontend - @param user_message_ui $msg_ui the message of this request that names the requesting user
+        \-- frontend - the html start of the page with the logo, the loading text and the footer
 \-- cached page
     \-- cached_page_or_null
         \-- frontend - the fast path of the request routing that serves an already cached html page
