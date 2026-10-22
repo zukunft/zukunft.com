@@ -120,10 +120,13 @@ include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'users.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
@@ -212,10 +215,13 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 
 // shared group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -242,6 +248,8 @@ class frontend
      */
 
     const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
+    // the http header that asks a proxy to pass the start of a page at once (see send_loading_start)
+    const string HEADER_NO_BUFFERING = 'X-Accel-Buffering: no';
 
     // the lists whose api answers are cached (see db_cache_page::api_key)
     const array API_CACHED_LISTS = [phrase_list_ui::class, value_list_ui::class, result_list_ui::class];
@@ -1295,18 +1303,12 @@ class frontend
                     $html = new html_base();
                     $result .= $html->header($title, $msg_ui, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
-                        $logged_in = $usr !== null && !$usr->is_ip_only();
                         // the editor of the view as defined by a view relation e.g. the table editor
                         $msk_edt = null;
                         if ($msk_ui->editor_id != null) {
                             $msk_edt = $this->dto->typ_lst_cache->get_view_by_id($msk_ui->editor_id);
                         }
-                        $result .= $html->navbar($view_id, $url_array,
-                            $logged_in ? $usr->name() : null,
-                            $logged_in ? $usr->navbar_role() : null,
-                            ($logged_in and $usr->is_admin()),
-                            $msk_edt?->id() ?? 0,
-                            $msk_edt?->name() ?? '');
+                        $result .= $this->user_navbar($usr, $view_id, $url_array, $msk_edt);
                     }
                     $result .= $html->main($dsp_text);
                     $result .= $this->user_msg_html($msg_ui);
@@ -1319,6 +1321,61 @@ class frontend
         }
 
         return $result;
+    }
+
+    /**
+     * send the start of the page at once, because the creation of the page can take longer than
+     * the expected response time (config.yaml user > default > frontend > behaviour > response time
+     * > target); it shows the loading text only if the page is not complete by then
+     *
+     * @param user_message_ui $msg_ui the message of this request that names the requesting user
+     * @return void
+     */
+    function send_loading_start(user_message_ui $msg_ui): void
+    {
+        // e.g. nginx would otherwise hold back the start until the page is complete
+        header(self::HEADER_NO_BUFFERING);
+        while (ob_get_level() > 0) {
+            ob_end_flush();
+        }
+        echo $this->loading_start($msg_ui);
+        flush();
+    }
+
+    /**
+     * @param user_message_ui $msg_ui the message of this request that names the requesting user
+     * @return string the html start of the page with the navbar of the user and the loading text
+     */
+    function loading_start(user_message_ui $msg_ui): string
+    {
+        global $ui_sys;
+        $names = [triples::RESPONSE_TIME, words::TARGET, words::FRONTEND, words::BEHAVIOUR];
+        $delay = $ui_sys->cfg->get_by($names, $msg_ui, def::FALLBACK_RESPONSE_TIME_TARGET);
+        $navbar = $this->user_navbar($msg_ui->usr);
+        return new html_base()->loading_start((float)$delay, $navbar);
+    }
+
+    /**
+     * @param user_ui|null $usr the requesting user; null or an ip user gets the navbar without login
+     * @param int $view_id the id of the shown view used for the back and view change links
+     * @param array $url_array the url of the request passed through for the back links
+     * @param view_ui|null $msk_edt the editor of the shown view e.g. the table editor
+     * @return string the html code of the navigation bar
+     */
+    private function user_navbar(
+        ?user_ui $usr,
+        int      $view_id = 0,
+        array    $url_array = [],
+        ?view_ui $msk_edt = null
+    ): string
+    {
+        $logged_in = $usr !== null && !$usr->is_ip_only();
+        return new html_base()->navbar($view_id, $url_array,
+            $logged_in ? $usr->name() : null,
+            $logged_in ? $usr->navbar_role() : null,
+            ($logged_in and $usr->is_admin()),
+            $msk_edt?->id() ?? 0,
+            $msk_edt?->name() ?? '');
     }
 
 

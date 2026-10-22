@@ -2487,6 +2487,8 @@ enum messages: string
 
     // footer text fragments
     case FOOTER_DATA_LICENCE = 'footer_data_licence';
+    // shown while a slow page is still being created
+    case PAGE_LOADING = 'page_loading';
     case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
     case FOOTER_OF_VERSION = 'footer_of_version';
     case FOOTER_UNDER_THE = 'footer_under_the';

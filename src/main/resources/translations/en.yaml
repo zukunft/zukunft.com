@@ -545,6 +545,7 @@ messages:
   agpl3: "AGPL3"
   open_source: "Open Source"
   footer_data_licence: "All structured data is available under the"
+  page_loading: "Collecting data …"
   footer_licence_unless: "Licence unless otherwise stated and the"
   footer_of_version: "of this version"
   footer_under_the: "under the"

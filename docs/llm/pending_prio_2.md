@@ -692,6 +692,14 @@ Fill the gap: Compare with the actual spec for your existing "auto user and IP w
 
 add to the config.yaml the size and age limit for the cache tables and use it to clean up the cache if needed
 
+#### loading start of a slow page
+
+`http/view.php` sends the start of the page (`frontend::send_loading_start`) before the page is
+created, and the complete page follows it, so the document repeats the doctype, `<html>`,
+`<head>` and `<body>` of the page. The browsers merge them by the html error recovery, but the
+page is not valid html. Target: `render_url` returns the page without its document start when
+the loading start has been sent, and the cached page keeps the complete document.
+
 ### prepare denial-of-service protection
 
 use the cache for read only pages

@@ -193,43 +193,6 @@ rules for every step:
 6. A second message is created mid-test in user_ui_tests.php ("the api url of the system user…"): $sys_msg = new user_message($sys_ui). This only names what was already inline before. The test needs a message for the system user, but the rule says to create $msg once.
 7. docs/llm/pending.md has a new "view edit" entry (move the "main + variance" entries to the navbar edit menu). It isn't part of this work; I assume it's yours. Commit it separately or name it in the message.
 
-## speed up
-
-### show delay
-
-if the full creation of a page takes longer than the expected response time defined in config.yaml 
-view.php should show an 'Collecting data …' page similar to this, 
-but that includes already the page header and if possible the footer:
-
-<?php
-header('Content-Type: text/html; charset=utf-8');
-header('X-Accel-Buffering: no');   // tell nginx not to buffer this response
-
-while (ob_get_level() > 0) {
-    ob_end_flush();
-}
-?>
-<!doctype html>
-<html>
-<head>
-<style>
-  #loading { font-style: italic; }
-  .done #loading { display: none; }
-</style>
-</head>
-<body>
-<div id="loading">Collecting data …</div>
-<?php
-echo str_repeat(' ', 1024);   // some browsers wait for a minimum number of bytes
-flush();
-
-$result = build_final_page();   // the slow part
-?>
-<style>#loading { display: none; }</style>
-<main><?= $result ?></main>
-</body>
-</html>
-
 ### calculator
 
 goal: `view.php?m=16&id=-2573` (pv lifetime balance) is created in less than 3 seconds; the

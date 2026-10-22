@@ -228,8 +228,10 @@ if ($db_con->is_open()) {
                 // show the result to the user
                 // and use the cached html pages for view-only requests to reduce the response time
                 $sys->times->switch(system_time_type::URL_TO_HTML);
+                $ui->send_loading_start($msg_ui);
                 $is_live = ($is_action or $redirect_msg !== null);
                 $page_html = $ui->url_to_html_cached($url_array, $msg_ui, $is_live, $ui->dto);
+                $web_txt .= new html_base()->loading_end();
                 $web_txt .= db_cache_page::add_user_msg($page_html, $redirect_msg ?? '');
             }
             $sys->times->switch(system_time_type::CLOSE);

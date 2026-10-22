@@ -7065,6 +7065,9 @@
     \-- get_user - section for function get_user is expected to be set and get in /frontend.php
     \-- url_to_action - section for function url_to_action not yet defined that it should be execute in /frontend.php
     \-- url_to_html - section for function url_to_html not yet defined that it should be view in /frontend.php
+    \-- send_loading_start - section for function send_loading_start not yet defined that it should be view in /frontend
+            .php
+    \-- loading_start - section for function loading_start not yet defined that it should be view in /frontend.php
     \-- cached_page_or_null - section for function cached_page_or_null not yet defined that it should be cached page in 
             /frontend.php
     \-- url_to_html_cached - section for function url_to_html_cached not yet defined that it should be cached page in /f
@@ -7274,6 +7277,10 @@
     \-- dsp_notification_html - section for function dsp_notification_html not yet defined that it should be header & fo
             oter in /html/html_base.php
     \-- footer - section for function footer not yet defined that it should be header & footer in /html/html_base.php
+    \-- loading_start - section for function loading_start not yet defined that it should be header & footer in /html/ht
+            ml_base.php
+    \-- loading_end - section for function loading_end not yet defined that it should be header & footer in /html/html_b
+            ase.php
     \-- ref - section for function ref not yet defined that it should be wrapper for the basic html elements used in /ht
             ml/html_base.php
     \-- ref_view - section for function ref_view not yet defined that it should be wrapper for the basic html elements u
@@ -10266,6 +10273,10 @@
 \-- view
     \-- url_to_html
         \-- frontend - create the HTML code based on the given url
+    \-- send_loading_start
+        \-- frontend - send the start of the page at once, because the creation of the page can take longer than
+    \-- loading_start
+        \-- frontend - @param user_message_ui $msg_ui the message of this request that names the requesting user
 \-- cached page
     \-- cached_page_or_null
         \-- frontend - the fast path of the request routing that serves an already cached html page
@@ -10367,6 +10378,10 @@
         \-- html_base - like dsp_notification but the caller supplies already-safe HTML (e.g. to embed a link);
     \-- footer
         \-- html_base - @param bool $no_about true to omit the about link e.g. when already on the about page
+    \-- loading_start
+        \-- html_base - the start of a page that is sent before the page is created, because the creation can take
+    \-- loading_end
+        \-- html_base - @return string the html code that hides the start of the page sent by loading_start
 \-- wrapper for the basic html elements used
     \-- ref
         \-- html_base - create the html code for a link

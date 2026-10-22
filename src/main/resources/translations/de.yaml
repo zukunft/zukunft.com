@@ -11,6 +11,7 @@ messages:
   cc0_license: "CC0 Lizenz"
   program_code: "Programmcode"
   footer_data_licence: "Alle strukturierten Daten stehen unter der"
+  page_loading: "Daten werden gesammelt …"
   footer_licence_unless: "Lizenz, sofern nicht anders angegeben, und der"
   footer_of_version: "dieser Version"
   footer_under_the: "unter der"

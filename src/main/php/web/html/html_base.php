@@ -222,6 +222,9 @@ class html_base
     // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
+    // the start of a page shown while the page is created (see loading_start)
+    const string CLASS_LOADING = 'page-loading';
+    const string LOADING_ANIMATION = 'page-loading-show';
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     // green, so that the user sees at once that e.g. a save has worked
     const string CLASS_NOTIFICATION_SUCCESS = 'alert alert-success ' . api::USER_MSG_CLASS;
@@ -638,11 +641,55 @@ class html_base
      */
     function footer(bool $no_about = false): string
     {
-        global $mtr;
         // invisible placeholder so that a text replace can add a user message
         // to a html page loaded from the page cache (see api::USER_MSG_PLACEHOLDER)
         $result = api::USER_MSG_PLACEHOLDER . "\n";
-        $result .= '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
+        $result .= $this->site_footer($no_about);
+        $result .= '</' . self::BODY . '>' . "\n";
+        $result .= '</' . self::HTML . '>' . "\n";
+
+        return $result;
+    }
+
+    /**
+     * the start of a page that is sent before the page is created, because the creation can take
+     * longer than the expected response time; it becomes visible only after the delay, so for a
+     * fast page the browser keeps showing the previous page; it has no title, so the title of the
+     * page that follows is the title of the document
+     *
+     * @param float $delay the seconds after which the loading text is shown
+     * @param string $navbar the html code of the navigation bar of the requesting user
+     * @return string the html code from the doctype to the loading text and the footer
+     */
+    function loading_start(float $delay, string $navbar): string
+    {
+        global $mtr;
+        $show = self::LOADING_ANIMATION . ' 0s ' . $delay . 's forwards';
+        $css = '.' . self::CLASS_LOADING . ' {visibility: hidden; animation: ' . $show . ';}';
+        $css .= ' @keyframes ' . self::LOADING_ANIMATION . ' {to {visibility: visible;}}';
+        $head = $this->charset() . $this->head_style() . $this->style($css);
+        $txt = $navbar . $this->main($this->p($mtr->txt(msg_id::PAGE_LOADING)));
+        $txt .= $this->site_footer();
+        $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head);
+        return $result . '<' . self::BODY . '>' . $this->div($txt, self::CLASS_LOADING);
+    }
+
+    /**
+     * @return string the html code that hides the start of the page sent by loading_start
+     */
+    function loading_end(): string
+    {
+        return $this->style('.' . self::CLASS_LOADING . ' {display: none;}');
+    }
+
+    /**
+     * @param bool $no_about true to omit the about link e.g. when already on the about page
+     * @return string the html footer element of a page
+     */
+    private function site_footer(bool $no_about = false): string
+    {
+        global $mtr;
+        $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
@@ -660,8 +707,6 @@ class html_base
         $result .= '</' . self::P . '> ' . "\n";
 
         $result .= '</' . self::FOOTER . '>' . "\n";
-        $result .= '</' . self::BODY . '>' . "\n";
-        $result .= '</' . self::HTML . '>' . "\n";
 
         return $result;
     }
@@ -3188,6 +3233,16 @@ class html_base
     private function head(string $txt): string
     {
         return '<' . self::HEAD . '>' . $txt . '</' . self::HEAD . '>';
+    }
+
+    /**
+     * wrap the style tag around css code
+     * @param string $css the css rules
+     * @return string the style element
+     */
+    private function style(string $css): string
+    {
+        return '<' . self::STYLE . '>' . $css . '</' . self::STYLE . '>';
     }
 
     /**

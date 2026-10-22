@@ -739,6 +739,25 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $html->text_h2('names'), html_base::CLASS_HTML . '=');
 
 
+        $t->subheader($ts . 'loading start');
+
+        // the start of a slow page shows the loading text with the footer only after the delay
+        $test_name = 'the loading start is shown after the delay';
+        $loading = $html->loading_start(1.5, '');
+        $t->assert_text_contains($test_name, $loading, html_base::LOADING_ANIMATION . ' 0s 1.5s forwards');
+        $test_name = '... with the loading text';
+        $t->assert_text_contains($test_name, $loading, $mtr->txt(msg_id::PAGE_LOADING));
+        $test_name = '... and the footer';
+        $t->assert_text_contains($test_name, $loading, html_base::CLASS_FOOTER);
+        // negative: the page that follows names the document and closes it
+        $test_name = 'the loading start has no title';
+        $t->assert_text_not_contains($test_name, $loading, '<' . html_base::TITLE);
+        $test_name = '... and does not close the body';
+        $t->assert_text_not_contains($test_name, $loading, '</' . html_base::BODY);
+        $test_name = 'the loading end hides the loading start';
+        $t->assert_text_contains($test_name, $html->loading_end(), html_base::CLASS_LOADING . ' {display: none;}');
+
+
         $t->subheader($ts . 'unit html table tests');
 
         // create a test set of phrase groups
