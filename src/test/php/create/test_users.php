@@ -33,8 +33,10 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::USER . 'user_log_sum.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_log.php';
@@ -61,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum as user_log_sum_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateMalformedStringException;
 use DateTime;
@@ -418,6 +421,16 @@ class test_users
             user_log::FLD_REQUEST_TIME => self::TV_USER_LOG_MS,
         ]);
         return $sum;
+    }
+
+    /**
+     * @return user_log_sum_ui the summed sessions of the test user as the frontend receives them
+     */
+    function log_sum_ui(): user_log_sum_ui
+    {
+        $sum_ui = new user_log_sum_ui();
+        $sum_ui->api_mapper($this->log_sum()->api_json_array());
+        return $sum_ui;
     }
 
     /**

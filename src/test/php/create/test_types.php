@@ -64,6 +64,7 @@ include_once paths::MODEL_SANDBOX . 'protection_type.php';
 include_once paths::MODEL_SANDBOX . 'share_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_SYSTEM . 'job_status.php';
 include_once paths::MODEL_SYSTEM . 'job_type.php';
@@ -145,6 +146,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\job_status;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
@@ -206,6 +208,9 @@ class test_types
     // the scaling factor and the symbol of the "scaling word percent" phrase type of phrase_types.csv
     const int SCALING_PCT_SCALE = 100;
     const string SCALING_PCT_SYMBOL = '%';
+
+    // the action that leads to the "assigned" sys log status of sys_log_statuum.csv
+    const string SYS_LOG_ASSIGNED_ACTION = 'assign to';
 
     function __construct(test_cleanup $env) {
         $this->env = $env;
@@ -273,6 +278,42 @@ class test_types
     {
         return new sys_log_status(
             sys_log_statuum::OPEN,
+            sys_log_statuum::OPEN_NAME,
+            sys_log_statuum::OPEN_COM,
+            sys_log_statuum::OPEN_ID);
+    }
+
+    /**
+     * @return sys_log_status_list a type list with only the status "open" for unit testing
+     */
+    function sys_log_status_list(): sys_log_status_list
+    {
+        $typ_lst = new sys_log_status_list();
+        $typ_lst->add($this->sys_log_status());
+        return $typ_lst;
+    }
+
+    /**
+     * @return sys_log_status "assigned" with the action that leads to it for unit testing
+     */
+    function sys_log_status_assigned(): sys_log_status
+    {
+        $log_sta = new sys_log_status(
+            sys_log_statuum::ASSIGNED,
+            sys_log_statuum::ASSIGNED,
+            sys_log_statuum::ASSIGNED_COM,
+            sys_log_statuum::ASSIGNED_ID);
+        $log_sta->action = self::SYS_LOG_ASSIGNED_ACTION;
+        return $log_sta;
+    }
+
+    /**
+     * @return sys_log_status "open" without the code id e.g. to test that a type list refuses it
+     */
+    function sys_log_status_without_code_id(): sys_log_status
+    {
+        return new sys_log_status(
+            null,
             sys_log_statuum::OPEN_NAME,
             sys_log_statuum::OPEN_COM,
             sys_log_statuum::OPEN_ID);

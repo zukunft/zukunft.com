@@ -478,6 +478,37 @@ class db_cache_tests
         $t->assert($test_name,
             db_cache_page::strip_user_msg(db_cache_page::add_user_msg($clean_page, $msg_html)), $clean_page);
 
+
+        $t->subheader($ts . 'debug id');
+
+        // db_cache: the debug id shows the database id
+        $test_name = 'cache with id';
+        $cac = $t_db_cache->db_cache();
+        $dsp = $cac->dsp_id();
+        $id_txt = '=' . test_db_caches::ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a reset cache entry does not show the test id
+        $test_name = 'cache without id';
+        $cac = $t_db_cache->db_cache();
+        $cac->reset();
+        $dsp = $cac->dsp_id();
+        $id_txt = '=' . test_db_caches::ID;
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
+        // db_cache_page: the debug id shows the url of the cached page
+        $test_name = 'page with url';
+        $cac_page = $t_db_cache->db_cache_page();
+        $dsp = $cac_page->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, test_db_caches::PAGE_URL);
+
+        // negative: a page without url shows no url
+        $test_name = 'page without url';
+        $cac_page = $t_db_cache->db_cache_page();
+        $cac_page->reset();
+        $dsp = $cac_page->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, test_db_caches::PAGE_URL);
+
     }
 
 }

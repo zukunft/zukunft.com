@@ -130,6 +130,20 @@ class term_ui_tests
         $test_name = '... and id() returns zero again';
         $t->assert($test_name, $trm_zero->id(), 0);
 
+        $t->subheader($ts . 'debug id');
+
+        // the term uses the debug text of the word, triple, verb or formula behind it
+        $test_name = 'shows the name of the word';
+        $trm_dsp = new term($t_wrd->word()->term()->api_json());
+        $dsp = $trm_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: a term without a loaded object has no name to show
+        $test_name = 'shows no name for an empty term';
+        $trm_dsp = new term();
+        $dsp = $trm_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
         $t->subheader($ts . 'api mapper');
 
         // the class of the api json selects the object, so a word json fills the term with the word

@@ -36,6 +36,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_REF . 'ref.php';
@@ -50,6 +52,8 @@ include_once paths::SHARED . 'library.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -66,6 +70,10 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class test_objects
 {
 
+    // the database id of the plain base objects for unit tests
+    const int TV_ID = 1;
+
+
     /*
      * init
      */
@@ -76,6 +84,31 @@ class test_objects
     function __construct(test_cleanup $env)
     {
         $this->env = $env;
+    }
+
+
+    /*
+     * unit
+     */
+
+    /**
+     * @return db_object a plain database object with an id e.g. to test a function of the base class
+     */
+    function db_object(): db_object
+    {
+        $dbo = new db_object();
+        $dbo->id = self::TV_ID;
+        return $dbo;
+    }
+
+    /**
+     * @return db_object_multi a plain multi table object with an id e.g. to test a function of the base class
+     */
+    function db_object_multi(): db_object_multi
+    {
+        $dbo = new db_object_multi();
+        $dbo->set_id(self::TV_ID);
+        return $dbo;
     }
 
 

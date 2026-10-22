@@ -114,6 +114,17 @@ class test_jobs
     }
 
     /**
+     * @return job a value update job without the formula that it needs to be added to a job list
+     */
+    function job_value_update(): job
+    {
+        $t_usr = new test_users($this->env);
+        $job = $this->job();
+        $job->set_type(job_types::VALUE_UPDATE, $t_usr->system_user());
+        return $job;
+    }
+
+    /**
      * @return job_list a list of batch job entries with some dummy values
      */
     function job_list(): job_list

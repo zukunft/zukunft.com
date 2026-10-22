@@ -284,6 +284,22 @@ class job_tests
         $chg_msg->reset();
 
 
+        $t->subheader($ts . 'list add');
+
+        // a base import job needs no formula and is added to the list
+        $test_name = 'add a job';
+        $job_lst = new job_list($sys_usr);
+        $job_lst->add($t_job->job());
+        $cnt = $job_lst->count();
+        $t->assert($test_name, $cnt, 1);
+
+        // negative: a value update job without formula is refused and the message names the job
+        $test_name = 'add a job without formula';
+        $job_lst = new job_list($sys_usr);
+        $add_msg = $job_lst->add($t_job->job_value_update());
+        $t->assert_msg_false($test_name, $add_msg, job_types::VALUE_UPDATE);
+
+
         $t->subheader($ts . 'due job selection');
 
         $sys_usr = new test_users($t)->system_user();
@@ -316,6 +332,22 @@ class job_tests
         $empty_lst = new job_list($sys_usr);
         $due = $job_run->due_jobs($empty_lst, $now);
         $t->assert_true($test_name, count($due) == 0);
+
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id shows the type of the job
+        $test_name = 'job with type';
+        $job = $t_job->job();
+        $dsp = $job->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, job_types::BASE_IMPORT);
+
+        // negative: a reset job shows no type
+        $test_name = 'job without type';
+        $job = $t_job->job();
+        $job->reset();
+        $dsp = $job->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, job_types::BASE_IMPORT);
 
     }
 

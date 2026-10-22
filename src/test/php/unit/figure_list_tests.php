@@ -45,11 +45,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list as figure_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\results;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class figure_list_tests
 {
@@ -61,6 +63,7 @@ class figure_list_tests
         $msg = new user_message();
         $sc = new sql_creator();
         $t_fig = new test_figures($t);
+        $tl = new test_lib();
         $t->name = 'figure->';
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';
@@ -107,6 +110,51 @@ class figure_list_tests
         $first_id = $fig_lst->get_first_id($msg);
         $t->assert($test_name, $first_id, 0);
         $msg->reset();
+
+        $t->subheader($ts . 'add');
+        // a figure of a value is added to an empty list
+        $test_name = 'add a figure';
+        $fig_lst = new figure_list($t->usr1);
+        $added = $fig_lst->add($t_fig->figure_value($msg), $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: the same figure again is refused as double
+        $test_name = 'add refuses a double figure';
+        $fig_lst = $t_fig->figure_list($msg);
+        $added = $fig_lst->add($t_fig->figure_value($msg), $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the figures with their number
+        $test_name = 'debug id with the figure numbers';
+        $num_txt = (string)results::TV_INT;
+        $fig_lst = $t_fig->figure_list($msg);
+        $dsp = $fig_lst->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $num_txt);
+        $msg->reset();
+
+        // negative: an empty figure list shows no figure number
+        $test_name = 'debug id of an empty list';
+        $fig_lst = new figure_list($t->usr1);
+        $dsp = $fig_lst->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, $num_txt);
+
+        // the frontend list uses the shared list debug id with the id of each figure
+        $test_name = 'frontend debug id with the figure id';
+        $id_txt = (string)values::PI_SYMBOL_ID;
+        $fig_lst_ui = $tl->ui_obj($t_fig->figure_list($msg), new figure_list_ui());
+        $dsp = $fig_lst_ui->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+        $msg->reset();
+
+        // negative: an empty frontend list has an empty debug id
+        $test_name = 'frontend debug id of an empty list';
+        $fig_lst_ui = new figure_list_ui();
+        $dsp = $fig_lst_ui->dsp_id();
+        $t->assert($test_name, $dsp, '');
 
 
         $t->subheader($ts . 'html frontend');

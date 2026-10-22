@@ -130,6 +130,22 @@ class reference_ui_tests
         $t->assert_false($test_name, $ref_map->api_mapper([json_fields::EXTERNAL_KEY => refs::PI_KEY], $msg));
         $msg->reset();
 
+        $t->subheader($ts . 'debug id');
+
+        // a reference has no own debug text, so the db object debug text shows its id
+        $test_name = 'shows the id of the reference';
+        $ref_dsp = new ref($t_ref->reference()->api_json());
+        $id_txt = (string)refs::PI_ID;
+        $dsp = $ref_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a new reference has no database id to show
+        $test_name = 'shows no id for a new reference';
+        $ref_dsp = new ref();
+        $id_txt = (string)refs::PI_ID;
+        $dsp = $ref_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
         $t->subheader($ts . 'source select');
 
         // the reference add and edit form offers the sources of the request cache and preselects

@@ -109,6 +109,15 @@ class element_list_tests
         $frm->elements($msg, $trm_lst);
         $t->assert_msg_false($test_name, $msg, '"' . formula_names::REF_ID_NOT_A_NUMBER . '"');
 
+        $t->subheader($ts . 'add');
+
+        // an element is added at the end of the list
+        $test_name = 'add an element';
+        $elm_lst = new element_list($t->usr1);
+        $elm_lst->add($t_frm->element());
+        $cnt = $elm_lst->count();
+        $t->assert($test_name, $cnt, 1);
+
         $t->subheader($ts . 'api mapper');
         $test_name = 'the frontend api mapper adds every element of the group';
         $elm_grp_ui = new element_group_ui();
@@ -137,6 +146,27 @@ class element_list_tests
         $vars = $elm_grp->api_json_array([], $msg);
         $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
         $msg->reset();
+
+        $t->subheader($ts . 'group debug id');
+
+        // the debug id of an element group names its elements
+        $test_name = 'debug id with the element names';
+        $elm_grp = $t_frm->element_group();
+        $dsp = $elm_grp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MINUTE);
+
+        // the debug id of an element group adds the phrases of the context
+        $test_name = 'debug id with the phrases';
+        $elm_grp = $t_frm->element_group();
+        $elm_grp->phr_lst = $t_phr->phrase_list_pi();
+        $dsp = $elm_grp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::PI_SYMBOL);
+
+        // negative: an element group without phrases shows no phrases
+        $test_name = 'debug id without phrases';
+        $elm_grp = $t_frm->element_group();
+        $dsp = $elm_grp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::PI_SYMBOL);
 
     }
 

@@ -130,6 +130,21 @@ class phrase_ui_tests
         $t->assert_false($test_name, $phr_map->api_mapper($api_json, $msg));
         $msg->reset();
 
+        $t->subheader($ts . 'debug id');
+
+        // the phrase uses the combine object debug text, which names the word behind it
+        $test_name = 'shows the name of the word';
+        $phr_dsp = new phrase($t_wrd->word()->phrase()->api_json());
+        $dsp = $phr_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: a phrase without an object has no name to show
+        $test_name = 'shows no name for a phrase without an object';
+        $phr_dsp = new phrase();
+        $phr_dsp->set_obj(null);
+        $dsp = $phr_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
         $t->subheader($ts . 'default view');
         // a phrase with an own view e.g. the calculator of a PV installation is linked to that
         // view with the phrase id, which is negative for a triple (frontend::dbo_for_url)

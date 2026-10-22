@@ -42,7 +42,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -280,6 +282,56 @@ class view_tests
         $t->assert($test_name, $vars, []);
         $msg->reset();
 
+        $t->subheader($ts . 'export');
+
+        // the type of a view is exported by its code id if it is not the default type
+        $test_name = 'export type';
+        $msk = $t_msk->view_filled_included();
+        $exp = $msk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], view_types::ENTRY);
+        $msg->reset();
+
+        // negative: the default type of a view is left out of the export
+        $test_name = 'export default type';
+        $msk = $t_msk->view();
+        $msk->set_type(view_types::DEFAULT, $msg);
+        $exp = $msk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // the style of a view is exported by its code id if it is not the default style
+        $test_name = 'export style';
+        $msk = $t_msk->view_filled_included();
+        $exp = $msk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::STYLE], view_styles::COL_SM_4);
+        $msg->reset();
+
+        // negative: the default style of the view style list is left out of the export
+        $test_name = 'export default style';
+        $msk = $t_msk->view();
+        $msk->set_style(view_styles::COL_SM_8, $msg);
+        $exp = $msk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::STYLE, $exp);
+        $msg->reset();
+
+        // the components of a view are exported by their name without the view of the link
+        $test_name = 'export components';
+        $msk = $t_msk->view_with_components();
+        $exp = $msk->export_json($msg, [], false);
+        $cmp_lst = $exp[json_fields::COMPONENTS];
+        $first_cmp = $cmp_lst[0];
+        $t->assert($test_name, $first_cmp[json_fields::NAME], components::WORD_NAME);
+        $test_name = 'export components without the view';
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $first_cmp);
+        $msg->reset();
+
+        // negative: a view without component links exports no components
+        $test_name = 'export no components';
+        $msk = $t_msk->view();
+        $exp = $msk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::COMPONENTS, $exp);
+        $msg->reset();
+
         $t->subheader($ts . 'term assignment');
 
         // a term that is assigned twice, e.g. by an import file, is reported to the caller,
@@ -448,6 +500,54 @@ class view_tests
         $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
         $msg->reset();
 
+        $t->subheader($ts . 'export');
+
+        // without the database load the parent and the child view are exported as objects
+        $test_name = 'export parent';
+        $mrl = $t_msk->view_relation();
+        $exp = $mrl->export_json($msg, [], false);
+        $parent = $exp[json_fields::PARENT];
+        $t->assert($test_name, $parent[json_fields::NAME], views::WORD_EDIT);
+        $test_name = 'export child';
+        $child = $exp[json_fields::CHILD];
+        $t->assert($test_name, $child[json_fields::NAME], views::WORD_LOG);
+        $msg->reset();
+
+        // negative: a view relation without a child view exports no child view
+        $test_name = 'export no child';
+        $mrl = $t_msk->view_relation_incomplete();
+        $exp = $mrl->export_json($msg, [], false);
+        $t->assert_null($test_name, $exp[json_fields::CHILD]);
+        $msg->reset();
+
+        // the type of a view relation is exported by its code id
+        $test_name = 'export type';
+        $mrl = $t_msk->view_relation_editor();
+        $exp = $mrl->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], view_relation_types::EDITOR);
+        $msg->reset();
+
+        // the description of a view relation is exported if it is set
+        $test_name = 'export description';
+        $mrl = $t_msk->view_relation_filled_included();
+        $exp = $mrl->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], test_const::VIEW_RELATION_COM);
+        $msg->reset();
+
+        // negative: a view relation without a description exports no description
+        $test_name = 'export no description';
+        $mrl = $t_msk->view_relation();
+        $exp = $mrl->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg->reset();
+
+        // the start position of a view relation is exported if it is set
+        $test_name = 'export position';
+        $mrl = $t_msk->view_relation();
+        $exp = $mrl->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::POSITION], test_const::VIEW_RELATION_POS);
+        $msg->reset();
+
 
         /*
          * view relation list
@@ -488,6 +588,23 @@ class view_tests
         $t->assert_null($test_name, $mrl_lst->editor_id(views::WORD_EDIT_ID));
         $test_name = '... and a view without a relation has no editor';
         $t->assert_null($test_name, $mrl_lst->editor_id(views::START_ID));
+
+        $t->subheader($ts . 'export');
+
+        // a view relation list exports one entry per view relation
+        $test_name = 'export second relation';
+        $mrl_lst = $t_msk->view_relation_list();
+        $exp = $mrl_lst->export_json($msg, [], false);
+        $second = $exp[1];
+        $t->assert($test_name, $second[json_fields::TYPE_NAME], view_relation_types::EDITOR);
+        $msg->reset();
+
+        // negative: a view relation list exports no entry beyond its view relations
+        $test_name = 'export no third relation';
+        $mrl_lst = $t_msk->view_relation_list();
+        $exp = $mrl_lst->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, 2, $exp);
+        $msg->reset();
 
 
         /*

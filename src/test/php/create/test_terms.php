@@ -150,6 +150,14 @@ class test_terms
     }
 
     /**
+     * @return term_list without any term e.g. to test the empty debug id
+     */
+    function list_empty(): term_list
+    {
+        return new term_list($this->env->usr1);
+    }
+
+    /**
      * @return term_list with all terms used for the unit tests
      */
     function term_list_all(): term_list

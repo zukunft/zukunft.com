@@ -30,7 +30,7 @@ SELECT phrase_type_update_log_100200
         1::smallint,
         108::smallint,
         'changed description'::text,
-        '1'::text,
+        null::text,
         1::bigint,
         106::smallint,
         'standard'::text);

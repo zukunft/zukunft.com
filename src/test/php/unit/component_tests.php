@@ -348,6 +348,68 @@ class component_tests
         $t->assert_key_not_exists($test_name . ' col', json_fields::PHRASE_COL, $vars);
         $msg->reset();
 
+        $t->subheader($ts . 'component export');
+
+        // the ui messages of a component are exported by their code id if they are set
+        $test_name = 'export ui message';
+        $cmp = $t_cmp->component_filled_included();
+        $exp = $cmp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::UI_MSG_CODE_ID], msg_id::PLEASE_SELECT->value);
+        $test_name = 'export ui message vars';
+        $t->assert($test_name, $exp[json_fields::UI_MSG_CODE_ID_VARS], msg_id::DONE->value);
+        $test_name = 'export ui message exception';
+        $t->assert($test_name, $exp[json_fields::UI_MSG_CODE_ID_EXCEPTION], msg_id::ERROR_TEXT->value);
+        $msg->reset();
+
+        // negative: a component without ui messages exports none of the ui message fields
+        $test_name = 'export no ui message';
+        $cmp = $t_cmp->component();
+        $exp = $cmp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::UI_MSG_CODE_ID, $exp);
+        $test_name = 'export no ui message vars';
+        $t->assert_key_not_exists($test_name, json_fields::UI_MSG_CODE_ID_VARS, $exp);
+        $test_name = 'export no ui message exception';
+        $t->assert_key_not_exists($test_name, json_fields::UI_MSG_CODE_ID_EXCEPTION, $exp);
+        $test_name = 'export no ui message exception value';
+        $t->assert_key_not_exists($test_name, json_fields::UI_MSG_CODE_VAL_EXCEPTION, $exp);
+        $msg->reset();
+
+        // the style of a component is exported by its code id if it is set
+        $test_name = 'export style';
+        $cmp = $t_cmp->component_filled_included();
+        $exp = $cmp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::STYLE], view_styles::COL_SM_4);
+        $msg->reset();
+
+        // negative: a component without a style exports no style
+        $test_name = 'export no style';
+        $cmp = $t_cmp->component();
+        $exp = $cmp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::STYLE, $exp);
+        $msg->reset();
+
+        // the phrases that select the table rows and columns are exported by their name
+        $test_name = 'export row';
+        $cmp = $t_cmp->component_filled_included();
+        $exp = $cmp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::ROW], words::YEAR_CAP);
+        $test_name = 'export column';
+        $t->assert($test_name, $exp[json_fields::COLUMN], word_names::CANTON);
+        $test_name = 'export sub column';
+        $t->assert($test_name, $exp[json_fields::COLUMN2], word_names::CITY);
+        $msg->reset();
+
+        // negative: a component without row and column phrases exports no phrase names
+        $test_name = 'export no row';
+        $cmp = $t_cmp->component();
+        $exp = $cmp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::ROW, $exp);
+        $test_name = 'export no column';
+        $t->assert_key_not_exists($test_name, json_fields::COLUMN, $exp);
+        $test_name = 'export no sub column';
+        $t->assert_key_not_exists($test_name, json_fields::COLUMN2, $exp);
+        $msg->reset();
+
         $t->subheader($ts . 'component api mapper');
 
         // the frontend sends the component as api json, so the mapper must take the name of it

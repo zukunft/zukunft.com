@@ -77,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
@@ -1241,6 +1242,41 @@ class import_tests
         $t->assert($test_name, $dto_merged->formula_list()->count(), $dto_expected->formula_list()->count());
         $test_name = '... and the merged calc validations match the merged file';
         $t->assert($test_name, $dto_merged->result_check_list()->count(), $dto_expected->result_check_list()->count());
+
+
+        $t->subheader($ts . 'export');
+        $t_trm = new test_terms($t);
+
+        // data_object: a word with only a name goes into the compact word list
+        $test_name = 'export a name only word in the word list';
+        $dto = $t_trm->dto_minute_and_second();
+        $exp = $dto->export_json($msg);
+        $wrd_names = $exp[json_fields::WORD_LIST];
+        $t->assert($test_name, $wrd_names[0], word_names::MINUTE);
+        $msg->reset();
+
+        // negative: a data object without words has no word list
+        $test_name = 'export no word list without words';
+        $dto = $t_trm->dto_scale_none();
+        $exp = $dto->export_json($msg);
+        $t->assert_key_not_exists($test_name, json_fields::WORD_LIST, $exp);
+        $msg->reset();
+
+        // data_object: a word with a config gets a full word entry
+        $test_name = 'export a word with config as full entry';
+        $dto = $t_trm->dto_scale_mio();
+        $exp = $dto->export_json($msg);
+        $wrd_entries = $exp[json_fields::WORDS];
+        $first = $wrd_entries[0];
+        $t->assert($test_name, $first[json_fields::NAME], word_names::ONE);
+        $msg->reset();
+
+        // negative: name only words get no full word entry
+        $test_name = 'export no full entry for name only words';
+        $dto = $t_trm->dto_minute_and_second();
+        $exp = $dto->export_json($msg);
+        $t->assert_key_not_exists($test_name, json_fields::WORDS, $exp);
+        $msg->reset();
 
     }
 

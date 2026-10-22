@@ -55,6 +55,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once paths::SHARED_CONST_FIELDS . 'word_fields.php';
@@ -96,6 +97,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -483,6 +485,32 @@ class change_log_tests
         // sql to delete the change log of a time series value during the test cleanup
         $this->assert_value_time_series_change_log_del_qp($t, $db_con);
 
+        $t->subheader($ts . 'add');
+
+        // a change is added to the change list
+        $test_name = 'add a change';
+        $log_lst = new change_log_list();
+        $added = $log_lst->add($t_log->log_word_add());
+        $t->assert_true($test_name, $added);
+
+        // negative: a missing change is not added
+        $test_name = 'add no change for null';
+        $log_lst = new change_log_list();
+        $added = $log_lst->add(null);
+        $t->assert_false($test_name, $added);
+
+        // a link change is added to the link change list
+        $test_name = 'add a link change';
+        $cl_lst = new change_log_link_list();
+        $added = $cl_lst->add($t_log->log_link());
+        $t->assert_true($test_name, $added);
+
+        // negative: a missing link change is not added
+        $test_name = 'add no link change for null';
+        $cl_lst = new change_log_link_list();
+        $added = $cl_lst->add(null);
+        $t->assert_false($test_name, $added);
+
         $t->subheader($ts . 'sql list statement');
 
         // prepare the objects for the tests
@@ -495,6 +523,59 @@ class change_log_tests
 
         $log_lst = $t_log->log_list_named();
         $t->assert_api($log_lst);
+
+
+        $t->subheader($ts . 'debug id');
+
+        // change_log: the debug id of the base log entry shows the changed table
+        $test_name = 'base log with table';
+        $chg = $t_log->log_base_word_add();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, change_tables::WORD);
+
+        // negative: a base log entry without table shows no table
+        $test_name = 'base log without table';
+        $chg = $t_log->log_base();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, change_tables::WORD);
+
+        // change: the debug id of an update shows the value before the change
+        $test_name = 'named log with old value';
+        $chg = $t_log->log_word_update();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::TEST_RENAMED);
+
+        // negative: an add has no value before the change
+        $test_name = 'named log without old value';
+        $chg = $t_log->log_word_add();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::TEST_RENAMED);
+
+        // change_value: the debug id of a value update shows the value before the change
+        $test_name = 'value log with old value';
+        $chg = $t_log->log_value_update();
+        $dsp = $chg->dsp_id();
+        $old_txt = (string)values::SAMPLE_INT;
+        $t->assert_text_contains($test_name, $dsp, $old_txt);
+
+        // negative: a value add has no value before the change
+        $test_name = 'value log without old value';
+        $chg = $t_log->log_value();
+        $dsp = $chg->dsp_id();
+        $old_txt = (string)values::SAMPLE_INT;
+        $t->assert_text_not_contains($test_name, $dsp, $old_txt);
+
+        // change_link: the debug id shows the linked from object
+        $test_name = 'link log with from object';
+        $chg = $t_log->log_link_named();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::CONST_NAME);
+
+        // negative: a link log with only the ids shows no from object
+        $test_name = 'link log without from object';
+        $chg = $t_log->log_link();
+        $dsp = $chg->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::CONST_NAME);
 
     }
 

@@ -468,6 +468,14 @@ class test_formulas extends test_objects
         return $lst;
     }
 
+    /**
+     * @return formula_list without any formula e.g. to test that nothing is exported
+     */
+    function list_empty(): formula_list
+    {
+        return new formula_list($this->env->usr1);
+    }
+
     function formula_list(): formula_list
     {
         $lst = new formula_list($this->env->usr1);
@@ -505,6 +513,17 @@ class test_formulas extends test_objects
         $t_wrd = new test_words($this->env);
         $lnk = new formula_link($this->env->usr1);
         $lnk->set(2, $this->formula_increase(), $t_wrd->word()->phrase());
+        return $lnk;
+    }
+
+    /**
+     * @return formula_link the increase formula link with the default link type set explicit
+     */
+    function link_default(): formula_link
+    {
+        global $sys;
+        $lnk = $this->formula_link_increase();
+        $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
         return $lnk;
     }
 

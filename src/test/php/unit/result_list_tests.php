@@ -124,6 +124,21 @@ class result_list_tests
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $trp);
 
 
+        $t->subheader($ts . 'add');
+
+        // a result with a db id is added to an empty list
+        $test_name = 'add a result';
+        $res_lst = new result_list($t->usr1);
+        $added = $res_lst->add($t_res->result_simple_1());
+        $t->assert_true($test_name, $added);
+
+        // negative: the same result again is not added
+        $test_name = 'add refuses a double result';
+        $res_lst = $t_res->result_list();
+        $added = $res_lst->add($t_res->result_simple_1());
+        $t->assert_false($test_name, $added);
+
+
         $t->subheader($ts . 'im- and export');
 
         $json_file = 'unit/result/result_list_import_part.json';

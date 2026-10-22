@@ -123,6 +123,24 @@ class word_ui_tests
         $result = $wrd_crud->del($no_usr_msg);
         $t->assert_true($test_name, $result->has_msg_id(msg_id::USER_MISSING));
 
+        $t->subheader($ts . 'debug id');
+
+        // the named sandbox debug text shows the name and the id of the word
+        $test_name = 'shows the name of the word';
+        $wrd_dsp = new word($t_wrd->word()->api_json());
+        $dsp = $wrd_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+        $test_name = '... and its id';
+        $id_txt = (string)word_names::MATH_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a word known only by its id e.g. from a url has no name to show
+        $test_name = 'shows no name for a word without a name';
+        $wrd_dsp = new word();
+        $wrd_dsp->set_id(word_names::MATH_ID);
+        $dsp = $wrd_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
         // TODO Prio 2 add a list of differences between the user word and the standard word
         //      with an undo button to change back to the standard
         // TODO Prio 2 add this ui test for all main sandbox objects

@@ -298,6 +298,64 @@ class user_tests
         $t->assert_false($test_name, key_exists(json_fields::NAME, $usr_ip_core_api));
         $msg->reset();
 
+        // the name of a user is exported
+        $test_name = 'export name';
+        $usr_exp = $t_usr->user_ip_loaded();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], users::TEST_USER_NAME);
+        $msg->reset();
+
+        // negative: an empty field is left out e.g. the missing name of an ip user
+        $test_name = 'export no empty name';
+        $usr_exp = $t_usr->user_ip();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $exp);
+        $msg->reset();
+
+        // a user that uses the sandbox exports the flag
+        $test_name = 'export sandbox usage';
+        $usr_exp = $t_usr->sandbox_user();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_true($test_name, $exp[json_fields::USES_SANDBOX]);
+        $msg->reset();
+
+        // negative: the default false of the sandbox usage is not exported
+        $test_name = 'export no default sandbox usage';
+        $usr_exp = $t_usr->non_sandbox_user();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::USES_SANDBOX, $exp);
+        $msg->reset();
+
+        // the last used source of a user is exported as a nested object
+        $test_name = 'export last source';
+        $usr_exp = $t_usr->user_filled($t);
+        $exp = $usr_exp->export_json($msg, [], false);
+        $src_exp = $exp[json_fields::SOURCE];
+        $t->assert($test_name, $src_exp[json_fields::NAME], sources::SIB);
+        $msg->reset();
+
+        // negative: a user without last used source exports no source
+        $test_name = 'export no last source';
+        $usr_exp = $t_usr->user_ip_loaded();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE, $exp);
+        $msg->reset();
+
+        // the last used view of a user is exported as a nested object
+        $test_name = 'export last view';
+        $usr_exp = $t_usr->user_filled($t);
+        $exp = $usr_exp->export_json($msg, [], false);
+        $msk_exp = $exp[json_fields::VIEW];
+        $t->assert($test_name, $msk_exp[json_fields::NAME], views::START_NAME);
+        $msg->reset();
+
+        // negative: a user without last used view exports no view
+        $test_name = 'export no last view';
+        $usr_exp = $t_usr->user_ip_loaded();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $msg->reset();
+
 
         $t->subheader($ts . 'change permission');
 
@@ -604,6 +662,17 @@ class user_tests
         $msg->reset();
 
 
+        $t->subheader($ts . 'log sum add');
+
+        // the summed sessions of a user are added to the list
+        $test_name = 'add a log sum';
+        $sum_lst = $t_usr->log_sum_list_empty();
+        $sum_lst->add($t_usr->log_sum());
+        $vars = $sum_lst->api_json_array();
+        $first = $vars[0];
+        $t->assert($test_name, $first[json_fields::ID], users::SYSTEM_TEST_ID);
+
+
         $t->subheader($ts . 'last used ip saved on login');
 
         // a logged in user connecting from a new ip must get its last used ip updated in the user
@@ -813,6 +882,23 @@ class user_tests
         $msg = $usr_chg->diff_msg($t_usr->sandbox_user());
         $t->assert_false($test_name, str_contains(
             $msg->all_message_text(), users::TEST_USER_PASSWORD_FIX_HASH));
+
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of a loaded user shows the database id
+        $test_name = 'user with id';
+        $usr = $t_usr->user_filled_loaded($t);
+        $dsp = $usr->dsp_id();
+        $id_txt = (string)users::TEST_USER_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a user that is not yet saved has no database id
+        $test_name = 'user without id';
+        $usr = $t_usr->user_filled($t);
+        $dsp = $usr->dsp_id();
+        $id_txt = (string)users::TEST_USER_ID;
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
     }
 

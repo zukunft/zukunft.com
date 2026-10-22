@@ -929,6 +929,20 @@ class base_ui_tests
         $result = (new button($url, $url_arr))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
+        // the explanation is shown in the tooltip of the add button
+        $test_name = 'the add button shows the explanation';
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
+        $btn = new button($url, $url_arr);
+        $btn_html = $btn->add(msg_id::WORD_ADD, word_names::MATH_COM);
+        $t->assert_text_contains($test_name, $btn_html, word_names::MATH_COM);
+
+        // negative: without an explanation the add button shows only the message text
+        $test_name = 'the add button without explanation shows only the message';
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
+        $btn = new button($url, $url_arr);
+        $btn_html = $btn->add(msg_id::WORD_ADD);
+        $t->assert_text_not_contains($test_name, $btn_html, word_names::MATH_COM);
+
         // TODO Prio 2 move e.g. because the edit word button is tested already in the unit tests of the object
 
         $url = $html->url_back(views::WORD_DEL_ID);

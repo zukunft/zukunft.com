@@ -43,7 +43,9 @@ include_once paths::MODEL_SYSTEM . 'system_time.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
 include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once html_paths::SYSTEM . 'sys_log.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::SYSTEM . 'system_time.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'sys_log_functions.php';
@@ -59,7 +61,9 @@ use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_ui;
+use Zukunft\ZukunftCom\main\php\web\system\system_time as system_time_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
@@ -273,6 +277,29 @@ class test_sys_log extends test_objects
     function list_for_user_empty_ui(): sys_log_list_ui
     {
         return new sys_log_list_ui();
+    }
+
+    /**
+     * @param user_message_ui $msg to report the api mapping problems of the frontend entry
+     * @return sys_log_ui the open system error log entry as the frontend receives it
+     */
+    function sys_log_ui(user_message_ui $msg): sys_log_ui
+    {
+        $be_msg = new user_message($this->env->usr1); // not reported, only builds the json of the fixed fixture like system_time_api_json
+        $slg_ui = new sys_log_ui();
+        $slg_ui->api_mapper($this->sys_log()->api_json_array([], $be_msg), $msg);
+        return $slg_ui;
+    }
+
+    /**
+     * @param user_message_ui $msg to report the api mapping problems of the frontend entry
+     * @return system_time_ui the slow api request time as the frontend receives it
+     */
+    function system_time_ui(user_message_ui $msg): system_time_ui
+    {
+        $sys_tim_ui = new system_time_ui();
+        $sys_tim_ui->api_mapper($this->system_time_api_json()[0], $msg);
+        return $sys_tim_ui;
     }
 
 }

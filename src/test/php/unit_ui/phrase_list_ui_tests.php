@@ -111,6 +111,24 @@ class phrase_list_ui_tests
 
         $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $msg);
 
+        // the phrase list uses the add function of sandbox_list_named
+        $t->subheader($ts . 'add');
+
+        // a phrase that is not yet in the list is added
+        $test_name = 'a new phrase is added';
+        $add_lst = new phrase_list();
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: a phrase that is already in the list is not added again
+        $test_name = 'a phrase that is already in the list is not added again';
+        $add_lst = new phrase_list();
+        $add_lst->add($phr_city_ui, $msg);
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
         /*
          * TODO Prio 3 add a phrase selector if the phrase list is short and add an test
         // test the phrase selector

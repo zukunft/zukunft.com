@@ -332,6 +332,48 @@ class source_tests
         $json_file = 'unit/ref/bipm.json';
         $t->assert_json_file(new source($t->usr1), $json_file);
 
+        // the url of a source is exported
+        $test_name = 'export url';
+        $src = $t_src->source();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::URL], sources::BFS_ULR);
+        $msg->reset();
+
+        // negative: a source without url exports no url
+        $test_name = 'export no url';
+        $src = $t_src->source_ref();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::URL, $exp);
+        $msg->reset();
+
+        // the doi of a source is exported
+        $test_name = 'export doi';
+        $src = $t_src->source_filled_included();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DOI], sources::TEST_DOI);
+        $msg->reset();
+
+        // negative: a source without doi exports no doi
+        $test_name = 'export no doi';
+        $src = $t_src->source();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DOI, $exp);
+        $msg->reset();
+
+        // the default view is exported by its name, because the id differs between pods
+        $test_name = 'export view name';
+        $src = $t_src->source_filled_included();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::VIEW], views::SOURCE_NAME);
+        $msg->reset();
+
+        // negative: a source without default view exports no view
+        $test_name = 'export no view';
+        $src = $t_src->source_reserved();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $msg->reset();
+
 
         // start the test section (ts)
         $ts = 'unit source type ';

@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_links;
@@ -220,6 +221,63 @@ class term_view_tests
         $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
         $t->assert_key_not_exists($test_name . ' priority', json_fields::PRIORITY, $vars);
         $t->assert_key_not_exists($test_name . ' style', json_fields::STYLE, $vars);
+        $msg->reset();
+
+        $t->subheader($ts . 'term_view export');
+
+        // the view and the term of a term view are exported as objects
+        $test_name = 'export view';
+        $trm_msk = $t_msk->term_view();
+        $exp = $trm_msk->export_json($msg, [], false);
+        $msk_exp = $exp[json_fields::VIEW];
+        $t->assert($test_name, $msk_exp[json_fields::NAME], views::MATH_CONST_NAME);
+        $test_name = 'export term';
+        $trm_exp = $exp[json_fields::TERM];
+        $t->assert($test_name, $trm_exp[json_fields::OBJECT_CLASS], json_fields::CLASS_TRIPLE);
+        $msg->reset();
+
+        // negative: a term view with a term without a name exports no term
+        $test_name = 'export no term';
+        $trm_msk = $t_lnk->term_view_incomplete();
+        $exp = $trm_msk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TERM, $exp);
+        $msg->reset();
+
+        // the link type of a term view is exported if it is not the default type
+        $test_name = 'export link type';
+        $trm_msk = $t_msk->term_view();
+        $trm_msk->set_predicate(view_link_types::SELECTED_WORD);
+        $exp = $trm_msk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PREDICATE], view_link_types::SELECTED_WORD);
+        $msg->reset();
+
+        // negative: the default link type of a term view is left out of the export
+        $test_name = 'export default link type';
+        $trm_msk = $t_msk->term_view();
+        $exp = $trm_msk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $msg->reset();
+
+        // the description, the priority and the style of a term view are exported if they are set
+        $test_name = 'export description';
+        $trm_msk = $t_msk->term_view_filled_included();
+        $exp = $trm_msk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], test_const::TERM_VIEW_COM);
+        $test_name = 'export priority';
+        $t->assert($test_name, $exp[json_fields::PRIORITY], test_const::TERM_VIEW_ORDER_NBR);
+        $test_name = 'export style';
+        $t->assert($test_name, $exp[json_fields::STYLE], view_styles::COL_SM_8);
+        $msg->reset();
+
+        // negative: a term view without them exports no description, priority and style
+        $test_name = 'export no description';
+        $trm_msk = $t_msk->term_view();
+        $exp = $trm_msk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $test_name = 'export no priority';
+        $t->assert_key_not_exists($test_name, json_fields::PRIORITY, $exp);
+        $test_name = 'export no style';
+        $t->assert_key_not_exists($test_name, json_fields::STYLE, $exp);
         $msg->reset();
 
         $t->subheader($ts . 'triple api');

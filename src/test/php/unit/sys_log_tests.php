@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_slow_list;
@@ -235,6 +236,43 @@ class sys_log_tests
         $vars = $log->api_json_array([], $msg);
         $t->assert_key_not_exists($test_name, json_fields::SOLVER, $vars);
         $msg->reset();
+
+
+        $t->subheader($ts . 'list add');
+
+        // a log entry is added to the list
+        $test_name = 'add a log entry';
+        $log_lst = new sys_log_list();
+        $log_lst->add($t_sys->sys_log());
+        $cnt = $log_lst->count();
+        $t->assert($test_name, $cnt, 1);
+
+        // negative: the same log entry again is not added a second time
+        $test_name = 'add a log entry twice';
+        $log_lst = new sys_log_list();
+        $log_lst->add($t_sys->sys_log());
+        $log_lst->add($t_sys->sys_log());
+        $cnt = $log_lst->count();
+        $t->assert($test_name, $cnt, 1);
+
+
+        $t->subheader($ts . 'system time add');
+
+        // a new step is added with its time
+        $test_name = 'add a step';
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(self::TV_STEP_DB_READ_SEC, system_time_type::DB_READ);
+        $report = $sys_tim_lst->report();
+        $t->assert_text_contains($test_name, $report,
+            system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC, 4) . ' sec');
+
+        // negative: a step that is already in the list is not added again, but its time is summed
+        $test_name = 'add a known step';
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $sys_tim_lst->add(self::TV_STEP_DB_READ_SEC, system_time_type::DB_READ);
+        $report = $sys_tim_lst->report();
+        $t->assert_text_contains($test_name, $report,
+            system_time_type::DB_READ . ': ' . round(2 * self::TV_STEP_DB_READ_SEC, 4) . ' sec');
 
 
         $t->subheader($ts . 'system time type sql setup');
@@ -490,6 +528,23 @@ class sys_log_tests
         $vars = $sys_tim->api_json_array([], $msg);
         $t->assert_null($test_name, $vars[json_fields::TIME_START]);
         $msg->reset();
+
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of an updated log entry shows the update time
+        $test_name = 'updated log with update time';
+        $slg = $t_sys->sys_log_filled();
+        $dsp = $slg->dsp_id();
+        $upd = new DateTime(self::TV_TIME_ASSIGNED)->format(DateTimeInterface::ATOM);
+        $t->assert_text_contains($test_name, $dsp, $upd);
+
+        // negative: a log entry that has never been updated shows no update time
+        $test_name = 'new log without update time';
+        $slg = $t_sys->sys_log();
+        $dsp = $slg->dsp_id();
+        $upd = new DateTime(self::TV_TIME_ASSIGNED)->format(DateTimeInterface::ATOM);
+        $t->assert_text_not_contains($test_name, $dsp, $upd);
 
     }
 

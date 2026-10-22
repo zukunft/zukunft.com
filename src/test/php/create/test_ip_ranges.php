@@ -49,6 +49,10 @@ use Zukunft\ZukunftCom\main\php\shared\const\ip_ranges;
 class test_ip_ranges
 {
 
+    // the database id of the test ip range for unit tests
+    const int TV_ID = 1;
+
+
     /*
      * map
      */
@@ -64,6 +68,16 @@ class test_ip_ranges
         $ip_range->from = ip_ranges::TEST_START;
         $ip_range->to = ip_ranges::TEST_END;
         $ip_range->set_user($sys_usr);
+        return $ip_range;
+    }
+
+    /**
+     * @return ip_range the test ip range as loaded from the database, so with the id set
+     */
+    function ip_range_loaded(): ip_range
+    {
+        $ip_range = $this->ip_range();
+        $ip_range->id = self::TV_ID;
         return $ip_range;
     }
 

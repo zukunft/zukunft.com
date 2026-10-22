@@ -38,6 +38,7 @@ include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -368,6 +369,34 @@ class expression_tests
         $msg->reset();
         $test_name = 'a text without a phrase has no phrase ids';
         $t->assert($test_name, $exp_no_calc->phr_id_lst('')->lst, []);
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id shows the user text of the expression
+        $test_name = 'debug id with the user text';
+        $exp = $t_frm->expression();
+        $dsp = $exp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, formula_names::SCALE_TO_SEC_EXP);
+
+        // the debug id adds the reference text with the term ids
+        $test_name = 'debug id with the reference text';
+        $id_txt = (string)word_names::MINUTE_ID;
+        $exp = $t_frm->expression();
+        $dsp = $exp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a user text without equal sign has no reference text, so no term id is shown
+        $test_name = 'debug id without reference text';
+        $exp = new expression($t_frm->formula());
+        $exp->set_ref_and_user_text(null, word_names::MINUTE);
+        $dsp = $exp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
+        // negative: an empty element group list has an empty debug id
+        $test_name = 'debug id of an empty element group list';
+        $elm_grp_lst = new element_group_list($t->usr1);
+        $dsp = $elm_grp_lst->dsp_id();
+        $t->assert($test_name, $dsp, '');
 
     }
 

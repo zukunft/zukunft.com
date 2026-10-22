@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -455,6 +456,48 @@ class formula_tests
         $frm_imp_off = new formula($t->usr1);
         $frm_imp_off->import_mapper($ex_json_off, $msg_exp);
         $t->assert_null($test_name, $frm_imp_off->need_all_val);
+
+        // a formula type that is not the default is exported by its code id
+        $test_name = 'export the type';
+        $frm = $t_frm->formula_this();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], formula_type::THIS);
+        $msg->reset();
+
+        // negative: the default formula type is left out of the export
+        $test_name = 'export no default type';
+        $frm = $t_frm->formula();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // the expression of the user is exported
+        $test_name = 'export the expression';
+        $frm = $t_frm->formula();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::EXPRESSION], formula_names::SCALE_TO_SEC_EXP);
+        $msg->reset();
+
+        // negative: a formula without a user expression exports no expression
+        $test_name = 'export no expression if not set';
+        $frm = $t_frm->formula_scale_mio();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EXPRESSION, $exp);
+        $msg->reset();
+
+        // the latex is exported
+        $test_name = 'export the latex';
+        $frm = $t_frm->formula();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::LATEX], formula_names::SCALE_TO_SEC_LATEX);
+        $msg->reset();
+
+        // negative: a formula without latex exports no latex
+        $test_name = 'export no latex if not set';
+        $frm = $t_frm->formula_scale_mio();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::LATEX, $exp);
+        $msg->reset();
 
     }
 

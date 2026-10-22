@@ -39,7 +39,6 @@ use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\table_chart;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
@@ -206,17 +205,39 @@ class value_list_ui_tests
 
         // a value is added once, also if a filter finds it twice e.g. by the page phrase and by a child
         $t->subheader($ts . 'add');
+
+        // a value that is not yet in the list is added
+        $test_name = 'a new value is added';
         $add_lst = new value_list_ui();
-        $val = $impact_lst->lst()[0];
-        $add_lst->add($val, $msg_ui);
+        $val = $t_val->value_ch_ui();
+        $added = $add_lst->add($val, $msg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
+
+        // negative: a value that is already in the list is not added again
         $test_name = 'a value that is already in the list is not added again';
-        $t->assert_false($test_name, $add_lst->add($val, $msg_ui));
+        $add_lst = new value_list_ui();
+        $add_lst->add($val, $msg_ui);
+        $added = $add_lst->add($val, $msg_ui);
+        $t->assert_false($test_name, $added);
+        $msg_ui->reset();
+
+        // the refused double leaves the list with one entry
         $test_name = '... so the list keeps one entry';
-        $t->assert($test_name, $add_lst->count(), 1);
-        // negative: a value without an id is not yet in the database, so it is never a double
+        $add_lst = new value_list_ui();
+        $add_lst->add($val, $msg_ui);
+        $add_lst->add($val, $msg_ui);
+        $cnt = $add_lst->count();
+        $t->assert($test_name, $cnt, 1);
+        $msg_ui->reset();
+
+        // a value without an id is not yet in the database, so it is never a double
         $test_name = 'a second value without an id is added';
-        $add_lst->add(new value_ui(), $msg_ui);
-        $t->assert_true($test_name, $add_lst->add(new value_ui(), $msg_ui));
+        $add_lst = new value_list_ui();
+        $add_lst->add($t_val->value_add_ui(), $msg_ui);
+        $added = $add_lst->add($t_val->value_add_ui(), $msg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
 
         $t->subheader($ts . 'most relevant');
         // a limit above the fixture size, so that these blocks test the grouping and the order;

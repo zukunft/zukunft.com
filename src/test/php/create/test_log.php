@@ -41,6 +41,7 @@ include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_table.php';
 include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_LOG . 'change_values_big.php';
 include_once paths::MODEL_LOG . 'change_values_geo_big.php';
@@ -92,6 +93,7 @@ include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CREATE . 'test_formulas.php';
+include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -106,6 +108,7 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
@@ -1246,6 +1249,41 @@ class test_log
         $chg->new_link_id = verbs::PART_ID;
         $chg->new_to_id = word_names::MATH_ID;
         $chg->row_id = 1;
+        return $chg;
+    }
+
+    /**
+     * @return change_link a change log entry of a link change with the linked from object e.g. to test the debug id
+     */
+    function log_link_named(): change_link
+    {
+        $t_wrd = new test_words($this->env);
+        $chg = $this->log_link();
+        $chg->new_from = $t_wrd->word_const();
+        return $chg;
+    }
+
+    /**
+     * @return change_log the base part of a change log entry without action, table and field
+     */
+    function log_base(): change_log
+    {
+        $chg = new change_log($this->env->usr1);
+        $chg->set_time_str(test_const::DUMMY_DATETIME);
+        return $chg;
+    }
+
+    /**
+     * @return change_log the base part of a change log entry of adding a word name
+     */
+    function log_base_word_add(): change_log
+    {
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the log setters report into
+        $chg = $this->log_base();
+        $chg->set_action(change_actions::ADD, $msg);
+        $chg->set_table(change_tables::WORD, $msg);
+        $chg->set_field(change_fields::FLD_WORD_NAME, $msg);
+        $chg->row_id = word_names::MATH_ID;
         return $chg;
     }
 

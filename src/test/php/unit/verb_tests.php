@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -62,6 +63,7 @@ class verb_tests
         $sc = new sql_creator();
         $t_vrb = new test_verbs($t);
         $t_trp = new test_triples($t);
+        $msg = new user_message();
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
 
@@ -95,6 +97,62 @@ class verb_tests
         $json_file = 'unit/verb/is_a.json';
         $t->assert_json_file($vrb, $json_file);
 
+        // the plural is an own field of the verb export
+        $test_name = 'export includes the plural';
+        $vrb = $t_vrb->verb_is_filled();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME_PLURAL], verbs::IS_PLURAL);
+        $msg->reset();
+
+        // negative: a verb without plural exports no plural
+        $test_name = 'export without plural';
+        $vrb = $t_vrb->verb_is();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME_PLURAL, $exp);
+        $msg->reset();
+
+        // the reverse name is exported
+        $test_name = 'export includes the reverse';
+        $vrb = $t_vrb->verb_is_filled();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME_REVERSE], verbs::IS_REVERSE);
+        $msg->reset();
+
+        // negative: a verb without reverse name exports no reverse
+        $test_name = 'export without reverse';
+        $vrb = $t_vrb->verb_is();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME_REVERSE, $exp);
+        $msg->reset();
+
+        // the plural of the reverse name is exported
+        $test_name = 'export includes the reverse plural';
+        $vrb = $t_vrb->verb_is_filled();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME_PLURAL_REVERSE], verbs::IS_REV_PLURAL);
+        $msg->reset();
+
+        // negative: a verb without reverse plural exports no reverse plural
+        $test_name = 'export without reverse plural';
+        $vrb = $t_vrb->verb_is();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME_PLURAL_REVERSE, $exp);
+        $msg->reset();
+
+        // the name used in formulas is exported
+        $test_name = 'export includes the formula name';
+        $vrb = $t_vrb->verb_is_filled();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME_IN_FORMULA], verbs::IS_NAME_FORMULA);
+        $msg->reset();
+
+        // negative: a verb without formula name exports no formula name
+        $test_name = 'export without formula name';
+        $vrb = $t_vrb->verb_is();
+        $exp = $vrb->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME_IN_FORMULA, $exp);
+        $msg->reset();
+
 
         $t->subheader($ts . 'html frontend');
 
@@ -103,7 +161,6 @@ class verb_tests
 
 
         $t->subheader($ts . 'api mapper');
-        $msg = new user_message();
 
         // the reverse name is a language form of the verb, so the api json of the filled verb sets it
         $test_name = 'the api mapper sets the reverse name of the verb';
@@ -169,6 +226,20 @@ class verb_tests
         $trp_name_only = $t_trp->triple_name_only();
         $name_generated = $trp_name_only->generate_name();
         $t->assert($test_name, $name_generated, '');
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the user of the verb
+        $test_name = 'the debug id shows the user';
+        $vrb = $t_vrb->verb();
+        $dsp = $vrb->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
+
+        // negative: a verb without user shows no user
+        $test_name = 'the debug id of a verb without user';
+        $vrb = $t_vrb->verb_is();
+        $dsp = $vrb->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
 
 
         // start the test section (ts)

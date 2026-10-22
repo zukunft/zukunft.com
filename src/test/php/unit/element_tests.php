@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\element\element as element_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -156,6 +157,28 @@ class element_tests
         $vars = $elm->api_json_array([], $msg);
         $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], '');
         $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the linked object
+        $test_name = 'debug id with the object name';
+        $elm = $t_frm->element();
+        $dsp = $elm->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MINUTE);
+
+        // the debug id shows the id of the linked object
+        $test_name = 'debug id with the object id';
+        $id_txt = (string)word_names::MINUTE_ID;
+        $elm = $t_frm->element();
+        $dsp = $elm->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: an element without object shows no object name
+        $test_name = 'debug id without object';
+        $elm = $t_frm->element();
+        $elm->obj = null;
+        $dsp = $elm->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MINUTE);
 
         // JSON export list
         // TODO Prio 1 activate or deprecate

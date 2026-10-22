@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
@@ -106,6 +107,20 @@ class term_tests
         $trm = $vrb->term();
         $t->assert($t->name . 'verb id', $trm->id_obj(), $vrb->id());
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of a term is the full debug id of its object incl. the user
+        $test_name = 'the debug id shows the user of the object';
+        $trm = $t_trm->term();
+        $dsp = $trm->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
+
+        // negative: the term of an object without user shows no user
+        $test_name = 'the debug id of a term without user';
+        $trm = $t_trm->term_verb_is();
+        $dsp = $trm->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
 
 
         $t->subheader($ts . 'id encoding');
@@ -245,6 +260,37 @@ class term_tests
         $trm = $t_trm->term_verb();
         $vars = $trm->api_json_array([], $msg);
         $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
+
+
+        $t->subheader($ts . 'export');
+
+        // the export of a word term names the class word
+        $test_name = 'export of a word term names the class';
+        $trm = $t_trm->term();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: a triple term is not exported as a word
+        $test_name = 'export of a triple term names the class';
+        $trm = $t_trm->term_triple();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_TRIPLE);
+        $msg->reset();
+
+        // the export of a verb term names the class verb
+        $test_name = 'export of a verb term names the class';
+        $trm = $t_trm->term_verb();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
+
+        // the export of a formula term names the class formula
+        $test_name = 'export of a formula term names the class';
+        $trm = $t_trm->term_formula();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_FORMULA);
         $msg->reset();
 
 

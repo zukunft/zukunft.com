@@ -291,10 +291,28 @@ class group extends sandbox_named
     function add(phrase $phr): bool
     {
         $result = false;
-        if (!in_array($phr->id(), $this->name_pos_lst())) {
+        if (!$this->has_phrase_id($phr->id())) {
             $this->lst[] = $phr;
             $this->set_dirty();
             $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $id the id of the phrase that should be added
+     * @return bool true if a phrase with this id is already part of the group;
+     *              a phrase without id is not yet in the database, so it is never a double
+     */
+    private function has_phrase_id(int $id): bool
+    {
+        $result = false;
+        if ($id != 0) {
+            foreach ($this->lst as $grp_phr) {
+                if ($grp_phr->id() == $id) {
+                    $result = true;
+                }
+            }
         }
         return $result;
     }

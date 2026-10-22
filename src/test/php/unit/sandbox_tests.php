@@ -92,18 +92,21 @@ use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
+use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_verbs;
@@ -132,6 +135,7 @@ class sandbox_tests
         $t_val = new test_values($t);
         $t_frm = new test_formulas($t);
         $t_grp = new test_groups($t);
+        $t_ref = new test_refs($t);
         $lib = new library();
 
         // start the test section (ts)
@@ -643,6 +647,267 @@ class sandbox_tests
         $vars = $val->api_json_array([], $msg);
         $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
         $msg->reset();
+
+
+        // the sandbox base classes are only reached through a concrete child, so each block creates
+        // the export json of a factory object without db load and checks the field that the base class adds
+        $t->subheader($ts . 'export');
+
+        // sandbox: the share type is exported if set
+        $test_name = 'export the sandbox share type';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SHARE], share_types::GROUP);
+        $msg->reset();
+
+        // negative: no share type is exported if not set
+        $test_name = 'export no sandbox share type';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SHARE, $exp);
+        $msg->reset();
+
+        // sandbox: the protection type is exported if set
+        $test_name = 'export the sandbox protection type';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PROTECTION], protection_types::ADMIN);
+        $msg->reset();
+
+        // negative: no protection type is exported if not set
+        $test_name = 'export no sandbox protection type';
+        $wrd = $t_wrd->word_name_only();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PROTECTION, $exp);
+        $msg->reset();
+
+        // sandbox: the excluded flag is exported for an excluded object
+        $test_name = 'export the sandbox excluded flag';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_true($test_name, $exp[json_fields::EXCLUDED]);
+        $msg->reset();
+
+        // negative: no excluded flag for an included object
+        $test_name = 'export no sandbox excluded flag';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EXCLUDED, $exp);
+        $msg->reset();
+
+        // sandbox_named: the name
+        $test_name = 'export the named name';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], word_names::MATH);
+        $msg->reset();
+
+        // negative: an object without name exports no name
+        $test_name = 'export the named name of a word without name';
+        $wrd = $t_wrd->word_incomplete();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_null($test_name, $exp[json_fields::NAME]);
+        $msg->reset();
+
+        // sandbox_named: the description is exported if set
+        $test_name = 'export the named description';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], word_names::MATH_COM);
+        $msg->reset();
+
+        // negative: no description is exported if not set
+        $test_name = 'export no named description';
+        $wrd = $t_wrd->word_name_only();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg->reset();
+
+        // sandbox_named: the usage is exported if set
+        $test_name = 'export the named usage';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::USAGE], test_const::DUMMY_USAGE_WORD);
+        $msg->reset();
+
+        // negative: no usage is exported if not set
+        $test_name = 'export no named usage';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::USAGE, $exp);
+        $msg->reset();
+
+        // sandbox_typed: the type code id is exported if set
+        $test_name = 'export the typed type code id';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_CODE_ID], phrase_types::NORMAL);
+        $msg->reset();
+
+        // negative: no type code id is exported if no type is set
+        $test_name = 'export no typed type code id';
+        $wrd = $t_wrd->word_name_only();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_CODE_ID, $exp);
+        $msg->reset();
+
+        // sandbox_typed: the type name is exported if set (and not removed by the child as default)
+        $test_name = 'export the typed type name';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], phrase_types::SCALING_NAME);
+        $msg->reset();
+
+        // negative: no type name is exported if no type is set
+        $test_name = 'export no typed type name';
+        $wrd = $t_wrd->word_name_only();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // sandbox_code_id: the code id is exported if set
+        $test_name = 'export the code id';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::CODE_ID], word_names::MATH);
+        $msg->reset();
+
+        // negative: no code id is exported if not set
+        $test_name = 'export no code id';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::CODE_ID, $exp);
+        $msg->reset();
+
+        // sandbox_link: the predicate is exported by its code id if set
+        $test_name = 'export the link predicate';
+        $lnk = $t_frm->formula_link();
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PREDICATE], formula_link_types::TIME_PERIOD);
+        $msg->reset();
+
+        // negative: no predicate is exported if not set
+        $test_name = 'export no link predicate';
+        $lnk = $t_frm->formula_link();
+        $lnk->set_predicate_id(null);
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $msg->reset();
+
+        // sandbox_multi: a share type that is not public is exported
+        $test_name = 'export the multi share type';
+        $val = $t_val->value_shared($t_val->value_pi());
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SHARE], share_types::GROUP);
+        $msg->reset();
+
+        // negative: the public default share type is not exported
+        $test_name = 'export no public multi share type';
+        $val = $t_val->value_pi();
+        $val->set_share_id($sys->typ_lst->shr_typ->id(share_types::PUBLIC));
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SHARE, $exp);
+        $msg->reset();
+
+        // sandbox_multi: a protection type that is not the default is exported
+        $test_name = 'export the multi protection type';
+        $val = $t_val->value_protected($msg);
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PROTECTION], protection_types::ADMIN);
+        $msg->reset();
+
+        // negative: the default no protection type is not exported
+        $test_name = 'export no default multi protection type';
+        $val = $t_val->value_pi();
+        $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PROTECTION, $exp);
+        $msg->reset();
+
+        // sandbox_value: the phrases of the value group are exported as words
+        $test_name = 'export the value words';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $words = $exp[json_fields::WORDS];
+        $t->assert($test_name, $words[0], word_names::PI_SYMBOL);
+        $msg->reset();
+
+        // negative: a value without phrases exports no words
+        $test_name = 'export no value words';
+        $val = $t_val->value_pi();
+        $val->set_grp($t_grp->group_without_key());
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::WORDS, $exp);
+        $msg->reset();
+
+        // sandbox_list: each object of the list is exported
+        $test_name = 'export the list entries';
+        $lst = $t_ref->ref_list_math();
+        $exp = $lst->export_json($msg, [], false);
+        $first = $exp[0];
+        $t->assert($test_name, $first[json_fields::NAME], refs::PI_KEY);
+        $msg->reset();
+
+        // negative: an empty list exports no entry
+        $test_name = 'export an empty list';
+        $lst = $t_ref->list_empty();
+        $exp = $lst->export_json($msg, [], false);
+        $t->assert($test_name, $exp, []);
+        $msg->reset();
+
+        // the sandbox base classes are only reached through a concrete child, so each block checks
+        // the part of the debug id that the base class writes
+        $t->subheader($ts . 'debug id');
+
+        // sandbox named: the debug id shows the name
+        $test_name = 'the debug id of a named object';
+        $wrd = $t_wrd->word();
+        $dsp = $wrd->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: an object without name shows no name
+        $test_name = 'the debug id of an object without name';
+        $wrd = $t_wrd->word_incomplete();
+        $dsp = $wrd->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
+        // sandbox link: the debug id shows the from object
+        $test_name = 'the debug id of a link';
+        $lnk = $t_frm->formula_link();
+        $dsp = $lnk->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, formula_names::SCALE_TO_SEC);
+
+        // negative: a link without from object shows no from name
+        $test_name = 'the debug id of a link without from object';
+        $lnk = $t_frm->formula_link();
+        $lnk->set_fob(null);
+        $dsp = $lnk->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, formula_names::SCALE_TO_SEC);
+
+        // sandbox value: the debug id shows the group name
+        $test_name = 'the debug id of a value';
+        $val = $t_val->value_pi();
+        $dsp = $val->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, groups::TN_READ);
+
+        // negative: a value without group shows no group name
+        $test_name = 'the debug id of a value without group';
+        $val = $t_val->value_pi();
+        $val->set_grp($t_grp->group_without_key());
+        $dsp = $val->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, groups::TN_READ);
+
+        // sandbox list: the debug id shows the names of the list
+        $test_name = 'the debug id of a list';
+        $wrd_lst = $t_wrd->word_list();
+        $dsp = $wrd_lst->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: an empty list has no debug text
+        $test_name = 'the debug id of an empty list';
+        $lst = $t_ref->list_empty();
+        $dsp = $lst->dsp_id();
+        $t->assert_empty($test_name, $dsp);
 
         // TODO Prio 2 review the tests below e.g. by using the test section ($ts) and $test_name like above
         $t->subheader($ts . 'functions that does not need a database connection');

@@ -12,9 +12,9 @@ goal: every public function of `docs/code_test_coverage.md` has at least two uni
 (or the counter) and the developer regenerates the report to see the gap shrink
 
 starting point: 1126 of 6200 public functions are covered; of the 4869 gaps 3275 are in the
-main backend, 1414 in the frontend and 180 in shared, 381 functions have one call (22 of
-them have a name of their own, see step 1; the other 359 share their name and need two
-calls per class, see step 2), and the 205 functions that no code calls are listed in the
+main backend, 1414 in the frontend and 180 in shared, 381 functions have one call (359 of
+them share their name and need two calls per class, see step 1), and the 205 functions
+that no code calls are listed in the
 section "never called" at the end of the report, for the developer to decide per function
 whether it is removed or kept
 
@@ -34,42 +34,38 @@ rules for every step:
   cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
 - the LLM never runs the tests; the developer runs them and regenerates the report
 
-1. the functions with one call and a name of their own: the getters that only an assert calls
-   (`component::get_row_phrase_id`, backend `data_object::group_list`, web
-   `user_message::get_last_info`) get their own positive and negative test; the others cannot
-   get a second test in a unit test without database: the ones that need the database move
-   to step 5 (`value_base::save_as_default`, `view::load_by_term`, web
-   `db_object::add_via_api`, `component::log_link`,
-   `config_numbers::load_cfg`, `db_cache_page::del_all`, `type_lists::load_cached`,
-   `system_object::system_user` and `user_log`), the ones without a failure branch to step 6
-   (`frontend::activation_url`, `html_base::p`, `import_convert_xbrl::instance_file_name`,
-   `change_log_list::load_sql_by_user_value`, `phrase::value_selection`), and the ones that
-   need a source change are listed in `docs/llm/pending_prio_2.md` ("functions with one unit
-   test call"); a function whose only counted call is a test factory of the same name
-   (e.g. `test_users::system_user`) or a commented-out line gets a real positive test too
-2. cover the functions that many classes share, in the order of the number of classes:
-   `api_json_array` (61 classes), `export_json` (49), `add` (47), `dsp_id` and `default_id`
-   (46), `load_sql` (45), `db_fields_changed` (44), `db_fields_all` (43), `import_mapper`
-   (38), `load_dummy` and `api_array` (37), `name_field` and `fill` (36), `delta` (32),
-   `diff_msg` (28), `url_mapper` and `save` (27); one prompt per function name, which adds one
-   positive and one negative block per class to the test file of that class; `reset` (67
-   classes) is not listed as a gap, because the counter also counts every `$msg->reset()` of
-   the test blocks, so the reset of each class still gets its own positive and negative test
-3. cover the classes without database and frontend first, because their tests are fast and
-   need no fixture: `library` (94 gaps), `html_base` (114), `sql_creator` (80),
+1. cover the functions that many classes share, in the order of the number of classes:
+   `default_id` (46 classes), `load_sql` (45),
+   `db_fields_changed` (44), `db_fields_all` (43), `import_mapper` (38), `load_dummy` and
+   `api_array` (37), `name_field` and `fill` (36), `delta` (32), `diff_msg` (28), `url_mapper`
+   and `save` (27); one prompt per function name, which adds one positive and one negative
+   block per class to the test file of that class; `reset` (67 classes) is not listed as a
+   gap, because the counter also counts every `$msg->reset()` of the test blocks, so the reset
+   of each class still gets its own positive and negative test
+2. cover the classes without database and frontend first, because their tests are fast and
+   need no fixture: `html_base` (114 gaps), `sql_creator` (80),
    `sql_type_list` (50), then the frontend forms and lists (`system_form` 87, `db_object` 66,
    `phrase_list` 53, `triple` 52, `phrase` 48)
-4. cover the backend model classes with the unit test factories (no database): `sandbox`
+3. cover the backend model classes with the unit test factories (no database): `sandbox`
    (134), `sandbox_multi` (123), `triple` (97), `user` (95), `phrase_list` (92), `phrase`
    (78), `group` (72), `word` (69), `sandbox_value` (69), `sandbox_link` (69), `ref` (60),
    `data_object` (58), `formula_map` (57), `component` (55), `value_base` (55)
-5. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (122)
-   and the `load_*` functions that are left after step 2
-6. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
-   `application` (`start`, `start_api`, `open_db`, `end`): either a test of the request
-   lifecycle covers them, or the counter gets a named exception list with the reason per
-   function, which `docs/llm/testing.md` documents and which must stay short
-7. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
+4. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (122),
+   the `load_*` functions that are left after step 1 and the functions with one call that
+   need the database for the second: `value_base::save_as_default`, `view::load_by_term`, web
+   `db_object::add_via_api`, `component::log_link`, `config_numbers::load_cfg`,
+   `db_cache_page::del_all`, `type_lists::load_cached`, `system_object::system_user` and
+   `user_log`, and the `add` that writes the object to the database: `sandbox`,
+   `sandbox_named`, `sandbox_link`, `sandbox_multi`, `value_base`, `value_time_series`,
+   `triple`, `verb`, `group`, `ref`, `formula_map`, `ip_range`, `change_log` and `change_link`
+5. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
+   `application` (`start`, `start_api`, `open_db`, `end`) and the functions with one call
+   that have no failure branch for a negative test (`frontend::activation_url`,
+   `html_base::p`, `import_convert_xbrl::instance_file_name`,
+   `change_log_list::load_sql_by_user_value`, `phrase::value_selection`): either a test of
+   the request lifecycle covers them, or the counter gets a named exception list with the
+   reason per function, which `docs/llm/testing.md` documents and which must stay short
+6. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
    with a const in `src/test/php/const/` and fails if it drops, so a new function without
    tests is reported at once; the const is raised after each step
 
@@ -158,7 +154,7 @@ rules for every step:
    `web/view/view_exe.php:770` (tooltip and url), `web/system/sys_log.php:71` (the missing
    backend fields), `web/helper/data_object.php:285` (the missing objects e.g. view_link_list),
    `web/word/word.php:288` (all fields in the url); each page gets its html snapshot test
-6. add the missing unit tests (together with step 1 of "test coverage"):
+6. add the missing unit tests (together with "test coverage"):
    `cfg/phrase/phrase_list.php:2247` and `:2265`, `cfg/sandbox/sandbox.php:2539`,
    `cfg/word/triple.php:2229` and `:2250`, `shared/helper/ListOfIdNamedCodeObjects.php:204` and
    `:276`, `shared/helper/ListOfIdNamedObjects.php:206`, `shared/json_fields.php:63`,

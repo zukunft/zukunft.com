@@ -221,6 +221,17 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "mathematics" with its wikidata reference e.g. to test the export of the references
+     */
+    function word_with_ref(): word
+    {
+        $t_ref = new test_refs($this->env);
+        $wrd = $this->word();
+        $wrd->ref_lst = [$t_ref->reference_math()];
+        return $wrd;
+    }
+
+    /**
      * @return word to test the sql insert via function
      */
     static function word_add(): word
@@ -1633,6 +1644,16 @@ class test_words extends test_objects
         $lst->add($this->word_const());
         $lst->add($this->word_pi_symbol());
         $lst->add($this->word_e_symbol());
+        return $lst;
+    }
+
+    /**
+     * @return word_list with only a word without any configuration e.g. to test that the export leaves it out
+     */
+    function word_list_without_cfg(): word_list
+    {
+        $lst = new word_list($this->env->usr1);
+        $lst->add($this->word_name_only());
         return $lst;
     }
 

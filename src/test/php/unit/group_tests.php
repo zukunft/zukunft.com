@@ -269,6 +269,20 @@ class group_tests
         $t->assert($test_name, $grp->name_given(), '');
         $t->assert($test_name, $grp->name(), triple_names::E);
 
+        $t->subheader($ts . 'debug id');
+
+        // the debug id shows the name of the group
+        $test_name = 'the debug id shows the name';
+        $grp = $t_grp->group();
+        $dsp = $grp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, groups::TN_READ);
+
+        // negative: a group without name and phrases shows only the id
+        $test_name = 'the debug id of a group without name';
+        $grp = $t_grp->group_without_key();
+        $dsp = $grp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, groups::TN_READ);
+
         $t->subheader($ts . 'api mapper');
 
         // the name of the api json is the name given by the user
@@ -329,6 +343,38 @@ class group_tests
         $grp = $t_grp->group_e();
         $vars = $grp->api_json_array([], $msg);
         $t->assert($test_name, $vars[json_fields::NAME], triple_names::E);
+        $msg->reset();
+
+        $t->subheader($ts . 'export');
+
+        // the words of the group are exported by their names
+        $test_name = 'export includes the words';
+        $grp = $t_grp->group();
+        $exp = $grp->export_json($msg, [], false);
+        $words = $exp[json_fields::WORDS];
+        $t->assert($test_name, $words[0], word_names::PI_SYMBOL);
+        $msg->reset();
+
+        // negative: a group of only a triple exports no words
+        $test_name = 'export without words';
+        $grp = $t_grp->group_pi_math();
+        $exp = $grp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::WORDS, $exp);
+        $msg->reset();
+
+        // the triples of the group are exported by their names
+        $test_name = 'export includes the triples';
+        $grp = $t_grp->group_pi_math();
+        $exp = $grp->export_json($msg, [], false);
+        $triples = $exp[json_fields::TRIPLES];
+        $t->assert($test_name, $triples[0], triple_names::PI_NAME);
+        $msg->reset();
+
+        // negative: a group of only a word exports no triples
+        $test_name = 'export without triples';
+        $grp = $t_grp->group();
+        $exp = $grp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TRIPLES, $exp);
         $msg->reset();
 
         // a list e.g. of an import holds a group by its name, because the id needs the ids of the phrases

@@ -3087,6 +3087,24 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple "mathematical constant" with the default phrase type e.g. to test that the export leaves the type out
+     */
+    function triple_default_type(): triple
+    {
+        $trp = $this->triple();
+        $trp->set_type(phrase_types::NORMAL, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
+     * @return triple_list without any triple e.g. to test that the export is empty
+     */
+    function list_empty(): triple_list
+    {
+        return new triple_list($this->env->usr1);
+    }
+
+    /**
      * @return triple_list with just one element to test the group id
      */
     function triple_list_one(): triple_list

@@ -32,9 +32,11 @@ use Zukunft\ZukunftCom\main\php\web\word\triple as triple_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -149,6 +151,26 @@ class triple_tests
         $trp = new triple($t->usr_normal);
         $t->assert_false($test_name, $trp->set_code_id(
             triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($t->usr_normal)));
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the verb between the linked phrases
+        $test_name = 'the debug id shows the verb';
+        $trp = $t_trp->triple();
+        $dsp = $trp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, verbs::PART_NAME);
+
+        // ... and the id of the triple
+        $test_name = 'the debug id shows the triple id';
+        $trp = $t_trp->triple();
+        $dsp = $trp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, triple_fields::FLD_ID);
+
+        // negative: a triple without id and links shows its name, but no triple id
+        $test_name = 'the debug id of a triple without id';
+        $trp = $t_trp->triple_name_only();
+        $dsp = $trp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, triple_fields::FLD_ID);
 
         $t->subheader($ts . 'rename routing');
 
@@ -430,6 +452,135 @@ class triple_tests
         $t->assert_ex_and_import($t_trp->triple_filled_add_name(), $t->usr_system);
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($t->usr1), $json_file);
+
+        // the name of the triple is exported
+        $test_name = 'export includes the name';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], triple_names::MATH_CONST);
+        $msg->reset();
+
+        // negative: a triple with only the links set exports no name
+        $test_name = 'export without name';
+        $trp = $t_trp->triple_link_only();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $exp);
+        $msg->reset();
+
+        // the description of the triple is exported
+        $test_name = 'export includes the description';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], triple_names::MATH_CONST_COM);
+        $msg->reset();
+
+        // negative: a triple without description exports no description
+        $test_name = 'export without description';
+        $trp = $t_trp->triple_link_only();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg->reset();
+
+        // a not default phrase type is exported by its name
+        $test_name = 'export includes a not default type';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], phrase_types::MATH_CONST_NAME);
+        $msg->reset();
+
+        // negative: the default phrase type is left out of the export
+        $test_name = 'export leaves out the default type';
+        $trp = $t_trp->triple_default_type();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // the linked phrases are exported by their names
+        $test_name = 'export includes the from and to name';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::EX_FROM], word_names::CONST_NAME);
+        $t->assert($test_name, $exp[json_fields::EX_TO], word_names::MATH);
+        $msg->reset();
+
+        // negative: a triple without links exports no from and to
+        $test_name = 'export without from and to';
+        $trp = $t_trp->triple_api();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EX_FROM, $exp);
+        $t->assert_key_not_exists($test_name, json_fields::EX_TO, $exp);
+        $msg->reset();
+
+        // the verb is exported by its name instead of the predicate code id
+        $test_name = 'export includes the verb name';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::EX_VERB], verbs::PART_NAME);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $msg->reset();
+
+        // negative: a triple without verb exports no verb
+        $test_name = 'export without verb';
+        $trp = $t_trp->triple_api();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EX_VERB, $exp);
+        $msg->reset();
+
+        // the view is exported by its name
+        $test_name = 'export includes the view name';
+        $trp = $t_trp->triple_filled();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::VIEW], views::MATH_CONST_NAME);
+        $msg->reset();
+
+        // negative: a triple without view exports no view
+        $test_name = 'export without view';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $msg->reset();
+
+        // the usage is exported to validate the consistency
+        $test_name = 'export includes the usage';
+        $trp = $t_trp->triple_filled();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::USAGE], triple_names::SYSTEM_TEST_ADD_USAGE);
+        $msg->reset();
+
+        // negative: a triple without usage exports no usage
+        $test_name = 'export without usage';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::USAGE, $exp);
+        $msg->reset();
+
+        // the impact is part of the export so that it round-trips
+        $test_name = 'export includes the impact';
+        $trp = $t_trp->triple_impact();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::IMPACT], impacts::MAX);
+        $msg->reset();
+
+        // negative: a triple without impact exports no impact
+        $test_name = 'export without impact';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::IMPACT, $exp);
+        $msg->reset();
+
+        // the weight is part of the export so that it round-trips
+        $test_name = 'export includes the weight';
+        $trp = $t_trp->triple_impact();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::WEIGHT], test_const::TRIPLE_WEIGHT);
+        $msg->reset();
+
+        // negative: a triple without weight exports no weight
+        $test_name = 'export without weight';
+        $trp = $t_trp->triple();
+        $exp = $trp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::WEIGHT, $exp);
+        $msg->reset();
 
         // the impact field is part of the triple im- and export
         // even if the impact is expected to be calculated internal

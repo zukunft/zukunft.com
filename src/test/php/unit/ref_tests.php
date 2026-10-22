@@ -154,6 +154,28 @@ class ref_tests
         $ref = $t_ref->ref_filled();
         $t->assert_reset($ref);
 
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the phrase of the reference
+        $test_name = 'the debug id shows the phrase';
+        $ref_dsp = $t_ref->reference();
+        $dsp = $ref_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::PI);
+
+        // ... and the id of the reference
+        $test_name = 'the debug id shows the id';
+        $ref_dsp = $t_ref->reference();
+        $dsp = $ref_dsp->dsp_id();
+        $id_txt = (string)refs::PI_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a reference without id shows no id
+        $test_name = 'the debug id of a reference without id';
+        $ref_dsp = $t_ref->ref_filled_add();
+        $dsp = $ref_dsp->dsp_id();
+        $id_txt = (string)refs::PI_ID;
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
         $t->subheader($ts . 'read access (share)');
         // a non-public reference must not be disclosed to another user via a related-reference list
         // (idor); ref extends sandbox (is_readable_by) and ref_list has its own filter_readable_by
@@ -386,6 +408,92 @@ class ref_tests
         $t->assert_ex_and_import($t_ref->ref_filled(), $t->usr_system);
         $json_file = 'unit/ref/wikipedia.json';
         $t->assert_json_file(new ref($t->usr1), $json_file);
+
+        // the source of a reference is exported by its name
+        $test_name = 'export source name';
+        $ref = $t_ref->reference_plus();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SOURCE_NAME], sources::WIKIDATA);
+        $msg->reset();
+
+        // negative: a reference without source exports no source name
+        $test_name = 'export no source name';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_NAME, $exp);
+        $msg->reset();
+
+        // the reference type is exported by its code id instead of the predicate
+        $test_name = 'export type name';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], ref_types::WIKIDATA);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $msg->reset();
+
+        // negative: a reference without type exports no type name
+        $test_name = 'export no type name';
+        $ref = $t_ref->reference_user();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // the external key of a reference is exported as its name
+        $test_name = 'export external key';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], refs::PI_KEY);
+        $msg->reset();
+
+        // negative: a reference without external key exports no name
+        $test_name = 'export no external key';
+        $ref = $t_ref->reference_user();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $exp);
+        $msg->reset();
+
+        // the description of a reference is exported
+        $test_name = 'export description';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], refs::PI_COM);
+        $msg->reset();
+
+        // negative: a reference without description exports no description
+        $test_name = 'export no description';
+        $ref = $t_ref->reference();
+        $ref->description = null;
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg->reset();
+
+        // the url of a reference is exported
+        $test_name = 'export url';
+        $ref = $t_ref->reference_plus();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::URL], refs::PI_URL);
+        $msg->reset();
+
+        // negative: a reference without url exports no url
+        $test_name = 'export no url';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::URL, $exp);
+        $msg->reset();
+
+        // the phrase of a reference is exported by its name
+        $test_name = 'export phrase name';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::FROM_PHRASE], word_names::PI);
+        $msg->reset();
+
+        // negative: a reference without phrase exports no phrase
+        $test_name = 'export no phrase name';
+        $ref = $t_ref->reference_user();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::FROM_PHRASE, $exp);
+        $msg->reset();
 
         // the "refs" part of a word or triple import json must be a list of objects, because
         // import_mapper expects an array; the check guards the mapper call in

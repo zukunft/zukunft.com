@@ -37,14 +37,20 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_message.php';
+include_once paths::EXPORT . 'export_type_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'ListOf.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::CREATE . 'test_ip_ranges.php';
+include_once test_paths::CREATE . 'test_objects.php';
+include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
@@ -58,8 +64,12 @@ use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdNamedObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOf;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\test\php\create\test_ip_ranges;
+use Zukunft\ZukunftCom\test\php\create\test_objects;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -146,6 +156,23 @@ class base_object_tests
         $t->assert_false($test_name, $msg_nok->is_error());
         $test_name = 'an ok message is no error';
         $t->assert_false($test_name, $msg_ok->is_error());
+
+        $t->subheader($ts . 'message add');
+
+        // a message id with its vars is added to the message
+        $test_name = 'a message text is added';
+        $msg->add(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $cnt = count($msg->msg_var_lst);
+        $t->assert($test_name, $cnt, 1);
+        $msg->reset();
+
+        // negative: the same message text with the same vars is not repeated
+        $test_name = 'the same message text is added only once';
+        $msg->add(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $msg->add(msg_id::RESET_MAIL_SENT, [word_names::MATH]);
+        $cnt = count($msg->msg_var_lst);
+        $t->assert($test_name, $cnt, 1);
+        $msg->reset();
 
         $t->subheader($ts . 'list');
         $test_name = 'count';
@@ -422,6 +449,132 @@ class base_object_tests
         $t->assert_key_not_exists($test_name, json_fields::PLURAL, $first);
         $msg_be->reset();
 
+        // the type object base class is reached through a type without own export fields,
+        // so each block checks the field that type_object exports only if it is set
+        $t->subheader($ts . 'export');
+
+        // type_object: the name is exported if set
+        $test_name = 'export the type name';
+        $typ = $t_typ->share_type();
+        $exp = $typ->export_json($msg_be, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], share_types::PUBLIC_NAME);
+        $msg_be->reset();
+
+        // negative: no name is exported if not set
+        $test_name = 'export no type name';
+        $typ = $t_typ->share_type();
+        $typ->reset();
+        $exp = $typ->export_json($msg_be, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $exp);
+        $msg_be->reset();
+
+        // type_object: the code id is exported if set
+        $test_name = 'export the type code id';
+        $typ = $t_typ->share_type();
+        $exp = $typ->export_json($msg_be, [], false);
+        $t->assert($test_name, $exp[json_fields::CODE_ID], share_types::PUBLIC);
+        $msg_be->reset();
+
+        // negative: no code id is exported if not set
+        $test_name = 'export no type code id';
+        $typ = $t_typ->share_type();
+        $typ->reset();
+        $exp = $typ->export_json($msg_be, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::CODE_ID, $exp);
+        $msg_be->reset();
+
+        // type_object: the description is exported if set
+        $test_name = 'export the type description';
+        $typ = $t_typ->share_type();
+        $exp = $typ->export_json($msg_be, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], share_types::PUBLIC_COM);
+        $msg_be->reset();
+
+        // negative: a type without description exports no description
+        $test_name = 'export no type description';
+        $typ = $t_typ->phrase_type();
+        $exp = $typ->export_json($msg_be, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg_be->reset();
+
+        // the lists of the settings that select what an export or an api message includes
+        $t->subheader($ts . 'type list add');
+
+        // an export type is added to the export type list
+        $test_name = 'export type list adds a type';
+        $exp_typ_lst = new export_type_list();
+        $exp_typ_lst->add(export_type::IGNORE_FROM);
+        $t->assert_true($test_name, $exp_typ_lst->ignore_from());
+
+        // negative: an export type already in the list is not added again
+        $test_name = 'export type list refuses a double type';
+        $exp_typ_lst = new export_type_list([export_type::IGNORE_FROM]);
+        $exp_typ_lst->add(export_type::IGNORE_FROM);
+        $cnt = count($exp_typ_lst->lst);
+        $t->assert($test_name, $cnt, 1);
+
+        // an api type is added to the api type list
+        $test_name = 'api type list adds a type';
+        $api_typ_lst = new api_type_list();
+        $api_typ_lst->add(api_types::INCL_PHRASES);
+        $t->assert_true($test_name, $api_typ_lst->include_phrases());
+
+        // negative: an api type already in the list is not added again
+        $test_name = 'api type list refuses a double type';
+        $api_typ_lst = new api_type_list([api_types::INCL_PHRASES]);
+        $api_typ_lst->add(api_types::INCL_PHRASES);
+        $cnt = count($api_typ_lst->lst);
+        $t->assert($test_name, $cnt, 1);
+
+        // the debug id of the id base classes is reached through a plain object
+        // or a child without own debug id, so each block checks the id that the base class adds
+        $t->subheader($ts . 'debug id');
+        $t_obj = new test_objects($t);
+        $t_usr = new test_users($t);
+
+        // db_object: the debug id shows the database id
+        $test_name = 'db object with id';
+        $dbo = $t_obj->db_object();
+        $dsp = $dbo->dsp_id();
+        $id_txt = '=' . test_objects::TV_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: an object without database id does not show the test id
+        $test_name = 'db object without id';
+        $dbo = $t_obj->db_object();
+        $dbo->reset();
+        $dsp = $dbo->dsp_id();
+        $id_txt = '=' . test_objects::TV_ID;
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
+        // db_object_seq_id: the debug id of a user session shows the database id
+        $test_name = 'seq id object with id';
+        $usr_log = $t_usr->user_log_open();
+        $dsp = $usr_log->dsp_id();
+        $id_txt = ' ' . test_users::TV_USER_LOG_ID . ')';
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a session that is not yet saved has no database id
+        $test_name = 'seq id object without id';
+        $usr_log = $t_usr->user_log();
+        $dsp = $usr_log->dsp_id();
+        $id_txt = ' ' . test_users::TV_USER_LOG_ID . ')';
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
+        // db_object_multi: the debug id shows the database id
+        $test_name = 'multi object with id';
+        $dbo = $t_obj->db_object_multi();
+        $dsp = $dbo->dsp_id();
+        $id_txt = ' ' . test_objects::TV_ID . ')';
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a multi object without database id does not show the test id
+        $test_name = 'multi object without id';
+        $dbo = $t_obj->db_object_multi();
+        $dbo->reset();
+        $dsp = $dbo->dsp_id();
+        $id_txt = ' ' . test_objects::TV_ID . ')';
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
 
         // TODO Prio 0 add add and unset tests

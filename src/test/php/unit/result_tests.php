@@ -498,6 +498,20 @@ class result_tests
         $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($t->usr1), $json_file);
 
+        // the formula that has created the result is exported by its name
+        $test_name = 'export the formula name';
+        $res = $t_res->result_main_max();
+        $exp = $res->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::FORMULA_NAME], formula_names::SCALE_TO_SEC);
+        $msg->reset();
+
+        // negative: a result without a formula exports an empty formula name
+        $test_name = 'export no formula name without formula';
+        $res = $t_res->result_simple();
+        $exp = $res->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::FORMULA_NAME], '');
+        $msg->reset();
+
 
         // the result page shows the formula with the numbers that the calculation has used, so the
         // right side of the formula is split at each element group symbol into texts and figures

@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\export\export_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\component\component_link as component_link_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_const;
@@ -158,6 +160,18 @@ class component_link_tests
         $cmp_id = $lnk_cmp->component_id();
         $t->assert($test_name, $cmp_id, components::WORD_ID);
 
+        // the position orders the component within the view
+        $test_name = 'the position of a component link';
+        $lnk_pos = $t_cmp->component_link();
+        $lnk_pos->set_pos(test_const::COMPONENT_LINK_ORDER_NBR);
+        $t->assert($test_name, $lnk_pos->get_pos(), test_const::COMPONENT_LINK_ORDER_NBR);
+
+        // negative: null removes the position, so that the view orders the component itself
+        $test_name = 'remove the position of a component link';
+        $lnk_pos = $t_cmp->component_link();
+        $lnk_pos->set_pos(null);
+        $t->assert_null($test_name, $lnk_pos->get_pos());
+
         $t->subheader($ts . 'component link api json array');
 
         // the detailed api json of a component link sends the view by its id
@@ -207,6 +221,75 @@ class component_link_tests
         $vars = $lnk_arr->api_json_array([], $msg);
         $t->assert_key_not_exists($test_name, json_fields::POS_TYPE, $vars);
         $msg->reset();
+
+        $t->subheader($ts . 'component link export');
+
+        // a component link exports the view and the component as objects
+        $test_name = 'export view';
+        $lnk_exp = $t_cmp->component_link();
+        $exp = $lnk_exp->export_json($msg, [], false);
+        $msk_exp = $exp[json_fields::VIEW];
+        $t->assert($test_name, $msk_exp[json_fields::NAME], views::START_NAME);
+        $test_name = 'export component';
+        $cmp_exp = $exp[json_fields::COMPONENT];
+        $t->assert($test_name, $cmp_exp[json_fields::NAME], components::WORD_NAME);
+        $msg->reset();
+
+        // negative: as part of the view export the view is left out and the component is named
+        $test_name = 'export without view';
+        $lnk_exp = $t_cmp->component_link();
+        $exp = $lnk_exp->export_json($msg, [export_type::IGNORE_FROM], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $test_name = 'export component name';
+        $t->assert($test_name, $exp[json_fields::NAME], components::WORD_NAME);
+        $msg->reset();
+
+        // the link type, the position type and the style are exported if they are not the default
+        $test_name = 'export link type';
+        $lnk_exp = $t_cmp->component_link_filled_included();
+        $exp = $lnk_exp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PREDICATE], component_link_type::EXPRESSION);
+        $test_name = 'export position type';
+        $t->assert($test_name, $exp[json_fields::POS_TYPE], position_types::SIDE);
+        $test_name = 'export style';
+        $t->assert($test_name, $exp[json_fields::STYLE], view_styles::COL_SM_8);
+        $msg->reset();
+
+        // negative: the default link type and position type and no style are left out of the export
+        $test_name = 'export default link type';
+        $lnk_exp = $t_cmp->component_link();
+        $exp = $lnk_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $test_name = 'export default position type';
+        $t->assert_key_not_exists($test_name, json_fields::POS_TYPE, $exp);
+        $test_name = 'export no style';
+        $t->assert_key_not_exists($test_name, json_fields::STYLE, $exp);
+        $msg->reset();
+
+        // the position of a component link is exported
+        $test_name = 'export position';
+        $lnk_exp = $t_cmp->component_link();
+        $exp = $lnk_exp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::POSITION], component_link::START_ORDER_NBR);
+        $msg->reset();
+
+        $t->subheader($ts . 'component link debug id');
+
+        // the debug id shows the position of the component within the view
+        $test_name = 'the debug id shows the position';
+        $lnk_dsp = $t_cmp->component_link();
+        $lnk_dsp->set_pos(test_const::COMPONENT_LINK_ORDER_NBR);
+        $dsp = $lnk_dsp->dsp_id();
+        $pos_txt = 'at pos ' . test_const::COMPONENT_LINK_ORDER_NBR;
+        $t->assert_text_contains($test_name, $dsp, $pos_txt);
+
+        // negative: a link without position shows no position
+        $test_name = 'the debug id of a link without position';
+        $lnk_dsp = $t_cmp->component_link();
+        $lnk_dsp->set_pos(null);
+        $dsp = $lnk_dsp->dsp_id();
+        $pos_txt = 'at pos ' . test_const::COMPONENT_LINK_ORDER_NBR;
+        $t->assert_text_not_contains($test_name, $dsp, $pos_txt);
 
         // the add and edit form of a component link shows the position type and the link type,
         // so each posts its own url var, else the form has two link type fields with the same id

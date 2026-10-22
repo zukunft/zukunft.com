@@ -47,6 +47,7 @@ include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_log_sum_list.php';
 include_once html_paths::WEB . 'frontend.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED_CONST . 'components.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_log_named_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list as user_log_sum_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
@@ -766,6 +768,16 @@ class user_ui_tests
         $map_msg->api_mapper([json_fields::USER => $api_json], $msg);
         $t->assert_null($test_name, $map_msg->usr?->name());
         $msg->reset();
+
+        // the list of the summed sessions adds every entry, so it has no negative case
+        $t->subheader($ts . 'add');
+
+        // the summed sessions of a user are added to the list
+        $test_name = 'the summed sessions of a user are added';
+        $sum_lst = new user_log_sum_list_ui();
+        $sum_ui = $t_usr->log_sum_ui();
+        $added = $sum_lst->add($sum_ui);
+        $t->assert_true($test_name, $added);
     }
 
 }

@@ -913,6 +913,80 @@ class value_tests
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($t->usr1), $json_file);
 
+        // the base part exports the source of the value by its name
+        $test_name = 'export the source name';
+        $val = $t_val->light_speed();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SOURCE_NAME], sources::SIB);
+        $msg->reset();
+
+        // negative: a value without a source exports no source name
+        $test_name = 'export no source name without source';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_NAME, $exp);
+        $msg->reset();
+
+        // a numeric value exports the number
+        $test_name = 'export the number';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NUMBER], values::PI);
+        $msg->reset();
+
+        // negative: a text value exports no number
+        $test_name = 'export no number of a text value';
+        $val = $t_val->text_value();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $exp);
+        $msg->reset();
+
+        // a text value exports the text
+        $test_name = 'export the text';
+        $val = $t_val->text_value();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TEXT_VALUE], values::TEXT);
+        $msg->reset();
+
+        // negative: a numeric value exports no text
+        $test_name = 'export no text of a numeric value';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TEXT_VALUE, $exp);
+        $msg->reset();
+
+        // a geolocation value exports the geolocation
+        $test_name = 'export the geolocation';
+        $val = $t_val->geo_value();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::GEO_VALUE], values::GEO);
+        $msg->reset();
+
+        // negative: a numeric value exports no geolocation
+        $test_name = 'export no geolocation of a numeric value';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::GEO_VALUE, $exp);
+        $msg->reset();
+
+        // a time value exports the time
+        // TODO Prio 2 compare the text once export_json writes the time as text
+        //      (see docs/llm/pending_prio_2.md, "api mapper", value_time)
+        $test_name = 'export the time';
+        $val = $t_val->time_value();
+        $target = strtotime(values::TIME);
+        $exp = $val->export_json($msg, [], false);
+        $time = $exp[json_fields::TIME_VALUE];
+        $timestamp = $time->getTimestamp();
+        $t->assert($test_name, $timestamp, $target);
+        $msg->reset();
+
+        // negative: a numeric value exports no time
+        $test_name = 'export no time of a numeric value';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TIME_VALUE, $exp);
+        $msg->reset();
 
         $t->subheader($ts . 'ui formatting');
 

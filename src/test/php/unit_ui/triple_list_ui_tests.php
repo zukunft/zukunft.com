@@ -103,6 +103,23 @@ class triple_list_ui_tests
         $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'triple_list', 'triple_list', $msg);
+
+        // the triple list uses the add function of ListBase
+        $t->subheader($ts . 'add');
+
+        // a triple is added to the list
+        $test_name = 'a triple is added';
+        $add_lst = new triple_list();
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: an empty entry is not added
+        $test_name = 'an empty entry is not added';
+        $add_lst = new triple_list();
+        $added = $add_lst->add(null, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
     }
 
 }
