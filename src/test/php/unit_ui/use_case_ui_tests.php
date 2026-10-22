@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -47,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
@@ -558,13 +560,16 @@ class use_case_ui_tests
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_INPUTS)));
         $inh_id = $dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
         $inh_name = url_var::NUMERIC_VALUE . $inh_id;
-        // the save writes the entered number to the value that the field shows, so the field sends its group id
+        // the save writes a changed number to the value that the field shows, so the field sends
+        // the group id and the shown number of the value
         $inh_val_id = (string)$dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->id();
+        $inh_shown = $html->number_value(values::CITY_ZH_INHABITANTS_2019);
         $test_name = 'a number field shows the label, the number, the limit, the step and the hint of the input';
         $t->assert_text_contains($test_name, $in_html, $html->div(
             $html->label(triple_names::CALC_INHABITANTS_LABEL_COM, $inh_name)
             . $html->div($html->input_number($inh_name, values::CITY_ZH_INHABITANTS_2019, 0, null, 100, $form)
-                . $html->form_hidden(url_var::GROUP . $inh_id, $inh_val_id, $form), styles::INPUT_ROW)
+                . $html->form_hidden(url_var::GROUP . $inh_id, $inh_val_id, $form)
+                . $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $inh_id, $inh_shown, $form), styles::INPUT_ROW)
             . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::INPUT_HINT),
             styles::INPUT_FIELD));
         // negative: a phrase selector selects a phrase and not a value, so it sends no group id
@@ -604,9 +609,13 @@ class use_case_ui_tests
         // negative: the bootstrap form group around a selector is not used in a calculator field
         $test_name = '... without a form group around it';
         $t->assert_text_not_contains($test_name, $in_html, 'form-group');
-        $test_name = 'the save button shows the page again with the entered inputs';
-        $t->assert_text_contains($test_name, $in_html, '>' . $mtr->txt(msg_id::CALCULATOR_SAVE) . '</button>');
+        // the save changes data, so it is a post form whose named submit runs the save action
+        $test_name = 'the save button posts the inputs to the save of the calculator page';
+        $t->assert_text_contains($test_name, $in_html, 'method="' . html_base::METHOD_POST . '" id="' . $form . '"');
         $t->assert_text_contains($test_name, $in_html, $html->form_hidden(url_var::MASK, views::CALCULATOR));
+        $t->assert_text_contains($test_name, $in_html, $html->form_hidden(url_var::ACTION, url_var::ACTION_SAVE));
+        $t->assert_text_contains($test_name, $in_html, 'name="' . url_var::POST_SUBMIT . '">'
+            . $mtr->txt(msg_id::CALCULATOR_SAVE) . '</button>');
         $test_name = 'the assumptions follow the inputs in a collapsed block with the default heading';
         $t->assert_text_order($test_name, $in_html, '</button>',
             '<summary>' . $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS) . '</summary>');
@@ -616,6 +625,8 @@ class use_case_ui_tests
         // negative: a phrase without calculator triples has no inputs
         $test_name = 'a phrase without calculator triples shows no calculator input';
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
+
+        $this->calculator_save_tests($t, $ts);
 
         $t->subheader($ts . 'calculation result');
         // the page phrase Zurich has the result column 2019, the signed row group city with the rows
@@ -905,6 +916,75 @@ class use_case_ui_tests
         // negative: another view keeps its own name in the title
         $test_name = '... and another view its own name';
         $t->assert_text_contains($test_name, $msk->title($wrd, $msg, $dto_res), $msk->name());
+    }
+
+    /**
+     * the save of a calculator page: only the number fields with a changed number are saved,
+     * and the page is shown again; the write itself is simulated, so no database row is changed
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function calculator_save_tests(test_cleanup $t, string $ts): void
+    {
+        global $mtr;
+        $ui = new frontend();
+
+        $t->subheader($ts . 'calculator save');
+        $changed = (string)word_names::INHABITANT_ID;
+        $same = (string)word_names::YEAR_2020_ID;
+        $shown_key = url_var::PRE . url_var::NUMERIC_VALUE;
+        $form = [
+            url_var::MASK => views::CALCULATOR_ID,
+            // the phrase id of the triple, which is negative
+            url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::ACTION => url_var::ACTION_SAVE,
+            // a field whose number the user has changed
+            url_var::NUMERIC_VALUE . $changed => (string)values::SAMPLE_FLOAT,
+            url_var::GROUP . $changed => (string)values::PI_MATH_ID,
+            $shown_key . $changed => (string)values::CITY_ZH_INHABITANTS_2019,
+            // a field that the user has not changed
+            url_var::NUMERIC_VALUE . $same => (string)values::CITY_ZH_INHABITANTS_2019,
+            url_var::GROUP . $same => (string)values::E_ID,
+            $shown_key . $same => (string)values::CITY_ZH_INHABITANTS_2019,
+            // a phrase selector, which sends neither a group id nor a shown number
+            url_var::NUMERIC_VALUE . word_names::CANTON_ID => (string)word_names::YEAR_2020_ID,
+        ];
+        $msg = new user_message();
+        $changes = $ui->calculator_changes($form, $msg);
+        $test_name = 'the calculator save writes only the field with a changed number';
+        $change_count = count($changes);
+        $t->assert($test_name, $change_count, 1);
+        $test_name = '... to the value of the field';
+        $change_id = $changes[0]->id();
+        $t->assert($test_name, $change_id, values::PI_MATH_ID);
+        $test_name = '... with the entered number';
+        $change_number = $changes[0]->number();
+        $t->assert($test_name, $change_number, values::SAMPLE_FLOAT);
+
+        // negative: a text is not a number, so it is reported and not saved
+        $test_name = 'an entered text is not saved';
+        $txt_form = $form;
+        $txt_form[url_var::NUMERIC_VALUE . $changed] = word_names::INHABITANTS;
+        $txt_msg = new user_message();
+        $txt_changes = $ui->calculator_changes($txt_form, $txt_msg);
+        $t->assert($test_name, $txt_changes, []);
+        $test_name = '... but reported';
+        $t->assert_false($test_name, $txt_msg->is_ok());
+
+        // the simulated save shows the calculator page again without the inputs, which the page
+        // then shows with the saved numbers
+        $test_name = 'a save without a changed number shows the calculator page again';
+        $same_form = $form;
+        $same_form[url_var::NUMERIC_VALUE . $changed] = (string)values::CITY_ZH_INHABITANTS_2019;
+        $act_backend = clone $t->usr1;
+        $act_msg = new user_message();
+        $act_msg->usr = new user_ui();
+        $next_url = $ui->url_to_action($same_form, $act_backend, $act_msg, $ui->dto, false);
+        $t->assert($test_name, $next_url, [url_var::MASK => views::CALCULATOR_ID, url_var::ID => -triple_names::CITY_ZH_ID]);
+        $test_name = '... and tells the user that nothing has been saved';
+        $info = $act_msg->get_last_info();
+        $t->assert($test_name, $info, $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
     }
 
     /**

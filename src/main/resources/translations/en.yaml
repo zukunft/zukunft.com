@@ -568,6 +568,8 @@ messages:
   calculator_inputs: "Inputs"
   calculator_assumptions: "Assumptions"
   calculator_save: "Save"
+  calculator_saved: "changes saved (z$VarValue$z numbers)"
+  calculator_nothing_changed: "no number has been changed, so nothing has been saved"
   calculator_result: "Result"
   calculator_details: "Details and sources"
   calculator_sources: "Sources"

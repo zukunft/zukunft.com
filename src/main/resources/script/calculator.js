@@ -200,13 +200,13 @@
         if (cell.percent !== null) {
             result = String(round(num * 100, data.format.percent_decimals));
             if (cell.percent !== '') {
-                result += ' ' + cell.percent;
+                result += data.format.unit_sep + cell.percent;
             }
         } else {
             result = fixed(num * cell.factor, cell.decimals);
         }
         if (cell.unit !== '') {
-            result += ' ' + cell.unit;
+            result += data.format.unit_sep + cell.unit;
         }
         return result;
     }

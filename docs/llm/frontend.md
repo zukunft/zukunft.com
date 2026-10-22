@@ -48,6 +48,20 @@ calculator script, so that the results change as soon as an input changes:
 - Every cell of a number has a unique html id (a repeated number gets its count
   behind the id), so the script can update each cell and the save can name it.
 
+### The save of a calculator page
+
+The save button of a calculator page is a post form with the session token
+(`system_page::calculator_button_save`, `html_base::form_post`) that every number
+field joins by its form attribute. Each number field sends its number
+(`n<field>`), the group id of the value it shows (`g<field>`) and the number it
+has shown (`8n<field>`, `ui_list::calculator_save_vars`); a phrase selector sends
+neither the group id nor the shown number, so it is never saved as a number. `frontend::action_calculator_save`
+writes only the numbers that differ from the shown one, as the change of the
+requesting user (`frontend::calculator_changes`, `db_object::update`), without a
+confirm view, and shows the page again: after a save with the saved numbers and
+"changes saved", after a failed save (e.g. a user without login) with the entered
+numbers and the message, so that no input is lost.
+
 A separate JavaScript frontend (likely Vue.js or React) is planned for later as
 its own app consuming the same api; that is a future, additional client and does
 not relax this rule for the current server-rendered HTML frontend.
