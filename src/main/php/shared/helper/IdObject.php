@@ -139,7 +139,7 @@ class IdObject
     }
 
     /**
-     * TODO to be called once by all child setter hooks
+     * TODO Prio 2 to be called once by all child setter hooks
      */
     function set_modified(): void
     {

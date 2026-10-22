@@ -70,7 +70,7 @@ class ref_read_tests
         $t->assert('load_types', $result, true);
 
         // ... and check if at least the most critical is loaded
-        // TODO check
+        // TODO Prio 2 check
         $result = $sys->typ_lst->phr_typ->id(phrase_type_shared::NORMAL);
         $t->assert('check ' . phrase_type_shared::NORMAL, $result, 1);
 

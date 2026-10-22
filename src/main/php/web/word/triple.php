@@ -187,7 +187,7 @@ class triple extends sandbox_code_id
      */
 
     /**
-     * TODO add the cache object and use it to get linked objects
+     * TODO Prio 2 add the cache object and use it to get linked objects
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      *
@@ -698,7 +698,7 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * TODO use ENUM instead of string in php version 8.1
+     * TODO Prio 2 use ENUM instead of string in php version 8.1
      * @return phrase_types|null the phrase type of this word
      */
     function type(user_message $msg): ?object
@@ -964,7 +964,7 @@ class triple extends sandbox_code_id
      *
      * @param string $type the ENUM string of the fixed type
      * @returns bool true if the word has the given type
-     * TODO Switch to php 8.1 and real ENUM
+     * TODO Prio 2 Switch to php 8.1 and real ENUM
      */
     function is_type(string $type, user_message $msg): bool
     {
@@ -1182,7 +1182,7 @@ class triple extends sandbox_code_id
 
     /**
      * display one link to the user by returning the HTML code for the link to the calling function
-     * TODO include the user sandbox in the selection
+     * TODO Prio 2 include the user sandbox in the selection
      */
     function display(): string
     {
@@ -1209,7 +1209,7 @@ class triple extends sandbox_code_id
         $result = ''; // reset the html code var
 
         // prepare to show the triple in the reverse direction
-        // TODO use the reverse name of the verb e.g. "are" instead of "is a"
+        // TODO Prio 2 use the reverse name of the verb e.g. "are" instead of "is a"
         $result .= $this->get_to()->name() . ' ';     // e.g. Countries
         $result .= $this->get_verb()->name() . ' ';   // e.g. are
         $result .= $this->get_from()->name();         // e.g. Australia (and others)

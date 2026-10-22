@@ -207,7 +207,7 @@ class term_list extends sandbox_list_named
     /**
      * create the html term links in three columns that have more or less the same number of items
      * the terms are ordered by impact (highest first) and then spread left to right over the columns
-     * TODO add the context per term type:
+     * TODO Prio 2 add the context per term type:
      *      for phrases with config::LIMIT_NAME_LIST related (foaf) phrases
      *      for verbs with config::LIMIT_NAME_LIST triples where the verb is used by impact
      *      for formulas with the latex formula converted to MathML

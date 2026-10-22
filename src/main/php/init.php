@@ -73,7 +73,7 @@ include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
 global $db_con; // the database connection
 
-// TODO check if "sudo apt-get install php-curl" is done for testing
+// TODO Prio 2 check if "sudo apt-get install php-curl" is done for testing
 //phpinfo();
 
 // database links

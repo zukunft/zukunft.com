@@ -34,22 +34,31 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_list.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::DB . 'sql_where_list.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CREATE . 'test_sql.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_where_list;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -58,11 +67,13 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\test\php\create\test_sql;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
@@ -245,6 +256,85 @@ class sql_tests
         $sql_msg->api_mapper([], $msg);
         $t->assert_null($test_name, $sql_msg->usr?->name());
         $msg->reset();
+
+        // the lists that collect the parts of a sql statement before it is created
+        $t->subheader($ts . 'add');
+        $t_sql = new test_sql();
+
+        // a field is added to the field list
+        $test_name = 'field list adds a field';
+        $fld_lst = new sql_field_list();
+        $fld_lst->add($t_sql->field());
+        $added = $fld_lst->lst[0];
+        $t->assert($test_name, $added->name, word_fields::FLD_NAME);
+
+        // a parameter field is added to the parameter field list
+        $test_name = 'par field list adds a field';
+        $par_fld_lst = new sql_par_field_list();
+        $par_fld_lst->add($t_sql->par_field());
+        $added = $par_fld_lst->lst[0];
+        $t->assert($test_name, $added->name, word_fields::FLD_NAME);
+
+        // negative: a parameter field with a name already in the list is not added again
+        $test_name = 'par field list refuses a double field name';
+        $par_fld_lst = new sql_par_field_list();
+        $par_fld_lst->add($t_sql->par_field());
+        $par_fld_lst->add($t_sql->par_field());
+        $cnt = count($par_fld_lst->lst);
+        $t->assert($test_name, $cnt, 1);
+
+        // a sql call with its parameters is added to the parameter list
+        $test_name = 'par list adds a sql call';
+        $par_lst = new sql_par_list();
+        $par_lst->add($t_sql->par());
+        $cnt = count($par_lst->lst);
+        $t->assert($test_name, $cnt, 1);
+
+        // a sql creation type is added to the type list
+        $test_name = 'type list adds a type';
+        $sc_par_lst = new sql_type_list();
+        $sc_par_lst->add(sql_type::LOG);
+        $t->assert_true($test_name, $sc_par_lst->do_log());
+
+        // negative: a type already in the list is not added again
+        $test_name = 'type list refuses a double type';
+        $sc_par_lst = new sql_type_list([sql_type::LOG]);
+        $sc_par_lst->add(sql_type::LOG);
+        $cnt = count($sc_par_lst->lst);
+        $t->assert($test_name, $cnt, 1);
+
+        // a where condition is added to the where list
+        $test_name = 'where list adds a condition';
+        $whr_lst = new sql_where_list();
+        $whr_lst->add($t_sql->where());
+        $added = $whr_lst->lst[0];
+        $t->assert($test_name, $added->fld, word_fields::FLD_NAME);
+
+        $t->subheader($ts . 'debug id');
+
+        // sql_par: the debug id shows the parameters of the sql call
+        $test_name = 'sql call with parameter';
+        $qp = $t_sql->par_math();
+        $dsp = $qp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: a sql call without parameter shows no parameter
+        $test_name = 'sql call without parameter';
+        $qp = $t_sql->par();
+        $dsp = $qp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
+        // sql_par_list: the debug id shows the sql calls of the list
+        $test_name = 'sql call list';
+        $par_lst = $t_sql->par_list_math();
+        $dsp = $par_lst->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: an empty list shows no sql call
+        $test_name = 'empty sql call list';
+        $par_lst = new sql_par_list();
+        $dsp = $par_lst->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
 
     }
 

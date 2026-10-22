@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list as formula_link_list_ui;
@@ -78,7 +79,7 @@ class formula_link_tests
         $t->name = 'formula_link->';
         $t->resource_path = 'db/formula/';
 
-        // TODO use assert_sql_all if possible
+        // TODO Prio 2 use assert_sql_all if possible
 
         // start the test section (ts)
         $ts = 'unit formula link ';
@@ -202,7 +203,8 @@ class formula_link_tests
         // the formula is expected as a json object, not only by its id
         $test_name = 'an api message with only an id as the formula is refused';
         $lnk_new = new formula_link($t->usr1);
-        $t->assert_false($test_name, $lnk_new->api_mapper([json_fields::ID => 0, json_fields::FORMULA => formula_names::SCALE_TO_SEC_ID], $msg));
+        $api_json = [json_fields::ID => 0, json_fields::FORMULA => formula_names::SCALE_TO_SEC_ID];
+        $t->assert_false($test_name, $lnk_new->api_mapper($api_json, $msg));
         $msg->reset();
         // a formula link type can be limited to one formula
         $test_name = 'the api mapper sets the formula of a formula link type';
@@ -233,6 +235,122 @@ class formula_link_tests
         $test_name = 'the frontend api mapper reports a formula link without id in the list';
         $lnk_lst_ui = new formula_link_list_ui();
         $t->assert_false($test_name, $lnk_lst_ui->api_mapper([$lnk_json])->is_ok());
+
+        $t->subheader($ts . 'api json array');
+
+        // with the phrases the formula is sent as an object with its name
+        $test_name = 'the formula is sent with the phrases';
+        $lnk = $t_frm->formula_link();
+        $vars = $lnk->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::FORMULA][json_fields::NAME], formula_names::SCALE_TO_SEC);
+        $msg->reset();
+
+        // negative: without the phrases the formula is sent only by its id
+        $test_name = 'the formula id is sent without the phrases';
+        $lnk = $t_frm->formula_link();
+        $vars = $lnk->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::FORMULA_ID], formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+
+        // the priority is only sent if set
+        $test_name = 'the priority is sent if set';
+        $lnk = $t_frm->formula_link();
+        $vars = $lnk->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PRIORITY], test_const::FORMULA_LINK_ORDER_NBR);
+        $msg->reset();
+
+        // negative: a formula link without priority sends none
+        $test_name = 'no priority is sent if not set';
+        $lnk = $t_frm->formula_link_increase();
+        $vars = $lnk->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::PRIORITY, $vars);
+        $msg->reset();
+
+        // the description is only sent if set
+        $test_name = 'the description is sent if set';
+        $lnk = $t_frm->formula_link_filled_included();
+        $vars = $lnk->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::DESCRIPTION], test_const::FORMULA_LINK_COM);
+        $msg->reset();
+
+        // negative: a formula link without description sends none
+        $test_name = 'no description is sent if not set';
+        $lnk = $t_frm->formula_link();
+        $vars = $lnk->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
+        $msg->reset();
+
+        // a formula link type can be limited to one formula
+        $test_name = 'the formula of a limited link type is sent';
+        $frm_lnk_typ = $t_frm->link_type_limited();
+        $vars = $frm_lnk_typ->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::FORMULA_ID], formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+
+        // negative: a link type for all formulas sends no formula
+        $test_name = 'no formula is sent for a link type of all formulas';
+        $frm_lnk_typ = $t_frm->link_type();
+        $vars = $frm_lnk_typ->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::FORMULA_ID]);
+        $msg->reset();
+
+        $t->subheader($ts . 'export');
+
+        // a link type that is not the default is exported by its code id
+        $test_name = 'the link type is exported';
+        $lnk = $t_frm->formula_link();
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PREDICATE], formula_link_types::TIME_PERIOD);
+        $msg->reset();
+
+        // negative: the default link type is left out of the export
+        $test_name = 'the default link type is not exported';
+        $lnk = $t_frm->link_default();
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $msg->reset();
+
+        // the priority is only exported if set
+        $test_name = 'the priority is exported if set';
+        $lnk = $t_frm->formula_link();
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PRIORITY], test_const::FORMULA_LINK_ORDER_NBR);
+        $msg->reset();
+
+        // negative: a formula link without priority exports none
+        $test_name = 'no priority is exported if not set';
+        $lnk = $t_frm->formula_link_increase();
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PRIORITY, $exp);
+        $msg->reset();
+
+        // the description is only exported if set
+        $test_name = 'the description is exported if set';
+        $lnk = $t_frm->formula_link_filled_included();
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], test_const::FORMULA_LINK_COM);
+        $msg->reset();
+
+        // negative: a formula link without description exports none
+        $test_name = 'no description is exported if not set';
+        $lnk = $t_frm->formula_link();
+        $exp = $lnk->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg->reset();
+
+        // a link type limited to one formula exports the formula
+        $test_name = 'the formula of a limited link type is exported';
+        $frm_lnk_typ = $t_frm->link_type_limited();
+        $exp = $frm_lnk_typ->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::FORMULA], formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+
+        // negative: a link type for all formulas exports no formula
+        $test_name = 'no formula is exported for a link type of all formulas';
+        $frm_lnk_typ = $t_frm->link_type();
+        $exp = $frm_lnk_typ->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::FORMULA, $exp);
+        $msg->reset();
 
         /*
         $t->subheader($ts . 'im- and export');

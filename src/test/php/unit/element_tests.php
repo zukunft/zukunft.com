@@ -49,7 +49,10 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\element\element as element_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_verbs;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_tests
@@ -62,6 +65,8 @@ class element_tests
         $msg_ui = new user_message_ui();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
+        $t_trp = new test_triples($t);
+        $t_vrb = new test_verbs($t);
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
 
@@ -114,6 +119,66 @@ class element_tests
         $elm_ui = new element_ui();
         $t->assert_false($test_name, $elm_ui->api_mapper($elm_json, $msg_ui));
         $msg_ui->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // the object class tells the frontend which term the element links
+        $test_name = 'the object class of a word element';
+        $elm = $t_frm->element();
+        $vars = $elm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        $test_name = 'the object class of a triple element';
+        $elm = $t_frm->element();
+        $elm->obj = $t_trp->triple();
+        $vars = $elm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_TRIPLE);
+        $msg->reset();
+
+        $test_name = 'the object class of a verb element';
+        $elm = $t_frm->element();
+        $elm->obj = $t_vrb->verb_part();
+        $vars = $elm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
+
+        $test_name = 'the object class of a formula element';
+        $elm = $t_frm->element();
+        $elm->obj = $t_frm->formula_scale_mio();
+        $vars = $elm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_FORMULA);
+        $msg->reset();
+
+        // negative: an element without object has an empty object class
+        $test_name = 'the object class of an element without object';
+        $elm = $t_frm->element();
+        $elm->obj = null;
+        $vars = $elm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], '');
+        $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the linked object
+        $test_name = 'debug id with the object name';
+        $elm = $t_frm->element();
+        $dsp = $elm->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MINUTE);
+
+        // the debug id shows the id of the linked object
+        $test_name = 'debug id with the object id';
+        $id_txt = (string)word_names::MINUTE_ID;
+        $elm = $t_frm->element();
+        $dsp = $elm->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: an element without object shows no object name
+        $test_name = 'debug id without object';
+        $elm = $t_frm->element();
+        $elm->obj = null;
+        $dsp = $elm->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MINUTE);
 
         // JSON export list
         // TODO Prio 1 activate or deprecate

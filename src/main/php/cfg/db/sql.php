@@ -54,7 +54,7 @@ class sql
     // setup tables
     const string CREATE = 'CREATE OR REPLACE';
     const string INDEX = 'INDEX';
-    const string UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
+    const string UNIQUE = 'UNIQUE INDEX';  // TODO Prio 2 check if UNIQUE needs to be used for word and triple names
 
     // functions
     const string NOW = 'Now()';

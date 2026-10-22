@@ -129,7 +129,7 @@ class combine_named extends combine_object
     }
 
     /**
-     * TODO review and use only frontend objects
+     * TODO Prio 2 review and use only frontend objects
      * @param int|null $type_id the type id of the word, triple, formula or verb
      * @return void
      */

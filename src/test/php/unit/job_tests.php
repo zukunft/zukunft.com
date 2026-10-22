@@ -44,6 +44,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\test\php\create\test_jobs;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
+use DateTimeInterface;
 
 class job_tests
 {
@@ -67,6 +69,7 @@ class job_tests
         // init
         $sc = new sql_creator();
         $t_job = new test_jobs($t);
+        $msg = new user_message();
         $t->name = 'job->';
         $t->resource_path = 'db/job/';
 
@@ -125,6 +128,53 @@ class job_tests
 
         $job_lst = $t_job->job_list();
         $t->assert_api($job_lst);
+
+        $t->subheader($ts . 'api json array');
+
+        // the id of the user who has requested the job is sent if the owner is known
+        $test_name = 'user id of the owner';
+        $job = $t_job->job();
+        $vars = $job->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::USER_ID] ?? 0, users::SYSTEM_TEST_ID);
+        $msg->reset();
+
+        // negative: a job without an owner sends no user id
+        $test_name = 'no user id without owner';
+        $job = $t_job->job_filled();
+        $vars = $job->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::USER_ID, $vars);
+        $msg->reset();
+
+        // the start time is sent if the job has been started
+        $test_name = 'start time of a started job';
+        $job = $t_job->job();
+        $start = new DateTime(sys_log_tests::TV_TIME)->format(DateTimeInterface::ATOM);
+        $vars = $job->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::TIME_START] ?? '', $start);
+        $msg->reset();
+
+        // negative: a job that has not been started sends no start time
+        $test_name = 'no start time if not started';
+        $job = $t_job->job();
+        $job->start_time = null;
+        $vars = $job->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::TIME_START, $vars);
+        $msg->reset();
+
+        // the end time is sent if the job has been completed
+        $test_name = 'end time of a completed job';
+        $job = $t_job->job_filled();
+        $end = new DateTime(sys_log_tests::TV_TIME_TWO)->format(DateTimeInterface::ATOM);
+        $vars = $job->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::TIME_END] ?? '', $end);
+        $msg->reset();
+
+        // negative: a running job sends no end time
+        $test_name = 'no end time of a running job';
+        $job = $t_job->job();
+        $vars = $job->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::TIME_END, $vars);
+        $msg->reset();
 
 
         // the user who has requested a job can downgrade or cancel it, an admin can also upgrade it
@@ -234,6 +284,22 @@ class job_tests
         $chg_msg->reset();
 
 
+        $t->subheader($ts . 'list add');
+
+        // a base import job needs no formula and is added to the list
+        $test_name = 'add a job';
+        $job_lst = new job_list($sys_usr);
+        $job_lst->add($t_job->job());
+        $cnt = $job_lst->count();
+        $t->assert($test_name, $cnt, 1);
+
+        // negative: a value update job without formula is refused and the message names the job
+        $test_name = 'add a job without formula';
+        $job_lst = new job_list($sys_usr);
+        $add_msg = $job_lst->add($t_job->job_value_update());
+        $t->assert_msg_false($test_name, $add_msg, job_types::VALUE_UPDATE);
+
+
         $t->subheader($ts . 'due job selection');
 
         $sys_usr = new test_users($t)->system_user();
@@ -266,6 +332,22 @@ class job_tests
         $empty_lst = new job_list($sys_usr);
         $due = $job_run->due_jobs($empty_lst, $now);
         $t->assert_true($test_name, count($due) == 0);
+
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id shows the type of the job
+        $test_name = 'job with type';
+        $job = $t_job->job();
+        $dsp = $job->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, job_types::BASE_IMPORT);
+
+        // negative: a reset job shows no type
+        $test_name = 'job without type';
+        $job = $t_job->job();
+        $job->reset();
+        $dsp = $job->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, job_types::BASE_IMPORT);
 
     }
 

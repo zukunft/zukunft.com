@@ -503,6 +503,10 @@ class use_case_ui_tests
         $test_name = 'the rows of a row group follow the order chain';
         $t->assert($test_name, array_map(fn($item) => $item->name(), $rows), [
             triple_names::CALC_ZH_ROW_BE, triple_names::CALC_ZH_ROW_INHABITANTS]);
+        // negative: the row group has no filter, so it has no sub-items with the filter verb
+        $test_name = 'a row group has no filter sub-items';
+        $grp_flt = $calc->sub_items($grp, verbs::WITH_ID);
+        $t->assert($test_name, $grp_flt, []);
         $test_name = 'a row built from the group phrase shows the other phrase';
         $t->assert($test_name, $calc->label($rows[0], $grp), word_names::BE);
         $test_name = 'a row shows the label of its phrase and never the label of its filter phrase';
@@ -763,6 +767,12 @@ class use_case_ui_tests
         $no_val_phr_lst = $t_phr->list_global_problems_ui();
         $dto_lst->add_values_of($no_val_phr_lst, new value_list_ui(), $msg);
         $t->assert_true($test_name, $dto_lst->has_values_of($no_val_phr_lst));
+        // negative: phrases that the online cache has asked already are not loaded again
+        $test_name = 'an online cache loads asked phrases not again';
+        $val_count = $dto_lst->val_lst->count();
+        $dto_lst->load_values_of($no_val_phr_lst, $msg);
+        $t->assert($test_name, $dto_lst->val_lst->count(), $val_count);
+        $msg->reset();
         // negative: a new value list holds none of the asked phrases
         $test_name = 'a new value list holds the values of no asked phrases';
         $dto_lst->set_value_list($zh_val_lst);
@@ -815,7 +825,8 @@ class use_case_ui_tests
         $unused_script = $js_list->calculator_script($js_calc, $wrd, $js_lst, $dto_res, $msg);
         $unused_plan = json_decode($lib->str_left_of($lib->str_right_of($unused_script, ui_list::CALC_DATA_ID . '">'), '</script>'), true);
         $test_name = '... but not a number that no result, input or cell uses';
-        $t->assert_false($test_name, array_key_exists($unused_val->html_id(), $unused_plan[ui_list::CALC_NUMBERS]));
+        $unused_numbers = $unused_plan[ui_list::CALC_NUMBERS];
+        $t->assert_key_not_exists($test_name, $unused_val->html_id(), $unused_numbers);
         $test_name = '... while the numbers that the page uses stay';
         $t->assert($test_name, (string)$unused_plan[ui_list::CALC_NUMBERS][$canton_key], (string)values::SAMPLE_INT);
         // the browser calculates only the results that a cell shows and the results these use, so a
@@ -832,12 +843,12 @@ class use_case_ui_tests
         ksort($all_res_plan);
         $cell_plan = [$shown_res->html_id() => [ui_list::CALC_CELL_NUMBER => $shown_res->html_id()]];
         $needed_plan = $js_list->calculator_needed_results($all_res_plan, $cell_plan);
-        $t->assert_true($test_name, array_key_exists($shown_res->html_id(), $needed_plan));
+        $t->assert_key_exists($test_name, $shown_res->html_id(), $needed_plan);
         $test_name = '... and the result that this result uses';
-        $t->assert_true($test_name, array_key_exists($operand_res->html_id(), $needed_plan));
+        $t->assert_key_exists($test_name, $operand_res->html_id(), $needed_plan);
         // negative: a result that no cell shows and no shown result uses is left out
         $test_name = '... but not a result that no cell needs';
-        $t->assert_false($test_name, array_key_exists($unused_res->html_id(), $needed_plan));
+        $t->assert_key_not_exists($test_name, $unused_res->html_id(), $needed_plan);
         $test_name = '... sorted by the html id';
         $res_keys = array_keys($needed_plan);
         $sorted_keys = $res_keys;

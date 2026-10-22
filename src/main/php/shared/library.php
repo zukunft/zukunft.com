@@ -2491,7 +2491,7 @@ class library
                 $target = round($target, self::DIFF_NUM_PRECISION);
                 if ($result != $target) {
                     $msg .= 'number ' . $result . ' != ' . $target;
-                    // TODO add this message on level info
+                    // TODO Prio 3 add this message on level info
                     // } else {
                     //    $msg = 'number ' . $result . ' ≈ ' . $target;
                 }
@@ -4578,7 +4578,7 @@ class library
     /**
      * remove the namespace from the class name
      * same as class_to_name but without backend exceptions
-     * TODO make it static
+     * TODO Prio 2 make it static
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -4589,7 +4589,7 @@ class library
 
     /**
      * remove the namespace from the class name
-     * TODO avoid these exception
+     * TODO Prio 2 avoid these exception
      *
      * @param string $class including the namespace
      * @return string class name without the namespace
@@ -4618,7 +4618,7 @@ class library
 
     function class_to_resource_path(string $class): string
     {
-        // TODO avoid and remove exception
+        // TODO Prio 2 avoid and remove exception
         if ($class == source::class) {
             $class = ref::class;
         } elseif ($class == formula_link::class) {
@@ -4634,7 +4634,7 @@ class library
 
     /**
      * get the id field related to a class
-     * TODO avoid these exception
+     * TODO Prio 2 avoid these exception
      *
      * @param string $class including the namespace
      * @return string the name of the id field
@@ -4843,7 +4843,7 @@ class library
             and $class != change_values_big::class) {
             $result .= sql_db::TABLE_EXTENSION;
         }
-        // TODO remove these exception
+        // TODO Prio 2 remove these exception
         if ($result == 'values_primes') {
             $result = 'values_prime';
         }
@@ -5048,7 +5048,7 @@ class library
 
     /**
      * create a short string that indicates, which fields of all fields have been changed
-     * TODO combine with the sql_name_shorten function
+     * TODO Prio 2 combine with the sql_name_shorten function
      *
      * @param sql_par_field_list $fvt_lst list of fields that have been changed
      * @param array $fld_lst_all list of all fields of the given object

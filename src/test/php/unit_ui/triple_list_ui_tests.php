@@ -77,7 +77,8 @@ class triple_list_ui_tests
         // the id is mandatory, so a triple of the api json without the id is reported
         $test_name = 'the api mapper reports a triple without the id';
         $trp_lst_map = new triple_list();
-        $t->assert_false($test_name, $trp_lst_map->api_mapper([[json_fields::NAME => triple_names::MATH_CONST]])->is_ok());
+        $api_json = [[json_fields::NAME => triple_names::MATH_CONST]];
+        $t->assert_false($test_name, $trp_lst_map->api_mapper($api_json)->is_ok());
 
         // create the triple list test set
         $lst = new triple_list();
@@ -102,6 +103,23 @@ class triple_list_ui_tests
         $test_page .= $html->form($form, $from_rows);
 
         $t->html_page_test($test_page, 'triple_list', 'triple_list', $msg);
+
+        // the triple list uses the add function of ListBase
+        $t->subheader($ts . 'add');
+
+        // a triple is added to the list
+        $test_name = 'a triple is added';
+        $add_lst = new triple_list();
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: an empty entry is not added
+        $test_name = 'an empty entry is not added';
+        $add_lst = new triple_list();
+        $added = $add_lst->add(null, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
     }
 
 }

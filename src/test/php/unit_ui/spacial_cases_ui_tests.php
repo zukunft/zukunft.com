@@ -74,10 +74,10 @@ class spacial_cases_ui_tests
         $cfg->typ_lst_cache = $ui->dto->typ_lst_cache;
         $test_page .= $msk->show($wrd, $msg, $cfg) . '<br>';
 
-        // TODO review and combine with read db tests
+        // TODO Prio 2 review and combine with read db tests
         $t->html_view_test($test_page, view_shared::WORD_ADD_DETAIL);
 
-        // TODO add a word edit page with no usage to test the switch to the exception message
+        // TODO Prio 2 add a word edit page with no usage to test the switch to the exception message
 
         $test_name = 'view with message';
     }

@@ -205,7 +205,7 @@ class formula_calc_tests
             . $lib->term_id(triple_names::SECOND_ID, triple::class) . ','
             . $lib->term_id(word_names::MINUTE_ID, word::class) . ')');
 
-        // TODO add result display test
+        // TODO Prio 2 add result display test
 
         // test the calculation of one value
         $trm_lst = $t->term_list_for_tests(array(

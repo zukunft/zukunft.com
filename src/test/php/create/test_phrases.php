@@ -169,6 +169,18 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the web mass units kg and tonne, which a number format converts into each other
+     */
+    function phrase_list_mass_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->kg()->phrase());
+        $lst->add($t_wrd->tonne()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list as it is returned from the phrase list api, so at the moment without triple links
      */
     function phrase_list_api(): phrase_list
@@ -755,7 +767,7 @@ class test_phrases
 
     /**
      * @return phrase_list the request cache that knows the symbol of percent, so that a number
-     *                     with a percent phrase can be shown as e.g. "1.23%"
+     *                     with a percent phrase can be shown as e.g. "1.23 %"
      */
     function list_percent_symbol_cache(): phrase_list
     {

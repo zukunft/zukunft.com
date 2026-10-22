@@ -221,6 +221,17 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "mathematics" with its wikidata reference e.g. to test the export of the references
+     */
+    function word_with_ref(): word
+    {
+        $t_ref = new test_refs($this->env);
+        $wrd = $this->word();
+        $wrd->ref_lst = [$t_ref->reference_math()];
+        return $wrd;
+    }
+
+    /**
      * @return word to test the sql insert via function
      */
     static function word_add(): word
@@ -623,6 +634,13 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function tonne(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::TONNE_ID, word_names::TONNE);
+        return $wrd;
+    }
+
     function definition(): word
     {
         $wrd = new word($this->env->usr1);
@@ -912,8 +930,8 @@ class test_words extends test_objects
         return $wrd;
     }
 
-// TODO explain for each test object for which test it is used
-// TODO rename because in the test object "$t->" the prefix dummy is not needed
+// TODO Prio 3 explain for each test object for which test it is used
+// TODO Prio 2 rename because in the test object "$t->" the prefix dummy is not needed
     function word_this(): word
     {
         $wrd = new word($this->env->usr1);
@@ -1633,6 +1651,16 @@ class test_words extends test_objects
         $lst->add($this->word_const());
         $lst->add($this->word_pi_symbol());
         $lst->add($this->word_e_symbol());
+        return $lst;
+    }
+
+    /**
+     * @return word_list with only a word without any configuration e.g. to test that the export leaves it out
+     */
+    function word_list_without_cfg(): word_list
+    {
+        $lst = new word_list($this->env->usr1);
+        $lst->add($this->word_name_only());
         return $lst;
     }
 

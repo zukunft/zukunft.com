@@ -126,8 +126,24 @@ class phrase_ui_tests
         // without the class the mapper cannot know if the phrase is a word or a triple, so it reports it
         $test_name = 'the api mapper reports a phrase without the class';
         $phr_map = new phrase();
-        $t->assert_false($test_name, $phr_map->api_mapper([json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH], $msg));
+        $api_json = [json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH];
+        $t->assert_false($test_name, $phr_map->api_mapper($api_json, $msg));
         $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the phrase uses the combine object debug text, which names the word behind it
+        $test_name = 'shows the name of the word';
+        $phr_dsp = new phrase($t_wrd->word()->phrase()->api_json());
+        $dsp = $phr_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: a phrase without an object has no name to show
+        $test_name = 'shows no name for a phrase without an object';
+        $phr_dsp = new phrase();
+        $phr_dsp->set_obj(null);
+        $dsp = $phr_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
 
         $t->subheader($ts . 'default view');
         // a phrase with an own view e.g. the calculator of a PV installation is linked to that
@@ -149,6 +165,10 @@ class phrase_ui_tests
         // negative: a phrase without a default view links to the triple view
         $test_name = 'a phrase without a default view links to the triple view';
         $t->assert_text_contains($test_name, $trp->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);
+        // negative: the page of a word is the word view and never the triple view
+        $test_name = 'the page url of a word does not open the triple view';
+        $wrd_page_url = $wrd->phrase_page_url();
+        $t->assert_text_not_contains($test_name, $wrd_page_url, url_var::MASK . '=' . views::TRIPLE_ID);
 
         $t->subheader($ts . 'all rows style');
         // the ranking has as many rows as the unit config allows, so the cut is forced with the

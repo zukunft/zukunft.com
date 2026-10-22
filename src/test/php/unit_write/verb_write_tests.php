@@ -82,7 +82,7 @@ class verb_write_tests
         $test_name = 'test verb not yet used can be deleted';
         $vrb = new verb;
         $vrb->load_by_name(verbs::TEST_ADD_NAME, $msg);
-        // TODO this setting of the user should actually not be needed
+        // TODO Prio 2 this setting of the user should actually not be needed
         $vrb->set_user($t->usr1);
         $t->assert_true($test_name, $vrb->del($msg));
 
@@ -90,7 +90,7 @@ class verb_write_tests
         $result = $t->log_last_by_user();
         $t->assert($test_name, $result, 'zukunft.com system test deleted "System Test Verb"');
 
-        // TODO add more tests e.g. that a verb name cannot be used for a word any more
+        // TODO Prio 2 add more tests e.g. that a verb name cannot be used for a word any more
 
 
         $t->subheader($ts . 'list');

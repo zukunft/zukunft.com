@@ -5,7 +5,7 @@
     test/unit/formula.php - unit testing of the formula database and map functions
     ---------------------
 
-    TODO move the sql tests to a separate class
+    TODO Prio 2 move the sql tests to a separate class
   
 
     This file is part of zukunft.com - calc with words
@@ -45,6 +45,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -61,6 +62,7 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -76,6 +78,7 @@ class formula_tests
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 
@@ -163,6 +166,89 @@ class formula_tests
         $t->assert($test_name, $frm->get_view_id(), 0);
         $msg->reset();
 
+        $t->subheader($ts . 'api json array');
+
+        // the latex is sent for the formula display
+        $test_name = 'the latex is sent';
+        $frm = $t_frm->formula();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LATEX], formula_names::SCALE_TO_SEC_LATEX);
+        $msg->reset();
+
+        // negative: a formula without latex sends no latex
+        $test_name = 'no latex is sent if not set';
+        $frm = $t_frm->formula_scale_mio();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LATEX]);
+        $msg->reset();
+
+        // the need all values flag is only sent if set
+        $test_name = 'the need all values flag is sent if set';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_true($test_name, $vars[json_fields::NEED_ALL_VAL]);
+        $msg->reset();
+
+        // negative: a formula without the flag sends no flag
+        $test_name = 'the need all values flag is not sent if not set';
+        $frm = $t_frm->formula();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::NEED_ALL_VAL, $vars);
+        $msg->reset();
+
+        // the last update is sent for a page request
+        $test_name = 'the last update is sent for a page request';
+        $frm = $t_frm->formula_filled();
+        $upd = new DateTime(sys_log_tests::TV_TIME)->format(DateTime::ATOM);
+        $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE], $upd);
+        $msg->reset();
+
+        // negative: the volatile last update is not sent without a page request
+        $test_name = 'the last update is not sent without a page request';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::LAST_UPDATE, $vars);
+        $msg->reset();
+
+        // an excluded formula is sent with its id and the excluded flag if requested
+        $test_name = 'an excluded formula is sent with the excluded flag';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert_true($test_name, $vars[json_fields::EXCLUDED]);
+        $msg->reset();
+
+        // negative: without the request an excluded formula is not sent at all
+        $test_name = 'an excluded formula is not sent';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::ID, $vars);
+        $msg->reset();
+
+        // the assigned phrases are sent for the formula page
+        $test_name = 'the related phrases are sent for a page request';
+        $frm = $t_frm->formula();
+        $frm->phrases_related = $t_phr->phrase_list_pi();
+        $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASES_RELATED][0][json_fields::NAME], word_names::PI_SYMBOL);
+        $msg->reset();
+
+        // negative: the plain call sends no related data and needs no database
+        $test_name = 'no related phrases are sent without a page request';
+        $frm = $t_frm->formula();
+        $frm->phrases_related = $t_phr->phrase_list_pi();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars);
+        $msg->reset();
+
+        // negative: a formula without id has no related data yet
+        $test_name = 'no related phrases are sent for a formula without id';
+        $frm = $t_frm->formula_add();
+        $frm->phrases_related = $t_phr->phrase_list_pi();
+        $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars);
+        $msg->reset();
+
         $t->subheader($ts . 'frontend');
         $frm = $t_frm->formula();
         $t->assert_api_to_ui($frm, new formula_ui());
@@ -214,7 +300,7 @@ class formula_tests
         $test_name = '... e.g. a pending latex change is labeled with the latex db field';
         $t->assert($test_name, $fld_to_url[formula_fields::FLD_LATEX] ?? '', url_var::LATEX);
         $test_name = 'the system-set last update time has no url var, because no form may post it';
-        $t->assert_false($test_name, array_key_exists(fields::FLD_LAST_UPDATE, $fld_to_url));
+        $t->assert_key_not_exists($test_name, fields::FLD_LAST_UPDATE, $fld_to_url);
 
         $t->subheader($ts . 'partial update expression handling');
         // the stored formula as loaded from the database, carrying its expression
@@ -365,11 +451,53 @@ class formula_tests
         $test_name = 'a formula without the all values needed flag does not export it';
         $frm_off = $t_frm->formula();
         $ex_json_off = $frm_off->export_json($msg_exp, [], false);
-        $t->assert_false($test_name, array_key_exists(json_fields::NEED_ALL_VAL, $ex_json_off));
+        $t->assert_key_not_exists($test_name, json_fields::NEED_ALL_VAL, $ex_json_off);
         $test_name = 'a formula import without the all values needed flag does not set it';
         $frm_imp_off = new formula($t->usr1);
         $frm_imp_off->import_mapper($ex_json_off, $msg_exp);
         $t->assert_null($test_name, $frm_imp_off->need_all_val);
+
+        // a formula type that is not the default is exported by its code id
+        $test_name = 'export the type';
+        $frm = $t_frm->formula_this();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], formula_type::THIS);
+        $msg->reset();
+
+        // negative: the default formula type is left out of the export
+        $test_name = 'export no default type';
+        $frm = $t_frm->formula();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // the expression of the user is exported
+        $test_name = 'export the expression';
+        $frm = $t_frm->formula();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::EXPRESSION], formula_names::SCALE_TO_SEC_EXP);
+        $msg->reset();
+
+        // negative: a formula without a user expression exports no expression
+        $test_name = 'export no expression if not set';
+        $frm = $t_frm->formula_scale_mio();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EXPRESSION, $exp);
+        $msg->reset();
+
+        // the latex is exported
+        $test_name = 'export the latex';
+        $frm = $t_frm->formula();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::LATEX], formula_names::SCALE_TO_SEC_LATEX);
+        $msg->reset();
+
+        // negative: a formula without latex exports no latex
+        $test_name = 'export no latex if not set';
+        $frm = $t_frm->formula_scale_mio();
+        $exp = $frm->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::LATEX, $exp);
+        $msg->reset();
 
     }
 
@@ -390,7 +518,7 @@ class formula_tests
     }
 
     /**
-     * TODO check the diff to assert_sql_user_changes
+     * TODO Prio 2 check the diff to assert_sql_user_changes
      *
      * @param test_cleanup $t the test environment
      * @param formula $frm the user sandbox object e.g. a word

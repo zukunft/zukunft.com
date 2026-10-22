@@ -163,7 +163,7 @@ class value_write_tests
             $chk_val->phr_lst()->set_lst(array());
             $chk_val->load_phrases($msg);
             if (!$chk_val->phr_lst()->is_empty()) {
-                // TODO check if sort is needed
+                // TODO Prio 3 check if sort is needed
                 //$chk_val->phr_lst()->wlsort();
                 $result = $lib->dsp_array($chk_val->phr_names());
             } else {
@@ -218,7 +218,8 @@ class value_write_tests
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $result = $val_ui->value($msg_ui);
         $ui_sys->phr_lst = $phr_lst_keep;
-        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2) . word_names::PERCENT_SYMBOL;
+        $target = number_format(round(values::SAMPLE_PCT * 100, 2), 2)
+            . value_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $t->assert(', value->val_formatted for ' . $pct_val->dsp_id(), $result, $target);
 
         // test the scaling of a value
@@ -386,7 +387,7 @@ class value_write_tests
         if ($added_val->is_id_set()) {
             $result = $t->log_last_by_field($added_val, $msg, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
-        // TODO fix it
+        // TODO Prio 2 fix it
         $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
         if ($result != $target) {
             $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
@@ -402,7 +403,7 @@ class value_write_tests
         $t->assert(', value->load the value previous updated for "' . word_names::TEST_RENAMED . '"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if a user-specific value is created if another user changes the value
-        // TODO check loaded value matches the value for usr1
+        // TODO Prio 2 check loaded value matches the value for usr1
         $val_usr2 = new value($t->usr2);
         $val_usr2->load_by_id($added_val_id, $msg);
         $val_usr2->set_number(self::NUMBER_CHANGED);

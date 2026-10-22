@@ -530,8 +530,8 @@ class controller
         $msg_ok = true;
         $body = array();
         if ($api_msg !== null) {
-            // TODO check transfer time
-            // TODO check if version matches
+            // TODO Prio 2 check transfer time
+            // TODO Prio 1 check if version matches
             if ($msg_ok) {
                 if (array_key_exists($body_key, $api_msg)) {
                     $body = $api_msg[$body_key];

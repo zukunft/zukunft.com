@@ -178,7 +178,7 @@ class ip_range_list extends list_db_write
             $msg->add_info_id(msg_id::IP_LIST_EMPTY);
         } else {
 
-            // TODO replace this slow temp solution with the proper block saving like indicated in the comment below
+            // TODO Prio 2 replace this slow temp solution with the proper block saving like indicated in the comment below
             foreach ($this->lst() as $ip) {
                 // for each item of a list an empty user_message statement should be used
                 // so that an issue in one item does not prevent other item from being saved
@@ -200,8 +200,8 @@ class ip_range_list extends list_db_write
             $usr_msg->add($this->insert($db_lst, true, $imp, ip_range::class));
 
             // create any missing sql update functions and update the ip ranges
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
-            // TODO create blocks of update function calls
+            // TODO Prio 2 create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+            // TODO Prio 2 create blocks of update function calls
             $usr_msg->add($this->update($db_lst, true, $imp, ip_range::class, $upd_per_sec));
             */
         }

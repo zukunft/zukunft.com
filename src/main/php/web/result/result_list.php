@@ -429,7 +429,7 @@ class result_list extends sandbox_list_value
 
     /**
      * create the html code to show the formula results to the user
-     * TODO move to result_list_min_display
+     * TODO Prio 2 move to result_list_min_display
      */
     function display_old(user_message $msg): string
     {

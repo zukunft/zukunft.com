@@ -125,16 +125,16 @@ class all_unit_tests extends test_cleanup
         new coding_rule_tests()->run($this);
         new change_link_validation_tests()->run($this);
         new sql_tests()->run($this);
-        new sys_log_tests()->run($this); // TODO add assert_api_to_ui
-        new change_log_tests()->run($this); // TODO add assert_api_to_ui  // TODO for version 0.0.6 add import test
-        new job_tests()->run($this); // TODO add assert_api_to_ui
+        new sys_log_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
+        new change_log_tests()->run($this); // TODO Prio 2 add assert_api_to_ui  // TODO Prio 2 for version 0.0.6 add import test
+        new job_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
         new pod_tests()->run($this);
         new user_tests()->run($this);
         new user_list_tests()->run($this);
         new base_object_tests()->run($this);
         new sandbox_tests()->run($this);
-        new language_tests()->run($this); // TODO add assert_api_to_ui
-        new type_tests()->run($this); // TODO add assert_api_to_ui
+        new language_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
+        new type_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
         new db_cache_tests()->run($this);
 
         // do the user object unit tests
@@ -148,8 +148,8 @@ class all_unit_tests extends test_cleanup
         new triple_list_tests()->run($this);
         new phrase_tests()->run($this);
         new phrase_list_tests()->run($this);
-        new group_tests()->run($this); // TODO add assert_api_to_ui
-        new group_list_tests()->run($this); // TODO add assert_api_to_ui
+        new group_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
+        new group_list_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
         new term_tests()->run($this);
         new term_list_tests()->run($this);
         new source_tests()->run($this);
@@ -160,7 +160,7 @@ class all_unit_tests extends test_cleanup
         new formula_tests()->run($this);
         new formula_calc_tests()->run($this);
         new formula_list_tests()->run($this);
-        new formula_link_tests()->run($this); // TODO add assert_api_to_ui
+        new formula_link_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
         new element_tests()->run($this);
         new element_list_tests()->run($this);
         new expression_tests()->run($this);
@@ -169,11 +169,11 @@ class all_unit_tests extends test_cleanup
         new figure_tests()->run($this);
         new figure_list_tests()->run($this);
         new view_tests()->run($this);
-        new view_list_tests()->run($this); // TODO add assert_api_to_ui
+        new view_list_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
         new term_view_tests()->run($this);
         new component_tests()->run($this);
-        new component_list_tests()->run($this); // TODO add assert_api_to_ui
-        new component_link_tests()->run($this); // TODO add assert_api_to_ui
+        new component_list_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
+        new component_link_tests()->run($this); // TODO Prio 2 add assert_api_to_ui
         new component_link_list_tests()->run($this);
 
         // do the im- and export unit tests

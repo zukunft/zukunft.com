@@ -221,7 +221,7 @@ class view extends sandbox_code_id
         $this->editor_id = null;
     }
 
-    // TODO check if there is any case where the user fields should not be set
+    // TODO Prio 2 check if there is any case where the user fields should not be set
 
     /**
      * map the database fields to the object fields
@@ -288,8 +288,8 @@ class view extends sandbox_code_id
         ?data_object $dto = null
     ): bool
     {
-        // TODO use a requesting user because the object user might differ from the user who is requesting the import
-        // TODO all objects wit a code id must have a requesting user
+        // TODO Prio 1 use a requesting user because the object user might differ from the user who is requesting the import
+        // TODO Prio 1 all objects wit a code id must have a requesting user
 
         log_debug();
 
@@ -298,7 +298,7 @@ class view extends sandbox_code_id
         parent::import_mapper($in_ex_json, $msg, $dto);
 
         // first save the parameters of the view itself
-        // TODO aline all type_list mappings with this set_style call
+        // TODO Prio 2 aline all type_list mappings with this set_style call
         if (key_exists(json_fields::STYLE, $in_ex_json)) {
             $this->set_style($in_ex_json[json_fields::STYLE], $msg);
         }
@@ -306,8 +306,8 @@ class view extends sandbox_code_id
             $this->set_type($in_ex_json[json_fields::TYPE_NAME], $msg);
         }
 
-        // TODO get component from the dto object
-        // TODO check if it is working that after saving (or remembering) add the view components
+        // TODO Prio 2 get component from the dto object
+        // TODO Prio 2 check if it is working that after saving (or remembering) add the view components
         if (key_exists(json_fields::COMPONENTS, $in_ex_json)) {
             $json_lst = $in_ex_json[json_fields::COMPONENTS];
             $cmp_pos = 1;
@@ -323,7 +323,7 @@ class view extends sandbox_code_id
             $this->check_component_positions_complete($json_lst, $msg);
         }
 
-        // TODO add the assigned terms
+        // TODO Prio 2 add the assigned terms
         // after the view has it's components assign the view to the terms
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
             $value = $in_ex_json[json_fields::ASSIGNED];
@@ -551,16 +551,16 @@ class view extends sandbox_code_id
                 $this->save($msg);
 
                 if ($msg->is_ok()) {
-                    // TODO save also the components
+                    // TODO Prio 2 save also the components
                     //$cmp_lnk_ui = new component_link();
-                    // TODO save also the links
+                    // TODO Prio 2 save also the links
                     //$cmp_lnk_ui = new component_link();
                     log_debug($this->dsp_id());
                 }
             }
         }
 
-        // TODO add the assigned terms
+        // TODO Prio 2 add the assigned terms
         // after the view has it's components assign the view to the terms
         // TODO Prio 0 switch to a key_exists
         foreach ($in_ex_json as $key => $value) {
@@ -603,7 +603,7 @@ class view extends sandbox_code_id
 
         global $sys;
 
-        // TODO avoid the var overwrite be overwriting the type_name() function
+        // TODO Prio 2 avoid the var overwrite be overwriting the type_name() function
         if (isset($this->type_id)) {
             if ($this->type_id <> $sys->typ_lst->msk_typ->default_id()) {
                 $vars[json_fields::TYPE_NAME] = $sys->typ_lst->msk_typ->code_id($this->type_id);
@@ -822,8 +822,8 @@ class view extends sandbox_code_id
 
     /**
      * create an SQL statement to retrieve a view by the phrase from the database
-     * TODO include user_term_views into the selection
-     * TODO take the usage into account for the selection of the view
+     * TODO Prio 2 include user_term_views into the selection
+     * TODO Prio 2 take the usage into account for the selection of the view
      *
      * @param sql_creator $sc with the target db_type set
      * @param term $trm the code id of the view
@@ -908,8 +908,8 @@ class view extends sandbox_code_id
 
     /**
      * create an SQL statement to retrieve all view components of a view
-     * TODO check if it can be combined with load_sql from component_link_list
-     * TODO make the order user-specific
+     * TODO Prio 2 check if it can be combined with load_sql from component_link_list
+     * TODO Prio 2 make the order user-specific
      *
      * @param sql_db $db_con as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
@@ -1104,7 +1104,7 @@ class view extends sandbox_code_id
     function del_term(term $trm): user_message
     {
         $msg = new user_message(); // the not yet implemented message IS the return value of this stub
-        // TODO implement
+        // TODO Prio 2 implement
         $msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
         return $msg;
     }
@@ -1411,7 +1411,7 @@ class view extends sandbox_code_id
                 );
             }
             global $sys;
-            // TODO move to id function of type list
+            // TODO Prio 2 move to id function of type list
             if ($this->get_style_id() < 0) {
                 $msg->add(msg_id::VIEW_STYLE_MISSING, [
                     msg_id::VAR_TYPE => $this->get_style_id(),

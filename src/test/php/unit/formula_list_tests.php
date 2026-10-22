@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -59,6 +60,7 @@ class formula_list_tests
     {
 
         // init
+        $msg = new user_message();
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
@@ -93,6 +95,23 @@ class formula_list_tests
         //$t->assert_sql_all($db_con, $frm);
 
 
+        $t->subheader($ts . 'add');
+
+        // a formula is added to an empty list
+        $test_name = 'add a formula';
+        $frm_lst = $t_frm->list_empty();
+        $added = $frm_lst->add($t_frm->formula(), false, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: the same formula again is refused as double
+        $test_name = 'add refuses a double formula';
+        $frm_lst = $t_frm->formula_list_short();
+        $added = $frm_lst->add($t_frm->formula(), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+
         $t->subheader($ts . 'api');
 
         $frm_lst = $t_frm->formula_list_short();
@@ -102,6 +121,21 @@ class formula_list_tests
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/formula/formula_list.json';
         $t->assert_json_file(new formula_list($t->usr1), $json_file);
+
+        // a formula list exports one entry per formula
+        $test_name = 'export one entry per formula';
+        $frm_lst = $t_frm->formula_list_short();
+        $exp = $frm_lst->export_json($msg, [], false);
+        $first = $exp[0];
+        $t->assert($test_name, $first[json_fields::NAME], formula_names::SCALE_TO_SEC);
+        $msg->reset();
+
+        // negative: an empty formula list exports no entry
+        $test_name = 'export no entry of an empty list';
+        $frm_lst = $t_frm->list_empty();
+        $exp = $frm_lst->export_json($msg, [], false);
+        $t->assert($test_name, $exp, []);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

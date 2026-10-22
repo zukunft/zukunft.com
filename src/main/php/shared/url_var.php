@@ -45,8 +45,8 @@ class url_var
 
     // TODO Prio 1 use be default the *_LONG url_var
     // TODO Prio 2 based on the config setting switch the the short or pod exchangeable url
-    // TODO always use these const instead e.g. of the controller const
-    // TODO allow to use the object names instead of the id for human readable urls
+    // TODO Prio 2 always use these const instead e.g. of the controller const
+    // TODO Prio 2 allow to use the object names instead of the id for human readable urls
     // the parameter names used in the url or in the result json
     const string PAR = '?';
     const string ADD = '&';
@@ -161,7 +161,7 @@ class url_var
     const string LATEX = 'fx'; // the formula in latex format
     const string FORMULA_TYPE = 'fy';
     const string GROUP = 'g';
-    const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
+    const string GROUP_NAME = 'gn'; // TODO Prio 3 maybe it is possible to use NAME
     const string SOURCE_GROUP_NAME = 'gs'; // the group of the numbers that a result is calculated from
     const string LOG = 'h'; // h for history of the object
     const string LOG_STATUS = 'ha'; // the stAtus of a system log entry
@@ -308,7 +308,7 @@ class url_var
     const string STEP_CANCELED = '-2'; // the process has been canceled
     const string STEP_FAILED = '-3'; // the process cannot be processed
 
-    // TODO move to workflows
+    // TODO Prio 2 move to workflows
     // user reaction actions: the first parameter of frontend::url_user_reaction and the
     // cumulative segment of a unit workflow snapshot filename (see docs/llm/testing.md)
     const string ACTION_SHOW = 'show'; // display the requested object e.g. the test word in its default view
@@ -721,7 +721,7 @@ class url_var
      */
 
     // TODO Prio 1 complete all url vars mappings for $pod_url
-    // TODO use the mapping table also to create the human url
+    // TODO Prio 2 use the mapping table also to create the human url
     // mapping of a human-readable url to the standard url
     // first entry is the from array key,
     // second is the target array key

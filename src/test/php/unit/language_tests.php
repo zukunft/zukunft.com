@@ -99,6 +99,67 @@ class language_tests
         $t->assert_null($test_name, $lan->wiki_code);
         $msg->reset();
 
+        $t->subheader($ts . 'api json array');
+
+        // the wikimedia code of a language is part of the api message
+        $test_name = 'wikimedia code';
+        $lan = $t_lan->language_translate();
+        $vars = $lan->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::WIKI_CODE] ?? null, languages::TRANSLATE_WIKI);
+        $msg->reset();
+
+        // negative: a language without a wikimedia code sends an empty code
+        $test_name = 'no wikimedia code';
+        $lan = $t_lan->language();
+        $vars = $lan->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::WIKI_CODE] ?? null);
+        $msg->reset();
+
+        $t->subheader($ts . 'export');
+
+        // the wikimedia code of a language is exported
+        $test_name = 'export wikimedia code';
+        $lan = $t_lan->language_translate();
+        $exp = $lan->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::WIKI_CODE], languages::TRANSLATE_WIKI);
+        $msg->reset();
+
+        // negative: a language without a wikimedia code exports no code
+        $test_name = 'export no wikimedia code';
+        $lan = $t_lan->language();
+        $exp = $lan->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::WIKI_CODE, $exp);
+        $msg->reset();
+
+        // the local name of a language is exported
+        $test_name = 'export local name';
+        $lan = $t_lan->language_translate();
+        $exp = $lan->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::LOCAL_NAME], languages::TRANSLATE_LOCAL_NAME);
+        $msg->reset();
+
+        // negative: a language without a local name exports no local name
+        $test_name = 'export no local name';
+        $lan = $t_lan->language_translate();
+        $lan->local_name = null;
+        $exp = $lan->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::LOCAL_NAME, $exp);
+        $msg->reset();
+
+        // the usage of a language is exported
+        $test_name = 'export usage';
+        $lan = $t_lan->language_translate();
+        $exp = $lan->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::USAGE], languages::TRANSLATE_USAGE);
+        $msg->reset();
+
+        // negative: a language without a usage exports no usage
+        $test_name = 'export no usage';
+        $lan = $t_lan->language();
+        $exp = $lan->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::USAGE, $exp);
+        $msg->reset();
+
 
         // start the test section (ts)
         $ts = 'unit language form ';
@@ -125,6 +186,40 @@ class language_tests
         $lan_for = new language_form('');
         $lan_for->api_mapper([json_fields::LANGUAGE => ''], $msg);
         $t->assert_null($test_name, $lan_for->lng_id);
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // the language of a language form is sent by its id
+        $test_name = 'language id';
+        $lan_for = $t_typ->language_form();
+        $lan_for->lng_id = languages::DEFAULT_ID;
+        $vars = $lan_for->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LANGUAGE] ?? null, languages::DEFAULT_ID);
+        $msg->reset();
+
+        // negative: a language form without a language sends an empty language id
+        $test_name = 'no language id';
+        $lan_for = $t_typ->language_form();
+        $vars = $lan_for->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LANGUAGE] ?? null);
+        $msg->reset();
+
+        $t->subheader($ts . 'export');
+
+        // the language of a language form is exported by its id
+        $test_name = 'export language id';
+        $lan_for = $t_typ->language_form();
+        $lan_for->lng_id = languages::DEFAULT_ID;
+        $exp = $lan_for->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::LANGUAGE], languages::DEFAULT_ID);
+        $msg->reset();
+
+        // negative: a language form without a language exports no language
+        $test_name = 'export no language id';
+        $lan_for = $t_typ->language_form();
+        $exp = $lan_for->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::LANGUAGE, $exp);
         $msg->reset();
 
 

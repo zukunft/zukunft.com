@@ -138,6 +138,20 @@ class verb_list_ui_tests
         $test_name = '... and has no code id conflict for the same verb';
         $t->assert_false($test_name, $lst_dbl->code_id_conflict(verbs::IS, verbs::IS_ID));
 
+        $t->subheader($ts . 'debug id');
+
+        // the type list writes an empty debug text for every list
+        // TODO Prio 2 check the names once web type_list::dsp_id lists them
+        //      (see docs/llm/pending_prio_2.md, "dsp id", web type_list)
+        $test_name = 'is empty for a list with one verb';
+        $dsp = $lst_one->dsp_id();
+        $t->assert_empty($test_name, $dsp);
+
+        // negative: the debug text lists no verb of the list
+        $test_name = 'shows no verb name';
+        $dsp = $lst_one->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, verbs::IS_NAME);
+
         // test the verb list display functions
         $form = 'verb_list_ui_test';
         $test_page = $html->text_h2('verb list display test');

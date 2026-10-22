@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
@@ -135,6 +136,7 @@ class view_ui_tests
         $msk_map = new view();
         $msk_map->api_mapper(json_decode($t_msk->view_filled_included()->api_json(), true), $msg);
         $t->assert($test_name, $msk_map->get_style_id(), view_styles::COL_SM_4_ID);
+        $msg->reset();
 
         // the id is mandatory, because without it a save would add a new view
         $test_name = 'a view json without an id is refused';
@@ -146,25 +148,33 @@ class view_ui_tests
         $mrl = new view_relation_ui();
         $mrl->api_mapper(json_decode($t_msk->view_relation_filled_included()->api_json(), true), $msg);
         $t->assert($test_name, $mrl->parent()?->id(), views::WORD_EDIT_ID);
+        $msg->reset();
 
         // a view relation without a parent view in the api message has no parent view
         $test_name = 'a view relation json without a parent leaves the parent view empty';
         $mrl = new view_relation_ui();
         $mrl->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
-        $t->assert_true($test_name, $mrl->parent() === null);
+        $t->assert_null($test_name, $mrl->parent()?->dsp_id());
         $msg->reset();
 
         // a page request carries the linked view with its name
         $test_name = 'the api mapper sets the view of a term view';
+        $trm_msk_json = $t_msk->term_view_filled_included()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]);
         $trm_msk = new term_view_ui();
-        $trm_msk->api_mapper(json_decode($t_msk->term_view_filled_included()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]), true), $msg);
+        $trm_msk->api_mapper(json_decode($trm_msk_json, true), $msg);
         $t->assert($test_name, $trm_msk->view()?->name(), views::MATH_CONST_NAME);
+        $msg->reset();
+
+        // the page request carries the linked term too
+        $test_name = 'the api mapper sets the term of a term view';
+        $trm_linked = $trm_msk->term_linked();
+        $t->assert($test_name, $trm_linked?->id(), $t_msk->term_view()->term()->id());
 
         // a term view without a term in the api message has no term
         $test_name = 'a term view json without a term leaves the term empty';
         $trm_msk = new term_view_ui();
         $trm_msk->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
-        $t->assert_true($test_name, $trm_msk->term_linked() === null);
+        $t->assert_null($test_name, $trm_msk->term_linked()?->dsp_id());
         $msg->reset();
 
         $t->subheader($ts . 'show fields');
@@ -225,11 +235,21 @@ class view_ui_tests
         $sorted = $cmp_lst->sorted_by_position();
         $t->assert($test_name, $sorted[0]->position <= $sorted[count($sorted) - 1]->position, true);
 
+        // negative: a component list without components has nothing to sort
+        $test_name = 'an empty component list is sorted to an empty list';
+        $cmp_lst_empty = new component_list();
+        $sorted_empty = $cmp_lst_empty->sorted_by_position();
+        $t->assert($test_name, $sorted_empty, []);
+
         // a view that is not in the cache or has no components gets the no-components message
         $test_name = 'a view without components shows the no-components message';
         $msk_empty = new view($t_msk->view_add()->api_json());
         $t->assert($test_name, $list->view_components($msk_empty, $msg),
             $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS));
+        // negative: a view without components in its api message has an empty component list
+        $test_name = 'a view without components has an empty component list';
+        $cmp_lst_empty = $msk_empty->get_component_list();
+        $t->assert($test_name, $cmp_lst_empty->count(), 0);
 
         // beside the position, the name and the position type each row offers the icons to change
         // or to remove the component link; the add row has no link yet, so it shows no icons
@@ -521,6 +541,11 @@ class view_ui_tests
             [api_types::TEST_MODE, api_types::INCL_RELATED]));
         $t->assert($test_name, $sfm->show_link_type($mrl_del_ui),
             $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, view_relation_types::REMOVE_NAME));
+
+        $test_name = 'an empty relation type sets no relation type';
+        $mrl_emp = $t_msk->view_relation_filled_included();
+        $mrl_emp->set_relation_type('');
+        $t->assert($test_name, $mrl_emp->predicate_id(), 0);
 
         $test_name = 'the view relation page shows the start position';
         $t->assert($test_name, $sfm->show_start_pos($mrl),

@@ -39,6 +39,9 @@ include_once paths::MODEL_GROUP . 'group_list.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -49,7 +52,9 @@ class group_list_tests
 
         // init
         $sc = new sql_creator();
+        $t_grp = new test_groups($t);
         $t_wrd = new test_words($t);
+        $msg = new user_message();
         $t->name = 'group_list->';
         $t->resource_path = 'db/group/';
 
@@ -65,6 +70,36 @@ class group_list_tests
         $t->assert_sql_by_ids($test_name, $sc, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($sc, $grp_lst, array(3,2,4));
         $t->assert_sql_by_phrase($sc, $grp_lst, $t_wrd->word()->phrase());
+
+        $t->subheader($ts . 'add');
+
+        // a group with an id is added to an empty list
+        $test_name = 'add a group';
+        $grp_lst = new group_list($t->usr1);
+        $added = $grp_lst->add($t_grp->group(), false, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: a word is not a group, so it is refused
+        $test_name = 'add refuses a word';
+        $grp_lst = new group_list($t->usr1);
+        $added = $grp_lst->add($t_wrd->word(), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id shows the names of the groups
+        $test_name = 'the debug id shows the group names';
+        $grp_lst = $t_grp->group_list();
+        $dsp = $grp_lst->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, groups::TN_READ);
+
+        // negative: an empty list has no debug text
+        $test_name = 'the debug id of an empty list';
+        $grp_lst = $t_grp->list_empty();
+        $dsp = $grp_lst->dsp_id();
+        $t->assert_empty($test_name, $dsp);
 
     }
 

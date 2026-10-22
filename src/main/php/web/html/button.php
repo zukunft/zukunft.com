@@ -243,7 +243,7 @@ class button
         //zu_debug("button->yes_no ".$this->title.".", 10);
 
         if ($ui_msg_id != '') {
-            // TODO review
+            // TODO Prio 2 review
             //$ui_msg = new message();
             //$this->title = $ui_msg->txt($ui_msg_id);
             $this->title = '';

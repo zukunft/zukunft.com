@@ -247,7 +247,7 @@ class value_time extends value_base
 
         return $vars;
     }
-    // TODO test set_by_api_json
+    // TODO Prio 2 test set_by_api_json
 
 
     /*

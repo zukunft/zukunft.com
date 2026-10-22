@@ -182,8 +182,8 @@ class component_write_tests
         $t->assert('component->load type_id for "' . components::TEST_RENAMED_NAME . '"', $result, $target);
 
         // check if the component parameter adding have been logged
-        // TODO for testing always use the latest table name
-        // TODO create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
+        // TODO Prio 2 for testing always use the latest table name
+        // TODO Prio 2 create an additional test based on change_tables and change_fields to receive data for an deprecated table or field
         $log_ui = $t->log_last_ui_by_field($cmp_reloaded, fields::FLD_DESCRIPTION, $cmp_reloaded->id(), $msg);
         $usr_marker = $log_ui->is_user_sandbox_change() ? msg_id::LOG_USER->value . ' ' : '';
         $result = $log_ui->dsp(true);

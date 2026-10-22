@@ -178,27 +178,32 @@
     }
 
     /**
-     * @param num an integer
-     * @returns the integer with the thousand separator of the user like the php number_format
+     * @param num a number
+     * @param decimals the number of decimals
+     * @returns the number with the decimals, the decimal point and the thousand separator of the user like the php number_format
      */
-    function thousands(num) {
-        const digits = String(Math.abs(num)).replace(/\B(?=(\d{3})+(?!\d))/g, data.format.thousand_sep);
-        return (num < 0 ? '-' : '') + digits;
+    function fixed(num, decimals) {
+        const rounded = round(num, decimals);
+        const parts = Math.abs(rounded).toFixed(decimals).split('.');
+        const digits = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, data.format.thousand_sep);
+        const sign = rounded < 0 ? '-' : '';
+        return sign + digits + (decimals > 0 ? data.format.dec_point + parts[1] : '');
     }
 
     /**
      * @param num the number of a cell
-     * @param cell the format of the cell
-     * @returns the text of the cell like sandbox_value::val_formatted and ui_list::calculator_number_text
+     * @param cell the format of the cell: the factor and the decimals of the unit that the cell shows (see web\helper\number_format)
+     * @returns the text of the cell like ui_list::calculator_cell_text
      */
     function text(num, cell) {
         let result;
         if (cell.percent !== null) {
-            result = String(round(num * 100, data.format.percent_decimals)) + cell.percent;
-        } else if (Math.abs(num) >= 1000) {
-            result = thousands(round(num, 0));
+            result = String(round(num * 100, data.format.percent_decimals));
+            if (cell.percent !== '') {
+                result += ' ' + cell.percent;
+            }
         } else {
-            result = String(round(num, 2));
+            result = fixed(num * cell.factor, cell.decimals);
         }
         if (cell.unit !== '') {
             result += ' ' + cell.unit;

@@ -10,7 +10,7 @@
 
     add the instance id, user id and time stamp to the export file
 
-    TODO
+    TODO Prio 2
     - offer to export the change log
     - export only the user view
     - ... or include the standard value
@@ -98,7 +98,7 @@ class export
                 $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con, $msg, 'get pod name');
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
-                $export_obj->selection = $phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
+                $export_obj->selection = $phr_lst->names(); // must be set by before the call TODO Prio 2 not nice better use the $phr_lst->object_exp_lst()
 
                 // 1.5. expand the selection to all triples (and their phrases) connected to the
                 //      selected phrases, e.g. from "nuclear" and "power" to the triple "nuclear power"
@@ -212,7 +212,7 @@ class export
                 $export_obj->formulas = $exp_formulas;
 
                 // 9. add all views and view components to the export object
-                // TODO create an array add function that does not add duplicates
+                // TODO Prio 2 create an array add function that does not add duplicates
                 log_debug('export->get views');
                 //$wrd_lst = $phr_lst_used->wrd_lst_all();
                 $view_lst = $wrd_lst->view_lst($msg);

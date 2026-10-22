@@ -112,7 +112,8 @@ class reference_list_ui_tests
         // a list entry without an id is reported, so the caller can show the problem
         $test_name = 'a reference list entry without an id is reported';
         $ref_lst = new ref_list();
-        $t->assert_false($test_name, $ref_lst->api_mapper([[json_fields::EXTERNAL_KEY => refs::PI_KEY]])->is_ok());
+        $api_json = [[json_fields::EXTERNAL_KEY => refs::PI_KEY]];
+        $t->assert_false($test_name, $ref_lst->api_mapper($api_json)->is_ok());
     }
 
 }

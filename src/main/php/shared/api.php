@@ -155,6 +155,7 @@ class api
     const string JSON_LIST_VERBS = 'verbs';
     const string JSON_LIST_SYSTEM_VIEWS = 'system_views';
     const string JSON_LIST_SYSTEM_PHRASES = 'system_phrases';
+    const string JSON_LIST_SYSTEM_FORMULAS = 'system_formulas';
     const string JSON_LIST_PHRASE_IDS = 'phrase_ids';
 
 
@@ -162,7 +163,7 @@ class api
      * fields
      */
 
-    // TODO review
+    // TODO Prio 2 review
     // to include the objects that should be displayed in one api message
     const string API_WORD = 'word';
     const string API_TRIPLE = 'triple';
@@ -183,8 +184,8 @@ class api
     {
         $msg_ok = true;
         $body = array();
-        // TODO check transfer time
-        // TODO check if version matches
+        // TODO Prio 2 check transfer time
+        // TODO Prio 1 check if version matches
         if ($msg_ok) {
             if (array_key_exists($body_key, $api_msg)) {
                 $body = $api_msg[$body_key];

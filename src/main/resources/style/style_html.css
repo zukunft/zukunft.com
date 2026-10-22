@@ -457,7 +457,7 @@ a:hover {
     color: #274b8f; /* a dark blue variant of the #385eb7 link blue to show that a non-ip user is logged in */
 }
 
-/* TODO review and combine with the other width
+/* TODO Prio 3 review and combine with the other width
    the change preview table is centered and its width follows the config 'side width' breakpoints
    (layout > side width: min 1000, max 2800 px): full width on normal/small screens,
    10/12 on wide screens and 8/12 on very wide screens */

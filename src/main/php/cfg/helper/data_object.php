@@ -91,6 +91,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -151,6 +152,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class data_object
@@ -209,6 +211,9 @@ class data_object
     // all preloaded phrases that the frontend needs on every page (see load_system_phrases)
     public phrase_list $sys_phr;
 
+    // the formulas linked to the measure units of the system phrases (see load_system_formulas)
+    public formula_list $sys_frm;
+
 
     /*
      * construct and map
@@ -248,6 +253,7 @@ class data_object
         $this->typ_lst = new type_lists();
         $this->sys_msk = new view_sys_list($usr);
         $this->sys_phr = new phrase_list($usr);
+        $this->sys_frm = new formula_list($usr);
     }
 
 
@@ -788,6 +794,27 @@ class data_object
             }
         }
         return !$this->sys_phr->is_empty();
+    }
+
+    /**
+     * load the formulas linked to the measure units of the system phrases e.g. "scale tonne to kg",
+     * so that the frontend can show 123'456 kg as 123.5 t (see web\helper\number_format);
+     * called after load_system_phrases, because the units are taken from the system phrases
+     *
+     * @param user_message $msg to report a problem of the load
+     * @return bool true if at least one formula has been preloaded
+     */
+    function load_system_formulas(user_message $msg): bool
+    {
+        $this->sys_frm = new formula_list($this->get_user());
+        // only the own type of a phrase is used, because the from and to of a symbol triple can be an
+        // id-only triple, which measure_lst would try to reload without a verb, one db read each
+        $unit_lst = $this->sys_phr->get_by_type(phrase_types::MEASURE);
+        $result = false;
+        if (!$unit_lst->is_empty()) {
+            $result = $this->sys_frm->load_by_phr_lst($unit_lst, $msg);
+        }
+        return $result;
     }
 
 
@@ -1761,7 +1788,7 @@ class data_object
 
     /**
      * add or update all users to the database
-     * TODO add the requesting user to prevent access right gains
+     * TODO Prio 1 add the requesting user to prevent access right gains
      * @param import $imp the import object that includes the start time of the import
      * @param user_message $msg ok or the error message for the user with the suggested solution
      */
@@ -2074,7 +2101,7 @@ class data_object
     }
 
     /**
-     * TODO add the missing lists and vars of the dto object
+     * TODO Prio 2 add the missing lists and vars of the dto object
      * reports the difference to the given data object as human-readable messages
      * @param data_object $dto which might have some differences
      * @return user_message all differences as a human-readable text

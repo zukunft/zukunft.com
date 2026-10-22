@@ -48,10 +48,12 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_link_write_tests
@@ -63,6 +65,7 @@ class formula_link_write_tests
         // init
         $t_db = new test_db_load($t);
         $t_frm = new test_formulas($t);
+        $t_usr = new test_users($t);
         $msg = new user_message($t->usr1);
 
         // start the test section (ts)
@@ -82,6 +85,12 @@ class formula_link_write_tests
         $test_name = 'link phrase "' . $wrd->name() . '" to a formula "' . $frm->name() . '" using the formula function link_phr';
         $result = $frm->link_phrase_and_save($wrd->phrase(), $msg);
         $t->assert_true($test_name, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+
+        $test_name = 'an ip user cannot link a phrase to a formula';
+        $ip_msg = new user_message($t_usr->user_ip_loaded());
+        $frm_scale = $t_frm->formula();
+        $frm_scale->link_phrase_and_save($wrd->phrase(), $ip_msg);
+        $t->assert_msg_false($test_name, $ip_msg, msg_id::CHANGE_BLOCKED_FOR_IP_USER->text());
 
         // ... check the correct logging
         $phr = new phrase($t->usr1);
@@ -133,13 +142,13 @@ class formula_link_write_tests
         // ... check if the link is shown correctly also for the second user
         // ... the second user has excluded the word at this point,
         //     so even if the word is linked the word link is nevertheless false
-        // TODO add a check that the word is linked if the second user activates the word
+        // TODO Prio 2 add a check that the word is linked if the second user activates the word
         $frm = new formula($t->usr2);
         $frm->load_by_name(formula_names::SYSTEM_TEST_ADD, $msg);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
-        // TODO fix it
+        // TODO Prio 1 fix it
         //$t->assert('formula->assign_phr_ulst contains "' . $phr->name() . '" for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value update has been triggered
@@ -159,7 +168,7 @@ class formula_link_write_tests
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last($msg, true);
-        // TODO fix it
+        // TODO Prio 1 fix it
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . word_names::TEST_ADD . '';
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' ';
         $t->assert('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $result, $target);
@@ -277,7 +286,7 @@ class formula_link_write_tests
         $phr_lst->load_names_by_ids($phr_ids, $msg);
         $result = $phr_lst->dsp_id();
         $target = words::YEAR_CAP;
-        // TODO fix it
+        // TODO Prio 1 fix it
         // $t->dsp_contains(', formula_link_list->load phrase linked to ' . $frm->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
 
     }

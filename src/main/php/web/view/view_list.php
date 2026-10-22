@@ -102,7 +102,7 @@ class view_list extends ListBase
 
     function get_by_code_id(string $code_id): view|sandbox|IdObject|TextIdObject|CombineObject|null
     {
-        // TODO use a hash list
+        // TODO Prio 2 use a hash list
         $result = new view();
         foreach ($this->lst() as $dsp) {
             if ($dsp->code_id == $code_id) {
@@ -223,7 +223,7 @@ class view_list extends ListBase
 
     /**
      * get the default view
-     * TODO if a phrase can be ranked use the ranking view
+     * TODO Prio 2 if a phrase can be ranked use the ranking view
      * @param sandbox $sbx the object to which the default view should be found
      * @return int the view id if no view has been selected until now
      */

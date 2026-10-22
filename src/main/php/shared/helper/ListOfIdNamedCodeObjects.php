@@ -164,7 +164,7 @@ class ListOfIdNamedCodeObjects extends ListOfIdNamedObjects
 
     /**
      * select an item by code id
-     * TODO add unit tests
+     * TODO Prio 2 add unit tests
      *
      * @param string $code_id the unique code id of the object that should be returned
      * @return object|null the found code id object or null if no id is found
@@ -306,7 +306,7 @@ class ListOfIdNamedCodeObjects extends ListOfIdNamedObjects
     }
 
     /**
-     * TODO add a unit test
+     * TODO Prio 2 add a unit test
      * @returns array with all unique ids of this list with the keys within this list
      */
     protected function code_id_pos_lst(): array

@@ -81,7 +81,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 class html_base
 {
 
-    // TODO move all html const used in zukunft.com to html_names
+    // TODO Prio 2 move all html const used in zukunft.com to html_names
 
     // fixed elements
     const string TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
@@ -125,7 +125,7 @@ class html_base
     const string BS_BTN_IMPORT = 'btn-outline-secondary';
     const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
-    // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
+    // TODO Prio 3 move the user interface setting to the user page, so that he can define which UI he wants to use
     const int UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
     const string METHOD_POST = 'post';
@@ -222,6 +222,15 @@ class html_base
     // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
+    // the start of a page shown while the page is created (see loading_start)
+    const string CLASS_LOADING = 'page-loading';
+    const string LOADING_ANIMATION = 'page-loading-show';
+    const string CLASS_LOADING_SECONDS = 'page-loading-seconds';
+    const string LOADING_COUNTER = 'page-loading-sec';
+    const string LOADING_COUNT_ANIMATION = 'page-loading-count';
+    // the seconds up to which the loading text counts; not the php max_execution_time, because php
+    // counts only its own cpu time, so a request that waits for the database runs much longer
+    const int LOADING_COUNT_LIMIT = 3600;
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     // green, so that the user sees at once that e.g. a save has worked
     const string CLASS_NOTIFICATION_SUCCESS = 'alert alert-success ' . api::USER_MSG_CLASS;
@@ -493,7 +502,7 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        // TODO switch the view mask to a suggested related view
+        // TODO Prio 3 switch the view mask to a suggested related view
         $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $edt_id, $edt_name) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
@@ -638,11 +647,85 @@ class html_base
      */
     function footer(bool $no_about = false): string
     {
-        global $mtr;
         // invisible placeholder so that a text replace can add a user message
         // to a html page loaded from the page cache (see api::USER_MSG_PLACEHOLDER)
         $result = api::USER_MSG_PLACEHOLDER . "\n";
-        $result .= '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
+        $result .= $this->site_footer($no_about);
+        $result .= '</' . self::BODY . '>' . "\n";
+        $result .= '</' . self::HTML . '>' . "\n";
+
+        return $result;
+    }
+
+    /**
+     * the start of a page that is sent before the page is created, because the creation can take
+     * longer than the expected response time; it becomes visible only after the delay, so for a
+     * fast page the browser keeps showing the previous page; it has no title and its header shows
+     * only the logo without the search form, so the page that follows names the document and no
+     * element id is used twice
+     *
+     * @param float $delay the seconds after which the loading text is shown
+     * @param int $since the seconds since the request start shown when the text appears; counted up each second
+     * @return string the html code from the doctype to the loading text and the footer
+     */
+    function loading_start(float $delay, int $since): string
+    {
+        global $mtr;
+        $show = self::LOADING_ANIMATION . ' 0s ' . $delay . 's forwards';
+        $css = '.' . self::CLASS_LOADING . ' {visibility: hidden; animation: ' . $show . ';}';
+        $css .= ' @keyframes ' . self::LOADING_ANIMATION . ' {to {visibility: visible;}}';
+        $loading = $mtr->txt(msg_id::PAGE_LOADING);
+        if ($since < self::LOADING_COUNT_LIMIT) {
+            $css .= $this->loading_count_css($delay, $since, self::LOADING_COUNT_LIMIT);
+            $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SINCE);
+            $loading .= ' ' . $this->span('', self::CLASS_LOADING_SECONDS);
+            $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS);
+        }
+        $head = $this->charset() . $this->head_style() . $this->style($css);
+        $txt = $this->nav($this->logo(), self::CLASS_NAV);
+        $txt .= $this->main($this->p($loading));
+        $txt .= $this->site_footer();
+        $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head);
+        return $result . '<' . self::BODY . '>' . $this->div($txt, self::CLASS_LOADING);
+    }
+
+    /**
+     * the css that counts the seconds of the loading text without javascript: a registered integer
+     * property is animated in one step per second and shown as a css counter
+     *
+     * @param float $delay the seconds after which the count starts
+     * @param int $since the first number shown
+     * @param int $limit the last number shown
+     * @return string the css rules of the count
+     */
+    private function loading_count_css(float $delay, int $since, int $limit): string
+    {
+        $var = '--' . self::LOADING_COUNTER;
+        $steps = $limit - $since;
+        $count = self::LOADING_COUNT_ANIMATION . ' ' . $steps . 's steps(' . $steps . ') ' . $delay . 's forwards';
+        $css = ' @property ' . $var . " {syntax: '<integer>'; inherits: false; initial-value: " . $since . ';}';
+        $css .= ' .' . self::CLASS_LOADING_SECONDS . ' {animation: ' . $count . ';';
+        $css .= ' counter-reset: ' . self::LOADING_COUNTER . ' var(' . $var . ');}';
+        $css .= ' .' . self::CLASS_LOADING_SECONDS . '::after {content: counter(' . self::LOADING_COUNTER . ');}';
+        return $css . ' @keyframes ' . self::LOADING_COUNT_ANIMATION . ' {to {' . $var . ': ' . $limit . ';}}';
+    }
+
+    /**
+     * @return string the html code that hides the start of the page sent by loading_start
+     */
+    function loading_end(): string
+    {
+        return $this->style('.' . self::CLASS_LOADING . ' {display: none;}');
+    }
+
+    /**
+     * @param bool $no_about true to omit the about link e.g. when already on the about page
+     * @return string the html footer element of a page
+     */
+    private function site_footer(bool $no_about = false): string
+    {
+        global $mtr;
+        $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
@@ -660,8 +743,6 @@ class html_base
         $result .= '</' . self::P . '> ' . "\n";
 
         $result .= '</' . self::FOOTER . '>' . "\n";
-        $result .= '</' . self::BODY . '>' . "\n";
-        $result .= '</' . self::HTML . '>' . "\n";
 
         return $result;
     }
@@ -2704,7 +2785,7 @@ class html_base
 
     /**
      * translate and create the html code for a label
-     * TODO use if if possible
+     * TODO Prio 3 use if if possible
      * @param msg_id $msg_id message id that should be translated to the text to be shown as a label
      * @param string $for the url id of the html form field
      * @return string the html code to show the label
@@ -3153,9 +3234,9 @@ class html_base
 
     /**
      *display a progress bar
-     * TODO create a auto refresh page for async processes and the HTML front end without JavaScript
-     * TODO create a db table, where the async process can drop the status
-     * TODO add the refresh frequency setting to the general and user settings
+     * TODO Prio 2 create a auto refresh page for async processes and the HTML front end without JavaScript
+     * TODO Prio 2 create a db table, where the async process can drop the status
+     * TODO Prio 3 add the refresh frequency setting to the general and user settings
      */
     function ui_progress($id, $value, $max, $text): string
     {
@@ -3170,7 +3251,7 @@ class html_base
 
     /**
      * wrap the html tag around html code
-     * TODO: to be adjusted depending on the display language
+     * TODO Prio 2 to be adjusted depending on the display language
      * @param string $txt the html code
      * @param string $lan the language code of the text
      * @return string the wrapped code
@@ -3188,6 +3269,16 @@ class html_base
     private function head(string $txt): string
     {
         return '<' . self::HEAD . '>' . $txt . '</' . self::HEAD . '>';
+    }
+
+    /**
+     * wrap the style tag around css code
+     * @param string $css the css rules
+     * @return string the style element
+     */
+    private function style(string $css): string
+    {
+        return '<' . self::STYLE . '>' . $css . '</' . self::STYLE . '>';
     }
 
     /**

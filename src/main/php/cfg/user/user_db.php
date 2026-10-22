@@ -5,10 +5,10 @@
     model/user/user.php - a person who uses zukunft.com
     -------------------
 
-    TODO make sure that no right gain is possible
-    TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
-    TODO log the access attempts to objects with a restricted access
-    TODO build a process so that a user can request access to an object with restricted access
+    TODO Prio 1 make sure that no right gain is possible
+    TODO Prio 2 move the non functional user parameters to hidden words to be able to reuse the standard view functionality
+    TODO Prio 2 log the access attempts to objects with a restricted access
+    TODO Prio 2 build a process so that a user can request access to an object with restricted access
 
     if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
     if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
@@ -94,7 +94,7 @@ class user_db extends db_object_seq_id
      * db const
      */
 
-    // TODO move to user_db class like word_db
+    // TODO Prio 2 move to user_db class like word_db
     // database fields and comments only used for user
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
@@ -159,7 +159,7 @@ class user_db extends db_object_seq_id
     const string FLD_DB_NOW = 'NOW() AS db_now';
 
     // all database field names excluding the id
-    // TODO review and sync with FLD_LST_ALL and move non critical fields to a value_list
+    // TODO Prio 2 review and sync with FLD_LST_ALL and move non critical fields to a value_list
     const array FLD_NAMES = array(
         self::FLD_NAME,
         self::FLD_IP_ADDR,
@@ -188,7 +188,7 @@ class user_db extends db_object_seq_id
         self::FLD_SOURCE,
         self::FLD_USES_SANDBOX,
 
-        // TODO to be added
+        // TODO Prio 2 to be added
         //self::FLD_EMAIL_STATUS,
     );
     // the database field names excluding the id and the fields for logon

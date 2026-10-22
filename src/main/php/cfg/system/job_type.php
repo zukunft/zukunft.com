@@ -5,7 +5,7 @@
     model/system/job_type.php - a predefined batch task that can be triggered by a user action or a scheduler
     -------------------------
 
-    TODO allow to create workflows
+    TODO Prio 2 allow to create workflows
          e.g. to request at other users to remove the user overwrites of a word
          that is requested to be deleted, which the users can confirm or reject
          the process is completed if all user have confirmed the word removal
@@ -53,6 +53,6 @@ class job_type extends type_object
 
     // comments used for the database creation
     const string TBL_COMMENT = 'for predefined batch jobs that can be triggered by a user action or scheduled e.g. data synchronisation';
-    const string FLD_ID = 'job_type_id'; // repeated to enable use in other const (TODO try to use something like "final" in java)
+    const string FLD_ID = 'job_type_id'; // repeated to enable use in other const (TODO Prio 3 try to use something like "final" in java)
 
 }

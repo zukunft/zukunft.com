@@ -147,7 +147,7 @@ class term_view extends sandbox_link
         fields::FLD_PROTECT
     );
     // all database field names, excluding the id, used to identify if there are some user-specific changes
-    // TODO check if this is used in all relevant objects
+    // TODO Prio 2 check if this is used in all relevant objects
     const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
         self::FLD_ORDER,
@@ -219,7 +219,7 @@ class term_view extends sandbox_link
 
     /**
      * map the database fields to the object fields
-     * TODO get the related view and term object from the cache if possible
+     * TODO Prio 2 get the related view and term object from the cache if possible
      *
      * @param array|null $db_row with the data directly from the database
      * @param bool $load_std true if only the standard user sandbox object is loaded
@@ -694,7 +694,7 @@ class term_view extends sandbox_link
     }
 
     /**
-     * TODO check if the overwrites are correct for all objects
+     * TODO Prio 2 check if the overwrites are correct for all objects
      *      and if a to_id() function is needed
      * @return string|null with the term name
      */
@@ -722,7 +722,7 @@ class term_view extends sandbox_link
 
     /**
      * @return array with the all field names that the user can change for this object
-     * TODO move to the highest object level
+     * TODO Prio 2 move to the highest object level
      */
     protected function all_sandbox_fields(): array
     {
@@ -792,8 +792,8 @@ class term_view extends sandbox_link
     }
 
     /**
-     * TODO move inner part to view as "load_remaining"
-     * TODO add a bool var "is_loaded" to db_object
+     * TODO Prio 2 move inner part to view as "load_remaining"
+     * TODO Prio 2 add a bool var "is_loaded" to db_object
      *      to indicate is the object has just been created and might be incomplete
      *      or if loaded from the db and is expected to have all vars in line with the db
      * @param user_message $msg to collect the message due to missing links

@@ -8,9 +8,9 @@
     The list of the parameters used for one query or function on order of usage
     unit by field name AND value
 
-    TODO add function that returns either the name e.g._word_id or the placeholder e.g. $3 / ?
+    TODO Prio 2 add function that returns either the name e.g._word_id or the placeholder e.g. $3 / ?
 
-    TODO add a sql_where_list, which contains
+    TODO Prio 2 add a sql_where_list, which contains
         the name or letter of the table
         name of the db field
         assign type ( = / in / AND / OR / ... )

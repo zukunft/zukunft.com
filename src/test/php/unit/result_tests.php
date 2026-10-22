@@ -156,7 +156,7 @@ class result_tests
 
         $t->subheader($ts . 'result sql write');
         // result changes are not logged because potentially they can be reproduced
-        // TODO check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
+        // TODO Prio 2 check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
         $res_prime = $t_res->result_prime();
         $res_prime_max = $t_res->result_prime_max();
         $res_main = $t_res->result_main();
@@ -177,7 +177,7 @@ class result_tests
         $res = $t_res->result_incomplete();
         $t->assert_sql_insert_fail($sc, $res);
         // TODO Prio 0 activate db write
-        // TODO add tests for text, time and geo values
+        // TODO Prio 2 add tests for text, time and geo values
         $res = $t_res->result();
         $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
         $db_res_prime_max = $res_prime_max->cloned(results::TV_FLOAT);
@@ -231,6 +231,35 @@ class result_tests
         $test_name = 'the sandbox value part of the mapper clears the share type of a former mapping';
         $res->api_mapper($t_res->result_simple_1()->api_json_array([], $msg), $msg);
         $t->assert_null($test_name, $res->share_id());
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+        // the phrases of the source group are sent as the context if the phrases are requested
+        $test_name = 'the context phrases of a result';
+        $res = $t_res->result_main_max();
+        $vars = $res->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::CONTEXT][0][json_fields::NAME] ?? '', word_names::CONST_NAME);
+        $msg->reset();
+
+        // negative: without the phrase flag the result has no context
+        $test_name = 'no context phrases without the phrase flag';
+        $res = $t_res->result_main_max();
+        $vars = $res->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::CONTEXT, $vars);
+        $msg->reset();
+
+        // the formula that has created the result is sent by its id
+        $test_name = 'the formula id of a result';
+        $res = $t_res->result_main_max();
+        $vars = $res->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::FORMULA_ID] ?? 0, formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+
+        // negative: a result without a formula sends no formula id
+        $test_name = 'no formula id of a result without formula';
+        $res = $t_res->result_simple();
+        $vars = $res->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::FORMULA_ID, $vars);
         $msg->reset();
 
         // the result table must always fit the source group, because the source_group_id column
@@ -292,6 +321,13 @@ class result_tests
         $sc->reset(sql_db::POSTGRES);
         $res_most_grp = $t_res->result();
         $t->assert($test_name, $qp_grp->sql, $res_most_grp->load_sql_by_grp($sc, $res_most_grp->grp())->sql);
+        // negative: the fallback load by group in the big table is not the one of the standard table
+        $test_name = '... but the fallback load by group in the big table reads another table';
+        $sc->reset(sql_db::POSTGRES);
+        $res_prime = $t_res->result_prime();
+        $grp_moved = $res_grp->grp();
+        $qp_grp_big = $res_prime->load_sql_by_grp_moved($sc, $grp_moved, sql_type::BIG);
+        $t->assert_not($test_name, $qp_grp_big->sql, $qp_grp->sql);
         // negative: without the fallback the load reads the table of the own phrases
         $test_name = 'the normal load by id does not read the standard table';
         $sc->reset(sql_db::POSTGRES);
@@ -363,6 +399,11 @@ class result_tests
         [, $any_after] = $res_src->used_phrase_selection($msg);
         $t->assert_true($test_name, $any_after);
         $msg->reset();
+        // negative: an empty source group replaces the phrases of the old one
+        $test_name = '... and the phrases of the old source group are dropped';
+        $res_drop = $t_res->result_main_max();
+        $res_drop->set_src_grp(new group($t->usr1));
+        $t->assert($test_name, $res_drop->source_group()->phrase_list()->names(), []);
 
         // negative: a result saved without the source group (e.g. imported without a context) falls
         // back to its own phrases, where any match makes a number related, so that the page of
@@ -374,6 +415,10 @@ class result_tests
         $test_name = '... where a number with any of them is related';
         $t->assert_true($test_name, $any_fallback);
         $msg->reset();
+        // negative: the source group of such a result names no phrase
+        $test_name = '... because its source group is empty';
+        $src_names = $res_no_src->source_group()->phrase_list()->names();
+        $t->assert($test_name, $src_names, []);
 
         // a calculation that has used nothing sends the empty lists, because only an empty list
         // tells the page that nothing has been used, whereas a missing list says that the result
@@ -385,10 +430,10 @@ class result_tests
         $res_none->results_used = new result_list($t->usr1);
         $none_json = json_decode($res_none->api_json(
             [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_USED], $msg), true);
-        $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $none_json));
+        $t->assert_key_exists($test_name, json_fields::VALUES, $none_json);
         $test_name = '... and of used formulas and results';
-        $t->assert_true($test_name, array_key_exists(json_fields::FORMULAS, $none_json)
-            and array_key_exists(json_fields::RESULTS, $none_json));
+        $t->assert_key_exists($test_name, json_fields::FORMULAS, $none_json);
+        $t->assert_key_exists($test_name . ' results', json_fields::RESULTS, $none_json);
         $msg->reset();
 
         // negative: a result that has not been asked for the used numbers sends no list at all,
@@ -396,7 +441,7 @@ class result_tests
         $test_name = 'a result without the used lists sends no used values';
         $plain_json = json_decode($t_res->result_main_max()->api_json(
             [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_USED], $msg), true);
-        $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $plain_json));
+        $t->assert_key_not_exists($test_name, json_fields::VALUES, $plain_json);
         $msg->reset();
 
         // a row of a result table carries either the text group key or the phrase id columns
@@ -453,6 +498,20 @@ class result_tests
         $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($t->usr1), $json_file);
 
+        // the formula that has created the result is exported by its name
+        $test_name = 'export the formula name';
+        $res = $t_res->result_main_max();
+        $exp = $res->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::FORMULA_NAME], formula_names::SCALE_TO_SEC);
+        $msg->reset();
+
+        // negative: a result without a formula exports an empty formula name
+        $test_name = 'export no formula name without formula';
+        $res = $t_res->result_simple();
+        $exp = $res->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::FORMULA_NAME], '');
+        $msg->reset();
+
 
         // the result page shows the formula with the numbers that the calculation has used, so the
         // right side of the formula is split at each element group symbol into texts and figures
@@ -478,7 +537,7 @@ class result_tests
         $test_name = 'the result page api message contains the formula with the numbers';
         $res = $t_res->result_page_related();
         $api_json = $res->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
-        $t->assert_true($test_name, array_key_exists(json_fields::EXPRESSION_PARTS, $api_json));
+        $t->assert_key_exists($test_name, json_fields::EXPRESSION_PARTS, $api_json);
         $test_name = '... with the figure as a value';
         $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][0][json_fields::OBJECT_CLASS],
             json_fields::CLASS_VALUE);
@@ -486,15 +545,17 @@ class result_tests
         $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][1][json_fields::TEXT],
             formula_names::SCALE_TO_SEC_EXP_REF_R_REST);
         $test_name = '... and the formula with the terms to link its latex';
-        $t->assert_true($test_name, array_key_exists(json_fields::LATEX_TERMS, $api_json[json_fields::FORMULA]));
+        $frm_json = $api_json[json_fields::FORMULA];
+        $t->assert_key_exists($test_name, json_fields::LATEX_TERMS, $frm_json);
         // negative: a formula without known terms sends no term list
         $test_name = 'a result formula without latex terms sends no term list';
         $api_json = $t_res->result_main_max()->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::LATEX_TERMS, $api_json[json_fields::FORMULA]));
+        $frm_json = $api_json[json_fields::FORMULA];
+        $t->assert_key_not_exists($test_name, json_fields::LATEX_TERMS, $frm_json);
         // negative: only the page asks for the formula with the numbers
         $test_name = 'a result api message without the page flag has no formula with numbers';
         $api_json = $res->api_json_array([api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::EXPRESSION_PARTS, $api_json));
+        $t->assert_key_not_exists($test_name, json_fields::EXPRESSION_PARTS, $api_json);
         // negative: a number that the requester may not read is shown by its phrase names (idor)
         $test_name = 'a figure that the user may not read is sent as the group name';
         $res->expression_parts = $res->expression_parts(formula_names::SCALE_TO_SEC_EXP_REF_R,
@@ -512,11 +573,13 @@ class result_tests
         $test_name = 'a page with the used lists flag gets the values used';
         $res = $t_res->result_page_related();
         $typ_lst = [api_types::INCL_RELATED, api_types::INCL_USED, api_types::TEST_MODE];
-        $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $res->api_json_array($typ_lst, $msg)));
+        $vars = $res->api_json_array($typ_lst, $msg);
+        $t->assert_key_exists($test_name, json_fields::VALUES, $vars);
         // negative: the default page shows no used list, so it does not wait for them
         $test_name = 'a page without the used lists flag gets no values used';
         $typ_lst = [api_types::INCL_RELATED, api_types::TEST_MODE];
-        $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $res->api_json_array($typ_lst, $msg)));
+        $vars = $res->api_json_array($typ_lst, $msg);
+        $t->assert_key_not_exists($test_name, json_fields::VALUES, $vars);
         $msg->reset();
 
 

@@ -11,13 +11,13 @@
     the index group is designed to be useful for structured values e.g.
     the index big group is designed to be useful for highly structured values e.g. the ISIN as a 48-bit value with up to 65k fields (because each field can be a triple a multi dimensional tables can be store with index big)
 
-    TODO add index and index big tables
-    TODO remove the fields word_ids, triple_ids and id_order
-    TODO rename to group (and element_group to combination)
-    TODO move name and description to user_groups
-    TODO use 32 bit key for the phrase_id (and prepare a 64 bit key in needed)
-    TODO use 512 bit key for phrase groups for up to 16 phrases
-    TODO prepare a 4096 key for long phrase groups up to 64 phrases
+    TODO Prio 2 add index and index big tables
+    TODO Prio 2 remove the fields word_ids, triple_ids and id_order
+    TODO Prio 2 rename to group (and element_group to combination)
+    TODO Prio 2 move name and description to user_groups
+    TODO Prio 3 use 32 bit key for the phrase_id (and prepare a 64 bit key in needed)
+    TODO Prio 3 use 512 bit key for phrase groups for up to 16 phrases
+    TODO Prio 3 prepare a 4096 key for long phrase groups up to 64 phrases
 
     a kind of phrase list, but separated into two different lists
 
@@ -741,7 +741,7 @@ class group extends sandbox_multi
      */
 
     /**
-     * TODO move (and other functions) to db_object and rename the existing db_object to db_id_object
+     * TODO Prio 2 move (and other functions) to db_object and rename the existing db_object to db_id_object
      * just set the class name for the user sandbox function
      * load a word object by database id
      * @param int|string $id the id of the group
@@ -816,7 +816,7 @@ class group extends sandbox_multi
 
     /**
      * load the word and triple objects based on the ids load from the database if needed
-     * TODO review
+     * TODO Prio 2 review
      */
     private function load_lst(user_message $msg, phr_ids|null $ids = null): void
     {
@@ -911,8 +911,8 @@ class group extends sandbox_multi
     /**
      * create an SQL statement to retrieve a phrase groups by name from the database
      * only selects groups where the default name has been overwritten by the user
-     * TODO check that the user does not use a group name that matches the generated name of another group
-     * TODO include the prime and big tables into the search
+     * TODO Prio 1 check that the user does not use a group name that matches the generated name of another group
+     * TODO Prio 2 include the prime and big tables into the search
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $name the name of the phrase group
@@ -1225,7 +1225,7 @@ class group extends sandbox_multi
             $db_rec = new group($this->get_user());
             $db_rec->load_by_id($this->id(), $msg);
             if ($db_rec->name() != $this->name() or $db_rec->description != $this->description) {
-                // TODO call insert or update sql statement
+                // TODO Prio 2 call insert or update sql statement
                 //$result .= $this->save_id();
                 log_warning('save of group description not yet implemented');
             }
@@ -1249,7 +1249,7 @@ class group extends sandbox_multi
             $result .= $test_load->load_by_obj_vars($msg);
             log_debug('loaded ' . $this->dsp_id());
         } else {
-            // TODO use a unit test seq builder
+            // TODO Prio 2 use a unit test seq builder
             $test_load->set_id(1);
         }
 
@@ -1804,7 +1804,7 @@ class group extends sandbox_multi
     }
 
     /**
-     * TODO add a unit test
+     * TODO Prio 2 add a unit test
      * @return phrase of the most relevant time
      */
     function time(user_message $msg): phrase
@@ -1812,7 +1812,7 @@ class group extends sandbox_multi
         $phr = new phrase($this->get_user());
         $phr_lst = $this->phrase_list()->time_word_list($msg);
         if (!$phr_lst->is_empty()) {
-            // TODO use a new "most relevant" function
+            // TODO Prio 2 use a new "most relevant" function
             $phr = $phr_lst->lst()[0];
         } else {
             $phr = $phr_lst->assume_time($msg);
@@ -1821,7 +1821,7 @@ class group extends sandbox_multi
     }
 
     /**
-     * TODO add a db read test
+     * TODO Prio 2 add a db read test
      * @param $time_wrd_id
      * @return result the best matching result of the group
      */
@@ -1859,7 +1859,7 @@ class group extends sandbox_multi
 
     /**
      * create the generic group name
-     * TODO check if saving the generic name in the database is needed for faster search (most likely not)
+     * TODO Prio 3 check if saving the generic name in the database is needed for faster search (most likely not)
      *
      * @returns string the generic name if it has been saved to the database
      */
@@ -1874,7 +1874,7 @@ class group extends sandbox_multi
             $this->load_lst($msg);
         }
 
-        // TODO take the order into account
+        // TODO Prio 2 take the order into account
         $group_name = $this->phrase_list()->dsp_name();
 
         // update the name if possible and needed
@@ -1933,7 +1933,7 @@ class group extends sandbox_multi
 
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * set the phrase group object vars based on an api json array
      * similar to import_obj but using the database id instead of the names and code id
      * @param array $api_json the api array
@@ -1982,7 +1982,7 @@ class group extends sandbox_multi
      * delete a phrase group that is supposed not to be used anymore
      * the removal if the linked values must be done before calling this function
      * the word and triple links related to this phrase group are also removed
-     * TODO maybe move this to del_exe
+     * TODO Prio 3 maybe move this to del_exe
      *
      * @param user_message $msg
      * @param bool $must_exist if false no error message is created if the group has already been deleted

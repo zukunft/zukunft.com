@@ -106,7 +106,7 @@ class phrase_type extends type_object
 
     function __construct(string $code_id, int $id = 0, string $name = '')
     {
-        parent::__construct($code_id, $name, $id);
+        parent::__construct($code_id, $name, null, $id);
         $this->code_id = $code_id;
         $this->id = $id;
         $this->name = $name;

@@ -39,7 +39,6 @@ use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
-use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\value\table_chart;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
@@ -106,19 +105,19 @@ class value_list_ui_tests
         $phr_lst_context_ui = new phrase_list_ui($phr_lst_context->api_json());
 
         // create the value list and the table to display the results
-        // TODO move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
-        // TODO format numbers
-        // TODO use one phrase for city of Zurich
-        // TODO optional "(in mio)" formatting for scale words
-        // TODO move time words to column headline
-        // TODO use language based plural for inhabitant
-        // TODO if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
-        // TODO if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
-        // TODO add buttons to or empty cells for easy adding new related values
+        // TODO Prio 3 move the measure phrase behind the number e.g. speed of light 299'792'458 m/s instead of speed of light m/s 299'792'458
+        // TODO Prio 2 format numbers
+        // TODO Prio 3 use one phrase for city of Zurich
+        // TODO Prio 3 optional "(in mio)" formatting for scale words
+        // TODO Prio 3 move time words to column headline
+        // TODO Prio 3 use language based plural for inhabitant
+        // TODO Prio 3 if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
+        // TODO Prio 3 if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
+        // TODO Prio 3 add buttons to or empty cells for easy adding new related values
         $lst_zh_ui = $t_val->value_list_zh_ui();
         $lst_math_ui = $t_val->value_list_math_ui();
 
-        // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
+        // TODO Prio 2 add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
         $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($msg_ui, $phr_lst_context_ui) . '<br>';
@@ -154,7 +153,8 @@ class value_list_ui_tests
         $t->assert($test_name, $val_lst_ui->count(), $t_val->value_list_math()->count());
         $test_name = 'the api mapper reports a value without id';
         $val_lst_ui = new value_list_ui();
-        $t->assert_false($test_name, $val_lst_ui->api_mapper([[json_fields::NUMBER => values::PI]])->is_ok());
+        $api_json = [[json_fields::NUMBER => values::PI]];
+        $t->assert_false($test_name, $val_lst_ui->api_mapper($api_json)->is_ok());
 
         $t->subheader($ts . 'user config');
 
@@ -205,17 +205,39 @@ class value_list_ui_tests
 
         // a value is added once, also if a filter finds it twice e.g. by the page phrase and by a child
         $t->subheader($ts . 'add');
+
+        // a value that is not yet in the list is added
+        $test_name = 'a new value is added';
         $add_lst = new value_list_ui();
-        $val = $impact_lst->lst()[0];
-        $add_lst->add($val, $msg_ui);
+        $val = $t_val->value_ch_ui();
+        $added = $add_lst->add($val, $msg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
+
+        // negative: a value that is already in the list is not added again
         $test_name = 'a value that is already in the list is not added again';
-        $t->assert_false($test_name, $add_lst->add($val, $msg_ui));
+        $add_lst = new value_list_ui();
+        $add_lst->add($val, $msg_ui);
+        $added = $add_lst->add($val, $msg_ui);
+        $t->assert_false($test_name, $added);
+        $msg_ui->reset();
+
+        // the refused double leaves the list with one entry
         $test_name = '... so the list keeps one entry';
-        $t->assert($test_name, $add_lst->count(), 1);
-        // negative: a value without an id is not yet in the database, so it is never a double
+        $add_lst = new value_list_ui();
+        $add_lst->add($val, $msg_ui);
+        $add_lst->add($val, $msg_ui);
+        $cnt = $add_lst->count();
+        $t->assert($test_name, $cnt, 1);
+        $msg_ui->reset();
+
+        // a value without an id is not yet in the database, so it is never a double
         $test_name = 'a second value without an id is added';
-        $add_lst->add(new value_ui(), $msg_ui);
-        $t->assert_true($test_name, $add_lst->add(new value_ui(), $msg_ui));
+        $add_lst = new value_list_ui();
+        $add_lst->add($t_val->value_add_ui(), $msg_ui);
+        $added = $add_lst->add($t_val->value_add_ui(), $msg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
 
         $t->subheader($ts . 'most relevant');
         // a limit above the fixture size, so that these blocks test the grouping and the order;
@@ -1193,11 +1215,11 @@ class value_list_ui_tests
         $test_name = 'an empty value list has no table model for the charts';
         $t->assert_null($test_name, new value_list_ui()->chart_model($msg_ui));
 
-        // TODO add a test that if a view contains beside the "2023 (year)"
+        // TODO Prio 2 add a test that if a view contains beside the "2023 (year)"
         //      no other phrase that contains the word "2023"
         //      the "(year)" is not shown to the user, because the user will assume i
 
-        // TODO add s test that if a view contains the word "city"
+        // TODO Prio 2 add s test that if a view contains the word "city"
         //      or many cities and never a "canton"
         //      and the phrase "Zurich (city)" is shown
         //      only "Zurich" without "(city)" is used

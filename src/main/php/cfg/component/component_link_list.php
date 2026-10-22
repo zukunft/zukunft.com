@@ -134,7 +134,7 @@ class component_link_list extends sandbox_link_list
 
     /**
      * interface function to load all component links and the components of the given view
-     * TODO (speed) combine the sql statements
+     * TODO Prio 2 (speed) combine the sql statements
      *
      * @param view $msk if set to get all links for this view
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
@@ -477,7 +477,7 @@ class component_link_list extends sandbox_link_list
     /**
      * simple but slow function to add of update all list items in the database
      * TODO Prio 0 apply the user_message reset to all lists
-     * TODO faster mass db update
+     * TODO Prio 2 faster mass db update
      *
      * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine
      * @return bool true if everything has been fine

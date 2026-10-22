@@ -56,6 +56,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
+include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -154,7 +155,7 @@ class test_triples extends test_objects
         // the same weight as units.json sets for the db row of this triple, because the term
         // list unit test and the term list api read test share the fixture term_list.json,
         // so the in-memory twin and the db row must create the same api json
-        $trp->weight = 0.5;
+        $trp->weight = test_const::TRIPLE_WEIGHT;
         return $trp;
     }
 
@@ -179,7 +180,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * TODO PRIO 1
+     * TODO Prio 1
      * @return triple as it is returned at the moment via phrase list api, means without links
      */
     function triple_api(): triple
@@ -478,7 +479,7 @@ class test_triples extends test_objects
     }
 
     /**
-     * TODO PRIO 1
+     * TODO Prio 1
      * @return triple pi as it is returned at the moment via phrase list api, means without links
      */
     function triple_pi_api(): triple
@@ -3083,6 +3084,24 @@ class test_triples extends test_objects
         $trp->set_verb($t_vrb->verb_can_be());
         $trp->set_to($this->time_points()->phrase());
         return $trp;
+    }
+
+    /**
+     * @return triple "mathematical constant" with the default phrase type e.g. to test that the export leaves the type out
+     */
+    function triple_default_type(): triple
+    {
+        $trp = $this->triple();
+        $trp->set_type(phrase_types::NORMAL, new user_message($this->env->usr1));
+        return $trp;
+    }
+
+    /**
+     * @return triple_list without any triple e.g. to test that the export is empty
+     */
+    function list_empty(): triple_list
+    {
+        return new triple_list($this->env->usr1);
     }
 
     /**

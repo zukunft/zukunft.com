@@ -77,7 +77,7 @@ class job_status extends type_object
 
     // comments used for the database creation
     const string TBL_COMMENT = 'predefined status of batch task as a database table e.g. so that admin can change the description';
-    const string FLD_ID = 'job_status_id'; // repeated to enable use in other const (TODO try to use something like "final" in java)
+    const string FLD_ID = 'job_status_id'; // repeated to enable use in other const (TODO Prio 3 try to use something like "final" in java)
     const string FLD_NAME = 'status_name';
 
     const string FLD_PRIO_COM = 'execution priority offset based on the job status';

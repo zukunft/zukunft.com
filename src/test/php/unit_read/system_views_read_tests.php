@@ -86,7 +86,7 @@ class system_views_read_tests
 
     /**
      * render every system view with the data read from the database and compare it with the snapshot
-     * TODO move all other HTML frontend tests here
+     * TODO Prio 2 move all other HTML frontend tests here
      *
      * @param test_cleanup $t the test environment with the test users
      * @return void
@@ -395,7 +395,7 @@ class system_views_read_tests
         $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
         $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
-        // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
+        // TODO Prio 2 add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
     }
 
     /**

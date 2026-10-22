@@ -62,7 +62,7 @@
         "class": "word"
     },
     {
-        "id": 108,
+        "id": 109,
         "name": "Bern (city)",
         "class": "triple"
     },
@@ -88,12 +88,12 @@
         "class": "word"
     },
     {
-        "id": 625,
+        "id": 626,
         "name": "cash flow",
         "class": "triple"
     },
     {
-        "id": 628,
+        "id": 629,
         "name": "cash flow statement",
         "description": "financial statement that shows how changes in balance sheet accounts and income affect cash and cash equivalents, and breaks the analysis down to operating, investing and financing activities. see Wikipedia: Cash flow statement (Q460184)",
         "class": "triple"
@@ -106,7 +106,7 @@
         "class": "word"
     },
     {
-        "id": 459,
+        "id": 460,
         "name": "CHF is symbol for Swiss franc",
         "class": "triple"
     },
@@ -172,12 +172,12 @@
         "class": "word"
     },
     {
-        "id": 139,
+        "id": 140,
         "name": "education can be global problem",
         "class": "triple"
     },
     {
-        "id": 58,
+        "id": 59,
         "name": "𝑒 (unit symbol)",
         "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
         "type_id": 28,
@@ -204,7 +204,7 @@
         "class": "word"
     },
     {
-        "id": 109,
+        "id": 110,
         "name": "Geneva (city)",
         "class": "triple"
     },
@@ -216,24 +216,24 @@
         "class": "word"
     },
     {
-        "id": 104,
+        "id": 105,
         "name": "global problem",
         "description": "here more a personal issue (wikipedia does not really match)",
         "class": "triple"
     },
     {
-        "id": 126,
+        "id": 127,
         "name": "global warming",
         "description": "the long-term rise in Earth's average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.",
         "class": "triple"
     },
     {
-        "id": 197,
+        "id": 198,
         "name": "global warming (global problem)",
         "class": "triple"
     },
     {
-        "id": 127,
+        "id": 128,
         "name": "global warming potential",
         "description": "see Wikipedia: Global warming potential",
         "class": "triple"
@@ -266,7 +266,7 @@
         "class": "word"
     },
     {
-        "id": 194,
+        "id": 195,
         "name": "happy time points",
         "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\".",
         "class": "triple"
@@ -279,7 +279,7 @@
         "class": "word"
     },
     {
-        "id": 136,
+        "id": 137,
         "name": "health can be a global problem",
         "description": "poor health of many people is one of the problems ranked on the start page",
         "class": "triple"
@@ -299,7 +299,7 @@
         "class": "word"
     },
     {
-        "id": 626,
+        "id": 627,
         "name": "income taxes",
         "class": "triple"
     },
@@ -406,7 +406,7 @@
         "class": "word"
     },
     {
-        "id": 56,
+        "id": 57,
         "name": "Pi (math)",
         "description": "ratio of the circumference of a circle to its diameter",
         "type_id": 28,
@@ -433,7 +433,7 @@
         "class": "word"
     },
     {
-        "id": 135,
+        "id": 136,
         "name": "populism (global problem)",
         "class": "triple"
     },
@@ -452,7 +452,7 @@
         "class": "word"
     },
     {
-        "id": 138,
+        "id": 139,
         "name": "poverty (global problem)",
         "class": "triple"
     },
@@ -504,7 +504,7 @@
         "class": "word"
     },
     {
-        "id": 130,
+        "id": 131,
         "name": "time points",
         "description": "a value multiplied by the time e.g. used for the UN Disability-adjusted life year (DALYs)",
         "class": "triple"
@@ -586,21 +586,21 @@
         "class": "word"
     },
     {
-        "id": 107,
+        "id": 108,
         "protection": 3,
         "name": "Zurich (canton)",
         "description": "The canton of Zurich is an administrative unit (canton) of Switzerland, situated in the northeastern part of the country.",
         "class": "triple"
     },
     {
-        "id": 106,
+        "id": 107,
         "protection": 3,
         "name": "Zurich (city)",
         "description": "Zurich is the largest city in Switzerland and the capital of the canton of Zurich. It is in north-central Switzerland, at the northwestern tip of Lake Zurich.",
         "class": "triple"
     },
     {
-        "id": 301,
+        "id": 302,
         "name": "Zurich Insurance",
         "description": "Zurich Insurance Group, a global multi-line insurer headquartered in Zurich",
         "class": "triple"

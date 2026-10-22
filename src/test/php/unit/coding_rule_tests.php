@@ -141,9 +141,30 @@ class coding_rule_tests
         $t->assert($test_name, (string)($name_lst['reset'] ?? 0), '1');
         // negative: a declaration and a quoted name are no calls
         $test_name = 'a function declaration is not counted as a call';
-        $t->assert_false($test_name, array_key_exists('load', $cnt_lst));
+        $t->assert_key_not_exists($test_name, 'load', $cnt_lst);
         $test_name = '... and a quoted name is not counted as a call either';
-        $t->assert_false($test_name, array_key_exists('reset', $cnt_lst));
+        $t->assert_key_not_exists($test_name, 'reset', $cnt_lst);
+
+        // the report lists the functions without any test before the functions with too few tests
+        $test_name = 'a function without a test call is listed as without any test';
+        $cls_lst = ['word' => ['load', 'save']];
+        $cnt_lst = ['load' => 1];
+        $low_cnt = 0;
+        $no_test_md = $cov->section_md('main backend', $cls_lst, $cnt_lst, [], [], true, $low_cnt);
+        $t->assert_text_contains($test_name, $no_test_md, 'save - 0 unit test calls');
+        $test_name = '... in a section named by the number of these functions';
+        $t->assert_text_contains($test_name, $no_test_md, '1 functions of main backend have no test at all');
+        // negative: a function with one test call is not listed as without any test
+        $test_name = 'a function with a test call is not listed as without any test';
+        $t->assert_text_not_contains($test_name, $no_test_md, 'load');
+        $test_name = 'a function with too few test calls is listed as incomplete';
+        $incomplete_md = $cov->section_md('main backend', $cls_lst, $cnt_lst, [], [], false, $low_cnt);
+        $t->assert_text_contains($test_name, $incomplete_md, 'load - 1 unit test calls');
+        $test_name = '... in a section named by the number of incomplete functions';
+        $t->assert_text_contains($test_name, $incomplete_md, '1 functions of main backend have incomplete tests');
+        // negative: a function without a test call is not listed as incomplete
+        $test_name = 'a function without a test call is not listed as incomplete';
+        $t->assert_text_not_contains($test_name, $incomplete_md, 'save');
 
         $this->php_class_name_check($t);
 
@@ -2053,7 +2074,7 @@ class coding_rule_tests
 
     /**
      * check if all used classes are also included once within the same file
-     * TODO add a child parent list and make sure that a parent never includes a child object
+     * TODO Prio 2 add a child parent list and make sure that a parent never includes a child object
      *      but the child always includes the parent
      *      and make sure that all not needed deactivated includes are removed
      *
@@ -2242,10 +2263,10 @@ class coding_rule_tests
      * check if the functions in the classes are grouped by sections
      * if the sections of all classes are in the same order
      * and if the sections are described in the class header
-     * TODO check that all sections have a description in the header
-     * TODO check that the sections match the order in the header
-     * TODO check that the header section list match the general order
-     * TODO check that no function is in an unexpected section
+     * TODO Prio 2 check that all sections have a description in the header
+     * TODO Prio 2 check that the sections match the order in the header
+     * TODO Prio 2 check that the header section list match the general order
+     * TODO Prio 2 check that no function is in an unexpected section
      *
      * @param string $base_path path name of the folder with the php scripts that should be checked
      * @param string $obj_grp_txt nae of the object group e.g. "main backend" or "html frontend"

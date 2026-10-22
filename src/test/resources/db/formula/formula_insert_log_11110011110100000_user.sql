@@ -51,7 +51,7 @@ SELECT formula_insert_log_11110011110100000_user
         636::smallint,
         1::smallint,
         632::smallint,
-        '{t64}={w100}*60'::text,
+        '{t65}={w100}*60'::text,
         633::smallint,
         '"second (time)" = "minute" * 60'::text,
         634::smallint,

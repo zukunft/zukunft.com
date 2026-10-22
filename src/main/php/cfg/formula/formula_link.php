@@ -265,7 +265,7 @@ class formula_link extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            // TODO load by if from cache?
+            // TODO Prio 2 load by if from cache?
             if (key_exists(formula_fields::FLD_ID, $db_row)) {
                 $this->formula()->id = $db_row[formula_fields::FLD_ID];
                 // set_obj_from_id (not set_id) so a negative phrase id is mapped to a triple
@@ -508,8 +508,8 @@ class formula_link extends sandbox_link
      * set and get
      */
 
-    // TODO add function "formula()" that returns the "From_OBject (fob)"
-    // TODO check that all link objects have a self speaking interface function for the "From_OBject (fob)" and "To_OBject (tob)"
+    // TODO Prio 2 add function "formula()" that returns the "From_OBject (fob)"
+    // TODO Prio 2 check that all link objects have a self speaking interface function for the "From_OBject (fob)" and "To_OBject (tob)"
 
     /**
      * set the main vars with one function

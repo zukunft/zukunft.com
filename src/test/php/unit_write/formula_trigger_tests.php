@@ -128,11 +128,11 @@ class formula_trigger_tests
         } else {
             $result = '';
         }
-        // TODO check why the data in PROD is strange
+        // TODO Prio 2 check why the data in PROD is strange
         if ($result == values::SALES_INCREASE_2017_FORM) {
             $target = values::SALES_INCREASE_2017_FORM;
         } else {
-            $target = "0.75%";
+            $target = '0.75' . result::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         }
         // TODO Prio 0 activate
         //$t->assert('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $result, $target, $t::TIMEOUT_LIMIT_LONG);

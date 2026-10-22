@@ -77,6 +77,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
@@ -114,6 +115,17 @@ class import_tests
         $test_name = 'YAML import sql function count';
         // building the sql insert calls from the imported data takes longer than a normal unit function
         $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc, $msg)->count(), 1, $t::TIMEOUT_LIMIT_FILE);
+
+        $test_name = 'YAML that starts with a tooltip imports no word';
+        $yml_arr = [words::TOOLTIP_COMMENT => word_names::MATH_COM];
+        $dto = $imp->get_data_object_yaml($yml_arr, $msg);
+        $t->assert($test_name, $dto->word_list()->count(), 0);
+        $msg->reset();
+
+        $test_name = 'an empty word list creates no sql function';
+        $sql_lst = $dto->word_list()->sql_insert_call_with_par($sc, $msg);
+        $t->assert($test_name, $sql_lst->count(), 0);
+        $msg->reset();
 
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);
@@ -677,6 +689,10 @@ class import_tests
         $keywords = [...array_keys(triples::CALCULATOR_LISTS), ...array_keys(triples::CALCULATOR_PROPERTIES)];
         $repeated = array_values(array_intersect($keywords, array_column($json_array[json_fields::TRIPLES], json_fields::NAME)));
         $t->assert($test_name, $repeated, $keywords);
+        // negative: a triple that the file does not define is not in the import
+        $test_name = '... but has no triple of another use case';
+        $trp_none = $dto->get_triple_by_name(triple_names::PI, $msg);
+        $t->assert_null($test_name, $trp_none?->name());
 
         // the CBAM calculator use case chains the embedded emission, the free allocation
         // adjustment, the carbon price deduction, the obligation and the cost of an import, so
@@ -948,7 +964,7 @@ class import_tests
         $json_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO);
         $context_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
-        // TODO review the parameter context
+        // TODO Prio 2 review the parameter context
         $msg->usr = $t->usr1;
         $conv_str = $conv_wiki->convert_wiki_json($in_table, $msg, test_base::TEST_TIMESTAMP, $context_str,
             ['country', 'ISO 3166'], [], 1,
@@ -1226,6 +1242,41 @@ class import_tests
         $t->assert($test_name, $dto_merged->formula_list()->count(), $dto_expected->formula_list()->count());
         $test_name = '... and the merged calc validations match the merged file';
         $t->assert($test_name, $dto_merged->result_check_list()->count(), $dto_expected->result_check_list()->count());
+
+
+        $t->subheader($ts . 'export');
+        $t_trm = new test_terms($t);
+
+        // data_object: a word with only a name goes into the compact word list
+        $test_name = 'export a name only word in the word list';
+        $dto = $t_trm->dto_minute_and_second();
+        $exp = $dto->export_json($msg);
+        $wrd_names = $exp[json_fields::WORD_LIST];
+        $t->assert($test_name, $wrd_names[0], word_names::MINUTE);
+        $msg->reset();
+
+        // negative: a data object without words has no word list
+        $test_name = 'export no word list without words';
+        $dto = $t_trm->dto_scale_none();
+        $exp = $dto->export_json($msg);
+        $t->assert_key_not_exists($test_name, json_fields::WORD_LIST, $exp);
+        $msg->reset();
+
+        // data_object: a word with a config gets a full word entry
+        $test_name = 'export a word with config as full entry';
+        $dto = $t_trm->dto_scale_mio();
+        $exp = $dto->export_json($msg);
+        $wrd_entries = $exp[json_fields::WORDS];
+        $first = $wrd_entries[0];
+        $t->assert($test_name, $first[json_fields::NAME], word_names::ONE);
+        $msg->reset();
+
+        // negative: name only words get no full word entry
+        $test_name = 'export no full entry for name only words';
+        $dto = $t_trm->dto_minute_and_second();
+        $exp = $dto->export_json($msg);
+        $t->assert_key_not_exists($test_name, json_fields::WORDS, $exp);
+        $msg->reset();
 
     }
 

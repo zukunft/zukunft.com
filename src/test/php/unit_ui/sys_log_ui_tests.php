@@ -450,6 +450,25 @@ class sys_log_ui_tests
         $sys_tim = new system_time_ui();
         $t->assert_false($test_name, $sys_tim->api_mapper($api_json, $msg_ui));
         $msg_ui->reset();
+
+        // the system log list and the request time list add every entry, so they have no negative case
+        $t->subheader($ts . 'add');
+
+        // a system log entry is added to the list
+        $test_name = 'a system log entry is added';
+        $slg_lst = new sys_log_list_ui();
+        $slg_ui = $t_sys->sys_log_ui($msg_ui);
+        $added = $slg_lst->add($slg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
+
+        // a request time is added to the list
+        $test_name = 'a request time is added';
+        $tim_lst = new system_time_list_ui();
+        $sys_tim = $t_sys->system_time_ui($msg_ui);
+        $added = $tim_lst->add($sys_tim);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
     }
 
 }

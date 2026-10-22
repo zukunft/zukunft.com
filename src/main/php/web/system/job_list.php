@@ -69,7 +69,7 @@ class job_list extends ListBase
 
     /**
      * set the vars of these list display objects bases on the api json array
-     * TODO can be moved to list_dsp as soon as all list api message include the header
+     * TODO Prio 2 can be moved to list_dsp as soon as all list api message include the header
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
@@ -228,7 +228,7 @@ class job_list extends ListBase
     {
         $html = new html_base();
         $cols = '';
-        // TODO check if and why the next line makes sense
+        // TODO Prio 2 check if and why the next line makes sense
         // $cols = $html->td('');
         foreach ($this->lst() as $job) {
             $lnk = $job->display_linked($url_arr);

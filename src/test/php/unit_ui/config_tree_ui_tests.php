@@ -156,6 +156,10 @@ class config_tree_ui_tests
         $test_name = 'the columns are select, user and system';
         $col_names = array_map(fn(array $col) => array_map(fn($cfn) => $cfn->name, $col), $cft->columns($cft->nodes));
         $t->assert($test_name, $col_names, [[test_config_trees::SELECT], [test_config_trees::USER], [test_config_trees::SYSTEM]]);
+        // negative: an unknown scope has no top level node, so every column is empty
+        $test_name = 'an unknown scope leaves all columns empty';
+        $cols_unknown = $cft->columns($cft->branch(test_config_trees::RETRY));
+        $t->assert($test_name, $cols_unknown, [[], [], []]);
         $test_name = '... and the page shows the three columns';
         $col_class = html_base::CLASS_HTML . '="' . styles::CONFIG_COLUMN . '"';
         $t->assert($test_name, substr_count($cft->html('', ''), $col_class), 3);

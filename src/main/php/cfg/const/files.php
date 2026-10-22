@@ -80,7 +80,7 @@ class files
     const string DB_SETUP_PG_PATH = self::DB_SETUP_PATH . 'postgres' . DIRECTORY_SEPARATOR;
     const string DB_SETUP_MYSQL_PATH = self::DB_SETUP_PATH . 'mysql' . DIRECTORY_SEPARATOR;
 
-    // TODO make the csv file list based on the class name
+    // TODO Prio 2 make the csv file list based on the class name
     const string CODE_LINK_PATH = self::RESOURCE_PATH . 'db_code_links' . DIRECTORY_SEPARATOR;
 
 

@@ -119,7 +119,7 @@ class group_write_tests
 
 
         // test if the time word is correctly excluded
-        // TODO move to phrase list tests
+        // TODO Prio 2 move to phrase list tests
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_by_names(array(word_names::ZH, word_names::CANTON, word_names::INHABITANTS, word_names::MIO, word_names::YEAR_2020), $msg);
         $phr_grp = new group($t->usr1);

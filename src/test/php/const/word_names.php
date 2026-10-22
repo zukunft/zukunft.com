@@ -250,7 +250,7 @@ class word_names
     const string GE = 'Geneva';
     const int GE_ID = 196;
     const int INHABITANT_ID = 201;
-    // TODO add test to search for words in all language forms e.g. plural
+    // TODO Prio 2 add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
     // the word of solution_prio.json whose values of populism have a variance range
     const string FIFTEEN_YEAR = '15-year';
@@ -343,6 +343,9 @@ class word_names
     const string KG = 'kg';
     const int KG_ID = 28;
     const string KG_COM = 'The kilogram is the SI base unit of mass.';
+    // the larger mass unit that a column of large kg numbers is shown in (see number_format)
+    const string TONNE = 'tonne';
+    const int TONNE_ID = 125;
     const string HYPERFINE = 'hyperfine';
     const int HYPERFINE_ID = 127;
     const string TRANSITION = 'transition';

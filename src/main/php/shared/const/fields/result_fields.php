@@ -44,9 +44,9 @@ class result_fields
     // *_SQL_TYP is the sql data type used for the field
     const string FLD_ID = 'group_id';
     const string FLD_SOURCE = 'source_';
-    // TODO replace with result_fields::FLD_SOURCE . group_fields::FLD_ID
+    // TODO Prio 2 replace with result_fields::FLD_SOURCE . group_fields::FLD_ID
     const string FLD_SOURCE_GRP = 'source_group_id';
-    // TODO replace with group_fields::FLD_ID
+    // TODO Prio 2 replace with group_fields::FLD_ID
     const string FLD_GRP = 'group_id';
     const string FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
     const string FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';

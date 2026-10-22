@@ -120,10 +120,13 @@ include_once html_paths::VIEW . 'view_relation.php';
 include_once html_paths::VIEW . 'term_view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'users.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'languages.php';
 include_once html_paths::SHARED_ENUM . 'language_codes.php';
@@ -212,10 +215,13 @@ use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 
 // shared group (alphabetic by FQN)
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -242,6 +248,8 @@ class frontend
      */
 
     const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
+    // the http header that asks a proxy to pass the start of a page at once (see send_loading_start)
+    const string HEADER_NO_BUFFERING = 'X-Accel-Buffering: no';
 
     // the lists whose api answers are cached (see db_cache_page::api_key)
     const array API_CACHED_LISTS = [phrase_list_ui::class, value_list_ui::class, result_list_ui::class];
@@ -606,7 +614,7 @@ class frontend
 
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
-                // TODO cache the system config json and detect
+                // TODO Prio 2 cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
                 $cfg->load_cfg($sys_msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
@@ -646,7 +654,7 @@ class frontend
         $result = '';
 
         // resume session (based on cookies)
-        // TODO review session start and end calls
+        // TODO Prio 2 review session start and end calls
         // enforce tls (prod/test) then harden the session cookie before the session starts
         server_guard::enforce_tls();
         server_guard::harden_session();
@@ -751,7 +759,7 @@ class frontend
 
     /**
      * load the frontend cache from a dummy api message instead of an api call
-     * TODO move to test to avoid usage of backend in frontend
+     * TODO Prio 2 move to test to avoid usage of backend in frontend
      *
      * @param user_message_ui $msg_ui the backend user used for the import e.g. of the system views
      * @param string $api_msg the cache api message that the caller reads from the test resource,
@@ -987,8 +995,8 @@ class frontend
 
     /**
      * create the HTML code based on the given url
-     * TODO for the confirm action highlight the changes
-     * TODO add the db update via api
+     * TODO Prio 2 for the confirm action highlight the changes
+     * TODO Prio 2 add the db update via api
      *
      * @param array $url_array the parsed url as an array
      * @param user_message_ui $msg_ui to enrich with potential errors; carries the requesting user (null for an anonymous request)
@@ -1256,7 +1264,7 @@ class frontend
         // an edit or del mask is the view that the user has requested, so it is never overwritten here
         // and only a view that the user has selected for the object needs to be saved
         if (in_array($view_id, views::EDIT_DEL_MASKS_IDS)) {
-            // TODO move as much a possible to backend functions
+            // TODO Prio 2 move as much a possible to backend functions
             if ($dbo->id() === 0 or $dbo->id() === '' or $dbo->id() === null) {
                 $result .= log_err("id of " . library::class_to_name($dbo::class) . " is empty", "view.php", '',
                     (new Exception)->getTraceAsString());
@@ -1268,10 +1276,10 @@ class frontend
 
         // create a display object, select and load the view and display the word according to the view
         if ($view_id != 0) {
-            // TODO first create the frontend object and call from the frontend object the api
-            // TODO for system views avoid the backend call by using the cache from the frontend
-            // TODO get the system view from the preloaded cache
-            // TODO use the frontend not the backend cache
+            // TODO Prio 2 first create the frontend object and call from the frontend object the api
+            // TODO Prio 2 for system views avoid the backend call by using the cache from the frontend
+            // TODO Prio 2 get the system view from the preloaded cache
+            // TODO Prio 2 use the frontend not the backend cache
             $msk_ui = $this->dto->typ_lst_cache->get_view_by_id($view_id);
             if ($msk_ui == null) {
                 $result .= log_err('No view for "' . $view_id . '" found.',
@@ -1319,6 +1327,41 @@ class frontend
         }
 
         return $result;
+    }
+
+    /**
+     * send the start of the page at once, because the creation of the page can take longer than
+     * the expected response time (config.yaml user > default > frontend > behaviour > response time
+     * > target); it shows the loading text only if the page is not complete by then
+     *
+     * @param user_message_ui $msg_ui the message of this request that names the requesting user
+     * @param float $start_time the start of the request, from which the loading text counts the seconds
+     * @return void
+     */
+    function send_loading_start(user_message_ui $msg_ui, float $start_time): void
+    {
+        // e.g. nginx would otherwise hold back the start until the page is complete
+        header(self::HEADER_NO_BUFFERING);
+        while (ob_get_level() > 0) {
+            ob_end_flush();
+        }
+        echo $this->loading_start($msg_ui, $start_time);
+        flush();
+    }
+
+    /**
+     * the html start of the page with the logo, the loading text and the footer
+     * @param user_message_ui $msg_ui to report a problem of reading the config
+     * @param float $start_time the start of the request, so that the count includes the setup before this start
+     * @return string the html start of the page that is shown after the expected response time
+     */
+    function loading_start(user_message_ui $msg_ui, float $start_time): string
+    {
+        global $ui_sys;
+        $names = [triples::RESPONSE_TIME, words::TARGET, words::FRONTEND, words::BEHAVIOUR];
+        $delay = (float)$ui_sys->cfg->get_by($names, $msg_ui, def::FALLBACK_RESPONSE_TIME_TARGET);
+        $since = (int)round(microtime(true) - $start_time + $delay);
+        return new html_base()->loading_start($delay, $since);
     }
 
 
@@ -2920,7 +2963,7 @@ class frontend
     private
     function log_info(string $msg): string
     {
-        // TODO actually sent the message to the server
+        // TODO Prio 2 actually sent the message to the server
         return 'Info message to backend: ' . $msg;
     }
 

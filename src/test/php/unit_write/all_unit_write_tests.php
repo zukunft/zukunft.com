@@ -201,7 +201,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 // run_export_test($t);
                 // run_permission_test ($t);
 
-                // TODO add a test the checks if import returns the expected error messages e.g. if a triple has the name of a word
+                // TODO Prio 2 add a test the checks if import returns the expected error messages e.g. if a triple has the name of a word
 
                 run_legacy_test($t);
                 run_math_test($t);
@@ -211,7 +211,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 // TODO Prio 2 activate
                 //$this->run_api_test();
                 //run_word_ui_test($t);
-                // TODO add a test to merge a separate opened phrase canton Zürich with Zurich (canton)
+                // TODO Prio 2 add a test to merge a separate opened phrase canton Zürich with Zurich (canton)
                 run_word_display_test($t);
 
                 // import_test_data() and import_base_data($usr) is intentionally not called here to keep test.php fast
@@ -233,7 +233,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
     /**
      * recreate the database to test the database setup script
-     * TODO make sure that this can never be called in PROD
+     * TODO Prio 1 make sure that this can never be called in PROD
      *
      * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return void
@@ -265,7 +265,7 @@ class all_unit_write_tests extends all_unit_read_tests
     }
 
     /**
-     * TODO fill a user_message with the warning and error messages and return true if successful
+     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
      * import all zukunft.com data via json files for the unit and db read testing
      * @param user $usr the user who should be owner of the data
      * @return string any error or warning message during import
@@ -299,7 +299,7 @@ class all_unit_write_tests extends all_unit_read_tests
     }
 
     /**
-     * TODO fill a user_message with the warning and error messages and return true if successful
+     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
      * import all zukunft.com initial setup data vie json files
      * should not include data used for system testing to prevent volatile test data
      * @param user $usr the user who should be owner of the data

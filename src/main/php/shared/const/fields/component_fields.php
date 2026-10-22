@@ -55,7 +55,7 @@ class component_fields
     const string FLD_UI_MSG_ID_EXCEPTION_COM = 'used for system components the id to select the language specific user interface exception message e.g. if the system value is zero';
     const string FLD_UI_MSG_VAL_EXCEPTION = 'ui_msg_value_exception';
     const string FLD_UI_MSG_VAL_EXCEPTION_COM = 'used for system components the value to select the exception message e.g. 0 (zero)';
-    // TODO move the lined phrases to a component phrase link table for n:m relation with a type for each link
+    // TODO Prio 2 move the lined phrases to a component phrase link table for n:m relation with a type for each link
     const string FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
     const string FLD_ROW_PHRASE = 'word_id_row';
     const string FLD_COL_PHRASE_COM = 'to define the type for the table columns';

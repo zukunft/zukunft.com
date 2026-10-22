@@ -137,7 +137,7 @@ class system_tests
     function run(test_cleanup $t): void
     {
 
-        // TODO move system user to a test object vars
+        // TODO Prio 2 move system user to a test object vars
         global $sys;
         global $mtr;
         global $cfg;
@@ -169,7 +169,7 @@ class system_tests
         $t->subheader($ts . 'debug functions');
 
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
-        // TODO check that all objects are included in this list
+        // TODO Prio 2 check that all objects are included in this list
         $t_wrd = new test_words($t);
         $t_vrb = new test_verbs($t);
         $t_trp = new test_triples($t);
@@ -369,6 +369,11 @@ class system_tests
         // an info message must never set the message to not ok
         $test_name = 'info messages keep the message ok';
         $t->assert_true($test_name, $two_msg->is_ok());
+
+        $test_name = 'an info without id adds no text';
+        $no_id_msg = new user_message($t->usr1);
+        $no_id_msg->add_info_id(null);
+        $t->assert($test_name, $no_id_msg->all_message_text(), '');
 
 
         $t->subheader($ts . 'system config sql');

@@ -132,7 +132,7 @@ class sandbox_typed extends sandbox_named
         // map the fields whenever the row has been mapped (id set), not based on the parent return,
         // because an error left on $msg by an earlier operation must not lead to a half mapped object
         if ($this->id() != 0) {
-            // TODO easy use set_type_by_id function
+            // TODO Prio 2 easy use set_type_by_id function
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
             }
@@ -388,7 +388,7 @@ class sandbox_typed extends sandbox_named
     {
         $vars = parent::export_json($msg, $exp_typ, $do_load);
 
-        // TODO use the code id additional to the name where ever possible
+        // TODO Prio 2 use the code id additional to the name where ever possible
         if ($this->type_code_id() <> '') {
             $vars[json_fields::TYPE_CODE_ID] = $this->type_code_id();
         }

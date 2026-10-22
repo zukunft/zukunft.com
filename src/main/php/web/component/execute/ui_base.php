@@ -68,7 +68,7 @@ class ui_base
     }
 
     /**
-     * TODO move to a component exe part class
+     * TODO Prio 2 move to a component exe part class
      * @return string a dummy text
      */
     function verb_name(?db_object $dbo = null): string
@@ -77,7 +77,7 @@ class ui_base
     }
 
     /**
-     * TODO move to a component exe part class
+     * TODO Prio 2 move to a component exe part class
      * @return string a dummy text
      */
     function triple_name(?db_object $dbo = null): string
@@ -86,7 +86,7 @@ class ui_base
     }
 
     /**
-     * TODO move to a component exe part class
+     * TODO Prio 2 move to a component exe part class
      * @return string a dummy text
      */
     function value_name(?db_object $dbo = null): string
@@ -95,7 +95,7 @@ class ui_base
     }
 
     /**
-     * TODO move to a component exe part class
+     * TODO Prio 2 move to a component exe part class
      * @return string a dummy text
      */
     function group_name(?db_object $dbo = null): string
@@ -104,7 +104,7 @@ class ui_base
     }
 
     /**
-     * TODO move to a component exe part class
+     * TODO Prio 2 move to a component exe part class
      * @return string a dummy text
      */
     function num_value(user_message $msg, ?db_object $dbo = null): string
@@ -218,7 +218,7 @@ class ui_base
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string the html code to show a list of values
      */
     function table(?db_object $dbo = null, ?data_object $cfg = null): string
@@ -227,7 +227,7 @@ class ui_base
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
     function all(): string

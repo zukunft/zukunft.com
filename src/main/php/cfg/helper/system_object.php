@@ -104,7 +104,7 @@ class system_object
     public type_lists $typ_lst;
 
     // the system users as a private var to restrict the access
-    // TODO Prio check where this is used and make sure it is only used for system testing
+    // TODO Prio 2 check where this is used and make sure it is only used for system testing
     public user_list $sys_usr_lst;
 
     // the preloaded system views (mask cache) used to link code to the views by code id

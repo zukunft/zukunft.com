@@ -211,7 +211,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                         'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
                         . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
-                    // TODO check if there are related log entries and if yes exclude it instead of delete
+                    // TODO Prio 1 check if there are related log entries and if yes exclude it instead of delete
                     $this->del_exe($msg);
                 }
             }
@@ -370,7 +370,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
             log_warning('No key found for the logging in db_id_object_non_sandbox::sql_delete_and_log');
         }
 
-        // TODO get the fields used in the change log sql from the sql
+        // TODO Prio 2 get the fields used in the change log sql from the sql
         $func_body_change .= ' ' . $qp_log->sql . ';';
 
         // add the row id of the standard table for user overwrites

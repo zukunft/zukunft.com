@@ -692,6 +692,14 @@ Fill the gap: Compare with the actual spec for your existing "auto user and IP w
 
 add to the config.yaml the size and age limit for the cache tables and use it to clean up the cache if needed
 
+#### loading start of a slow page
+
+`http/view.php` sends the start of the page (`frontend::send_loading_start`) before the page is
+created, and the complete page follows it, so the document repeats the doctype, `<html>`,
+`<head>` and `<body>` of the page. The browsers merge them by the html error recovery, but the
+page is not valid html. Target: `render_url` returns the page without its document start when
+the loading start has been sent, and the cached page keeps the complete document.
+
 ### prepare denial-of-service protection
 
 use the cache for read only pages
@@ -1700,9 +1708,17 @@ found 2026-10-14 when the user_log table and its writer in application::end_api 
   no start_pos (PHP warning "Undefined array key"); the load by parent ids adds them on its own,
   the common load_sql should add them like component_link_list, which changes the by_ids fixtures
 
+## result id
+
+`cfg/group/result_id::two_int_group_id` builds the 128 bit key from `array_slice($id_lst, 0, 3)` and
+`array_slice($id_lst, 4, 7)`, so the phrase at position 3 is never part of the key, e.g. the year of
+"Zurich (city), Geneva (city), inhabitants, 2020"; two results that differ only in that phrase get the same
+id. The two 64-bit parts are joined as decimal texts without a fixed length, so the key cannot be split
+again. The fix changes the stored result ids; `group_tests` "128 bit result_id" pins the current key.
+
 ## api mapper
 
-found while adding the api_mapper unit tests (see docs/llm/pending.md, test coverage step 2);
+found while adding the api_mapper unit tests (see docs/llm/pending.md, test coverage);
 each point needs a source change and a test that shows the bug first
 
 - not testable without a change: `web/sandbox/combine_object::api_mapper` and
@@ -1734,3 +1750,164 @@ each point needs a source change and a test that shows the bug first
 - `web/group/group::api_array` sends the name only if the description is set
 - `cfg/phrase/phrase_type::row_mapper_typ_obj` assigns instead of compares the scale
   (`if ($db_row[self::FLD_SCALE] = 'NULL')`)
+
+## functions with one unit test call
+
+found while adding the missing negative tests (see docs/llm/pending.md, test coverage);
+each point needs a source change before the second test can be written
+
+- the failure is only a `log_err`, which a unit test counts as a system error, instead of a
+  message on `$msg`: `cfg/db/sql_creator::create_db_role` (unknown db type),
+  `cfg/word/word_list::get_grp` (empty list)
+- `cfg/import/import_convert_xbrl::convert_folder_to_file` throws a RuntimeException for a missing
+  folder or a failed write instead of reporting it
+- `cfg/import/import_file::import_config_yaml` returns the message unchanged for a user who is
+  neither admin nor system, so the refusal is not reported
+- `cfg/formula/formula_map::get_ref_text` converts only if the dirty flag is set, which only
+  `set_user_text` sets while it already runs and reports the same conversion
+- the counter counts a call in a commented-out line or block, so `cfg/view/view::load_by_term`
+  (`unit_read/view_read_tests.php`) and `cfg/word/word_list::get_grp` (`unit_ui/value_ui_tests.php`)
+  look tested but have no active test
+
+## api json array
+
+found while adding the api_json_array unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `cfg/user/user_list::api_json_array` passes the requesting user
+  as the `user_message` of `user::api_json_array`, so every non-empty list throws a TypeError
+- not testable without a change: `cfg/helper/db_object_multi::api_json_array` is never reached,
+  because `cfg/sandbox/sandbox_multi::api_json_array` does not call the parent; either call it or
+  remove the override
+- not testable without the database: `cfg/sandbox/sandbox_value_list::api_json_array` loads the
+  phrase names even with `TEST_MODE`, and for a list with loaded phrases the output is the same
+- `cfg/sandbox/sandbox_named::api_json_array`: the `TEST_MODE` branch sends `description` instead of
+  `get_description()`, which is the same value for every class, so the branch can be removed
+- `cfg/component/component_link::api_json_array` sends the position and the position type as null
+  for a new link without a position, because `null != START_ORDER_NBR` is true
+- `cfg/helper/type_object::api_json_array` merges `get_object_vars`, so a child sends its fields
+  under the property name (`status_id`, `prio`, `scale`) in addition to the `json_fields` key
+- `cfg/phrase/phrase_type::export_json` checks the scale instead of the symbol before it adds the
+  symbol
+- `cfg/helper/combine_object::api_json_array` sends no object class for an excluded term requested
+  with `WITH_EXCLUDED_ID`, so the frontend cannot tell which kind of term has been excluded
+- untested for a missing fixture: the condition of `cfg/word/triple::api_json_array` (no factory
+  sets a `condition_id`) and the action of `cfg/system/sys_log_status` (no const for an action text)
+
+## export json
+
+found while adding the export_json unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `cfg/phrase/phrase_list::export_json` compares `get_class` of
+  each entry with word and triple, but the list holds phrase objects, so every entry is logged as
+  an error and the export is always empty
+- not testable without a change: the refs of `cfg/word/triple::export_json` (`ref_lst` is private
+  without a setter)
+- `$do_load = false` is not passed on: the nested term, view and source of
+  `cfg/user/user::export_json` (so the view loads its components), the refs of
+  `cfg/word/word::export_json` and `cfg/word/triple::export_json`, and the condition formula of
+  `cfg/word/triple::export_json`, which is always loaded by id
+- `cfg/helper/data_object::export_json` takes no `$exp_typ` and `$do_load` like the other
+  export functions and always exports its objects without a load
+- a null position is exported as `POSITION => null`, because `null >= 0` is true:
+  `cfg/view/view_relation::export_json`, `cfg/component/component::export_json` and
+  `cfg/component/component_link::export_json`
+- the default view style differs: `view_style_list::default_id` is COL_SM_8, which
+  `cfg/view/view::export_json` leaves out, while `cfg/component/component_link::export_json`
+  compares with `view_styles::DEFAULT` (COL_SM_4)
+- `cfg/view/view_relation::export_json` uses `$do_load` to choose between the parent and child as
+  names or as objects, but loads nothing
+- empty fields are exported as null: the name and description of `cfg/group/group::export_json`
+  and the formula name of `cfg/result/result::export_json` for a result without a formula
+- `cfg/verb/verb::export_json` writes the description a second time after
+  `type_object::export_json`
+- `cfg/value/value_time::export_json` exports the time as a DateTime object instead of a text
+- not testable without the database (`$do_load = true` only): the reload by group of
+  `sandbox_value`, the phrases of `group`, the source of `value_base`, the assigned phrases of
+  `formula_map`, the view reload of `source` and the phrase reload of `component`
+
+## add
+
+found while adding the add unit tests of the lists (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- a double is not detected, because the check searches the list positions instead of the ids:
+  `cfg/sandbox/sandbox_value_list::add` (`in_array` on `id_lst()`)
+- web `group::name_pos_lst` and the `lst_dirty` flag that only it reads are no longer used, since
+  `group::add` checks the phrase ids; remove them
+- `add` returns true although the double is refused and only reported on the message:
+  `cfg/log/change_log_list::add`, `cfg/log/change_log_link_list::add`, web `ListBase::add`; and
+  `cfg/sandbox/sandbox_list_named::add` skips a double or an entry without id on a non-empty list
+  silently and ignores `$allow_duplicates`
+- `cfg/sandbox/sandbox_value_list::add` with `$allow_duplicates` adds the value but returns false
+- a null entry, which the signature allows, is a fatal error: `cfg/element/element_list::add`
+  (passes it to `add_direct`), `cfg/result/result_list::add` (`dsp_id()` in the debug log),
+  `cfg/sandbox/sandbox_list_named::add` (`$to_add::class`), web `figure_list::add` and
+  `value_list::add` (`id()`); `cfg/db/sql_field_list::add`, `sql_par_list::add` and
+  `sql_where_list::add` append the null entry, and `sql_par_list::add_by_name` reads its name
+- `shared/helper/ListOfIdObjects::add_obj` checks a double by the id only, so a second unsaved
+  object with id 0 (e.g. an ip range or a sys log entry) is refused as a double
+- `cfg/system/job_list::has_similar` overwrites `$chk_phr_lst_ids` instead of appending, and calls
+  `phr_lst->id()` without a null check, so adding a job to a list with a base import job fails
+- `cfg/formula/figure_list::add` has a dead "no id and no name" guard (`figure::name()` is never
+  empty) and returns `$msg->is_ok()`, so an earlier error on the same message refuses the figure
+- web `group_list::dsp_id` counts the not yet set `time_lst`, which fails on the first refused add
+- `cfg/system/sys_log_list::add` is documented to return a bool but returns nothing
+
+## dsp id
+
+found while adding the dsp_id unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `cfg/db/sql_type_list::dsp_id` implodes the `sql_type` enum
+  cases, which cannot become a string, so a list with any entry fails; and the shared
+  `CombineObject::dsp_id` is never reached, because every child overrides it without the parent
+- a missing guard is a fatal error: web `term::dsp_id` calls `obj()->dsp_id()` without the null
+  check of `combine_object::dsp_id`, and `cfg/system/sys_log::dsp_id` and
+  `cfg/log/change_log::dsp_id` format the time without a check for null
+- web `type_list::dsp_id` always returns an empty text, so a log message of a type list carries
+  no information (the unit test pins the empty text with a `TODO Prio 2`); web `group_list::dsp_id`
+  lists the group names only for a debug level above 0
+- `cfg/helper/type_list::dsp_id` writes the list position instead of the database id
+- `cfg/db/sql_par_list::dsp_id` adds `', '` for every entry after the length limit
+- `cfg/log/change::dsp_id` and `cfg/log/change_value::dsp_id` have no space before `'to '`
+- dead branches: the id-only else of `cfg/system/ip_range::dsp_id` (the class name is never empty),
+  the `for phrases` part of `cfg/group/group::dsp_id` and the id-only branch of
+  `cfg/formula/figure_list::dsp_id` (`name()` never returns `'""'`)
+- `cfg/word/triple::dsp_id` closes the bracket of the link ids only for a triple with id
+- `cfg/sandbox/sandbox_value::dsp_id` shows the number 0 as null
+- `cfg/helper/db_object_multi::dsp_id` joins an array id field without an id to a string
+- `shared/calc/expression::get_ref_text` passes a null user text to `strpos`, and
+  `cfg/formula/expression::dsp_id` creates a message that is never reported
+- web `db_object::dsp_id` and shared `CombineObject::dsp_id` return the `int|string` id as string
+  only through the implicit cast
+
+## library
+
+found while adding the unit tests of `shared/library` (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: the private helpers `str_sep`, `str_split_add_sep`,
+  `str_word_len_normal`, `str_diff_list`, `str_diff_list_next_array_match`,
+  `str_diff_list_next_match` and the private static `sort_by_class_and_id`; either test them
+  through their public caller or remove them from the public function list of the report
+- not tested: the positive case of `dir_remove` (it would need a folder that the test creates and
+  removes) and `env_to_log` (it reads the process environment)
+- an empty or null maker loops forever: `str_left_of_or_all` and `str_right_of_or_all`
+- `str_right($text, 0)` returns the whole text instead of an empty text
+- `count_recursive` raises the level inside the loop, so each sibling after the first is counted
+  one level deeper and a level limit undercounts
+- `array_get_first_two_col` implodes the nested array for its error message
+- `key_num_sort` renumbers the numeric keys through `array_merge`
+- `json_clean` filters without a callback, so it also removes `0`, `"0"` and `false`; after that
+  `json_contains` reads the missing `id` key of an entry with id 0
+- `json_merge_str` passes the decoded json without a check, so an invalid json is a fatal error
+- `explain_missing` writes `gettype($target)` twice instead of the type of the result, and
+  `array_explain_missing` compares `!$result[$key] == $value` instead of `!=`
+- `dsp_var` shows `0` and `'0'` as an empty text, and `dsp_array_keys([])` returns `null` while
+  `dsp_array([])` returns an empty text
+- `php_code_use` and its sorted and converted variants take every line that starts with `use`
+  (e.g. `user…`), and `php_code_function` skips the `public` and `private` functions
+- the doc comments of `ids_not_empty` (negative ids are dropped) and `array_merge_by_key`
+  (numeric keys are merged) do not match the code

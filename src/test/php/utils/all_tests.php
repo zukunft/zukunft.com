@@ -21,7 +21,7 @@
     - check the correct setup of the base words, numbers and formulas
     - always synthetic reserved words and values are used for testing that are defined in each class and are removed after the tests
 
-    TODO
+    TODO Prio 2
     - move the tests to classes and call all tests with test.php but stop in case of an error
     - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "company"
     - before starting the system test, check that really no user has used any test name and if create a warning and stop the test
@@ -276,6 +276,9 @@ class all_tests extends all_unit_write_tests
             // if an error has stopped these tests, their snapshots are from the last run, so a check
             // would report the pages of the old code instead of a problem of this run
             if ($sys->errors <= ERROR_LIMIT and FRONTEND_TEST and WORKFLOW_TEST and WRITE_TEST) {
+                // the file refresh and the type list check above have no assertion of their own, so
+                // their duration is not charged to the first snapshot check as a false timeout
+                $this->reset_section_timer();
                 new coding_rule_tests()->run_html_snapshots($this);
             }
         }

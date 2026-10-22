@@ -5,7 +5,7 @@
   model/service/db_cl.php - code link class that links the upfront loaded type list
   -----------------------
 
-  TODO check automatically that all rows with code_id are existing in the database and add any missing rows
+  TODO Prio 1 check automatically that all rows with code_id are existing in the database and add any missing rows
 
   This file is part of zukunft.com - calc with words
 

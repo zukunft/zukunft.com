@@ -69,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -317,6 +318,50 @@ class word_tests
         $t->assert_null($test_name, $wrd_map->plural);
         $msg->reset();
 
+        $t->subheader($ts . 'api json array');
+
+        // the plural is an own field of the word
+        $test_name = 'the plural of the word is sent';
+        $wrd = $t_wrd->word_filled();
+        $vars = $wrd->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::PLURAL], word_names::MATH_PLURAL);
+        $msg->reset();
+
+        // negative: a request of the phrase names sends only the id and the name
+        $test_name = 'the phrase names request sends no plural';
+        $wrd = $t_wrd->word_filled();
+        $vars = $wrd->api_json_array([api_types::TEST_MODE, api_types::PHRASE_NAMES], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::PLURAL, $vars);
+        $msg->reset();
+
+        // the default view is sent so that the edit form can preselect it
+        $test_name = 'the view of the word is sent';
+        $wrd = $t_wrd->word_view_set();
+        $vars = $wrd->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW], views::HISTORIC_ID);
+        $msg->reset();
+
+        // negative: a word without a default view sends no view
+        $test_name = 'a word without view sends no view';
+        $wrd = $t_wrd->word();
+        $vars = $wrd->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $vars);
+        $msg->reset();
+
+        // an excluded word is sent with its id and the excluded flag if requested
+        $test_name = 'an excluded word is sent with the excluded flag';
+        $wrd = $t_wrd->word_excluded();
+        $vars = $wrd->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert_true($test_name, $vars[json_fields::EXCLUDED]);
+        $msg->reset();
+
+        // negative: without the request an excluded word is not sent at all
+        $test_name = 'an excluded word is not sent';
+        $wrd = $t_wrd->word_excluded();
+        $vars = $wrd->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::ID, $vars);
+        $msg->reset();
+
         $t->subheader($ts . 'api/word handler reads the ?incl_related URL param into the api_type_list');
         // the api/word/index.php GET handler now opts into api_types::INCL_RELATED only when
         // ?incl_related is truthy on the URL — this keeps single-word fetches cheap by default
@@ -346,15 +391,15 @@ class word_tests
         $vars_with = $wrd->api_json_array($with_related, $msg);
         $vars_without = $wrd->api_json_array($without_related, $msg);
         $test_name = 'word api_json_array includes phrases_related when INCL_RELATED is set';
-        $t->assert_true($t->name . $test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars_with));
+        $t->assert_key_exists($test_name, json_fields::PHRASES_RELATED, $vars_with);
         $test_name = 'word api_json_array omits phrases_related without INCL_RELATED';
-        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_without));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars_without);
         // negative: a word with an empty phrases_related list does not emit the key
         $bare_wrd = $t_wrd->word_chf();
         $bare_wrd->phrases_related = new phrase_list($t->usr1);
         $vars_bare = $bare_wrd->api_json_array($with_related, $msg);
         $test_name = 'word api_json_array omits phrases_related when the list is empty';
-        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_bare));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars_bare);
 
         $t->subheader($ts . 'related phrase selection by impact');
         // the most relevant related phrases e.g. the stocks with the highest
@@ -403,6 +448,12 @@ class word_tests
         $t->assert($test_name . ' and the share', $url_arr[url_var::SHARE], share_types::PUBLIC_ID);
         $t->assert($test_name . ' and the protection', $url_arr[url_var::PROTECTION], protection_types::ADMIN_ID);
         $t->assert($test_name . ' and the owner', $url_arr[url_var::OWNER], users::SYSTEM_TEST_NAME);
+
+        // negative: an empty owner name e.g. of a page url without owner leaves the owner unknown
+        $test_name = 'an empty owner name leaves the owner unknown';
+        $wrd_no_owner = $t_wrd->word_dsp();
+        $wrd_no_owner->set_owner_name('');
+        $t->assert($test_name, $wrd_no_owner->owner_name(), '');
 
         $test_name = 'the url array of a word contains the plural, usage, impact and default view';
         $wrd_ui->plural = word_names::MATH_PLURAL;
@@ -536,11 +587,83 @@ class word_tests
 
         $t->subheader($ts . 'im- and export');
 
-        // TODO check that all objects have a im and export test
+        // TODO Prio 2 check that all objects have a im and export test
         $t->assert_ex_and_import($t_wrd->word(), $t->usr_system);
         $t->assert_ex_and_import($t_wrd->word_filled(), $t->usr_system);
         $json_file = 'unit/word/second.json';
         $t->assert_json_file(new word($t->usr1), $json_file);
+
+        // the plural is an own field of the word export
+        $test_name = 'export includes the plural';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PLURAL], word_names::MATH_PLURAL);
+        $msg->reset();
+
+        // negative: a word without plural exports no plural
+        $test_name = 'export without plural';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PLURAL, $exp);
+        $msg->reset();
+
+        // the default phrase type is left out of the export
+        $test_name = 'export leaves out the default type';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // negative: a not default phrase type is exported
+        $test_name = 'export includes a not default type';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], phrase_types::SCALING_NAME);
+        $msg->reset();
+
+        // the view is exported by its name
+        $test_name = 'export includes the view name';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::VIEW], views::MATH_CONST_NAME);
+        $msg->reset();
+
+        // negative: a view with only the id is not loaded without database, so no view is exported
+        $test_name = 'export without view name';
+        $wrd = $t_wrd->word_view_set();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $msg->reset();
+
+        // the references are exported with their external key
+        $test_name = 'export includes the references';
+        $wrd = $t_wrd->word_with_ref();
+        $exp = $wrd->export_json($msg, [], false);
+        $refs = $exp[json_fields::REFS];
+        $ref = $refs[0];
+        $t->assert($test_name, $ref[json_fields::NAME], refs::MATH_KEY);
+        $msg->reset();
+
+        // negative: a word without references exports no references
+        $test_name = 'export without references';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::REFS, $exp);
+        $msg->reset();
+
+        // the impact is part of the export so that it round-trips
+        $test_name = 'export includes the impact';
+        $wrd = $t_wrd->word_filled();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::IMPACT], test_const::DUMMY_IMPACT);
+        $msg->reset();
+
+        // negative: a word without impact exports no impact
+        $test_name = 'export without impact';
+        $wrd = $t_wrd->word();
+        $exp = $wrd->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::IMPACT, $exp);
+        $msg->reset();
 
         $t->subheader($ts . 'sync and fill');
         $test_name = 'check if the word fill function set all database fields';

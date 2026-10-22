@@ -119,7 +119,7 @@ class config extends value_list
         return $result;
     }
 
-    // TODO add the user setting as default
+    // TODO Prio 2 add the user setting as default
     function percent_decimals(): int
     {
         return shared_config::DEFAULT_PERCENT_DECIMALS;

@@ -111,6 +111,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -602,8 +603,8 @@ class base_ui_tests
 
         $t->subheader($ts . 'selector');
 
-        // TODO test the creation of a phrase list API JSON
-        // TODO create a selector using a list an with a simple test page header an footer
+        // TODO Prio 2 test the creation of a phrase list API JSON
+        // TODO Prio 2 create a selector using a list an with a simple test page header an footer
         /*
         $sel = new html_selector();
         $sel->label = 'Test:';
@@ -738,6 +739,39 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $html->text_h2('names'), html_base::CLASS_HTML . '=');
 
 
+        $t->subheader($ts . 'loading start');
+
+        // the start of a slow page shows the loading text with the footer only after the delay
+        $test_name = 'the loading start is shown after the delay';
+        $loading = $html->loading_start(1.5, 2);
+        $t->assert_text_contains($test_name, $loading, html_base::LOADING_ANIMATION . ' 0s 1.5s forwards');
+        $test_name = '... with the loading text';
+        $t->assert_text_contains($test_name, $loading, $mtr->txt(msg_id::PAGE_LOADING));
+        $test_name = '... and the footer';
+        $t->assert_text_contains($test_name, $loading, html_base::CLASS_FOOTER);
+        // negative: the page that follows names the document and closes it
+        $test_name = 'the loading start has no title';
+        $t->assert_text_not_contains($test_name, $loading, '<' . html_base::TITLE);
+        $test_name = '... and does not close the body';
+        $t->assert_text_not_contains($test_name, $loading, '</' . html_base::BODY);
+        $test_name = '... and uses no element id e.g. of the search field of the navbar';
+        $t->assert_text_not_contains($test_name, $loading, ' ' . html_base::ID . '="');
+        // the seconds since the request start are counted up to the count limit, not to the php time limit
+        $test_name = 'the loading text counts the seconds from the given second';
+        $t->assert_text_contains($test_name, $loading, 'initial-value: 2;');
+        $test_name = '... in one step per second up to the count limit';
+        $t->assert_text_contains($test_name, $loading, ' 3598s steps(3598) 1.5s forwards');
+        $t->assert_text_contains($test_name, $loading, html_base::LOADING_COUNTER . ': ' . html_base::LOADING_COUNT_LIMIT . ';');
+        $test_name = '... and shows the count in the text';
+        $t->assert_text_contains($test_name, $loading, html_base::CLASS_LOADING_SECONDS . '"></');
+        // negative: a request that has already reached the count limit shows no count
+        $test_name = 'the loading text has no count at the count limit';
+        $at_limit = $html->loading_start(1.5, html_base::LOADING_COUNT_LIMIT);
+        $t->assert_text_not_contains($test_name, $at_limit, html_base::CLASS_LOADING_SECONDS);
+        $test_name = 'the loading end hides the loading start';
+        $t->assert_text_contains($test_name, $html->loading_end(), html_base::CLASS_LOADING . ' {display: none;}');
+
+
         $t->subheader($ts . 'unit html table tests');
 
         // create a test set of phrase groups
@@ -801,7 +835,7 @@ class base_ui_tests
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $res_canton_html = $res_canton_ui->value_edit($msg_ui);
         $res_canton_number = round((values::CANTON_ZH_INHABITANTS_2020_IN_MIO / values::CH_INHABITANTS_2019_IN_MIO) * 100, 2)
-            . word_names::PERCENT_SYMBOL;
+            . value_ui::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $t->assert_text_contains('', $res_canton_html, $res_canton_number);
         // the phrases of the test setup are used again for the snapshots below
         $ui_sys->phr_lst = $phr_lst_keep;
@@ -828,14 +862,14 @@ class base_ui_tests
 
         $t->subheader($ts . 'list');
 
-        // TODO create and set the model objects and
+        // TODO Prio 2 create and set the model objects and
         //      create the api object using the api_obj() function
         //      create and set the dsp object based on the api json
 
         $lst = new verb_list($t->usr1);
         $lst->add_verb(new verb(1, verbs::IS));
         $lst->add_verb(new verb(2, verbs::PART_NAME));
-        // TODO use set_from_json to set the display object
+        // TODO Prio 2 use set_from_json to set the display object
         $vrb_lst_ui = new verb_list_ui();
         $vrb_lst_ui->set_from_json_array($lst->api_json_array([], $msg), $msg_ui);
         $t->html_page_test($vrb_lst_ui->list(verb_ui::class, 'Verbs'), '', 'list_verbs', $msg_ui);
@@ -854,7 +888,7 @@ class base_ui_tests
 
 
 
-        // TODO review
+        // TODO Prio 2 review
 
         global $sys;
         $html = new html_base();
@@ -928,7 +962,21 @@ class base_ui_tests
         $result = (new button($url, $url_arr))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
-        // TODO move e.g. because the edit word button is tested already in the unit tests of the object
+        // the explanation is shown in the tooltip of the add button
+        $test_name = 'the add button shows the explanation';
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
+        $btn = new button($url, $url_arr);
+        $btn_html = $btn->add(msg_id::WORD_ADD, word_names::MATH_COM);
+        $t->assert_text_contains($test_name, $btn_html, word_names::MATH_COM);
+
+        // negative: without an explanation the add button shows only the message text
+        $test_name = 'the add button without explanation shows only the message';
+        $url = $html->url_back(views::WORD_ADD_DETAIL_ID);
+        $btn = new button($url, $url_arr);
+        $btn_html = $btn->add(msg_id::WORD_ADD);
+        $t->assert_text_not_contains($test_name, $btn_html, word_names::MATH_COM);
+
+        // TODO Prio 2 move e.g. because the edit word button is tested already in the unit tests of the object
 
         $url = $html->url_back(views::WORD_DEL_ID);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';
@@ -1629,6 +1677,12 @@ class base_ui_tests
         $url_map->url_to_standard($lib->url_array($url), $msg);
         $err_msg = $msg->var_message_text();
         $t->assert($test_name, $err_msg, 'url mapper for "debug" is missing, url mapper for "id" is missing, url mapper for "mapping_missing" is missing');
+        // negative: a url key without a pod mapping is reported as missing
+        $test_name = 'pod url conversion reports a url key without a pod mapping';
+        $pod_msg = new user_message_ui();
+        $no_map_url = [url_var::MASK => views::WORD_ID, test_const::URL_KEY_UNKNOWN => '1'];
+        $url_map->standard_url_to_pod($no_map_url, $pod_msg);
+        $t->assert_true($test_name, $pod_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 
     }
 

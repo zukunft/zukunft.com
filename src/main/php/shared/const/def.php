@@ -65,6 +65,9 @@ class def
     // fallback for the response time in milliseconds from which a request is critical on the admin dashboard;
     // overridden by config.yaml entry pod.limits.usage.response time.millisecond.warning
     const int FALLBACK_RESPONSE_TIME_WARNING = 2000;
+    // fallback for the seconds after which a page that is not yet complete shows that the data is being collected;
+    // overridden by config.yaml entry user.default.frontend.behaviour.response time.target
+    const float FALLBACK_RESPONSE_TIME_TARGET = 1.0;
     // fallback for the number of failed logins of the same name from which they are critical on the admin dashboard;
     // overridden by config.yaml entry pod.limits.max login.per day.by ip-address
     const int FALLBACK_MAX_LOGIN = 5;

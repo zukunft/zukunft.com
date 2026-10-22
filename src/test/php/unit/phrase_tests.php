@@ -52,8 +52,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -117,8 +119,39 @@ class phrase_tests
         // a negative phrase id is a triple, so a triple json without the from phrase is reported
         $test_name = 'the api mapper reports a triple phrase without the from phrase';
         $phr_map = new phrase($t->usr1);
-        $t->assert_false($test_name, $phr_map->api_mapper([json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null], $msg));
+        $api_json = [json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null];
+        $t->assert_false($test_name, $phr_map->api_mapper($api_json, $msg));
         $msg->reset();
+
+        $t->subheader($ts . 'export');
+
+        // a triple phrase exports the fields of the triple e.g. the verb name
+        $test_name = 'triple phrase export includes the verb';
+        $phr = $t_phr->phrase_filled();
+        $exp = $phr->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::EX_VERB], verbs::PART_NAME);
+        $msg->reset();
+
+        // negative: a word phrase exports the word, so without a verb
+        $test_name = 'word phrase export without verb';
+        $phr = $t_phr->phrase();
+        $exp = $phr->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::EX_VERB, $exp);
+        $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the full debug id of a phrase names the user of the phrase object
+        $test_name = 'the debug id shows the user';
+        $phr = $t_phr->phrase();
+        $dsp = $phr->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
+
+        // negative: the short debug id leaves out the user
+        $test_name = 'the short debug id without user';
+        $phr = $t_phr->phrase();
+        $dsp = $phr->dsp_id(false);
+        $t->assert_text_not_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
 
         $t->subheader($ts . 'html frontend');
         $phr = $t_wrd->word()->phrase();

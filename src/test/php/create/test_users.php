@@ -33,11 +33,15 @@
 namespace Zukunft\ZukunftCom\test\php\create;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once html_paths::USER . 'user_log_sum.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_log.php';
+include_once paths::MODEL_USER . 'user_log_sum.php';
+include_once paths::MODEL_USER . 'user_log_sum_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
@@ -50,6 +54,8 @@ include_once test_paths::UTILS . 'test_cleanup.php';
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
@@ -57,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum as user_log_sum_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateMalformedStringException;
 use DateTime;
@@ -71,6 +78,7 @@ class test_users
     const int TV_USER_LOG_TOLERANCE_SEC = 60; // the max seconds between two times taken in the same test
     const string TV_USER_LOG_OLD_START = '2000-01-01T00:00:00+0100'; // a session older than any real session
     const string TV_USER_LOG_ARCHIVE_BEFORE = '2000-01-02T00:00:00+0100'; // to archive only the old test session
+    const int TV_USER_LOG_REQUESTS = 1; // the number of requests of the test session, which has no data change
 
     /*
      * cleanup
@@ -398,6 +406,49 @@ class test_users
         $usr_log = $this->user_log();
         $usr_log->id = self::TV_USER_LOG_ID;
         return $usr_log;
+    }
+
+    /**
+     * @return user_log_sum the summed sessions of the test user as the dashboard query returns them
+     */
+    function log_sum(): user_log_sum
+    {
+        $sum = new user_log_sum();
+        $sum->row_mapper([
+            user_db::FLD_ID => users::SYSTEM_TEST_ID,
+            user_db::FLD_NAME => users::SYSTEM_TEST_NAME,
+            user_log::FLD_REQUESTS => self::TV_USER_LOG_REQUESTS,
+            user_log::FLD_REQUEST_TIME => self::TV_USER_LOG_MS,
+        ]);
+        return $sum;
+    }
+
+    /**
+     * @return user_log_sum_ui the summed sessions of the test user as the frontend receives them
+     */
+    function log_sum_ui(): user_log_sum_ui
+    {
+        $sum_ui = new user_log_sum_ui();
+        $sum_ui->api_mapper($this->log_sum()->api_json_array());
+        return $sum_ui;
+    }
+
+    /**
+     * @return user_log_sum_list the summed sessions of only the test user
+     */
+    function log_sum_list(): user_log_sum_list
+    {
+        $lst = $this->log_sum_list_empty();
+        $lst->add($this->log_sum());
+        return $lst;
+    }
+
+    /**
+     * @return user_log_sum_list without any summed sessions as the dashboard query returns it for an idle pod
+     */
+    function log_sum_list_empty(): user_log_sum_list
+    {
+        return new user_log_sum_list();
     }
 
 }

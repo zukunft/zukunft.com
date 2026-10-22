@@ -125,6 +125,7 @@ class source_ui_tests
         $src_map = new source();
         $src_map->api_mapper(json_decode($t_src->source_reserved()->api_json(), true), $msg);
         $t->assert($test_name, $src_map->url(), sources::SIB_URL);
+        $msg->reset();
 
         // the id is mandatory, because without it a save would add a new source
         $test_name = 'a source json without an id is refused';
@@ -140,7 +141,8 @@ class source_ui_tests
         // a list entry without an id is reported, so the caller can show the problem
         $test_name = 'a source list entry without an id is reported';
         $src_lst = new source_list();
-        $t->assert_false($test_name, $src_lst->api_mapper([[json_fields::NAME => sources::SIB]])->is_ok());
+        $api_json = [[json_fields::NAME => sources::SIB]];
+        $t->assert_false($test_name, $src_lst->api_mapper($api_json)->is_ok());
 
         $t->subheader($ts . 'show fields');
 

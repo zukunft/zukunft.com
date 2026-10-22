@@ -40,7 +40,7 @@ enum change_tables: string
     // and an assignment of the deprecated tables names to the table names of this version
     // this list contains only tables where a direct change by the user is possible
     // so the phrase, term and figure tables are not included here, but in the sql_db list
-    // TODO should only contain the table names of past program versions
+    // TODO Prio 2 should only contain the table names of past program versions
     //      to combine the log in case of a renamed class
     const string USER = 'users';
     const int USER_ID = 21;

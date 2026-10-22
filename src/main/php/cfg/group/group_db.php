@@ -95,7 +95,7 @@ class group_db
         fields::FLD_DESCRIPTION
     );
     // list of fixed tables where a group name overwrite might be stored
-    // TODO check if this can be used somewhere else means if there are unwanted repeating
+    // TODO Prio 3 check if this can be used somewhere else means if there are unwanted repeating
     const array TBL_LIST = array(
         [sql_type::MOST],
         [sql_type::PRIME],

@@ -227,8 +227,8 @@ class component_link_write_tests
         $cmp_lnk = new component_link($t->usr2);
         $cmp_lnk->load_by_link($dsp2, $cmp2, $msg);
         if ($cmp_lnk->id() > 0) {
-            $result = $cmp_lnk->move_up($msg); // TODO force to reload the entry list
-            //$result = $cmp_lnk->move_up(); // TODO force to reload the entry list
+            $result = $cmp_lnk->move_up($msg); // TODO Prio 2 force to reload the entry list
+            //$result = $cmp_lnk->move_up(); // TODO Prio 2 force to reload the entry list
             $target = true;
             // TODO Prio 2 activate
             //$t->assert('view component order changed for user 2', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
@@ -244,7 +244,7 @@ class component_link_write_tests
                 } else {
                     $target = components::TEST_ADD_NAME;
                 }
-                // TODO check probably wrong
+                // TODO Prio 1 check probably wrong
                 if ($pos == 1) {
                     $target = components::TEST_ADD_NAME;
                 } else {

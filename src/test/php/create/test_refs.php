@@ -257,6 +257,14 @@ class test_refs extends test_objects
         return $lst;
     }
 
+    /**
+     * @return ref_list without any reference e.g. to test the empty api message
+     */
+    function list_empty(): ref_list
+    {
+        return new ref_list($this->env->usr1);
+    }
+
     function ref_list_math_ui(): ref_list_ui
     {
         $tl = new test_lib();

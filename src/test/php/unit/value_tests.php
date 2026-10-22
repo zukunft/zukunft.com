@@ -155,7 +155,7 @@ class value_tests
         $t->assert($test_name, $named_json[json_fields::NAME] ?? '', groups::TN_READ);
         $test_name = 'the api json of a value named only by its phrases has no name';
         $unnamed_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_json));
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $unnamed_json);
         $test_name = 'the export json of a value with a named group has the given name';
         $named_ex_json = $t_val->value($msg)->export_json($msg, [], false);
         $t->assert($test_name, $named_ex_json[json_fields::NAME] ?? '', groups::TN_READ);
@@ -166,7 +166,7 @@ class value_tests
         $msg->reset();
         $test_name = 'the export json of a value named only by its phrases has no name';
         $unnamed_ex_json = $val->export_json($msg, [], false);
-        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_ex_json));
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $unnamed_ex_json);
         $test_name = '... so the import gives no name to the group';
         $val_imported = new value($t->usr1);
         $val_imported->import_mapper($unnamed_ex_json, $msg);
@@ -228,7 +228,8 @@ class value_tests
         $msg->reset();
         $test_name = 'the base part of the mapper refuses a timestamp that is not a time';
         $val = new value($t->usr1);
-        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIMESTAMP => values::TEXT], $msg));
+        $api_json = [json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIMESTAMP => values::TEXT];
+        $t->assert_false($test_name, $val->api_mapper($api_json, $msg));
         $msg->reset();
         $test_name = 'the number of the api json is the number of the value';
         $val = new value($t->usr1);
@@ -237,7 +238,8 @@ class value_tests
         $msg->reset();
         $test_name = 'a text as the number of a value is refused';
         $val = new value($t->usr1);
-        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT], $msg));
+        $api_json = [json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT];
+        $t->assert_false($test_name, $val->api_mapper($api_json, $msg));
         $msg->reset();
         $test_name = 'the text of the api json is the text of the value';
         $val = new value_text($t->usr1);
@@ -268,7 +270,104 @@ class value_tests
         $msg->reset();
         $test_name = 'a text that is not a time is refused as the time of a value';
         $val = new value_time($t->usr1);
-        $t->assert_false($test_name, $val->api_mapper([json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIME_VALUE => values::TEXT], $msg));
+        $api_json = [json_fields::ID => values::PI_SYMBOL_ID, json_fields::TIME_VALUE => values::TEXT];
+        $t->assert_false($test_name, $val->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+        // the base part sends the source of the value by its id
+        $test_name = 'the source id of a value with a source';
+        $val = $t_val->light_speed();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::SOURCE_ID] ?? 0, sources::SIB_ID);
+        $msg->reset();
+
+        // negative: a value without a source sends no source id
+        $test_name = 'no source id of a value without a source';
+        $val = $t_val->value_pi();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_ID, $vars);
+        $msg->reset();
+
+        // a numeric value sends the number
+        $test_name = 'the number of a numeric value';
+        $val = $t_val->value_pi();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::NUMBER] ?? 0, values::PI);
+        $msg->reset();
+
+        // the value page gets the source nested with its name
+        $test_name = 'the source of a value page';
+        $val = $t_val->light_speed();
+        $vars = $val->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::SOURCE][json_fields::NAME] ?? '', sources::SIB);
+        $msg->reset();
+
+        // negative: the plain api message has no nested source
+        $test_name = 'no nested source without the page flag';
+        $val = $t_val->light_speed();
+        $vars = $val->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE, $vars);
+        $msg->reset();
+
+        // the value page gets the time of the last update
+        $test_name = 'the last update of a value page';
+        $val = $t_val->value_pi();
+        $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        $vars = $val->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE] ?? '', test_const::DUMMY_DATETIME);
+        $msg->reset();
+
+        // negative: the plain api message has no volatile last update
+        $test_name = 'no last update without the page flag';
+        $val = $t_val->value_pi();
+        $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        $vars = $val->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::LAST_UPDATE, $vars);
+        $msg->reset();
+
+        // a geolocation value sends the geolocation
+        $test_name = 'the geolocation of a geo value';
+        $val = $t_val->geo_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::GEO_VALUE] ?? '', values::GEO);
+        $msg->reset();
+
+        // negative: a geolocation value sends no number
+        $test_name = 'no number of a geo value';
+        $val = $t_val->geo_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $vars);
+        $msg->reset();
+
+        // a text value sends the text
+        $test_name = 'the text of a text value';
+        $val = $t_val->text_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::TEXT_VALUE] ?? '', values::TEXT);
+        $msg->reset();
+
+        // negative: a text value sends no number
+        $test_name = 'no number of a text value';
+        $val = $t_val->text_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $vars);
+        $msg->reset();
+
+        // a time value sends the time
+        // TODO Prio 2 compare the text once api_json_array sends the time as the text that api_mapper expects
+        //      (see docs/llm/pending_prio_2.md, "api mapper", value_time)
+        $test_name = 'the time of a time value';
+        $val = $t_val->time_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, ($vars[json_fields::TIME_VALUE] ?? null)?->getTimestamp(), strtotime(values::TIME));
+        $msg->reset();
+
+        // negative: a time value sends no number
+        $test_name = 'no number of a time value';
+        $val = $t_val->time_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'union row mapping');
@@ -615,10 +714,10 @@ class value_tests
         $val = $t_val->value_incomplete($msg);
         $t->assert_sql_insert_fail($sc, $val, [sql_type::LOG]);
 
-        // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
-        // TODO for update fill the missing phrase id with zeros because only one row should be updated
-        // TODO add test to change owner of the normal (not user-specific) value
-        // TODO add tests for time, text and geo values
+        // TODO Prio 1 for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
+        // TODO Prio 1 for update fill the missing phrase id with zeros because only one row should be updated
+        // TODO Prio 2 add test to change owner of the normal (not user-specific) value
+        // TODO Prio 2 add tests for time, text and geo values
         $t->subheader($ts . 'sql write update');
         $val = $t_val->value($msg);
         $t->assert_sql_update($sc, $val, $db_val);
@@ -814,6 +913,80 @@ class value_tests
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($t->usr1), $json_file);
 
+        // the base part exports the source of the value by its name
+        $test_name = 'export the source name';
+        $val = $t_val->light_speed();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SOURCE_NAME], sources::SIB);
+        $msg->reset();
+
+        // negative: a value without a source exports no source name
+        $test_name = 'export no source name without source';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_NAME, $exp);
+        $msg->reset();
+
+        // a numeric value exports the number
+        $test_name = 'export the number';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NUMBER], values::PI);
+        $msg->reset();
+
+        // negative: a text value exports no number
+        $test_name = 'export no number of a text value';
+        $val = $t_val->text_value();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $exp);
+        $msg->reset();
+
+        // a text value exports the text
+        $test_name = 'export the text';
+        $val = $t_val->text_value();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TEXT_VALUE], values::TEXT);
+        $msg->reset();
+
+        // negative: a numeric value exports no text
+        $test_name = 'export no text of a numeric value';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TEXT_VALUE, $exp);
+        $msg->reset();
+
+        // a geolocation value exports the geolocation
+        $test_name = 'export the geolocation';
+        $val = $t_val->geo_value();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::GEO_VALUE], values::GEO);
+        $msg->reset();
+
+        // negative: a numeric value exports no geolocation
+        $test_name = 'export no geolocation of a numeric value';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::GEO_VALUE, $exp);
+        $msg->reset();
+
+        // a time value exports the time
+        // TODO Prio 2 compare the text once export_json writes the time as text
+        //      (see docs/llm/pending_prio_2.md, "api mapper", value_time)
+        $test_name = 'export the time';
+        $val = $t_val->time_value();
+        $target = strtotime(values::TIME);
+        $exp = $val->export_json($msg, [], false);
+        $time = $exp[json_fields::TIME_VALUE];
+        $timestamp = $time->getTimestamp();
+        $t->assert($test_name, $timestamp, $target);
+        $msg->reset();
+
+        // negative: a numeric value exports no time
+        $test_name = 'export no time of a numeric value';
+        $val = $t_val->value_pi();
+        $exp = $val->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TIME_VALUE, $exp);
+        $msg->reset();
 
         $t->subheader($ts . 'ui formatting');
 
@@ -839,7 +1012,7 @@ class value_tests
         $t->subheader($ts . 'html frontend');
 
         $val = $t_val->value($msg);
-        // TODO add class field to api message
+        // TODO Prio 2 add class field to api message
         $t->assert_api_to_ui($val, new value_ui());
 
         // the value default page also shows the source with a link to the source page
@@ -861,7 +1034,7 @@ class value_tests
         $test_name = 'a value without an update time shows no last update line';
         $t->assert($test_name, $form->show_last_update($val_plain), '');
 
-        // TODO move to ui tests
+        // TODO Prio 2 move to ui tests
         $val_ui = new value_ui($val->api_json([api_types::INCL_PHRASES]));
         // the value has no source, so the link is followed by the grey "-" mark (see sandbox_value::quality_mark)
         $test_name = 'value edit link';

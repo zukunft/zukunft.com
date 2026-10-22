@@ -7,7 +7,7 @@
 
     $trm is the suggested var name
 
-    TODO: load formula word
+    TODO Prio 2 load formula word
         check triple
 
     mainly to check the term consistency of all objects
@@ -281,7 +281,7 @@ class term extends combine_named
     }
 
     /**
-     * TODO deprecate and replace with row_mapper_obj
+     * TODO Prio 2 deprecate and replace with row_mapper_obj
      * map the main field from the term view to a term object
      * @return bool true if at least one term has been loaded
      */
@@ -390,7 +390,7 @@ class term extends combine_named
     /**
      * create the expected object based on the id
      * must have the same logic as the database view and the frontend
-     * TODO dismiss?
+     * TODO Prio 3 dismiss?
      *
      * @param int $id the term id as received e.g. from the database view
      * @return void
@@ -448,7 +448,7 @@ class term extends combine_named
     /**
      * set the term id based id the word, triple, verb or formula id
      * must have the same logic as the database view and the frontend
-     * TODO deprecate?
+     * TODO Prio 3 deprecate?
      *
      * @param int $id the object id that is converted to the term id
      * @param string $class the class of the term object

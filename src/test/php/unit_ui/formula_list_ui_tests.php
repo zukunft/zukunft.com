@@ -81,7 +81,8 @@ class formula_list_ui_tests
         $t->assert($test_name, $lst->count(), $t_frm->formula_list_short()->count());
         $test_name = 'the api mapper reports a formula without id';
         $lst = new formula_list_ui();
-        $t->assert_false($test_name, $lst->api_mapper([[json_fields::NAME => formula_names::SCALE_TO_SEC]])->is_ok());
+        $api_json = [[json_fields::NAME => formula_names::SCALE_TO_SEC]];
+        $t->assert_false($test_name, $lst->api_mapper($api_json)->is_ok());
     }
 
 }

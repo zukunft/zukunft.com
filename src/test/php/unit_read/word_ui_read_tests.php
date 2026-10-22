@@ -61,9 +61,9 @@ class word_ui_read_tests
         $ts = 'db read word ui ';
         $t->header($ts);
 
-        // TODO add a list of differences between the user word and the standard word
+        // TODO Prio 2 add a list of differences between the user word and the standard word
         //      with an undo button to change back to the standard
-        // TODO add this ui test for all main sandbox objects
+        // TODO Prio 2 add this ui test for all main sandbox objects
 
         $wrd = new word($t_wrd->word()->api_json());
         $wrd_pi = new word($t_wrd->word_pi()->api_json());

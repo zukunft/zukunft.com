@@ -150,12 +150,12 @@ class change_log_list extends list_db_read
 {
 
 
-    // TODO add cast
-    // TODO add JSON export test
-    // TODO add API test
-    // TODO add table view
-    // TODO add table view unit test
-    // TODO add table view db read test
+    // TODO Prio 2 add cast
+    // TODO Prio 2 add JSON export test
+    // TODO Prio 2 add API test
+    // TODO Prio 2 add table view
+    // TODO Prio 2 add table view unit test
+    // TODO Prio 2 add table view db read test
 
 
     /*
@@ -764,7 +764,7 @@ class change_log_list extends list_db_read
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
         $sc->add_where(user_db::FLD_ID, $usr->id);
-        // TODO replace 'l2' with a var or const (like load_sql_by_obj_fld)
+        // TODO Prio 2 replace 'l2' with a var or const (like load_sql_by_obj_fld)
         $sc->add_where(change_field::FLD_TABLE, $this->user_table_ids(), sql_par_type::INT_LIST, 'l2');
         // the page limit set by the caller, so that a user page never reads the complete change
         // log of the user just to show the newest rows
@@ -794,7 +794,7 @@ class change_log_list extends list_db_read
         $sc->set_name($qp->name);
 
         $sc->add_where(user_db::FLD_ID, $usr->id);
-        // TODO replace 'l2' with a var or const (like load_sql_by_obj_fld)
+        // TODO Prio 2 replace 'l2' with a var or const (like load_sql_by_obj_fld)
         $sc->add_where(change_field::FLD_TABLE, $this->user_table_ids(), sql_par_type::INT_LIST, 'l2');
         $sc->set_page($this->limit, $this->offset());
         $qp->sql = $sc->sql();
@@ -823,7 +823,7 @@ class change_log_list extends list_db_read
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of the change log
-     * TODO use class name instead of TBL_CHANGE
+     * TODO Prio 2 use class name instead of TBL_CHANGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
@@ -999,7 +999,7 @@ class change_log_list extends list_db_read
         if ($field_name != '') {
             $sc->add_where(change::FLD_FIELD_ID, $table_field_id);
         } else {
-            // TODO replace 'l2' with a var or const
+            // TODO Prio 2 replace 'l2' with a var or const
             if ($usr_table_id > 0) {
                 $sc->add_where(change_field::FLD_TABLE, [$table_field_id, $usr_table_id], sql_par_type::INT_LIST, 'l2');
             } else {
@@ -1077,7 +1077,7 @@ class change_log_list extends list_db_read
             // a row id is unique only within a table, so without the table filter the changes of
             // every object with the same id (the word, the triple, the view ... with this id)
             // compete for the row limit and the changes of the requested object are cut off
-            // TODO replace 'l2' with a var or const
+            // TODO Prio 2 replace 'l2' with a var or const
             $tbl_ids = [$this->change_table_id($class)];
             $usr_table_id = $this->change_table_id($class, true);
             if ($usr_table_id > 0) {

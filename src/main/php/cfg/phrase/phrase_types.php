@@ -5,7 +5,7 @@
     model/phrase/phrase_types.php - to link coded functionality to a word or a triple, which means to every phrase
     -----------------------------
 
-    TODO rename to phrase type
+    TODO Prio 2 rename to phrase type
 
 
     This file is part of zukunft.com - calc with words

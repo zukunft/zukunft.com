@@ -830,7 +830,7 @@ class sandbox_link_named extends sandbox_link
 
     /**
      * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
+     * TODO Prio 2 add qp merge
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp

@@ -73,7 +73,7 @@ class formula_read_tests
         /*
         // ... check if the link is shown correctly also for the second user
         // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
-        // TODO check what that the word is linked if the second user activates the word
+        // TODO Prio 2 check what that the word is linked if the second user activates the word
         $phr = new phrase($t->usr1);
         $phr->load_by_name(words::TN_READ);
         $frm = new formula($t->usr2);

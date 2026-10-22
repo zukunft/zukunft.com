@@ -129,7 +129,7 @@ class formula_list extends sandbox_list_named
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->get_user());
                         $frm->row_mapper_sandbox($db_row, $msg);
-                        // TODO check if this is really needed
+                        // TODO Prio 2 check if this is really needed
                         if ($frm->name() <> '') {
                             $name_wrd = new word($this->get_user());
                             $name_wrd->load_by_name($frm->name(), $msg);
@@ -142,7 +142,7 @@ class formula_list extends sandbox_list_named
         }
         /*
         $result = parent::rows_mapper_obj(new formula_link($this->get_user()), $db_rows, $load_all);
-        // TODO check if this is really needed
+        // TODO Prio 2 check if this is really needed
         if ($db_rows != null) {
             foreach ($this->lst() as $frm) {
                 if ($frm->name() <> '') {
@@ -822,7 +822,7 @@ class formula_list extends sandbox_list_named
             // create a new user message object for each try
             // to get only the user messages of the last try
             // and to report only the remaining messages
-            // TODO check that other list also have independent check messages
+            // TODO Prio 2 check that other list also have independent check messages
             $msg_load = new user_message($msg->usr);
             $msg_chk = new user_message($msg->usr);
             $lst_ins = new user_message($msg->usr);
@@ -863,7 +863,7 @@ class formula_list extends sandbox_list_named
                 $chk_lst->fill_by_name($trm_lst, $msg_chk, true, false);
 
                 // get the formulas that needs to be added
-                // TODO check if other list save function are using the cache instead of this here
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $load_lst = $chk_lst->missing_ids($msg_chk);
 
                 // load the formulas by name from the database that does not yet have a database id
@@ -871,12 +871,12 @@ class formula_list extends sandbox_list_named
                 $imp->step_start(msg_id::LOAD, formula::class, $load_lst->count(), $step_time);
                 $db_lst = new formula_list($this->get_user());
                 // force to load all names including the formulas excluded by the user to potential include the formulas due to the import
-                // TODO add load_all = true also to the other objects
+                // TODO Prio 2 add load_all = true also to the other objects
                 $db_lst->load_by_names( $load_lst->names(true), $msg_load, true );
                 $imp->step_end($load_lst->count(), $load_per_sec);
 
                 // fill up the cache to prevent loading the same formula again in the next level
-                // TODO increase speed!
+                // TODO Prio 2 increase speed!
                 $trm_lst = $trm_lst->merge($db_lst->term_list());
 
                 // fill up the overall db list with db value for later detection of the formulas that needs to be updated
@@ -892,7 +892,7 @@ class formula_list extends sandbox_list_named
                 $load_lst = $load_lst->get_ready($msg_chk, $imp->file_name);
 
                 // get the formulas that still needs to be added
-                // TODO check if other list save function are using the cache instead of this here
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $add_lst = $load_lst->missing_ids($msg_chk);
 
                 // create any missing sql insert functions and insert the missing formulas
@@ -919,7 +919,7 @@ class formula_list extends sandbox_list_named
                 $this->save_formulas_words($imp, $lst_ins);
 
                 // fill up the cache to prevent loading the same formula again in the next level
-                // TODO increase speed!
+                // TODO Prio 2 increase speed!
                 $trm_lst = $trm_lst->merge($db_lst->term_list());
 
                 // fill up the overall db list with db value for later detection of the formulas that needs to be updated
@@ -1054,7 +1054,7 @@ class formula_list extends sandbox_list_named
 
     /**
      * save all formulas of this list
-     * TODO create one SQL and commit statement for faster execution
+     * TODO Prio 2 create one SQL and commit statement for faster execution
      *
      * @param import $imp the import object with the filename and the estimated time of arrival
      * @param term_list $cache the cached phrases that does not need to be loaded from the db again

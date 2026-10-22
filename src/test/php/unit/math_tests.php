@@ -88,7 +88,7 @@ class math_tests
         // test bracket finding
         $math_text = "(2 - 1) * 2";
         $result = $calc->has_bracket($math_text);
-        // TODO speed up
+        // TODO Prio 2 speed up
         $t->assert($ts . 'has bracket in "' . $math_text . '"', $result, true, $t::TIMEOUT_LIMIT_CALC);
 
         // test bracket execute

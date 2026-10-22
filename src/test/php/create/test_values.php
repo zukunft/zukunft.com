@@ -761,6 +761,16 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_list with only the pi value e.g. to test that a single value is not exported as a list
+     */
+    function list_pi(): value_list
+    {
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_pi());
+        return $lst;
+    }
+
+    /**
      * @return value_list with the test values for the word zurich
      */
     function value_list_zh(): value_list

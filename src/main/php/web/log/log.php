@@ -76,13 +76,13 @@ class log extends db_object_ui
     function api_mapper(array $json_array, user_message $msg): bool
     {
         parent::api_mapper($json_array, $msg);
-        // TODO use empty date instead?
+        // TODO Prio 3 use empty date instead?
         $sys_log_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME, $json_array)) {
             try {
                 $sys_log_timestamp = new DateTime($json_array[json_fields::TIME]);
             } catch (Exception $e) {
-                // TODO avoid loops if date writing in log_err fails ?
+                // TODO Prio 2 avoid loops if date writing in log_err fails ?
                 log_err('Error converting system log timestamp ' . $json_array[json_fields::TIME]
                     . ' because ' . $e->getMessage());
             }

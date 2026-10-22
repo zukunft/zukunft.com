@@ -9,9 +9,9 @@
     or word and triple to phrase
     or word, triple, verb and formula to term
 
-    TODO use it for figure
-    TODO use it for phrase
-    TODO use it for term
+    TODO Prio 2 use it for figure
+    TODO Prio 2 use it for phrase
+    TODO Prio 2 use it for term
 
 
     This file is part of zukunft.com - calc with words

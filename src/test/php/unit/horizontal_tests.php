@@ -63,6 +63,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::USER . 'user_message.php';
+include_once test_paths::CREATE . 'test_groups.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_users.php';
 include_once test_paths::UTILS . 'test_api.php';
@@ -87,6 +88,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_api;
@@ -227,7 +229,7 @@ class horizontal_tests
         foreach (def::MAIN_CLASSES as $class) {
             $dto = new data_object($t->usr1);
             $msg = new user_message($t->usr1);
-            // TODO add test to im- and export objects with the owner and a user that differs from the owner
+            // TODO Prio 2 add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t_map->class_to_filled_object($class);
             // remember the db id, because the db id is never included in the export
@@ -264,7 +266,7 @@ class horizontal_tests
                 $dto->add_view($filled_obj->parent(), $msg);
                 $dto->add_view($filled_obj->child(), $msg);
             } elseif ($class == component::class) {
-                // TODO Prion 1 review and at least prevent the potential polymorph warning in the IDE
+                // TODO Prio 1 review and at least prevent the potential polymorph warning in the IDE
                 // the import resolves the row and column phrase names via the import cache
                 $dto->add_phrase($filled_obj->row_phrase, $msg);
                 $dto->add_phrase($filled_obj->col_phrase, $msg);
@@ -294,6 +296,21 @@ class horizontal_tests
             $api_json_ex = json_encode($t->json_remove_fields_only_to_ui(json_decode($api_json, true)));
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
+
+        // a group with a name is added to the import cache
+        $test_name = 'a group with a key is added to the import cache';
+        $t_grp = new test_groups($t);
+        $dto = new data_object($t->usr1);
+        $dto->add_group($t_grp->group(), $msg);
+        $t->assert($test_name, $dto->group_list()->count(), 1);
+        $msg->reset();
+
+        // negative: a group without a name and without phrases has no key for the import cache
+        $test_name = 'a group without a key is not added to the import cache';
+        $dto = new data_object($t->usr1);
+        $dto->add_group($t_grp->group_without_key(), $msg);
+        $t->assert($test_name, $dto->group_list()->count(), 0);
+        $msg->reset();
 
         // restore the normal usr1 so the following tests run with the email profile user again
         $t->usr1 = $usr1_saved;

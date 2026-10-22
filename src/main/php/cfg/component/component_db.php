@@ -109,7 +109,7 @@ class component_db
         [fields::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', component_fields::FLD_DESCRIPTION_COM],
         [component_fields::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_type::class, component_fields::FLD_TYPE_COM],
         [fields::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
-        // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
+        // TODO Prio 2 link with a foreign key to phrases (or terms?) if link to a view is allowed
         [component_fields::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', component_fields::FLD_ROW_PHRASE_COM],
         [formula_fields::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, component_fields::FLD_FORMULA_COM],
         [component_fields::FLD_COL_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', component_fields::FLD_COL_PHRASE_COM],

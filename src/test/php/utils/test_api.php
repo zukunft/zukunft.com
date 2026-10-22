@@ -139,7 +139,7 @@ class test_api extends test_base
         // because they are irrelevant for the user and this reduces traffic
         // the "api save" message ($array_to_backend) should contain empty fields
         // to allow the user to remove e.g. a description and less save traffic is expected
-        // TODO add a test that e.g. the description can be removed via api
+        // TODO Prio 2 add a test that e.g. the description can be removed via api
         $array_to_backend = $lib->array_filter_r($array_to_backend, fn($value) => is_null($value) || $value === '');
         $array_to_frontend = json_decode($msg_to_frontend, true);
         $array_to_frontend = $this->json_remove_fields_only_to_ui($array_to_frontend);
@@ -473,15 +473,15 @@ class test_api extends test_base
         }
         // Check if backend is reading the id
         $data = array(url_var::ID => $id);
-        // TODO move this exception to the api_par_lst
+        // TODO Prio 2 move this exception to the api_par_lst
         if ($class == value::class) {
             $data[url_var::WITH_PHRASES] = url_var::TRUE;
         }
-        // TODO check why for formula a double call is needed
+        // TODO Prio 2 check why for formula a double call is needed
         if ($class == formula::class) {
             $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         }
-        // TODO simulate other users
+        // TODO Prio 2 simulate other users
         if ($class == user::class) {
             // the user read endpoint returns the json only to an admin or the user
             // himself, so authenticate as the admin user before the request; an
@@ -1189,7 +1189,7 @@ class test_api extends test_base
                 . ' for ' . $class_for_file . ' exists', false);
         } else {
 
-            // TODO remove, for faster debugging only
+            // TODO Prio 2 remove, for faster debugging only
             $json_actual = json_encode($actual);
             $json_expected = json_encode($expected);
             if ($contains) {

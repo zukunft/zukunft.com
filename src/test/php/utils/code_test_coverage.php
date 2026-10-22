@@ -119,10 +119,18 @@ class code_test_coverage
         // sections of the untested functions show the tests that are worth adding
         $uncalled_lst = $this->uncalled_names($src_lst, $share_lst, $call_lst);
         $fnc_cnt = 0;
+        foreach ($src_lst as $cls_lst) {
+            foreach ($cls_lst as $fnc_lst) {
+                $fnc_cnt += count($fnc_lst);
+            }
+        }
+        // first the functions without any test of all sections, then the ones with too few tests
         $low_cnt = 0;
         $body_txt = '';
-        foreach ($src_lst as $sec => $cls_lst) {
-            $body_txt .= $this->section_md($sec, $cls_lst, $cnt_lst, $share_lst, $uncalled_lst, $fnc_cnt, $low_cnt);
+        foreach ([true, false] as $no_test) {
+            foreach ($src_lst as $sec => $cls_lst) {
+                $body_txt .= $this->section_md($sec, $cls_lst, $cnt_lst, $share_lst, $uncalled_lst, $no_test, $low_cnt);
+            }
         }
         $uncalled_cnt = 0;
         $uncalled_txt = $this->uncalled_md($src_lst, $uncalled_lst, $name_lst, $uncalled_cnt);
@@ -260,8 +268,9 @@ class code_test_coverage
     }
 
     /**
-     * build the markdown section of one source folder with one row
-     * per class function that has less than MIN_TESTS unit test calls
+     * build the markdown section of one source folder with one row per class function that
+     * has no unit test call at all or, for the incomplete section, at least one but less than
+     * MIN_TESTS unit test calls
      *
      * a function name that several classes declare gets the same count for each of them, because
      * a test call does not tell which class it hits; so such a name needs MIN_TESTS calls per
@@ -273,30 +282,31 @@ class code_test_coverage
      * @param array $cnt_lst map of function name to the number of unit test calls
      * @param array $share_lst map of function name to the number of classes that declare it
      * @param array $uncalled_lst map of function name to true for the functions that no code calls, which are listed in the last section only
-     * @param int $fnc_cnt (in/out) total number of public functions checked
+     * @param bool $no_test true for the section of the functions without any test, false for the incomplete ones
      * @param int $low_cnt (in/out) number of functions with less than MIN_TESTS calls
      * @return string the markdown section with the class tree of the undertested functions
      */
-    private function section_md(
+    function section_md(
         string $sec,
         array  $cls_lst,
         array  $cnt_lst,
         array  $share_lst,
         array  $uncalled_lst,
-        int    &$fnc_cnt,
+        bool   $no_test,
         int    &$low_cnt
     ): string
     {
         $md_txt = '';
+        $sec_cnt = 0;
         foreach ($cls_lst as $class => $fnc_lst) {
-            $fnc_cnt += count($fnc_lst);
             $row_txt = '';
             foreach ($fnc_lst as $fnc) {
                 $cnt = $cnt_lst[$fnc] ?? 0;
                 $share = $share_lst[$fnc] ?? 1;
                 $uncalled = array_key_exists($fnc, $uncalled_lst);
-                if (!$uncalled and $cnt < self::MIN_TESTS * $share) {
-                    $low_cnt++;
+                $in_section = (($cnt == 0) == $no_test);
+                if (!$uncalled and $in_section and $cnt < self::MIN_TESTS * $share) {
+                    $sec_cnt++;
                     $row_txt .= '    \-- ' . $fnc . ' - ' . $cnt . ' unit test calls';
                     if ($share > 1) {
                         $row_txt .= ' shared by ' . $share . ' classes';
@@ -308,9 +318,14 @@ class code_test_coverage
                 $md_txt .= '\-- ' . $class . "\n" . $row_txt;
             }
         }
+        $low_cnt += $sec_cnt;
+        $title = $sec_cnt . ' functions of ' . $sec . ' have incomplete tests';
+        if ($no_test) {
+            $title = $sec_cnt . ' functions of ' . $sec . ' have no test at all';
+        }
         $sec_txt = '';
         if ($md_txt != '') {
-            $sec_txt = "\n" . '## ' . $sec . "\n" . "\n"
+            $sec_txt = "\n" . '## ' . $title . "\n" . "\n"
                 . '```' . "\n" . $md_txt . '```' . "\n";
         }
         return $sec_txt;

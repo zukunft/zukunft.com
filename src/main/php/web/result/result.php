@@ -175,7 +175,7 @@ class result extends sandbox_value
             $this->expression_parts = null;
         }
 
-        /* TODO add all result fields that are not part of the sandbox value object
+        /* TODO Prio 2 add all result fields that are not part of the sandbox value object
         if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[json_fields::USER_TEXT]);
         } else {

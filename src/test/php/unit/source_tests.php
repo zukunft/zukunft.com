@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
@@ -103,7 +104,7 @@ class source_tests
         $t->assert_sql_standard_by_name($sc, $src);
 
         $t->subheader($ts . 'sql write insert');
-        // TODO test the log version for db write
+        // TODO Prio 2 test the log version for db write
         $src = $t_src->source_reserved();
         $t->assert_sql_insert($sc, $src);
         $t->assert_sql_insert($sc, $src, [sql_type::USER]);
@@ -212,11 +213,56 @@ class source_tests
         $src_map = new source($t->usr1);
         $src_map->api_mapper($t_src->source_filled_included()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $src_map->url, sources::BFS_ULR);
+        $msg->reset();
 
         // the api sends a zero view id if no default view is selected, which must not set a view
         $test_name = 'the api mapper ignores a default view id of zero';
         $src_map->api_mapper([json_fields::ID => sources::BFS_ID, json_fields::VIEW => 0], $msg);
         $t->assert($test_name, $src_map->get_view_id(), 0);
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+        // a source sends the url and the doi
+        $test_name = 'the url of a source';
+        $src = $t_src->source_filled_included();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', sources::BFS_ULR);
+        $t->assert($test_name, $vars[json_fields::DOI] ?? '', sources::TEST_DOI);
+        $msg->reset();
+
+        // the default view is sent by its id, so that the edit form can preselect it
+        $test_name = 'the default view of a source';
+        $src = $t_src->source_filled_included();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW] ?? 0, views::SOURCE_ID);
+        $msg->reset();
+
+        // negative: a source without a default view sends no view
+        $test_name = 'no default view of a source without view';
+        $src = $t_src->source_reserved();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $vars);
+        $msg->reset();
+
+        // with the test mode an excluded source sends all fields
+        $test_name = 'the url of an excluded source in test mode';
+        $src = $t_src->source_filled();
+        $vars = $src->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', sources::BFS_ULR);
+        $msg->reset();
+
+        // negative: an excluded source sends only the id and the excluded flag
+        $test_name = 'an excluded source sends only the id';
+        $src = $t_src->source_filled();
+        $vars = $src->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert($test_name, $vars, [json_fields::ID => sources::BFS_ID, json_fields::EXCLUDED => true]);
+        $msg->reset();
+
+        // negative: without any flag an excluded source sends nothing
+        $test_name = 'an excluded source sends nothing';
+        $src = $t_src->source_filled();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
         $msg->reset();
 
         $t->subheader($ts . 'frontend');
@@ -285,6 +331,48 @@ class source_tests
         $t->assert_ex_and_import($t_src->source_filled(), $t->usr_system);
         $json_file = 'unit/ref/bipm.json';
         $t->assert_json_file(new source($t->usr1), $json_file);
+
+        // the url of a source is exported
+        $test_name = 'export url';
+        $src = $t_src->source();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::URL], sources::BFS_ULR);
+        $msg->reset();
+
+        // negative: a source without url exports no url
+        $test_name = 'export no url';
+        $src = $t_src->source_ref();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::URL, $exp);
+        $msg->reset();
+
+        // the doi of a source is exported
+        $test_name = 'export doi';
+        $src = $t_src->source_filled_included();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DOI], sources::TEST_DOI);
+        $msg->reset();
+
+        // negative: a source without doi exports no doi
+        $test_name = 'export no doi';
+        $src = $t_src->source();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DOI, $exp);
+        $msg->reset();
+
+        // the default view is exported by its name, because the id differs between pods
+        $test_name = 'export view name';
+        $src = $t_src->source_filled_included();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::VIEW], views::SOURCE_NAME);
+        $msg->reset();
+
+        // negative: a source without default view exports no view
+        $test_name = 'export no view';
+        $src = $t_src->source_reserved();
+        $exp = $src->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $msg->reset();
 
 
         // start the test section (ts)

@@ -85,7 +85,8 @@ class view_list_ui_tests
         // a list entry without an id is reported, so the caller can show the problem
         $test_name = 'a view list entry without an id is reported';
         $msk_lst = new view_list();
-        $t->assert_false($test_name, $msk_lst->api_mapper([[json_fields::NAME => views::START_NAME]])->is_ok());
+        $api_json = [[json_fields::NAME => views::START_NAME]];
+        $t->assert_false($test_name, $msk_lst->api_mapper($api_json)->is_ok());
     }
 
 }

@@ -155,14 +155,15 @@ class result_ui_tests
         $t->subheader($ts . 'page request');
         $test_name = 'a result detail page asks for the used lists';
         $api_par = frontend::page_api_par(views::RESULT_DEFAULT_DETAIL);
-        $t->assert_true($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $t->assert_key_exists($test_name, url_var::INCL_USED, $api_par);
         $test_name = 'the result default page does not wait for the used lists';
         $api_par = frontend::page_api_par(views::RESULT);
-        $t->assert_false($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $t->assert_key_not_exists($test_name, url_var::INCL_USED, $api_par);
         $test_name = '... but asks for the related objects';
-        $t->assert_true($test_name, array_key_exists(url_var::INCL_RELATED, $api_par));
+        $t->assert_key_exists($test_name, url_var::INCL_RELATED, $api_par);
         $test_name = 'a page without a main object asks for no related objects';
-        $t->assert_false($test_name, array_key_exists(url_var::INCL_RELATED, frontend::page_api_par(views::START)));
+        $start_par = frontend::page_api_par(views::START);
+        $t->assert_key_not_exists($test_name, url_var::INCL_RELATED, $start_par);
 
         // below the title the page shows in three columns what the number is based on
         $t->subheader($ts . 'used for the calculation');
@@ -265,21 +266,21 @@ class result_ui_tests
         $res = new result($api_json);
         $phr_sys_keep = $ui_sys->typ_lst_cache->phr_sys;
         $phr_lst_keep = $ui_sys->phr_lst;
+        $pct_txt = '1.23' . result::UNIT_SEPARATOR . word_names::PERCENT_SYMBOL;
         $test_name = 'percent values use the user config percent decimals';
         $ui_sys->typ_lst_cache->phr_sys = $t_phr->list_percent_symbol_cache_ui();
         $ui_sys->phr_lst = new phrase_list_ui();
-        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->val_formatted($msg), $pct_txt);
         $test_name = '... also if only the phrases of the page know the symbol';
         $ui_sys->typ_lst_cache->phr_sys = new phrase_list_ui();
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
-        $t->assert($test_name, $res->val_formatted($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->val_formatted($msg), $pct_txt);
         // a calculated number is shown in the same format as a measured one, so the cell text of
         // a result is the formatted number and never the raw one
         $test_name = '... and a table cell of a result uses the same format';
-        $t->assert($test_name, $res->value($msg), '1.23' . word_names::PERCENT_SYMBOL);
+        $t->assert($test_name, $res->value($msg), $pct_txt);
         $test_name = '... also as the linked number of the cell';
-        $t->assert_text_contains($test_name, $res->value_edit($msg),
-            '>1.23' . word_names::PERCENT_SYMBOL . '<');
+        $t->assert_text_contains($test_name, $res->value_edit($msg), '>' . $pct_txt . '<');
         // negative: with the symbol triple in neither cache the number is shown without the sign
         // instead of falling back to a coded one
         $test_name = '... but without the symbol triple in any cache the sign is missing';

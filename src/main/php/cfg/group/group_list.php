@@ -136,7 +136,7 @@ class group_list extends sandbox_list_named
 
     /**
      * create an SQL statement to retrieve a list of groups linked to the given phrase from the database
-     * TODO review to load the prime group by id
+     * TODO Prio 2 review to load the prime group by id
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase $phr if set to get all values for this phrase
@@ -225,7 +225,7 @@ class group_list extends sandbox_list_named
 
         $tbl_ext = $this->table_extension($tbl_types);
         $sc->set_class($class, new sql_type_list(), $tbl_ext);
-        // TODO add pattern filter for the prime group id
+        // TODO Prio 2 add pattern filter for the prime group id
         $grp = new group($this->get_user());
         $sc->set_id_field($grp->id_field());
         $sc->set_name($qp->name);
@@ -276,7 +276,7 @@ class group_list extends sandbox_list_named
 
     /**
      * create the common part of an SQL statement to get a list of phrase groups from the database
-     * TODO combine standard with prime and big
+     * TODO Prio 2 combine standard with prime and big
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
@@ -299,9 +299,9 @@ class group_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load a list of phrase groups by the ids
-     * TODO combine standard with prime and big
-     * TODO add load test to compare like matching with link table matching
-     * TODO for prime use binary key like matching
+     * TODO Prio 2 combine standard with prime and big
+     * TODO Prio 2 add load test to compare like matching with link table matching
+     * TODO Prio 2 for prime use binary key like matching
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $grp_ids a list of int values with the group ids
@@ -447,7 +447,7 @@ class group_list extends sandbox_list_named
     - if a normal phrase is assigned but not used no value should be selected
     - if a   time word   is assigned but not used no value should be selected
 
-    TODO: check if a value is used in the formula
+    TODO Prio 2 check if a value is used in the formula
           exclude the time word and if needed loop over the time words
           if the value has been update, create a calculation request
     */
@@ -511,7 +511,7 @@ class group_list extends sandbox_list_named
         */
 
         // create the value or result selection
-        // TODO use sql builder
+        // TODO Prio 2 use sql builder
         if ($type == 'value') {
             $sql_select = 'SELECT v.group_id,
                             v.group_id
@@ -591,7 +591,7 @@ class group_list extends sandbox_list_named
                     log_debug('group ' . $grp_to_add->dsp_id() . ' used instead of ' . $val_grp->dsp_id() . ' because ' . $phr_frm->dsp_id() . ' and  ' . $phr_lst_res_name . ' are part of the formula and have been remove from the phrase group selection');
                     $changed++;
                 }
-                /* TODO deprecate now
+                /* TODO Prio 2 deprecate now
                 if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value_db::FLD_TIME_WORD])) {
                     $added++;
                     $changed++;
@@ -651,7 +651,7 @@ class group_list extends sandbox_list_named
     /**
      * get the common phrases of a groups
      * assumes that each group is fully loaded
-     * TODO add a check if a group the phrase list of a group is incomplete
+     * TODO Prio 1 add a check if a group the phrase list of a group is incomplete
      *
      * @return phrase_list|null with all phrases that are part of each phrase group of the list
      */

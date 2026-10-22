@@ -81,7 +81,8 @@ class phrase_list_ui_tests
         // without the class the mapper cannot know if a phrase is a word or a triple, so it reports it
         $test_name = 'the api mapper reports a phrase without the class';
         $phr_lst_map = new phrase_list();
-        $t->assert_false($test_name, $phr_lst_map->api_mapper([[json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH]])->is_ok());
+        $api_json = [[json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH]];
+        $t->assert_false($test_name, $phr_lst_map->api_mapper($api_json)->is_ok());
 
         // create the phrase list test set
         $form = 'phrase_list_ui_test';
@@ -110,8 +111,26 @@ class phrase_list_ui_tests
 
         $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $msg);
 
+        // the phrase list uses the add function of sandbox_list_named
+        $t->subheader($ts . 'add');
+
+        // a phrase that is not yet in the list is added
+        $test_name = 'a new phrase is added';
+        $add_lst = new phrase_list();
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: a phrase that is already in the list is not added again
+        $test_name = 'a phrase that is already in the list is not added again';
+        $add_lst = new phrase_list();
+        $add_lst->add($phr_city_ui, $msg);
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
         /*
-         * TODO add a phrase selector if the phrase list is short and add an test
+         * TODO Prio 3 add a phrase selector if the phrase list is short and add an test
         // test the phrase selector
         $form_name = 'test_phrase_selector';
         $pos = 1;

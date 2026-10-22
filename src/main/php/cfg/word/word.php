@@ -7,9 +7,9 @@
 
     $wrd is the suggested var name
 
-    TODO move plural to a linked word?
+    TODO Prio 3 move plural to a linked word?
 
-    TODO check if all objects follow these rules
+    TODO Prio 2 check if all objects follow these rules
         - database fields are defined within the object wit a const staring with FLD_
         - the object is as small as possible, means there are no redundant fields
         - for each selection and database reading function a separate load function with the search field is defined e.g. load_by_name(string name)
@@ -375,7 +375,7 @@ class word extends sandbox_code_id
     /**
      * map a word api json to this model word object
      * similar to the import_obj function but using the database id instead of names as the unique key
-     * TODO add a test case to check if an import of a pure name overwrites the existing type setting
+     * TODO Prio 2 add a test case to check if an import of a pure name overwrites the existing type setting
      *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $msg the message for the user why the action has failed and a suggested solution
@@ -387,7 +387,7 @@ class word extends sandbox_code_id
 
         // it is expected that the code id is set via import by an admin not via api
 
-        // TODO move plural to language forms
+        // TODO Prio 2 move plural to language forms
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
                 $this->plural = $api_json[json_fields::PLURAL];
@@ -462,7 +462,7 @@ class word extends sandbox_code_id
                         $ref_obj = new ref($this->get_user());
                         $ref_obj->set_phrase($this->phrase());
                         $ref_obj->import_mapper($ref_data, $msg, $dto);
-                        // TODO $dto should never be null if no direct import is used
+                        // TODO Prio 2 $dto should never be null if no direct import is used
                         $dto?->add_reference($ref_obj, $msg);
                         if ($msg->is_ok()) {
                             $this->ref_lst[] = $ref_obj;
@@ -472,7 +472,7 @@ class word extends sandbox_code_id
             }
         }
 
-        // TODO change to view object like in triple
+        // TODO Prio 2 change to view object like in triple
         if (key_exists(json_fields::VIEW, $in_ex_json)) {
             $msk_name = $in_ex_json[json_fields::VIEW];
             $wrd_view = new view($this->get_user());
@@ -510,7 +510,7 @@ class word extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * TODO prio 2 review
+     * TODO Prio 2 review
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user_message $msg to collect the mapping error messages
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
@@ -731,7 +731,7 @@ class word extends sandbox_code_id
      * default view plus the default views of its parent words (the phrases it "is a")
      * each view is loaded by id because set_view_id() only stores the id, not the name that
      * the api export and the frontend name_link need
-     * TODO the parent loop loads each parent word and its view one by one; replace with a
+     * TODO Prio 2 the parent loop loads each parent word and its view one by one; replace with a
      *      single list load once a view_list->load_by_word_list() exists
      */
     function load_views_related(user_message $msg): void
@@ -1027,7 +1027,7 @@ class word extends sandbox_code_id
 
     /**
      * load a word that represents a formula by the name
-     * TODO exclude the formula words in all other queries
+     * TODO Prio 2 exclude the formula words in all other queries
      *
      * @param string $name the name word
      * @return int the id of the object found and zero if nothing is found
@@ -1091,7 +1091,7 @@ class word extends sandbox_code_id
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        // TODO check if and where it is needed to exclude the formula words
+        // TODO Prio 2 check if and where it is needed to exclude the formula words
         // global $sys;
         // $qp = parent::load_sql_usr_num($sc, $this, $query_name);
         // $sc->add_where(phrase::FLD_TYPE, $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
@@ -1156,9 +1156,9 @@ class word extends sandbox_code_id
 
     /**
      * if there is just one formula linked to the word, get it
-     * TODO separate the query parameter creation and add a unit test
-     * TODO allow also to retrieve a list of formulas
-     * TODO get the user-specific list of formulas
+     * TODO Prio 2 separate the query parameter creation and add a unit test
+     * TODO Prio 2 allow also to retrieve a list of formulas
+     * TODO Prio 2 get the user-specific list of formulas
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function reload_formula(user_message $msg): formula
@@ -1470,7 +1470,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * TODO maybe collect the single words or this is a third case
+     * TODO Prio 3 maybe collect the single words or this is a third case
      * returns a list of words that are related to this word
      * e.g. for "Zurich" it will return "canton", "city" and "company" and "Zurich" itself
      *      to be able to collect all relations to the given word e.g. Zurich
@@ -1655,7 +1655,7 @@ class word extends sandbox_code_id
 
     /**
      * @return word the follow word id based on the predefined verb following
-     * TODO create unit tests
+     * TODO Prio 2 create unit tests
      */
     function next(user_message $msg): word
     {
@@ -1681,7 +1681,7 @@ class word extends sandbox_code_id
 
     /**
      * return the follow word id based on the predefined verb following
-     * TODO create unit tests
+     * TODO Prio 2 create unit tests
      */
     function prior(user_message $msg): word
     {
@@ -1736,7 +1736,7 @@ class word extends sandbox_code_id
 
     /**
      * calculate the suggested default view for this word
-     * TODO review, because is it needed? get the view used by most users for this word
+     * TODO Prio 2 review, because is it needed? get the view used by most users for this word
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
@@ -1763,7 +1763,7 @@ class word extends sandbox_code_id
     {
         global $db_con;
 
-        // TODO recreate based on the group
+        // TODO Prio 2 recreate based on the group
         /*
         $sql = 'UPDATE words t
              SET ' . $db_con->sf("values") . ' = (
@@ -1824,7 +1824,7 @@ class word extends sandbox_code_id
      */
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * true if the word has any none default settings such as a special type
      */
     function has_cfg(): bool
@@ -1864,7 +1864,7 @@ class word extends sandbox_code_id
             $result = true;
             // check if no value is related to the word
             // check if no phrase group is linked to the word
-            // TODO if a value or formula is linked to the word the user should see a warning message, which he can confirm
+            // TODO Prio 2 if a value or formula is linked to the word the user should see a warning message, which he can confirm
             return $result;
         } else {
             return false;
@@ -2146,7 +2146,7 @@ class word extends sandbox_code_id
                 $obj->view
             );
         }
-        // TODO move to language forms
+        // TODO Prio 2 move to language forms
         if ($obj->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(

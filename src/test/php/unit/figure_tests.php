@@ -32,7 +32,9 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
@@ -46,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -98,7 +101,7 @@ class figure_tests
         $fig = $t_fig->figure_value($msg);
         $t->assert('figure value symbol', $fig->get_symbol(), "");
         $fig = $t_fig->figure_result();
-        // TODO review
+        // TODO Prio 2 review
         //$t->assert('figure result symbol', $fig->get_symbol(), "{f1}");
 
 
@@ -138,6 +141,25 @@ class figure_tests
         $t->assert_false($test_name, $fig->api_mapper($fig_json, $msg));
         $msg->reset();
 
+        $t->subheader($ts . 'debug id');
+
+        // the debug id shows when the number of the figure has been updated
+        $test_name = 'debug id with the last update';
+        $upd = new DateTime(test_const::DUMMY_DATETIME);
+        $upd_txt = $upd->format(sql_db::DATE_FORMAT);
+        $fig = $t_fig->figure_value($msg);
+        $dsp = $fig->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $upd_txt);
+        $msg->reset();
+
+        // negative: a figure without last update shows no update time
+        $test_name = 'debug id without the last update';
+        $fig = $t_fig->figure_value($msg);
+        $fig->obj()->set_last_update(null);
+        $dsp = $fig->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, $upd_txt);
+        $msg->reset();
+
 
         $t->subheader($ts . 'html frontend');
 
@@ -152,13 +174,14 @@ class figure_tests
         $fig_json = $fig_ui->api_array([], $msg_ui);
         $t->assert($test_name, $fig_json[json_fields::NAME] ?? '', groups::TN_READ);
         $test_name = '... and no phrases, because the group of the api fixture carries none';
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $fig_json));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES, $fig_json);
         $test_name = 'the figure of a value sends the description of the group like the value';
         $fig_ui->obj->grp->set_description(groups::TN_READ_COM);
         $t->assert($test_name, $fig_ui->api_array([], $msg_ui)[json_fields::DESCRIPTION] ?? '', groups::TN_READ_COM);
         $test_name = 'the figure of a result without a given name sends no name';
         $fig_ui = $tl->ui_obj($t_fig->figure_result(), new figure_ui());
-        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $fig_ui->api_array([], $msg_ui)));
+        $fig_arr = $fig_ui->api_array([], $msg_ui);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $fig_arr);
 
         $fig = $t_fig->figure_value($msg);
         $dsp = $tl->ui_obj($fig, new figure_ui());

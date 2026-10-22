@@ -332,7 +332,7 @@ class def
     // corresponding frontend object,
     // a database table and
     // can be im- and exported
-    // TODO add group, term_view_links, formula_link, component_links, styles, view_types,
+    // TODO Prio 2 add group, term_view_links, formula_link, component_links, styles, view_types,
     //          time_series, geo and text values, ip ranges, language, pod,
     //          add types (phrase_type, formula_type, formula_link_types, source_types,
     //                     ref_types, position_types, view_types, view_link_types,
@@ -623,7 +623,7 @@ class def
         source_fields::FLD_ID,
     ];
 
-    // TODO Prion 1 review and combine with CLASSES_NO_CHANGE_LOG
+    // TODO Prio 1 review and combine with CLASSES_NO_CHANGE_LOG
     // list of classes that use a database table but where the changes never needs to be added to the change log
     const array CLASSES_NO_LOG = [
         job::class,
@@ -859,7 +859,7 @@ class def
     ];
 
     // list of all sequences used in the database
-    // TODO base the list on the class list const and a sequence name function
+    // TODO Prio 2 base the list on the class list const and a sequence name function
     const array DB_SEQ_LIST = [
         'sys_log_status_sys_log_status_id_seq',
         'sys_log_sys_log_id_seq',

@@ -7,9 +7,9 @@
 
     $res is the suggested var name
 
-    TODO: add these function
-    TODO rename to result
-    TODO create a separate table for the time series results
+    TODO Prio 2 add these function
+    TODO Prio 2 rename to result
+    TODO Prio 2 create a separate table for the time series results
 
     set_dirty_on_value_update  - set all formula result value to dirty that are depending on an updated values via Apache Kafka messages not via database
     set_dirty_on_result_update - set all formula result value to dirty that are depending on an updated formula result
@@ -197,7 +197,7 @@ class result extends sandbox_value
     // database fields
     public ?group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
     public formula $frm;                // the formula object used to calculate this result
-    // TODO use the is_std of the sandbox_value object
+    // TODO Prio 2 use the is_std of the sandbox_value object
     public ?bool $is_std = True;        // true as long as no user-specific value, formula or assignment is used for this result
 
     // database related variables
@@ -327,7 +327,7 @@ class result extends sandbox_value
     }
 
     /**
-     * TODO move the common parts to the parent object
+     * TODO Prio 2 move the common parts to the parent object
      * map a result api json to this model result object
      * @param array $api_json the api array with the values that should be mapped
      * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
@@ -369,7 +369,7 @@ class result extends sandbox_value
 
     /**
      * set the vars of this value object based on the given json without writing to the database
-     * TODO import the description and save it in the group description
+     * TODO Prio 2 import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $msg to enrich with warnings, problems and solutions
@@ -1742,7 +1742,7 @@ class result extends sandbox_value
         // the formula that has created the result
         $vars[json_fields::FORMULA_NAME] = $this->frm->name();
 
-        // TODO add source group
+        // TODO Prio 2 add source group
 
         // add the value itself
         $vars[json_fields::NUMBER] = $this->number();
@@ -1760,10 +1760,10 @@ class result extends sandbox_value
     private function save_prepare_phr_lst_src(user_message $msg): void
     {
         if ($this->src_grp->phrase_list()->is_empty()) {
-            // TODO check if the phrases are already loaded
+            // TODO Prio 2 check if the phrases are already loaded
             // $this->src_grp->phrase_list()->load();
             // get the word group id (and create the group if needed)
-            // TODO include triples
+            // TODO Prio 2 include triples
             if (count($this->src_grp->phrase_list()->id_lst()) > 0) {
                 log_debug("source group for " . $this->src_grp->phrase_list()->dsp_id() . ".");
                 $grp = new group($this->get_user());
@@ -1779,7 +1779,7 @@ class result extends sandbox_value
     {
         if ($this->grp()->phrase_list()->is_empty()) {
             // get the word group id (and create the group if needed)
-            // TODO include triples
+            // TODO Prio 2 include triples
             $grp = new group($this->get_user());
             $grp->load_by_phr_lst($this->grp()->phrase_list(), $msg);
             $this->grp()->set_id($grp->get_id($msg));
@@ -1970,7 +1970,7 @@ class result extends sandbox_value
             }
         }
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
-        // TODO Prio review
+        // TODO Prio 2 review
         /*
         if (!empty($frm_ids)) {
             $sql_in = $lib->sql_array($frm_ids, ' formula_id IN (', ') ');
@@ -2036,7 +2036,7 @@ class result extends sandbox_value
      *      the guess is that the user wants the latest reported number
      *      so this function will return false if the latest reported number is not yet saved in the database
      */
-    // TODO add check
+    // TODO Prio 2 add check
     private function has_no_time_value(user_message $msg): bool
     {
         $res_check = $this->clone_all();
@@ -2169,7 +2169,7 @@ class result extends sandbox_value
 
     /**
      * save the formula result to the database
-     * TODO check if user-specific result needs to be added
+     * TODO Prio 2 check if user-specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      *
      * @param user_message $msg the message that should be shown to the user in case something went wrong

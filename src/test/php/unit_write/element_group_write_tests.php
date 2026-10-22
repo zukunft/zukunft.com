@@ -180,7 +180,7 @@ class element_group_write_tests
 
             $t->subheader($ts . 'figure list');
 
-            // TODO fix it
+            // TODO Prio 2 fix it
             $fig_lst->load_phrases();
             $result = htmlspecialchars($fig_lst->dsp_id());
             //$target = htmlspecialchars("<style class=\"' . styles::STYLE_USER . '\">35'481</style> (438)");

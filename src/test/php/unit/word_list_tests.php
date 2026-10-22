@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -144,7 +145,7 @@ class word_list_tests
         $t->subheader($ts . 'modify and filter word lists');
 
         // create words for unit testing
-        // TODO used create dummy functions
+        // TODO Prio 2 used create dummy functions
         $wrd1 = new word($t->usr1);
         $wrd1->id = 1;
         $wrd1->set_name('word1');
@@ -261,6 +262,10 @@ class word_list_tests
         $t->assert_contains_not($test_name, $filtered->names(), word_names::E_SYMBOL);
         $test_name = 'filtered word list by name still contains ' . word_names::PI_SYMBOL;
         $t->assert_contains($test_name, $filtered->names(), word_names::PI_SYMBOL);
+        // negative: a name that is not in the list removes no word
+        $test_name = 'filter by a name not in the list keeps all words';
+        $filtered_none = $wrd_lst->filter_by_name([word_names::PI]);
+        $t->assert($test_name, $filtered_none->names(), $wrd_lst->names());
 
         // time list
         $wrd_lst = new word_list($t->usr1);
@@ -299,7 +304,7 @@ class word_list_tests
         $json = $wrd_lst->export_json($msg, []);
         $json_expected = json_decode(file_get_contents(test_files::WORD_LIST));
         $result = $lib->json_is_similar($json, $json_expected);
-        // TODO remove, for faster debugging only
+        // TODO Prio 2 remove, for faster debugging only
         $json_expected_txt = json_encode($json_expected);
         $json_actual_txt = json_encode($json);
         $t->assert('JSON export word list', $result, true);
@@ -341,9 +346,38 @@ class word_list_tests
         $t->assert_false($test_name, $added);
         $msg->reset();
 
+        // the named list add accepts a word with a db id
+        $test_name = 'add a word with a db id';
+        $wrd_lst = new word_list($t->usr1);
+        $added = $wrd_lst->add($t_wrd->word(), false, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: the named list add refuses a word without id and name
+        $test_name = 'add refuses a word without a key';
+        $wrd_lst = new word_list($t->usr1);
+        $added = $wrd_lst->add($t_wrd->word_incomplete(), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/word/word_list.json';
         $t->assert_json_file(new word_list($t->usr1), $json_file);
+
+        // the list exports one entry per word that has a configuration
+        $test_name = 'export includes the configured word';
+        $wrd_lst = $t_wrd->word_list();
+        $exp = $wrd_lst->export_json($msg, [], false);
+        $first = $exp[0];
+        $t->assert($test_name, $first[json_fields::NAME], word_names::MATH);
+        $msg->reset();
+
+        // negative: a word without any configuration is left out of the export
+        $test_name = 'export leaves out a word without configuration';
+        $wrd_lst = $t_wrd->word_list_without_cfg();
+        $exp = $wrd_lst->export_json($msg, [], false);
+        $t->assert($test_name, $exp, []);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

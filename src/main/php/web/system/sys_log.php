@@ -77,7 +77,7 @@ class sys_log extends log
     public ?DateTime $update_time = null;
     public ?string $log_text = null;
     public ?string $description = null;
-    // TODO use a simple user object instead of the id
+    // TODO Prio 2 use a simple user object instead of the id
     // the user or user group who is supposed to fix the issue
     public ?int $solver_id = null;
     // the solver name transported in the api message so the frontend needs no db lookup to show it
@@ -237,7 +237,7 @@ class sys_log extends log
     {
         $html = new html_base();
         $row = '';
-        // TODO replace with the user date format setting,
+        // TODO Prio 2 replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
         $row .= $html->td($this->time()->format('Y-m-d H:i:s'));
@@ -288,12 +288,12 @@ class sys_log extends log
 
         $html = new html_base();
         $row = '';
-        // TODO replace with the user date format setting,
+        // TODO Prio 2 replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
         $row .= $html->td($this->time()->format(DateTimeInterface::ATOM));
         // escape the user-controlled name and the request-derived log fields (stored xss)
-        // TODO show the user name instead of the id
+        // TODO Prio 2 show the user name instead of the id
         $row .= $html->td($html->esc($this->user_name()));
         $row .= $html->td($html->esc($this->text()));
         $row .= $html->td($html->esc($this->trace()));
@@ -315,7 +315,7 @@ class sys_log extends log
     function header(): string
     {
         $html = new html_base();
-        // TODO replace with language specific headers
+        // TODO Prio 2 replace with language specific headers
         $result = $html->th('creation time');
         $result .= $html->th('user');
         $result .= $html->th('issue description');
@@ -330,7 +330,7 @@ class sys_log extends log
     function header_admin(): string
     {
         $html = new html_base();
-        // TODO replace with language specific headers
+        // TODO Prio 2 replace with language specific headers
         $result = $html->th('creation time');
         $result .= $html->th('user');
         $result .= $html->th('issue description');
@@ -403,7 +403,7 @@ class sys_log extends log
         return $this->owner($msg)->name();
     }
 
-    // TODO review
+    // TODO Prio 2 review
     function status_name(): string
     {
         return '"' . $this->status . '"';

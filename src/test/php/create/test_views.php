@@ -40,6 +40,7 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
+include_once paths::MODEL_VIEW . 'view_relation_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -466,7 +468,7 @@ class test_views extends test_objects
     }
 
     /**
-     * TODO add the relevance to test the sorting
+     * TODO Prio 2 add the relevance to test the sorting
      * @return view_list with a longer list of suggested views for a word
      */
     function view_list_word_long(): view_list
@@ -546,7 +548,20 @@ class test_views extends test_objects
         $mrl->set_parent($this->view_word_edit());
         $mrl->set_relation_type(view_relation_types::ADD);
         $mrl->set_child($this->view_word_log());
-        $mrl->start_pos = 15;
+        $mrl->start_pos = test_const::VIEW_RELATION_POS;
+        return $mrl;
+    }
+
+    /**
+     * @return view_relation with the parent view but without the child view
+     *         e.g. to test that a missing child view is not exported
+     */
+    function view_relation_incomplete(): view_relation
+    {
+        $mrl = new view_relation($this->env->usr1);
+        $mrl->id = 1;
+        $mrl->set_parent($this->view_word_edit());
+        $mrl->set_relation_type(view_relation_types::ADD);
         return $mrl;
     }
 
@@ -555,7 +570,7 @@ class test_views extends test_objects
         global $sys;
         // TODO Prio 0 maybe use msk_rel instead of mrl
         $mrl = $this->view_relation();
-        $mrl->description = 'add usage and log of a word';
+        $mrl->description = test_const::VIEW_RELATION_COM;
         $mrl->exclude();
         $mrl->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $mrl->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -585,6 +600,18 @@ class test_views extends test_objects
         //$msk_rel->set_parent($this->view_filled_add());
         //$msk_rel->set_child($this->view_part_filled_add());
         return $msk_rel;
+    }
+
+    /**
+     * @return view_relation_list with the add relation of the word edit view
+     *         and the editor relation of the table view
+     */
+    function view_relation_list(): view_relation_list
+    {
+        $lst = new view_relation_list($this->env->usr1);
+        $lst->add_link($this->view_relation());
+        $lst->add_link($this->view_relation_editor());
+        return $lst;
     }
 
     function term_view_add(): term_view
@@ -621,7 +648,7 @@ class test_views extends test_objects
     {
         global $sys;
         $trm_msk = $this->term_view();
-        $trm_msk->description = 'add usage and log of a word';
+        $trm_msk->description = test_const::TERM_VIEW_COM;
         $trm_msk->order_nbr = test_const::TERM_VIEW_ORDER_NBR;
         $trm_msk->set_style(view_styles::COL_SM_8, new user_message($this->env->usr1));
         $trm_msk->exclude();

@@ -789,3 +789,27 @@ value only). Every place that shows a number with its phrases calls the mark
 right behind the number (`value_edit`, `name_link`, `links_and_measure`), so a
 new display of a number reuses one of these instead of formatting the number
 itself.
+
+## The numbers of one unit in one column share the unit and the decimals
+
+The numbers of a calculator table column with the same unit are formatted as one
+group (`web\helper\number_format`), so that they can be compared at a glance. The
+largest number decides, with the target digits of `config.yaml` number format >
+digits (default 4):
+
+- it has more integer digits than the target and a preloaded formula converts the
+  unit to a larger one, e.g. `"kg" = "tonne" * 1000`: the group is shown in the
+  larger unit, step by step to the nearest unit, e.g. 113'805 kg as 113.8 t
+- it is below one and a formula converts it to a smaller unit in which it keeps
+  the target digits: the group is shown in the smaller unit, e.g. 0.123456 t as
+  123.5 kg
+- the decimals of the group are the target digits minus the integer digits of its
+  largest number, never below zero, so 10'482 kg next to 113'805 kg is 10.5 t and
+  2'000 kg is 2.0 t
+
+A detail table names the unit in its header, so its columns share the decimals
+only. The formulas are the ones linked to the measure units of the system phrases
+(`data_object::load_system_formulas`, `system_formulas` of the ui config api), and
+the browser recalculation writes a cell with the factor and the decimals of its
+group (`ui_list::calculator_cell_format`, `calculator.js`). A percent symbol is a
+unit, so it follows the number after a blank, e.g. "49 %".

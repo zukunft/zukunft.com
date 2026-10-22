@@ -100,6 +100,18 @@ class value_list_tests
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list($msg)->filter_by_time($msg, $t_phr->phrase_list());
 
+        // a value with a group is added
+        $test_name = 'add a value';
+        $val_lst = new value_list($t->usr1);
+        $added = $val_lst->add($t_val->value_pi());
+        $t->assert_true($test_name, $added);
+
+        // negative: a missing value is not added
+        $test_name = 'add no value for null';
+        $val_lst = new value_list($t->usr1);
+        $added = $val_lst->add(null);
+        $t->assert_false($test_name, $added);
+
         $t->subheader($ts . 'sort value list');
         // the factory adds the low impact value first and the high impact value second
         $test_name = 'sort by impact descending puts the high impact value first';
@@ -188,7 +200,8 @@ class value_list_tests
         $msg->reset();
         $test_name = 'the api mapper refuses a value with a text as the number';
         $val_lst = new value_list($t->usr1);
-        $t->assert_false($test_name, $val_lst->api_mapper([[json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT]], $msg));
+        $api_json = [[json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT]];
+        $t->assert_false($test_name, $val_lst->api_mapper($api_json, $msg));
         $msg->reset();
 
         $t->subheader($ts . 'sql creation value list');
@@ -247,6 +260,22 @@ class value_list_tests
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/value/travel_scoring_value_list.json';
         $t->assert_json_file(new value_list($t->usr1), $json_file);
+
+        // a list of more than one value exports each value by its phrase that is not part of the context
+        $test_name = 'export the values of a list';
+        $val_lst = $t_val->value_list_math();
+        $exp = $val_lst->export_json($msg, [], false);
+        $exp_values = $exp[json_fields::VALUES];
+        $first = $exp_values[0];
+        $t->assert($test_name, $first[word_names::PI_SYMBOL], values::PI);
+        $msg->reset();
+
+        // negative: a list with only one value exports no values
+        $test_name = 'export no values of a single value list';
+        $val_lst = $t_val->list_pi();
+        $exp = $val_lst->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VALUES, $exp);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

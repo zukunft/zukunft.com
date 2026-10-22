@@ -30,10 +30,10 @@
   
 */
 
-// TODO Check that calling the update function always expects a boolean as return value
-// TODO check that $db_con->get and $db_con->get1 always can handle a null row result
-// TODO check that for all update and insert statement the user id is set correctly (use word user config as an example)
-// TODO mainly for data from the internet use prepared statements to prevent SQL injections
+// TODO Prio 2 Check that calling the update function always expects a boolean as return value
+// TODO Prio 2 check that $db_con->get and $db_con->get1 always can handle a null row result
+// TODO Prio 2 check that for all update and insert statement the user id is set correctly (use word user config as an example)
+// TODO Prio 1 mainly for data from the internet use prepared statements to prevent SQL injections
 
 namespace Zukunft\ZukunftCom\main\php\cfg\db;
 

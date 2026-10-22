@@ -598,7 +598,7 @@ class views
     const int CURRENCY_ID = 187; // a kind of dummy id that may often change
 
 
-    // TODO views to be created
+    // TODO Prio 2 views to be created
     const string WORD_LIST = 'word_list'; //
 
     const string USER_ADD = 'user_add';
@@ -1052,7 +1052,7 @@ class views
     ];
 
     // system masks that only used to display a sandbox object
-    // TODO review SETUP_ID seems to be not correct
+    // TODO Prio 1 review SETUP_ID seems to be not correct
     const array SHOW_MASKS_IDS = [
         self::START_ID,
         self::ABOUT_ID,

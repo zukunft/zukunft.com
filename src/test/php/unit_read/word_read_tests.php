@@ -84,7 +84,7 @@ class word_read_tests
         $t->assert_load($wrd, word_names::MATH);
         $t->assert($ts . $test_name . 'description', $wrd->description, word_names::MATH_COM);
 
-        // TODO load plural, type and view
+        // TODO Prio 2 load plural, type and view
 
         $t->subheader($ts . 'value quality');
         $test_name = 'the word assumed is typed value quality';
@@ -218,7 +218,7 @@ class word_read_tests
         $t->assert($test_name, $dsp_id, 0);
 
 
-        // TODO move to the other word list tests
+        // TODO Prio 2 move to the other word list tests
         $t->subheader($ts . 'list');
         $t->name = 'word list read db->';
 
@@ -287,7 +287,7 @@ class word_read_tests
 
         $t->subheader($ts . 'FOAF read tests');
 
-        // TODO review all tests base on this one
+        // TODO Prio 2 review all tests base on this one
         $test_name = 'The list von cities must contain at least Zurich, Bern ans Geneva';
         $foaf_lst = $t_wrd->word_city()->are($msg)->names();
         $fixed_lst = $t_phr->phrase_list_cities()->wrd_lst_all($msg)->names();

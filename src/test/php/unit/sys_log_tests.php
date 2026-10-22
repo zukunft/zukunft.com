@@ -50,6 +50,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time_slow_list;
@@ -111,6 +112,7 @@ class sys_log_tests
         // init
         $sc = new sql_creator();
         $t_sys = new test_sys_log($t);
+        $msg = new user_message($t->usr1);
         $t->name = 'sys_log->';
         $t->resource_path = 'db/sys_log/';
 
@@ -145,6 +147,10 @@ class sys_log_tests
         // negative: after a new line the step time starts again and is not the runtime
         $test_name = '... and starts again with the next line';
         $t->assert_true($test_name, (float)$log_txt->since_last() < self::STEP_PAUSE_SEC);
+        // negative: an empty text gets no time stamped line
+        $test_name = 'an empty text has no time stamp line';
+        $stamped_empty = $log_txt->time_stamp_lines('');
+        $t->assert($test_name, $stamped_empty, '');
 
         $t->subheader($ts . 'sys_log insert throttle');
 
@@ -199,6 +205,74 @@ class sys_log_tests
         $t_sys = new test_sys_log($t);
         $log_lst = $t_sys->sys_log_list();
         $t->assert_api($log_lst, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
+
+        $t->subheader($ts . 'api json array');
+
+        // the description of a log entry is sent if it is set
+        $test_name = 'description of a filled entry';
+        $log = $t_sys->sys_log_filled();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::DESCRIPTION] ?? '', self::TV_DESCRIPTION);
+        $msg->reset();
+
+        // negative: an empty description is filtered out
+        $test_name = 'no description of an open entry';
+        $log = $t_sys->sys_log();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
+        $msg->reset();
+
+        // the solver of an assigned log entry
+        $test_name = 'solver of an assigned entry';
+        $log = $t_sys->sys_log_two();
+        $vars = $log->api_json_array([], $msg);
+        $solver_id = $t->usr_admin->id();
+        $t->assert($test_name, $vars[json_fields::SOLVER], $solver_id);
+        $msg->reset();
+
+        // negative: an open log entry without solver sends no solver
+        $test_name = 'no solver of an open entry';
+        $log = $t_sys->sys_log();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::SOLVER, $vars);
+        $msg->reset();
+
+
+        $t->subheader($ts . 'list add');
+
+        // a log entry is added to the list
+        $test_name = 'add a log entry';
+        $log_lst = new sys_log_list();
+        $log_lst->add($t_sys->sys_log());
+        $cnt = $log_lst->count();
+        $t->assert($test_name, $cnt, 1);
+
+        // negative: the same log entry again is not added a second time
+        $test_name = 'add a log entry twice';
+        $log_lst = new sys_log_list();
+        $log_lst->add($t_sys->sys_log());
+        $log_lst->add($t_sys->sys_log());
+        $cnt = $log_lst->count();
+        $t->assert($test_name, $cnt, 1);
+
+
+        $t->subheader($ts . 'system time add');
+
+        // a new step is added with its time
+        $test_name = 'add a step';
+        $sys_tim_lst = new system_time_list();
+        $sys_tim_lst->add(self::TV_STEP_DB_READ_SEC, system_time_type::DB_READ);
+        $report = $sys_tim_lst->report();
+        $t->assert_text_contains($test_name, $report,
+            system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC, 4) . ' sec');
+
+        // negative: a step that is already in the list is not added again, but its time is summed
+        $test_name = 'add a known step';
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $sys_tim_lst->add(self::TV_STEP_DB_READ_SEC, system_time_type::DB_READ);
+        $report = $sys_tim_lst->report();
+        $t->assert_text_contains($test_name, $report,
+            system_time_type::DB_READ . ': ' . round(2 * self::TV_STEP_DB_READ_SEC, 4) . ' sec');
 
 
         $t->subheader($ts . 'system time type sql setup');
@@ -258,6 +332,11 @@ class sys_log_tests
         $test_name = '... and no longer in the category that has counted it';
         $t->assert_text_contains($test_name, $sys_tim_lst->report(),
             system_time_type::DB_READ . ': ' . round(self::TV_STEP_DB_READ_SEC - self::TV_STEP_LOAD_TYPES_SEC, 4) . ' sec');
+        // negative: a time of zero is not moved, so the new category is not created
+        $test_name = 'a time of zero is not moved';
+        $sys_tim_lst = $t_sys->system_time_steps();
+        $sys_tim_lst->move(0.0, system_time_type::DB_READ, system_time_type::API_WAIT);
+        $t->assert_text_not_contains($test_name, $sys_tim_lst->report(), system_time_type::API_WAIT . ': ');
         // the steps that the backend has named in the json of its answer split the api wait
         $sys_tim_lst = new system_time_list();
         $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::API_WAIT);
@@ -292,6 +371,9 @@ class sys_log_tests
         $t->assert_text_not_contains($test_name, $sys_tim_lst->report(), system_time_list::GROUP_REST);
         $test_name = '... also not in the report of the section';
         $t->assert_text_not_contains($test_name, $sys_tim_lst->section_report(), system_time_list::GROUP_REST);
+        $test_name = '... and has no line of small steps';
+        $small_name = system_time_list::small_steps_name();
+        $t->assert_text_not_contains($test_name, $sys_tim_lst->report(), $small_name);
         // the render time of each component type splits the url to html time in the same way
         $sys_tim_lst = new system_time_list();
         $sys_tim_lst->add(self::TV_SLOW_SEC, system_time_type::URL_TO_HTML);
@@ -422,7 +504,6 @@ class sys_log_tests
         $t->assert($test_name, $since->getTimestamp(), $now - $days_sec);
 
         $t->subheader($ts . 'slow request api');
-        $msg = new user_message($t->usr1);
         $test_name = 'a slow request is sent with its milliseconds';
         $sys_tim = new system_time();
         $sys_tim->row_mapper($t_sys->system_time_row(), $msg);
@@ -439,6 +520,31 @@ class sys_log_tests
         $sys_tim = new system_time();
         $sys_tim->row_mapper(null, $msg);
         $t->assert_null($test_name, $sys_tim->url);
+        $msg->reset();
+
+        // negative: a system time that has not been started sends no start time
+        $test_name = 'no start time if not started';
+        $sys_tim = new system_time();
+        $vars = $sys_tim->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::TIME_START]);
+        $msg->reset();
+
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of an updated log entry shows the update time
+        $test_name = 'updated log with update time';
+        $slg = $t_sys->sys_log_filled();
+        $dsp = $slg->dsp_id();
+        $upd = new DateTime(self::TV_TIME_ASSIGNED)->format(DateTimeInterface::ATOM);
+        $t->assert_text_contains($test_name, $dsp, $upd);
+
+        // negative: a log entry that has never been updated shows no update time
+        $test_name = 'new log without update time';
+        $slg = $t_sys->sys_log();
+        $dsp = $slg->dsp_id();
+        $upd = new DateTime(self::TV_TIME_ASSIGNED)->format(DateTimeInterface::ATOM);
+        $t->assert_text_not_contains($test_name, $dsp, $upd);
 
     }
 

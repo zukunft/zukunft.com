@@ -120,7 +120,7 @@ class element extends db_object_seq_id_user
      * object vars
      */
 
-    // TODO should be actually just the linked formula id that extends the term
+    // TODO Prio 2 should be actually just the linked formula id that extends the term
     // TODO Prio 2 deprecate the symbol var and create it with a function
 
     public formula $frm;                              // the repeated formula object for direct access when saving to the database
@@ -328,7 +328,7 @@ class element extends db_object_seq_id_user
 
     /**
      * set the element object by the id and the type id
-     * TODO use cache to avoid db reloading
+     * TODO Prio 2 use cache to avoid db reloading
      *
      * @param int $id the database id of the element object
      * @param int $typ_id the id of the element object type

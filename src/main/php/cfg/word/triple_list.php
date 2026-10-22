@@ -116,7 +116,7 @@ class triple_list extends sandbox_list_named
 
     public array $lst; // the list of triples
 
-    // fields to select a part of the graph (TODO deprecated)
+    // fields to select a part of the graph (TODO Prio 2 deprecated)
     public array $ids = array();  // list of link ids
     public ?word $wrd = null;          // show the graph elements related to this word
     public ?word_list $wrd_lst = null; // show the graph elements related to these words
@@ -131,7 +131,7 @@ class triple_list extends sandbox_list_named
     /**
      * fill the triple list based on a database records
      * actually just add the single triple object to the parent function
-     * TODO check that a similar function is used for all lists
+     * TODO Prio 2 check that a similar function is used for all lists
      *
      * @param array $db_rows is an array of an array with the database values
      * @param user_message $msg to enrich with problems and suggested solutions
@@ -888,7 +888,7 @@ class triple_list extends sandbox_list_named
                 $chk_lst->fill_missing_verbs();
 
                 // get the triples that needs to be added
-                // TODO check if other list save function are using the cache instead of this here
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $load_lst = $chk_lst->missing_ids($msg_chk);
 
                 // load the triples by name from the database that does not yet have a database id
@@ -896,12 +896,12 @@ class triple_list extends sandbox_list_named
                 $imp->step_start(msg_id::LOAD, triple::class, $load_lst->count(), $step_time);
                 $db_lst = new triple_list($this->get_user());
                 // force to load all names including the triples excluded by the user to potential include the triples due to the import
-                // TODO add load_all = true also to the other objects
+                // TODO Prio 2 add load_all = true also to the other objects
                 $db_lst->load_by_names( $load_lst->names(true), $msg_load, true );
                 $imp->step_end($load_lst->count(), $load_per_sec);
 
                 // fill up the cache to prevent loading the same triple again in the next level
-                // TODO increase speed!
+                // TODO Prio 2 increase speed!
                 $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill up the overall db list with db value for later detection of the triples that needs to be updated
@@ -916,7 +916,7 @@ class triple_list extends sandbox_list_named
                 $load_lst = $load_lst->get_ready($msg_chk, $imp->file_name);
 
                 // get the triples that still needs to be added
-                // TODO check if other list save function are using the cache instead of this here
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $add_lst = $load_lst->missing_ids($msg_chk);
 
                 // create any missing sql insert functions and insert the missing triples
@@ -932,7 +932,7 @@ class triple_list extends sandbox_list_named
                 }
 
                 // reload the id of the triples added with the last run
-                // TODO use the insert message instead to increase speed
+                // TODO Prio 2 use the insert message instead to increase speed
                 // use a fresh message here too so the reloaded triples keep their name (see above)
                 $db_lst = new triple_list($this->get_user());
                 if (!$add_lst->is_empty()) {
@@ -940,7 +940,7 @@ class triple_list extends sandbox_list_named
                 }
 
                 // fill up the cache to prevent loading the same triple again in the next level
-                // TODO increase speed!
+                // TODO Prio 2 increase speed!
                 $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill up the overall db list with db value for later detection of the triples that needs to be updated

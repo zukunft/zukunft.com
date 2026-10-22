@@ -156,7 +156,8 @@ class term_list_ui_tests
         // a value is no term, so the mapper reports the class of the api json
         $test_name = 'the api mapper reports a class that is not a term';
         $trm_lst_map = new term_list();
-        $t->assert_false($test_name, $trm_lst_map->api_mapper([[json_fields::ID => word_names::MATH_ID, json_fields::OBJECT_CLASS => json_fields::CLASS_VALUE]])->is_ok());
+        $api_json = [[json_fields::ID => word_names::MATH_ID, json_fields::OBJECT_CLASS => json_fields::CLASS_VALUE]];
+        $t->assert_false($test_name, $trm_lst_map->api_mapper($api_json)->is_ok());
     }
 
 }

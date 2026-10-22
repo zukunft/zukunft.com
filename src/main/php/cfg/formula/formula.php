@@ -664,7 +664,7 @@ class formula extends formula_map
     /**
      * lists of all words directly assigned to a formula and where the formula should be used
      * TODO Prio 1 move to phrase list
-     * TODO rename to
+     * TODO Prio 2 rename to
      * - linked_phrases:               for the phrases directly linked       to the formula based on the user settings
      * - linked_phrases_standard:      for the phrases directly linked       to the formula based on the standard settings for new user
      * - linked_phrases_all_user:      for the phrases directly linked       to the formula for any user
@@ -698,7 +698,7 @@ class formula extends formula_map
     /**
      * the complete list of a phrases assigned to a formula
      * TODO Prio 1 move to phrase list
-     * TODO rename to linked_foaf_phrases_standard
+     * TODO Prio 2 rename to linked_foaf_phrases_standard
      */
     function assign_phr_lst_direct(user_message $msg): ?phrase_list
     {
@@ -775,7 +775,7 @@ class formula extends formula_map
      * load the views related to this formula into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; currently the formula's own
      * default view, loaded by id so that it carries the name the api and frontend name_link need
-     * TODO add the default views of the assigned phrases once the related-phrase load is not
+     * TODO Prio 2 add the default views of the assigned phrases once the related-phrase load is not
      *      limited to the direct assignments, mirroring word::load_views_related()
      * @param user_message $msg to collect any problem while loading the views
      * @return void
@@ -1057,7 +1057,7 @@ class formula extends formula_map
     /**
      * fill the formula in the reference format with numbers based on the data preloaded by load_data_for_calc;
      * this is the calculation part of to_num that does not load the terms itself
-     * TODO move the value retrieval (element_group::figures) into load_data_for_calc as well
+     * TODO Prio 2 move the value retrieval (element_group::figures) into load_data_for_calc as well
      *
      * @param phrase_list $phr_lst list of phrase used to select the value for the calculation
      * @param user_message $msg to collect the problems and solution for the user to pick
@@ -1432,7 +1432,7 @@ class formula extends formula_map
      * @param phrase_list $phr_lst is the context for the value retrieval, and it also contains any time words
      * the time words are only separated right before saving to the database
      * always returns an array of results
-     * TODO check if calculation is really needed
+     * TODO Prio 2 check if calculation is really needed
      *      if one of the result words is a scaling word, remove all value scaling words
      *      always create a default result (for the user 0)
      */
@@ -1660,7 +1660,7 @@ class formula extends formula_map
 
     /*
      * expression
-     * TODO probably to be replaced with expression functions
+     * TODO Prio 2 probably to be replaced with expression functions
      */
 
     /**
@@ -1802,7 +1802,7 @@ class formula extends formula_map
 
     /**
      * update the database reference text based on the user text
-     * TODO check in not the left AND the right part needs to be transformed as expression
+     * TODO Prio 2 check in not the left AND the right part needs to be transformed as expression
      * TODO Prio 1 return a user message instead of a string
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation

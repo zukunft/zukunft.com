@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_lists.php';
+include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -71,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_type;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
@@ -102,7 +105,7 @@ class type_tests
         $ts = 'unit type ';
         $t->header($ts);
 
-        // TODO job_types
+        // TODO Prio 2 job_types
 
         $t->subheader($ts . 'types json cache round trip');
         // the backend can load all types with one cached json instead of one select per list,
@@ -235,6 +238,245 @@ class type_tests
         $typ_ui = new type_object_ui(0, sys_log_statuum::OPEN);
         $t->assert_false($test_name, $typ_ui->api_mapper($api_json, $msg_ui));
         $msg_ui->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // the type object adds its own vars e.g. the code id
+        $test_name = 'code id of a type';
+        $typ = $t_typ->sys_log_status();
+        $vars = $typ->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::CODE_ID] ?? '', sys_log_statuum::OPEN);
+        $msg->reset();
+
+        // negative: a type without code id sends no code id
+        $test_name = 'no code id of a type without';
+        $typ = $t_typ->sys_log_status();
+        $typ->code_id = null;
+        $vars = $typ->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::CODE_ID]);
+        $msg->reset();
+
+        // the sys log status sends the status it leads to
+        $test_name = 'status of a sys log status';
+        $log_sta = $t_typ->sys_log_status();
+        $log_sta->status_id = sys_log_statuum::OPEN_ID;
+        $vars = $log_sta->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::STATUS] ?? 0, sys_log_statuum::OPEN_ID);
+        $msg->reset();
+
+        // negative: a sys log status without status sends none
+        $test_name = 'no status of a sys log status';
+        $log_sta = $t_typ->sys_log_status();
+        $vars = $log_sta->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::STATUS]);
+        $msg->reset();
+
+        // the job status sends its priority
+        $test_name = 'priority of a job status';
+        $job_sta = $t_typ->job_status();
+        $job_sta->prio = job_statuum::PRIO_HIGHEST;
+        $vars = $job_sta->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PRIORITY] ?? 0, job_statuum::PRIO_HIGHEST);
+        $msg->reset();
+
+        // negative: a job status without preset sends the default priority zero
+        $test_name = 'default priority of a job status';
+        $job_sta = $t_typ->job_status();
+        $vars = $job_sta->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PRIORITY], 0);
+        $msg->reset();
+
+        // the phrase type sends its scaling factor and symbol
+        $test_name = 'scale of a phrase type';
+        $phr_typ = $t_typ->phrase_type_scaling_pct();
+        $vars = $phr_typ->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::SCALE] ?? 0, test_types::SCALING_PCT_SCALE);
+        $msg->reset();
+
+        // negative: a phrase type without scaling factor sends none
+        $test_name = 'no scale of a phrase type';
+        $phr_typ = $t_typ->phrase_type();
+        $vars = $phr_typ->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::SCALE]);
+        $msg->reset();
+
+        // the symbol of the phrase type e.g. to show the unit
+        $test_name = 'symbol of a phrase type';
+        $phr_typ = $t_typ->phrase_type_scaling_pct();
+        $vars = $phr_typ->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::SYMBOL] ?? '', test_types::SCALING_PCT_SYMBOL);
+        $msg->reset();
+
+        // negative: a phrase type without symbol sends none
+        $test_name = 'no symbol of a phrase type';
+        $phr_typ = $t_typ->phrase_type();
+        $vars = $phr_typ->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::SYMBOL]);
+        $msg->reset();
+
+        // the type list sends one entry per type
+        $test_name = 'one entry per type';
+        $typ_lst = $typ_lst_all->sys_log_sta;
+        $vars = $typ_lst->api_json_array([], $msg);
+        $first = $vars[0];
+        $t->assert($test_name, $first[json_fields::CODE_ID], sys_log_statuum::OPEN);
+        $msg->reset();
+
+        // negative: an empty type list sends an empty array
+        $test_name = 'empty type list';
+        $typ_lst = new sys_log_status_list();
+        $vars = $typ_lst->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
+
+        // a ref type uses its own api json array e.g. with the base url
+        $test_name = 'ref type entry with url';
+        $typ_lst = $typ_lst_all->ref_typ;
+        $vars = $typ_lst->api_json_array([], $msg);
+        $first = $vars[0];
+        $t->assert_key_exists($test_name, json_fields::URL, $first);
+        $msg->reset();
+
+        // negative: a standard type sends only the common type fields
+        $test_name = 'standard type entry without url';
+        $typ_lst = $typ_lst_all->sys_log_sta;
+        $vars = $typ_lst->api_json_array([], $msg);
+        $first = $vars[0];
+        $t->assert_key_not_exists($test_name, json_fields::URL, $first);
+        $msg->reset();
+
+        // the type lists send one key per api list
+        $test_name = 'one key per api list';
+        $vars = $typ_lst_all->api_json_array([], $msg);
+        $t->assert($test_name, array_keys($vars), array_keys(type_lists::API_LISTS));
+        $msg->reset();
+
+        // negative: the system views are not part of the type lists
+        $test_name = 'no system views in the type lists';
+        $vars = $typ_lst_all->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::LIST_SYSTEM_VIEWS, $vars);
+        $msg->reset();
+
+        $t->subheader($ts . 'export');
+
+        // a ref type exports its base url
+        $test_name = 'ref type url';
+        $ref_typ = $t_typ->ref_type();
+        $ref_typ->url = refs::PI_URL;
+        $exp = $ref_typ->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::URL], refs::PI_URL);
+        $msg->reset();
+
+        // negative: a ref type without base url exports no url
+        $test_name = 'no ref type url';
+        $ref_typ = $t_typ->ref_type();
+        $exp = $ref_typ->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::URL, $exp);
+        $msg->reset();
+
+        // a user profile exports its right level
+        $test_name = 'user profile right level';
+        $usr_prf = $t_typ->user_profile();
+        $exp = $usr_prf->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::RIGHT_LEVEL], user_profiles::NORMAL_LEVEL);
+        $msg->reset();
+
+        // negative: a user profile without right level exports no level
+        $test_name = 'no user profile right level';
+        $usr_prf = $t_typ->user_profile();
+        $usr_prf->right_level = null;
+        $exp = $usr_prf->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::RIGHT_LEVEL, $exp);
+        $msg->reset();
+
+        // a job status exports its priority
+        $test_name = 'job status priority';
+        $job_sta = $t_typ->job_status();
+        $job_sta->prio = job_statuum::PRIO_HIGHEST;
+        $exp = $job_sta->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::PRIORITY], job_statuum::PRIO_HIGHEST);
+        $msg->reset();
+
+        // negative: a job status without priority exports no priority
+        $test_name = 'no job status priority';
+        $job_sta = $t_typ->job_status();
+        $job_sta->prio = null;
+        $exp = $job_sta->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::PRIORITY, $exp);
+        $msg->reset();
+
+        // a sys log status exports the status it leads to
+        $test_name = 'sys log status status';
+        $log_sta = $t_typ->sys_log_status();
+        $log_sta->status_id = sys_log_statuum::OPEN_ID;
+        $exp = $log_sta->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::STATUS], sys_log_statuum::OPEN_ID);
+        $msg->reset();
+
+        // negative: a sys log status without status exports no status
+        $test_name = 'no sys log status status';
+        $log_sta = $t_typ->sys_log_status();
+        $exp = $log_sta->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::STATUS, $exp);
+        $msg->reset();
+
+        // a sys log status exports the action that leads to it
+        $test_name = 'sys log status action';
+        $log_sta = $t_typ->sys_log_status_assigned();
+        $exp = $log_sta->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::ACTION], test_types::SYS_LOG_ASSIGNED_ACTION);
+        $msg->reset();
+
+        // negative: the initial sys log status has no action, so it exports none
+        $test_name = 'no sys log status action';
+        $log_sta = $t_typ->sys_log_status();
+        $exp = $log_sta->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::ACTION, $exp);
+        $msg->reset();
+
+        // a phrase type exports its scaling factor
+        $test_name = 'phrase type scale';
+        $phr_typ = $t_typ->phrase_type_scaling_pct();
+        $exp = $phr_typ->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SCALE], test_types::SCALING_PCT_SCALE);
+        $msg->reset();
+
+        // negative: a phrase type without scaling factor exports no scale
+        $test_name = 'no phrase type scale';
+        $phr_typ = $t_typ->phrase_type();
+        $exp = $phr_typ->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SCALE, $exp);
+        $msg->reset();
+
+        // a phrase type exports its symbol
+        $test_name = 'phrase type symbol';
+        $phr_typ = $t_typ->phrase_type_scaling_pct();
+        $exp = $phr_typ->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SYMBOL], test_types::SCALING_PCT_SYMBOL);
+        $msg->reset();
+
+        // negative: a phrase type without symbol exports no symbol
+        $test_name = 'no phrase type symbol';
+        $phr_typ = $t_typ->phrase_type();
+        $exp = $phr_typ->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SYMBOL, $exp);
+        $msg->reset();
+
+        $t->subheader($ts . 'add');
+
+        // a type with a code id is added and can be selected by the code id
+        $test_name = 'a type with code id is added';
+        $typ_lst = new sys_log_status_list();
+        $typ_lst->add($t_typ->sys_log_status());
+        $sta_id = $typ_lst->id(sys_log_statuum::OPEN);
+        $t->assert($test_name, $sta_id, sys_log_statuum::OPEN_ID);
+
+        // negative: a type without code id is not added to a list where the user cannot add types
+        $test_name = 'a type without code id is refused';
+        $typ_lst = new sys_log_status_list();
+        $typ_lst->add($t_typ->sys_log_status_without_code_id(), false);
+        $cnt = $typ_lst->count();
+        $t->assert($test_name, $cnt, 0);
 
         $t->subheader($ts . 'code link csv row mapper');
         // the statuum csv files are found by the status list class,
@@ -467,6 +709,35 @@ class type_tests
 
         $t->subheader($ts . 'sql delete update for admin use only');
         $t->assert_sql_delete($sc, $typ, [sql_type::LOG]);
+
+        // the type base classes are reached through the sys log status, which has no own debug id
+        $t->subheader($ts . 'debug id');
+
+        // type_object: the debug id shows the name of the type
+        $test_name = 'type with name';
+        $typ = $t_typ->sys_log_status();
+        $dsp = $typ->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, sys_log_statuum::OPEN_NAME);
+
+        // negative: a reset type shows no name
+        $test_name = 'type without name';
+        $typ = $t_typ->sys_log_status();
+        $typ->reset();
+        $dsp = $typ->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, sys_log_statuum::OPEN_NAME);
+
+        // type_list: the debug id shows the names of the types in the list
+        $test_name = 'type list with a type';
+        $typ_lst = $t_typ->sys_log_status_list();
+        $dsp = $typ_lst->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, sys_log_statuum::OPEN_NAME);
+
+        // negative: an empty type list shows no type name
+        $test_name = 'type list without type';
+        $typ_lst = $t_typ->sys_log_status_list();
+        $typ_lst->reset();
+        $dsp = $typ_lst->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, sys_log_statuum::OPEN_NAME);
     }
 
 }

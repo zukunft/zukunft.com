@@ -170,7 +170,7 @@ class figure extends combine_object
      */
     function set_id(int $id): void
     {
-        // TODO check if not set_id should be used
+        // TODO Prio 2 check if not set_id should be used
         $this->set_obj_id(abs($id));
     }
 

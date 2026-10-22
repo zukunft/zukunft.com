@@ -98,7 +98,7 @@ class term extends combine_named
             $trp = new triple();
             $trp->api_mapper($json_array, $msg);
             $this->set_obj($trp);
-            // TODO check if needed
+            // TODO Prio 3 check if needed
             //$this->set_id($trp->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
             $vrb = new verb();
@@ -311,7 +311,7 @@ class term extends combine_named
     /**
      * set the term id based id the word, triple, verb or formula id
      * must have the same logic as the database view and the frontend
-     * TODO deprecate?
+     * TODO Prio 2 deprecate?
      *
      * @param int $id the object id that is converted to the term id
      * @param string $class the class of the term object
@@ -351,7 +351,7 @@ class term extends combine_named
      */
 
     /**
-     * TODO review and use the api_array function of the objects
+     * TODO Prio 2 review and use the api_array function of the objects
      * @return array the json message array to send the updated data to the backend
      * corresponding to the api jsonSerialize function:
      * use the object id not the term id because the class is included
@@ -397,7 +397,7 @@ class term extends combine_named
                 $vars[json_fields::USER_TEXT] = $this->obj()->get_usr_text();
                 $vars[json_fields::LATEX] = $this->obj()->get_latex();
             }
-            // TODO add exclude field and move to a parent object?
+            // TODO Prio 2 add exclude field and move to a parent object?
             if ($this->obj()?->share_id() != null) {
                 $vars[json_fields::SHARE] = $this->obj()?->share_id();
             }
@@ -656,7 +656,7 @@ class term extends combine_named
      */
     function dsp_selector(term $type, string $form, int $pos, string $class, user_message $msg, array $url_arr = []): string
     {
-        // TODO include pattern in the call
+        // TODO Prio 2 include pattern in the call
         $pattern = '';
         $trm_lst = new term_list();
         $trm_lst->load_like($pattern, $msg);

@@ -238,7 +238,7 @@ class view_exe extends view_base
                         } elseif ($auto_row) {
                             // the row uses the style of the component e.g. col-md-4 for a short line
                             // or the full page width if no style is set
-                            // TODO easy move code to HTML class
+                            // TODO Prio 2 easy move code to HTML class
                             $row_style = $html->get_style_code($style_id);
                             if ($row_style == '') {
                                 $row_style = view_styles::DEFAULT_ROW;
@@ -503,7 +503,7 @@ class view_exe extends view_base
     }
 
     /**
-     * TODO fill
+     * TODO Prio 2 fill
      * @return string
      */
     protected function user(): string
@@ -679,7 +679,7 @@ class view_exe extends view_base
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
-                // TODO ??? should this not be the default entry type
+                // TODO Prio 2 ??? should this not be the default entry type
                 $result .= $this->component_selector($script, $msg, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));

@@ -65,6 +65,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
@@ -78,6 +79,7 @@ class ref_tests
         // init for reference
         $sc = new sql_creator();
         $t_ref = new test_refs($t);
+        $t_typ = new test_types($t);
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
 
@@ -144,13 +146,35 @@ class ref_tests
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql delete');
-        // TODO log deleting the link by logging the change of the external link to empty
+        // TODO Prio 1 log deleting the link by logging the change of the external link to empty
         $t->assert_sql_delete($sc, $ref);
         $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'base object handling');
         $ref = $t_ref->ref_filled();
         $t->assert_reset($ref);
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id names the phrase of the reference
+        $test_name = 'the debug id shows the phrase';
+        $ref_dsp = $t_ref->reference();
+        $dsp = $ref_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::PI);
+
+        // ... and the id of the reference
+        $test_name = 'the debug id shows the id';
+        $ref_dsp = $t_ref->reference();
+        $dsp = $ref_dsp->dsp_id();
+        $id_txt = (string)refs::PI_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a reference without id shows no id
+        $test_name = 'the debug id of a reference without id';
+        $ref_dsp = $t_ref->ref_filled_add();
+        $dsp = $ref_dsp->dsp_id();
+        $id_txt = (string)refs::PI_ID;
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
         $t->subheader($ts . 'read access (share)');
         // a non-public reference must not be disclosed to another user via a related-reference list
@@ -196,6 +220,15 @@ class ref_tests
         $ref_map = new ref($t->usr1);
         $ref_map->api_mapper($t_ref->reference()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $ref_map->get_external_key(), refs::PI_KEY);
+        $msg->reset();
+
+        $test_name = 'the api mapper ignores an empty external key';
+        $ref_no_key = new ref($t->usr1);
+        $api_json = [json_fields::ID => refs::PI_ID, json_fields::EXTERNAL_KEY => ''];
+        $ref_no_key->api_mapper($api_json, $msg);
+        $ext_key = $ref_no_key->get_external_key();
+        $t->assert_null($test_name, $ext_key);
+        $msg->reset();
 
         // an empty phrase id of e.g. an add form must not link the reference to a phrase
         $test_name = 'the api mapper ignores a phrase id of zero';
@@ -208,12 +241,105 @@ class ref_tests
         $ref_typ = new ref_type();
         $ref_typ->api_mapper([json_fields::ID => ref_types::WIKIDATA_ID, json_fields::URL => refs::PI_URL], $msg, true);
         $t->assert($test_name, $ref_typ->url, refs::PI_URL);
+        $msg->reset();
 
         // ... but never an api message of a frontend
         $test_name = 'the untrusted api mapper ignores the base url of a reference type';
         $ref_typ = new ref_type();
         $ref_typ->api_mapper([json_fields::ID => ref_types::WIKIDATA_ID, json_fields::URL => refs::PI_URL], $msg);
         $t->assert_null($test_name, $ref_typ->url);
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+        // a reference sends the url and the external key
+        $test_name = 'the url of a reference';
+        $ref = $t_ref->reference_plus();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', refs::PI_URL);
+        $t->assert($test_name, $vars[json_fields::EXTERNAL_KEY] ?? '', refs::PI_KEY);
+        $msg->reset();
+
+        // negative: a reference without a url sends an empty url
+        $test_name = 'no url of a reference without url';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::URL] ?? null);
+        $msg->reset();
+
+        // the plain api message names the phrase by its id
+        $test_name = 'the phrase id of a reference';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASE_ID] ?? 0, word_names::PI_ID);
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
+        $msg->reset();
+
+        // negative: with the phrase flag the phrase is nested instead of its id
+        $test_name = 'the nested phrase of a reference';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASES][0][json_fields::NAME] ?? '', word_names::PI);
+        $t->assert_key_not_exists($test_name, json_fields::PHRASE_ID, $vars);
+        $msg->reset();
+
+        // the source of a reference is sent by its id
+        $test_name = 'the source id of a reference';
+        $ref = $t_ref->reference_plus();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::SOURCE_ID] ?? 0, sources::WIKIDATA_ID);
+        $msg->reset();
+
+        // negative: a reference without a source sends no source id
+        $test_name = 'no source id of a reference without source';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_ID, $vars);
+        $msg->reset();
+
+        // the cached impact is sent if it has been calculated
+        $test_name = 'the impact of a reference';
+        $ref = $t_ref->reference();
+        $ref->impact = impacts::MAX;
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::IMPACT] ?? 0, impacts::MAX);
+        $msg->reset();
+
+        // negative: a reference without an impact sends no impact
+        $test_name = 'no impact of a reference without impact';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::IMPACT, $vars);
+        $msg->reset();
+
+        // a reference list sends one entry per reference
+        $test_name = 'one entry per reference of a list';
+        $ref_lst = $t_ref->ref_list_math();
+        $vars = $ref_lst->api_json_array([], $msg);
+        $t->assert($test_name, count($vars), 2);
+        $t->assert($test_name, $vars[0][json_fields::ID] ?? 0, refs::PI_ID);
+        $msg->reset();
+
+        // negative: an empty reference list sends an empty list
+        $test_name = 'an empty reference list';
+        $ref_lst = $t_ref->list_empty();
+        $vars = $ref_lst->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
+
+        // a reference type sends its name, code id and base url
+        $test_name = 'the reference type';
+        $ref_typ = $t_typ->ref_type();
+        $ref_typ->url = refs::PI_URL;
+        $vars = $ref_typ->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::CODE_ID] ?? '', ref_types::WIKIDATA);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', refs::PI_URL);
+        $msg->reset();
+
+        // negative: a reference type without a base url sends an empty url
+        $test_name = 'no url of a reference type without url';
+        $ref_typ = $t_typ->ref_type();
+        $vars = $ref_typ->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::URL] ?? null);
         $msg->reset();
 
         $t->subheader($ts . 'frontend');
@@ -282,6 +408,92 @@ class ref_tests
         $t->assert_ex_and_import($t_ref->ref_filled(), $t->usr_system);
         $json_file = 'unit/ref/wikipedia.json';
         $t->assert_json_file(new ref($t->usr1), $json_file);
+
+        // the source of a reference is exported by its name
+        $test_name = 'export source name';
+        $ref = $t_ref->reference_plus();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::SOURCE_NAME], sources::WIKIDATA);
+        $msg->reset();
+
+        // negative: a reference without source exports no source name
+        $test_name = 'export no source name';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_NAME, $exp);
+        $msg->reset();
+
+        // the reference type is exported by its code id instead of the predicate
+        $test_name = 'export type name';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::TYPE_NAME], ref_types::WIKIDATA);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE, $exp);
+        $msg->reset();
+
+        // negative: a reference without type exports no type name
+        $test_name = 'export no type name';
+        $ref = $t_ref->reference_user();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::TYPE_NAME, $exp);
+        $msg->reset();
+
+        // the external key of a reference is exported as its name
+        $test_name = 'export external key';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], refs::PI_KEY);
+        $msg->reset();
+
+        // negative: a reference without external key exports no name
+        $test_name = 'export no external key';
+        $ref = $t_ref->reference_user();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $exp);
+        $msg->reset();
+
+        // the description of a reference is exported
+        $test_name = 'export description';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::DESCRIPTION], refs::PI_COM);
+        $msg->reset();
+
+        // negative: a reference without description exports no description
+        $test_name = 'export no description';
+        $ref = $t_ref->reference();
+        $ref->description = null;
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $exp);
+        $msg->reset();
+
+        // the url of a reference is exported
+        $test_name = 'export url';
+        $ref = $t_ref->reference_plus();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::URL], refs::PI_URL);
+        $msg->reset();
+
+        // negative: a reference without url exports no url
+        $test_name = 'export no url';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::URL, $exp);
+        $msg->reset();
+
+        // the phrase of a reference is exported by its name
+        $test_name = 'export phrase name';
+        $ref = $t_ref->reference();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::FROM_PHRASE], word_names::PI);
+        $msg->reset();
+
+        // negative: a reference without phrase exports no phrase
+        $test_name = 'export no phrase name';
+        $ref = $t_ref->reference_user();
+        $exp = $ref->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::FROM_PHRASE, $exp);
+        $msg->reset();
 
         // the "refs" part of a word or triple import json must be a list of objects, because
         // import_mapper expects an array; the check guards the mapper call in

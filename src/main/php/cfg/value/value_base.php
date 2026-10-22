@@ -5,10 +5,10 @@
     model/value/value.php - the main number object
     ---------------------
 
-    TODO: split the group_id key into single phrase keys for faster db index based selection
-    TODO: always use the phrase group as master and update the value phrase links as slave
+    TODO Prio 3 split the group_id key into single phrase keys for faster db index based selection
+    TODO Prio 2 always use the phrase group as master and update the value phrase links as slave
 
-    TODO: to read a value
+    TODO Prio 3 to read a value
           first check the fastest and least used cache pod for the given phrase (not phrase list or group!)
           second check inside the pod for the expected value table oder OLAP cube
           e.g. a classic table e.g. for swiss addresses
@@ -16,14 +16,14 @@
           or a key-value table for a group of 1, 2, 4, 8, 16 and more phrases (or s standard table if public)
 
 
-    TODO: move the time word to the phrase group because otherwise a geo tag or an area also needs to be separated
+    TODO Prio 2 move the time word to the phrase group because otherwise a geo tag or an area also needs to be separated
 
-    TODO: what happens if a user (not the value owner) is adding a word to the value
-    TODO: split the object to a time term value and a time stamp value for memory saving
-    TODO: create an extreme reduced base object for effective handling of mass data with just phrase group (incl. time if needed) and value with can be used for key value noSQL databases
-    TODO: remove PRIMARY KEY creation for prime tables aor allow null column in primary key
-    TODO: split the number, text and geo value object
-    TODO: split and move the dto_read and dto_write parts to separate objects
+    TODO Prio 2 what happens if a user (not the value owner) is adding a word to the value
+    TODO Prio 3 split the object to a time term value and a time stamp value for memory saving
+    TODO Prio 3 create an extreme reduced base object for effective handling of mass data with just phrase group (incl. time if needed) and value with can be used for key value noSQL databases
+    TODO Prio 2 remove PRIMARY KEY creation for prime tables aor allow null column in primary key
+    TODO Prio 2 split the number, text and geo value object
+    TODO Prio 2 split and move the dto_read and dto_write parts to separate objects
 
     Common object for the tables values, user_values,
     in the database the object is save in two tables
@@ -368,7 +368,7 @@ class value_base extends sandbox_value
                     . ' when loading ' . $this->dsp_id()
                     . ' from a db row with the fields "' . implode(', ', array_keys($db_row)) . '"', $msg);
             }
-            // TODO check if phrase_group_id and time_word_id are user-specific or time series specific
+            // TODO Prio 2 check if phrase_group_id and time_word_id are user-specific or time series specific
             $this->set_source_id($db_row[source_fields::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]));
         }
@@ -388,8 +388,8 @@ class value_base extends sandbox_value
         parent::api_mapper($api_json, $msg);
 
         // make sure that there are no unexpected leftovers but keep the user
-        // TODO check that it is always moved to sandbox object
-        // TODO use sand
+        // TODO Prio 2 check that it is always moved to sandbox object
+        // TODO Prio 2 use sand
         $this->reset(true);
 
         if (array_key_exists(json_fields::ID, $api_json)) {
@@ -464,7 +464,7 @@ class value_base extends sandbox_value
 
     /**
      * set the vars of this value object based on the given json without writing to the database
-     * TODO import the description and save it in the group description
+     * TODO Prio 2 import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $msg to enrich with warnings, problems and solutions
@@ -633,7 +633,7 @@ class value_base extends sandbox_value
 
         return $vars;
     }
-    // TODO test set_by_api_json
+    // TODO Prio 2 test set_by_api_json
 
 
     /*
@@ -798,7 +798,7 @@ class value_base extends sandbox_value
                     $grp_unscale = $phr_lst_converted->get_grp_id();
                     $this->grp()->set_id($grp_unscale->id());
                     $this->load_by_grp($grp_unscale, $msg);
-                    // TODO:
+                    // TODO Prio 2
                     // check if there are any matching values at all
                     // if yes, get the most often used phrase
                     // repeat adding a phrase utils a number is found
@@ -1088,7 +1088,7 @@ class value_base extends sandbox_value
 
     /**
      * create and return the description for this value
-     * TODO check if $this->load_phrases() needs to be called before calling this function
+     * TODO Prio 2 check if $this->load_phrases() needs to be called before calling this function
      */
     function name(): string
     {
@@ -1130,7 +1130,7 @@ class value_base extends sandbox_value
 
     /**
      * load the source and return the source name
-     * TODO avoid unneeded loading of sources
+     * TODO Prio 2 avoid unneeded loading of sources
      */
     function source_name(user_message $msg): string
     {
@@ -1164,7 +1164,7 @@ class value_base extends sandbox_value
 
     /**
      * create human-readable messages of the differences between the value objects
-     * TODO add time_stamp and user value if needed
+     * TODO Prio 2 add time_stamp and user value if needed
      * @param value_base|db_object_multi $obj which might be different to this value object
      * @param bool $ex_def if true exluding differences in fields with a defualt value like the type
      * @return user_message the human-readable messages of the differences between the value objects
@@ -1220,7 +1220,7 @@ class value_base extends sandbox_value
 
     /**
      * check the data consistency of this user value
-     * TODO move to test?
+     * TODO Prio 3 move to test?
      * @return bool true if everything is fine
      */
     function check(user_message $msg): bool
@@ -1258,7 +1258,7 @@ class value_base extends sandbox_value
 
     /**
      * check if the given value matches this value
-     * TODO join with sandbox is_same and review
+     * TODO Prio 2 join with sandbox is_same and review
      *
      * @param value_base $val the value that should be checked
      * @return bool true if all parameters are the same
@@ -1276,7 +1276,7 @@ class value_base extends sandbox_value
             $result = false;
         }
         /*
-         * TODO activate
+         * TODO Prio 1 activate
         if ($this->phr_lst()->id() != $val->phr_lst()->id()) {
             $result = false;
         }
@@ -1452,7 +1452,7 @@ class value_base extends sandbox_value
                         $r_part = $lib->str_right_of($frm->ref_text, chars::CHAR_CALC);
                         $wrd_symbol = chars::WORD_START . $scale_wrd->id() . chars::WORD_END;
                         $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
-                        // TODO separate time from value words
+                        // TODO Prio 2 separate time from value words
                         $calc = new calc_internal();
                         $result = $calc->parse($r_part);
                     }
@@ -1493,7 +1493,7 @@ class value_base extends sandbox_value
 
     /**
      * import a value from an external object
-     * TODO import the description and save it in the group description
+     * TODO Prio 2 import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $msg to enrich with warnings, problems and solutions
@@ -1777,7 +1777,7 @@ class value_base extends sandbox_value
 
     /**
      * get a list of all formula results that are depending on this value
-     * TODO: add a loop over the calculation if the are more formula results needs to be updated than defined with sql_db::ROW_MAX
+     * TODO Prio 1 add a loop over the calculation if the are more formula results needs to be updated than defined with sql_db::ROW_MAX
      */
     function res_lst_depending(user_message $msg): result_list
     {
@@ -1869,7 +1869,7 @@ class value_base extends sandbox_value
     }
 
     /**
-     * TODO switch to sql creator
+     * TODO Prio 2 switch to sql creator
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
      *                 to check if the value has been changed
      */
@@ -1902,7 +1902,7 @@ class value_base extends sandbox_value
 
     /**
      * true if the loaded value is not user-specific
-     * TODO: check the difference between is_std and can_change
+     * TODO Prio 2 check the difference between is_std and can_change
      */
     function is_std(): bool
     {
@@ -1918,7 +1918,7 @@ class value_base extends sandbox_value
 
     /**
      * true if a record for a user-specific configuration already exists in the database
-     * TODO for the user config it is relevant which user has the user config
+     * TODO Prio 2 for the user config it is relevant which user has the user config
      *      so the target user id must be added (or not?)
      */
     function has_usr_cfg(): bool
@@ -2102,7 +2102,7 @@ class value_base extends sandbox_value
         $val_wrd_id = $db_con->insert(array("group_id","phrase_id"), array($this->id(),$phr_id));
         if ($val_wrd_id > 0) {
           // get the link id, but updating the reference in the log should not be done, because the row id should be the ref to the original value
-          // TODO: call the word group creation
+          // TODO Prio 2 call the word group creation
         }
       }
     } else {
@@ -2277,7 +2277,7 @@ class value_base extends sandbox_value
         $class_name = $lib->class_to_name($this::class);
 
         // check if a new value is supposed to be added or updated
-        // TODO combine this db call with the add or update to one SQL sequence with one commit at the end
+        // TODO Prio 2 combine this db call with the add or update to one SQL sequence with one commit at the end
         if (!$this->is_saved()) {
             log_debug('check if a value ' . $this->dsp_id() . ' is already in the database');
             // check if a value for these phrases is already in the database
@@ -2301,14 +2301,14 @@ class value_base extends sandbox_value
             } else {
                 log_debug('update id ' . $this->id() . ' to save "' . $this->get_value() . '" for user ' . $this->get_user()->id());
                 // update a value
-                // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
+                // TODO Prio 2 if no one else has ever changed the value, change to default value, else create a user overwrite
 
                 // read the database value to be able to check if something has been changed
                 // done first, because it needs to be done for user and general values
                 $db_rec = $this->clone_all();
                 $db_rec->reset();
                 $db_rec->set_user($this->get_user());
-                // TODO for the user sandbox load by phrase group id and source because one user can say, that one value has different number from different sources
+                // TODO Prio 2 for the user sandbox load by phrase group id and source because one user can say, that one value has different number from different sources
                 $db_rec->load_by_id($this->grp()->id(), $msg);
                 if ($db_rec->id() != $this->id()) {
                     $msg->add_message_text($msg_reload . ' ' . $class_name . ' ' . $this->dsp_id() . ' ' . $msg_fail);

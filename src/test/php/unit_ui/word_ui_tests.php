@@ -123,9 +123,27 @@ class word_ui_tests
         $result = $wrd_crud->del($no_usr_msg);
         $t->assert_true($test_name, $result->has_msg_id(msg_id::USER_MISSING));
 
-        // TODO add a list of differences between the user word and the standard word
+        $t->subheader($ts . 'debug id');
+
+        // the named sandbox debug text shows the name and the id of the word
+        $test_name = 'shows the name of the word';
+        $wrd_dsp = new word($t_wrd->word()->api_json());
+        $dsp = $wrd_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+        $test_name = '... and its id';
+        $id_txt = (string)word_names::MATH_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a word known only by its id e.g. from a url has no name to show
+        $test_name = 'shows no name for a word without a name';
+        $wrd_dsp = new word();
+        $wrd_dsp->set_id(word_names::MATH_ID);
+        $dsp = $wrd_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
+        // TODO Prio 2 add a list of differences between the user word and the standard word
         //      with an undo button to change back to the standard
-        // TODO add this ui test for all main sandbox objects
+        // TODO Prio 2 add this ui test for all main sandbox objects
 
         $wrd = new word($t_wrd->word()->api_json());
         $wrd_pi = new word($t_wrd->word_pi()->api_json());
@@ -578,6 +596,11 @@ class word_ui_tests
         $sel = $dto->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
         $sel->more_text = $mtr->txt(msg_id::PLEASE_SELECT_SHORT);
         $t->assert_text_contains($test_name, $sel->display(), $more_html);
+        // negative: a page without formulas offers no formula to select
+        $test_name = 'a formula selector without formulas has no option';
+        $dto_no_frm = new data_object();
+        $sel_empty = $dto_no_frm->formula_list()->selector_ui(views::FORMULA_LINK_ADD, 0, url_var::FORMULA);
+        $t->assert($test_name, $sel_empty->lst, []);
 
         $t->subheader($ts . 'related sorted by impact');
         $stock_html = $list->phrases_related($msg, $wrd_company_rel);

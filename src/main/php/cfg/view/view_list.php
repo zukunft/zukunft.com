@@ -85,7 +85,7 @@ class view_list extends sandbox_list_named
     /**
      * fill the view list based on a database records
      * actually just add the single view object to the parent function
-     * TODO check that a similar function is used for all lists
+     * TODO Prio 2 check that a similar function is used for all lists
      *
      * @param array $db_rows is an array of an array with the database values
      * @param user_message $msg to enrich with problems and suggested solutions
@@ -161,7 +161,7 @@ class view_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load a list of views by the names
-     * TODO use name_field() function to avoid overwrites
+     * TODO Prio 2 use name_field() function to avoid overwrites
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
@@ -381,7 +381,7 @@ class view_list extends sandbox_list_named
 
     /**
      * save all views of this list
-     * TODO create one SQL and commit statement for faster execution
+     * TODO Prio 2 create one SQL and commit statement for faster execution
      *
      * @param import|null $imp the import object with the estimate of the total save time
      * @param user_message $msg the message shown to the user why the action has failed or an empty string if everything is fine

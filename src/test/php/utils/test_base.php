@@ -46,8 +46,8 @@
 
 */
 
-// TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
-// TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
+// TODO Prio 2 add checks that all id (name or link) changing return the correct error message if the new id already exists
+// TODO Prio 2 build a cascading test classes and split the classes to sections less than 1000 lines of code
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
@@ -745,8 +745,8 @@ class test_base
 
     /**
      * check if the test result is as expected and display the test result to an admin user
-     * TODO replace all dsp calls with this but the
-     * TODO the first parameter should almost always be $ts . $test_name
+     * TODO Prio 2 replace all dsp calls with this but the
+     * TODO Prio 2 the first parameter should almost always be $ts . $test_name
      *
      * @param string $test_name (unique) description of the test
      * @param string|bool|array|null $result the actual result
@@ -1084,6 +1084,46 @@ class test_base
     }
 
     /**
+     * check that the array has the given key e.g. that the api json contains a field
+     * the keys of the array are reported, so that a failure shows which key is missing on which array
+     *
+     * @param string $msg (unique) description of the test
+     * @param string|int $key the key that is expected in the array
+     * @param array $vars the actual array e.g. the result of api_json_array
+     * @return bool true if the array has the key
+     */
+    function assert_key_exists(string $msg, string|int $key, array $vars): bool
+    {
+        $found = array_key_exists($key, $vars);
+        $keys = implode(', ', array_keys($vars));
+        $diff = '';
+        if (!$found) {
+            $diff = 'key "' . $key . '" missing';
+        }
+        return $this->assert_dsp($msg, $found, 'an array with the key ' . $key, $keys, $diff);
+    }
+
+    /**
+     * check that the array does NOT have the given key e.g. that an empty field is not sent
+     * the keys of the array are reported, so that a failure shows which key is unexpected on which array
+     *
+     * @param string $msg (unique) description of the test
+     * @param string|int $key the key that is expected to be absent from the array
+     * @param array $vars the actual array e.g. the result of api_json_array
+     * @return bool true if the array does not have the key
+     */
+    function assert_key_not_exists(string $msg, string|int $key, array $vars): bool
+    {
+        $found = array_key_exists($key, $vars);
+        $keys = implode(', ', array_keys($vars));
+        $diff = '';
+        if ($found) {
+            $diff = 'key "' . $key . '" found';
+        }
+        return $this->assert_dsp($msg, !$found, 'an array without the key ' . $key, $keys, $diff);
+    }
+
+    /**
      * check if the test for results contains at least all expected results
      * or in other words if all needles can be found in the haystack
      *
@@ -1212,7 +1252,7 @@ class test_base
         $db_obj->load_by_id($usr_obj->id(), $msg);
         $recreated_json = $db_obj->export_json($msg, []);
         $result = $lib->json_is_similar($original_json, $recreated_json);
-        // TODO remove, for faster debugging only
+        // TODO Prio 2 remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
         $json_ex_txt = json_encode($recreated_json);
         return $this->assert_json($test_name . ' reloaded export json of ' . $usr_obj::class, $recreated_json, $original_json);
@@ -1233,7 +1273,7 @@ class test_base
         $url = THIS_URL . url_var::API_PATH . 'json';
         $data = array($fld => $id);
         $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
-        // TODO remove next line (added for faster debugging only)
+        // TODO Prio 2 remove next line (added for faster debugging only)
         $json_actual = json_encode($actual);
         $expected_text = $this->file('api/json/' . $test_name . '.json');
         $expected = json_decode($expected_text, true);
@@ -1577,7 +1617,7 @@ class test_base
         $msg = new user_message($usr);
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
-        // TODO move to a lib function that fills an usr_msg object
+        // TODO Prio 2 move to a lib function that fills an usr_msg object
         if ($json_in !== null) {
             $dto = new data_object($msg->usr);
             $usr_obj->import_obj($json_in, $msg, $dto);
@@ -1587,7 +1627,7 @@ class test_base
             if ($usr_obj::class == user::class) {
                 $json_ex = $this->json_remove_volatile($json_ex);
             }
-            // TODO remove, for faster debugging only
+            // TODO Prio 2 remove, for faster debugging only
             $json_in_txt = json_encode($json_in);
             $json_ex_txt = json_encode($json_ex);
             return $this->assert_json($this->name . 'import check name', $json_ex, $json_in);
@@ -2475,7 +2515,7 @@ class test_base
 
     /**
      * check the SQL statements to get all users that have changed the object
-     * TODO add this test once to each user object type
+     * TODO Prio 2 add this test once to each user object type
      *
      * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
@@ -2500,7 +2540,7 @@ class test_base
 
     /**
      * check the SQL statements to get the users that has created the most often used db row
-     * TODO add this test once to each relevant object type (at least once for named sandbox, link and value)
+     * TODO Prio 2 add this test once to each relevant object type (at least once for named sandbox, link and value)
      *
      * @param sql_creator $sc a sql creator object that can be empty
      * @param sandbox|sandbox_value $usr_obj the user sandbox object e.g. a word
@@ -2610,7 +2650,7 @@ class test_base
     /**
      * check the SQL statements to load named sandbox objects by a pattern for the name
      * for all allowed SQL database dialects
-     * TODO add unit and load test for triple, verb, view and component list
+     * TODO Prio 2 add unit and load test for triple, verb, view and component list
      *
      * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
@@ -3206,9 +3246,9 @@ class test_base
 
     /**
      * similar to assert_load_sql but for the load_sql_obj_vars that
-     * TODO should be replaced by assert_load_sql_id, assert_load_sql_name, assert_load_sql_all, ...
-     * TODO check that all assert_load_sql_ use by more that one test are here
-     * TODO in the assert_load_sql_ functions used for one test object only use the forwarded $t and $db_con vars
+     * TODO Prio 2 should be replaced by assert_load_sql_id, assert_load_sql_name, assert_load_sql_all, ...
+     * TODO Prio 2 check that all assert_load_sql_ use by more that one test are here
+     * TODO Prio 2 in the assert_load_sql_ functions used for one test object only use the forwarded $t and $db_con vars
      *
      * check the object load SQL statements for all allowed SQL database dialects
      *
@@ -3798,7 +3838,7 @@ class test_base
             $result = $this->write_named_check_description($sbx, $this->usr1, $old_description);
         }
         if ($result) {
-            // ... and user 2 also see the changed (TODO or not?)
+            // ... and user 2 also see the changed (TODO Prio 2 or not?)
             $result = $this->write_named_check_description($sbx, $this->usr2, $new_description);
         }
 
@@ -4145,7 +4185,7 @@ class test_base
                 $result = $this->write_link_check_order_nbr($lnk, $this->usr1, $old_order_nbr);
             }
             if ($result) {
-                // ... and user 2 also see the changed (TODO or not?)
+                // ... and user 2 also see the changed (TODO Prio 2 or not?)
                 $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
             }
         } elseif ($lnk::class == term_view::class
@@ -4186,7 +4226,7 @@ class test_base
                 $result = $this->write_link_check_description($lnk, $this->usr1, $old_description);
             }
             if ($result) {
-                // ... and user 2 also see the changed (TODO or not?)
+                // ... and user 2 also see the changed (TODO Prio 2 or not?)
                 $result = $this->write_link_check_description($lnk, $this->usr2, $new_description);
             }
         } else {
@@ -4981,7 +5021,7 @@ class test_base
         $class = $lib->class_to_name($obj::class);
         $name = $obj->unique_value();
         $test_name = 'add ' . $class . ' ' . $name . ' by user ' . $usr->dsp_id();
-        // TODO maybe add if ($obj::class = user::class) {
+        // TODO Prio 3 maybe add if ($obj::class = user::class) {
         if ($this->assert_true($test_name, $obj->save($msg), $this::TIMEOUT_LIMIT_DB)) {
             return $obj->id();
         } else {
@@ -5745,7 +5785,7 @@ class test_base
             $final_msg .= 'actual: ' . $result . ', ' . "\n";
             $final_msg .= 'expected: ' . $target . "\n";
             $this->error_counter++;
-            // TODO: create a ticket after version 0.1 where hopefully more than one developer is working on the project
+            // TODO Prio 3 create a ticket after version 0.1 where hopefully more than one developer is working on the project
         }
 
         // show the execution time
@@ -6329,7 +6369,7 @@ class test_base
     ): change_log_ui
     {
         $msg = new user_message();
-        // TODO maybe use log_object?
+        // TODO Prio 3 maybe use log_object?
         if ($sbx->is_value_obj()) {
             $log = $sbx->log_value_object();
         } else {
@@ -6399,7 +6439,7 @@ class test_base
      */
     function update_path_file(string $filepath, string $result): void
     {
-        // TODO always set a breakpoint here
+        // TODO Prio 3 always set a breakpoint here
         // the first snapshot of a new object type is written to a folder that does not exist yet
         $dir = dirname($filepath);
         if (!is_dir($dir) and !mkdir($dir, 0775, true) and !is_dir($dir)) {

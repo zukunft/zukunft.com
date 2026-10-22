@@ -139,6 +139,7 @@ class component_ui_tests
         $cmp_map = new component();
         $cmp_map->api_mapper(json_decode($t_cmp->component()->api_json(), true), $msg);
         $t->assert($test_name, $cmp_map->name(), components::WORD_NAME);
+        $msg->reset();
 
         // the id is mandatory, because without it a save would add a new component
         $test_name = 'a component json without an id is refused';
@@ -147,15 +148,17 @@ class component_ui_tests
 
         // a page request carries the linked view of a component link with its name
         $test_name = 'the api mapper sets the view of a component link';
+        $lnk_json = $t_cmp->component_link_filled_included()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]);
         $lnk = new component_link_ui();
-        $lnk->api_mapper(json_decode($t_cmp->component_link_filled_included()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]), true), $msg);
+        $lnk->api_mapper(json_decode($lnk_json, true), $msg);
         $t->assert($test_name, $lnk->get_view()?->name(), views::START_NAME);
+        $msg->reset();
 
         // a component link without a view in the api message has no view
         $test_name = 'a component link json without a view leaves the view empty';
         $lnk = new component_link_ui();
         $lnk->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
-        $t->assert_true($test_name, $lnk->get_view() === null);
+        $t->assert_null($test_name, $lnk->get_view()?->dsp_id());
         $msg->reset();
 
         $t->subheader($ts . 'title');

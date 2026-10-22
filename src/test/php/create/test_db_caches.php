@@ -54,6 +54,12 @@ use DateTime;
 class test_db_caches
 {
 
+    // the database id of the cache entry and of the cached page for unit tests
+    const int ID = 1;
+    // the url of the cached page for unit tests
+    const string PAGE_URL = 'http://zukunft.com/';
+
+
     /*
      * init
      */
@@ -78,7 +84,7 @@ class test_db_caches
     {
         $t_usr = new test_users();
         $db_cache = new db_cache($t_usr->user_ip());
-        $db_cache->id = 1;
+        $db_cache->id = self::ID;
         $db_cache->type_id = db_cache_types::SYSTEM_CONFIG_ID;
         $db_cache->data = [];
         return $db_cache;
@@ -113,8 +119,8 @@ class test_db_caches
     function db_cache_page(): db_cache_page
     {
         $db_cache_page = new db_cache_page();
-        $db_cache_page->id = 1;
-        $db_cache_page->url = 'http://zukunft.com/';
+        $db_cache_page->id = self::ID;
+        $db_cache_page->url = self::PAGE_URL;
         return $db_cache_page;
     }
 

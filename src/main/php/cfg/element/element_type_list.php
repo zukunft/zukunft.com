@@ -5,7 +5,7 @@
     model/element/element_type_list.php - to link coded functionality to a formula element type
     ---------------------------------
 
-    TODO review and merge with parameter_type because this will never change, so a fixed enum can be used
+    TODO Prio 2 review and merge with parameter_type because this will never change, so a fixed enum can be used
 
     This file is part of zukunft.com - calc with words
 

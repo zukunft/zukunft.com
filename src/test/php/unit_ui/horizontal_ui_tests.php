@@ -75,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_relation;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
@@ -237,6 +238,11 @@ class horizontal_ui_tests
             $test_name = 'the backend ' . $class . ' converts back to its frontend class';
             $t->assert($test_name, $map->uiObject($db_obj)::class, $ui_obj::class);
         }
+
+        $test_name = 'a backend class without a frontend class converts to the base object';
+        $grp = $t_map->class_to_object(group::class, $t->usr1);
+        $grp_ui = $map->uiObject($grp);
+        $t->assert($test_name, $grp_ui::class, db_object_ui::class);
 
         $t->subheader($ts . 'component types');
         $html = new html_base();

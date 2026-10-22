@@ -178,7 +178,7 @@ class json_fields
     // json field names of the api json messages
     // which is supposed to be the same as the corresponding var of the api object
     // so that no additional mapping is needed
-    // TODO check if api objects can be deprecated
+    // TODO Prio 2 check if api objects can be deprecated
     // and used in the backend to create the json for the frontend
     // and used in the frontend for the field selection
     const string ID = 'id'; // the unique database id used to save the changes
@@ -403,6 +403,8 @@ class json_fields
     const string LIST_SYSTEM_VIEWS = 'system_views';
     // the phrases that the frontend needs on every page e.g. the symbol triples (see verbs::PRELOAD_VERBS)
     const string LIST_SYSTEM_PHRASES = 'system_phrases';
+    // the formulas that convert a measure unit of the system phrases e.g. "kg" = "tonne" * 1000
+    const string LIST_SYSTEM_FORMULAS = 'system_formulas';
 
     /*
      * im- and export - fields used only for the im- and export json messages

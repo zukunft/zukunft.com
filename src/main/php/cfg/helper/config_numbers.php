@@ -145,19 +145,19 @@ class config_numbers extends value_list
     const array IP_USER_LOG_ALLOWED_NAMES = [...config_numbers::USER_LOG_PATH, triples::IP_USER, words::ALLOWED];
 
     // list of word that should be hidden be default for normal selections
-    // TODO check on pod start that these words exists and are of hidden type
+    // TODO Prio 2 check on pod start that these words exists and are of hidden type
     const array HIDDEN_KEYWORDS = [
         words::THIS_SYSTEM,
     ];
 
     // list of triples that should be hidden be default for normal selections
-    // TODO check on pod start that these triples exists and are of hidden type
+    // TODO Prio 2 check on pod start that these triples exists and are of hidden type
     const array HIDDEN_KEY_TRIPLES = [
         [words::SYSTEM, words::CONFIGURATION],
     ];
 
     // list of words that should be admin protected because they are user for the system configuration
-    // TODO check on pod start that these words exists and are admin protected
+    // TODO Prio 2 check on pod start that these words exists and are admin protected
     const array ADMIN_KEYWORDS = [
         words::ALLOWED,
         words::AUTOMATIC,
@@ -224,7 +224,7 @@ class config_numbers extends value_list
     ];
 
     // list of triples that should be admin protected because they are user for the system configuration
-    // TODO check on pod start that these triples exists and are admin protected
+    // TODO Prio 2 check on pod start that these triples exists and are admin protected
     const array ADMIN_KEY_TRIPLES = [
         [words::DATABASE, words::CHANGE],
         [words::START, words::DELAY],
@@ -249,7 +249,7 @@ class config_numbers extends value_list
     ];
 
     // list of internal tooltips (and the related word) where the default text for new users should not be changed
-    // TODO check on pod start that these comments are still normal
+    // TODO Prio 2 check on pod start that these comments are still normal
     const array INTERNAL_COMMENTS = [
         [words::TOOLTIP_COMMENT_COM, words::TOOLTIP_COMMENT],
         [words::SYS_CONF_VALUE_COM, words::SYS_CONF_VALUE],

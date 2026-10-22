@@ -128,8 +128,8 @@ class user_write_tests
         $result = $wrd_time->is_type(phrase_type_shared::TIME);
         $t->assert($test_name, $result, true);
 
-        // TODO prevent access write gains
-        // TODO prevent changing system users
+        // TODO Prio 1 prevent access write gains
+        // TODO Prio 1 prevent changing system users
 
 
         // load the main test words
@@ -162,7 +162,7 @@ class user_write_tests
         $t->assert('word->children for "' . word_names::TEST_PARENT . '" excluding the start word', $result, $target,
             $t::TIMEOUT_LIMIT, 'out of ' . $phr_lst->dsp_id());
 
-        // TODO move read only tests like this to the db read or unit tests
+        // TODO Prio 2 move read only tests like this to the db read or unit tests
         // word are, which includes all words related to the parent
         // e.g. which is for parent canton the phrase "Zurich (canton)", but not, as tested later, the phrase "Zurich (city)"
         //      "cantons are Zurich, Bern, ... and valid is also everything related to the Word canton itself"

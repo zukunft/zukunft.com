@@ -35,11 +35,11 @@ class phrase_types
 {
 
     // list of the phrase types that have a coded functionality
-    // TODO add the missing functionality and unit tests
+    // TODO Prio 2 add the missing functionality and unit tests
     const string NORMAL = "default";
     const int NORMAL_ID = 1;
     const string NORMAL_NAME = "standard";
-    const string MATH_CONST = "constant"; // TODO add usage sample
+    const string MATH_CONST = "constant"; // TODO Prio 3 add usage sample
     const string MATH_CONST_NAME = "math constant";
     const string TIME = "time";
     const int TIME_ID = 11;
@@ -48,7 +48,7 @@ class phrase_types
     const string TIME_NUMBER_NAME = "time number";
     const string TIME_JUMP = "time_jump";
     const string TIME_JUMP_NAME = "time jump";
-    const string LATEST = "latest"; // TODO add usage sample
+    const string LATEST = "latest"; // TODO Prio 3 add usage sample
     const string LATEST_NAME = "latest";
     const string PERCENT = "percent";
     const string PERCENT_NAME = "format percent";
@@ -92,16 +92,16 @@ class phrase_types
         self::SCALING,
         self::SCALING_HIDDEN,
     ];
-    const string SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
+    const string SCALING_PCT = "scaling_percent"; // TODO Prio 3 used to define the scaling formula word to scale percentage values ?
     const string SCALING_PCT_NAME = "scaling word percent";
-    const string SCALED_MEASURE = "scaled_measure"; // TODO add usage sample
+    const string SCALED_MEASURE = "scaled_measure"; // TODO Prio 3 add usage sample
     const string SCALED_MEASURE_NAME = "scaled measure";
     const string FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas
     const string FORMULA_LINK_NAME = "formula link";
     const int FORMULA_LINK_ID = 21;
-    const string CALC = "calc"; // TODO add usage sample
+    const string CALC = "calc"; // TODO Prio 3 add usage sample
     const string CALC_NAME = "calc";
-    const string LAYER = "view"; // TODO add usage sample
+    const string LAYER = "view"; // TODO Prio 3 add usage sample
     const string LAYER_NAME = "view / layer";
     const string OTHER = "type_other";
     const string OTHER_NAME = "differentiator filler";

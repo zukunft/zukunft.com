@@ -39,6 +39,7 @@ include_once paths::SHARED_TYPES . 'api_types.php';
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_ui;
 use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -69,13 +70,32 @@ class figure_list_ui_tests
         $t->subheader($ts . 'api mapper');
         $test_name = 'the api mapper adds every figure of the api json';
         $lst = new figure_list();
-        $lst->api_mapper(json_decode($t_fig->figure_list($msg)->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]), true));
+        $fig_lst_json = $t_fig->figure_list($msg)->api_json([api_types::TEST_MODE, api_types::INCL_PHRASES]);
+        $lst->api_mapper(json_decode($fig_lst_json, true));
         $t->assert($test_name, $lst->count(), $t_fig->figure_list($msg)->count());
         $test_name = 'the api mapper reports a figure without class';
         $fig_json = json_decode($t_fig->figure_value($msg)->api_json([api_types::INCL_PHRASES]), true);
         unset($fig_json[json_fields::OBJECT_CLASS]);
         $lst = new figure_list();
         $t->assert_false($test_name, $lst->api_mapper([$fig_json])->is_ok());
+
+        $t->subheader($ts . 'add');
+
+        // a figure that is not yet in the list is added
+        $test_name = 'a new figure is added';
+        $add_lst = new figure_list();
+        $fig = new figure_ui($t_fig->figure_value($msg)->api_json([api_types::INCL_PHRASES]));
+        $added = $add_lst->add($fig, $msg_ui);
+        $t->assert_true($test_name, $added);
+        $msg_ui->reset();
+
+        // negative: a figure that is already in the list is not added again
+        $test_name = 'a figure that is already in the list is not added again';
+        $add_lst = new figure_list();
+        $add_lst->add($fig, $msg_ui);
+        $added = $add_lst->add($fig, $msg_ui);
+        $t->assert_false($test_name, $added);
+        $msg_ui->reset();
     }
 
 }

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
 use Zukunft\ZukunftCom\main\php\shared\const\ip_ranges;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::DB . 'sql_creator.php';
@@ -122,11 +123,59 @@ class ip_range_tests
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
 
+        // ip_range: the fields are mapped to the export json
+        $test_name = 'export the reason';
+        $ip_range = $t_ip_range->ip_range_filled();
+        $exp = $ip_range->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::REASON], ip_ranges::TEST_REASON);
+        $msg->reset();
+
+        // negative: a range without reason exports an empty reason
+        $test_name = 'export no reason';
+        $ip_range = $t_ip_range->ip_range();
+        $exp = $ip_range->export_json($msg, [], false);
+        $t->assert_null($test_name, $exp[json_fields::REASON]);
+        $msg->reset();
+
 
         $t->subheader($ts . 'ip list sql');
 
         $ip_lst = new ip_range_list();
         $t->assert_sql_by_obj_vars($db_con, $ip_lst);
+
+
+        $t->subheader($ts . 'list add');
+
+        // a new ip range is added to the list
+        $test_name = 'add a range';
+        $ip_lst = new ip_range_list();
+        $added = $ip_lst->add($t_ip_range->ip_range(), $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: the same range again is refused as a double entry
+        $test_name = 'add a double range';
+        $ip_lst = $t_ip_range->ip_range_list($msg);
+        $added = $ip_lst->add($t_ip_range->ip_range(), $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of a saved range shows the database id
+        $test_name = 'range with id';
+        $ip_range = $t_ip_range->ip_range_loaded();
+        $dsp = $ip_range->dsp_id();
+        $id_txt = '(' . test_ip_ranges::TV_ID . ')';
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a range that is not yet saved has no database id
+        $test_name = 'range without id';
+        $ip_range = $t_ip_range->ip_range();
+        $dsp = $ip_range->dsp_id();
+        $id_txt = '(' . test_ip_ranges::TV_ID . ')';
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
     }
 

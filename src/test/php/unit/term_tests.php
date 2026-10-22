@@ -54,7 +54,11 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -103,6 +107,20 @@ class term_tests
         $trm = $vrb->term();
         $t->assert($t->name . 'verb id', $trm->id_obj(), $vrb->id());
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of a term is the full debug id of its object incl. the user
+        $test_name = 'the debug id shows the user of the object';
+        $trm = $t_trm->term();
+        $dsp = $trm->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
+
+        // negative: the term of an object without user shows no user
+        $test_name = 'the debug id of a term without user';
+        $trm = $t_trm->term_verb_is();
+        $dsp = $trm->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
 
 
         $t->subheader($ts . 'id encoding');
@@ -205,6 +223,77 @@ class term_tests
         $t->assert($t->name . '... and the name', $trm->name(), $frm->name());
 
 
+        $t->subheader($ts . 'api json array');
+
+        // combine_object: the class of a term with id is sent, so that the frontend can rebuild the term
+        $test_name = 'the class of a word term';
+        $trm = $t_trm->term();
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: a term without id sends no class
+        $test_name = 'no class of a term without id';
+        $trm = $t_trm->by_name(word_names::MATH);
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::OBJECT_CLASS, $vars);
+        $msg->reset();
+
+        // combine_object: the class of an excluded term is sent in test mode
+        $test_name = 'the class of an excluded term in test mode';
+        $trm = $t_wrd->word_excluded()->term();
+        $vars = $trm->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: the class of an excluded term is not sent with only the excluded id
+        // TODO Prio 2 adjust if the excluded id should name the class of the term
+        //      (see docs/llm/pending_prio_2.md, "api json array", combine_object)
+        $test_name = 'no class of an excluded term';
+        $trm = $t_wrd->word_excluded()->term();
+        $vars = $trm->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::OBJECT_CLASS, $vars);
+        $msg->reset();
+
+        // combine_object: a verb term always gets the class
+        $test_name = 'the class of a verb term';
+        $trm = $t_trm->term_verb();
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
+
+
+        $t->subheader($ts . 'export');
+
+        // the export of a word term names the class word
+        $test_name = 'export of a word term names the class';
+        $trm = $t_trm->term();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: a triple term is not exported as a word
+        $test_name = 'export of a triple term names the class';
+        $trm = $t_trm->term_triple();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_TRIPLE);
+        $msg->reset();
+
+        // the export of a verb term names the class verb
+        $test_name = 'export of a verb term names the class';
+        $trm = $t_trm->term_verb();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
+
+        // the export of a formula term names the class formula
+        $test_name = 'export of a formula term names the class';
+        $trm = $t_trm->term_formula();
+        $exp = $trm->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::OBJECT_CLASS], json_fields::CLASS_FORMULA);
+        $msg->reset();
+
+
         $t->subheader($ts . 'sql setup');
         $trm = $t_trm->term();
         $t->assert_sql_view_create($trm);
@@ -213,8 +302,8 @@ class term_tests
         $t->subheader($ts . 'sql query');
 
         // check the creation of the prepared sql statements to load a term by id or name
-        // TODO use assert_load_sql_id for all objects
-        // TODO use assert_load_sql_name for all named objects
+        // TODO Prio 2 use assert_load_sql_id for all objects
+        // TODO Prio 2 use assert_load_sql_name for all named objects
         $trm = new term($t->usr1);
         $t->assert_sql_by_id($sc, $trm);
         $t->assert_sql_by_name($sc, $trm);

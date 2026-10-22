@@ -208,9 +208,9 @@ class sandbox_value_list extends sandbox_list
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
      *
-     *  TODO use order by in query
-     *  TODO use limit and page in query
-     *  TODO replace return bool with user message e.g. to be able to return to the user
+     *  TODO Prio 2 use order by in query
+     *  TODO Prio 2 use limit and page in query
+     *  TODO Prio 2 replace return bool with user message e.g. to be able to return to the user
      *       "no values found, click here to search for values linked to any word of the list"
      *       or "... click here for related words"
      *
@@ -244,8 +244,8 @@ class sandbox_value_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of values by a list of phrases from the database
      * return all values that match at least one phrase of the list
-     * TODO add ORDER BY (relevance of value)
-     * TODO use LIMIT and PAGE
+     * TODO Prio 2 add ORDER BY (relevance of value)
+     * TODO Prio 2 use LIMIT and PAGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -427,7 +427,7 @@ class sandbox_value_list extends sandbox_list
 
     /**
      * add the single phrase fields to the sql creator object
-     * TODO make $par_pos unnecessary
+     * TODO Prio 2 make $par_pos unnecessary
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $phr_pos_lst to set a fixed name for the parameter
@@ -511,7 +511,7 @@ class sandbox_value_list extends sandbox_list
             }
             $fld_lst_usr_ex_std = result_db::FLD_NAMES_DATE_USR_EX_STD;
             $fld_lst_usr_num_ex_std = result_db::FLD_NAMES_NUM_USR_EX_STD;
-            // TODO use const overwrites for the result types a.g. for geo location results
+            // TODO Prio 2 use const overwrites for the result types a.g. for geo location results
             $fld_lst_usr_txt = [];
             $fld_lst_usr_num = result_db::FLD_NAMES_NUM_USR;
             $fld_lst_usr_only = result_db::FLD_NAMES_USR_ONLY;
@@ -565,7 +565,7 @@ class sandbox_value_list extends sandbox_list
 
         $sc->set_usr($this->get_user()->id);
         if ($is_std) {
-            // TODO replace next line with union select field name synchronisation
+            // TODO Prio 2 replace next line with union select field name synchronisation
             $sc->set_fields_num_dummy($fld_lst_dummy);
             if ($lib->is_value($class)) {
                 $sc->set_fields($fld_lst_std);

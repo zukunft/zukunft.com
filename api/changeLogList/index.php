@@ -73,7 +73,7 @@ if ($db_con->is_open()) {
     // send the complete change log of a user just to fill a list of a few rows
     $log_size = (int)($_GET[url_var::LOG_SIZE] ?? 0);
 
-    // TODO deprecate
+    // TODO Prio 2 deprecate
     $wrd_id = $_GET[url_var::WORD] ?? 0;
     $wrd_fld = $_GET[url_var::LOG_FIELD] ?? '';
 
@@ -106,7 +106,7 @@ if ($db_con->is_open()) {
             $lst->load_by_obj_fld($class, $msg, $id, $usr, $fld);
             $result = $lst->api_json([], $msg);
         } else {
-            // TODO deprecate
+            // TODO Prio 2 deprecate
             if ($wrd_id != 0) {
                 $wrd = new word($usr);
                 $wrd->load_by_id($wrd_id, $msg);
