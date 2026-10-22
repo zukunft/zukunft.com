@@ -53,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
@@ -523,23 +524,24 @@ class user_tests
         $test_name = 'no activation key';
         $usr_arr = $t_usr->user_filled($t);
         $vars = $usr_arr->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::ACTIVATION_KEY, $vars));
-        $t->assert_false($test_name . ' and no ip', array_key_exists(json_fields::IP_ADDR, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::ACTIVATION_KEY, $vars);
+        $t->assert_key_not_exists($test_name . ' and no ip', json_fields::IP_ADDR, $vars);
         $msg->reset();
 
         // negative: an empty field is not sent at all
         $test_name = 'no empty email';
         $usr_arr = $t_usr->user_add();
         $vars = $usr_arr->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::EMAIL, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::EMAIL, $vars);
         $msg->reset();
 
         // the last used view of a user is sent by its id
         $test_name = 'view id';
         $usr_arr = $t_usr->user_filled($t);
+        $trm = new test_terms($t)->term();
         $vars = $usr_arr->api_json_array([], $msg);
         $t->assert($test_name, $vars[json_fields::VIEW_ID] ?? null, views::START_ID);
-        $t->assert($test_name . ' term', $vars[json_fields::TERM_ID] ?? null, $usr_arr->trm->id());
+        $t->assert($test_name . ' term', $vars[json_fields::TERM_ID], $trm->id());
         $t->assert($test_name . ' source', $vars[json_fields::SOURCE_ID] ?? null, sources::SIB_ID);
         $msg->reset();
 
@@ -549,9 +551,9 @@ class user_tests
         $typ_lst = [api_types::INCL_VIEWS, api_types::INCL_TERMS, api_types::INCL_SOURCES];
         $vars = $usr_arr->api_json_array($typ_lst, $msg);
         $t->assert($test_name, $vars[json_fields::VIEW][json_fields::ID] ?? null, views::START_ID);
-        $t->assert_false($test_name . ' without id', array_key_exists(json_fields::VIEW_ID, $vars));
-        $t->assert_false($test_name . ' term without id', array_key_exists(json_fields::TERM_ID, $vars));
-        $t->assert_false($test_name . ' source without id', array_key_exists(json_fields::SOURCE_ID, $vars));
+        $t->assert_key_not_exists($test_name . ' without id', json_fields::VIEW_ID, $vars);
+        $t->assert_key_not_exists($test_name . ' term without id', json_fields::TERM_ID, $vars);
+        $t->assert_key_not_exists($test_name . ' source without id', json_fields::SOURCE_ID, $vars);
         $msg->reset();
 
         // the right level of a user profile is part of the api message

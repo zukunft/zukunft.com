@@ -263,7 +263,7 @@ class formula_link_tests
         $test_name = 'no priority is sent if not set';
         $lnk = $t_frm->formula_link_increase();
         $vars = $lnk->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PRIORITY, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PRIORITY, $vars);
         $msg->reset();
 
         // the description is only sent if set
@@ -277,7 +277,7 @@ class formula_link_tests
         $test_name = 'no description is sent if not set';
         $lnk = $t_frm->formula_link();
         $vars = $lnk->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
         $msg->reset();
 
         // a formula link type can be limited to one formula

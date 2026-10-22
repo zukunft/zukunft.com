@@ -92,7 +92,8 @@ class reference_ui_tests
         $t->assert($test_name, $url_arr[url_var::PHRASE], $ref_filled->phrase()->id());
         $test_name = 'the url of an empty reference carries no external key';
         $ref_empty = new ref();
-        $t->assert_false($test_name, array_key_exists(url_var::EXTERNAL_KEY, $ref_empty->to_url_array($msg)));
+        $url_arr = $ref_empty->to_url_array($msg);
+        $t->assert_key_not_exists($test_name, url_var::EXTERNAL_KEY, $url_arr);
 
         $sfm = new system_form();
         $ttl_html = $sfm->title_named($ref_filled, $msg);

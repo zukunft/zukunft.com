@@ -56,6 +56,7 @@ include_once paths::SHARED . 'url_var.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'triple_list.php';
+include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -154,7 +155,7 @@ class test_triples extends test_objects
         // the same weight as units.json sets for the db row of this triple, because the term
         // list unit test and the term list api read test share the fixture term_list.json,
         // so the in-memory twin and the db row must create the same api json
-        $trp->weight = 0.5;
+        $trp->weight = test_const::TRIPLE_WEIGHT;
         return $trp;
     }
 

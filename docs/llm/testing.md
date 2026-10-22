@@ -595,6 +595,18 @@ When a dedicated helper expresses the check, use it directly with raw values —
 - **Wrong**: `$t->assert_true($test_name, str_contains($title_sym, verbs::SYMBOL_NAME));`
 - **Right**: `$t->assert_text_contains($test_name, $title_sym, verbs::SYMBOL_NAME);`
 
+The preferred assert is the one that receives the most self-speaking values: the values that
+are compared, not a `true` or `false` computed from them, so that the failing assert can
+report what it looked for and where. The same holds for an array key: the key and the array go
+to the assert, which then reports which key is missing on which array.
+
+- **Wrong**: `$t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));`
+- **Right**: `$t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);`
+  (and `assert_key_exists` for the positive case)
+
+When the fitting variant is missing in `test_base`, it is added there first (with the report
+of the compared values) instead of falling back to `assert_true` / `assert_false`.
+
 Two follow-ons:
 - Collapse a defensive compound into the single substring that subsumes it.
   `(str_contains($h,'<h4>CHF</h4>') or str_contains($h,'<h2>CHF</h2>')) and !str_contains($h,'>CHF <a')`
@@ -604,6 +616,28 @@ Two follow-ons:
   (`$edit_pos > $heading_end`) — is a generic `assert_true` with the comparison
   acceptable. Reach for it last. (Still feed it named consts:
   `strpos($html, icons::EDIT)`, not `'fas fa-edit'`.)
+
+### The assert line compares two plain values
+
+The one-logical-element rule (`docs/llm/structure.md`) holds for the assert line too: it
+carries the `$test_name`, the actual value and the expected value, and each of the two values
+is a named variable, a single key read or a const. A nested key, a list index, a `??`
+fallback, a `count()` or a call chain is read into a named variable in the line before the
+assert, so the reader sees at a glance what is compared. A key that the positive test expects
+is read without `??`: a missing key is a failure of the test, and the run reports it with the
+key name.
+
+- **Wrong**: `$t->assert($test_name, $vars[0][json_fields::CODE_ID] ?? '', sys_log_statuum::OPEN);`
+- **Right**:
+
+```php
+$first = $vars[0];
+$t->assert($test_name, $first[json_fields::CODE_ID], sys_log_statuum::OPEN);
+```
+
+A compare of two counts (`count($vars)` with `count($typ_lst->lst())`) is no substitute: both
+sides come from the object under test, so the assert passes for any content. Compare one
+entry with a const instead.
 
 ### Every error message explains itself
 

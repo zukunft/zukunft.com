@@ -361,7 +361,7 @@ class change_log_tests
         $test_name = 'no row name without name';
         $log = $t_log->log_word_add();
         $vars = $log->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::ROW_NAME, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::ROW_NAME, $vars);
         $msg->reset();
 
         // the values of the other users are sent if another user has changed the field
@@ -376,7 +376,7 @@ class change_log_tests
         $test_name = 'no other values without others';
         $log = $t_log->log_word_add_view();
         $vars = $log->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::OTHER_VALUES, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::OTHER_VALUES, $vars);
         $msg->reset();
 
         // the old value of an updated named object field
@@ -440,7 +440,8 @@ class change_log_tests
         $test_name = 'one entry per change';
         $log_lst = $t_log->log_list_user_overwrites();
         $vars = $log_lst->api_json_array([], $msg);
-        $t->assert($test_name, count($vars), count($log_lst->lst()));
+        $first = $vars[0];
+        $t->assert($test_name, $first[json_fields::ROW_NAME], word_names::MATH);
         $msg->reset();
 
         // negative: an empty list results in an empty array

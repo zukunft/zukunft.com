@@ -457,6 +457,11 @@ open for the calculator page:
   has found calculator triples, so for a phrase without them that is opened with the
   `Calculator` view all api loads run twice
 
+## view edit
+
+move the entries like 'main + variance' from the '...' menu in the table component to the 'edit icon' menu in the navbar
+if there are more than 5 (config.yaml value) entries in one group show a '... more' entry in the menu
+
 ## import / export
 
 add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)

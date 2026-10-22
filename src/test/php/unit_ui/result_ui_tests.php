@@ -155,14 +155,15 @@ class result_ui_tests
         $t->subheader($ts . 'page request');
         $test_name = 'a result detail page asks for the used lists';
         $api_par = frontend::page_api_par(views::RESULT_DEFAULT_DETAIL);
-        $t->assert_true($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $t->assert_key_exists($test_name, url_var::INCL_USED, $api_par);
         $test_name = 'the result default page does not wait for the used lists';
         $api_par = frontend::page_api_par(views::RESULT);
-        $t->assert_false($test_name, array_key_exists(url_var::INCL_USED, $api_par));
+        $t->assert_key_not_exists($test_name, url_var::INCL_USED, $api_par);
         $test_name = '... but asks for the related objects';
-        $t->assert_true($test_name, array_key_exists(url_var::INCL_RELATED, $api_par));
+        $t->assert_key_exists($test_name, url_var::INCL_RELATED, $api_par);
         $test_name = 'a page without a main object asks for no related objects';
-        $t->assert_false($test_name, array_key_exists(url_var::INCL_RELATED, frontend::page_api_par(views::START)));
+        $start_par = frontend::page_api_par(views::START);
+        $t->assert_key_not_exists($test_name, url_var::INCL_RELATED, $start_par);
 
         // below the title the page shows in three columns what the number is based on
         $t->subheader($ts . 'used for the calculation');

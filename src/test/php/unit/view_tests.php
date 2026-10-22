@@ -48,9 +48,11 @@ use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_figures;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_users;
@@ -158,7 +160,8 @@ class view_tests
         $t->assert($test_name, new view_ui($msk->api_json())->editor_id, views::TABLE_EDITOR_ID);
         $test_name = 'a view without an editor sends no editor id';
         $msk = $t_msk->view_table();
-        $t->assert_false($test_name, array_key_exists(json_fields::EDITOR_ID, $msk->api_json_array([], $msg)));
+        $msk_json = $msk->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::EDITOR_ID, $msk_json);
         $test_name = '... so the frontend view has none';
         $t->assert_null($test_name, new view_ui($msk->api_json())->editor_id);
 
@@ -245,21 +248,22 @@ class view_tests
         $test_name = 'no style';
         $msk = $t_msk->view();
         $vars = $msk->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::STYLE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::STYLE, $vars);
         $msg->reset();
 
         // the component links of a view are sent if the view has them
         $test_name = 'components';
         $msk = $t_msk->view_with_components();
         $vars = $msk->api_json_array([], $msg);
-        $t->assert($test_name, count($vars[json_fields::COMPONENTS] ?? []), $msk->cmp_lnk_lst->count());
+        $first_lnk = $vars[json_fields::COMPONENTS][0];
+        $t->assert($test_name, $first_lnk[json_fields::ID], components::WORD_ID);
         $msg->reset();
 
         // negative: a view without component links sends no components
         $test_name = 'no components';
         $msk = $t_msk->view();
         $vars = $msk->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::COMPONENTS, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::COMPONENTS, $vars);
         $msg->reset();
 
         // an excluded view is sent only with its id and the excluded flag if the ids are requested
@@ -413,35 +417,35 @@ class view_tests
         $mrl = $t_msk->view_relation();
         $vars = $mrl->api_json_array([api_types::INCL_VIEWS], $msg);
         $t->assert($test_name, $vars[json_fields::PARENT][json_fields::ID] ?? null, views::WORD_EDIT_ID);
-        $t->assert_false($test_name . ' without id', array_key_exists(json_fields::PARENT_ID, $vars));
+        $t->assert_key_not_exists($test_name . ' without id', json_fields::PARENT_ID, $vars);
         $msg->reset();
 
         // the start position of a view relation is sent if it is set
         $test_name = 'position';
         $mrl = $t_msk->view_relation();
         $vars = $mrl->api_json_array([], $msg);
-        $t->assert($test_name, $vars[json_fields::POSITION] ?? null, $mrl->start_pos);
+        $t->assert($test_name, $vars[json_fields::POSITION], test_const::VIEW_RELATION_POS);
         $msg->reset();
 
         // negative: a view relation without a start position sends no position
         $test_name = 'no position';
         $mrl = $t_msk->view_relation_add();
         $vars = $mrl->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::POSITION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::POSITION, $vars);
         $msg->reset();
 
         // the description of a view relation is sent if it is set
         $test_name = 'description';
         $mrl = $t_msk->view_relation_filled_included();
         $vars = $mrl->api_json_array([], $msg);
-        $t->assert($test_name, $vars[json_fields::DESCRIPTION] ?? null, $mrl->description);
+        $t->assert($test_name, $vars[json_fields::DESCRIPTION], test_const::VIEW_RELATION_COM);
         $msg->reset();
 
         // negative: a view relation without a description sends no description
         $test_name = 'no description';
         $mrl = $t_msk->view_relation();
         $vars = $mrl->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
         $msg->reset();
 
 

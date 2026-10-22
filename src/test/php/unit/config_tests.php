@@ -296,7 +296,8 @@ class config_tests
         $default_names = array_merge(config_tree::ROOT_KEYS,
             [test_config_trees::SYSTEM, test_config_trees::DATABASE, test_config_trees::ROW_LIMIT, test_config_trees::ROW_LIMIT_SETTING]);
         $default_key = config_numbers::names_key($default_names);
-        $t->assert_false($test_name, array_key_exists($default_key, $t_cft->cfg()->exact_lookup()));
+        $exact_lookup = $t_cft->cfg()->exact_lookup();
+        $t->assert_key_not_exists($test_name, $default_key, $exact_lookup);
         // negative: a key with two settings is a group without a value or a unit
         $test_name = 'a key with two settings has no value and no unit';
         $retry_node = $t_cft->node_by_name($nodes, test_config_trees::RETRY);
@@ -322,7 +323,7 @@ class config_tests
         $t->assert($test_name, $max_node[json_fields::ID] ?? 0, test_config_trees::MAX_DELAY_ID);
         // negative: without a database value there is nothing to overwrite
         $test_name = '... but a setting without a database value has no id';
-        $t->assert_false($test_name, array_key_exists(json_fields::ID, $default_node));
+        $t->assert_key_not_exists($test_name, json_fields::ID, $default_node);
         // negative: a config.yaml without a key has no node, even if the database has values
         $test_name = 'an empty config.yaml has no node';
         $empty_nodes = $cft->nodes([], $t_cft->cfg());
@@ -336,7 +337,9 @@ class config_tests
         $t->assert($test_name, config_numbers::names_key(array_reverse($names)), config_numbers::names_key($names));
         // negative: a value with more phrases belongs to a setting below the given one
         $test_name = '... but not by a part of its phrases';
-        $t->assert_false($test_name, array_key_exists(config_numbers::names_key(array_slice($names, 1)), $obj_lookup));
+        $part_names = array_slice($names, 1);
+        $part_key = config_numbers::names_key($part_names);
+        $t->assert_key_not_exists($test_name, $part_key, $obj_lookup);
         // a numeric name is an int key of the cached lookup rows, but the same phrase as its text
         $test_name = 'a numeric name is the same phrase as its text';
         $t->assert($test_name, config_numbers::names_key([2000]), config_numbers::names_key(['2000']));

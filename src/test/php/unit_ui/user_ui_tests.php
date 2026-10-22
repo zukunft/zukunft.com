@@ -491,10 +491,11 @@ class user_ui_tests
 
         $test_name = 'the api url of an ip only user carries no user id';
         $ip_data = $rest->data_with_user([], new user_message($ip_ui));
-        $t->assert_false($test_name, array_key_exists(url_var::USER, $ip_data));
+        $t->assert_key_not_exists($test_name, url_var::USER, $ip_data);
 
         $test_name = 'the api url without a user carries no user id';
-        $t->assert_false($test_name, array_key_exists(url_var::USER, $rest->data_with_user([], $msg)));
+        $api_data = $rest->data_with_user([], $msg);
+        $t->assert_key_not_exists($test_name, url_var::USER, $api_data);
 
         $t->subheader($ts . 'page url');
 
@@ -553,7 +554,9 @@ class user_ui_tests
         $test_name = 'the system user sees the standard data';
         $t->assert_true($test_name, $sys_ui->uses_standard_data());
         $test_name = 'the api url of the system user carries no user id';
-        $t->assert_false($test_name, array_key_exists(url_var::USER, $rest->data_with_user([], new user_message($sys_ui))));
+        $sys_msg = new user_message($sys_ui);
+        $sys_data = $rest->data_with_user([], $sys_msg);
+        $t->assert_key_not_exists($test_name, url_var::USER, $sys_data);
 
         // the page of a logged in user shows the user name, the logout link and the black add and
         // edit icons, so it is never stored as or taken from the shared page cache; the requesting
@@ -675,7 +678,7 @@ class user_ui_tests
         $std_arr = $url_map->url_to_standard([url_var::MASK => views::USER_ADMIN_EDIT_ID, url_var::USER_TO_EDIT => users::DEV_ID], $msg);
         $t->assert($test_name, $std_arr[url_var::ID] ?? 0, users::DEV_ID);
         $test_name = '... and is not kept beside the id';
-        $t->assert_false($test_name, array_key_exists(url_var::USER_TO_EDIT, $std_arr));
+        $t->assert_key_not_exists($test_name, url_var::USER_TO_EDIT, $std_arr);
         $test_name = 'the user_to_edit of another view does not replace the id';
         $std_arr = $url_map->url_to_standard(
             [url_var::MASK => views::WORD_ID, url_var::ID => word_names::MATH_ID, url_var::USER_TO_EDIT => users::DEV_ID], $msg);

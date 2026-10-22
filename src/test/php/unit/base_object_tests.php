@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -59,6 +60,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\ListOf;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\create\test_ip_ranges;
+use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -393,8 +395,9 @@ class base_object_tests
 
         // db_object_seq_id: the id of a user
         $test_name = 'the seq id';
-        $vars = $t->usr1->api_json_array([], $msg_be);
-        $t->assert($test_name, $vars[json_fields::ID], $t->usr1->id());
+        $usr = new test_users()->user_filled_loaded($t);
+        $vars = $usr->api_json_array([], $msg_be);
+        $t->assert($test_name, $vars[json_fields::ID], users::TEST_USER_ID);
         $msg_be->reset();
 
         // negative: an object without db id sends the id zero
@@ -415,7 +418,8 @@ class base_object_tests
         $test_name = 'the list drops an empty field';
         $wrd_lst = $t_wrd->word_list();
         $vars = $wrd_lst->api_json_array([], $msg_be);
-        $t->assert_false($test_name, array_key_exists(json_fields::PLURAL, $vars[0]));
+        $first = $vars[0];
+        $t->assert_key_not_exists($test_name, json_fields::PLURAL, $first);
         $msg_be->reset();
 
 

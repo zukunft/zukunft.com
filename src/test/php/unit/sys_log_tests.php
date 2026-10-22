@@ -218,21 +218,22 @@ class sys_log_tests
         $test_name = 'no description of an open entry';
         $log = $t_sys->sys_log();
         $vars = $log->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
         $msg->reset();
 
         // the solver of an assigned log entry
         $test_name = 'solver of an assigned entry';
         $log = $t_sys->sys_log_two();
         $vars = $log->api_json_array([], $msg);
-        $t->assert($test_name, $vars[json_fields::SOLVER] ?? 0, $log->solver->id());
+        $solver_id = $t->usr_admin->id();
+        $t->assert($test_name, $vars[json_fields::SOLVER], $solver_id);
         $msg->reset();
 
         // negative: an open log entry without solver sends no solver
         $test_name = 'no solver of an open entry';
         $log = $t_sys->sys_log();
         $vars = $log->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::SOLVER, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::SOLVER, $vars);
         $msg->reset();
 
 

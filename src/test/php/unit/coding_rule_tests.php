@@ -141,9 +141,9 @@ class coding_rule_tests
         $t->assert($test_name, (string)($name_lst['reset'] ?? 0), '1');
         // negative: a declaration and a quoted name are no calls
         $test_name = 'a function declaration is not counted as a call';
-        $t->assert_false($test_name, array_key_exists('load', $cnt_lst));
+        $t->assert_key_not_exists($test_name, 'load', $cnt_lst);
         $test_name = '... and a quoted name is not counted as a call either';
-        $t->assert_false($test_name, array_key_exists('reset', $cnt_lst));
+        $t->assert_key_not_exists($test_name, 'reset', $cnt_lst);
 
         $this->php_class_name_check($t);
 

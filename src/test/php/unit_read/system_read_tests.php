@@ -161,11 +161,11 @@ class system_read_tests
         // every user reads the same cached types message, so it must not name the user who has requested it first
         $typ_header = json_decode($typ_json, true);
         $test_name = 'the cached types api message has a header';
-        $t->assert_true($test_name, array_key_exists(json_fields::POD, $typ_header));
+        $t->assert_key_exists($test_name, json_fields::POD, $typ_header);
         $test_name = '... but without the id of the requesting user';
-        $t->assert_false($test_name, array_key_exists(json_fields::USER_ID, $typ_header));
+        $t->assert_key_not_exists($test_name, json_fields::USER_ID, $typ_header);
         $test_name = '... and without the name of the requesting user';
-        $t->assert_false($test_name, array_key_exists(json_fields::USER_NAME, $typ_header));
+        $t->assert_key_not_exists($test_name, json_fields::USER_NAME, $typ_header);
 
         /*
          * SQL database read unit tests

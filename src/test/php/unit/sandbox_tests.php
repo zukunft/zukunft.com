@@ -374,7 +374,8 @@ class sandbox_tests
         $test_name = '... and a json without predicate sends no predicate back';
         $lnk_ui = new component_link_ui();
         $lnk_ui->api_mapper([json_fields::ID => $lnk->id()], $msg_ui);
-        $t->assert_false($test_name, array_key_exists(json_fields::PREDICATE_ID, $lnk_ui->api_array([], $msg_ui)));
+        $lnk_arr = $lnk_ui->api_array([], $msg_ui);
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE_ID, $lnk_arr);
         $msg_ui->reset();
 
         // the sandbox base classes are only reached through a concrete child, so each block creates
@@ -406,7 +407,7 @@ class sandbox_tests
         $test_name = 'no sandbox share type';
         $wrd = $t_wrd->word();
         $vars = $wrd->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::SHARE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::SHARE, $vars);
         $msg->reset();
 
         // sandbox: the protection type is sent if set
@@ -420,7 +421,7 @@ class sandbox_tests
         $test_name = 'no sandbox protection type';
         $wrd = $t_wrd->word_name_only();
         $vars = $wrd->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PROTECTION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PROTECTION, $vars);
         $msg->reset();
 
         // sandbox: the excluded flag is sent for an excluded object
@@ -434,7 +435,7 @@ class sandbox_tests
         $test_name = 'no sandbox excluded flag';
         $wrd = $t_wrd->word();
         $vars = $wrd->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::EXCLUDED, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::EXCLUDED, $vars);
         $msg->reset();
 
         // sandbox_named: the name
@@ -476,7 +477,7 @@ class sandbox_tests
         $test_name = 'no named usage';
         $wrd = $t_wrd->word();
         $vars = $wrd->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::USAGE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::USAGE, $vars);
         $msg->reset();
 
         // sandbox_typed: the type
@@ -504,7 +505,7 @@ class sandbox_tests
         $test_name = 'no code id';
         $wrd = $t_wrd->word();
         $vars = $wrd->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::CODE_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::CODE_ID, $vars);
         $msg->reset();
 
         // sandbox_link: a predicate that is not the default of the link class is sent
@@ -519,14 +520,14 @@ class sandbox_tests
         $lnk = $t_frm->formula_link();
         $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
         $vars = $lnk->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PREDICATE_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE_ID, $vars);
         $msg->reset();
 
         // negative: the predicate of a triple is the verb, so it is not sent as predicate
         $test_name = 'no link predicate of a triple';
         $trp = $t_trp->triple();
         $vars = $trp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PREDICATE_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PREDICATE_ID, $vars);
         $msg->reset();
 
         // sandbox_link_named: the name of an excluded link is sent if the excluded objects are requested
@@ -583,7 +584,7 @@ class sandbox_tests
         $val = $t_val->value_pi();
         $val->set_share_id($sys->typ_lst->shr_typ->id(share_types::PUBLIC));
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::SHARE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::SHARE, $vars);
         $msg->reset();
 
         // sandbox_multi: a protection type that is not the default is sent
@@ -598,7 +599,7 @@ class sandbox_tests
         $val = $t_val->value_pi();
         $val->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::NO_PROTECT));
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PROTECTION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PROTECTION, $vars);
         $msg->reset();
 
         // sandbox_value: the id of a value is the group id
@@ -626,7 +627,7 @@ class sandbox_tests
         $test_name = 'no value description';
         $val = $t_val->value_pi();
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
         $msg->reset();
 
         // sandbox_value: the phrases are sent if requested
@@ -640,7 +641,7 @@ class sandbox_tests
         $test_name = 'no value phrases';
         $val = $t_val->value_pi();
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
         $msg->reset();
 
         // TODO Prio 2 review the tests below e.g. by using the test section ($ts) and $test_name like above

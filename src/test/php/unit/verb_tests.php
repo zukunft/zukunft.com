@@ -148,7 +148,7 @@ class verb_tests
         $vrb = $t_vrb->verb_part();
         $vrb->triples_related = $t_trp->triple_list_one();
         $vars = $vrb->api_json_array([api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::TRIPLES, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::TRIPLES, $vars);
         $msg->reset();
 
         // negative: a verb without id is not yet used by any triple
@@ -156,7 +156,7 @@ class verb_tests
         $vrb = $t_vrb->verb_name_only();
         $vrb->triples_related = $t_trp->triple_list_one();
         $vars = $vrb->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::TRIPLES, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::TRIPLES, $vars);
         $msg->reset();
 
 

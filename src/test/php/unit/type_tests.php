@@ -316,7 +316,8 @@ class type_tests
         $test_name = 'one entry per type';
         $typ_lst = $typ_lst_all->sys_log_sta;
         $vars = $typ_lst->api_json_array([], $msg);
-        $t->assert($test_name, count($vars), count($typ_lst->lst()));
+        $first = $vars[0];
+        $t->assert($test_name, $first[json_fields::CODE_ID], sys_log_statuum::OPEN);
         $msg->reset();
 
         // negative: an empty type list sends an empty array
@@ -330,14 +331,16 @@ class type_tests
         $test_name = 'ref type entry with url';
         $typ_lst = $typ_lst_all->ref_typ;
         $vars = $typ_lst->api_json_array([], $msg);
-        $t->assert_true($test_name, array_key_exists(json_fields::URL, $vars[0] ?? []));
+        $first = $vars[0];
+        $t->assert_key_exists($test_name, json_fields::URL, $first);
         $msg->reset();
 
         // negative: a standard type sends only the common type fields
         $test_name = 'standard type entry without url';
         $typ_lst = $typ_lst_all->sys_log_sta;
         $vars = $typ_lst->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::URL, $vars[0] ?? []));
+        $first = $vars[0];
+        $t->assert_key_not_exists($test_name, json_fields::URL, $first);
         $msg->reset();
 
         // the type lists send one key per api list
@@ -349,7 +352,7 @@ class type_tests
         // negative: the system views are not part of the type lists
         $test_name = 'no system views in the type lists';
         $vars = $typ_lst_all->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::LIST_SYSTEM_VIEWS, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::LIST_SYSTEM_VIEWS, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'code link csv row mapper');

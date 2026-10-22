@@ -221,7 +221,7 @@ class term_tests
         $test_name = 'no class of a term without id';
         $trm = $t_trm->by_name(word_names::MATH);
         $vars = $trm->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::OBJECT_CLASS, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::OBJECT_CLASS, $vars);
         $msg->reset();
 
         // combine_object: the class of an excluded term is sent in test mode
@@ -232,10 +232,12 @@ class term_tests
         $msg->reset();
 
         // negative: the class of an excluded term is not sent with only the excluded id
+        // TODO Prio 2 adjust if the excluded id should name the class of the term
+        //      (see docs/llm/pending_prio_2.md, "api json array", combine_object)
         $test_name = 'no class of an excluded term';
         $trm = $t_wrd->word_excluded()->term();
         $vars = $trm->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::OBJECT_CLASS, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::OBJECT_CLASS, $vars);
         $msg->reset();
 
         // combine_object: a verb term always gets the class

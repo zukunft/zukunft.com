@@ -330,7 +330,7 @@ class word_tests
         $test_name = 'the phrase names request sends no plural';
         $wrd = $t_wrd->word_filled();
         $vars = $wrd->api_json_array([api_types::TEST_MODE, api_types::PHRASE_NAMES], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PLURAL, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PLURAL, $vars);
         $msg->reset();
 
         // the default view is sent so that the edit form can preselect it
@@ -344,7 +344,7 @@ class word_tests
         $test_name = 'a word without view sends no view';
         $wrd = $t_wrd->word();
         $vars = $wrd->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::VIEW, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $vars);
         $msg->reset();
 
         // an excluded word is sent with its id and the excluded flag if requested
@@ -358,7 +358,7 @@ class word_tests
         $test_name = 'an excluded word is not sent';
         $wrd = $t_wrd->word_excluded();
         $vars = $wrd->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::ID, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'api/word handler reads the ?incl_related URL param into the api_type_list');
@@ -390,15 +390,15 @@ class word_tests
         $vars_with = $wrd->api_json_array($with_related, $msg);
         $vars_without = $wrd->api_json_array($without_related, $msg);
         $test_name = 'word api_json_array includes phrases_related when INCL_RELATED is set';
-        $t->assert_true($t->name . $test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars_with));
+        $t->assert_key_exists($test_name, json_fields::PHRASES_RELATED, $vars_with);
         $test_name = 'word api_json_array omits phrases_related without INCL_RELATED';
-        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_without));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars_without);
         // negative: a word with an empty phrases_related list does not emit the key
         $bare_wrd = $t_wrd->word_chf();
         $bare_wrd->phrases_related = new phrase_list($t->usr1);
         $vars_bare = $bare_wrd->api_json_array($with_related, $msg);
         $test_name = 'word api_json_array omits phrases_related when the list is empty';
-        $t->assert_true($t->name . $test_name, !array_key_exists(json_fields::PHRASES_RELATED, $vars_bare));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars_bare);
 
         $t->subheader($ts . 'related phrase selection by impact');
         // the most relevant related phrases e.g. the stocks with the highest

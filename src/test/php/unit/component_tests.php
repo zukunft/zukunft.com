@@ -194,7 +194,7 @@ class component_tests
         $t->assert_null($test_name, $cmp_no_lnk->linked_component_id);
         $test_name = 'a component without a linked component sends no linked component';
         $api_no_lnk = json_decode($cmp_no_lnk->api_json(), true);
-        $t->assert_false($test_name, array_key_exists(json_fields::LINKED_COMPONENT, $api_no_lnk));
+        $t->assert_key_not_exists($test_name, json_fields::LINKED_COMPONENT, $api_no_lnk);
         // the page url of the component edit form posts the two fields back to the backend
         $test_name = 'a posted linked component and its type are mapped to the frontend component';
         $cmp_lnk_url_ui = new component_ui($t_cmp->component()->api_json());
@@ -243,7 +243,7 @@ class component_tests
         $t->assert_null($test_name, $cmp_no_exc->ui_msg_value_exception);
         $test_name = 'a ui message exception value of null is not part of the api message';
         $api_no_exc = json_decode($cmp_no_exc->api_json(), true);
-        $t->assert_false($test_name, array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_no_exc));
+        $t->assert_key_not_exists($test_name, json_fields::UI_MSG_CODE_VAL_EXCEPTION, $api_no_exc);
         // the frontend keeps the zero and sends it back to the backend, so that a save of a
         // component form does not clear the exception value
         $test_name = 'the frontend keeps a ui message exception value of zero';
@@ -299,9 +299,9 @@ class component_tests
         $test_name = 'no ui message code id';
         $cmp = $t_cmp->component();
         $vars = $cmp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::UI_MSG_CODE_ID, $vars));
-        $t->assert_false($test_name . ' vars', array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $vars));
-        $t->assert_false($test_name . ' exception', array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::UI_MSG_CODE_ID, $vars);
+        $t->assert_key_not_exists($test_name . ' vars', json_fields::UI_MSG_CODE_ID_VARS, $vars);
+        $t->assert_key_not_exists($test_name . ' exception', json_fields::UI_MSG_CODE_ID_EXCEPTION, $vars);
         $msg->reset();
 
         // the default style of a component is sent if it is set
@@ -315,7 +315,7 @@ class component_tests
         $test_name = 'no style';
         $cmp = $t_cmp->component();
         $vars = $cmp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::STYLE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::STYLE, $vars);
         $msg->reset();
 
         // the formula of a component is sent by its id
@@ -329,7 +329,7 @@ class component_tests
         $test_name = 'no formula id';
         $cmp = $t_cmp->component_filled_included();
         $vars = $cmp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::FORMULA_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::FORMULA_ID, $vars);
         $msg->reset();
 
         // the phrases that select the table rows and columns are sent by their id
@@ -344,8 +344,8 @@ class component_tests
         $test_name = 'no row phrase id';
         $cmp = $t_cmp->component();
         $vars = $cmp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASE_ROW, $vars));
-        $t->assert_false($test_name . ' col', array_key_exists(json_fields::PHRASE_COL, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASE_ROW, $vars);
+        $t->assert_key_not_exists($test_name . ' col', json_fields::PHRASE_COL, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'component api mapper');

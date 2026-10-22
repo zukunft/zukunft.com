@@ -155,7 +155,7 @@ class value_tests
         $t->assert($test_name, $named_json[json_fields::NAME] ?? '', groups::TN_READ);
         $test_name = 'the api json of a value named only by its phrases has no name';
         $unnamed_json = $val->api_json_array([api_types::INCL_PHRASES], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_json));
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $unnamed_json);
         $test_name = 'the export json of a value with a named group has the given name';
         $named_ex_json = $t_val->value($msg)->export_json($msg, [], false);
         $t->assert($test_name, $named_ex_json[json_fields::NAME] ?? '', groups::TN_READ);
@@ -166,7 +166,7 @@ class value_tests
         $msg->reset();
         $test_name = 'the export json of a value named only by its phrases has no name';
         $unnamed_ex_json = $val->export_json($msg, [], false);
-        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $unnamed_ex_json));
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $unnamed_ex_json);
         $test_name = '... so the import gives no name to the group';
         $val_imported = new value($t->usr1);
         $val_imported->import_mapper($unnamed_ex_json, $msg);
@@ -286,7 +286,7 @@ class value_tests
         $test_name = 'no source id of a value without a source';
         $val = $t_val->value_pi();
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::SOURCE_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_ID, $vars);
         $msg->reset();
 
         // a numeric value sends the number
@@ -307,7 +307,7 @@ class value_tests
         $test_name = 'no nested source without the page flag';
         $val = $t_val->light_speed();
         $vars = $val->api_json_array([api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::SOURCE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE, $vars);
         $msg->reset();
 
         // the value page gets the time of the last update
@@ -323,7 +323,7 @@ class value_tests
         $val = $t_val->value_pi();
         $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
         $vars = $val->api_json_array([api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::LAST_UPDATE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::LAST_UPDATE, $vars);
         $msg->reset();
 
         // a geolocation value sends the geolocation
@@ -337,7 +337,7 @@ class value_tests
         $test_name = 'no number of a geo value';
         $val = $t_val->geo_value();
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::NUMBER, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $vars);
         $msg->reset();
 
         // a text value sends the text
@@ -351,10 +351,12 @@ class value_tests
         $test_name = 'no number of a text value';
         $val = $t_val->text_value();
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::NUMBER, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $vars);
         $msg->reset();
 
         // a time value sends the time
+        // TODO Prio 2 compare the text once api_json_array sends the time as the text that api_mapper expects
+        //      (see docs/llm/pending_prio_2.md, "api mapper", value_time)
         $test_name = 'the time of a time value';
         $val = $t_val->time_value();
         $vars = $val->api_json_array([], $msg);
@@ -365,7 +367,7 @@ class value_tests
         $test_name = 'no number of a time value';
         $val = $t_val->time_value();
         $vars = $val->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::NUMBER, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::NUMBER, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'union row mapping');

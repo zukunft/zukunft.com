@@ -546,7 +546,7 @@ class test_views extends test_objects
         $mrl->set_parent($this->view_word_edit());
         $mrl->set_relation_type(view_relation_types::ADD);
         $mrl->set_child($this->view_word_log());
-        $mrl->start_pos = 15;
+        $mrl->start_pos = test_const::VIEW_RELATION_POS;
         return $mrl;
     }
 
@@ -555,7 +555,7 @@ class test_views extends test_objects
         global $sys;
         // TODO Prio 0 maybe use msk_rel instead of mrl
         $mrl = $this->view_relation();
-        $mrl->description = 'add usage and log of a word';
+        $mrl->description = test_const::VIEW_RELATION_COM;
         $mrl->exclude();
         $mrl->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $mrl->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
@@ -621,7 +621,7 @@ class test_views extends test_objects
     {
         global $sys;
         $trm_msk = $this->term_view();
-        $trm_msk->description = 'add usage and log of a word';
+        $trm_msk->description = test_const::TERM_VIEW_COM;
         $trm_msk->order_nbr = test_const::TERM_VIEW_ORDER_NBR;
         $trm_msk->set_style(view_styles::COL_SM_8, new user_message($this->env->usr1));
         $trm_msk->exclude();

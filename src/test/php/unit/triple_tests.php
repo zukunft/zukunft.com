@@ -262,7 +262,7 @@ class triple_tests
         $test_name = 'the from phrase is not sent without the phrases';
         $trp = $t_trp->triple();
         $vars = $trp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::FROM_PHRASE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::FROM_PHRASE, $vars);
         $msg->reset();
 
         // with the phrases the verb is sent with its name
@@ -298,14 +298,14 @@ class triple_tests
         $test_name = 'the weight is sent if set';
         $trp = $t_trp->triple_impact();
         $vars = $trp->api_json_array([], $msg);
-        $t->assert($test_name, $vars[json_fields::WEIGHT], $trp->weight);
+        $t->assert($test_name, $vars[json_fields::WEIGHT], test_const::TRIPLE_WEIGHT);
         $msg->reset();
 
         // negative: a triple without weight sends no weight
         $test_name = 'no weight is sent if not set';
         $trp = $t_trp->triple();
         $vars = $trp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::WEIGHT, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::WEIGHT, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'frontend');

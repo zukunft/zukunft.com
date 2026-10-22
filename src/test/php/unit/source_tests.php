@@ -241,7 +241,7 @@ class source_tests
         $test_name = 'no default view of a source without view';
         $src = $t_src->source_reserved();
         $vars = $src->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::VIEW, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $vars);
         $msg->reset();
 
         // with the test mode an excluded source sends all fields

@@ -135,7 +135,7 @@ class element_list_tests
         $test_name = 'no phrases are sent without phrases';
         $elm_grp = $t_frm->element_group();
         $vars = $elm_grp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
         $msg->reset();
 
     }

@@ -249,7 +249,7 @@ class ref_tests
         $ref = $t_ref->reference();
         $vars = $ref->api_json_array([], $msg);
         $t->assert($test_name, $vars[json_fields::PHRASE_ID] ?? 0, word_names::PI_ID);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
         $msg->reset();
 
         // negative: with the phrase flag the phrase is nested instead of its id
@@ -257,7 +257,7 @@ class ref_tests
         $ref = $t_ref->reference();
         $vars = $ref->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
         $t->assert($test_name, $vars[json_fields::PHRASES][0][json_fields::NAME] ?? '', word_names::PI);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASE_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASE_ID, $vars);
         $msg->reset();
 
         // the source of a reference is sent by its id
@@ -271,7 +271,7 @@ class ref_tests
         $test_name = 'no source id of a reference without source';
         $ref = $t_ref->reference();
         $vars = $ref->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::SOURCE_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE_ID, $vars);
         $msg->reset();
 
         // the cached impact is sent if it has been calculated
@@ -286,7 +286,7 @@ class ref_tests
         $test_name = 'no impact of a reference without impact';
         $ref = $t_ref->reference();
         $vars = $ref->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::IMPACT, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::IMPACT, $vars);
         $msg->reset();
 
         // a reference list sends one entry per reference

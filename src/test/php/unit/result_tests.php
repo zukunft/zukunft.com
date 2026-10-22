@@ -245,7 +245,7 @@ class result_tests
         $test_name = 'no context phrases without the phrase flag';
         $res = $t_res->result_main_max();
         $vars = $res->api_json_array([api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::CONTEXT, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::CONTEXT, $vars);
         $msg->reset();
 
         // the formula that has created the result is sent by its id
@@ -259,7 +259,7 @@ class result_tests
         $test_name = 'no formula id of a result without formula';
         $res = $t_res->result_simple();
         $vars = $res->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::FORMULA_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::FORMULA_ID, $vars);
         $msg->reset();
 
         // the result table must always fit the source group, because the source_group_id column
@@ -430,10 +430,10 @@ class result_tests
         $res_none->results_used = new result_list($t->usr1);
         $none_json = json_decode($res_none->api_json(
             [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_USED], $msg), true);
-        $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $none_json));
+        $t->assert_key_exists($test_name, json_fields::VALUES, $none_json);
         $test_name = '... and of used formulas and results';
-        $t->assert_true($test_name, array_key_exists(json_fields::FORMULAS, $none_json)
-            and array_key_exists(json_fields::RESULTS, $none_json));
+        $t->assert_key_exists($test_name, json_fields::FORMULAS, $none_json);
+        $t->assert_key_exists($test_name . ' results', json_fields::RESULTS, $none_json);
         $msg->reset();
 
         // negative: a result that has not been asked for the used numbers sends no list at all,
@@ -441,7 +441,7 @@ class result_tests
         $test_name = 'a result without the used lists sends no used values';
         $plain_json = json_decode($t_res->result_main_max()->api_json(
             [api_types::TEST_MODE, api_types::INCL_RELATED, api_types::INCL_USED], $msg), true);
-        $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $plain_json));
+        $t->assert_key_not_exists($test_name, json_fields::VALUES, $plain_json);
         $msg->reset();
 
         // a row of a result table carries either the text group key or the phrase id columns
@@ -523,7 +523,7 @@ class result_tests
         $test_name = 'the result page api message contains the formula with the numbers';
         $res = $t_res->result_page_related();
         $api_json = $res->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
-        $t->assert_true($test_name, array_key_exists(json_fields::EXPRESSION_PARTS, $api_json));
+        $t->assert_key_exists($test_name, json_fields::EXPRESSION_PARTS, $api_json);
         $test_name = '... with the figure as a value';
         $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][0][json_fields::OBJECT_CLASS],
             json_fields::CLASS_VALUE);
@@ -531,15 +531,17 @@ class result_tests
         $t->assert($test_name, $api_json[json_fields::EXPRESSION_PARTS][1][json_fields::TEXT],
             formula_names::SCALE_TO_SEC_EXP_REF_R_REST);
         $test_name = '... and the formula with the terms to link its latex';
-        $t->assert_true($test_name, array_key_exists(json_fields::LATEX_TERMS, $api_json[json_fields::FORMULA]));
+        $frm_json = $api_json[json_fields::FORMULA];
+        $t->assert_key_exists($test_name, json_fields::LATEX_TERMS, $frm_json);
         // negative: a formula without known terms sends no term list
         $test_name = 'a result formula without latex terms sends no term list';
         $api_json = $t_res->result_main_max()->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::LATEX_TERMS, $api_json[json_fields::FORMULA]));
+        $frm_json = $api_json[json_fields::FORMULA];
+        $t->assert_key_not_exists($test_name, json_fields::LATEX_TERMS, $frm_json);
         // negative: only the page asks for the formula with the numbers
         $test_name = 'a result api message without the page flag has no formula with numbers';
         $api_json = $res->api_json_array([api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::EXPRESSION_PARTS, $api_json));
+        $t->assert_key_not_exists($test_name, json_fields::EXPRESSION_PARTS, $api_json);
         // negative: a number that the requester may not read is shown by its phrase names (idor)
         $test_name = 'a figure that the user may not read is sent as the group name';
         $res->expression_parts = $res->expression_parts(formula_names::SCALE_TO_SEC_EXP_REF_R,
@@ -557,11 +559,13 @@ class result_tests
         $test_name = 'a page with the used lists flag gets the values used';
         $res = $t_res->result_page_related();
         $typ_lst = [api_types::INCL_RELATED, api_types::INCL_USED, api_types::TEST_MODE];
-        $t->assert_true($test_name, array_key_exists(json_fields::VALUES, $res->api_json_array($typ_lst, $msg)));
+        $vars = $res->api_json_array($typ_lst, $msg);
+        $t->assert_key_exists($test_name, json_fields::VALUES, $vars);
         // negative: the default page shows no used list, so it does not wait for them
         $test_name = 'a page without the used lists flag gets no values used';
         $typ_lst = [api_types::INCL_RELATED, api_types::TEST_MODE];
-        $t->assert_false($test_name, array_key_exists(json_fields::VALUES, $res->api_json_array($typ_lst, $msg)));
+        $vars = $res->api_json_array($typ_lst, $msg);
+        $t->assert_key_not_exists($test_name, json_fields::VALUES, $vars);
         $msg->reset();
 
 

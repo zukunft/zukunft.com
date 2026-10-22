@@ -314,14 +314,14 @@ class group_tests
         $test_name = 'no phrases are sent without the phrases';
         $grp = $t_grp->group();
         $vars = $grp->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
         $msg->reset();
 
         // with the phrases a group without a given name is named by its phrases only
         $test_name = 'no name is sent for an unnamed group with the phrases';
         $grp = $t_grp->group_e();
         $vars = $grp->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $vars);
         $msg->reset();
 
         // negative: without the phrases the name of an unnamed group is sent

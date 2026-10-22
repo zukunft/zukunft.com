@@ -142,7 +142,7 @@ class job_tests
         $test_name = 'no user id without owner';
         $job = $t_job->job_filled();
         $vars = $job->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::USER_ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::USER_ID, $vars);
         $msg->reset();
 
         // the start time is sent if the job has been started
@@ -158,7 +158,7 @@ class job_tests
         $job = $t_job->job();
         $job->start_time = null;
         $vars = $job->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::TIME_START, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::TIME_START, $vars);
         $msg->reset();
 
         // the end time is sent if the job has been completed
@@ -173,7 +173,7 @@ class job_tests
         $test_name = 'no end time of a running job';
         $job = $t_job->job();
         $vars = $job->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::TIME_END, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::TIME_END, $vars);
         $msg->reset();
 
 

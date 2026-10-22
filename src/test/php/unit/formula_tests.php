@@ -192,21 +192,22 @@ class formula_tests
         $test_name = 'the need all values flag is not sent if not set';
         $frm = $t_frm->formula();
         $vars = $frm->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::NEED_ALL_VAL, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::NEED_ALL_VAL, $vars);
         $msg->reset();
 
         // the last update is sent for a page request
         $test_name = 'the last update is sent for a page request';
         $frm = $t_frm->formula_filled();
+        $upd = new DateTime(sys_log_tests::TV_TIME)->format(DateTime::ATOM);
         $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
-        $t->assert($test_name, $vars[json_fields::LAST_UPDATE], $frm->last_update->format(DateTime::ATOM));
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE], $upd);
         $msg->reset();
 
         // negative: the volatile last update is not sent without a page request
         $test_name = 'the last update is not sent without a page request';
         $frm = $t_frm->formula_filled();
         $vars = $frm->api_json_array([api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::LAST_UPDATE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::LAST_UPDATE, $vars);
         $msg->reset();
 
         // an excluded formula is sent with its id and the excluded flag if requested
@@ -220,7 +221,7 @@ class formula_tests
         $test_name = 'an excluded formula is not sent';
         $frm = $t_frm->formula_filled();
         $vars = $frm->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::ID, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::ID, $vars);
         $msg->reset();
 
         // the assigned phrases are sent for the formula page
@@ -236,7 +237,7 @@ class formula_tests
         $frm = $t_frm->formula();
         $frm->phrases_related = $t_phr->phrase_list_pi();
         $vars = $frm->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars);
         $msg->reset();
 
         // negative: a formula without id has no related data yet
@@ -244,7 +245,7 @@ class formula_tests
         $frm = $t_frm->formula_add();
         $frm->phrases_related = $t_phr->phrase_list_pi();
         $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::PHRASES_RELATED, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'frontend');
@@ -298,7 +299,7 @@ class formula_tests
         $test_name = '... e.g. a pending latex change is labeled with the latex db field';
         $t->assert($test_name, $fld_to_url[formula_fields::FLD_LATEX] ?? '', url_var::LATEX);
         $test_name = 'the system-set last update time has no url var, because no form may post it';
-        $t->assert_false($test_name, array_key_exists(fields::FLD_LAST_UPDATE, $fld_to_url));
+        $t->assert_key_not_exists($test_name, fields::FLD_LAST_UPDATE, $fld_to_url);
 
         $t->subheader($ts . 'partial update expression handling');
         // the stored formula as loaded from the database, carrying its expression
@@ -449,7 +450,7 @@ class formula_tests
         $test_name = 'a formula without the all values needed flag does not export it';
         $frm_off = $t_frm->formula();
         $ex_json_off = $frm_off->export_json($msg_exp, [], false);
-        $t->assert_false($test_name, array_key_exists(json_fields::NEED_ALL_VAL, $ex_json_off));
+        $t->assert_key_not_exists($test_name, json_fields::NEED_ALL_VAL, $ex_json_off);
         $test_name = 'a formula import without the all values needed flag does not set it';
         $frm_imp_off = new formula($t->usr1);
         $frm_imp_off->import_mapper($ex_json_off, $msg_exp);

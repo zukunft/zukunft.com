@@ -602,7 +602,7 @@ class test_components extends test_objects
     {
         $t_msk = new test_views($this->env);
         $lnk = new component_link($this->env->usr1);
-        $lnk->set(1, $t_msk->view(), $this->component(), 1);
+        $lnk->set(test_const::LINK_ID, $t_msk->view(), $this->component(), 1);
         return $lnk;
     }
 

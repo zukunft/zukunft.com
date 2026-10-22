@@ -745,7 +745,7 @@ class system_view_ui_tests
         $sel_url_new = $ui->url_with_selected_phrase($sel_url, views::TABLE_EDITOR, $dto, $msg);
         $t->assert($test_name, $sel_url_new[url_var::ID] ?? 0, $phr->id());
         $test_name = '... and the name is not kept as an object value';
-        $t->assert($test_name, array_key_exists(url_var::PHRASE, $sel_url_new), false);
+        $t->assert_key_not_exists($test_name, url_var::PHRASE, $sel_url_new);
         $msg->reset();
         // negative: e.g. the phrase of a reference is not the selection of the page
         $test_name = 'the phrase of another view does not switch the page';

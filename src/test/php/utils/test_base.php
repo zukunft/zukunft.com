@@ -1084,6 +1084,46 @@ class test_base
     }
 
     /**
+     * check that the array has the given key e.g. that the api json contains a field
+     * the keys of the array are reported, so that a failure shows which key is missing on which array
+     *
+     * @param string $msg (unique) description of the test
+     * @param string|int $key the key that is expected in the array
+     * @param array $vars the actual array e.g. the result of api_json_array
+     * @return bool true if the array has the key
+     */
+    function assert_key_exists(string $msg, string|int $key, array $vars): bool
+    {
+        $found = array_key_exists($key, $vars);
+        $keys = implode(', ', array_keys($vars));
+        $diff = '';
+        if (!$found) {
+            $diff = 'key "' . $key . '" missing';
+        }
+        return $this->assert_dsp($msg, $found, 'an array with the key ' . $key, $keys, $diff);
+    }
+
+    /**
+     * check that the array does NOT have the given key e.g. that an empty field is not sent
+     * the keys of the array are reported, so that a failure shows which key is unexpected on which array
+     *
+     * @param string $msg (unique) description of the test
+     * @param string|int $key the key that is expected to be absent from the array
+     * @param array $vars the actual array e.g. the result of api_json_array
+     * @return bool true if the array does not have the key
+     */
+    function assert_key_not_exists(string $msg, string|int $key, array $vars): bool
+    {
+        $found = array_key_exists($key, $vars);
+        $keys = implode(', ', array_keys($vars));
+        $diff = '';
+        if ($found) {
+            $diff = 'key "' . $key . '" found';
+        }
+        return $this->assert_dsp($msg, !$found, 'an array without the key ' . $key, $keys, $diff);
+    }
+
+    /**
      * check if the test for results contains at least all expected results
      * or in other words if all needles can be found in the haystack
      *

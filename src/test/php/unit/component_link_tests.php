@@ -55,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_tests
@@ -164,16 +165,16 @@ class component_link_tests
         $lnk_arr = $t_cmp->component_link();
         $vars = $lnk_arr->api_json_array([api_types::LINK_DETAILS], $msg);
         $t->assert($test_name, $vars[json_fields::VIEW_ID] ?? null, views::START_ID);
-        $t->assert_false($test_name . ' without link id', array_key_exists(json_fields::LINK_ID, $vars));
+        $t->assert_key_not_exists($test_name . ' without link id', json_fields::LINK_ID, $vars);
         $msg->reset();
 
         // negative: the single layer json moves the link id to link_id and uses id for the component
         $test_name = 'single layer link id';
         $lnk_arr = $t_cmp->component_link();
         $vars = $lnk_arr->api_json_array([], $msg);
-        $t->assert($test_name, $vars[json_fields::LINK_ID] ?? null, $lnk_arr->id());
+        $t->assert($test_name, $vars[json_fields::LINK_ID], test_const::LINK_ID);
         $t->assert($test_name . ' component id', $vars[json_fields::ID] ?? null, components::WORD_ID);
-        $t->assert_false($test_name . ' without view id', array_key_exists(json_fields::VIEW_ID, $vars));
+        $t->assert_key_not_exists($test_name . ' without view id', json_fields::VIEW_ID, $vars);
         $msg->reset();
 
         // the position of a stored component link is always sent
@@ -188,7 +189,7 @@ class component_link_tests
         $lnk_arr = $t_cmp->component_link_add();
         $lnk_arr->set_pos(component_link::START_ORDER_NBR);
         $vars = $lnk_arr->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::POSITION, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::POSITION, $vars);
         $msg->reset();
 
         // a new component link sends the position type if it is not the default
@@ -204,7 +205,7 @@ class component_link_tests
         $lnk_arr = $t_cmp->component_link_add();
         $lnk_arr->set_pos_type(position_types::DEFAULT);
         $vars = $lnk_arr->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::POS_TYPE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::POS_TYPE, $vars);
         $msg->reset();
 
         // the add and edit form of a component link shows the position type and the link type,

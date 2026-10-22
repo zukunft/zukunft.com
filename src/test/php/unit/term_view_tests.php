@@ -201,14 +201,14 @@ class term_view_tests
         $trm_msk = $t_msk->term_view();
         $vars = $trm_msk->api_json_array([api_types::INCL_VIEWS], $msg);
         $t->assert($test_name, $vars[json_fields::VIEW][json_fields::ID] ?? null, views::MATH_CONST_ID);
-        $t->assert_false($test_name . ' without id', array_key_exists(json_fields::VIEW_ID, $vars));
+        $t->assert_key_not_exists($test_name . ' without id', json_fields::VIEW_ID, $vars);
         $msg->reset();
 
         // the description, the priority and the style of a term view are sent if they are set
         $test_name = 'description';
         $trm_msk = $t_msk->term_view_filled_included();
         $vars = $trm_msk->api_json_array([], $msg);
-        $t->assert($test_name, $vars[json_fields::DESCRIPTION] ?? null, $trm_msk->description);
+        $t->assert($test_name, $vars[json_fields::DESCRIPTION], test_const::TERM_VIEW_COM);
         $t->assert($test_name . ' priority', $vars[json_fields::PRIORITY] ?? null, test_const::TERM_VIEW_ORDER_NBR);
         $t->assert($test_name . ' style', $vars[json_fields::STYLE] ?? null, view_styles::COL_SM_8_ID);
         $msg->reset();
@@ -217,9 +217,9 @@ class term_view_tests
         $test_name = 'no description';
         $trm_msk = $t_msk->term_view();
         $vars = $trm_msk->api_json_array([], $msg);
-        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
-        $t->assert_false($test_name . ' priority', array_key_exists(json_fields::PRIORITY, $vars));
-        $t->assert_false($test_name . ' style', array_key_exists(json_fields::STYLE, $vars));
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $vars);
+        $t->assert_key_not_exists($test_name . ' priority', json_fields::PRIORITY, $vars);
+        $t->assert_key_not_exists($test_name . ' style', json_fields::STYLE, $vars);
         $msg->reset();
 
         $t->subheader($ts . 'triple api');
