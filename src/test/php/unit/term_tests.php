@@ -54,7 +54,10 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -203,6 +206,44 @@ class term_tests
         // negative: the object id 1 read as a term id would be a word
         $t->assert_false($t->name . '... and not to a word', $trm->is_word());
         $t->assert($t->name . '... and the name', $trm->name(), $frm->name());
+
+
+        $t->subheader($ts . 'api json array');
+
+        // combine_object: the class of a term with id is sent, so that the frontend can rebuild the term
+        $test_name = 'the class of a word term';
+        $trm = $t_trm->term();
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: a term without id sends no class
+        $test_name = 'no class of a term without id';
+        $trm = $t_trm->by_name(word_names::MATH);
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::OBJECT_CLASS, $vars));
+        $msg->reset();
+
+        // combine_object: the class of an excluded term is sent in test mode
+        $test_name = 'the class of an excluded term in test mode';
+        $trm = $t_wrd->word_excluded()->term();
+        $vars = $trm->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_WORD);
+        $msg->reset();
+
+        // negative: the class of an excluded term is not sent with only the excluded id
+        $test_name = 'no class of an excluded term';
+        $trm = $t_wrd->word_excluded()->term();
+        $vars = $trm->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::OBJECT_CLASS, $vars));
+        $msg->reset();
+
+        // combine_object: a verb term always gets the class
+        $test_name = 'the class of a verb term';
+        $trm = $t_trm->term_verb();
+        $vars = $trm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OBJECT_CLASS], json_fields::CLASS_VERB);
+        $msg->reset();
 
 
         $t->subheader($ts . 'sql setup');

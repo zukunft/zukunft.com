@@ -1702,7 +1702,7 @@ found 2026-10-14 when the user_log table and its writer in application::end_api 
 
 ## api mapper
 
-found while adding the api_mapper unit tests (see docs/llm/pending.md, test coverage step 2);
+found while adding the api_mapper unit tests (see docs/llm/pending.md, test coverage);
 each point needs a source change and a test that shows the bug first
 
 - not testable without a change: `web/sandbox/combine_object::api_mapper` and
@@ -1737,7 +1737,7 @@ each point needs a source change and a test that shows the bug first
 
 ## functions with one unit test call
 
-found while adding the missing negative tests (see docs/llm/pending.md, test coverage step 1);
+found while adding the missing negative tests (see docs/llm/pending.md, test coverage);
 each point needs a source change before the second test can be written
 
 - the failure is only a `log_err`, which a unit test counts as a system error, instead of a
@@ -1752,3 +1752,28 @@ each point needs a source change before the second test can be written
 - the counter counts a call in a commented-out line or block, so `cfg/view/view::load_by_term`
   (`unit_read/view_read_tests.php`) and `cfg/word/word_list::get_grp` (`unit_ui/value_ui_tests.php`)
   look tested but have no active test
+
+## api json array
+
+found while adding the api_json_array unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `cfg/user/user_list::api_json_array` passes the requesting user
+  as the `user_message` of `user::api_json_array`, so every non-empty list throws a TypeError
+- not testable without a change: `cfg/helper/db_object_multi::api_json_array` is never reached,
+  because `cfg/sandbox/sandbox_multi::api_json_array` does not call the parent; either call it or
+  remove the override
+- not testable without the database: `cfg/sandbox/sandbox_value_list::api_json_array` loads the
+  phrase names even with `TEST_MODE`, and for a list with loaded phrases the output is the same
+- `cfg/sandbox/sandbox_named::api_json_array`: the `TEST_MODE` branch sends `description` instead of
+  `get_description()`, which is the same value for every class, so the branch can be removed
+- `cfg/component/component_link::api_json_array` sends the position and the position type as null
+  for a new link without a position, because `null != START_ORDER_NBR` is true
+- `cfg/helper/type_object::api_json_array` merges `get_object_vars`, so a child sends its fields
+  under the property name (`status_id`, `prio`, `scale`) in addition to the `json_fields` key
+- `cfg/phrase/phrase_type::export_json` checks the scale instead of the symbol before it adds the
+  symbol
+- `cfg/helper/combine_object::api_json_array` sends no object class for an excluded term requested
+  with `WITH_EXCLUDED_ID`, so the frontend cannot tell which kind of term has been excluded
+- untested for a missing fixture: the condition of `cfg/word/triple::api_json_array` (no factory
+  sets a `condition_id`) and the action of `cfg/system/sys_log_status` (no const for an action text)

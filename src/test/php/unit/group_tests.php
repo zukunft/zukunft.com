@@ -59,7 +59,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_groups;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
@@ -281,6 +283,52 @@ class group_tests
         $grp_map = new group($t->usr1);
         $grp_map->api_mapper([json_fields::ID => $t_grp->group()->id()], $msg);
         $t->assert($test_name, $grp_map->name_given(), '');
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // an excluded group sends only the id and the excluded flag
+        $test_name = 'an excluded group sends only the id and the flag';
+        $grp = $t_grp->group();
+        $grp->exclude();
+        $vars = $grp->api_json_array([], $msg);
+        $t->assert($test_name, array_keys($vars), [json_fields::ID, json_fields::EXCLUDED]);
+        $msg->reset();
+
+        // negative: in the test mode an excluded group sends all fields
+        $test_name = 'an excluded group sends the name in the test mode';
+        $grp = $t_grp->group();
+        $grp->exclude();
+        $vars = $grp->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::NAME], groups::TN_READ);
+        $msg->reset();
+
+        // with the phrases the group sends its phrases
+        $test_name = 'the phrases are sent with the phrases';
+        $grp = $t_grp->group();
+        $vars = $grp->api_json_array([api_types::INCL_PHRASES], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASES][0][json_fields::NAME], word_names::PI_SYMBOL);
+        $msg->reset();
+
+        // negative: without the phrases the group sends no phrases
+        $test_name = 'no phrases are sent without the phrases';
+        $grp = $t_grp->group();
+        $vars = $grp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $vars));
+        $msg->reset();
+
+        // with the phrases a group without a given name is named by its phrases only
+        $test_name = 'no name is sent for an unnamed group with the phrases';
+        $grp = $t_grp->group_e();
+        $vars = $grp->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::NAME, $vars));
+        $msg->reset();
+
+        // negative: without the phrases the name of an unnamed group is sent
+        $test_name = 'the name is sent for an unnamed group without the phrases';
+        $grp = $t_grp->group_e();
+        $vars = $grp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::NAME], triple_names::E);
         $msg->reset();
 
         // a list e.g. of an import holds a group by its name, because the id needs the ids of the phrases

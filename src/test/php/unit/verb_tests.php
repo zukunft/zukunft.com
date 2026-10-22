@@ -42,6 +42,8 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -115,6 +117,46 @@ class verb_tests
         $vrb_map = new verb();
         $vrb_map->api_mapper($t_vrb->verb()->api_json_array([], $msg), $msg);
         $t->assert($test_name, $vrb_map->get_code_id(), '');
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // the reverse name is a language form of the verb
+        $test_name = 'the reverse name is sent';
+        $vrb = $t_vrb->verb_is_filled();
+        $vars = $vrb->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::REVERSE], verbs::IS_REVERSE);
+        $msg->reset();
+
+        // negative: a verb without reverse name sends none
+        $test_name = 'no reverse name is sent if not set';
+        $vrb = $t_vrb->verb_measure();
+        $vars = $vrb->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::REVERSE]);
+        $msg->reset();
+
+        // the triples that use the verb are sent for the verb page
+        $test_name = 'the triples are sent for a page request';
+        $vrb = $t_vrb->verb_part();
+        $vrb->triples_related = $t_trp->triple_list_one();
+        $vars = $vrb->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::TRIPLES][0][json_fields::ID], triple_names::PI_SYMBOL_ID);
+        $msg->reset();
+
+        // negative: without the page request the triples are not sent
+        $test_name = 'the triples are not sent without a page request';
+        $vrb = $t_vrb->verb_part();
+        $vrb->triples_related = $t_trp->triple_list_one();
+        $vars = $vrb->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::TRIPLES, $vars));
+        $msg->reset();
+
+        // negative: a verb without id is not yet used by any triple
+        $test_name = 'the triples are not sent for a verb without id';
+        $vrb = $t_vrb->verb_name_only();
+        $vrb->triples_related = $t_trp->triple_list_one();
+        $vars = $vrb->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::TRIPLES, $vars));
         $msg->reset();
 
 

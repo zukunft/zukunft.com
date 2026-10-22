@@ -72,7 +72,9 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -111,6 +113,7 @@ class db_cache_tests
         // init
         $sc = new sql_creator();
         $t_db_cache = new test_db_caches($t);
+        $msg = new user_message($t->usr1);
         $t->name = 'db_cache->';
         $t->resource_path = 'db/db_cache/';
 
@@ -204,6 +207,53 @@ class db_cache_tests
 
         $cac_page = $t_db_cache->db_cache_page();
         $t->assert_api($cac_page);
+
+        $t->subheader($ts . 'api json array');
+
+        // the status of a refreshed cache entry
+        $test_name = 'status of a filled cache';
+        $cac = $t_db_cache->db_cache_filled();
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::STATUS] ?? 0, db_cache_statuum::CLEAN_ID);
+        $msg->reset();
+
+        // negative: a new cache entry always has a status, so only a reset clears it
+        $test_name = 'no status of a reset cache';
+        $cac = $t_db_cache->db_cache();
+        $cac->reset();
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::STATUS]);
+        $msg->reset();
+
+        // the time of the last cache refresh
+        $test_name = 'last update of a filled cache';
+        $cac = $t_db_cache->db_cache_filled();
+        $upd = new DateTime(sys_log_tests::TV_TIME)->format(DateTimeInterface::ATOM);
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE] ?? '', $upd);
+        $msg->reset();
+
+        // negative: a never refreshed cache entry has no last update
+        $test_name = 'no last update of a new cache';
+        $cac = $t_db_cache->db_cache();
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LAST_UPDATE]);
+        $msg->reset();
+
+        // the time when the cached html page has last been rendered
+        $test_name = 'last update of a filled page';
+        $cac_page = $t_db_cache->db_cache_page_filled();
+        $upd = new DateTime(sys_log_tests::TV_TIME)->format(DateTimeInterface::ATOM);
+        $vars = $cac_page->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE] ?? '', $upd);
+        $msg->reset();
+
+        // negative: a never rendered page has no last update
+        $test_name = 'no last update of a new page';
+        $cac_page = $t_db_cache->db_cache_page();
+        $vars = $cac_page->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LAST_UPDATE]);
+        $msg->reset();
 
 
         $t->subheader($ts . 'update fields');

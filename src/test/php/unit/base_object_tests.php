@@ -40,6 +40,7 @@ include_once paths::DB . 'sql_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'ListOf.php';
 include_once html_paths::USER . 'user_message.php';
+include_once test_paths::CREATE . 'test_ip_ranges.php';
 include_once test_paths::CREATE . 'test_words.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
 use Zukunft\ZukunftCom\main\php\shared\helper\ListOf;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\create\test_ip_ranges;
 use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -69,6 +71,7 @@ class base_object_tests
         // init
         $t_wrd = new test_words($t);
         $t_typ = new test_types($t);
+        $t_ip = new test_ip_ranges();
         $msg = new Message();
 
         // start the test section (ts)
@@ -382,6 +385,37 @@ class base_object_tests
         $json_usr = new user();
         $json_usr->api_mapper([json_fields::NAME => $t->usr1->name()], $msg_be);
         $t->assert($test_name, $json_usr->id(), 0);
+        $msg_be->reset();
+
+        // the id and list base classes are only reached through a concrete child, so each block
+        // creates the api json of a test object and checks the field that the base class adds
+        $t->subheader($ts . 'api json array');
+
+        // db_object_seq_id: the id of a user
+        $test_name = 'the seq id';
+        $vars = $t->usr1->api_json_array([], $msg_be);
+        $t->assert($test_name, $vars[json_fields::ID], $t->usr1->id());
+        $msg_be->reset();
+
+        // negative: an object without db id sends the id zero
+        $test_name = 'the seq id of an ip range without id';
+        $ip_range = $t_ip->ip_range();
+        $vars = $ip_range->api_json_array([], $msg_be);
+        $t->assert($test_name, $vars[json_fields::ID], 0);
+        $msg_be->reset();
+
+        // list_db_read: the fields that are set are sent for each list entry
+        $test_name = 'the list keeps a set field';
+        $wrd_lst = $t_wrd->word_list();
+        $vars = $wrd_lst->api_json_array([], $msg_be);
+        $t->assert($test_name, $vars[0][json_fields::NAME], word_names::MATH);
+        $msg_be->reset();
+
+        // negative: an empty field e.g. the plural of a word without plural is not sent
+        $test_name = 'the list drops an empty field';
+        $wrd_lst = $t_wrd->word_list();
+        $vars = $wrd_lst->api_json_array([], $msg_be);
+        $t->assert_false($test_name, array_key_exists(json_fields::PLURAL, $vars[0]));
         $msg_be->reset();
 
 

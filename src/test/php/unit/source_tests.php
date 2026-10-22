@@ -44,6 +44,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
@@ -218,6 +219,50 @@ class source_tests
         $test_name = 'the api mapper ignores a default view id of zero';
         $src_map->api_mapper([json_fields::ID => sources::BFS_ID, json_fields::VIEW => 0], $msg);
         $t->assert($test_name, $src_map->get_view_id(), 0);
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+        // a source sends the url and the doi
+        $test_name = 'the url of a source';
+        $src = $t_src->source_filled_included();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', sources::BFS_ULR);
+        $t->assert($test_name, $vars[json_fields::DOI] ?? '', sources::TEST_DOI);
+        $msg->reset();
+
+        // the default view is sent by its id, so that the edit form can preselect it
+        $test_name = 'the default view of a source';
+        $src = $t_src->source_filled_included();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW] ?? 0, views::SOURCE_ID);
+        $msg->reset();
+
+        // negative: a source without a default view sends no view
+        $test_name = 'no default view of a source without view';
+        $src = $t_src->source_reserved();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::VIEW, $vars));
+        $msg->reset();
+
+        // with the test mode an excluded source sends all fields
+        $test_name = 'the url of an excluded source in test mode';
+        $src = $t_src->source_filled();
+        $vars = $src->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', sources::BFS_ULR);
+        $msg->reset();
+
+        // negative: an excluded source sends only the id and the excluded flag
+        $test_name = 'an excluded source sends only the id';
+        $src = $t_src->source_filled();
+        $vars = $src->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert($test_name, $vars, [json_fields::ID => sources::BFS_ID, json_fields::EXCLUDED => true]);
+        $msg->reset();
+
+        // negative: without any flag an excluded source sends nothing
+        $test_name = 'an excluded source sends nothing';
+        $src = $t_src->source_filled();
+        $vars = $src->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
         $msg->reset();
 
         $t->subheader($ts . 'frontend');

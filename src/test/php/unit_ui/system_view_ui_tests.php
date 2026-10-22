@@ -513,6 +513,11 @@ class system_view_ui_tests
         $test_name = '... but in orange if the request has an issue';
         $saved_msg->add_id(msg_id::CONFIG_NOT_LOADED);
         $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION . '"');
+        // the confirmation of a done action is the last info
+        $test_name = 'the text of a done action is the last info';
+        $info_msg = new user_message();
+        $info_msg->add_info($saved_txt);
+        $t->assert($test_name, $info_msg->get_last_info(), $saved_txt);
         // negative: an empty text is no info, so it never adds an empty success bar
         $test_name = 'an empty text is not added as info';
         $empty_msg = new user_message();

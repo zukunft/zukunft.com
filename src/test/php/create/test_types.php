@@ -203,6 +203,10 @@ class test_types
     // use the global test environment
     private test_cleanup $env;
 
+    // the scaling factor and the symbol of the "scaling word percent" phrase type of phrase_types.csv
+    const int SCALING_PCT_SCALE = 100;
+    const string SCALING_PCT_SYMBOL = '%';
+
     function __construct(test_cleanup $env) {
         $this->env = $env;
     }
@@ -450,6 +454,20 @@ class test_types
             phrase_types::SCALING,
             phrase_types::SCALING_ID,
             phrase_types::SCALING_NAME);
+    }
+
+    /**
+     * @return phrase_type "scaling word percent" type with a scaling factor and a symbol for unit testing
+     */
+    function phrase_type_scaling_pct(): phrase_type
+    {
+        $phr_typ = new phrase_type(
+            phrase_types::SCALING_PCT,
+            0,
+            phrase_types::SCALING_PCT_NAME);
+        $phr_typ->scale = self::SCALING_PCT_SCALE;
+        $phr_typ->symbol = self::SCALING_PCT_SYMBOL;
+        return $phr_typ;
     }
 
     /**

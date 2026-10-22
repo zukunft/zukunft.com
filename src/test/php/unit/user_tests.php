@@ -47,9 +47,13 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -504,6 +508,98 @@ class user_tests
         $map_msg = new user_message();
         $map_msg->api_mapper([]);
         $t->assert_null($test_name, $map_msg->usr?->name());
+
+
+        $t->subheader($ts . 'api json array');
+
+        // the email is sent to the user himself or an admin
+        $test_name = 'email';
+        $usr_arr = $t_usr->user_filled($t);
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::EMAIL] ?? null, users::TEST_USER_MAIL);
+        $msg->reset();
+
+        // negative: the activation key and the ip address are never sent over the api
+        $test_name = 'no activation key';
+        $usr_arr = $t_usr->user_filled($t);
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::ACTIVATION_KEY, $vars));
+        $t->assert_false($test_name . ' and no ip', array_key_exists(json_fields::IP_ADDR, $vars));
+        $msg->reset();
+
+        // negative: an empty field is not sent at all
+        $test_name = 'no empty email';
+        $usr_arr = $t_usr->user_add();
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::EMAIL, $vars));
+        $msg->reset();
+
+        // the last used view of a user is sent by its id
+        $test_name = 'view id';
+        $usr_arr = $t_usr->user_filled($t);
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW_ID] ?? null, views::START_ID);
+        $t->assert($test_name . ' term', $vars[json_fields::TERM_ID] ?? null, $usr_arr->trm->id());
+        $t->assert($test_name . ' source', $vars[json_fields::SOURCE_ID] ?? null, sources::SIB_ID);
+        $msg->reset();
+
+        // negative: with the objects included the last used view is nested instead of its id
+        $test_name = 'nested view';
+        $usr_arr = $t_usr->user_filled($t);
+        $typ_lst = [api_types::INCL_VIEWS, api_types::INCL_TERMS, api_types::INCL_SOURCES];
+        $vars = $usr_arr->api_json_array($typ_lst, $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW][json_fields::ID] ?? null, views::START_ID);
+        $t->assert_false($test_name . ' without id', array_key_exists(json_fields::VIEW_ID, $vars));
+        $t->assert_false($test_name . ' term without id', array_key_exists(json_fields::TERM_ID, $vars));
+        $t->assert_false($test_name . ' source without id', array_key_exists(json_fields::SOURCE_ID, $vars));
+        $msg->reset();
+
+        // the right level of a user profile is part of the api message
+        $test_name = 'profile right level';
+        $t_typ = new test_types($t);
+        $usr_prf = $t_typ->user_profile();
+        $vars = $usr_prf->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::RIGHT_LEVEL] ?? null, user_profiles::NORMAL_LEVEL);
+        $msg->reset();
+
+        // negative: a profile without a right level sends an empty right level
+        $test_name = 'profile without right level';
+        $usr_prf = $t_typ->user_profile();
+        $usr_prf->right_level = null;
+        $vars = $usr_prf->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::RIGHT_LEVEL] ?? null);
+        $msg->reset();
+
+        // the summed sessions of a user are sent with the user and the number of requests
+        $test_name = 'log sum requests';
+        $sum = $t_usr->log_sum();
+        $vars = $sum->api_json_array();
+        $t->assert($test_name, $vars[json_fields::REQUESTS] ?? null, test_users::TV_USER_LOG_REQUESTS);
+        $t->assert($test_name . ' user', $vars[json_fields::ID] ?? null, users::SYSTEM_TEST_ID);
+        $msg->reset();
+
+        // negative: a sum row without a user sends no user and no requests
+        $test_name = 'log sum without user';
+        $sum = $t_usr->log_sum();
+        $sum->row_mapper([]);
+        $vars = $sum->api_json_array();
+        $t->assert($test_name, $vars[json_fields::ID] ?? null, 0);
+        $t->assert($test_name . ' and no requests', $vars[json_fields::REQUESTS] ?? null, 0);
+        $msg->reset();
+
+        // the list of the summed sessions sends one entry per user
+        $test_name = 'log sum list';
+        $sum_lst = $t_usr->log_sum_list();
+        $vars = $sum_lst->api_json_array();
+        $t->assert($test_name, $vars[0][json_fields::ID] ?? null, users::SYSTEM_TEST_ID);
+        $msg->reset();
+
+        // negative: an empty list of summed sessions sends an empty list
+        $test_name = 'empty log sum list';
+        $sum_lst = $t_usr->log_sum_list_empty();
+        $vars = $sum_lst->api_json_array();
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
 
 
         $t->subheader($ts . 'last used ip saved on login');

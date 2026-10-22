@@ -53,7 +53,9 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_links;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -183,6 +185,41 @@ class term_view_tests
         $test_name = 'a term view json without a term id leaves the term empty';
         $lnk->api_mapper([json_fields::ID => $trm_msk->id()], $msg);
         $t->assert_null($test_name, $lnk->term()?->dsp_id());
+        $msg->reset();
+
+        $t->subheader($ts . 'term_view api json array');
+
+        // a term view sends only the id of the view by default
+        $test_name = 'view id';
+        $trm_msk = $t_msk->term_view();
+        $vars = $trm_msk->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW_ID] ?? null, views::MATH_CONST_ID);
+        $msg->reset();
+
+        // negative: with the views included the view is nested instead of its id
+        $test_name = 'nested view';
+        $trm_msk = $t_msk->term_view();
+        $vars = $trm_msk->api_json_array([api_types::INCL_VIEWS], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW][json_fields::ID] ?? null, views::MATH_CONST_ID);
+        $t->assert_false($test_name . ' without id', array_key_exists(json_fields::VIEW_ID, $vars));
+        $msg->reset();
+
+        // the description, the priority and the style of a term view are sent if they are set
+        $test_name = 'description';
+        $trm_msk = $t_msk->term_view_filled_included();
+        $vars = $trm_msk->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::DESCRIPTION] ?? null, $trm_msk->description);
+        $t->assert($test_name . ' priority', $vars[json_fields::PRIORITY] ?? null, test_const::TERM_VIEW_ORDER_NBR);
+        $t->assert($test_name . ' style', $vars[json_fields::STYLE] ?? null, view_styles::COL_SM_8_ID);
+        $msg->reset();
+
+        // negative: a term view without them sends no description, priority and style
+        $test_name = 'no description';
+        $trm_msk = $t_msk->term_view();
+        $vars = $trm_msk->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
+        $t->assert_false($test_name . ' priority', array_key_exists(json_fields::PRIORITY, $vars));
+        $t->assert_false($test_name . ' style', array_key_exists(json_fields::STYLE, $vars));
         $msg->reset();
 
         $t->subheader($ts . 'triple api');

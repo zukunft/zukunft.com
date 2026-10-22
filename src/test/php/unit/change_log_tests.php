@@ -92,7 +92,10 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -344,6 +347,108 @@ class change_log_tests
         $log_new = new change($t->usr1);
         $api = $log_new->api_json_array(new api_type_list([]), $msg);
         $t->assert($test_name, $api[json_fields::ID] ?? null, 0);
+
+        $t->subheader($ts . 'api json array');
+
+        // the name of the changed object is sent if it has been set
+        $test_name = 'row name of a named change';
+        $log = $t_log->log_source_overwrite();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::ROW_NAME] ?? '', sources::SIB);
+        $msg->reset();
+
+        // negative: a change without an object name sends no row name
+        $test_name = 'no row name without name';
+        $log = $t_log->log_word_add();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::ROW_NAME, $vars));
+        $msg->reset();
+
+        // the values of the other users are sent if another user has changed the field
+        $test_name = 'other values of a change';
+        $log = $t_log->log_word_add_view();
+        $log->other_values = test_log::OTHER_VALUES;
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OTHER_VALUES] ?? [], test_log::OTHER_VALUES);
+        $msg->reset();
+
+        // negative: a change that no other user has touched sends no other values
+        $test_name = 'no other values without others';
+        $log = $t_log->log_word_add_view();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::OTHER_VALUES, $vars));
+        $msg->reset();
+
+        // the old value of an updated named object field
+        $test_name = 'old value of a change';
+        $log = $t_log->log_word_update();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OLD_VALUE] ?? '', word_names::TEST_RENAMED);
+        $msg->reset();
+
+        // negative: an added field has no old value
+        $test_name = 'no old value of an add';
+        $log = $t_log->log_word_add();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::OLD_VALUE]);
+        $msg->reset();
+
+        // the standard value of a user overwrite
+        $test_name = 'std value of an overwrite';
+        $log = $t_log->log_component_overwrite();
+        $log->std_value = components::WORD_COM;
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::STD_VALUE] ?? '', components::WORD_COM);
+        $msg->reset();
+
+        // negative: an overwrite without a known standard value
+        $test_name = 'no std value';
+        $log = $t_log->log_component_overwrite();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::STD_VALUE]);
+        $msg->reset();
+
+        // the old value of an updated value
+        $test_name = 'old value of a value change';
+        $log = $t_log->log_value_update();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::OLD_VALUE] ?? 0, values::SAMPLE_INT);
+        $msg->reset();
+
+        // negative: an added value has no old value
+        $test_name = 'no old value of a value add';
+        $log = $t_log->log_value();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::OLD_VALUE]);
+        $msg->reset();
+
+        // the new value of an added value
+        $test_name = 'new value of a value change';
+        $log = $t_log->log_value();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::NEW_VALUE] ?? 0, values::PI_SHORT);
+        $msg->reset();
+
+        // negative: a deleted value has no new value
+        $test_name = 'no new value of a value delete';
+        $log = $t_log->log_value_delete();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::NEW_VALUE]);
+        $msg->reset();
+
+        // one json entry per change of the list
+        $test_name = 'one entry per change';
+        $log_lst = $t_log->log_list_user_overwrites();
+        $vars = $log_lst->api_json_array([], $msg);
+        $t->assert($test_name, count($vars), count($log_lst->lst()));
+        $msg->reset();
+
+        // negative: an empty list results in an empty array
+        $test_name = 'empty list';
+        $log_lst = new change_log_list();
+        $vars = $log_lst->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
 
         // sql to load a log entry by field and row id
         // TODO Prio 2 check that user-specific changes are included in the list of changes

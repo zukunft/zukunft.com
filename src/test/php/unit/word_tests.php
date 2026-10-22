@@ -317,6 +317,50 @@ class word_tests
         $t->assert_null($test_name, $wrd_map->plural);
         $msg->reset();
 
+        $t->subheader($ts . 'api json array');
+
+        // the plural is an own field of the word
+        $test_name = 'the plural of the word is sent';
+        $wrd = $t_wrd->word_filled();
+        $vars = $wrd->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::PLURAL], word_names::MATH_PLURAL);
+        $msg->reset();
+
+        // negative: a request of the phrase names sends only the id and the name
+        $test_name = 'the phrase names request sends no plural';
+        $wrd = $t_wrd->word_filled();
+        $vars = $wrd->api_json_array([api_types::TEST_MODE, api_types::PHRASE_NAMES], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::PLURAL, $vars));
+        $msg->reset();
+
+        // the default view is sent so that the edit form can preselect it
+        $test_name = 'the view of the word is sent';
+        $wrd = $t_wrd->word_view_set();
+        $vars = $wrd->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW], views::HISTORIC_ID);
+        $msg->reset();
+
+        // negative: a word without a default view sends no view
+        $test_name = 'a word without view sends no view';
+        $wrd = $t_wrd->word();
+        $vars = $wrd->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::VIEW, $vars));
+        $msg->reset();
+
+        // an excluded word is sent with its id and the excluded flag if requested
+        $test_name = 'an excluded word is sent with the excluded flag';
+        $wrd = $t_wrd->word_excluded();
+        $vars = $wrd->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert_true($test_name, $vars[json_fields::EXCLUDED]);
+        $msg->reset();
+
+        // negative: without the request an excluded word is not sent at all
+        $test_name = 'an excluded word is not sent';
+        $wrd = $t_wrd->word_excluded();
+        $vars = $wrd->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::ID, $vars));
+        $msg->reset();
+
         $t->subheader($ts . 'api/word handler reads the ?incl_related URL param into the api_type_list');
         // the api/word/index.php GET handler now opts into api_types::INCL_RELATED only when
         // ?incl_related is truthy on the URL — this keeps single-word fetches cheap by default

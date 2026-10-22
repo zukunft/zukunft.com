@@ -34,6 +34,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -246,6 +247,65 @@ class triple_tests
         $trp_map = new triple($t->usr1);
         $api_json = [json_fields::ID => triple_names::MATH_CONST_ID, json_fields::FROM => null];
         $t->assert_false($test_name, $trp_map->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // with the phrases the from phrase is sent with its name for the page title
+        $test_name = 'the from phrase is sent with the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::FROM_PHRASE][json_fields::NAME], word_names::CONST_NAME);
+        $msg->reset();
+
+        // negative: without the phrases only the id of the from phrase is sent
+        $test_name = 'the from phrase is not sent without the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::FROM_PHRASE, $vars));
+        $msg->reset();
+
+        // with the phrases the verb is sent with its name
+        $test_name = 'the verb name is sent with the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::VERB][json_fields::NAME], verbs::PART_NAME);
+        $msg->reset();
+
+        // negative: without the phrases the verb is sent only by its id
+        $test_name = 'the verb id is sent without the phrases';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VERB], verbs::PART_ID);
+        $msg->reset();
+
+        // a triple without a given name is sent with the generated name
+        $test_name = 'the generated name is sent if no name is given';
+        $trp = $t_trp->triple_link_only();
+        $vars = $trp->api_json_array([], $msg);
+        $name = word_names::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . word_names::MATH;
+        $t->assert($test_name, $vars[json_fields::NAME], $name);
+        $msg->reset();
+
+        // negative: the name of a named triple is not replaced by the generated name
+        $test_name = 'the name is sent if given';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::NAME], triple_names::MATH_CONST);
+        $msg->reset();
+
+        // the weight is only sent if set
+        $test_name = 'the weight is sent if set';
+        $trp = $t_trp->triple_impact();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::WEIGHT], $trp->weight);
+        $msg->reset();
+
+        // negative: a triple without weight sends no weight
+        $test_name = 'no weight is sent if not set';
+        $trp = $t_trp->triple();
+        $vars = $trp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::WEIGHT, $vars));
         $msg->reset();
 
         $t->subheader($ts . 'frontend');

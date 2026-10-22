@@ -52,6 +52,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -155,6 +156,56 @@ class component_link_tests
         $lnk_cmp = $t_cmp->component_link();
         $cmp_id = $lnk_cmp->component_id();
         $t->assert($test_name, $cmp_id, components::WORD_ID);
+
+        $t->subheader($ts . 'component link api json array');
+
+        // the detailed api json of a component link sends the view by its id
+        $test_name = 'link details view id';
+        $lnk_arr = $t_cmp->component_link();
+        $vars = $lnk_arr->api_json_array([api_types::LINK_DETAILS], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW_ID] ?? null, views::START_ID);
+        $t->assert_false($test_name . ' without link id', array_key_exists(json_fields::LINK_ID, $vars));
+        $msg->reset();
+
+        // negative: the single layer json moves the link id to link_id and uses id for the component
+        $test_name = 'single layer link id';
+        $lnk_arr = $t_cmp->component_link();
+        $vars = $lnk_arr->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LINK_ID] ?? null, $lnk_arr->id());
+        $t->assert($test_name . ' component id', $vars[json_fields::ID] ?? null, components::WORD_ID);
+        $t->assert_false($test_name . ' without view id', array_key_exists(json_fields::VIEW_ID, $vars));
+        $msg->reset();
+
+        // the position of a stored component link is always sent
+        $test_name = 'position';
+        $lnk_arr = $t_cmp->component_link();
+        $vars = $lnk_arr->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::POSITION] ?? null, component_link::START_ORDER_NBR);
+        $msg->reset();
+
+        // negative: a new component link at the start position sends no position
+        $test_name = 'no position';
+        $lnk_arr = $t_cmp->component_link_add();
+        $lnk_arr->set_pos(component_link::START_ORDER_NBR);
+        $vars = $lnk_arr->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::POSITION, $vars));
+        $msg->reset();
+
+        // a new component link sends the position type if it is not the default
+        $test_name = 'position type';
+        $lnk_arr = $t_cmp->component_link_add();
+        $lnk_arr->set_pos_type(position_types::SAME_LINE);
+        $vars = $lnk_arr->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::POS_TYPE] ?? null, position_types::SAME_LINE_ID);
+        $msg->reset();
+
+        // negative: a new component link with the default position type sends no position type
+        $test_name = 'default position type';
+        $lnk_arr = $t_cmp->component_link_add();
+        $lnk_arr->set_pos_type(position_types::DEFAULT);
+        $vars = $lnk_arr->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::POS_TYPE, $vars));
+        $msg->reset();
 
         // the add and edit form of a component link shows the position type and the link type,
         // so each posts its own url var, else the form has two link type fields with the same id

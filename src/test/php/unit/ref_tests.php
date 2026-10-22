@@ -65,6 +65,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_refs;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 
@@ -78,6 +79,7 @@ class ref_tests
         // init for reference
         $sc = new sql_creator();
         $t_ref = new test_refs($t);
+        $t_typ = new test_types($t);
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
 
@@ -224,6 +226,98 @@ class ref_tests
         $ref_typ = new ref_type();
         $ref_typ->api_mapper([json_fields::ID => ref_types::WIKIDATA_ID, json_fields::URL => refs::PI_URL], $msg);
         $t->assert_null($test_name, $ref_typ->url);
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+        // a reference sends the url and the external key
+        $test_name = 'the url of a reference';
+        $ref = $t_ref->reference_plus();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', refs::PI_URL);
+        $t->assert($test_name, $vars[json_fields::EXTERNAL_KEY] ?? '', refs::PI_KEY);
+        $msg->reset();
+
+        // negative: a reference without a url sends an empty url
+        $test_name = 'no url of a reference without url';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::URL] ?? null);
+        $msg->reset();
+
+        // the plain api message names the phrase by its id
+        $test_name = 'the phrase id of a reference';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASE_ID] ?? 0, word_names::PI_ID);
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $vars));
+        $msg->reset();
+
+        // negative: with the phrase flag the phrase is nested instead of its id
+        $test_name = 'the nested phrase of a reference';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASES][0][json_fields::NAME] ?? '', word_names::PI);
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASE_ID, $vars));
+        $msg->reset();
+
+        // the source of a reference is sent by its id
+        $test_name = 'the source id of a reference';
+        $ref = $t_ref->reference_plus();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::SOURCE_ID] ?? 0, sources::WIKIDATA_ID);
+        $msg->reset();
+
+        // negative: a reference without a source sends no source id
+        $test_name = 'no source id of a reference without source';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::SOURCE_ID, $vars));
+        $msg->reset();
+
+        // the cached impact is sent if it has been calculated
+        $test_name = 'the impact of a reference';
+        $ref = $t_ref->reference();
+        $ref->impact = impacts::MAX;
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::IMPACT] ?? 0, impacts::MAX);
+        $msg->reset();
+
+        // negative: a reference without an impact sends no impact
+        $test_name = 'no impact of a reference without impact';
+        $ref = $t_ref->reference();
+        $vars = $ref->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::IMPACT, $vars));
+        $msg->reset();
+
+        // a reference list sends one entry per reference
+        $test_name = 'one entry per reference of a list';
+        $ref_lst = $t_ref->ref_list_math();
+        $vars = $ref_lst->api_json_array([], $msg);
+        $t->assert($test_name, count($vars), 2);
+        $t->assert($test_name, $vars[0][json_fields::ID] ?? 0, refs::PI_ID);
+        $msg->reset();
+
+        // negative: an empty reference list sends an empty list
+        $test_name = 'an empty reference list';
+        $ref_lst = $t_ref->list_empty();
+        $vars = $ref_lst->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
+
+        // a reference type sends its name, code id and base url
+        $test_name = 'the reference type';
+        $ref_typ = $t_typ->ref_type();
+        $ref_typ->url = refs::PI_URL;
+        $vars = $ref_typ->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::CODE_ID] ?? '', ref_types::WIKIDATA);
+        $t->assert($test_name, $vars[json_fields::URL] ?? '', refs::PI_URL);
+        $msg->reset();
+
+        // negative: a reference type without a base url sends an empty url
+        $test_name = 'no url of a reference type without url';
+        $ref_typ = $t_typ->ref_type();
+        $vars = $ref_typ->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::URL] ?? null);
         $msg->reset();
 
         $t->subheader($ts . 'frontend');

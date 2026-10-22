@@ -61,6 +61,7 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -76,6 +77,7 @@ class formula_tests
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 
@@ -161,6 +163,88 @@ class formula_tests
         $frm = new formula($t->usr1);
         $frm->api_mapper([json_fields::ID => formula_names::SCALE_TO_SEC_ID, json_fields::VIEW => 0], $msg);
         $t->assert($test_name, $frm->get_view_id(), 0);
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // the latex is sent for the formula display
+        $test_name = 'the latex is sent';
+        $frm = $t_frm->formula();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LATEX], formula_names::SCALE_TO_SEC_LATEX);
+        $msg->reset();
+
+        // negative: a formula without latex sends no latex
+        $test_name = 'no latex is sent if not set';
+        $frm = $t_frm->formula_scale_mio();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LATEX]);
+        $msg->reset();
+
+        // the need all values flag is only sent if set
+        $test_name = 'the need all values flag is sent if set';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_true($test_name, $vars[json_fields::NEED_ALL_VAL]);
+        $msg->reset();
+
+        // negative: a formula without the flag sends no flag
+        $test_name = 'the need all values flag is not sent if not set';
+        $frm = $t_frm->formula();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::NEED_ALL_VAL, $vars));
+        $msg->reset();
+
+        // the last update is sent for a page request
+        $test_name = 'the last update is sent for a page request';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE], $frm->last_update->format(DateTime::ATOM));
+        $msg->reset();
+
+        // negative: the volatile last update is not sent without a page request
+        $test_name = 'the last update is not sent without a page request';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::LAST_UPDATE, $vars));
+        $msg->reset();
+
+        // an excluded formula is sent with its id and the excluded flag if requested
+        $test_name = 'an excluded formula is sent with the excluded flag';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert_true($test_name, $vars[json_fields::EXCLUDED]);
+        $msg->reset();
+
+        // negative: without the request an excluded formula is not sent at all
+        $test_name = 'an excluded formula is not sent';
+        $frm = $t_frm->formula_filled();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::ID, $vars));
+        $msg->reset();
+
+        // the assigned phrases are sent for the formula page
+        $test_name = 'the related phrases are sent for a page request';
+        $frm = $t_frm->formula();
+        $frm->phrases_related = $t_phr->phrase_list_pi();
+        $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASES_RELATED][0][json_fields::NAME], word_names::PI_SYMBOL);
+        $msg->reset();
+
+        // negative: the plain call sends no related data and needs no database
+        $test_name = 'no related phrases are sent without a page request';
+        $frm = $t_frm->formula();
+        $frm->phrases_related = $t_phr->phrase_list_pi();
+        $vars = $frm->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars));
+        $msg->reset();
+
+        // negative: a formula without id has no related data yet
+        $test_name = 'no related phrases are sent for a formula without id';
+        $frm = $t_frm->formula_add();
+        $frm->phrases_related = $t_phr->phrase_list_pi();
+        $vars = $frm->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES_RELATED, $vars));
         $msg->reset();
 
         $t->subheader($ts . 'frontend');

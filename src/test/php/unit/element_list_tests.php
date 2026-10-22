@@ -46,7 +46,9 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
 use Zukunft\ZukunftCom\main\php\web\element\element_group as element_group_ui;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
+use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -61,6 +63,7 @@ class element_list_tests
         $sc = new sql_creator();
         $t_frm = new test_formulas($t);
         $t_trm = new test_terms($t);
+        $t_phr = new test_phrases($t);
         $t->name = 'element_list->';
         $t->resource_path = 'db/element/';
         $elm_lst = new element_list($t->usr1);
@@ -117,6 +120,23 @@ class element_list_tests
         $elm_grp_ui = new element_group_ui();
         $api_json = [json_fields::LIST_ELEMENTS => [$elm_json]];
         $t->assert_false($test_name, $elm_grp_ui->api_mapper($api_json)->is_ok());
+
+        $t->subheader($ts . 'group api json array');
+
+        // the phrases of the context are sent if the element group has them
+        $test_name = 'the phrases of the element group are sent';
+        $elm_grp = $t_frm->element_group();
+        $elm_grp->phr_lst = $t_phr->phrase_list_pi();
+        $vars = $elm_grp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASES][0][json_fields::NAME], word_names::PI_SYMBOL);
+        $msg->reset();
+
+        // negative: an element group without phrases sends none
+        $test_name = 'no phrases are sent without phrases';
+        $elm_grp = $t_frm->element_group();
+        $vars = $elm_grp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASES, $vars));
+        $msg->reset();
 
     }
 

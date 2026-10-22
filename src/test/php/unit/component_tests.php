@@ -63,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\component_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -281,6 +282,72 @@ class component_tests
         $title = $page->title_for_phrase(msg_id::SYSTEM_TITLE_TABLE_EDITOR);
         $t->assert_text_not_contains($test_name, $title, $mtr->txt(msg_id::FOR));
 
+        $t->subheader($ts . 'component api json array');
+
+        // the ui message of a component is sent if it is set
+        $test_name = 'ui message code id';
+        $msg = new user_message($t->usr1);
+        $cmp = $t_cmp->component_filled_included();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert($test_name, ($vars[json_fields::UI_MSG_CODE_ID] ?? null)?->value, msg_id::PLEASE_SELECT->value);
+        $t->assert($test_name . ' vars', ($vars[json_fields::UI_MSG_CODE_ID_VARS] ?? null)?->value, msg_id::DONE->value);
+        $t->assert($test_name . ' exception', ($vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] ?? null)?->value,
+            msg_id::ERROR_TEXT->value);
+        $msg->reset();
+
+        // negative: a component without a ui message sends none of the ui message fields
+        $test_name = 'no ui message code id';
+        $cmp = $t_cmp->component();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::UI_MSG_CODE_ID, $vars));
+        $t->assert_false($test_name . ' vars', array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $vars));
+        $t->assert_false($test_name . ' exception', array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $vars));
+        $msg->reset();
+
+        // the default style of a component is sent if it is set
+        $test_name = 'style';
+        $cmp = $t_cmp->component_filled_included();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::STYLE] ?? null, view_styles::COL_SM_4_ID);
+        $msg->reset();
+
+        // negative: a component without a style sends no style
+        $test_name = 'no style';
+        $cmp = $t_cmp->component();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::STYLE, $vars));
+        $msg->reset();
+
+        // the formula of a component is sent by its id
+        $test_name = 'formula id';
+        $cmp = $t_cmp->component_filled_all_included();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::FORMULA_ID] ?? null, formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+
+        // negative: a component without a formula sends no formula id
+        $test_name = 'no formula id';
+        $cmp = $t_cmp->component_filled_included();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::FORMULA_ID, $vars));
+        $msg->reset();
+
+        // the phrases that select the table rows and columns are sent by their id
+        $test_name = 'row phrase id';
+        $cmp = $t_cmp->component_filled_included();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PHRASE_ROW] ?? null, words::YEAR_CAP_ID);
+        $t->assert($test_name . ' col', $vars[json_fields::PHRASE_COL] ?? null, word_names::CANTON_ID);
+        $msg->reset();
+
+        // negative: a component without row and column phrases sends no phrase ids
+        $test_name = 'no row phrase id';
+        $cmp = $t_cmp->component();
+        $vars = $cmp->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::PHRASE_ROW, $vars));
+        $t->assert_false($test_name . ' col', array_key_exists(json_fields::PHRASE_COL, $vars));
+        $msg->reset();
+
         $t->subheader($ts . 'component api mapper');
 
         // the frontend sends the component as api json, so the mapper must take the name of it
@@ -477,6 +544,12 @@ class component_tests
         $cmp_db = $t_cmp->component();
         $cmp_db->set_row_phrase($t_phr->canton());
         $t->assert_false($test_name, $this->no_upd_diff($cmp_db, $cmp_row, $t->usr1)->is_ok());
+
+        // the phrase that selects the table rows is returned by its id
+        $test_name = 'the row phrase id';
+        $cmp_row_id = $t_cmp->component();
+        $cmp_row_id->set_row_phrase($t_phr->year());
+        $t->assert($test_name, $cmp_row_id->get_row_phrase_id(), words::YEAR_CAP_ID);
 
         // null removes the phrase that selects the table rows
         $test_name = 'remove the row phrase';

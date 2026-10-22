@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\cfg\view\view_relation_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
@@ -231,6 +232,50 @@ class view_tests
         $t->assert_api($msk, 'view_with_component_details', [api_types::INCL_COMPONENTS, api_types::LINK_DETAILS]);
         $t->assert_api_to_ui($msk, new view_ui());
 
+        $t->subheader($ts . 'api json array');
+
+        // the style of a view is sent if it is set
+        $test_name = 'style';
+        $msk = $t_msk->view_filled_included();
+        $vars = $msk->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::STYLE] ?? null, view_styles::COL_SM_4_ID);
+        $msg->reset();
+
+        // negative: a view without a style sends no style
+        $test_name = 'no style';
+        $msk = $t_msk->view();
+        $vars = $msk->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::STYLE, $vars));
+        $msg->reset();
+
+        // the component links of a view are sent if the view has them
+        $test_name = 'components';
+        $msk = $t_msk->view_with_components();
+        $vars = $msk->api_json_array([], $msg);
+        $t->assert($test_name, count($vars[json_fields::COMPONENTS] ?? []), $msk->cmp_lnk_lst->count());
+        $msg->reset();
+
+        // negative: a view without component links sends no components
+        $test_name = 'no components';
+        $msk = $t_msk->view();
+        $vars = $msk->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::COMPONENTS, $vars));
+        $msg->reset();
+
+        // an excluded view is sent only with its id and the excluded flag if the ids are requested
+        $test_name = 'excluded with id';
+        $msk = $t_msk->view_filled();
+        $vars = $msk->api_json_array([api_types::WITH_EXCLUDED_ID], $msg);
+        $t->assert($test_name, $vars, [json_fields::ID => views::START_ID, json_fields::EXCLUDED => true]);
+        $msg->reset();
+
+        // negative: an excluded view is not sent at all without the excluded id request
+        $test_name = 'excluded';
+        $msk = $t_msk->view_filled();
+        $vars = $msk->api_json_array([], $msg);
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
+
         $t->subheader($ts . 'term assignment');
 
         // a term that is assigned twice, e.g. by an import file, is reported to the caller,
@@ -351,6 +396,52 @@ class view_tests
         $test_name = 'a view relation json without a parent id leaves the parent view empty';
         $mrl_map->api_mapper([json_fields::ID => $mrl->id()], $msg);
         $t->assert_null($test_name, $mrl_map->parent()?->dsp_id());
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // a view relation sends only the id of the parent and the child view by default
+        $test_name = 'parent id';
+        $mrl = $t_msk->view_relation();
+        $vars = $mrl->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::PARENT_ID] ?? null, views::WORD_EDIT_ID);
+        $t->assert($test_name . ' child', $vars[json_fields::CHILD_ID] ?? null, views::WORD_LOG_ID);
+        $msg->reset();
+
+        // negative: with the views included the parent view is nested instead of its id
+        $test_name = 'nested parent';
+        $mrl = $t_msk->view_relation();
+        $vars = $mrl->api_json_array([api_types::INCL_VIEWS], $msg);
+        $t->assert($test_name, $vars[json_fields::PARENT][json_fields::ID] ?? null, views::WORD_EDIT_ID);
+        $t->assert_false($test_name . ' without id', array_key_exists(json_fields::PARENT_ID, $vars));
+        $msg->reset();
+
+        // the start position of a view relation is sent if it is set
+        $test_name = 'position';
+        $mrl = $t_msk->view_relation();
+        $vars = $mrl->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::POSITION] ?? null, $mrl->start_pos);
+        $msg->reset();
+
+        // negative: a view relation without a start position sends no position
+        $test_name = 'no position';
+        $mrl = $t_msk->view_relation_add();
+        $vars = $mrl->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::POSITION, $vars));
+        $msg->reset();
+
+        // the description of a view relation is sent if it is set
+        $test_name = 'description';
+        $mrl = $t_msk->view_relation_filled_included();
+        $vars = $mrl->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::DESCRIPTION] ?? null, $mrl->description);
+        $msg->reset();
+
+        // negative: a view relation without a description sends no description
+        $test_name = 'no description';
+        $mrl = $t_msk->view_relation();
+        $vars = $mrl->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
         $msg->reset();
 
 

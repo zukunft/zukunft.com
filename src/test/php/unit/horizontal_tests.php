@@ -297,9 +297,16 @@ class horizontal_tests
             $t->assert_json_string($test_name, $final_json, $api_json_ex);
         }
 
+        // a group with a name is added to the import cache
+        $test_name = 'a group with a key is added to the import cache';
+        $t_grp = new test_groups($t);
+        $dto = new data_object($t->usr1);
+        $dto->add_group($t_grp->group(), $msg);
+        $t->assert($test_name, $dto->group_list()->count(), 1);
+        $msg->reset();
+
         // negative: a group without a name and without phrases has no key for the import cache
         $test_name = 'a group without a key is not added to the import cache';
-        $t_grp = new test_groups($t);
         $dto = new data_object($t->usr1);
         $dto->add_group($t_grp->group_without_key(), $msg);
         $t->assert($test_name, $dto->group_list()->count(), 0);

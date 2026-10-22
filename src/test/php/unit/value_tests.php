@@ -274,6 +274,100 @@ class value_tests
         $t->assert_false($test_name, $val->api_mapper($api_json, $msg));
         $msg->reset();
 
+        $t->subheader($ts . 'api json array');
+        // the base part sends the source of the value by its id
+        $test_name = 'the source id of a value with a source';
+        $val = $t_val->light_speed();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::SOURCE_ID] ?? 0, sources::SIB_ID);
+        $msg->reset();
+
+        // negative: a value without a source sends no source id
+        $test_name = 'no source id of a value without a source';
+        $val = $t_val->value_pi();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::SOURCE_ID, $vars));
+        $msg->reset();
+
+        // a numeric value sends the number
+        $test_name = 'the number of a numeric value';
+        $val = $t_val->value_pi();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::NUMBER] ?? 0, values::PI);
+        $msg->reset();
+
+        // the value page gets the source nested with its name
+        $test_name = 'the source of a value page';
+        $val = $t_val->light_speed();
+        $vars = $val->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::SOURCE][json_fields::NAME] ?? '', sources::SIB);
+        $msg->reset();
+
+        // negative: the plain api message has no nested source
+        $test_name = 'no nested source without the page flag';
+        $val = $t_val->light_speed();
+        $vars = $val->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::SOURCE, $vars));
+        $msg->reset();
+
+        // the value page gets the time of the last update
+        $test_name = 'the last update of a value page';
+        $val = $t_val->value_pi();
+        $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        $vars = $val->api_json_array([api_types::INCL_RELATED, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE] ?? '', test_const::DUMMY_DATETIME);
+        $msg->reset();
+
+        // negative: the plain api message has no volatile last update
+        $test_name = 'no last update without the page flag';
+        $val = $t_val->value_pi();
+        $val->set_last_update(new DateTime(test_const::DUMMY_DATETIME));
+        $vars = $val->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::LAST_UPDATE, $vars));
+        $msg->reset();
+
+        // a geolocation value sends the geolocation
+        $test_name = 'the geolocation of a geo value';
+        $val = $t_val->geo_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::GEO_VALUE] ?? '', values::GEO);
+        $msg->reset();
+
+        // negative: a geolocation value sends no number
+        $test_name = 'no number of a geo value';
+        $val = $t_val->geo_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::NUMBER, $vars));
+        $msg->reset();
+
+        // a text value sends the text
+        $test_name = 'the text of a text value';
+        $val = $t_val->text_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::TEXT_VALUE] ?? '', values::TEXT);
+        $msg->reset();
+
+        // negative: a text value sends no number
+        $test_name = 'no number of a text value';
+        $val = $t_val->text_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::NUMBER, $vars));
+        $msg->reset();
+
+        // a time value sends the time
+        $test_name = 'the time of a time value';
+        $val = $t_val->time_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert($test_name, ($vars[json_fields::TIME_VALUE] ?? null)?->getTimestamp(), strtotime(values::TIME));
+        $msg->reset();
+
+        // negative: a time value sends no number
+        $test_name = 'no number of a time value';
+        $val = $t_val->time_value();
+        $vars = $val->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::NUMBER, $vars));
+        $msg->reset();
+
         $t->subheader($ts . 'union row mapping');
         // a value list is loaded with one union query over the prime, most and big value tables
         // (see value_list::load_sql_by_phr), so a prime row arrives with an empty group_id and

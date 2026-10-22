@@ -111,6 +111,7 @@ class sys_log_tests
         // init
         $sc = new sql_creator();
         $t_sys = new test_sys_log($t);
+        $msg = new user_message($t->usr1);
         $t->name = 'sys_log->';
         $t->resource_path = 'db/sys_log/';
 
@@ -203,6 +204,36 @@ class sys_log_tests
         $t_sys = new test_sys_log($t);
         $log_lst = $t_sys->sys_log_list();
         $t->assert_api($log_lst, '', [api_types::HEADER, api_types::INCL_COMPONENTS]);
+
+        $t->subheader($ts . 'api json array');
+
+        // the description of a log entry is sent if it is set
+        $test_name = 'description of a filled entry';
+        $log = $t_sys->sys_log_filled();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::DESCRIPTION] ?? '', self::TV_DESCRIPTION);
+        $msg->reset();
+
+        // negative: an empty description is filtered out
+        $test_name = 'no description of an open entry';
+        $log = $t_sys->sys_log();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::DESCRIPTION, $vars));
+        $msg->reset();
+
+        // the solver of an assigned log entry
+        $test_name = 'solver of an assigned entry';
+        $log = $t_sys->sys_log_two();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::SOLVER] ?? 0, $log->solver->id());
+        $msg->reset();
+
+        // negative: an open log entry without solver sends no solver
+        $test_name = 'no solver of an open entry';
+        $log = $t_sys->sys_log();
+        $vars = $log->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::SOLVER, $vars));
+        $msg->reset();
 
 
         $t->subheader($ts . 'system time type sql setup');
@@ -434,7 +465,6 @@ class sys_log_tests
         $t->assert($test_name, $since->getTimestamp(), $now - $days_sec);
 
         $t->subheader($ts . 'slow request api');
-        $msg = new user_message($t->usr1);
         $test_name = 'a slow request is sent with its milliseconds';
         $sys_tim = new system_time();
         $sys_tim->row_mapper($t_sys->system_time_row(), $msg);
@@ -451,6 +481,14 @@ class sys_log_tests
         $sys_tim = new system_time();
         $sys_tim->row_mapper(null, $msg);
         $t->assert_null($test_name, $sys_tim->url);
+        $msg->reset();
+
+        // negative: a system time that has not been started sends no start time
+        $test_name = 'no start time if not started';
+        $sys_tim = new system_time();
+        $vars = $sys_tim->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::TIME_START]);
+        $msg->reset();
 
     }
 

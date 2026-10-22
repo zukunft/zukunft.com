@@ -233,6 +233,35 @@ class result_tests
         $t->assert_null($test_name, $res->share_id());
         $msg->reset();
 
+        $t->subheader($ts . 'api json array');
+        // the phrases of the source group are sent as the context if the phrases are requested
+        $test_name = 'the context phrases of a result';
+        $res = $t_res->result_main_max();
+        $vars = $res->api_json_array([api_types::INCL_PHRASES, api_types::TEST_MODE], $msg);
+        $t->assert($test_name, $vars[json_fields::CONTEXT][0][json_fields::NAME] ?? '', word_names::CONST_NAME);
+        $msg->reset();
+
+        // negative: without the phrase flag the result has no context
+        $test_name = 'no context phrases without the phrase flag';
+        $res = $t_res->result_main_max();
+        $vars = $res->api_json_array([api_types::TEST_MODE], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::CONTEXT, $vars));
+        $msg->reset();
+
+        // the formula that has created the result is sent by its id
+        $test_name = 'the formula id of a result';
+        $res = $t_res->result_main_max();
+        $vars = $res->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::FORMULA_ID] ?? 0, formula_names::SCALE_TO_SEC_ID);
+        $msg->reset();
+
+        // negative: a result without a formula sends no formula id
+        $test_name = 'no formula id of a result without formula';
+        $res = $t_res->result_simple();
+        $vars = $res->api_json_array([], $msg);
+        $t->assert_false($test_name, array_key_exists(json_fields::FORMULA_ID, $vars));
+        $msg->reset();
+
         // the result table must always fit the source group, because the source_group_id column
         // of the prime and main tables is a bigint, of the standard table char(112) and of the
         // big table text, so a bigger source group moves the result to a bigger table

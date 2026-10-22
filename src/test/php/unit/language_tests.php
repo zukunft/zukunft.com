@@ -99,6 +99,22 @@ class language_tests
         $t->assert_null($test_name, $lan->wiki_code);
         $msg->reset();
 
+        $t->subheader($ts . 'api json array');
+
+        // the wikimedia code of a language is part of the api message
+        $test_name = 'wikimedia code';
+        $lan = $t_lan->language_translate();
+        $vars = $lan->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::WIKI_CODE] ?? null, languages::TRANSLATE_WIKI);
+        $msg->reset();
+
+        // negative: a language without a wikimedia code sends an empty code
+        $test_name = 'no wikimedia code';
+        $lan = $t_lan->language();
+        $vars = $lan->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::WIKI_CODE] ?? null);
+        $msg->reset();
+
 
         // start the test section (ts)
         $ts = 'unit language form ';
@@ -125,6 +141,23 @@ class language_tests
         $lan_for = new language_form('');
         $lan_for->api_mapper([json_fields::LANGUAGE => ''], $msg);
         $t->assert_null($test_name, $lan_for->lng_id);
+        $msg->reset();
+
+        $t->subheader($ts . 'api json array');
+
+        // the language of a language form is sent by its id
+        $test_name = 'language id';
+        $lan_for = $t_typ->language_form();
+        $lan_for->lng_id = languages::DEFAULT_ID;
+        $vars = $lan_for->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LANGUAGE] ?? null, languages::DEFAULT_ID);
+        $msg->reset();
+
+        // negative: a language form without a language sends an empty language id
+        $test_name = 'no language id';
+        $lan_for = $t_typ->language_form();
+        $vars = $lan_for->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LANGUAGE] ?? null);
         $msg->reset();
 
 
