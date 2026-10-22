@@ -145,6 +145,27 @@ class coding_rule_tests
         $test_name = '... and a quoted name is not counted as a call either';
         $t->assert_key_not_exists($test_name, 'reset', $cnt_lst);
 
+        // the report lists the functions without any test before the functions with too few tests
+        $test_name = 'a function without a test call is listed as without any test';
+        $cls_lst = ['word' => ['load', 'save']];
+        $cnt_lst = ['load' => 1];
+        $low_cnt = 0;
+        $no_test_md = $cov->section_md('main backend', $cls_lst, $cnt_lst, [], [], true, $low_cnt);
+        $t->assert_text_contains($test_name, $no_test_md, 'save - 0 unit test calls');
+        $test_name = '... in a section named by the number of these functions';
+        $t->assert_text_contains($test_name, $no_test_md, '1 functions of main backend have no test at all');
+        // negative: a function with one test call is not listed as without any test
+        $test_name = 'a function with a test call is not listed as without any test';
+        $t->assert_text_not_contains($test_name, $no_test_md, 'load');
+        $test_name = 'a function with too few test calls is listed as incomplete';
+        $incomplete_md = $cov->section_md('main backend', $cls_lst, $cnt_lst, [], [], false, $low_cnt);
+        $t->assert_text_contains($test_name, $incomplete_md, 'load - 1 unit test calls');
+        $test_name = '... in a section named by the number of incomplete functions';
+        $t->assert_text_contains($test_name, $incomplete_md, '1 functions of main backend have incomplete tests');
+        // negative: a function without a test call is not listed as incomplete
+        $test_name = 'a function without a test call is not listed as incomplete';
+        $t->assert_text_not_contains($test_name, $incomplete_md, 'save');
+
         $this->php_class_name_check($t);
 
         $this->php_include_tests($t, paths::MODEL);

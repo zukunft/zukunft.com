@@ -4,18 +4,6 @@
 
 ### test coverage
 
-#### reporting
-
-in docs/code_test_coverage.md list below 'main backend' only the functions that have zero tests 
-and change the title to 'x functions of main backend have no test at all'
-
-add below a new section 'x functions of main backend have incomplete tests'
-with function that have at least one test e.g. selector - 2 unit test calls shared by 24 classes
-
-and do similar for the shared and frontend 
-
-the order should be that docs/code_test_coverage.md starts with the backend, shared and frontend function that have no test
-
 #### steps
 
 goal: every public function of `docs/code_test_coverage.md` has at least two unit test calls
@@ -198,6 +186,16 @@ rules for every step:
      `unit/coding_rule_tests.php:1073`
    - the rule of `cfg/word/triple.php:375` ("explicit is better than implicit") is added to
      `docs/llm/coding.md` with this case as the sample
+
+#### clean up
+
+1. The new 'assert should use most specific parameters' rule has no coded check. coding.md says every machine-checkable coding rule gets a check in unit/coding_rule_tests.php. "No assert_true / assert_false / assert(…, false) around array_key_exists" is machine-checkable, but there is no such test, so a new wrapped assert would go unnoticed.
+2. The assert-line rule is only partly applied. The new testing.md section says to read keys without ?? and to read nested values on the line before. About 80 asserts in the tests committed in 0dc5b8100 still break it, for example sys_log_tests.php:214 ($vars[json_fields::DESCRIPTION] ?? '') and component_tests.php (($vars[…] ?? null)?->value).
+3. Duplicated logic in the two new helpers. assert_key_exists and assert_key_not_exists in test_base.php share their first three steps (lookup, key list, diff). A small private function returning the key list would remove the copy. This is minor.
+4. The new helpers have no $exe_max_time parameter, unlike assert_text_contains and the other helpers. So they always use the default timeout, which is fine for array lookups but differs from their siblings. Low priority.
+5. Two consts hold the same text: test_const::TERM_VIEW_COM and VIEW_RELATION_COM are both 'add usage and log of a word'. Keeping them separate is right as long as the two fixtures are meant to be independent; just be aware of it.
+6. A second message is created mid-test in user_ui_tests.php ("the api url of the system user…"): $sys_msg = new user_message($sys_ui). This only names what was already inline before. The test needs a message for the system user, but the rule says to create $msg once.
+7. docs/llm/pending.md has a new "view edit" entry (move the "main + variance" entries to the navbar edit menu). It isn't part of this work; I assume it's yours. Commit it separately or name it in the message.
 
 ## speed up
 
