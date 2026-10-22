@@ -294,7 +294,19 @@ the differences of `pv_lifetime_balance.html` to `pv_lifetime_balance_sample.htm
 the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
 renderer, never by adapting the sample
 
-1. save: based on the updated number on the frontend form and the id already included in the frontend, send update api requests to the backend and if success is confirmed show a 'changes saved' message. Maybe break this task into smaller tasks and list them here. 
+1. save - the parts after the save of the changed numbers (docs/llm/frontend.md "The save of a
+   calculator page"):
+    - write test: a unit_write test that saves one changed calculator number of the pv page as
+      the overwrite of `$t->usr1`, checks the shown number, the "changes saved" info and the
+      change log, and removes the overwrite again by the logged `del()`
+    - api: the save writes through `db_object::update`, which converts the frontend value to the
+      backend object; the PUT api call is the open TODO of `db_object::update` for every edit
+    - user without login: the save is refused by the backend and the page shows the message; the
+      save button could instead say "login to save" before the user enters numbers
+    - the selected option of a phrase selector (e.g. the replacement mix) is not saved, because a
+      selector names a phrase and not a value; saving it needs a value or a triple of the user
+    - the confirmation names only the number of saved values, not which numbers have changed
+      from what, as the settings page does (`frontend::setting_saved_text`)
 2. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
    the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
    Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today

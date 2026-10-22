@@ -245,6 +245,14 @@ class coding_rule_tests
         $test_name = 'different ids are no duplicate';
         $t->assert($test_name, $this->duplicate_ids('<select id="df_view"></select><select id="dm_view"></select>'),
             []);
+        // negative: a script that writes elements as text uses no id of the page
+        $test_name = 'an id in the code of a script is no duplicate';
+        $script_ids = $this->duplicate_ids('<script id="seed">x = \'<input id="\' + id + \'">\''
+            . ' + \'<label id="\' + id + \'">\';</script>');
+        $t->assert($test_name, $script_ids, []);
+        $test_name = '... but the id of the script element still counts';
+        $tag_ids = $this->duplicate_ids('<script id="seed"></script><div id="seed"></div>');
+        $t->assert($test_name, $tag_ids, ['seed']);
 
         $lib = new library();
         $files_checked = 0;
@@ -269,7 +277,7 @@ class coding_rule_tests
      */
     function duplicate_ids(string $html): array
     {
-        preg_match_all('/\sid="([^"]+)"/', $html, $matches);
+        preg_match_all('/\sid="([^"]+)"/', $this->without_script_code($html), $matches);
         $used = array_count_values($matches[1]);
         $result = array_keys(array_filter($used, fn(int $count) => $count > 1));
         sort($result);
@@ -316,8 +324,22 @@ class coding_rule_tests
     function empty_links(string $html): array
     {
         $tag = html_base::A;
-        preg_match_all('/<' . $tag . '\b[^>]*>\s*<\/' . $tag . '>/', $html, $matches);
+        preg_match_all('/<' . $tag . '\b[^>]*>\s*<\/' . $tag . '>/', $this->without_script_code($html), $matches);
         return $matches[0];
+    }
+
+    /**
+     * the html without the code inside its script elements, because a script e.g. of a raw sample page
+     * writes elements as text like '<input id="' + id + '">', which are no elements of the page;
+     * the script tags stay, so that the id of a script element e.g. of its json data still counts
+     *
+     * @param string $html the html code of a page or a part of it
+     * @return string the html code with empty script elements
+     */
+    private function without_script_code(string $html): string
+    {
+        $tag = html_base::SCRIPT;
+        return preg_replace('/(<' . $tag . '\b[^>]*>).*?(<\/' . $tag . '>)/s', '$1$2', $html);
     }
 
     /**
@@ -360,7 +382,8 @@ class coding_rule_tests
     function form_balance(string $html): int
     {
         $tag = html_base::FORM;
-        return preg_match_all('/<' . $tag . '\b[^>]*>/', $html) - preg_match_all('/<\/' . $tag . '>/', $html);
+        $page = $this->without_script_code($html);
+        return preg_match_all('/<' . $tag . '\b[^>]*>/', $page) - preg_match_all('/<\/' . $tag . '>/', $page);
     }
 
     /**

@@ -1241,7 +1241,7 @@ class system_page extends component
                     ?: $mtr->txt(msg_id::CALCULATOR_INPUTS);
                 $result = $html->div($html->block(html_base::H2, $html->esc($heading))
                     . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
-                    . $this->process_catch_button_refresh(msg_id::CALCULATOR_SAVE, $form_name, $msk_key, $dbo, $url_arr),
+                    . $this->calculator_button_save($form_name, $msk_key, $dbo),
                     styles::INPUTS);
                 $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
                 $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
@@ -1252,6 +1252,37 @@ class system_page extends component
                     $result .= $html->details($html->esc($summary), $fields);
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the button that saves the changed numbers of a calculator page and then shows the page again
+     * (see frontend::action_calculator_save); a post form, because it changes data, which every
+     * number field joins by its form attribute
+     *
+     * @param string $form_name the id of the form that the fields of the page join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @return string the html code of the save form or an empty string if the component is shown on no page
+     */
+    private function calculator_button_save(
+        string                                                $form_name,
+        string|int                                            $msk_key,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        // e.g. a preview of the component has no page to save
+        if ($msk_key != '' and $msk_key != 0) {
+            $html = new html_base();
+            $page_vars = $html->form_hidden(url_var::MASK, (string)$msk_key);
+            $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
+            $page_vars .= $html->form_hidden(url_var::ACTION, url_var::ACTION_SAVE);
+            $button = $html->button_bs($html->esc($mtr->txt(msg_id::CALCULATOR_SAVE)),
+                styles::PROCESS_CATCH_BUTTON_REFRESH, '', url_var::POST_SUBMIT);
+            $result = $html->form_post($form_name, $page_vars . $button);
         }
         return $result;
     }

@@ -958,7 +958,10 @@ class frontend
                 $url_array, $view, $msg_ui, $dto, url_var::CRUD_CREATE, $do_it),
             in_array($view, views::EDIT_MASKS_IDS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_crud(
                 $url_array, $view, $msg_ui, $dto, url_var::CRUD_UPDATE, $do_it),
-            default => $this->log_ignored_write_step($view, $step, $msg_ui)
+            // the save of a calculator page writes the changed numbers without a confirm view
+            $view == views::CALCULATOR_ID and $action == url_var::ACTION_SAVE => $url = $this->action_calculator_save(
+                $url_array, $msg_ui, $do_it),
+            default =>$this->log_ignored_write_step($view, $step, $msg_ui)
         };
 
         // a login, signup, activation or logout has replaced the local user var by reference, so
@@ -2691,6 +2694,97 @@ class frontend
      * @param string $crud the write e.g. url_var::CRUD_UPDATE
      * @return bool true if a number of the settings page is saved, which is changed in place on that page
      */
+    /**
+     * save the numbers that the user has changed on a calculator page and show the page again with
+     * the saved numbers; if a save fails, e.g. for a user without login, the page shows the entered
+     * numbers again together with the message, so that the input is not lost
+     *
+     * @param array $url_array the submitted calculator form with the number, group id and shown number of each field
+     * @param user_message_ui $msg_ui with the requesting user to collect the result of the save
+     * @param bool $do_it false to simulate the save e.g. in a unit test
+     * @return array the url of the calculator page
+     */
+    private function action_calculator_save(array $url_array, user_message_ui $msg_ui, bool $do_it): array
+    {
+        global $mtr;
+        $changes = $this->calculator_changes($url_array, $msg_ui);
+        $saved = 0;
+        if ($do_it) {
+            foreach ($changes as $val) {
+                $result_msg = $val->update($msg_ui);
+                if ($result_msg->is_ok()) {
+                    $saved++;
+                } else {
+                    $msg_ui->merge($result_msg);
+                }
+            }
+            // the pages that show the saved numbers are outdated
+            if ($saved > 0) {
+                $this->drop_cached_pages($msg_ui, false, value_ui::class);
+            }
+        }
+        $url = [url_var::MASK => $url_array[url_var::MASK], url_var::ID => $url_array[url_var::ID] ?? 0];
+        if (!$msg_ui->is_ok()) {
+            $url = array_merge($this->calculator_numbers($url_array), $url);
+        } elseif ($changes == []) {
+            $msg_ui->add_info($mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
+        } elseif ($saved > 0) {
+            $lib = new library();
+            $msg_ui->add_info($lib->msg_var_text([[msg_id::CALCULATOR_SAVED, [msg_id::VAR_VALUE => (string)$saved]]], $mtr));
+        }
+        return $url;
+    }
+
+    /**
+     * the values of a calculator save whose number the user has changed: each number field sends its
+     * number, the group id of its value and the number that it has shown (see ui_list::calculator_save_vars),
+     * so a field without them e.g. a selector is never saved
+     *
+     * @param array $url_array the submitted calculator form
+     * @param user_message_ui $msg_ui to report an entered text that is not a number
+     * @return value_ui[] the values with the changed number
+     */
+    function calculator_changes(array $url_array, user_message_ui $msg_ui): array
+    {
+        $shown_key = url_var::PRE . url_var::NUMERIC_VALUE;
+        $result = [];
+        foreach ($url_array as $key => $shown) {
+            if (str_starts_with((string)$key, $shown_key)) {
+                $field = substr((string)$key, strlen($shown_key));
+                $number = $url_array[url_var::NUMERIC_VALUE . $field] ?? null;
+                $grp_id = $url_array[url_var::GROUP . $field] ?? null;
+                if ($number === null or $grp_id === null) {
+                    log_warning('the calculator field ' . $field . ' has been sent without its number or group id');
+                } elseif (!is_numeric($number)) {
+                    $msg_ui->add(msg_id::URL_VALUE_NOT_NUMERIC, [msg_id::VAR_VALUE => $number]);
+                } elseif ((float)$number != (float)$shown) {
+                    $val = new value_ui();
+                    $val->set_id(is_numeric($grp_id) ? (int)$grp_id : $grp_id);
+                    $val->number = (float)$number;
+                    $result[] = $val;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $url_array the submitted calculator form
+     * @return array the entered numbers of the number fields, so that the page shows them again
+     */
+    private function calculator_numbers(array $url_array): array
+    {
+        $shown_key = url_var::PRE . url_var::NUMERIC_VALUE;
+        $result = [];
+        foreach (array_keys($url_array) as $key) {
+            $num_key = url_var::NUMERIC_VALUE . substr((string)$key, strlen($shown_key));
+            if (str_starts_with((string)$key, $shown_key) and array_key_exists($num_key, $url_array)) {
+                $result[$num_key] = $url_array[$num_key];
+            }
+        }
+        return $result;
+    }
+
     private function is_setting_save(array $url_array, string $crud): bool
     {
         $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);

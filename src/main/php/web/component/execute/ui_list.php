@@ -154,6 +154,7 @@ class ui_list extends ui_base
     const string CALC_CELL_FACTOR = 'factor';
     const string CALC_CELL_DECIMALS = 'decimals';
     const string CALC_DEC_POINT = 'dec_point';
+    const string CALC_UNIT_SEP = 'unit_sep';
     const string CALC_THOUSAND_SEP = 'thousand_sep';
     const string CALC_PERCENT_DECIMALS = 'percent_decimals';
     const string CALC_POSITIVE = 'positive';
@@ -2397,7 +2398,8 @@ class ui_list extends ui_base
         $name = url_var::NUMERIC_VALUE . $val->id();
         $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val->number();
         $text = $label . ' ' . $html->span($this->assumption_tag($val, $dto), styles::INPUT_TAG);
-        $input = $html->input_number($name, $num, null, null, null, $form_name);
+        $input = $html->input_number($name, $num, null, null, null, $form_name)
+            . $this->calculator_save_vars((string)$val->id(), $val, $form_name);
         $unit = $this->unit_name($val, $msg);
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
@@ -2518,9 +2520,8 @@ class ui_list extends ui_base
             $this->field_property($phr, triples::FIELD_LIMIT_UP, $dto),
             $this->field_property($phr, triples::FIELD_STEP, $dto), $form_name,
             $val == null ? null : $this->field_decimals($val, $msg));
-        // the save writes the entered number to the value that the field shows
         if ($val != null) {
-            $input .= $html->form_hidden(url_var::GROUP . $phr->id(), (string)$val->id(), $form_name);
+            $input .= $this->calculator_save_vars((string)$phr->id(), $val, $form_name);
         }
         $unit = $val == null ? '' : $this->unit_name($val, $msg);
         if ($unit != '') {
@@ -2528,6 +2529,27 @@ class ui_list extends ui_base
         }
         return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW)
             . $this->calculator_hint($hint, $this->source_ref($val, $src_ids)), styles::INPUT_FIELD);
+    }
+
+    /**
+     * the hidden vars that the save of a calculator page needs for one number field: the group id of
+     * the value that the field shows and the number of the value, so that the save writes only a
+     * changed number (see frontend::calculator_changes); a field without them e.g. a selector is never saved
+     *
+     * @param string $field the url key of the field behind the number var e.g. "-2757" for "n-2757"
+     * @param sandbox_value $val the value that the field shows
+     * @param string $form_name the save form that the field joins
+     * @return string the html code of the hidden vars
+     */
+    private function calculator_save_vars(string $field, sandbox_value $val, string $form_name): string
+    {
+        $html = new html_base();
+        $result = $html->form_hidden(url_var::GROUP . $field, (string)$val->id(), $form_name);
+        if ($val->number() !== null) {
+            $result .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $field,
+                $html->number_value($val->number()), $form_name);
+        }
+        return $result;
     }
 
     /**
@@ -3047,7 +3069,7 @@ class ui_list extends ui_base
         $txt = $val->val_formatted($msg);
         // a percent is formatted with its symbol already
         $unit = $val->is_percent($msg) ? '' : $this->unit_name($val, $msg);
-        return $unit == '' ? $txt : $txt . ' ' . $unit;
+        return $unit == '' ? $txt : $txt . sandbox_value::UNIT_SEPARATOR . $unit;
     }
 
     /**
@@ -3094,7 +3116,7 @@ class ui_list extends ui_base
             $result = $fmt->text($val->number(), $dec_point, $thousand_sep);
             $unit = $this->calculator_cell_unit($val, $fmt, $with_unit, $msg);
             if ($unit != '') {
-                $result .= ' ' . $unit;
+                $result .= sandbox_value::UNIT_SEPARATOR . $unit;
             }
         }
         return $result;
@@ -3220,6 +3242,7 @@ class ui_list extends ui_base
                 // without a loaded config the format of the page cells, the shared defaults
                 self::CALC_DEC_POINT => $ui_sys?->cfg?->dec_point() ?? shared_config::DEFAULT_DEC_POINT,
                 self::CALC_THOUSAND_SEP => $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP,
+                self::CALC_UNIT_SEP => sandbox_value::UNIT_SEPARATOR,
                 self::CALC_PERCENT_DECIMALS => $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS,
                 self::CALC_POSITIVE => styles::CALC_POSITIVE,
                 self::CALC_NEGATIVE => styles::CALC_NEGATIVE,

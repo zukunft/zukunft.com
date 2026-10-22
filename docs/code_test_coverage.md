@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1443 of 6209 public functions have at least 2 unit test calls; the 4561 functions below do not; the 205 functions of the last section are called nowhere
+1443 of 6211 public functions have at least 2 unit test calls; the 4563 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 2052 functions of main backend have no test at all
 
@@ -2312,7 +2312,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 889 functions of frontend have no test at all
+## 890 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2583,6 +2583,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- form_field_id - 0 unit test calls
     \-- form_get - 0 unit test calls
     \-- form_input_password - 0 unit test calls
+    \-- form_post - 0 unit test calls
     \-- form_session_token - 0 unit test calls
     \-- form_simple - 0 unit test calls
     \-- form_text - 0 unit test calls
@@ -4542,7 +4543,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 507 functions of frontend have incomplete tests
+## 508 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4707,6 +4708,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- selector - 2 unit test calls shared by 24 classes
 \-- frontend
     \-- activation_url - 1 unit test calls
+    \-- calculator_changes - 1 unit test calls
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- loading_start - 2 unit test calls shared by 2 classes
 \-- group

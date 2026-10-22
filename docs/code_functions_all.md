@@ -7081,6 +7081,8 @@
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
     \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
+    \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
+            end.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
             p
     \-- url_with_selected_phrase - section for function url_with_selected_phrase not yet defined that it should be execu
@@ -7487,6 +7489,8 @@
             ll html elements used in zukunft.com in /html/html_base.php
     \-- form_get - section for function form_get not yet defined that it should be base elements - functions for all htm
             l elements used in zukunft.com in /html/html_base.php
+    \-- form_post - section for function form_post not yet defined that it should be base elements - functions for all h
+            tml elements used in zukunft.com in /html/html_base.php
     \-- form_field - section for function form_field not yet defined that it should be base elements - functions for all
              html elements used in zukunft.com in /html/html_base.php
     \-- form_end - section for function form_end not yet defined that it should be base elements - functions for all htm
@@ -10275,6 +10279,8 @@
 \-- execute
     \-- url_to_action
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
+    \-- calculator_changes
+        \-- frontend - the values of a calculator save whose number the user has changed: each number field sends its
     \-- url_to_back_url
         \-- frontend - the previous page of a url built from its '9'-prefixed back targets, ready to be used directly as
     \-- url_with_selected_phrase
@@ -10617,6 +10623,8 @@
         \-- html_base - start a html form; the form name must be identical with the php script name
     \-- form_get
         \-- html_base - a form that only shows a page again with the entered values e.g. the refresh of a process catch
+    \-- form_post
+        \-- html_base - a form that changes data and that the inputs of other components join by their form attribute
     \-- form_field
         \-- html_base - create the HTML code for an input field including the label
     \-- form_end

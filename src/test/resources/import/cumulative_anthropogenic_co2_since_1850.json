@@ -1,0 +1,1388 @@
+{
+  "name": "cumulative_anthropogenic_co2_since_1850",
+  "version": "0.0.3",
+  "description": "Cumulative anthropogenic CO2 emissions since 1850 (GCB2025 Table 8), their partitioning into atmosphere, ocean and land, the cost of removal at 1000 USD per t in years of world GDP, and the question how climate-relevant the absorbed share remains: CO2 impulse response function (Joos 2013), zero emissions commitment (MacDougall 2020), emission/removal asymmetry (Zickfeld 2021), perturbation airborne fraction and sink weakening under negative emissions (Jones 2016), CMIP6 carbon cycle feedback parameters and TCRE (Arora 2020).",
+  "words": [
+    {
+      "name": "GtC",
+      "description": "gigatonne of carbon (1e9 t C)"
+    },
+    {
+      "name": "GtCO2",
+      "description": "gigatonne of carbon dioxide (1e9 t CO2); 1 GtC = 3.664 GtCO2"
+    },
+    {
+      "name": "cumulative anthropogenic CO2 emissions",
+      "description": "sum of fossil CO2 emissions and land-use change CO2 emissions over a period"
+    },
+    {
+      "name": "fossil CO2 emissions",
+      "description": "fossil fuel combustion and industrial processes including the cement carbonation sink (E_FOS)"
+    },
+    {
+      "name": "land-use change CO2 emissions",
+      "description": "net CO2 flux from land use, land-use change and forestry as defined by bookkeeping models (E_LUC)"
+    },
+    {
+      "name": "atmospheric CO2 increase",
+      "description": "part of cumulative emissions that remained in the atmosphere (G_ATM)"
+    },
+    {
+      "name": "ocean sink",
+      "description": "cumulative net uptake of anthropogenic CO2 by the ocean (S_OCEAN)"
+    },
+    {
+      "name": "land sink",
+      "description": "cumulative net uptake of CO2 by land excluding land use (S_LAND)"
+    },
+    {
+      "name": "budget imbalance",
+      "description": "emissions minus (atmosphere + ocean + land), a measure of incomplete knowledge (B_IM)"
+    },
+    {
+      "name": "1850-2024",
+      "description": "period from 1 January 1850 to 31 December 2024"
+    },
+    {
+      "name": "2025",
+      "description": "calendar year 2025, preliminary estimate"
+    },
+    {
+      "name": "1850-2026-10",
+      "description": "period from 1850 to about end of October 2026"
+    },
+    {
+      "name": "USD per t CO2",
+      "description": "US dollar per tonne of CO2 removed"
+    },
+    {
+      "name": "direct air capture removal cost",
+      "description": "cost to remove one tonne of CO2 from ambient air and store it permanently"
+    },
+    {
+      "name": "world GDP",
+      "description": "nominal gross domestic product of all countries in current USD"
+    },
+    {
+      "name": "trillion USD",
+      "description": "1e12 US dollar"
+    },
+    {
+      "name": "years of world GDP",
+      "description": "total cost divided by one year of world GDP"
+    },
+    {
+      "name": "share of world GDP",
+      "description": "annual cost divided by one year of world GDP"
+    },
+    {
+      "name": "atmospheric CO2 excess 2026",
+      "description": "anthropogenic CO2 currently remaining in the atmosphere, about 1060 GtCO2 in 2024 plus growth since"
+    },
+    {
+      "name": "sink rebound",
+      "description": "outgassing of CO2 from ocean and land when atmospheric CO2 is lowered, reducing the net effect of removal"
+    },
+    {
+      "name": "1850-2025",
+      "description": "period from 1 January 1850 to 31 December 2025, GCB2025 Table 8 column including the preliminary 2025 estimate"
+    },
+    {
+      "name": "CO2 impulse response function",
+      "description": "fraction of an instantaneous CO2 pulse that remains in the atmosphere t years after emission (IRF_CO2), multi-model mean of Joos 2013"
+    },
+    {
+      "name": "IRF coefficient a0",
+      "description": "asymptotic fraction of a CO2 pulse remaining airborne on the multi-millennial time scale before carbonate compensation"
+    },
+    {
+      "name": "IRF coefficient a1",
+      "description": "amplitude of the slowest decaying exponential term"
+    },
+    {
+      "name": "IRF coefficient a2",
+      "description": "amplitude of the intermediate exponential term"
+    },
+    {
+      "name": "IRF coefficient a3",
+      "description": "amplitude of the fastest exponential term"
+    },
+    {
+      "name": "IRF time scale tau1",
+      "description": "e-folding time of the slowest term, years"
+    },
+    {
+      "name": "IRF time scale tau2",
+      "description": "e-folding time of the intermediate term, years"
+    },
+    {
+      "name": "IRF time scale tau3",
+      "description": "e-folding time of the fastest term, years"
+    },
+    {
+      "name": "airborne fraction of pulse",
+      "description": "share of a 100 GtC pulse still in the atmosphere after a given number of years, present-day background 389 ppm"
+    },
+    {
+      "name": "ocean share of pulse",
+      "description": "share of a 100 GtC pulse taken up by the ocean after a given number of years"
+    },
+    {
+      "name": "land share of pulse",
+      "description": "share of a 100 GtC pulse taken up by land after a given number of years"
+    },
+    {
+      "name": "year 20",
+      "description": "20 years after the pulse"
+    },
+    {
+      "name": "year 50",
+      "description": "50 years after the pulse"
+    },
+    {
+      "name": "year 100",
+      "description": "100 years after the pulse"
+    },
+    {
+      "name": "year 200",
+      "description": "200 years after the pulse"
+    },
+    {
+      "name": "year 500",
+      "description": "500 years after the pulse"
+    },
+    {
+      "name": "year 1000",
+      "description": "1000 years after the pulse"
+    },
+    {
+      "name": "AGWP CO2",
+      "description": "absolute global warming potential of CO2, time-integrated radiative forcing per kg CO2, unit 1e-15 yr W m-2 kg-1"
+    },
+    {
+      "name": "temperature response to 100 GtC pulse",
+      "description": "global mean surface air temperature change caused by an instantaneous 100 GtC pulse, degree Celsius"
+    },
+    {
+      "name": "degree Celsius",
+      "description": "temperature difference in degree Celsius"
+    },
+    {
+      "name": "zero emissions commitment",
+      "description": "ZEC, global temperature change after CO2 emissions are set to zero, relative to the temperature at cessation"
+    },
+    {
+      "name": "ZEC50",
+      "description": "zero emissions commitment 50 years after cessation of emissions, 1000 PgC experiment A1"
+    },
+    {
+      "name": "ensemble mean",
+      "description": "arithmetic mean across the model ensemble"
+    },
+    {
+      "name": "ensemble median",
+      "description": "median across the model ensemble"
+    },
+    {
+      "name": "ensemble standard deviation",
+      "description": "standard deviation across the model ensemble"
+    },
+    {
+      "name": "number of models",
+      "description": "count of models in the ensemble"
+    },
+    {
+      "name": "atmospheric CO2 decline after cessation",
+      "description": "drop of atmospheric CO2 concentration 50 years after emissions stop in the 1000 PgC experiment, ppm"
+    },
+    {
+      "name": "ppm",
+      "description": "parts per million by volume of dry air"
+    },
+    {
+      "name": "emission removal asymmetry CO2",
+      "description": "excess of the atmospheric CO2 rise after an emission pulse over the CO2 decline after an equal removal pulse, 100 years after the pulse, relative to the change"
+    },
+    {
+      "name": "emission removal asymmetry temperature",
+      "description": "difference between the warming after an emission pulse and the cooling after an equal removal pulse, 100 years after the pulse; negative means removal cools slightly more than emission warms"
+    },
+    {
+      "name": "pulse 100 GtC",
+      "description": "instantaneous pulse of 100 GtC"
+    },
+    {
+      "name": "pulse 200 GtC",
+      "description": "instantaneous pulse of 200 GtC"
+    },
+    {
+      "name": "pulse 500 GtC",
+      "description": "instantaneous pulse of 500 GtC"
+    },
+    {
+      "name": "percent",
+      "description": "share in percent"
+    },
+    {
+      "name": "perturbation airborne fraction",
+      "description": "PAF, ratio of the atmospheric CO2 reduction to the amount of negative emissions applied (Jones 2016); 1 - PAF is the share of a removal offset by ocean and land outgassing"
+    },
+    {
+      "name": "constant removal 1 GtC per year",
+      "description": "idealised negative emission scenario on top of RCP2.6, constant 1 GtC per year 2020-2099"
+    },
+    {
+      "name": "constant removal 4 GtC per year",
+      "description": "idealised negative emission scenario on top of RCP2.6, constant 4 GtC per year 2020-2099"
+    },
+    {
+      "name": "ramp removal 1 to 4 GtC per year",
+      "description": "idealised negative emission scenario rising from 1 to 4 GtC per year 2020-2099"
+    },
+    {
+      "name": "ramp removal 4 to 1 GtC per year",
+      "description": "idealised negative emission scenario falling from 4 to 1 GtC per year 2020-2099"
+    },
+    {
+      "name": "land sink RCP2.6",
+      "description": "net land carbon uptake projected by CMIP5 Earth system models under RCP2.6, GtC per year, ensemble mean with spread"
+    },
+    {
+      "name": "ocean sink RCP2.6",
+      "description": "net ocean carbon uptake projected by CMIP5 Earth system models under RCP2.6, GtC per year, ensemble mean with spread"
+    },
+    {
+      "name": "2050-2099",
+      "description": "second half of the 21st century"
+    },
+    {
+      "name": "2250-2299",
+      "description": "second half of the 23rd century"
+    },
+    {
+      "name": "GtC per year",
+      "description": "gigatonne of carbon per year"
+    },
+    {
+      "name": "carbon-concentration feedback land",
+      "description": "beta_L, additional land carbon uptake per ppm atmospheric CO2 increase, PgC per ppm, from 1pctCO2 experiment"
+    },
+    {
+      "name": "carbon-concentration feedback ocean",
+      "description": "beta_O, additional ocean carbon uptake per ppm atmospheric CO2 increase, PgC per ppm"
+    },
+    {
+      "name": "carbon-climate feedback land",
+      "description": "gamma_L, land carbon loss per degree of warming, PgC per degree Celsius; negative means carbon is released"
+    },
+    {
+      "name": "carbon-climate feedback ocean",
+      "description": "gamma_O, ocean carbon loss per degree of warming, PgC per degree Celsius"
+    },
+    {
+      "name": "PgC per ppm",
+      "description": "petagram carbon per ppm; 1 PgC = 1 GtC"
+    },
+    {
+      "name": "PgC per degree Celsius",
+      "description": "petagram carbon per degree Celsius of global warming"
+    },
+    {
+      "name": "CMIP6",
+      "description": "Coupled Model Intercomparison Project phase 6, 11 models in Arora 2020"
+    },
+    {
+      "name": "CMIP5",
+      "description": "Coupled Model Intercomparison Project phase 5, 8 models in Arora 2020"
+    },
+    {
+      "name": "TCRE",
+      "description": "transient climate response to cumulative CO2 emissions, warming per unit cumulative emission"
+    },
+    {
+      "name": "degree Celsius per 1000 GtC",
+      "description": "degree Celsius per 1000 GtC cumulative emissions (equals degree Celsius per EgC)"
+    },
+    {
+      "name": "degree Celsius per 1000 GtCO2",
+      "description": "degree Celsius per 1000 GtCO2 cumulative emissions"
+    },
+    {
+      "name": "climate effect on land sink",
+      "description": "reduction of the land CO2 sink caused by climate change and variability, share of the sink, 2015-2024"
+    },
+    {
+      "name": "climate effect on ocean sink",
+      "description": "reduction of the ocean CO2 sink caused by climate change and variability, share of the sink, 2015-2024"
+    },
+    {
+      "name": "absorbed anthropogenic CO2",
+      "description": "cumulative CO2 taken up by ocean and land sinks 1850-2025, excluding the budget imbalance"
+    },
+    {
+      "name": "removal effectiveness",
+      "description": "share of a CO2 removal that still lowers atmospheric CO2 after a given time, approximated by the IRF of an equal positive pulse"
+    },
+    {
+      "name": "rebound share",
+      "description": "share of a CO2 removal that is offset by outgassing from ocean and land after a given time, 1 - removal effectiveness"
+    },
+    {
+      "name": "effective climate-relevant CO2 stock",
+      "description": "atmospheric excess plus the share of absorbed CO2 that would re-emerge if the atmosphere were drawn down, i.e. the amount that would have to be removed for the atmosphere to return to 1850"
+    },
+    {
+      "name": "warming per 0.1 degree Celsius",
+      "description": "cumulative CO2 emissions that cause 0.1 degree Celsius additional warming"
+    },
+    {
+      "name": "2026",
+      "description": "calendar year 2026, IMF projection"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "cumulative anthropogenic CO2 emissions",
+        "1850-2024",
+        "GtC"
+      ],
+      "number": 745,
+      "min": 680,
+      "max": 810,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "cumulative anthropogenic CO2 emissions",
+        "1850-2024",
+        "GtCO2"
+      ],
+      "number": 2730,
+      "min": 2490,
+      "max": 2970,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "fossil CO2 emissions",
+        "1850-2024",
+        "GtC"
+      ],
+      "number": 495,
+      "min": 470,
+      "max": 520,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "land-use change CO2 emissions",
+        "1850-2024",
+        "GtC"
+      ],
+      "number": 250,
+      "min": 190,
+      "max": 310,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "atmospheric CO2 increase",
+        "1850-2024",
+        "GtC"
+      ],
+      "number": 290,
+      "min": 285,
+      "max": 295,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "ocean sink",
+        "1850-2024",
+        "GtC"
+      ],
+      "number": 200,
+      "min": 160,
+      "max": 240,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "land sink",
+        "1850-2024",
+        "GtC"
+      ],
+      "number": 175,
+      "min": 125,
+      "max": 225,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "budget imbalance",
+        "1850-2024",
+        "GtC"
+      ],
+      "number": 80,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "cumulative anthropogenic CO2 emissions",
+        "2025",
+        "GtCO2"
+      ],
+      "number": 42.2,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "cumulative anthropogenic CO2 emissions",
+        "1850-2026-10",
+        "GtCO2",
+        "assumed"
+      ],
+      "number": 2800,
+      "min": 2560,
+      "max": 3040,
+      "confidence": 0.8,
+      "note_formula": "extrapolation_to_2026_10"
+    },
+    {
+      "words": [
+        "direct air capture removal cost",
+        "USD per t CO2",
+        "assumed"
+      ],
+      "number": 1000,
+      "confidence": 0.5
+    },
+    {
+      "words": [
+        "world GDP",
+        "2026",
+        "trillion USD"
+      ],
+      "number": 123.6,
+      "source": "IMF_WEO_via_Statista"
+    },
+    {
+      "words": [
+        "atmospheric CO2 increase",
+        "1850-2024",
+        "GtCO2"
+      ],
+      "number": 1063,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "atmospheric CO2 excess 2026",
+        "GtCO2",
+        "assumed"
+      ],
+      "number": 1100,
+      "confidence": 0.8
+    },
+    {
+      "words": [
+        "years of world GDP",
+        "cumulative anthropogenic CO2 emissions",
+        "1850-2026-10",
+        "assumed"
+      ],
+      "number": 22.7,
+      "confidence": 0.7,
+      "note_formula": "years_gdp_cumulative"
+    },
+    {
+      "words": [
+        "years of world GDP",
+        "atmospheric CO2 excess 2026",
+        "assumed"
+      ],
+      "number": 8.9,
+      "confidence": 0.7,
+      "note_formula": "years_gdp_atmosphere"
+    },
+    {
+      "words": [
+        "share of world GDP",
+        "2025",
+        "direct air capture removal cost",
+        "assumed"
+      ],
+      "number": 0.34,
+      "confidence": 0.7,
+      "note_formula": "gdp_share_annual_emissions"
+    },
+    {
+      "words": [
+        "cumulative anthropogenic CO2 emissions",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 755,
+      "min": 690,
+      "max": 820,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "fossil CO2 emissions",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 510,
+      "min": 485,
+      "max": 535,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "land-use change CO2 emissions",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 250,
+      "min": 190,
+      "max": 310,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "atmospheric CO2 increase",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 295,
+      "min": 290,
+      "max": 300,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "ocean sink",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 205,
+      "min": 165,
+      "max": 245,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "land sink",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 175,
+      "min": 125,
+      "max": 225,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "budget imbalance",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 80,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "absorbed anthropogenic CO2",
+        "1850-2025",
+        "GtC"
+      ],
+      "number": 380,
+      "min": 290,
+      "max": 470,
+      "source": "GCB2025",
+      "note_formula": "absorbed_sum"
+    },
+    {
+      "words": [
+        "absorbed anthropogenic CO2",
+        "1850-2025",
+        "GtCO2"
+      ],
+      "number": 1392,
+      "source": "GCB2025",
+      "note_formula": "GtC to GtCO2"
+    },
+    {
+      "words": [
+        "climate effect on land sink",
+        "percent"
+      ],
+      "number": 25,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "climate effect on ocean sink",
+        "percent"
+      ],
+      "number": 7.1,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "warming per 0.1 degree Celsius",
+        "GtCO2"
+      ],
+      "number": 180,
+      "source": "GCB2025"
+    },
+    {
+      "words": [
+        "TCRE",
+        "degree Celsius per 1000 GtCO2"
+      ],
+      "number": 0.56,
+      "source": "GCB2025",
+      "note_formula": "tcre_from_gcb"
+    },
+    {
+      "words": [
+        "CO2 impulse response function",
+        "IRF coefficient a0"
+      ],
+      "number": 0.2173,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "CO2 impulse response function",
+        "IRF coefficient a1"
+      ],
+      "number": 0.224,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "CO2 impulse response function",
+        "IRF coefficient a2"
+      ],
+      "number": 0.2824,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "CO2 impulse response function",
+        "IRF coefficient a3"
+      ],
+      "number": 0.2763,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "CO2 impulse response function",
+        "IRF time scale tau1"
+      ],
+      "number": 394.4,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "CO2 impulse response function",
+        "IRF time scale tau2"
+      ],
+      "number": 36.54,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "CO2 impulse response function",
+        "IRF time scale tau3"
+      ],
+      "number": 4.304,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "airborne fraction of pulse",
+        "year 20"
+      ],
+      "number": 0.6,
+      "min": 0.46,
+      "max": 0.74,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "airborne fraction of pulse",
+        "year 100"
+      ],
+      "number": 0.41,
+      "min": 0.28,
+      "max": 0.54,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "airborne fraction of pulse",
+        "year 1000"
+      ],
+      "number": 0.25,
+      "min": 0.16,
+      "max": 0.34,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "ocean share of pulse",
+        "year 1000"
+      ],
+      "number": 0.59,
+      "min": 0.47,
+      "max": 0.71,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "land share of pulse",
+        "year 1000"
+      ],
+      "number": 0.16,
+      "min": 0.02,
+      "max": 0.3,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "airborne fraction of pulse",
+        "year 50",
+        "assumed"
+      ],
+      "number": 0.487,
+      "confidence": 0.9,
+      "note_formula": "irf_fit"
+    },
+    {
+      "words": [
+        "airborne fraction of pulse",
+        "year 200",
+        "assumed"
+      ],
+      "number": 0.353,
+      "confidence": 0.9,
+      "note_formula": "irf_fit"
+    },
+    {
+      "words": [
+        "airborne fraction of pulse",
+        "year 500",
+        "assumed"
+      ],
+      "number": 0.28,
+      "confidence": 0.9,
+      "note_formula": "irf_fit"
+    },
+    {
+      "words": [
+        "AGWP CO2",
+        "year 20"
+      ],
+      "number": 25.2,
+      "min": 20.7,
+      "max": 29.6,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "AGWP CO2",
+        "year 50"
+      ],
+      "number": 53.5,
+      "min": 41.1,
+      "max": 65.8,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "AGWP CO2",
+        "year 100"
+      ],
+      "number": 92.5,
+      "min": 67.9,
+      "max": 117,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "AGWP CO2",
+        "year 500"
+      ],
+      "number": 324,
+      "min": 228,
+      "max": 421,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "AGWP CO2",
+        "year 1000"
+      ],
+      "number": 548,
+      "min": 380,
+      "max": 716,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "temperature response to 100 GtC pulse",
+        "year 20",
+        "degree Celsius"
+      ],
+      "number": 0.19,
+      "min": 0.1,
+      "max": 0.28,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "temperature response to 100 GtC pulse",
+        "year 50",
+        "degree Celsius"
+      ],
+      "number": 0.19,
+      "min": 0.09,
+      "max": 0.3,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "temperature response to 100 GtC pulse",
+        "year 100",
+        "degree Celsius"
+      ],
+      "number": 0.18,
+      "min": 0.02,
+      "max": 0.34,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "temperature response to 100 GtC pulse",
+        "year 500",
+        "degree Celsius"
+      ],
+      "number": 0.15,
+      "min": 0.05,
+      "max": 0.26,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "temperature response to 100 GtC pulse",
+        "year 1000",
+        "degree Celsius"
+      ],
+      "number": 0.14,
+      "min": 0.07,
+      "max": 0.21,
+      "source": "Joos2013"
+    },
+    {
+      "words": [
+        "zero emissions commitment",
+        "ZEC50",
+        "ensemble mean",
+        "degree Celsius"
+      ],
+      "number": -0.07,
+      "min": -0.36,
+      "max": 0.29,
+      "source": "MacDougall2020"
+    },
+    {
+      "words": [
+        "zero emissions commitment",
+        "ZEC50",
+        "ensemble median",
+        "degree Celsius"
+      ],
+      "number": -0.05,
+      "source": "MacDougall2020"
+    },
+    {
+      "words": [
+        "zero emissions commitment",
+        "ZEC50",
+        "ensemble standard deviation",
+        "degree Celsius"
+      ],
+      "number": 0.19,
+      "source": "MacDougall2020"
+    },
+    {
+      "words": [
+        "zero emissions commitment",
+        "number of models"
+      ],
+      "number": 18,
+      "source": "MacDougall2020"
+    },
+    {
+      "words": [
+        "atmospheric CO2 decline after cessation",
+        "year 50",
+        "ppm"
+      ],
+      "number": 76,
+      "min": 52,
+      "max": 91,
+      "source": "MacDougall2020"
+    },
+    {
+      "words": [
+        "emission removal asymmetry CO2",
+        "pulse 100 GtC",
+        "year 100",
+        "percent"
+      ],
+      "number": 3,
+      "source": "Zickfeld2021"
+    },
+    {
+      "words": [
+        "emission removal asymmetry CO2",
+        "pulse 200 GtC",
+        "year 100",
+        "percent"
+      ],
+      "number": 7,
+      "source": "Zickfeld2021"
+    },
+    {
+      "words": [
+        "emission removal asymmetry CO2",
+        "pulse 500 GtC",
+        "year 100",
+        "percent"
+      ],
+      "number": 18,
+      "source": "Zickfeld2021"
+    },
+    {
+      "words": [
+        "emission removal asymmetry temperature",
+        "pulse 200 GtC",
+        "year 100",
+        "percent"
+      ],
+      "number": -2,
+      "source": "Zickfeld2021"
+    },
+    {
+      "words": [
+        "perturbation airborne fraction",
+        "constant removal 1 GtC per year"
+      ],
+      "number": 0.6,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "perturbation airborne fraction",
+        "constant removal 4 GtC per year"
+      ],
+      "number": 0.57,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "perturbation airborne fraction",
+        "ramp removal 1 to 4 GtC per year"
+      ],
+      "number": 0.6,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "perturbation airborne fraction",
+        "ramp removal 4 to 1 GtC per year"
+      ],
+      "number": 0.55,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "land sink RCP2.6",
+        "2050-2099",
+        "GtC per year"
+      ],
+      "number": 0.8,
+      "min": -0.1,
+      "max": 1.7,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "ocean sink RCP2.6",
+        "2050-2099",
+        "GtC per year"
+      ],
+      "number": 1.1,
+      "min": 0.8,
+      "max": 1.4,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "land sink RCP2.6",
+        "2250-2299",
+        "GtC per year"
+      ],
+      "number": -0.4,
+      "min": -0.8,
+      "max": 0.0,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "ocean sink RCP2.6",
+        "2250-2299",
+        "GtC per year"
+      ],
+      "number": 0.1,
+      "min": -0.1,
+      "max": 0.3,
+      "source": "Jones2016"
+    },
+    {
+      "words": [
+        "carbon-concentration feedback land",
+        "CMIP6",
+        "PgC per ppm"
+      ],
+      "number": 0.97,
+      "min": 0.57,
+      "max": 1.37,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "carbon-concentration feedback ocean",
+        "CMIP6",
+        "PgC per ppm"
+      ],
+      "number": 0.79,
+      "min": 0.72,
+      "max": 0.86,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "carbon-climate feedback land",
+        "CMIP6",
+        "PgC per degree Celsius"
+      ],
+      "number": -45.1,
+      "min": -95.7,
+      "max": 5.5,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "carbon-climate feedback ocean",
+        "CMIP6",
+        "PgC per degree Celsius"
+      ],
+      "number": -17.2,
+      "min": -22.2,
+      "max": -12.2,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "TCRE",
+        "CMIP6",
+        "degree Celsius per 1000 GtC"
+      ],
+      "number": 1.77,
+      "min": 1.4,
+      "max": 2.14,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "TCRE",
+        "CMIP5",
+        "degree Celsius per 1000 GtC"
+      ],
+      "number": 1.63,
+      "min": 1.15,
+      "max": 2.11,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "TCRE",
+        "CMIP6",
+        "degree Celsius per 1000 GtCO2"
+      ],
+      "number": 0.48,
+      "source": "Arora2020",
+      "note_formula": "tcre_gtc_to_gtco2"
+    },
+    {
+      "words": [
+        "CMIP6",
+        "number of models"
+      ],
+      "number": 11,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "CMIP5",
+        "number of models"
+      ],
+      "number": 8,
+      "source": "Arora2020"
+    },
+    {
+      "words": [
+        "rebound share",
+        "year 100",
+        "assumed"
+      ],
+      "number": 0.591,
+      "min": 0.46,
+      "max": 0.72,
+      "confidence": 0.7,
+      "note_formula": "rebound_from_irf"
+    },
+    {
+      "words": [
+        "rebound share",
+        "year 1000",
+        "assumed"
+      ],
+      "number": 0.765,
+      "min": 0.66,
+      "max": 0.84,
+      "confidence": 0.6,
+      "note_formula": "rebound_from_irf"
+    },
+    {
+      "words": [
+        "effective climate-relevant CO2 stock",
+        "year 100",
+        "GtCO2",
+        "assumed"
+      ],
+      "number": 1900.0,
+      "confidence": 0.6,
+      "note_formula": "effective_stock"
+    },
+    {
+      "words": [
+        "effective climate-relevant CO2 stock",
+        "year 1000",
+        "GtCO2",
+        "assumed"
+      ],
+      "number": 2140.0,
+      "confidence": 0.5,
+      "note_formula": "effective_stock"
+    },
+    {
+      "words": [
+        "years of world GDP",
+        "effective climate-relevant CO2 stock",
+        "year 100",
+        "assumed"
+      ],
+      "number": 15.4,
+      "confidence": 0.6,
+      "note_formula": "years_gdp_effective"
+    },
+    {
+      "words": [
+        "years of world GDP",
+        "effective climate-relevant CO2 stock",
+        "year 1000",
+        "assumed"
+      ],
+      "number": 17.3,
+      "confidence": 0.5,
+      "note_formula": "years_gdp_effective"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "GtC to GtCO2",
+      "expression": "GtCO2 = GtC × 3.664"
+    },
+    {
+      "name": "fossil plus land-use",
+      "expression": "cumulative anthropogenic CO2 emissions = fossil CO2 emissions + land-use change CO2 emissions"
+    },
+    {
+      "name": "extrapolation_to_2026_10",
+      "expression": "1850-2026-10 = 1850-2024 + 2025 + 42 × 0.81",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "years_gdp_cumulative",
+      "expression": "years = 2800 × 1000 ÷ 1000 ÷ 123.6",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "years_gdp_atmosphere",
+      "expression": "years = 1100 × 1000 ÷ 1000 ÷ 123.6",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "gdp_share_annual_emissions",
+      "expression": "share = 42.2 × 1000 ÷ 1000 ÷ 123.6",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "absorbed_sum",
+      "expression": "absorbed anthropogenic CO2 = ocean sink + land sink"
+    },
+    {
+      "name": "tcre_from_gcb",
+      "expression": "TCRE = 0.1 ÷ 180 × 1000"
+    },
+    {
+      "name": "tcre_gtc_to_gtco2",
+      "expression": "degree Celsius per 1000 GtCO2 = degree Celsius per 1000 GtC ÷ 3.664"
+    },
+    {
+      "name": "irf_fit",
+      "expression": "IRF(t) = a0 + a1 × exp(−t ÷ tau1) + a2 × exp(−t ÷ tau2) + a3 × exp(−t ÷ tau3)",
+      "words": [
+        "assumed"
+      ],
+      "note": "exp is not evaluated by the zukunft.com engine; values precomputed"
+    },
+    {
+      "name": "rebound_from_irf",
+      "expression": "rebound share = 1 − airborne fraction of pulse",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "removal_effectiveness",
+      "expression": "removal effectiveness = airborne fraction of pulse × (1 − emission removal asymmetry CO2 ÷ 100)",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "effective_stock",
+      "expression": "effective climate-relevant CO2 stock = atmospheric CO2 increase + absorbed anthropogenic CO2 × rebound share",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "years_gdp_effective",
+      "expression": "years = effective climate-relevant CO2 stock × 1000 ÷ 1000 ÷ 123.6",
+      "words": [
+        "assumed"
+      ]
+    },
+    {
+      "name": "perturbation_airborne_fraction",
+      "expression": "perturbation airborne fraction = atmospheric CO2 reduction ÷ negative emissions applied"
+    }
+  ],
+  "sources": [
+    {
+      "name": "GCB2025",
+      "title": "Global Carbon Budget 2025",
+      "authors": "Friedlingstein, P. et al.",
+      "journal": "Earth System Science Data 18, 3211-3288",
+      "year": 2026,
+      "doi": "10.5194/essd-18-3211-2026",
+      "doi_verified": true,
+      "url": "https://essd.copernicus.org/articles/18/3211/2026/",
+      "reliability": "high"
+    },
+    {
+      "name": "IMF_WEO_via_Statista",
+      "title": "Countries with the largest nominal GDP worldwide 2026 (IMF World Economic Outlook)",
+      "year": 2026,
+      "doi": null,
+      "doi_verified": false,
+      "url": "https://www.statista.com/statistics/268173/countries-with-the-largest-gross-domestic-product-gdp/",
+      "reliability": "medium"
+    },
+    {
+      "name": "Joos2013",
+      "title": "Carbon dioxide and climate impulse response functions for the computation of greenhouse gas metrics: a multi-model analysis",
+      "authors": "Joos, F. et al.",
+      "journal": "Atmospheric Chemistry and Physics 13, 2793-2825",
+      "year": 2013,
+      "doi": "10.5194/acp-13-2793-2013",
+      "doi_verified": true,
+      "url": "https://acp.copernicus.org/articles/13/2793/2013/",
+      "reliability": "high"
+    },
+    {
+      "name": "MacDougall2020",
+      "title": "Is there warming in the pipeline? A multi-model analysis of the Zero Emissions Commitment from CO2",
+      "authors": "MacDougall, A. H. et al.",
+      "journal": "Biogeosciences 17, 2987-3016",
+      "year": 2020,
+      "doi": "10.5194/bg-17-2987-2020",
+      "doi_verified": true,
+      "url": "https://bg.copernicus.org/articles/17/2987/2020/",
+      "reliability": "high"
+    },
+    {
+      "name": "Zickfeld2021",
+      "title": "Asymmetry in the climate-carbon cycle response to positive and negative CO2 emissions",
+      "authors": "Zickfeld, K., Azevedo, D., Mathesius, S., Matthews, H. D.",
+      "journal": "Nature Climate Change 11, 613-617",
+      "year": 2021,
+      "doi": "10.1038/s41558-021-01061-2",
+      "doi_verified": true,
+      "url": "https://www.nature.com/articles/s41558-021-01061-2",
+      "reliability": "high",
+      "note": "single model UVic ESCM 2.9; percentages taken from the authors' Carbon Brief summary, abstract paywalled"
+    },
+    {
+      "name": "Jones2016",
+      "title": "Simulating the Earth system response to negative emissions",
+      "authors": "Jones, C. D. et al.",
+      "journal": "Environmental Research Letters 11, 095012",
+      "year": 2016,
+      "doi": "10.1088/1748-9326/11/9/095012",
+      "doi_verified": true,
+      "url": "https://ueaeprints.uea.ac.uk/id/eprint/61246/1/Published_manuscript.pdf",
+      "reliability": "high",
+      "note": "PAF values from a single simple model (Table 2), sink projections from CMIP5 ensemble"
+    },
+    {
+      "name": "Arora2020",
+      "title": "Carbon-concentration and carbon-climate feedbacks in CMIP6 models and their comparison to CMIP5 models",
+      "authors": "Arora, V. K. et al.",
+      "journal": "Biogeosciences 17, 4173-4222",
+      "year": 2020,
+      "doi": "10.5194/bg-17-4173-2020",
+      "doi_verified": true,
+      "url": "https://bg.copernicus.org/articles/17/4173/2020/",
+      "reliability": "high"
+    }
+  ]
+}

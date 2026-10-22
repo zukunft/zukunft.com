@@ -3088,6 +3088,24 @@ class html_base
     }
 
     /**
+     * a form that changes data and that the inputs of other components join by their form attribute
+     * e.g. the save of a calculator page; it posts the anti-csrf session token and the user id,
+     * and its submit button posts POST_SUBMIT, so that the entry point runs url_to_action
+     *
+     * @param string $form_name the id of the form that the inputs of the page name in their form attribute
+     * @param string $txt the inner html code of the form e.g. the hidden page vars and the submit button
+     * @return string the HTML code of the form
+     */
+    function form_post(string $form_name, string $txt): string
+    {
+        $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
+        $method = ' ' . self::METHOD . '="' . self::METHOD_POST . '"';
+        $id = ' ' . self::ID . '="' . $form_name . '"';
+        return '<' . self::FORM . $action . $method . $id . '>'
+            . $this->form_session_token() . $this->form_user() . $txt . '</' . self::FORM . '>';
+    }
+
+    /**
      * create the HTML code for an input field including the label
      * @param string $url_id the id of the input field e.g. n
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
