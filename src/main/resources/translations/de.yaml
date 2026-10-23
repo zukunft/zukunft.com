@@ -34,7 +34,7 @@ messages:
   calculator_inputs: "Eingaben"
   calculator_assumptions: "Annahmen"
   calculator_save: "Speichern"
-  calculator_saved: "Änderungen gespeichert (z$VarValue$z Zahlen)"
+  calculator_saved: "z$VarObjName$z auf z$VarValue$z geändert (vorher z$VarValueCheck$z)"
   calculator_nothing_changed: "keine Zahl wurde geändert, deshalb wurde nichts gespeichert"
   calculator_result: "Ergebnis"
   calculator_details: "Details und Quellen"

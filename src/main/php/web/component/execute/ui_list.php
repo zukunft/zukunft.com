@@ -2398,9 +2398,9 @@ class ui_list extends ui_base
         $name = url_var::NUMERIC_VALUE . $val->id();
         $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val->number();
         $text = $label . ' ' . $html->span($this->assumption_tag($val, $dto), styles::INPUT_TAG);
-        $input = $html->input_number($name, $num, null, null, null, $form_name)
-            . $this->calculator_save_vars((string)$val->id(), $val, $form_name);
         $unit = $this->unit_name($val, $msg);
+        $input = $html->input_number($name, $num, null, null, null, $form_name)
+            . $this->calculator_save_vars((string)$val->id(), $val, $label, $unit, $form_name);
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
         }
@@ -2506,7 +2506,8 @@ class ui_list extends ui_base
         $name = url_var::NUMERIC_VALUE . $phr->id();
         $val = $this->calculator_value($phr, $dbo, $dto, $msg);
         $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val?->number();
-        $text = $html->esc($calc->label($item));
+        $label = $calc->label($item);
+        $text = $html->esc($label);
         $hint = $calc->hint($item);
         if ($assumption and $val instanceof value) {
             $tag_style = $val->source_id() == null ? styles::INPUT_TAG_ASSUMED : styles::INPUT_TAG_MEASURED;
@@ -2520,10 +2521,10 @@ class ui_list extends ui_base
             $this->field_property($phr, triples::FIELD_LIMIT_UP, $dto),
             $this->field_property($phr, triples::FIELD_STEP, $dto), $form_name,
             $val == null ? null : $this->field_decimals($val, $msg));
-        if ($val != null) {
-            $input .= $this->calculator_save_vars((string)$phr->id(), $val, $form_name);
-        }
         $unit = $val == null ? '' : $this->unit_name($val, $msg);
+        if ($val != null) {
+            $input .= $this->calculator_save_vars((string)$phr->id(), $val, $label, $unit, $form_name);
+        }
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
         }
@@ -2534,20 +2535,34 @@ class ui_list extends ui_base
     /**
      * the hidden vars that the save of a calculator page needs for one number field: the group id of
      * the value that the field shows and the number of the value, so that the save writes only a
-     * changed number (see frontend::calculator_changes); a field without them e.g. a selector is never saved
+     * changed number (see frontend::calculator_changes), and the label and the unit of the field,
+     * so that the save names what it has saved (see frontend::calculator_saved_text);
+     * a field without them e.g. a selector is never saved
      *
      * @param string $field the url key of the field behind the number var e.g. "-2757" for "n-2757"
      * @param sandbox_value $val the value that the field shows
+     * @param string $label the label of the field e.g. "System size"
+     * @param string $unit the unit of the field e.g. "kWp" or an empty string for a number without unit
      * @param string $form_name the save form that the field joins
      * @return string the html code of the hidden vars
      */
-    private function calculator_save_vars(string $field, sandbox_value $val, string $form_name): string
+    private function calculator_save_vars(
+        string        $field,
+        sandbox_value $val,
+        string        $label,
+        string        $unit,
+        string        $form_name
+    ): string
     {
         $html = new html_base();
         $result = $html->form_hidden(url_var::GROUP . $field, (string)$val->id(), $form_name);
         if ($val->number() !== null) {
             $result .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $field,
                 $html->number_value($val->number()), $form_name);
+        }
+        $result .= $html->form_hidden(url_var::NAME . $field, $label, $form_name);
+        if ($unit != '') {
+            $result .= $html->form_hidden(url_var::PHRASE . $field, $unit, $form_name);
         }
         return $result;
     }

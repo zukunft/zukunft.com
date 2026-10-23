@@ -1,5 +1,19 @@
 # pending - list of planned llm prompts with prio 1
 
+## phrase data api
+
+similar to api/phraseList create a api/phraseData api that 
+e.g. returns a json that contains at least all data of 
+src/test/resources/web/html/use_cases/calculator_editor_data.json
+if /api/phraseData?id=-2780 is requested
+the user and the data obviously might differ
+
+### speed up user data creations
+
+if the phraseData for a user is requested and the cache contains the standard data already 
+get the standard data from the cache, read the user overwrites from the database 
+and overwrite the standard data with the user overwrites 
+
 ## cleanup
 
 ### test coverage

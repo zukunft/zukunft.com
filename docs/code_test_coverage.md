@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1443 of 6211 public functions have at least 2 unit test calls; the 4563 functions below do not; the 205 functions of the last section are called nowhere
+1444 of 6214 public functions have at least 2 unit test calls; the 4565 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 2052 functions of main backend have no test at all
 
@@ -2312,7 +2312,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 890 functions of frontend have no test at all
+## 892 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -3189,9 +3189,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- user_message
     \-- add_err_with_vars - 0 unit test calls
     \-- add_error_text - 0 unit test calls
+    \-- add_info_html - 0 unit test calls
     \-- add_warning_with_vars - 0 unit test calls shared by 3 classes
     \-- get_all_messages - 0 unit test calls shared by 2 classes
     \-- get_all_var_messages - 0 unit test calls
+    \-- get_last_info_html - 0 unit test calls
     \-- get_message - 0 unit test calls shared by 3 classes
     \-- get_row_id - 0 unit test calls shared by 3 classes
 \-- value

@@ -84,6 +84,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'change_action_list.php';
@@ -196,6 +197,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list as sandbox_list_ui;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\main\php\web\system\job as job_ui;
 use Zukunft\ZukunftCom\main\php\web\system\language as language_ui;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_ui;
@@ -1731,11 +1733,15 @@ class frontend
             }
             // an info of a request without an issue confirms a done action e.g. a saved setting
             $is_success = false;
+            $info_html = '';
             if ($msg_txt === '') {
+                $info_html = $msg_ui->get_last_info_html();
                 $msg_txt = $msg_ui->get_last_info();
                 $is_success = $msg_ui->is_ok();
             }
-            if ($msg_txt !== '') {
+            if ($info_html !== '') {
+                $result = $html->dsp_notification_html($info_html, $is_success);
+            } elseif ($msg_txt !== '') {
                 if ($msg_ui->has_msg_id(msg_id::PASSWORD_WRONG)) {
                     $reset_link = $html->ref(
                         api::RESET_SCRIPT,
@@ -2690,11 +2696,6 @@ class frontend
     }
 
     /**
-     * @param array $url_array the url of the write
-     * @param string $crud the write e.g. url_var::CRUD_UPDATE
-     * @return bool true if a number of the settings page is saved, which is changed in place on that page
-     */
-    /**
      * save the numbers that the user has changed on a calculator page and show the page again with
      * the saved numbers; if a save fails, e.g. for a user without login, the page shows the entered
      * numbers again together with the message, so that the input is not lost
@@ -2708,18 +2709,18 @@ class frontend
     {
         global $mtr;
         $changes = $this->calculator_changes($url_array, $msg_ui);
-        $saved = 0;
+        $saved = [];
         if ($do_it) {
-            foreach ($changes as $val) {
+            foreach ($changes as $field => $val) {
                 $result_msg = $val->update($msg_ui);
                 if ($result_msg->is_ok()) {
-                    $saved++;
+                    $saved[] = $this->calculator_saved_text($url_array, (string)$field);
                 } else {
                     $msg_ui->merge($result_msg);
                 }
             }
             // the pages that show the saved numbers are outdated
-            if ($saved > 0) {
+            if ($saved != []) {
                 $this->drop_cached_pages($msg_ui, false, value_ui::class);
             }
         }
@@ -2728,11 +2729,38 @@ class frontend
             $url = array_merge($this->calculator_numbers($url_array), $url);
         } elseif ($changes == []) {
             $msg_ui->add_info($mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
-        } elseif ($saved > 0) {
+        } elseif ($saved != []) {
             $lib = new library();
-            $msg_ui->add_info($lib->msg_var_text([[msg_id::CALCULATOR_SAVED, [msg_id::VAR_VALUE => (string)$saved]]], $mtr));
+            // the texts are translated and escaped already
+            $msg_ui->add_info_html($lib->msg_var_text($saved));
         }
         return $url;
+    }
+
+    /**
+     * the confirmation of one saved number as html, because the new number links to the default view of the value
+     *
+     * @param array $url_array the submitted calculator form with the label, the unit, the group id and the numbers of each field
+     * @param string $field the url key of the saved field behind the number var e.g. "-2748" for "n-2748"
+     * @return array the escaped translated message and its html vars that name the saved number e.g. for
+     *               "System size changed to <a href="...">9 kWp</a> (from 10 kWp)"
+     */
+    function calculator_saved_text(array $url_array, string $field): array
+    {
+        global $mtr;
+        $html = new html_base();
+        $unit = (string)($url_array[url_var::PHRASE . $field] ?? '');
+        if ($unit != '') {
+            $unit = sandbox_value_ui::UNIT_SEPARATOR . $unit;
+        }
+        $val_url = $html->url_back(views::VALUE, (string)$url_array[url_var::GROUP . $field], $url_array);
+        // the label is the only free text and therefore filled in last, so it never fills a placeholder itself
+        $vars = [
+            msg_id::VAR_VALUE => $html->ref($val_url, $url_array[url_var::NUMERIC_VALUE . $field] . $unit),
+            msg_id::VAR_VALUE_CHK => $html->esc($url_array[url_var::PRE . url_var::NUMERIC_VALUE . $field] . $unit),
+            msg_id::VAR_NAME => $html->esc((string)($url_array[url_var::NAME . $field] ?? '')),
+        ];
+        return [$html->esc($mtr->txt(msg_id::CALCULATOR_SAVED)), $vars];
     }
 
     /**
@@ -2761,7 +2789,7 @@ class frontend
                     $val = new value_ui();
                     $val->set_id(is_numeric($grp_id) ? (int)$grp_id : $grp_id);
                     $val->number = (float)$number;
-                    $result[] = $val;
+                    $result[$field] = $val;
                 }
             }
         }
@@ -2785,6 +2813,11 @@ class frontend
         return $result;
     }
 
+    /**
+     * @param array $url_array the url of the write
+     * @param string $crud the write e.g. url_var::CRUD_UPDATE
+     * @return bool true if a number of the settings page is saved, which is changed in place on that page
+     */
     private function is_setting_save(array $url_array, string $crud): bool
     {
         $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);

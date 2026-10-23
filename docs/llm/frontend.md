@@ -53,13 +53,16 @@ calculator script, so that the results change as soon as an input changes:
 The save button of a calculator page is a post form with the session token
 (`system_page::calculator_button_save`, `html_base::form_post`) that every number
 field joins by its form attribute. Each number field sends its number
-(`n<field>`), the group id of the value it shows (`g<field>`) and the number it
-has shown (`8n<field>`, `ui_list::calculator_save_vars`); a phrase selector sends
+(`n<field>`), the group id of the value it shows (`g<field>`), the number it
+has shown (`8n<field>`), its label (`k<field>`) and its unit (`p<field>`,
+`ui_list::calculator_save_vars`); a phrase selector sends
 neither the group id nor the shown number, so it is never saved as a number. `frontend::action_calculator_save`
 writes only the numbers that differ from the shown one, as the change of the
 requesting user (`frontend::calculator_changes`, `db_object::update`), without a
 confirm view, and shows the page again: after a save with the saved numbers and
-"changes saved", after a failed save (e.g. a user without login) with the entered
+one confirmation per saved number e.g. "System size changed to 9 kWp (from 10 kWp)",
+whose new number links to the default view of the value (`frontend::calculator_saved_text`,
+shown as safe html via `user_message::add_info_html`), after a failed save (e.g. a user without login) with the entered
 numbers and the message, so that no input is lost.
 
 A separate JavaScript frontend (likely Vue.js or React) is planned for later as

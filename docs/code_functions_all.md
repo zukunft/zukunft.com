@@ -7081,6 +7081,8 @@
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
     \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
+    \-- calculator_saved_text - section for function calculator_saved_text not yet defined that it should be execute in 
+            /frontend.php
     \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
             end.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
@@ -8350,6 +8352,10 @@
     \-- add_message - section for function add_message not yet defined that it should be add in /user/user_message.php
     \-- add_info - section for function add_info not yet defined that it should be add in /user/user_message.php
     \-- get_last_info - section for function get_last_info is expected to be set and get in /user/user_message.php
+    \-- add_info_html - section for function add_info_html not yet defined that it should be add in /user/user_message.p
+            hp
+    \-- get_last_info_html - section for function get_last_info_html is expected to be set and get in /user/user_message
+            .php
     \-- has_msg_id - section for function has_msg_id not yet defined that it should be add in /user/user_message.php
     \-- has_info - section for function has_info not yet defined that it should be add in /user/user_message.php
     \-- merge - section for function merge not yet defined that it should be add in /user/user_message.php
@@ -10279,6 +10285,9 @@
 \-- execute
     \-- url_to_action
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
+    \-- calculator_saved_text
+        \-- frontend - the confirmation of one saved number as html,
+                 because the new number links to the default view of the value
     \-- calculator_changes
         \-- frontend - the values of a calculator save whose number the user has changed: each number field sends its
     \-- url_to_back_url

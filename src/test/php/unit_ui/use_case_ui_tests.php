@@ -561,7 +561,7 @@ class use_case_ui_tests
         $inh_id = $dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
         $inh_name = url_var::NUMERIC_VALUE . $inh_id;
         // the save writes a changed number to the value that the field shows, so the field sends
-        // the group id and the shown number of the value
+        // the group id and the shown number of the value and the label to name the saved number
         $inh_val_id = (string)$dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->id();
         $inh_shown = $html->number_value(values::CITY_ZH_INHABITANTS_2019);
         $test_name = 'a number field shows the label, the number, the limit, the step and the hint of the input';
@@ -569,7 +569,8 @@ class use_case_ui_tests
             $html->label(triple_names::CALC_INHABITANTS_LABEL_COM, $inh_name)
             . $html->div($html->input_number($inh_name, values::CITY_ZH_INHABITANTS_2019, 0, null, 100, $form)
                 . $html->form_hidden(url_var::GROUP . $inh_id, $inh_val_id, $form)
-                . $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $inh_id, $inh_shown, $form), styles::INPUT_ROW)
+                . $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $inh_id, $inh_shown, $form)
+                . $html->form_hidden(url_var::NAME . $inh_id, triple_names::CALC_INHABITANTS_LABEL_COM, $form), styles::INPUT_ROW)
             . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::INPUT_HINT),
             styles::INPUT_FIELD));
         // negative: a phrase selector selects a phrase and not a value, so it sends no group id
@@ -943,6 +944,8 @@ class use_case_ui_tests
             url_var::NUMERIC_VALUE . $changed => (string)values::SAMPLE_FLOAT,
             url_var::GROUP . $changed => (string)values::PI_MATH_ID,
             $shown_key . $changed => (string)values::CITY_ZH_INHABITANTS_2019,
+            url_var::NAME . $changed => triple_names::CALC_INHABITANTS_LABEL_COM,
+            url_var::PHRASE . $changed => word_names::METRE,
             // a field that the user has not changed
             url_var::NUMERIC_VALUE . $same => (string)values::CITY_ZH_INHABITANTS_2019,
             url_var::GROUP . $same => (string)values::E_ID,
@@ -956,11 +959,43 @@ class use_case_ui_tests
         $change_count = count($changes);
         $t->assert($test_name, $change_count, 1);
         $test_name = '... to the value of the field';
-        $change_id = $changes[0]->id();
+        $change_id = $changes[$changed]->id();
         $t->assert($test_name, $change_id, values::PI_MATH_ID);
         $test_name = '... with the entered number';
-        $change_number = $changes[0]->number();
+        $change_number = $changes[$changed]->number();
         $t->assert($test_name, $change_number, values::SAMPLE_FLOAT);
+
+        $lib = new library();
+        $html = new html_base();
+        // the new number links to the default view of the saved value
+        $val_url = $html->url_back(views::VALUE, (string)values::PI_MATH_ID, $form);
+        $test_name = 'the confirmation names the label, the new number as a link and the old number with the unit';
+        $saved_txt = $lib->msg_var_text([$ui->calculator_saved_text($form, $changed)]);
+        $expected = triple_names::CALC_INHABITANTS_LABEL_COM . ' changed to '
+            . $html->ref($val_url, values::SAMPLE_FLOAT . ' ' . word_names::METRE)
+            . ' (from ' . values::CITY_ZH_INHABITANTS_2019 . ' ' . word_names::METRE . ')';
+        $t->assert($test_name, $saved_txt, $expected);
+        // negative: a number without unit gets no unit separator
+        $test_name = '... and only the numbers for a field without unit';
+        $no_unit_form = $form;
+        unset($no_unit_form[url_var::PHRASE . $changed]);
+        $no_unit_txt = $lib->msg_var_text([$ui->calculator_saved_text($no_unit_form, $changed)]);
+        $no_unit_expected = triple_names::CALC_INHABITANTS_LABEL_COM . ' changed to '
+            . $html->ref($val_url, (string)values::SAMPLE_FLOAT)
+            . ' (from ' . values::CITY_ZH_INHABITANTS_2019 . ')';
+        $t->assert($test_name, $no_unit_txt, $no_unit_expected);
+        // negative: the label is free text of the form, so a placeholder in it is never filled
+        $test_name = '... and keeps a placeholder in the label as text';
+        $marker = msg_id::VAR_START . msg_id::VAR_VALUE . msg_id::VAR_END;
+        $marker_form = array_merge($form, [url_var::NAME . $changed => $marker]);
+        $marker_txt = $lib->msg_var_text([$ui->calculator_saved_text($marker_form, $changed)]);
+        $t->assert_text_contains($test_name, $marker_txt, $marker);
+        // negative: the confirmation is shown as html, so a tag in the label is escaped and never shown as html
+        $test_name = '... and escapes a tag in the label';
+        $tag = '<' . html_base::A . '>';
+        $tag_form = array_merge($form, [url_var::NAME . $changed => $tag]);
+        $tag_txt = $lib->msg_var_text([$ui->calculator_saved_text($tag_form, $changed)]);
+        $t->assert_text_not_contains($test_name, $tag_txt, $tag);
 
         // negative: a text is not a number, so it is reported and not saved
         $test_name = 'an entered text is not saved';

@@ -1853,7 +1853,7 @@ enum messages: string
     case CALCULATOR_INPUTS = 'calculator_inputs';
     case CALCULATOR_ASSUMPTIONS = 'calculator_assumptions';
     case CALCULATOR_SAVE = 'calculator_save';
-    // the confirmation of the save with the number of changed values, or that no number has been changed
+    // the confirmation of one saved number with its label, the new and the old number, or that no number has been changed
     case CALCULATOR_SAVED = 'calculator_saved';
     case CALCULATOR_NOTHING_CHANGED = 'calculator_nothing_changed';
     // the first header of the result table, the default summary of the details and the sources heading
