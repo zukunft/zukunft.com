@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -71,6 +73,7 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
@@ -80,6 +83,7 @@ use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use DateTime;
 
 class use_case_ui_tests
 {
@@ -474,6 +478,26 @@ class use_case_ui_tests
         $t->assert($test_name, $this->render($t_cmp->component_calculator_input(), $wrd, $msk, $dto, $msg), '');
         $test_name = 'the calculation result is a known component type';
         $t->assert($test_name, $this->render($t_cmp->component_calculation_result(), $wrd, $msk, $dto, $msg), '');
+        // the editor is built by its script from the phrase data, which an offline page embeds empty
+        $test_name = 'the calculator editor of a phrase loads the editor script';
+        $editor_html = $this->render($t_cmp->component_calculator_editor(), $wrd, $msk, $dto, $msg);
+        $t->assert_text_contains($test_name, $editor_html, $html->script_src(files::CALCULATOR_EDITOR_SCRIPT));
+        $test_name = '... with the phrase data as the seed of the script';
+        $t->assert_text_contains($test_name, $editor_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, []));
+        // negative: a component without a page phrase e.g. in a preview has no editor to show
+        $test_name = '... but nothing for a component without a phrase';
+        $t->assert($test_name, $this->render($t_cmp->component_calculator_editor(), new word_ui(), $msk, $dto, $msg), '');
+        // the seed carries the time of the phrase data, which the snapshot replaces by the fixed test time
+        $test_name = 'the snapshot replaces the time of the phrase data seed by the test time';
+        $later = (new DateTime(test_const::DUMMY_DATETIME_LATER))->format(phrase_data::TIME_FORMAT);
+        $fixed = (new DateTime(test_const::DUMMY_DATETIME))->format(phrase_data::TIME_FORMAT);
+        $seed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $later]);
+        $fixed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $fixed]);
+        $t->assert($test_name, $t->fix_volatile_phrase_data_time($seed_html), $fixed_html);
+        // negative: a time outside the seed is a real part of the page and stays
+        $test_name = '... but not a time outside the seed';
+        $other_html = $html->script_data(ui_list::CALC_DATA_ID, [json_fields::TIME => $later]);
+        $t->assert($test_name, $t->fix_volatile_phrase_data_time($other_html), $other_html);
 
         $t->subheader($ts . 'calculator reader');
         // the page phrase Zurich (city) has no own calculator triples, so it gets the calculator

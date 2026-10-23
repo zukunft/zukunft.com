@@ -70,6 +70,8 @@ class files
     // the data that api/phraseData returns at least for the example PV installation
     CONST string PHRASE_DATA_PV_INSTALL_NAME = 'phrase_data_pv_install';
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
+    // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
+    CONST string CALCULATOR_EDITOR = 'calculator_editor';
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none

@@ -151,6 +151,9 @@ class phrase_data_read_tests
         $res_objs = $vars[json_fields::RESULTS] ?? [];
         $without_words = $this->count_without_field($res_objs, json_fields::WORDS);
         $t->assert($test_name, $without_words, 0);
+        $test_name = '... and the formula that has created it';
+        $without_frm = $this->count_without_field($res_objs, json_fields::FORMULA_NAME);
+        $t->assert($test_name, $without_frm, 0);
 
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';
@@ -335,13 +338,13 @@ class phrase_data_read_tests
     /**
      * @param array $objects the json of the objects of the data e.g. the results
      * @param string $fld the json field that each object should have e.g. the words
-     * @return int the number of objects without the field
+     * @return int the number of objects without the field or with an empty field e.g. a null formula name
      */
     private function count_without_field(array $objects, string $fld): int
     {
         $result = 0;
         foreach ($objects as $obj) {
-            if (!array_key_exists($fld, $obj)) {
+            if (empty($obj[$fld] ?? null)) {
                 $result++;
             }
         }

@@ -439,6 +439,7 @@ the object structure is:
 ├── stylesUi - css class constants used for html frontend
 ├── tableUi - $tbl - create the html code to display a spreadsheet
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
+├── phrase_dataUi - $phd - the data of one phrase as the phraseData api sends it
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── sys_log_listUi - the display extension of the system error log api object
 ├── system_time_listUi - $sys_tim_lst - a list of measured request times e.g. the slow urls of the admin dashboard

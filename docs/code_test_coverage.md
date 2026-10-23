@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1453 of 6217 public functions have at least 2 unit test calls; the 4559 functions below do not; the 205 functions of the last section are called nowhere
+1454 of 6220 public functions have at least 2 unit test calls; the 4561 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 2049 functions of main backend have no test at all
 
@@ -2309,7 +2309,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 890 functions of frontend have no test at all
+## 891 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2596,6 +2596,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- input_password - 0 unit test calls
     \-- label_lan - 0 unit test calls
     \-- lf - 0 unit test calls
+    \-- link_style - 0 unit test calls
     \-- list_item - 0 unit test calls
     \-- list_sort - 0 unit test calls shared by 3 classes
     \-- list_unsorted - 0 unit test calls
@@ -2612,8 +2613,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- prefixed_url_array - 0 unit test calls
     \-- row_center - 0 unit test calls shared by 2 classes
     \-- row_start - 0 unit test calls shared by 2 classes
-    \-- script_data - 0 unit test calls
-    \-- script_src - 0 unit test calls
     \-- search_input - 0 unit test calls
     \-- sub - 0 unit test calls
     \-- sup - 0 unit test calls
@@ -2708,6 +2707,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- tooltip - 0 unit test calls shared by 2 classes
     \-- unit_text - 0 unit test calls shared by 2 classes
     \-- wrd_lst - 0 unit test calls shared by 6 classes
+\-- phrase_data
+    \-- load_from_walk - 0 unit test calls
 \-- phrase_list
     \-- assigned_subtitle - 0 unit test calls
     \-- assume_time - 0 unit test calls shared by 4 classes
@@ -2941,6 +2942,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- system_page
     \-- activate_body - 0 unit test calls
     \-- body_search_full - 0 unit test calls
+    \-- calculator_editor - 0 unit test calls
     \-- config_tree - 0 unit test calls
     \-- error_log - 0 unit test calls
     \-- error_update - 0 unit test calls
@@ -4538,7 +4540,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 508 functions of frontend have incomplete tests
+## 509 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4722,6 +4724,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- p - 1 unit test calls
     \-- row_end - 1 unit test calls shared by 2 classes
     \-- row_right - 1 unit test calls shared by 2 classes
+    \-- script_src - 1 unit test calls
     \-- tbl - 3 unit test calls shared by 7 classes
     \-- td - 2 unit test calls shared by 4 classes
     \-- url - 4 unit test calls shared by 7 classes

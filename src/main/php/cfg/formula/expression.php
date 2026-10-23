@@ -790,14 +790,14 @@ class expression extends shared_expression
         if ($ref_text <> "") {
             // add word ids to selection
             // the words are scanned on a copy, so that the triples left of a word are still found
-            $wrd_text = $ref_text;
-            $new_wrd_id = $this->get_word_id($wrd_text);
+            $wrd_txt = $ref_text;
+            $new_wrd_id = $this->get_word_id($wrd_txt);
             while ($new_wrd_id != 0) {
                 if (!in_array($new_wrd_id, $id_lst)) {
                     $id_lst[] = $new_wrd_id;
                 }
-                $wrd_text = $lib->str_right_of($wrd_text, chars::WORD_START . $new_wrd_id . chars::WORD_END);
-                $new_wrd_id = $this->get_word_id($wrd_text);
+                $wrd_txt = $lib->str_right_of($wrd_txt, chars::WORD_START . $new_wrd_id . chars::WORD_END);
+                $new_wrd_id = $this->get_word_id($wrd_txt);
             }
             // add triple ids to selection
             $new_trp_id = $this->get_triple_id($ref_text);

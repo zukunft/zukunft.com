@@ -18,11 +18,11 @@ client-side handler.
   entries in a list, and the `.<name>-menu` rules in `style_html.css` float the
   list below the label (the header menus and the "…" column menu of a value table).
 - Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
-  for a JS plugin, …) from a `web/` renderer, except the calculator script below.
+  for a JS plugin, …) from a `web/` renderer, except the calculator scripts below.
 
 ### Javascript only for the calculator
 
-The one exception is a calculator page: if `config.yaml` allows it (user > default >
+The one exception is a calculator page and its editor: if `config.yaml` allows it (user > default >
 frontend > use javascript > for calculator; `use javascript` itself stays false for
 every other page), the result panel (`system_page::calculation_result`) adds the
 calculator script, so that the results change as soon as an input changes:
@@ -47,6 +47,14 @@ calculator script, so that the results change as soon as an input changes:
   shows the same page as before.
 - Every cell of a number has a unique html id (a repeated number gets its count
   behind the id), so the script can update each cell and the save can name it.
+
+The calculator editor (`system_page::calculator_editor`) has no page without the
+script: it renders the empty host, the answer of the phraseData api for the page
+phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and the
+static files `src/main/resources/script/calculator_editor.js` and
+`style/calculator_editor.css` (`files::CALCULATOR_EDITOR_SCRIPT`,
+`files::CALCULATOR_EDITOR_STYLE`); the script builds the editor from that seed and
+reads another phrase with one phraseData call.
 
 ### The save of a calculator page
 

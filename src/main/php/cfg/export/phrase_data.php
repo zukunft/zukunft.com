@@ -858,15 +858,39 @@ class phrase_data
     }
 
     /**
+     * sorted by the id, because the database returns the rows in no fixed order, so that the same
+     * data gives the same answer e.g. the same numbering of the sources in the calculator editor
+     *
      * @param array $lst the words, triples, formulas, sources, values or results of the data
      * @param user_message $msg to collect the export problems
      * @return array the export json of each object with its database id as the first field
      */
     private function with_ids(array $lst, user_message $msg): array
     {
+        usort($lst, fn($a, $b) => $this->compare_ids($a->id(), $b->id()));
         $result = [];
         foreach ($lst as $obj) {
             $result[] = [json_fields::ID => $obj->id()] + $obj->export_json($msg);
+        }
+        return $result;
+    }
+
+    /**
+     * a total order of the ids: the integer ids first by their number, then the text keys of the
+     * values and results e.g. "fQ-ex-/u+2V+" by their text, because a mixed comparison of a number
+     * and a text is not transitive
+     *
+     * @param int|string $id_a the id of the first object
+     * @param int|string $id_b the id of the second object
+     * @return int below zero if the first id comes first, zero if both are the same, else above zero
+     */
+    private function compare_ids(int|string $id_a, int|string $id_b): int
+    {
+        $result = is_string($id_a) <=> is_string($id_b);
+        if ($result == 0 and is_string($id_a)) {
+            $result = strcmp($id_a, $id_b);
+        } elseif ($result == 0) {
+            $result = $id_a <=> $id_b;
         }
         return $result;
     }

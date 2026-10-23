@@ -114,6 +114,7 @@ class system_views_read_tests
         $this->run_use_cases($t, $cfg);
         // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t);
+        $this->run_calculator_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
         $this->run_portfolio_split_calculator($t, $cfg);
 
@@ -492,9 +493,8 @@ class system_views_read_tests
         // "PV in Switzerland" is the sample with the avoided emission per reference mix
         $t->assert_view_by_name(views::COMPARISON_TABLE_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
-        // the editor placeholders show only their title and the phrase selector
+        // the table editor placeholder shows only its title and the phrase selector
         $t->assert_view_by_name(views::TABLE_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
-        $t->assert_view_by_name(views::CALCULATOR_EDITOR_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
 
         // the process catch pages are appended to the seed views, so they are selected by name like the editors
         $t->assert_view_by_name(views::PROCESS_CATCH_START_NAME, $t->usr1, new triple($t->usr1), triple_names::PV_IN_SWITZERLAND, $cfg);
@@ -521,6 +521,21 @@ class system_views_read_tests
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
+    }
+
+    /**
+     * the calculator editor of the PV lifetime balance: unlike the calculator page the editor gets
+     * its data from the phraseData api, which the page embeds as the seed of the editor script; the
+     * page is written to the use case folder next to the hand made calculator_editor_sample.html
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_calculator_editor(test_cleanup $t): void
+    {
+        $t->assert_view_by_name(views::CALCULATOR_EDITOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::CALCULATOR_EDITOR);
     }
 
     /**

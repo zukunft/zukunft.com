@@ -2,14 +2,65 @@
 
 ## calculation editor
 
-in src/test/resources/web/html/use_cases/calculator_editor_sample.html replace the seed json with 
-src/test/resources/api/phrase_data/phrase_data_pv_install_actual.json and try to 
-avoid any changes in the output or behaviour
+for the view 'Calculator editor' (id 196) the component should be the 'calculation editor' components so that 
+e.g. src/test/resources/web/html/use_cases/calculator_editor.html is returned
+if the given id is -2780 (name 'example PV installation')
 
-similar to src/test/resources/web/html/use_cases/pv_lifetime_balance.html and src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
-create src/test/resources/web/html/use_cases/calculator_editor.html from the script and compare the result with src/test/resources/web/html/use_cases/calculator_editor_sample.html
-but unlike pv_lifetime_balance.html the main database link should be the seed json which should come from /api/phraseData/ 
-so the data should be basically src/test/resources/api/phrase_data/phrase_data_pv_install_actual.json 
+### lists of a calculator
+
+on the left side the calculator editor show 5 lists (input, assumption, column, rowgroup and detail). 
+Similar to the 'Assumptions' of the calculator itself make these list extendable and shrink them on startup
+
+### title
+
+the calculation editor has the title 'Calculator editor' which is bold at the moment but the font size is similar to the rest. Increase the font size.
+
+### test case
+
+create test cased for all possible change types in the calculation editor.
+For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
+
+for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
+
+### general
+
+add to /docs/llm/* that no concrete word, triple, formula or any other name should be never part of the code.
+The ONLY link between production code and concrete database rows is the code_id. This is way it is named code id.
+This is a general rules that does not allow ANY exception. 
+
+For testing the name, id and other fields can be used. But ONLY for testing!
+
+### javascript
+
+add to /docs/llm/* that js files should not have any const that is not takes from a php const to fulfill the "on point of change" rule
+this implies that all js files must be written by a php script
+
+### api updateDrop
+
+create a new api 'updateDrop' that takes json messages and saves them in the database
+
+## api security
+
+if it does not yet exist create a test that checks if an api request is rejected if it is not part of a previous created session
+
+session can only be created either via a proper session start via gui
+or using a predefined api session login that uses e.g. a public / private key pair and other extra security 
+
+## other editors
+
+be ware (or better create a solution concept) for the case that in production the id of system triples used for testing will differ from the id in the development databases
+
+### table editor
+
+uss the calculation editor as a base and create a similar table editor
+
+### view editor
+
+uss the calculation editor as a base and create a view and component editor
+
+### process editor
+
+uss the calculation editor as a base and process editor, so multi step input views
 
 ## phrase data api
 

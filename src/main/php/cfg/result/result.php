@@ -1747,6 +1747,10 @@ class result extends sandbox_value
     {
         $vars = parent::export_json($msg, $exp_typ, $do_load);
 
+        // the reload by id maps only the formula id, so the name is loaded on demand
+        if ($do_load and $this->frm->name() == '' and $this->formula_id() != 0) {
+            $this->frm->load_by_id($this->formula_id(), $msg);
+        }
         // the formula that has created the result
         $vars[json_fields::FORMULA_NAME] = $this->frm->name();
 

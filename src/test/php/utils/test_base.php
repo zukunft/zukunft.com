@@ -76,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -133,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -203,7 +205,9 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once paths::EXPORT . 'phrase_data.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -1811,7 +1815,23 @@ class test_base
     {
         $msg_ui = new user_message_ui();
         $actual = $this->link_to_pod($this->html_page($body, $msg_ui, THIS_URL, languages::DEFAULT, $title), THIS_URL);
+        $actual = $this->fix_volatile_phrase_data_time($actual);
         return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
+    }
+
+    /**
+     * the phrase data that a calculator editor page embeds as its seed carries the time of its
+     * creation, so the time is replaced by the fixed test time before the page is compared;
+     * only for the snapshot, the real page keeps the time of the phrase data
+     *
+     * @param string $html the rendered html page
+     * @return string the html page with the fixed test time in the phrase data seed
+     */
+    function fix_volatile_phrase_data_time(string $html): string
+    {
+        $fixed = new DateTime(test_const::DUMMY_DATETIME);
+        $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
+        return preg_replace($pattern, '${1}' . $fixed->format(phrase_data::TIME_FORMAT) . '${2}', $html, 1);
     }
 
     // the html attributes of a snapshot page that carry a root relative url to the pod

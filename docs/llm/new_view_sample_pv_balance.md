@@ -532,8 +532,7 @@ Home: the `Calculator` view is created by `system_views.json` (`views::CALCULATO
 and gets its three components and the view relation from the system file
 `calculator_views.json` in `files::SYSTEM_DATA_APPENDED_FILES`, which also creates the
 `Comparison table`, the view of the values of a phrase with the defined columns. The
-`Calculator editor` is the placeholder view of `editor_views.json`, which gets its
-components in step 8 of `docs/llm/pending.md`.
+`Calculator editor` is the view of `editor_views.json` with the component of section 6.
 
 How a phrase gets this view and how the view finds its triples is described in
 "How the url leads to the view" at the top. There is no extra triple that
@@ -784,25 +783,26 @@ part is paid only once for all calculators.
 
 ## 6. The calculator editor
 
-The editor follows the same split: its components are the same for every
+The editor follows the same split: its component is the same for every
 calculator, and its content is the triples of section 5 for the phrase.
 
-| pos | component | type | renders |
-|---|---|---|---|
-| 1 | `title calculator editor` | `calculator_editor_title` | "Edit calculator" with the calculator label and a link back to the `Calculator` view of the same phrase |
-| 2 | `calculator setting tree` | `calculator_setting_tree` | one section per keyword below `calculator (system)` (found by its `code_id`), each a table of the items of this calculator in their order with up and down links that change the order triples, phrase (phrase selector), label and hint of the item (text, with the general label or hint of the phrase as placeholder) and a remove link. Sub-items are indented below their item. An empty last row adds an item. |
-| 3 | `calculator label list` | `calculator_label_list` | all label and hint triples of this calculator in one table, loaded by `to` = `calculator label` / `calculator hint` and filtered to the tree of the calculator and the phrases of its items, for proofreading and translating all texts at once; a label of a phrase is marked, because a change of it changes every calculator that lists the phrase |
-| 4 | `calculator field settings` | `calculator_field_settings` | the general triples and values of every phrase of the calculator: the field triples of the input and assumption phrases (type, limits, step, value phrases, selector options) and the highlights and side results of the row phrases (rule 6), with a note that a change here changes every page that uses the phrase |
-| 5 | `calculator derived parts` | `calculator_derived_parts` | read only: the derived assumptions, notes and sources with links to the value, formula and source editors, so the user sees what the page shows without a triple |
-| 6 | save button | `process_catch_button_refresh` | the form of the editor; shows the editor again with the changes |
+The view has one component, `calculator editor` (`calculator_editor`), which embeds
+the answer of `/api/phraseData/?id=<phrase>&pw=pwf&is=1` for the page phrase as the
+seed of the script `calculator_editor.js` (see `docs/llm/frontend.md`). The script
+shows the parts of the editor in three columns:
+
+| part | shows |
+|---|---|
+| phrase bar | the page phrase; another phrase is read with one phraseData call |
+| page structure | one section per keyword below `calculator (system)`, each with the items of this calculator in their order, with up, down and remove links and an add link per list; sub-items are indented below their item |
+| settings | the phrase, label and hint of the selected item, with the general label or hint of the phrase as placeholder, and the general triples and values of its phrase: the field triples of the input and assumption phrases (type, limits, step, value phrases, selector options) and the highlights and side results of the row phrases (rule 6), with a note that a change here changes every page that uses the phrase |
+| page preview | the page as the `Calculator` view shows it, with the derived notes and sources read only |
+| all texts | all label and hint triples of this calculator in one table for proofreading and translating; a label of a phrase is marked, because a change of it changes every calculator that lists the phrase |
+| changes | the triples and values that the save writes |
 
 Each change is a change of the user's own sandbox triple or value. The
 calculator of other users stays unchanged until they take over the change.
 A removed item is deleted through the logged `del()`.
-
-The parent rule (section 1, rule 3) is what makes the editor fast. The setting
-tree loads the calculator tree with one `load_related_by_name(calculator (system), depth 4)`.
-The label list loads all labels with one load by `to`.
 
 ## 7. Implementation steps
 

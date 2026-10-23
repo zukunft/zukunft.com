@@ -69,6 +69,11 @@
       "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
       "type": "process_catch_button_refresh",
       "ui_msg_code_id": "editor_button_show"
+    },
+    {
+      "name": "calculator editor",
+      "description": "the editor of the calculator page of the phrase with its own phrase selector, built by a script from the phrase data of the phrase",
+      "type": "calculator_editor"
     }
   ],
   "views": [
@@ -102,21 +107,13 @@
     },
     {
       "name": "Calculator editor",
-      "description": "placeholder to define the calculator page of a word or triple",
+      "description": "the editor to define the calculator page of a word or triple",
       "code_id": "calculator_editor",
       "type": "word",
       "components": [
         {
           "position": "1",
-          "name": "system title calculation editor"
-        },
-        {
-          "position": "2",
-          "name": "phrase selector"
-        },
-        {
-          "position": "3",
-          "name": "button show editor phrase"
+          "name": "calculator editor"
         }
       ]
     },

@@ -288,3 +288,4 @@ component_type_id, type_name, description, code_id
 287, 'calculator title', 'the calculator label of the page phrase as the page title and its calculator hint as the lead text', 'calculator_title'
 288, 'calculator input', 'the input fields of the calculator input items of the page phrase, the refresh button and the assumptions in a collapsed block', 'calculator_input'
 289, 'calculation result', 'the main result table by the calculator column and row group items of the page phrase, then the detail tables, the formula notes and the sources in a collapsed block', 'calculation_result'
+290, 'calculator editor', 'the editor of the calculator page of the phrase, built by a script from the phrase data of the phrase', 'calculator_editor'

@@ -6792,6 +6792,8 @@
             ponent/execute/system_page.php
     \-- calculator_input - section for function calculator_input not yet defined that it should be process catch in /com
             ponent/execute/system_page.php
+    \-- calculator_editor - section for function calculator_editor not yet defined that it should be process catch in /c
+            omponent/execute/system_page.php
     \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
             /component/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
@@ -7553,6 +7555,7 @@
             .php
     \-- script_data - section for function script_data not yet defined that it should be internal in /html/html_base.php
     \-- script_src - section for function script_src not yet defined that it should be internal in /html/html_base.php
+    \-- link_style - section for function link_style is expected to be link in /html/html_base.php
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
@@ -9735,6 +9738,8 @@
     \-- dsp_hist_links
         \-- user_log_display - @param array $url_arr the url vars of the calling page for the back link of the undo butt
                 ons
+    \-- load_from_walk
+        \-- phrase_data - the answer of the phraseData api is the export json without the api message header, so it
     \-- 1
         \-- language_list - 
         \-- view_link_type_list - @return int the database id of the default view link type
@@ -10114,6 +10119,8 @@
         \-- system_page - the title of a calculator page: the calculator label of the page phrase, or of the phrase it
     \-- calculator_input
         \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+    \-- calculator_editor
+        \-- system_page - the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
     \-- calculation_result
         \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- process_catch_fields
@@ -10711,6 +10718,8 @@
         \-- html_base - the data of a page script as json, which the browser never runs as code; a "<" is written
     \-- script_src
         \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
+    \-- link_style
+        \-- html_base - @param string $stylesheet path to the stylesheet file
 \-- table
     \-- tr
         \-- change_log_link - @param array $url_arr the url vars of the calling page for the back link of the undo butto
