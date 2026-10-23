@@ -267,6 +267,12 @@ class triples
         self::FIELD_SELECTION_PARENT => self::FIELD_SELECTION_PARENT_CODE_ID,
         self::FIELD_PAGE => self::FIELD_PAGE_CODE_ID,
     ];
+    // the field properties whose number is a value of the field phrase and the keyword e.g. (lifetime, field step) = 1
+    const array FIELD_VALUE_PROPERTIES = [
+        self::FIELD_LIMIT_UP => self::FIELD_LIMIT_UP_CODE_ID,
+        self::FIELD_LIMIT_DOWN => self::FIELD_LIMIT_DOWN_CODE_ID,
+        self::FIELD_STEP => self::FIELD_STEP_CODE_ID,
+    ];
     // the types of a process catch field by their code id
     const array FIELD_TYPES = [
         self::FIELD_LOCATION_SELECTOR => self::FIELD_LOCATION_SELECTOR_CODE_ID,

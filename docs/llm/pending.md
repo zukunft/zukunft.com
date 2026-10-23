@@ -2,10 +2,9 @@
 
 ## calculation editor
 
-check if the missing data in phrase_data_pv_install_actual.json compared to the json in
-src/test/resources/web/html/use_cases/calculator_editor_sample.html changes everything in the output
-
-fix the button ref to use a relative path or localhost e.g btnDiscard
+in src/test/resources/web/html/use_cases/calculator_editor_sample.html replace the seed json with 
+src/test/resources/api/phrase_data/phrase_data_pv_install_actual.json and try to 
+avoid any changes in the output or behaviour
 
 similar to src/test/resources/web/html/use_cases/pv_lifetime_balance.html and src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
 create src/test/resources/web/html/use_cases/calculator_editor.html from the script and compare the result with src/test/resources/web/html/use_cases/calculator_editor_sample.html

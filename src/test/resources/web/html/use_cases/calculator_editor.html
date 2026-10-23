@@ -12,9 +12,6 @@
 </head>
 <body>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
   /* layout: a sticky toolbar, then three working columns: the page structure (tree), the settings */
   /* of the selected part (inspector) and the live page with texts, changes and json as tabs */
@@ -46,8 +43,8 @@
     --pv-sec: #dbe4f5;
     --pv-assumed: #6b86c2;
     --pv-neg: #dc3545;
-    --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-    --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
     --font-page: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --r: 6px;
   }
@@ -85,14 +82,11 @@
     display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
   .brand { display: flex; flex-direction: column; min-width: 0; }
   .brand b { font-size: 15px; font-weight: 600; letter-spacing: .01em; }
-  .brand span { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
-  .bar .spacer { flex: 1 1 auto; }
   .tools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
   .btn { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 6px 11px; cursor: pointer; white-space: nowrap; }
   .btn:hover { border-color: var(--accent); }
   a.btn { text-decoration: none; color: inherit; display: inline-block; }
   .chip.live { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
-  .chip.demo { background: var(--shared-soft); border-color: transparent; color: var(--shared); }
   .btn:disabled { opacity: .45; cursor: default; border-color: var(--line); }
   .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
   .btn.small { padding: 2px 8px; font-size: 12px; }
@@ -109,13 +103,10 @@
     background: var(--accent-soft); color: var(--accent-deep); display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
   .notice.err { background: var(--danger-soft); color: var(--danger); }
 
-  /* the phrase whose calculator is edited */
-  .phrasebar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; background: var(--surface); border-bottom: 1px solid var(--line);
-    padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  /* the phrase whose calculator is edited, centred in the toolbar between the title and the tools */
+  .phrasebar { flex: 1 1 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; align-items: center; min-width: 0; margin: 0; }
   .phrasebar label { font-size: 12px; font-weight: 600; color: var(--ink-2); letter-spacing: .04em; }
   .phrasebar .inp { flex: 0 1 380px; min-width: 0; font-family: var(--font-mono); font-size: 13px; }
-  .phrasebar .phrasehint { color: var(--muted); font-size: 12px; flex: 1 1 220px; min-width: 0; }
-  .phrasebar .phrasehint .mono { color: var(--ink-2); }
 
   /* the three columns */
   .work { display: grid; grid-template-columns: minmax(0, 330px) minmax(0, 380px) minmax(0, 1fr); gap: 14px; align-items: start;
@@ -272,6 +263,10 @@
   /* text of the pod body, and the phrase label in its row instead of above the input like a form label */
   .editor { width: 100%; text-align: left; }
   .main-container .phrasebar label { display: inline; }
+  /* the pod forces white button text with !important, which is invisible on the light editor buttons */
+  .editor .btn { color: var(--ink) !important; }
+  .editor .btn.primary { color: var(--accent-ink) !important; }
+  .editor .btn.danger { color: var(--danger) !important; }
 </style>
 
 <!-- the zukunft.com navbar as rendered by html_base::header: logo, search, language and user menu -->
@@ -319,9 +314,12 @@
     <div class="bar">
       <div class="brand">
         <b>Calculator editor</b>
-        <span id="docInfo">loading…</span>
       </div>
-      <div class="spacer"></div>
+      <form class="phrasebar" id="phraseForm" autocomplete="off">
+        <label for="phraseIn">Phrase</label>
+        <input class="inp" id="phraseIn" list="phraseList" placeholder="word or triple, e.g. example PV installation" spellcheck="false">
+        <button class="btn primary" type="submit" id="btnLoad">Load</button>
+      </form>
       <div class="tools">
         <span class="chip" id="srcChip">loading…</span>
         <span class="chip count" id="changeCount">no changes</span>
@@ -333,12 +331,6 @@
         <button class="btn primary" id="btnSave" disabled>Save</button>
       </div>
     </div>
-    <form class="phrasebar" id="phraseForm" autocomplete="off">
-      <label for="phraseIn">Phrase</label>
-      <input class="inp" id="phraseIn" list="phraseList" placeholder="word or triple, e.g. example PV installation" spellcheck="false">
-      <button class="btn primary" type="submit" id="btnLoad">Load</button>
-      <span class="phrasehint" id="phraseHint"></span>
-    </form>
     <div id="noticeHost"></div>
 
     <div class="work">
@@ -5406,7 +5398,7 @@
     const save = document.getElementById("btnSave");
     save.disabled = SOURCE.mode !== "api" || lastOutput.changed === 0 || saving;
     save.textContent = saving ? "Saving…" : "Save";
-    save.title = SOURCE.mode === "api" ? "Write the changes to the database" : "Demo data: saving is off";
+    save.title = "Write the changes to the database";
     document.getElementById("btnUndo").disabled = history.undo.length === 0;
     document.getElementById("btnRedo").disabled = history.redo.length === 0;
     let count = 0;
@@ -5981,9 +5973,6 @@
     if (o.warnings.length > 0) {
       html += "<div><h3>Check before saving</h3><ul>" + o.warnings.map(function (w) { return '<li class="wrn">' + esc(w) + "</li>"; }).join("") + "</ul></div>";
     }
-    if (SOURCE.mode !== "api") {
-      html += '<p style="color:var(--shared);margin:0">Demo data: these changes are not saved anywhere.</p>';
-    }
     if (o.changed === 0) {
       html += '<p style="color:var(--muted);margin:0">No changes since the last save.</p>';
     } else if (SOURCE.mode === "api") {
@@ -6034,23 +6023,15 @@
     renderInspector();
     renderPane();
     refreshStatus();
-    document.getElementById("docInfo").textContent = state.page ? state.page + " ← " + state.base : "no phrase loaded";
     document.querySelector(".work").hidden = !state.page;
     const phraseIn = document.getElementById("phraseIn");
     if (document.activeElement !== phraseIn) {
       phraseIn.value = state.page;
     }
-    const hint = document.getElementById("phraseHint");
-    if (!SOURCE.online) {
-      hint.innerHTML = "demo data from <span class=\"mono\">" + esc(DOC_NAME) + "</span>, not connected to a pod: saving is off";
-    } else if (state.page) {
-      hint.innerHTML = "phrase id <span class=\"mono\">" + esc(String(SOURCE.pageId)) + "</span>, built from <span class=\"mono\">" + esc(state.base) + "</span>";
-    } else {
-      hint.textContent = "choose the phrase whose calculator you want to edit";
-    }
     const chip = document.getElementById("srcChip");
-    chip.className = SOURCE.mode === "api" ? "chip live" : "chip demo";
-    chip.textContent = SOURCE.mode === "api" ? "database" : "demo data";
+    chip.hidden = SOURCE.mode !== "api";
+    chip.className = "chip live";
+    chip.textContent = "database";
     chip.title = DOC_NAME;
     const view = document.getElementById("btnView");
     view.hidden = SOURCE.mode !== "api" || !SOURCE.pageId;
@@ -7048,7 +7029,7 @@
         loadDoc(seed.doc, seed.name, null);
         toast("Loaded “" + name + "”.");
       } else {
-        notice("This page is not connected to a zukunft.com pod, so only “" + esc((seed.doc.selection || [])[0]) + "” of the demo data can be loaded.", "err");
+        notice("This page is not connected to a zukunft.com pod, so only “" + esc((seed.doc.selection || [])[0]) + "” can be loaded.", "err");
       }
     } else {
       const btn = document.getElementById("btnLoad");

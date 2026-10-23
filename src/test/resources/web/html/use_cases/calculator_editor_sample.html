@@ -82,8 +82,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
 .brand { display: flex; flex-direction: column; min-width: 0; }
 .brand b { font-size: 15px; font-weight: 600; letter-spacing: .01em; }
-.brand span { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
-.bar .spacer { flex: 1 1 auto; }
 .tools { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .btn { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r); padding: 6px 11px; cursor: pointer; white-space: nowrap; }
 .btn:hover { border-color: var(--accent); }
@@ -105,13 +103,10 @@ a.btn { text-decoration: none; color: inherit; display: inline-block; }
   background: var(--accent-soft); color: var(--accent-deep); display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
 .notice.err { background: var(--danger-soft); color: var(--danger); }
 
-/* the phrase whose calculator is edited */
-.phrasebar { display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; background: var(--surface); border-bottom: 1px solid var(--line);
-  padding-block: 8px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+/* the phrase whose calculator is edited, centred in the toolbar between the title and the tools */
+.phrasebar { flex: 1 1 auto; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; align-items: center; min-width: 0; margin: 0; }
 .phrasebar label { font-size: 12px; font-weight: 600; color: var(--ink-2); letter-spacing: .04em; }
 .phrasebar .inp { flex: 0 1 380px; min-width: 0; font-family: var(--font-mono); font-size: 13px; }
-.phrasebar .phrasehint { color: var(--muted); font-size: 12px; flex: 1 1 220px; min-width: 0; }
-.phrasebar .phrasehint .mono { color: var(--ink-2); }
 
 /* the three columns */
 .work { display: grid; grid-template-columns: minmax(0, 330px) minmax(0, 380px) minmax(0, 1fr); gap: 14px; align-items: start;
@@ -268,6 +263,10 @@ textarea.inp { resize: vertical; min-height: 54px; }
 /* text of the pod body, and the phrase label in its row instead of above the input like a form label */
 .editor { width: 100%; text-align: left; }
 .main-container .phrasebar label { display: inline; }
+/* the pod forces white button text with !important, which is invisible on the light editor buttons */
+.editor .btn { color: var(--ink) !important; }
+.editor .btn.primary { color: var(--accent-ink) !important; }
+.editor .btn.danger { color: var(--danger) !important; }
 </style>
 
 <!-- the zukunft.com navbar as rendered by html_base::header: logo, search, language and user menu -->
@@ -315,9 +314,12 @@ textarea.inp { resize: vertical; min-height: 54px; }
 <div class="bar">
   <div class="brand">
     <b>Calculator editor</b>
-    <span id="docInfo">loading…</span>
   </div>
-  <div class="spacer"></div>
+  <form class="phrasebar" id="phraseForm" autocomplete="off">
+    <label for="phraseIn">Phrase</label>
+    <input class="inp" id="phraseIn" list="phraseList" placeholder="word or triple, e.g. example PV installation" spellcheck="false">
+    <button class="btn primary" type="submit" id="btnLoad">Load</button>
+  </form>
   <div class="tools">
     <span class="chip" id="srcChip">loading…</span>
     <span class="chip count" id="changeCount">no changes</span>
@@ -329,12 +331,6 @@ textarea.inp { resize: vertical; min-height: 54px; }
     <button class="btn primary" id="btnSave" disabled>Save</button>
   </div>
 </div>
-<form class="phrasebar" id="phraseForm" autocomplete="off">
-  <label for="phraseIn">Phrase</label>
-  <input class="inp" id="phraseIn" list="phraseList" placeholder="word or triple, e.g. example PV installation" spellcheck="false">
-  <button class="btn primary" type="submit" id="btnLoad">Load</button>
-  <span class="phrasehint" id="phraseHint"></span>
-</form>
 <div id="noticeHost"></div>
 
 <div class="work">
@@ -383,7 +379,9 @@ textarea.inp { resize: vertical; min-height: 54px; }
   "time": "2026-10-16 01:40:00",
   "user": "timon",
   "selection": [
-    "example PV installation"
+    {
+      "name": "example PV installation"
+    }
   ],
   "description": "Use case: the main results of a rooftop photovoltaic installation in Switzerland over its lifetime, the electricity produced and the CO2-eq saved against the Swiss consumption mix and against a replacement mix, as shown by the system view 'Calculator' for the phrase 'example PV installation'; the inputs, the assumptions, the result rows, the detail table, the labels and the hints of the page are the calculator triples of 'PV installation' and the general calculator triples of the listed phrases. The inputs are the system size in kWp, the orientation as a yield factor, the usable battery capacity and the annual household consumption; the worked example is 10 kWp east-west, 10 kWh battery, 4500 kWh. Every delivered kWh, used at home or exported, is assumed to displace one kWh of the reference mix; the embodied emission of the PV system (IEA PVPS 2023 reference, converted to a fixed amount per kWp) and of the batteries bought over the lifetime is subtracted. The CO2-eq saving is stated three times: with the annual Swiss consumption mix of 2018 (KBOB), with the monthly Swiss consumption mix 2018 to 2022 (treeze) weighted by the PV electricity delivered in each month, which is lower because PV produces in summer when the Swiss mix is cleanest, and with the European residual mix (Swissolar) as the replacement mix. The monthly dispatch of the page (direct use capped by the day share of the consumption, battery charge capped by one cycle a day and the night consumption) needs a minimum function, so its two annual sums and the PV-weighted mix are stored as modelled values; all other results are formulas of the file and reproduced by the calc-validation. The inputs that are not measured carry the word assumed and a confidence.",
   "words": [
@@ -534,6 +532,14 @@ textarea.inp { resize: vertical; min-height: 54px; }
       ]
     },
     {
+      "name": "lithium-ion cell",
+      "description": "the battery cells alone, without the housing, the inverter and the control of a home storage system"
+    },
+    {
+      "name": "home storage system",
+      "description": "a complete stationary battery of a house with the cells, the housing, the inverter and the control"
+    },
+    {
       "name": "charge"
     },
     {
@@ -612,10 +618,16 @@ textarea.inp { resize: vertical; min-height: 54px; }
       "name": "2018"
     },
     {
+      "name": "2019"
+    },
+    {
       "name": "2022"
     },
     {
       "name": "2023"
+    },
+    {
+      "name": "2025"
     },
     {
       "name": "assumed"
@@ -895,28 +907,28 @@ textarea.inp { resize: vertical; min-height: 54px; }
       "from": "gram",
       "verb": "per",
       "to": "kWh",
-      "type": "measure_unit",
+      "type": "measure unit",
       "description": "the unit of the emission intensity of electricity"
     },
     {
       "from": "kg",
       "verb": "per",
       "to": "kWh",
-      "type": "measure_unit",
+      "type": "measure unit",
       "description": "the unit of the production emission of a battery per kWh of storage capacity"
     },
     {
       "from": "kg",
       "verb": "per",
       "to": "kWp",
-      "type": "measure_unit",
+      "type": "measure unit",
       "description": "the unit of the embodied emission of a PV system per kWp of rated power"
     },
     {
       "from": "kWh",
       "verb": "per",
       "to": "kWp",
-      "type": "measure_unit"
+      "type": "measure unit"
     },
     {
       "name": "PV yield",
@@ -2226,7 +2238,7 @@ textarea.inp { resize: vertical; min-height: 54px; }
       "from": "kWh",
       "verb": "per",
       "to": "year",
-      "type": "measure_unit"
+      "type": "measure unit"
     },
     {
       "from": "kWh/a",
@@ -2239,7 +2251,7 @@ textarea.inp { resize: vertical; min-height: 54px; }
       "from": "kWh per kWp",
       "verb": "per",
       "to": "year",
-      "type": "measure_unit"
+      "type": "measure unit"
     },
     {
       "from": "kWh/kWp·a",
@@ -2252,7 +2264,7 @@ textarea.inp { resize: vertical; min-height: 54px; }
       "from": "year",
       "verb": "must be one of",
       "to": "duration unit",
-      "type": "measure_unit"
+      "type": "measure unit"
     },
     {
       "from": "a",
@@ -2265,7 +2277,7 @@ textarea.inp { resize: vertical; min-height: 54px; }
       "from": "share",
       "verb": "must be one of",
       "to": "ratio",
-      "type": "percent"
+      "type": "format percent"
     },
     {
       "from": "share",
@@ -3035,6 +3047,30 @@ textarea.inp { resize: vertical; min-height: 54px; }
     {
       "words": [
         "battery",
+        "battery production emission",
+        "kg per kWh",
+        "lithium-ion cell",
+        "2025"
+      ],
+      "number": "92",
+      "source": "Lithium-ion cell LCA comparison 2025",
+      "description": "the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
+    },
+    {
+      "words": [
+        "battery",
+        "battery production emission",
+        "kg per kWh",
+        "home storage system",
+        "2019"
+      ],
+      "number": "212",
+      "source": "HTW Berlin solar storage climate 2019",
+      "description": "the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
+    },
+    {
+      "words": [
+        "battery",
         "battery lifetime",
         "year (duration unit)",
         "assumed"
@@ -3566,7 +3602,7 @@ textarea.inp { resize: vertical; min-height: 54px; }
     {"words": ["example PV installation", "direct use", "December", "kWh", "modelled"], "number": "157.5"},
     {"words": ["example PV installation", "battery charge", "December", "kWh", "modelled"], "number": "49.9"}
   ],
-  "calc-validation": [
+  "results": [
     {
       "context": [
         "example PV installation",
@@ -4350,6 +4386,8 @@ const FIELD = {
   step: "field step"
 };
 const FIELD_VALUE_KW = new Set([FIELD.min, FIELD.max, FIELD.step]);
+/* the phrase type names of the api that make a triple a unit of a number */
+const UNIT_TYPES = new Set(["measure unit", "format percent"]);
 const FOLLOW = "is follower of";
 const HAS = "has a";
 const WITH = "with";
@@ -4479,7 +4517,7 @@ function buildIndex(doc) {
     if (t.verb === "is symbol for") {
       symbolFor.set(t.to, t.from);
     }
-    if (t.type === "measure_unit" || t.type === "percent") {
+    if (UNIT_TYPES.has(t.type)) {
       unitNames.add(t.name || (t.from + " " + t.verb + " " + t.to));
     }
   });
@@ -4490,10 +4528,26 @@ function buildIndex(doc) {
   (doc.values || []).forEach(function (v, i) {
     pool.push({ words: v.words || [], number: v.number, source: v.source, vidx: i });
   });
-  (doc["calc-validation"] || []).forEach(function (c) {
+  (doc.results || []).forEach(function (c) {
     pool.push({ words: c.words || [], number: c.number, calc: true, formula: c.formula });
   });
   const result = { T: T, byFrom: byFrom, byName: byName, known: known, symbolFor: symbolFor, unitNames: unitNames, pool: pool };
+  return result;
+}
+
+/* the name of the page phrase, which the api sends as the first phrase of the selection */
+function selectionName(doc) {
+  const sel = (doc.selection || [])[0] || {};
+  const result = sel.name || "";
+  return result;
+}
+
+/* the field keyword of a limit value e.g. "field step" of "PV capacity, field step", in any order of the words */
+function fieldKeyword(w) {
+  let result = "";
+  if (w.length === 2) {
+    result = w.find(function (x) { return FIELD_VALUE_KW.has(x); }) || "";
+  }
   return result;
 }
 
@@ -4620,7 +4674,7 @@ function parseDoc(doc) {
   const T = IDX.T;
   const used = new Set();
   const usedValues = new Set();
-  const page = (doc.selection || [])[0] || "";
+  const page = selectionName(doc);
   let base = "";
   T.forEach(function (t) {
     if (!base && t.verb === HAS && LISTS.some(function (L) { return L.kw === t.to; })) {
@@ -4781,9 +4835,10 @@ function parseDoc(doc) {
   /* limits and step of the fields */
   (doc.values || []).forEach(function (v, i) {
     const w = v.words || [];
-    if (w.length === 2 && FIELD_VALUE_KW.has(w[1])) {
-      const f = phrase(w[0]).field;
-      const key = w[1] === FIELD.min ? "min" : (w[1] === FIELD.max ? "max" : "step");
+    const kw = fieldKeyword(w);
+    if (kw) {
+      const f = phrase(w.find(function (x) { return x !== kw; })).field;
+      const key = kw === FIELD.min ? "min" : (kw === FIELD.max ? "max" : "step");
       f.limits[key] = { vsrc: i, num: String(v.number) };
       usedValues.add(i);
     }
@@ -4966,7 +5021,7 @@ function groupLabel(listKey) {
 }
 
 /* ------------------------------------------------------------------ */
-/* numbers for the preview: the values and the calc-validation results   */
+/* numbers for the preview: the values and the results                   */
 /* ------------------------------------------------------------------ */
 function poolNumber(entry) {
   let result = entry.number;
@@ -5702,15 +5757,29 @@ function valueBasedOptions(x) {
   const seen = new Set();
   const result = [];
   IDX.pool.forEach(function (e) {
-    if (e.vidx !== undefined && e.words[0] === x && e.words.length === 3) {
-      const ph = e.words[1];
-      if (!seen.has(ph)) {
-        seen.add(ph);
-        result.push({ phrase: ph, label: cap(ph) });
-      }
+    const ph = optionPhrase(e, x);
+    if (ph && !seen.has(ph)) {
+      seen.add(ph);
+      result.push({ phrase: ph, label: cap(ph) });
     }
   });
   result.sort(function (a, b) { return a.phrase.localeCompare(b.phrase); });
+  return result;
+}
+/* the option phrase of a value of a value based selector e.g. east-west of "yield factor, east-west, percent"; */
+/* the api sends the words in any order, so the option is the one word that is neither x nor a unit */
+function optionPhrase(e, x) {
+  let result = "";
+  if (e.vidx !== undefined && e.words.length === 3 && e.words.indexOf(x) >= 0) {
+    const rest = e.words.filter(function (w) { return w !== x && !isUnit(w); });
+    if (rest.length === 1) {
+      result = rest[0];
+    }
+  }
+  return result;
+}
+function isUnit(w) {
+  const result = IDX.unitNames.has(w) || IDX.symbolFor.has(w);
   return result;
 }
 function optionsHtml(x, f) {
@@ -5833,7 +5902,7 @@ function cellHtml(required, signed) {
 function previewPage() {
   const base = state.base;
   const cols = state.lists.column.items.filter(function (c) { return c.to; });
-  let html = '<div class="legend"><span><i></i>click a part to edit it</span><span>numbers come from the values and the calc-validation of the file</span></div>';
+  let html = '<div class="legend"><span><i></i>click a part to edit it</span><span>numbers come from the values and the results of the file</span></div>';
   html += '<div class="use-case">';
   html += '<header data-sel="page"><h4>' + esc(phraseText(base, "label") || cap(base)) + "</h4>" +
     (phraseText(base, "hint") ? "<p>" + esc(phraseText(base, "hint")) + "</p>" : "") + "</header>";
@@ -6027,19 +6096,10 @@ function renderAll() {
   renderInspector();
   renderPane();
   refreshStatus();
-  document.getElementById("docInfo").textContent = state.page ? state.page + " ← " + state.base : "no phrase loaded";
   document.querySelector(".work").hidden = !state.page;
   const phraseIn = document.getElementById("phraseIn");
   if (document.activeElement !== phraseIn) {
     phraseIn.value = state.page;
-  }
-  const hint = document.getElementById("phraseHint");
-  if (SOURCE.online && state.page) {
-    hint.innerHTML = "phrase id <span class=\"mono\">" + esc(String(SOURCE.pageId)) + "</span>, built from <span class=\"mono\">" + esc(state.base) + "</span>";
-  } else if (SOURCE.online) {
-    hint.textContent = "choose the phrase whose calculator you want to edit";
-  } else {
-    hint.textContent = "";
   }
   const chip = document.getElementById("srcChip");
   chip.hidden = SOURCE.mode !== "api";
@@ -6775,7 +6835,7 @@ async function loadFromApi() {
     SOURCE.verbIds = new Map();
     verbNames.forEach(function (name, vid) { SOURCE.verbIds.set(name, vid); });
     const doc = {
-      selection: [pageName],
+      selection: [{ id: pageId, name: pageName }],
       triples: docTriples,
       values: values.filter(function (v) {
         const key = String(v._id);
@@ -6783,7 +6843,7 @@ async function loadFromApi() {
         seenValues.add(key);
         return fresh;
       }),
-      "calc-validation": results,
+      results: results,
       sources: Array.from(sources.keys()).map(function (n) { return { name: n, url: sources.get(n) }; }),
       formulas: []
     };
@@ -6993,7 +7053,7 @@ function seedDoc() {
   return result;
 }
 function emptyDoc() {
-  const result = { selection: [""], triples: [], values: [], "calc-validation": [], sources: [], formulas: [] };
+  const result = { selection: [], triples: [], values: [], results: [], sources: [], formulas: [] };
   return result;
 }
 function setUrlId(id) {
@@ -7036,13 +7096,13 @@ async function loadPhrase(force) {
     });
   } else if (!SOURCE.online) {
     const seed = seedDoc();
-    if (name === (seed.doc.selection || [])[0]) {
+    if (name === selectionName(seed.doc)) {
       notice("", "");
       clearDraft();
       loadDoc(seed.doc, seed.name, null);
       toast("Loaded “" + name + "”.");
     } else {
-      notice("This page is not connected to a zukunft.com pod, so only “" + esc((seed.doc.selection || [])[0]) + "” can be loaded.", "err");
+      notice("This page is not connected to a zukunft.com pod, so only “" + esc(selectionName(seed.doc)) + "” can be loaded.", "err");
     }
   } else {
     const btn = document.getElementById("btnLoad");

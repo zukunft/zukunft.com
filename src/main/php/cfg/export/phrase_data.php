@@ -168,6 +168,7 @@ class phrase_data
         $val_lst = new value_list($usr);
         $val_lst->load_by_phr_lst($val_phr_lst, $msg, true);
         $val_lst->filter_readable_by($usr);
+        $this->add_field_values($val_lst, $phr_lst, $kwd_ids, $msg);
         $this->debug_step('values loaded for ' . $val_phr_lst->count() . ' phrases', $val_lst->count());
         // the data is collected by the phrase ids and loaded once per step
         $ids = array_merge($phr_lst->id_lst(), $this->value_phrase_ids($val_lst, $msg));
@@ -276,26 +277,32 @@ class phrase_data
     }
 
     /**
-     * walk from the phrase and the phrases it is built from over the from side of the triples,
-     * one database read per step, until no new phrase is found
+     * walk from the phrase and the phrases it is built from over the calculator triples on the
+     * from side, one database read per step, until no new phrase is found; the phrase of a list
+     * item is walked for its general triples (rule 6), but what it has a e.g. the option east of
+     * yield factor is a leaf that is added without its triples, so the walk stays within the
+     * calculator and never reaches e.g. coal electricity from electricity
      *
      * @param phrase $phr the requested phrase
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
      * @param user_message $msg with the requesting user
-     * @return phrase_list the walked phrases
+     * @return phrase_list the walked phrases and the leaves
      */
     private function walked_phrases(phrase $phr, array $kwd_ids, user_message $msg): phrase_list
     {
         $found_lst = new phrase_list($msg->usr);
+        $itm_lst = new phrase_list($msg->usr);
+        $leaf_lst = new phrase_list($msg->usr);
         $next = $this->built_from($phr, $msg);
         $loops = 0;
         while (!$next->is_empty() and $loops < def::MAX_LOOP) {
             $found_lst->merge($next);
-            $next = $this->next_phrases($next, $found_lst, $kwd_ids, $msg);
+            $next = $this->next_phrases($next, $found_lst, $itm_lst, $leaf_lst, $kwd_ids, $msg);
             $loops++;
             $this->debug_step('walk step ' . $loops . ' of ' . $found_lst->count() . ' walked, next', $next->count());
         }
         $this->report_loop_limit(!$next->is_empty(), 'walk', $msg);
+        $found_lst->merge($leaf_lst);
         return $found_lst;
     }
 
@@ -353,11 +360,20 @@ class phrase_data
     /**
      * @param phrase_list $step the phrases walked in the last step
      * @param phrase_list $walked all phrases walked so far
+     * @param phrase_list $itm_lst the phrases of the list items so far, extended by this step
+     * @param phrase_list $leaf_lst the leaves so far, extended by this step
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
      * @param user_message $msg with the requesting user
      * @return phrase_list the phrases to walk in the next step
      */
-    private function next_phrases(phrase_list $step, phrase_list $walked, array $kwd_ids, user_message $msg): phrase_list
+    private function next_phrases(
+        phrase_list  $step,
+        phrase_list  $walked,
+        phrase_list  $itm_lst,
+        phrase_list  $leaf_lst,
+        array        $kwd_ids,
+        user_message $msg
+    ): phrase_list
     {
         $next = new phrase_list($msg->usr);
         // the field phrases of the phrase selectors, whose options are added
@@ -365,9 +381,11 @@ class phrase_data
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_phr_lst($step, $msg, null, foaf_direction::UP);
         foreach ($trp_lst->lst() as $trp) {
-            $this->add_new($next, $walked, $kwd_ids, $trp->phrase(), $msg);
+            if ($this->is_calculator_link($trp)) {
+                $this->add_new($next, $walked, $kwd_ids, $trp->phrase(), $msg);
+            }
             if ($this->is_item_link($trp, $kwd_ids)) {
-                $this->add_new($next, $walked, $kwd_ids, $trp->get_to(), $msg);
+                $this->add_item($next, $walked, $itm_lst, $leaf_lst, $kwd_ids, $trp, $msg);
             }
             if ($this->is_selector_field($trp, $kwd_ids)) {
                 $this->add_new($src_phr_lst, new phrase_list($msg->usr), [], $trp->get_from(), $msg);
@@ -375,6 +393,48 @@ class phrase_data
         }
         $this->add_selector_options($next, $walked, $kwd_ids, $src_phr_lst, $msg);
         return $next;
+    }
+
+    /**
+     * @param triple $trp a triple whose from side has been walked
+     * @return bool true if the triple is part of a calculator e.g. a list item, its order or its field type,
+     *              false for a general triple e.g. coal electricity = electricity of coal
+     */
+    private function is_calculator_link(triple $trp): bool
+    {
+        return in_array($trp->get_verb_code_id(), verbs::CALCULATOR_VERBS);
+    }
+
+    /**
+     * add the to side of a list item triple: to the next step and the item phrases if the triple is
+     * an item of the calculator e.g. PV capacity of the inputs list, as a leaf if it is what the
+     * phrase of an item has a e.g. the option east of yield factor or the input year 2018
+     *
+     * @param phrase_list $next the phrases to walk in the next step
+     * @param phrase_list $walked all phrases walked so far
+     * @param phrase_list $itm_lst the phrases of the list items, whose to sides are leaves
+     * @param phrase_list $leaf_lst the phrases that are part of the data but not walked
+     * @param array $kwd_ids the phrase ids of the keywords that are never walked
+     * @param triple $trp the list item triple e.g. yield factor option east
+     * @param user_message $msg with the requesting user
+     * @return void
+     */
+    private function add_item(
+        phrase_list  $next,
+        phrase_list  $walked,
+        phrase_list  $itm_lst,
+        phrase_list  $leaf_lst,
+        array        $kwd_ids,
+        triple       $trp,
+        user_message $msg
+    ): void
+    {
+        if ($itm_lst->has_id($trp->from_id())) {
+            $this->add_new($leaf_lst, $walked, $kwd_ids, $trp->get_to(), $msg);
+        } else {
+            $this->add_new($next, $walked, $kwd_ids, $trp->get_to(), $msg);
+            $this->add_new($itm_lst, $walked, $kwd_ids, $trp->get_to(), $msg);
+        }
     }
 
     /**
@@ -484,6 +544,46 @@ class phrase_data
             }
         }
         return $result;
+    }
+
+    /**
+     * add the limits and steps of the fields of the phrases e.g. (lifetime, field step) = 1, because the
+     * values are loaded only for the walked triples, and a walked word like lifetime has the values of
+     * every use case; a field value is added only if all its phrases are part of the data
+     *
+     * @param value_list $val_lst the values of the data, extended by the field values
+     * @param phrase_list $phr_lst the start phrases of the walk e.g. with the input and assumption phrases
+     * @param array $kwd_ids the phrase ids of the keywords by their code id
+     * @param user_message $msg with the requesting user
+     * @return void
+     */
+    private function add_field_values(value_list $val_lst, phrase_list $phr_lst, array $kwd_ids, user_message $msg): void
+    {
+        $fld_ids = array_values(array_intersect_key($kwd_ids, array_flip(triples::FIELD_VALUE_PROPERTIES)));
+        $fld_val_lst = new value_list($msg->usr);
+        // without the field keywords e.g. in an empty database there is no field value
+        if ($fld_ids != []) {
+            $fld_val_lst->load_by_phr_lst($this->phrases_by_ids($fld_ids, $msg), $msg, true);
+        }
+        $fld_val_lst->filter_readable_by($msg->usr);
+        $ids = array_merge($phr_lst->id_lst(), $fld_ids);
+        foreach ($fld_val_lst->lst() as $val) {
+            $val->load_phrases($msg);
+            if ($this->is_within($val->phrase_list()->id_lst(), $ids)) {
+                $val_lst->add($val);
+            }
+        }
+        $this->debug_step('field values checked', $fld_val_lst->count());
+    }
+
+    /**
+     * @param array $val_ids the phrase ids of a value
+     * @param array $ids the phrase ids of the data
+     * @return bool true if every phrase of the value is part of the data
+     */
+    private function is_within(array $val_ids, array $ids): bool
+    {
+        return array_diff($val_ids, $ids) == [];
     }
 
     /**

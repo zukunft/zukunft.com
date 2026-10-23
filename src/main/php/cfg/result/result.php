@@ -716,9 +716,17 @@ class result extends sandbox_value
         return $lst;
     }
 
+    /**
+     * a text key is never prime, because it is the key of the standard or the big table
+     * e.g. the key that id() returns for a result moved by its source group
+     * @return bool true if the result is saved in the prime table
+     */
     function is_prime(): bool
     {
-        return (!$this->src_grp_moves_table() and parent::is_prime());
+        $grp_id = new group_id();
+        return (!$this->src_grp_moves_table()
+            and parent::is_prime()
+            and $grp_id->is_prime($this->grp_key_id()));
     }
 
     function is_main(): bool

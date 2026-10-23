@@ -285,10 +285,12 @@ class group_tests
 
         $t->subheader($ts . 'description');
         $test_name = 'a group with a description has a description';
-        $t->assert_true($test_name, $t_grp->group_filled()->has_description());
+        $grp = $t_grp->group_filled();
+        $t->assert_true($test_name, $grp->has_description());
         // negative: a group without a description has none
         $test_name = '... but a group without a description has none';
-        $t->assert_false($test_name, $t_grp->group()->has_description());
+        $grp = $t_grp->group();
+        $t->assert_false($test_name, $grp->has_description());
 
         $t->subheader($ts . 'debug id');
 

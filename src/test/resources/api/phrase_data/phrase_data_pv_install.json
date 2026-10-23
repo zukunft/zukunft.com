@@ -217,6 +217,20 @@
       ]
     },
     {
+      "name": "lithium-ion cell",
+      "description": "the battery cells alone, without the housing, the inverter and the control of a home storage system"
+    },
+    {
+      "name": "home storage system",
+      "description": "a complete stationary battery of a house with the cells, the housing, the inverter and the control"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2025"
+    },
+    {
       "id": 90,
       "name": "charge",
       "description": "Electric charge (symbol q, sometimes Q) is a physical property of matter that causes it to experience a force when placed in an electromagnetic field. Electric charge can be positive or negative."
@@ -2639,6 +2653,16 @@
   ],
   "sources": [
     {
+      "name": "Lithium-ion cell LCA comparison 2025",
+      "description": "Comparative life cycle assessment of lithium-ion, sodium-ion, and solid-state battery cells for electric vehicles. Journal of Industrial Ecology 29(1):113-128, 2025. Cradle-to-gate production of lithium-ion cells emits about 58 to 92 kg CO2-eq per kWh of cell capacity, optimised LFP cells about 37 kg; the figure covers the cells only, not the housing, inverter and control of a home storage system.",
+      "url": "https://ideas.repec.org/a/bla/inecol/v29y2025i1p113-128.html"
+    },
+    {
+      "name": "HTW Berlin solar storage climate 2019",
+      "description": "Weniger J., Orth N., Böhme N., Quaschning V. (HTW Berlin): Sind Solarstromspeicher Klimaschützer? 2019. Uses 212 kg CO2-eq per kWh of battery capacity for the production of a lithium home storage system, the upper end of the literature.",
+      "url": "https://solar.htw-berlin.de/wp-content/uploads/WENIGER-2019-Sind-Solarstromspeicher-Klimaschuetzer.pdf"
+    },
+    {
       "id": 251,
       "name": "IEA PVPS Task 12 fact sheet 2023",
       "description": "Stucki M., Götz M., de Wild-Scholten M., Frischknecht R.: Ökobilanz von Strom aus PV-Anlagen, Aktualisierung der Daten für das Jahr 2023. IEA PVPS Task 12 fact sheet, 2024. Reference system: 3 kWp mono-crystalline pitched roof system in Switzerland, 976 kWh/kWp annual yield including a linear degradation of 0.7 percent per year, 30 years lifetime, 35.8 g CO2-eq per kWh AC (modules 20.2, inverter 9.9, rest 5.8).",
@@ -3131,6 +3155,30 @@
       "description": "the published figures span a factor of five, so the middle is a guess"
     },
     {
+      "words": [
+        "battery",
+        "battery production emission",
+        "kg per kWh",
+        "lithium-ion cell",
+        "2025"
+      ],
+      "number": "92",
+      "source": "Lithium-ion cell LCA comparison 2025",
+      "description": "the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
+    },
+    {
+      "words": [
+        "battery",
+        "battery production emission",
+        "kg per kWh",
+        "home storage system",
+        "2019"
+      ],
+      "number": "212",
+      "source": "HTW Berlin solar storage climate 2019",
+      "description": "the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
+    },
+    {
       "id": 596728344524065495,
       "words": [
         "battery",
@@ -3568,6 +3616,14 @@
       ],
       "number": "100",
       "description": "the household consumption is entered in steps of 100 kWh"
+    },
+    {
+      "words": [
+        "lifetime",
+        "field step"
+      ],
+      "number": "1",
+      "description": "the lifetime is entered in years"
     },
     {
       "id": 2278394505,

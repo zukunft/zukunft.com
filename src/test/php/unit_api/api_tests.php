@@ -46,10 +46,10 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
-use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
@@ -123,6 +123,8 @@ class api_tests
 
     const string API_PATH = 'api/';
     const string PHP_DEFAULT_FILENAME = 'index.php';
+    // a walk value of the phrase data api that names no walk, built from the field name like the real values
+    const string UNKNOWN_PHRASE_DATA_WALK = 'pwx';
 
 
     /*
@@ -245,11 +247,12 @@ class api_tests
         $sel_name = $selection[0][json_fields::NAME] ?? '';
         $t->assert($test_name, $sel_name, triple_names::EXAMPLE_PV_INSTALLATION, $t::TIMEOUT_LIMIT_REST);
         // negative: an unknown walk is reported instead of answered with a guessed walk
-        $test_name = '... but an unknown walk returns no data';
-        $phd_par = [url_var::ID => $phr->id(), url_var::PHRASE_DATA_WALK => url_var::PHRASE_DATA_WALK];
+        $test_name = '... but an unknown walk is reported with the walk';
+        $phd_par = [url_var::ID => $phr->id(), url_var::PHRASE_DATA_WALK => self::UNKNOWN_PHRASE_DATA_WALK];
         $phd_txt = $t->api_call_timed(rest_ctrl::GET, $phd_url, $phd_par);
         $phd_json = json_decode($phd_txt, true) ?? [];
-        $t->assert_key_not_exists($test_name, json_fields::WORDS, $phd_json);
+        $err_txt = $phd_json[json_fields::MSG] ?? '';
+        $t->assert_text_contains($test_name, $err_txt, self::UNKNOWN_PHRASE_DATA_WALK);
         $msg->reset();
         // $t->assert_rest(new word($usr, words::TN_READ));
         // TODO Prio 2 add value_list tests for prime, normal and big value tables

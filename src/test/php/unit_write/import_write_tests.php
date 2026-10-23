@@ -274,28 +274,49 @@ class import_write_tests
         $target = 'Import file has been created with version "9.9.9"';
         $t->assert_text_contains($test_name, $imp_msg->all_message_text(), $target);
 
-        // the config import drops the cached config, because the cache is else renewed only by its age
-        $t->subheader($ts . 'config cache');
-        $test_name = 'a config load caches the config of the user';
-        $cfg_usr = new config_numbers($t->usr1);
-        $cfg_usr->load_cfg($msg, null, $t->usr1);
-        $cac = new db_cache($t->usr1);
-        $cac_id = $cac->load_by_type_and_user(db_cache_types::SYSTEM_CONFIG, $msg);
-        $t->assert_greater($test_name, 0, $cac_id);
-        $msg->reset();
-        $test_name = 'the drop of the config cache removes the cached config';
-        $imf->drop_config_cache($t->usr1, $msg);
-        $cac = new db_cache($t->usr1);
-        $cac_id = $cac->load_by_type_and_user(db_cache_types::SYSTEM_CONFIG, $msg);
-        $t->assert($test_name, $cac_id, 0);
-        $msg->reset();
-        // negative: a drop without a cached config finds nothing to remove and reports no error
-        $test_name = '... and a second drop without a cached config reports no error';
-        $imf->drop_config_cache($t->usr1, $msg);
-        $t->assert_msg($test_name, $msg);
-        $msg->reset();
+        $this->assert_config_cache_drop($t, $ts, $imf);
 
         $db_con->check_sequences();
+    }
+
+    /**
+     * the config import drops the cached config, because the cache is else renewed only by its age;
+     * the drop removes the config cache rows of all users, which the next config load writes again
+     *
+     * @param test_cleanup $t the test environment
+     * @param string $ts the name of the test section
+     * @param import_file $imf the import object whose config cache drop is tested
+     * @return void
+     */
+    private function assert_config_cache_drop(test_cleanup $t, string $ts, import_file $imf): void
+    {
+        $t->subheader($ts . 'config cache');
+        $msg = new user_message($t->usr1);
+        $cfg = new config_numbers($t->usr1);
+        $cfg->load_cfg($msg, null, $t->usr1);
+        $msg->reset();
+        // only a pod that caches the config in the database has a cache row to drop
+        $in_db = (CACHE_LOCATION == ENV_CACHE_DATABASE);
+        if (!$in_db or !$cfg->cache_allowed(db_cache_types::SYSTEM_CONFIG)) {
+            $t->dsp_warning('skipping the config cache drop test because this pod does not cache the config in the database');
+        } else {
+            $test_name = 'a config load caches the config of the user';
+            $cac = new db_cache($t->usr1);
+            $cac_id = $cac->load_by_type_and_user(db_cache_types::SYSTEM_CONFIG, $msg);
+            $t->assert_greater($test_name, 0, $cac_id);
+            $msg->reset();
+            $test_name = 'the drop of the config cache removes the cached config';
+            $imf->drop_config_cache($t->usr1, $msg);
+            $cac = new db_cache($t->usr1);
+            $cac_id = $cac->load_by_type_and_user(db_cache_types::SYSTEM_CONFIG, $msg);
+            $t->assert($test_name, $cac_id, 0);
+            $msg->reset();
+            // negative: a drop without a cached config finds nothing to remove and reports no error
+            $test_name = '... and a second drop without a cached config reports no error';
+            $imf->drop_config_cache($t->usr1, $msg);
+            $t->assert_msg($test_name, $msg);
+            $msg->reset();
+        }
     }
 
     /**

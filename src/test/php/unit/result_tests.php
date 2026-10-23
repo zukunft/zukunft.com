@@ -308,6 +308,13 @@ class result_tests
         $test_name = '... with the text key of the prime group';
         // the parameters are keyed by name for Postgres, so the first and only one is taken
         $t->assert($test_name, array_values($qp->par)[0] ?? null, $grp_id->int2key($prime_id));
+        // the reload by id() e.g. of the export resets the source group, so the text key alone
+        // must select the standard table and not the prime phrase id columns
+        $test_name = 'the reload by the text key of a moved result reads the standard table';
+        $sc->reset(sql_db::POSTGRES);
+        $res_reload = $t_res->result_prime();
+        $qp_reload = $res_reload->load_sql_by_id($sc, $grp_id->int2key($prime_id));
+        $t->assert($test_name, $qp_reload->sql, $qp->sql);
         $test_name = '... and then the big table';
         $sc->reset(sql_db::POSTGRES);
         $qp_big = $t_res->result_prime()->load_sql_by_id_moved($sc, $prime_id, sql_type::BIG);

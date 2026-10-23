@@ -26,7 +26,6 @@ button: $b
 change: $chg, $log_named, $log_new
 change_log: $chg, $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_map, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
-config_numbers: $cfg_usr
 element: $elm_map, $elm_ui
 figure: $fig_ui
 formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_be, $frm_empty, $frm_error, $frm_fn, $frm_has_next, $frm_hour, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_no_typ, $frm_order, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_scaled, $frm_tab, $frm_this, $frm_trm, $frm_typ, $frm_ui, $frm_unknown, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
@@ -165,7 +164,7 @@ message: $ui_msg
 number_format: $fmt, $no_cnv
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $kept, $kinds, $listed, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $rm_lst, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $time_lst, $tree, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $itm_lst, $kept, $kinds, $leaf_lst, $listed, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $result, $rm_lst, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $time_lst, $tree, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ, $phr_typ_map
@@ -268,7 +267,7 @@ user_request: $req
 user_status: $usr_sta
 user_type: $usr_typ
 value_geo: $obj_to_add, $result, $val
-value_list: $add_lst, $db_lst, $desc_lst, $empty_keep_lst, $empty_lst, $lst, $num_lst, $plain_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
+value_list: $add_lst, $db_lst, $desc_lst, $empty_keep_lst, $empty_lst, $fld_val_lst, $lst, $num_lst, $plain_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
 value_list_dsp: $val_lst
 value_text: $obj_to_add, $result, $val
 value_time: $obj_to_add, $result, $val

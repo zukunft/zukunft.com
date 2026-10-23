@@ -101,7 +101,8 @@ class phrase_data_read_tests
         // is limited by the test tolerance of the configuration
         $t->subheader($ts . 'from walk of the example PV installation');
         $test_name = 'the phrase data contains every word of the sample';
-        $vars = $phd->export_json($phr->id(), phrase_data_walks::FROM, false, $msg);
+        // with the results, so that the written actual file has the numbers of the calculator editor
+        $vars = $phd->export_json($phr->id(), phrase_data_walks::FROM, true, $msg);
         $t->write_api_actual_file(test_files::PHRASE_DATA_PV_INSTALL, $vars);
         $names = $this->names($vars[json_fields::WORDS] ?? []);
         $t->assert_contains($test_name, $names, $this->names($sample[json_fields::WORDS]), $t::TIMEOUT_LIMIT_IMPORT);
@@ -113,6 +114,10 @@ class phrase_data_read_tests
         $test_name = '... every triple';
         $trp_keys = $this->triple_keys($vars[json_fields::TRIPLES] ?? []);
         $t->assert_contains($test_name, $trp_keys, $this->triple_keys($sample[json_fields::TRIPLES]));
+        // negative: the walk follows only the calculator triples, not the general triples of a row phrase
+        $test_name = '... but not a general triple of a row phrase';
+        $trp_names = $this->names($vars[json_fields::TRIPLES] ?? []);
+        $t->assert_contains_not($test_name, $trp_names, [triple_names::COAL_ELECTRICITY]);
         $test_name = '... every formula';
         $frm_names = $this->names($vars[json_fields::FORMULAS] ?? []);
         $t->assert_contains($test_name, $frm_names, $this->names($sample[json_fields::FORMULAS]));
@@ -139,9 +144,13 @@ class phrase_data_read_tests
         $test_name = '... and the requested phrase as the selection';
         $selection = $this->names($vars[json_fields::SELECTION] ?? []);
         $t->assert($test_name, $selection, [triple_names::EXAMPLE_PV_INSTALLATION]);
-        // negative: the results are only added on request, because they are calculated data
-        $test_name = '... without the results if they are not requested';
-        $t->assert_key_not_exists($test_name, json_fields::RESULTS, $vars);
+        $test_name = '... and the results because they are requested';
+        $t->assert_key_exists($test_name, json_fields::RESULTS, $vars);
+        // a result is reloaded for the export by its own id, because its group id selects all results of the group
+        $test_name = '... and each exported result names its phrases';
+        $res_objs = $vars[json_fields::RESULTS] ?? [];
+        $without_words = $this->count_without_field($res_objs, json_fields::WORDS);
+        $t->assert($test_name, $without_words, 0);
 
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';
@@ -160,17 +169,9 @@ class phrase_data_read_tests
         $test_name = '... but not the values of the sample without the phrase';
         $sample_other = $this->values_by_phrase($sample[json_fields::VALUES], triple_names::EXAMPLE_PV_INSTALLATION, false);
         $t->assert_contains_not($test_name, $val_keys, $this->value_keys($sample_other));
-
-        $test_name = 'the phrase data contains the results if they are requested';
-        $res_vars = $phd->export_json($phr->id(), phrase_data_walks::VALUE, true, $msg);
-        $t->assert_msg($test_name, $msg, $t::TIMEOUT_LIMIT_IMPORT);
-        $t->assert_key_exists($test_name, json_fields::RESULTS, $res_vars);
-        $msg->reset();
-        // a result is reloaded for the export by its own id, because its group id selects all results of the group
-        $test_name = '... and each exported result names its phrases';
-        $res_objs = $res_vars[json_fields::RESULTS] ?? [];
-        $without_words = $this->count_without_field($res_objs, json_fields::WORDS);
-        $t->assert($test_name, $without_words, 0);
+        // negative: the results are only added on request, because they are calculated data
+        $test_name = '... and no results because they are not requested';
+        $t->assert_key_not_exists($test_name, json_fields::RESULTS, $val_vars);
 
         $test_name = 'the received api json is written next to the expected file';
         $actual_name = basename($t->api_actual_path(test_files::PHRASE_DATA_PV_INSTALL));

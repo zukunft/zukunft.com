@@ -412,6 +412,8 @@ F0-/z-/m-2Q+2U+,1,,the centre times 2.5 for the 80 percent probability range of 
 F0-/z-/n-0U+2P+,1,,"the loss is stated as a negative share, so the bigger share is the numerically lower bound"
 F0-/z-/n-2Q+2U+,1,,"the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent (see the view-validation of solution_prio.json); a range factor names no column of the ranking, so it is an input of the table and no cell of it"
 f2-0U+32+35+V6+,1,,"the published figures span a factor of five, so the middle is a guess"
+f2-es-05+V6+V8+,1,,"the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
+f2-es-8V+V6+V7+,1,,"the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
 f8-ex-0U+0e+1G+32+,1,,"the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"
 f8-ex-0U+1G+32+35+,1,,"the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"
 f8-f3-0U+0e+1G+32+,1,,"the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"

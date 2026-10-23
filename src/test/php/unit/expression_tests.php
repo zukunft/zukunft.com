@@ -375,6 +375,10 @@ class expression_tests
         $test_name = 'a triple used twice is listed once with its negative phrase id';
         $trp_ref = chars::TRIPLE_START . triple_names::PI_ID . chars::TRIPLE_END;
         $t->assert($test_name, $exp_no_calc->phr_id_lst($trp_ref . $trp_ref)->lst, [-triple_names::PI_ID]);
+        // a triple left of a word e.g. the result triple of "delivered electricity" = "direct use" + ...
+        $test_name = 'a triple left of a word is listed after the word';
+        $wrd_ref = chars::WORD_START . words::PCT_ID . chars::WORD_END;
+        $t->assert($test_name, $exp_no_calc->phr_id_lst($trp_ref . $wrd_ref)->lst, [words::PCT_ID, -triple_names::PI_ID]);
 
         $t->subheader($ts . 'debug id');
 
