@@ -2,18 +2,15 @@
 
 ## calculation editor
 
-for the view 'Calculator editor' (id 196) the component should be the 'calculation editor' components so that 
-e.g. src/test/resources/web/html/use_cases/calculator_editor.html is returned
-if the given id is -2780 (name 'example PV installation')
+### update json message
 
-### lists of a calculator
+if in the 'Calculator editor' save is pressed a json should be created and send to the api endpoint /api/updateDrop, which needs to be created
+The json should be similar to the import json that is described in docs/llm/json_structure.md, but the 'api_json' differs in some ways
+1. it uses the api header including the execution time report if needed
+2. it contains the database id which is used as the prime key if given
+3. also for types the database id is preferred used  
 
-on the left side the calculator editor show 5 lists (input, assumption, column, rowgroup and detail). 
-Similar to the 'Assumptions' of the calculator itself make these list extendable and shrink them on startup
-
-### title
-
-the calculation editor has the title 'Calculator editor' which is bold at the moment but the font size is similar to the rest. Increase the font size.
+create some tests that adds / updates / compares message files in src/test/resources/api/calculator_editor
 
 ### test case
 
@@ -48,7 +45,7 @@ or using a predefined api session login that uses e.g. a public / private key pa
 
 ## other editors
 
-be ware (or better create a solution concept) for the case that in production the id of system triples used for testing will differ from the id in the development databases
+be aware (or better create a solution concept) for the case that in production the id of system triples used for testing will differ from the id in the development databases
 
 ### table editor
 

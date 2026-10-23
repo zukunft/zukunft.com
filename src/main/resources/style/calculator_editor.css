@@ -162,7 +162,7 @@ button, input, select, textarea {
 }
 
 .brand b {
-    font-size: 15px;
+    font-size: 20px;
     font-weight: 600;
     letter-spacing: .01em;
 }
@@ -405,6 +405,26 @@ a.btn {
 .sect-head .kw {
     color: var(--muted);
     font-size: 11px;
+}
+
+/* a list of the page structure opens and closes by its heading, with an arrow as the marker */
+summary.sect-head {
+    cursor: pointer;
+    list-style: none;
+}
+
+summary.sect-head::-webkit-details-marker {
+    display: none;
+}
+
+summary.sect-head::before {
+    content: "▸";
+    color: var(--muted);
+    font-size: 11px;
+}
+
+details.sect[open] > summary.sect-head::before {
+    content: "▾";
 }
 
 .empty {

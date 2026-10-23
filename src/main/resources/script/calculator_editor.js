@@ -202,6 +202,10 @@ let MANAGED = null;      /* the triple and value indexes that the editor owns */
 let state = null;        /* the editable model */
 let selected = "page";
 let activeTab = "page";
+/* the lists of the page structure that the user has opened; on startup only the first list, the inputs, is open */
+const openLists = new Set([LISTS[0].key]);
+/* the collapsed blocks of the page preview that the user has opened e.g. the assumptions; closed on startup */
+const openPreview = new Set();
 const history = {undo: [], redo: [], lastKey: "", lastTime: 0};
 
 function buildIndex(doc) {
@@ -1460,11 +1464,13 @@ function renderTree() {
         const items = g.items.map(function (n, i) {
             return nodeRow(n, null, L.key, g.items, i);
         }).join("");
-        html += '<div class="sect" data-list="' + L.key + '">' +
-            '<div class="sect-head"><h3>' + esc(L.title) + '</h3><span class="kw mono">' + esc(L.kw) + "</span></div>" +
+        /* like the assumptions of the calculator page, each list opens and closes by its heading */
+        const open = openLists.has(L.key) ? " open" : "";
+        html += '<details class="sect" data-list="' + L.key + '"' + open + '>' +
+            '<summary class="sect-head"><h3>' + esc(L.title) + '</h3><span class="chip">' + g.items.length + '</span><span class="kw mono">' + esc(L.kw) + "</span></summary>" +
             '<div class="list" data-list="' + L.key + '">' + (items || '<div class="empty">Nothing in this list yet.</div>') + "</div>" +
             '<div class="addrow" style="padding-left:6px"><button class="addlink" data-act="addTop" data-list="' + L.key + '">' + esc(ADD_TEXT[L.key]) + "</button></div>" +
-            "</div>";
+            "</details>";
     });
     host.innerHTML = html;
 }
@@ -1876,6 +1882,13 @@ function cellHtml(required, signed) {
     return result;
 }
 
+/* the start of a collapsed block of the preview, open only if the user has opened it, because the preview is drawn again after each change */
+function previewDetailsStart(key) {
+    const open = openPreview.has(key) ? " open" : "";
+    const result = '<details data-preview="' + key + '"' + open + ">";
+    return result;
+}
+
 function previewPage() {
     const base = state.base;
     const cols = state.lists.column.items.filter(function (c) {
@@ -1893,7 +1906,7 @@ function previewPage() {
         return previewField(n, true);
     }).join("") || '<div class="empty-list">No inputs.</div>';
     html += '<button type="button" class="btn-save" tabindex="-1">Save</button></div>';
-    html += "<details open><summary>" + esc(groupLabel("assumption")) + "</summary>";
+    html += previewDetailsStart("assumption") + "<summary>" + esc(groupLabel("assumption")) + "</summary>";
     const assumptions = state.lists.assumption.items.filter(function (n) {
         return n.to;
     });
@@ -1939,7 +1952,7 @@ function previewPage() {
     const details = state.lists.detail.items.filter(function (d) {
         return d.to;
     });
-    html += "<details open><summary>" + esc(groupLabel("detail") || "Details") + '</summary><div class="more">';
+    html += previewDetailsStart("detail") + "<summary>" + esc(groupLabel("detail") || "Details") + '</summary><div class="more">';
     details.forEach(function (d) {
         html += detailTable(d);
     });
@@ -2223,6 +2236,7 @@ function focusPhrase(id) {
 
 function addTop(listKey) {
     const n = newNode(listKey);
+    openLists.add(listKey);
     mutate(function () {
         state.lists[listKey].items.push(n);
         n.name = uniqueName(conventionalName(n, groupName(listKey)), n);
@@ -2936,6 +2950,11 @@ function select(id) {
     if (selected !== id) {
         selected = id;
         history.lastKey = "";
+        /* an item selected e.g. in the page preview is shown in its list */
+        const hit = findNode(id);
+        if (hit) {
+            openLists.add(hit.listKey);
+        }
         renderTree();
         renderInspector();
         if (activeTab === "page") {
@@ -3078,6 +3097,19 @@ document.addEventListener("click", onClick);
 document.addEventListener("input", onInput);
 document.addEventListener("change", onChange);
 document.addEventListener("keydown", onKey);
+/* the toggle event does not bubble, so it is caught on the way down to remember the open lists and preview blocks */
+document.addEventListener("toggle", function (e) {
+    const el = e.target;
+    const list = el.matches && el.matches("details.sect") ? el.dataset.list : "";
+    const block = el.dataset ? el.dataset.preview : "";
+    const set = list ? openLists : openPreview;
+    const key = list || block;
+    if (key && el.open) {
+        set.add(key);
+    } else if (key) {
+        set.delete(key);
+    }
+}, true);
 const treeEl = document.getElementById("tree");
 treeEl.addEventListener("dragstart", onDragStart);
 treeEl.addEventListener("dragover", onDragOver);

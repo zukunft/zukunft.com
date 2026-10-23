@@ -3021,10 +3021,14 @@ class frontend
         // a phrase view (e.g. the calculator) shows a word or a triple, and the frontend objects
         // of a view are typed (see system_form::title_phrase), so the phrase id of the url decides
         // the object: a negative phrase id is a triple, a positive one a word; a triple view
-        // called with the phrase id e.g. by phrase::name_link gets the triple of the phrase id
+        // called with the phrase id e.g. by phrase::name_link gets the triple of the phrase id,
+        // and a word view called with a negative phrase id e.g. the calculator editor of a triple
+        // gets the triple too, because a word never has a negative id
         $url_id = $url_array[url_var::ID] ?? null;
+        $is_triple_id = ($url_id !== null and (int)$url_id < 0);
+        $is_phrase_dbo = ($dbo instanceof triple_ui or $dbo instanceof word_ui);
         if ($url_id !== null
-            and ($dbo instanceof phrase_ui or ($dbo instanceof triple_ui and (int)$url_id < 0))) {
+            and ($dbo instanceof phrase_ui or ($is_phrase_dbo and $is_triple_id))) {
             $dbo = $this->phrase_id_to_dbo_ui((int)$url_id);
         }
         return $dbo;

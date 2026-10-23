@@ -1,5 +1,12 @@
 # pending prio 2
 
+## test of the page object of a phrase view
+
+frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2780;
+it is private and only reached by url_to_html with the view in the cache, so add a unit test
+via url_to_html for a word view and a triple view, each called with a word and with a triple id
+
 ## start page global problem
 
 add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
