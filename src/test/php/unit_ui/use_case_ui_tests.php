@@ -987,7 +987,7 @@ class use_case_ui_tests
         // negative: an entered number with a trailing zero is shown in the format of the shown number
         $test_name = '... in the same format as the shown number';
         $zero_form = $no_unit_form;
-        $zero_form[url_var::NUMERIC_VALUE . $changed] = values::SAMPLE_FLOAT . '0';
+        $zero_form[url_var::NUMERIC_VALUE . $changed] = values::SAMPLE_FLOAT_TRAILING_ZERO_FORM;
         $zero_txt = $lib->msg_var_text([$ui->calculator_saved_text($zero_form, $changed)]);
         $t->assert($test_name, $zero_txt, $no_unit_expected);
         // negative: the label is free text of the form, so a placeholder in it is never filled

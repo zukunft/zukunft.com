@@ -525,29 +525,35 @@ class system_view_ui_tests
         $empty_msg = new user_message();
         $empty_msg->add_info('');
         $t->assert($test_name, $empty_msg->get_last_info(), '');
+        $test_name = 'an html info is the last html info';
         // e.g. the confirmation of a calculator save, whose new number links to the value
         $info_html = $html_base->ref($html_base->url_back(views::VALUE, values::PI_MATH_ID), $saved_txt);
-        $test_name = 'an html info is the last html info';
-        $link_msg = new user_message();
-        $link_msg->add_info_html($info_html);
-        $t->assert($test_name, $link_msg->get_last_info_html(), $info_html);
+        $msg->reset();
+        $msg->add_info_html($info_html);
+        $t->assert($test_name, $msg->get_last_info_html(), $info_html);
+        $msg->reset();
         // negative: an empty html is no info, so it never adds an empty success bar
         $test_name = 'an empty html is not added as info';
-        $empty_msg->add_info_html('');
-        $t->assert($test_name, $empty_msg->get_last_info_html(), '');
+        $msg->add_info_html('');
+        $t->assert($test_name, $msg->get_last_info_html(), '');
+        $msg->reset();
         $test_name = 'the html info of a done action is shown as html in green';
-        $link_html = $ui->user_msg_html($link_msg);
+        $msg->add_info_html($info_html);
+        $link_html = $ui->user_msg_html($msg);
         $t->assert_text_contains($test_name, $link_html, $info_html);
         $t->assert_text_contains($test_name, $link_html, html_base::CLASS_NOTIFICATION_SUCCESS);
+        $msg->reset();
         // negative: a plain info is text, so a tag in it is escaped and never shown as html
         $test_name = '... but a plain info is shown escaped';
-        $plain_msg = new user_message();
-        $plain_msg->add_info($info_html);
-        $t->assert_text_not_contains($test_name, $ui->user_msg_html($plain_msg), $info_html);
+        $msg->add_info($info_html);
+        $t->assert_text_not_contains($test_name, $ui->user_msg_html($msg), $info_html);
+        $msg->reset();
         // negative: an issue of the same request is shown instead of the confirmation
         $test_name = '... and an issue of the request is shown instead of the html info';
-        $link_msg->add_id(msg_id::CONFIG_NOT_LOADED);
-        $t->assert_text_not_contains($test_name, $ui->user_msg_html($link_msg), $info_html);
+        $msg->add_info_html($info_html);
+        $msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        $t->assert_text_not_contains($test_name, $ui->user_msg_html($msg), $info_html);
+        $msg->reset();
         // e.g. the refused save of a setting of the pod, which the backend reports without vars
         $test_name = 'a message without vars of a write is kept when merged into the message of the request';
         $refused_msg = new user_message();

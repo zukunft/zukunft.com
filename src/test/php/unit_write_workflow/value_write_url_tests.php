@@ -105,6 +105,10 @@ class value_write_url_tests extends value_url_tests
         global $mtr;
         $html = new html_base();
         $t_wrd = new test_words($t);
+        // the frontend message of the save and the backend message of the check load
+        $msg_ui = new user_message_ui();
+        $msg_ui->usr = $this->usr;
+        $msg = new user_message($t->usr1);
         $t->subheader($this->ts . 'calculator save');
         $one = $t_wrd->word_id_or_fixed(word_names::TEST_ADD, word_names::TEST_ADD_ID);
         $two = $t_wrd->word_id_or_fixed(word_names::TEST_ADD_TO, word_names::TEST_ADD_TO_ID);
@@ -120,30 +124,29 @@ class value_write_url_tests extends value_url_tests
             $shown_key => $html->number_value(values::SAMPLE_FLOAT),
             url_var::NAME . $field => word_names::TEST_ADD,
         ];
-        $msg_ui = new user_message_ui();
-        $msg_ui->usr = $this->usr;
-        $this->ui->url_to_action($form, $this->req->usr_backend, $msg_ui, $this->req->dto, true);
+
         $test_name = 'the calculator save confirms the saved number with the label';
+        $this->ui->url_to_action($form, $this->req->usr_backend, $msg_ui, $this->req->dto, true);
         $info = $msg_ui->get_last_info_html();
         $t->assert_text_contains($test_name, $info, word_names::TEST_ADD);
         $test_name = '... and the new number as a link';
         $t->assert_text_contains($test_name, $info, '>' . values::SAMPLE_INT . '</' . html_base::A . '>');
+        $msg_ui->reset();
         $test_name = '... and has written the number to the value';
-        $msg = new user_message(); // a buffer for the check load, asserted by the number below
         $val = new value($t->usr1);
         $val->load_by_id($val_id, $msg);
         // the number is compared as text, because assert takes no float
         $t->assert($test_name, (string)$val->number(), (string)values::SAMPLE_INT);
+        $msg->reset();
 
         // negative: the same number again is no change, so nothing is saved or confirmed
         $test_name = 'a save of the shown number saves nothing';
         $form[$shown_key] = (string)values::SAMPLE_INT;
-        $same_msg = new user_message_ui();
-        $same_msg->usr = $this->usr;
-        $this->ui->url_to_action($form, $this->req->usr_backend, $same_msg, $this->req->dto, true);
-        $t->assert($test_name, $same_msg->get_last_info(), $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
+        $this->ui->url_to_action($form, $this->req->usr_backend, $msg_ui, $this->req->dto, true);
+        $t->assert($test_name, $msg_ui->get_last_info(), $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
         $test_name = '... and confirms no saved number';
-        $t->assert($test_name, $same_msg->get_last_info_html(), '');
+        $t->assert($test_name, $msg_ui->get_last_info_html(), '');
+        $msg_ui->reset();
     }
 
     /**
