@@ -54,6 +54,8 @@ class user_message extends Message
     private array $txt;
     // array of informational messages shown even when is_ok() is true
     private array $info;
+    // array of informational messages as safe html e.g. with a link to the saved value
+    private array $info_html;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
 
@@ -72,6 +74,7 @@ class user_message extends Message
         parent::__construct();
         $this->txt = [];
         $this->info = [];
+        $this->info_html = [];
         if ($txt !== '') {
             $this->txt[] = $txt;
             $this->set_not_ok();
@@ -93,6 +96,7 @@ class user_message extends Message
         parent::reset();
         $this->txt = [];
         $this->info = [];
+        $this->info_html = [];
         $this->db_row_id = 0;
     }
 
@@ -288,6 +292,24 @@ class user_message extends Message
     }
 
     /**
+     * an info with a link e.g. to the saved value, which is shown as it is
+     *
+     * @param string $html the info as html that the caller guarantees to be safe: every text in it escaped
+     * @return void
+     */
+    function add_info_html(string $html): void
+    {
+        if ($html !== '' and !in_array($html, $this->info_html)) {
+            $this->info_html[] = $html;
+        }
+    }
+
+    function get_last_info_html(): string
+    {
+        return !empty($this->info_html) ? end($this->info_html) : '';
+    }
+
+    /**
      * @param msg_id $search the message id to look for
      * @return bool true if the given message id is recorded in msg_var_lst or msg_id_lst
      */
@@ -309,13 +331,13 @@ class user_message extends Message
     /**
      * @return bool true if there is any message worth showing to the user:
      *              an error or warning (!is_ok()), a translatable message with variables
-     *              (msg_var_lst entry added with $ok = true), or a plain info text
+     *              (msg_var_lst entry added with $ok = true), or a plain or html info text
      */
     function has_info(): bool
     {
         $has_error = !$this->is_ok();
         $has_var_msg = !empty($this->msg_var_lst);
-        $has_info_txt = !empty($this->info);
+        $has_info_txt = (!empty($this->info) or !empty($this->info_html));
         return $has_error || $has_var_msg || $has_info_txt;
     }
 

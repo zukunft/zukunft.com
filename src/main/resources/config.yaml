@@ -317,6 +317,10 @@ zukunft.com:
         level:
           sys-conf-value: 3
           tooltip-comment: "to define what should be shown: 4: all, 3: timeouts, 2: warnings or 1: only errors"
+        tolerance:
+          percent:
+            sys-conf-value: 1
+            tooltip-comment: "the max share of objects that an api answer may have more than its expected minimal sample e.g. 1 for twice the objects of api/phrase_data/phrase_data_pv_install.json, because other use cases add values to the shared triples of the sample e.g. the PV yield of each postal code"
       pod:
         url: "zukunft.com"
         tooltip-comment: "the url name of this pod"

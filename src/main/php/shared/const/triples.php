@@ -267,6 +267,12 @@ class triples
         self::FIELD_SELECTION_PARENT => self::FIELD_SELECTION_PARENT_CODE_ID,
         self::FIELD_PAGE => self::FIELD_PAGE_CODE_ID,
     ];
+    // the field properties whose number is a value of the field phrase and the keyword e.g. (lifetime, field step) = 1
+    const array FIELD_VALUE_PROPERTIES = [
+        self::FIELD_LIMIT_UP => self::FIELD_LIMIT_UP_CODE_ID,
+        self::FIELD_LIMIT_DOWN => self::FIELD_LIMIT_DOWN_CODE_ID,
+        self::FIELD_STEP => self::FIELD_STEP_CODE_ID,
+    ];
     // the types of a process catch field by their code id
     const array FIELD_TYPES = [
         self::FIELD_LOCATION_SELECTOR => self::FIELD_LOCATION_SELECTOR_CODE_ID,
@@ -375,6 +381,14 @@ class triples
         self::CALCULATOR_HINT => self::CALCULATOR_HINT_CODE_ID,
         self::CALCULATOR_HIGHLIGHT => self::CALCULATOR_HIGHLIGHT_CODE_ID,
         self::CALCULATOR_SIGNED => self::CALCULATOR_SIGNED_CODE_ID,
+    ];
+    // the keywords of the calculator and of the input fields by their code id, which the data of a
+    // phrase (see phrase_data) never walks through, because every page phrase links to them
+    const array CALCULATOR_KEYWORDS = [
+        ...triples::CALCULATOR_LISTS,
+        ...triples::CALCULATOR_PROPERTIES,
+        ...triples::FIELD_PROPERTIES,
+        ...triples::FIELD_TYPES,
     ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';

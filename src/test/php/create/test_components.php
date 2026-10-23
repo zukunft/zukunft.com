@@ -371,6 +371,14 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component the calculator editor, which the script builds from the phrase data of the page phrase
+     */
+    function component_calculator_editor(): component
+    {
+        return $this->component_use_case(components::TEST_CALCULATOR_EDITOR_NAME, component_types::CALCULATOR_EDITOR);
+    }
+
+    /**
      * @param string $name the name of the component, which some use case types show
      * @param string $type the code id of the component type
      * @return component a component of a use case page with the name and the type set

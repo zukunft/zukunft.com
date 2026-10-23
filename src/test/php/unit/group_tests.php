@@ -283,6 +283,15 @@ class group_tests
         $t->assert($test_name, $grp->name_given(), '');
         $t->assert($test_name, $grp->name(), triple_names::E);
 
+        $t->subheader($ts . 'description');
+        $test_name = 'a group with a description has a description';
+        $grp = $t_grp->group_filled();
+        $t->assert_true($test_name, $grp->has_description());
+        // negative: a group without a description has none
+        $test_name = '... but a group without a description has none';
+        $grp = $t_grp->group();
+        $t->assert_false($test_name, $grp->has_description());
+
         $t->subheader($ts . 'debug id');
 
         // the debug id shows the name of the group

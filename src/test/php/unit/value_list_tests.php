@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -96,6 +97,24 @@ class value_list_tests
         // negative: an empty list has no group
         $test_name = 'an empty value list has no group';
         $t->assert($test_name, new value_list($t->usr1)->grp_ids()->count(), 0);
+        // the import sets the description and the given name on the group of a value, so the
+        // group that set_grp_ids builds from the phrases must keep them for the save
+        $test_name = 'setting the group ids keeps the description of the group';
+        $desc_lst = new value_list($t->usr1);
+        $desc_lst->add($t_val->value_with_description());
+        $desc_lst->set_grp_ids();
+        $desc_txt = $desc_lst->lst()[0]->get_description() ?? '';
+        $t->assert($test_name, $desc_txt, groups::TN_READ_COM);
+        $test_name = '... and the given name of the group';
+        $name_given = $desc_lst->lst()[0]->grp()->name_given();
+        $t->assert($test_name, $name_given, groups::TN_READ);
+        // negative: a value without a description and name gets none from the new group
+        $test_name = '... but adds no description to a group without one';
+        $plain_lst = new value_list($t->usr1);
+        $plain_lst->add($t_val->value_pi());
+        $plain_lst->set_grp_ids();
+        $plain_desc = $plain_lst->lst()[0]->get_description() ?? '';
+        $t->assert($test_name, $plain_desc, '');
 
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list($msg)->filter_by_time($msg, $t_phr->phrase_list());

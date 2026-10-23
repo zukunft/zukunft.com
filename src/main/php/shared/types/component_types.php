@@ -643,6 +643,10 @@ class component_types
     const int CALCULATOR_INPUT_ID = 288;
     const string CALCULATION_RESULT = "calculation_result";
     const int CALCULATION_RESULT_ID = 289;
+    // the calculator editor of the page phrase: the script builds the editor from the phrase data
+    // (docs/llm/new_view_sample_pv_balance.md section 6)
+    const string CALCULATOR_EDITOR = "calculator_editor";
+    const int CALCULATOR_EDITOR_ID = 290;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -1249,6 +1253,7 @@ class component_types
         [self::CALCULATOR_TITLE, self::CALCULATOR_TITLE_ID],
         [self::CALCULATOR_INPUT, self::CALCULATOR_INPUT_ID],
         [self::CALCULATION_RESULT, self::CALCULATION_RESULT_ID],
+        [self::CALCULATOR_EDITOR, self::CALCULATOR_EDITOR_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

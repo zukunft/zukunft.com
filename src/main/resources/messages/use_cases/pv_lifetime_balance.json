@@ -155,6 +155,14 @@
       ]
     },
     {
+      "name": "lithium-ion cell",
+      "description": "the battery cells alone, without the housing, the inverter and the control of a home storage system"
+    },
+    {
+      "name": "home storage system",
+      "description": "a complete stationary battery of a house with the cells, the housing, the inverter and the control"
+    },
+    {
       "name": "charge"
     },
     {
@@ -233,10 +241,16 @@
       "name": "2018"
     },
     {
+      "name": "2019"
+    },
+    {
       "name": "2022"
     },
     {
       "name": "2023"
+    },
+    {
+      "name": "2025"
     },
     {
       "name": "assumed"
@@ -2652,6 +2666,30 @@
       ],
       "number": "0.5",
       "description": "the published figures span a factor of five, so the middle is a guess"
+    },
+    {
+      "words": [
+        "battery",
+        "battery production emission",
+        "kg per kWh",
+        "lithium-ion cell",
+        "2025"
+      ],
+      "number": "92",
+      "source": "Lithium-ion cell LCA comparison 2025",
+      "description": "the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
+    },
+    {
+      "words": [
+        "battery",
+        "battery production emission",
+        "kg per kWh",
+        "home storage system",
+        "2019"
+      ],
+      "number": "212",
+      "source": "HTW Berlin solar storage climate 2019",
+      "description": "the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
     },
     {
       "words": [

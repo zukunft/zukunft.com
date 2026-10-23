@@ -172,6 +172,17 @@ class value_tests
         $val_imported->import_mapper($unnamed_ex_json, $msg);
         $t->assert($test_name, $val_imported->grp()->name_given(), '');
         $msg->reset();
+        $test_name = 'the export json of a value has the description of its group';
+        $described_ex_json = $t_val->value_with_description()->export_json($msg, [], false);
+        $t->assert($test_name, $described_ex_json[json_fields::DESCRIPTION] ?? '', groups::TN_READ_COM);
+        $test_name = '... which the import takes as the description of the group';
+        $val_imported = new value($t->usr1);
+        $val_imported->import_mapper($described_ex_json, $msg);
+        $t->assert($test_name, $val_imported->get_description() ?? '', groups::TN_READ_COM);
+        $msg->reset();
+        // negative: a value without a description exports no empty description field
+        $test_name = 'the export json of a value without a description has no description';
+        $t->assert_key_not_exists($test_name, json_fields::DESCRIPTION, $unnamed_ex_json);
         $test_name = 'fill takes over the given group name';
         $val_filled = $t_val->value($msg)->clone_reset();
         $val_filled->fill($t_val->value($msg), $t->usr1);

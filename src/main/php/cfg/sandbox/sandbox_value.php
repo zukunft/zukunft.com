@@ -1696,9 +1696,10 @@ class sandbox_value extends sandbox_multi
     {
         $vars = parent::export_json($msg, $exp_typ, $do_load);
 
-        // reload the value parameters
+        // reload the value parameters by the own id, which is the group id of a value, but not of a
+        // result: a result is one of the results of its group and has its own key and table
         if ($do_load) {
-            $this->load_by_grp($this->grp(), $msg);
+            $this->load_by_id($this->id(), $msg);
             $this->load_phrases($msg);
         }
 

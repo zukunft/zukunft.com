@@ -76,6 +76,7 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
@@ -133,6 +134,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_ui;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -203,7 +205,9 @@ include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once paths::EXPORT . 'phrase_data.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -334,6 +338,7 @@ include_once test_paths::UNIT_READ . 'share_read_tests.php';
 include_once test_paths::UNIT_READ . 'protection_read_tests.php';
 include_once test_paths::UNIT_READ . 'language_read_tests.php';
 include_once test_paths::UNIT_READ . 'export_read_tests.php';
+include_once test_paths::UNIT_READ . 'phrase_data_read_tests.php';
 include_once test_paths::UNIT_READ . 'type_lists_ui_tests.php';
 
 // load the testing functions that save data to the database
@@ -1124,8 +1129,27 @@ class test_base
     }
 
     /**
-     * check if the test for results contains at least all expected results
-     * or in other words if all needles can be found in the haystack
+     * check that the actual number is not bigger than the given max e.g. the size of an api answer
+     *
+     * @param string $msg (unique) description of the test
+     * @param int $max the biggest accepted number
+     * @param int $actual the actual number
+     * @param float $exe_max_time the expected max time to create the result
+     * @return bool true if the actual number is not bigger than the max
+     */
+    function assert_max(string $msg, int $max, int $actual, float $exe_max_time = self::TIMEOUT_LIMIT): bool
+    {
+        // a number within the limit is compared with itself, a bigger one with the limit, so that
+        // a failure shows the actual number next to the max
+        $target = $actual;
+        if ($actual > $max) {
+            $target = $max;
+        }
+        return $this->assert($msg, (string)$actual, (string)$target, $exe_max_time);
+    }
+
+    /**
+     * check if the actual number is bigger than the given min
      *
      * @param string $msg (unique) description of the test
      * @param int $min the minimal expected number
@@ -1791,7 +1815,23 @@ class test_base
     {
         $msg_ui = new user_message_ui();
         $actual = $this->link_to_pod($this->html_page($body, $msg_ui, THIS_URL, languages::DEFAULT, $title), THIS_URL);
+        $actual = $this->fix_volatile_phrase_data_time($actual);
         return $this->assert_html_page($test_name, $actual, $file_path, $exe_max_time);
+    }
+
+    /**
+     * the phrase data that a calculator editor page embeds as its seed carries the time of its
+     * creation, so the time is replaced by the fixed test time before the page is compared;
+     * only for the snapshot, the real page keeps the time of the phrase data
+     *
+     * @param string $html the rendered html page
+     * @return string the html page with the fixed test time in the phrase data seed
+     */
+    function fix_volatile_phrase_data_time(string $html): string
+    {
+        $fixed = new DateTime(test_const::DUMMY_DATETIME);
+        $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
+        return preg_replace($pattern, '${1}' . $fixed->format(phrase_data::TIME_FORMAT) . '${2}', $html, 1);
     }
 
     // the html attributes of a snapshot page that carry a root relative url to the pod
@@ -6447,6 +6487,37 @@ class test_base
         } elseif (file_put_contents($filepath, $result) === false) {
             log_err('Cannot write target file ' . $filepath);
         }
+    }
+
+    /**
+     * write the json that an api test has received next to its expected file, if the expected
+     * file is listed in test_files::WRITE_API_ACTUAL_FILES, to compare the two e.g. with a diff tool
+     *
+     * @param string $expected_path the path of the expected json file e.g. ../phrase_data_pv_install.json
+     * @param array|null $actual the json that the api test has received; null writes nothing
+     * @return void
+     */
+    function write_api_actual_file(string $expected_path, ?array $actual): void
+    {
+        if (in_array($expected_path, test_files::WRITE_API_ACTUAL_FILES) and $actual !== null) {
+            $actual_path = $this->api_actual_path($expected_path);
+            $this->update_path_file($actual_path, library::json_for_humans($actual) . "\n");
+        }
+    }
+
+    /**
+     * @param string $expected_path the path of the expected file e.g. ../phrase_data_pv_install.json
+     * @return string the path of the actual file with the same extension e.g. ../phrase_data_pv_install_actual.json
+     */
+    function api_actual_path(string $expected_path): string
+    {
+        $dir = pathinfo($expected_path, PATHINFO_DIRNAME);
+        $result = $dir . DIRECTORY_SEPARATOR . pathinfo($expected_path, PATHINFO_FILENAME) . test_files::API_ACTUAL_SUFFIX;
+        $ext = pathinfo($expected_path, PATHINFO_EXTENSION);
+        if ($ext != '') {
+            $result .= '.' . $ext;
+        }
+        return $result;
     }
 
     /**

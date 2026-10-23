@@ -46,6 +46,8 @@ include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_data.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
@@ -68,6 +70,7 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'components.php';
+include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
@@ -83,6 +86,8 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
@@ -95,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -128,6 +134,9 @@ class system_page extends component
     ];
     // the tab that a process catch page shows if the url selects none
     const int PROCESS_CATCH_TAB_DEFAULT = 1;
+    // the html ids that the calculator editor script reads (script/calculator_editor.js)
+    const string CALC_EDITOR_HOST_ID = 'calcEditor';
+    const string CALC_EDITOR_SEED_ID = 'seed';
 
     /**
      * HTML for a page title
@@ -1283,6 +1292,51 @@ class system_page extends component
             $button = $html->button_bs($html->esc($mtr->txt(msg_id::CALCULATOR_SAVE)),
                 styles::PROCESS_CATCH_BUTTON_REFRESH, '', url_var::POST_SUBMIT);
             $result = $html->form_post($form_name, $page_vars . $button);
+        }
+        return $result;
+    }
+
+    /**
+     * the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
+     * the script builds the editor from the phrase data of the phrase, which the page embeds as
+     * the seed, so that the editor starts without an api call
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function calculator_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            $result = $html->link_style(files::CALCULATOR_EDITOR_STYLE)
+                . $html->div('', styles::CALC_EDITOR, self::CALC_EDITOR_HOST_ID)
+                . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase of the page e.g. example PV installation
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache; offline e.g. in a unit test no api is called
+     * @return array the phrase data of the phrase as the phraseData api sends it, empty if offline
+     */
+    private function calculator_editor_seed(phrase $phr, user_message $msg, ?data_object $cfg): array
+    {
+        $result = [];
+        if ($cfg != null and $cfg->online) {
+            $phd = new phrase_data();
+            $result = $phd->load_from_walk($phr, $msg);
         }
         return $result;
     }

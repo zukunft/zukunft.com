@@ -178,6 +178,8 @@ class styles
     const string CALC_MORE = 'more';
     const string CALC_NOTES = 'notes';
     const string CALC_SOURCES = 'src';
+    // the host of the calculator editor, which calculator_editor.css formats
+    const string CALC_EDITOR = 'editor';
 
     // the not critical entries of an admin dashboard column, which open by a click on the +/- marker
     const string ADMIN_MORE = 'admin-more';

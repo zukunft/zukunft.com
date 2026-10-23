@@ -84,8 +84,11 @@ class files
     const string STYLE_BS = paths::EXT_LIB_BS_CSS . 'bootstrap' . self::CSS;
     const string STYLE_FONT = paths::EXT_LIB_FONT_CSS . 'all' . self::CSS;
     const string LOGO = paths::IMAGE_RES . 'ZUKUNFT_logo' . self::SVG;
-    // the only script of the html frontend: the calculator pages repeat their calculation in the
-    // browser if config.yaml allows javascript for the calculator (see docs/llm/frontend.md)
+    // the only scripts of the html frontend: the calculator pages repeat their calculation in the
+    // browser and the calculator editor builds the editor from the phrase data, if config.yaml
+    // allows javascript for the calculator (see docs/llm/frontend.md)
     const string CALCULATOR_SCRIPT = self::SCRIPT_PATH . 'calculator' . self::JS;
+    const string CALCULATOR_EDITOR_SCRIPT = self::SCRIPT_PATH . 'calculator_editor' . self::JS;
+    const string CALCULATOR_EDITOR_STYLE = self::STYLE_PATH . 'calculator_editor' . self::CSS;
 
 }

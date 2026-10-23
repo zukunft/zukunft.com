@@ -32,6 +32,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
@@ -63,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -71,6 +73,7 @@ use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
+use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
@@ -80,6 +83,7 @@ use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use DateTime;
 
 class use_case_ui_tests
 {
@@ -474,6 +478,26 @@ class use_case_ui_tests
         $t->assert($test_name, $this->render($t_cmp->component_calculator_input(), $wrd, $msk, $dto, $msg), '');
         $test_name = 'the calculation result is a known component type';
         $t->assert($test_name, $this->render($t_cmp->component_calculation_result(), $wrd, $msk, $dto, $msg), '');
+        // the editor is built by its script from the phrase data, which an offline page embeds empty
+        $test_name = 'the calculator editor of a phrase loads the editor script';
+        $editor_html = $this->render($t_cmp->component_calculator_editor(), $wrd, $msk, $dto, $msg);
+        $t->assert_text_contains($test_name, $editor_html, $html->script_src(files::CALCULATOR_EDITOR_SCRIPT));
+        $test_name = '... with the phrase data as the seed of the script';
+        $t->assert_text_contains($test_name, $editor_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, []));
+        // negative: a component without a page phrase e.g. in a preview has no editor to show
+        $test_name = '... but nothing for a component without a phrase';
+        $t->assert($test_name, $this->render($t_cmp->component_calculator_editor(), new word_ui(), $msk, $dto, $msg), '');
+        // the seed carries the time of the phrase data, which the snapshot replaces by the fixed test time
+        $test_name = 'the snapshot replaces the time of the phrase data seed by the test time';
+        $later = (new DateTime(test_const::DUMMY_DATETIME_LATER))->format(phrase_data::TIME_FORMAT);
+        $fixed = (new DateTime(test_const::DUMMY_DATETIME))->format(phrase_data::TIME_FORMAT);
+        $seed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $later]);
+        $fixed_html = $html->script_data(system_page::CALC_EDITOR_SEED_ID, [json_fields::TIME => $fixed]);
+        $t->assert($test_name, $t->fix_volatile_phrase_data_time($seed_html), $fixed_html);
+        // negative: a time outside the seed is a real part of the page and stays
+        $test_name = '... but not a time outside the seed';
+        $other_html = $html->script_data(ui_list::CALC_DATA_ID, [json_fields::TIME => $later]);
+        $t->assert($test_name, $t->fix_volatile_phrase_data_time($other_html), $other_html);
 
         $t->subheader($ts . 'calculator reader');
         // the page phrase Zurich (city) has no own calculator triples, so it gets the calculator
@@ -561,7 +585,7 @@ class use_case_ui_tests
         $inh_id = $dto_in->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
         $inh_name = url_var::NUMERIC_VALUE . $inh_id;
         // the save writes a changed number to the value that the field shows, so the field sends
-        // the group id and the shown number of the value
+        // the group id and the shown number of the value and the label to name the saved number
         $inh_val_id = (string)$dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->id();
         $inh_shown = $html->number_value(values::CITY_ZH_INHABITANTS_2019);
         $test_name = 'a number field shows the label, the number, the limit, the step and the hint of the input';
@@ -569,7 +593,8 @@ class use_case_ui_tests
             $html->label(triple_names::CALC_INHABITANTS_LABEL_COM, $inh_name)
             . $html->div($html->input_number($inh_name, values::CITY_ZH_INHABITANTS_2019, 0, null, 100, $form)
                 . $html->form_hidden(url_var::GROUP . $inh_id, $inh_val_id, $form)
-                . $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $inh_id, $inh_shown, $form), styles::INPUT_ROW)
+                . $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $inh_id, $inh_shown, $form)
+                . $html->form_hidden(url_var::NAME . $inh_id, triple_names::CALC_INHABITANTS_LABEL_COM, $form), styles::INPUT_ROW)
             . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::INPUT_HINT),
             styles::INPUT_FIELD));
         // negative: a phrase selector selects a phrase and not a value, so it sends no group id
@@ -943,6 +968,8 @@ class use_case_ui_tests
             url_var::NUMERIC_VALUE . $changed => (string)values::SAMPLE_FLOAT,
             url_var::GROUP . $changed => (string)values::PI_MATH_ID,
             $shown_key . $changed => (string)values::CITY_ZH_INHABITANTS_2019,
+            url_var::NAME . $changed => triple_names::CALC_INHABITANTS_LABEL_COM,
+            url_var::PHRASE . $changed => word_names::METRE,
             // a field that the user has not changed
             url_var::NUMERIC_VALUE . $same => (string)values::CITY_ZH_INHABITANTS_2019,
             url_var::GROUP . $same => (string)values::E_ID,
@@ -956,11 +983,49 @@ class use_case_ui_tests
         $change_count = count($changes);
         $t->assert($test_name, $change_count, 1);
         $test_name = '... to the value of the field';
-        $change_id = $changes[0]->id();
+        $change_id = $changes[$changed]->id();
         $t->assert($test_name, $change_id, values::PI_MATH_ID);
         $test_name = '... with the entered number';
-        $change_number = $changes[0]->number();
+        $change_number = $changes[$changed]->number();
         $t->assert($test_name, $change_number, values::SAMPLE_FLOAT);
+
+        $lib = new library();
+        $html = new html_base();
+        // the new number links to the default view of the saved value
+        $val_url = $html->url_back(views::VALUE, (string)values::PI_MATH_ID, $form);
+        $test_name = 'the confirmation names the label, the new number as a link and the old number with the unit';
+        $saved_txt = $lib->msg_var_text([$ui->calculator_saved_text($form, $changed)]);
+        $expected = triple_names::CALC_INHABITANTS_LABEL_COM . ' changed to '
+            . $html->ref($val_url, values::SAMPLE_FLOAT . ' ' . word_names::METRE)
+            . ' (from ' . values::CITY_ZH_INHABITANTS_2019 . ' ' . word_names::METRE . ')';
+        $t->assert($test_name, $saved_txt, $expected);
+        // negative: a number without unit gets no unit separator
+        $test_name = '... and only the numbers for a field without unit';
+        $no_unit_form = $form;
+        unset($no_unit_form[url_var::PHRASE . $changed]);
+        $no_unit_txt = $lib->msg_var_text([$ui->calculator_saved_text($no_unit_form, $changed)]);
+        $no_unit_expected = triple_names::CALC_INHABITANTS_LABEL_COM . ' changed to '
+            . $html->ref($val_url, (string)values::SAMPLE_FLOAT)
+            . ' (from ' . values::CITY_ZH_INHABITANTS_2019 . ')';
+        $t->assert($test_name, $no_unit_txt, $no_unit_expected);
+        // negative: an entered number with a trailing zero is shown in the format of the shown number
+        $test_name = '... in the same format as the shown number';
+        $zero_form = $no_unit_form;
+        $zero_form[url_var::NUMERIC_VALUE . $changed] = values::SAMPLE_FLOAT_TRAILING_ZERO_FORM;
+        $zero_txt = $lib->msg_var_text([$ui->calculator_saved_text($zero_form, $changed)]);
+        $t->assert($test_name, $zero_txt, $no_unit_expected);
+        // negative: the label is free text of the form, so a placeholder in it is never filled
+        $test_name = '... and keeps a placeholder in the label as text';
+        $marker = msg_id::VAR_START . msg_id::VAR_VALUE . msg_id::VAR_END;
+        $marker_form = array_merge($form, [url_var::NAME . $changed => $marker]);
+        $marker_txt = $lib->msg_var_text([$ui->calculator_saved_text($marker_form, $changed)]);
+        $t->assert_text_contains($test_name, $marker_txt, $marker);
+        // negative: the confirmation is shown as html, so a tag in the label is escaped and never shown as html
+        $test_name = '... and escapes a tag in the label';
+        $tag = '<' . html_base::A . '>';
+        $tag_form = array_merge($form, [url_var::NAME . $changed => $tag]);
+        $tag_txt = $lib->msg_var_text([$ui->calculator_saved_text($tag_form, $changed)]);
+        $t->assert_text_not_contains($test_name, $tag_txt, $tag);
 
         // negative: a text is not a number, so it is reported and not saved
         $test_name = 'an entered text is not saved';

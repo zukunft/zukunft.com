@@ -1,5 +1,12 @@
 # pending prio 2
 
+## test of the page object of a phrase view
+
+frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2780;
+it is private and only reached by url_to_html with the view in the cache, so add a unit test
+via url_to_html for a word view and a triple view, each called with a word and with a triple id
+
 ## start page global problem
 
 add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
@@ -55,6 +62,10 @@ all api call should include the user session key
 and all backend calls should include a sequence id
 if a backend call breaks the sequence id the session is set to invalid and a new login is required
 
+## pinned views
+
+for the pinned views in the frontend offer to use the view name and a phrase name instead of a fixed url so that a re-pin of the phrase does not break the link
+
 ## frontend rules
 
 html_base::span() adds data-toggle="tooltip" to each span with a title, which no script reads and which docs/llm/frontend.md forbids for a web renderer; html_base::with_title() is the span without it, used so far only by the settings tree. Removing the attribute from span() changes about 188 snapshots, so it needs one run with AUTO_UPDATE_TEST_FILES and the review of the rewritten files
@@ -87,7 +98,7 @@ if the value if updated use the frontend cache to update the results within the 
 
 the html page cache (db_cache_page) is dropped only after a data change (frontend::drop_cached_pages), so after a code change of a renderer a page cached before the change is still served until a data change or `nc=1` bypasses it; add the program version (version.txt) to the cache key or drop all cached pages when the frontend starts with a new version, so that a deployment never shows a stale page
 
-the resultList, the valueList and the phraseList api messages are cached in db_cache_page (db_cache_page::api_key, json_by_key, save_json) and dropped with the html pages of the user, but a result that the batch job recalculates or a value, word or triple written via the api of another client or an import drops nothing, so it is renewed only after CACHE_MAX_AGE (by decision); each phraseList search pattern (kp) is its own cache row; the api has no `nc=1` bypass, the pod switch is the html page switch (config_numbers::page_cache_allowed) and its off branch has no test yet; a very long phrase id list could exceed the btree index limit of the url column, which only logs a failed cache write
+the resultList, the valueList, the phraseList and the phraseData api messages are cached in db_cache_page (db_cache_page::api_key, json_by_key, save_json) and dropped with the html pages of the user, but a result that the batch job recalculates or a value, word or triple written via the api of another client or an import drops nothing, so it is renewed only after CACHE_MAX_AGE (by decision); each phraseList search pattern (kp) is its own cache row; the api has no `nc=1` bypass, the pod switch is the html page switch (config_numbers::page_cache_allowed) and its off branch has no test yet; a very long phrase id list could exceed the btree index limit of the url column, which only logs a failed cache write
 
 the url form of a group id (shared/group_id_url.php) has known limits:
 - the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "/x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
@@ -1911,3 +1922,28 @@ each point needs a source change and a test that shows the bug first
   (e.g. `user…`), and `php_code_function` skips the `public` and `private` functions
 - the doc comments of `ids_not_empty` (negative ids are dropped) and `array_merge_by_key`
   (numeric keys are merged) do not match the code
+
+## code id of a triple
+
+the save of a triple never writes its code id: `triple::db_fields_changed` compares the type, the
+verb, the exclusion, the names, the weight and the condition, but not `code_id`, so the code ids of
+the system triples in the import files (e.g. `system_calculator_label` in calculator_keywords.json,
+`system_field_phrase_selector_type` in process_catch_fields.json) never reach the database and no
+triple of the test database has one (src/test/resources/unit/triple/list.csv); the frontend
+calculator and `phrase_data::keyword_ids` therefore select their keywords by the name; the fix needs
+the code id in the triple insert and update statements with their sql fixtures and change log row
+(`change_fields.csv`), and then `phrase_data::keyword_ids` can use `triple_list::load_by_code_ids`,
+whose statement still needs its sql fixture and unit test
+
+## circular includes of the web classes
+
+the web classes include each other in a circle, so an entry point works only if it includes
+`web/frontend.php` before any other web class: `web/sandbox/sandbox_list_named.php` includes
+`word.php` before its own class is defined, and that chain (word, change_log_named, component_exe,
+system_form) reaches `web/component/component_list.php`, which extends the still undefined
+`sandbox_list_named` and stops php with a fatal; e.g. `a_selected_test.php` loaded the web package
+first via test_db_load, test_pinned_ids, test_cleanup, test_api and change_log_list and failed, so
+it now includes `web/frontend.php` first; no include_once is removed until the includes are
+changed to a proper dynamic loading (docs/llm/file-layout.md), which also removes this order
+dependency; until then a coded check could load each web class file alone in a fresh php process
+and report the files that fail

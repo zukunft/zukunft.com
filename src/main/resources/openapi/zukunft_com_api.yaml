@@ -35,6 +35,8 @@ tags:
     description: a single word or triple
   - name: phraseList
     description: get a list of words or triples by id or related phrase or phrase list
+  - name: phraseData
+    description: get all data of one phrase in the import format with the database ids
   - name: termList
     description: get a list of words, triples, verbs or formulas either id or name
   - name: value
@@ -538,6 +540,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PhraseList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /phraseData:
+    get:
+      tags:
+        - phraseData
+      summary: get all data of one phrase
+      description: the words, triples, formulas, sources and values of one phrase with their database ids e.g. for a calculator page
+      operationId: getPhraseData
+      parameters:
+        - name: id
+          in: query
+          description: the phrase id, negative for a triple
+          required: true
+          schema:
+            type: integer
+        - name: pw
+          in: query
+          description: the walk, pwv for the values of the phrase (default) or pwf for the triples on its from side
+          required: false
+          schema:
+            type: string
+            enum: [pwv, pwf]
+        - name: is
+          in: query
+          description: 1 to add the results
+          required: false
+          schema:
+            type: string
+            enum: ['1']
+      responses:
+        '200':
+          description: the phrase data in the import format
+          content:
+            application/json:
+              schema:
+                type: object
         default:
           description: unexpected error
           content:

@@ -31,6 +31,7 @@ the object structure is:
 ├── element_db - the database const for the element table
 ├── export - create an object to export data - the object can be converted to a json, yaml or XML message
 ├── export_type_list - a list of parameters to configure the export message
+├── phrase_data - $phd - all data of one phrase in the import format with the database ids
 ├── xml_serializer - turning an array or object into XML using PHP
 ├── fig_ids - helper class for figure id lists
 ├── formula_db - the database const for formula tables
@@ -438,6 +439,7 @@ the object structure is:
 ├── stylesUi - css class constants used for html frontend
 ├── tableUi - $tbl - create the html code to display a spreadsheet
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
+├── phrase_dataUi - $phd - the data of one phrase as the phraseData api sends it
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── sys_log_listUi - the display extension of the system error log api object
 ├── system_time_listUi - $sys_tim_lst - a list of measured request times e.g. the slow urls of the admin dashboard

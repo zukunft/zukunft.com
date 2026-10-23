@@ -1302,11 +1302,14 @@ class phrase_list extends sandbox_list_named
     function phrase_ids(): phr_ids
     {
         $lst = array();
+        // the ids already added as keys, because the keys of $lst are only the positions
+        $used = array();
         if (count($this->lst()) > 0) {
             foreach ($this->lst() as $phr) {
                 // use only valid ids
                 if ($phr->id() <> 0) {
-                    if (!array_key_exists($phr->id(), $lst)) {
+                    if (!array_key_exists($phr->id(), $used)) {
+                        $used[$phr->id()] = true;
                         $lst[] = $phr->id();
                     }
                 }

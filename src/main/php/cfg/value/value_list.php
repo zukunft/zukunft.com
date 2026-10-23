@@ -193,6 +193,8 @@ class value_list extends sandbox_value_list
      * set the group id of every value of this list based on its phrase list
      * a value without a phrase is an internal inconsistency that the user cannot fix,
      * so it is only logged and this function reports nothing to the user
+     * the given name and the description of the group are kept, because e.g. the import sets
+     * them on the group of the value (see value_base::import_mapper) and the save writes them
      * @return void
      */
     function set_grp_ids(): void
@@ -202,8 +204,25 @@ class value_list extends sandbox_value_list
             if ($phr_lst->is_empty()) {
                 log_err('phrase list is empty for value ' . $val->dsp_id());
             } else {
-                $val->set_grp($phr_lst->get_grp_id(false));
+                $grp = $phr_lst->get_grp_id(false);
+                $this->keep_group_texts($val->grp(), $grp);
+                $val->set_grp($grp);
             }
+        }
+    }
+
+    /**
+     * @param group $old_grp the group of the value e.g. with the name and the description of the import
+     * @param group $grp the group with the id of the phrases, which replaces the old group
+     * @return void
+     */
+    private function keep_group_texts(group $old_grp, group $grp): void
+    {
+        if ($old_grp->name_given() != '') {
+            $grp->set_name($old_grp->name_given());
+        }
+        if ($old_grp->has_description()) {
+            $grp->set_description($old_grp->get_description());
         }
     }
 

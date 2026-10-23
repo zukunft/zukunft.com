@@ -233,6 +233,7 @@ class components
     const string TEST_CALCULATOR_TITLE_NAME = 'System Test View Component Calculator Title';
     const string TEST_CALCULATOR_INPUT_NAME = 'System Test View Component Calculator Input';
     const string TEST_CALCULATION_RESULT_NAME = 'System Test View Component Calculation Result';
+    const string TEST_CALCULATOR_EDITOR_NAME = 'System Test View Component Calculator Editor';
 
 
     // array of component names that used for testing and remove them after the test

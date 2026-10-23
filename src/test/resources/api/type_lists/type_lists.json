@@ -10136,6 +10136,12 @@
                 "code_id": "calculation_result",
                 "description": "the main result table by the calculator column and row group items of the page phrase, then the detail tables, the formula notes and the sources in a collapsed block",
                 "id": 289
+            },
+            {
+                "name": "calculator editor",
+                "code_id": "calculator_editor",
+                "description": "the editor of the calculator page of the phrase, built by a script from the phrase data of the phrase",
+                "id": 290
             }
         ],
         "component_link_types": [
@@ -11470,8 +11476,8 @@
                 "editor_id": 196,
                 "components": [
                     {
-                        "link_id": 1624,
-                        "id": 481,
+                        "link_id": 1622,
+                        "id": 482,
                         "name": "title calculator",
                         "description": "the calculator label of the phrase as the title, else the phrase name, and the calculator hint as the lead text",
                         "type_id": 287,
@@ -11480,8 +11486,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1625,
-                        "id": 482,
+                        "link_id": 1623,
+                        "id": 483,
                         "name": "calculator input",
                         "description": "the input fields and the assumptions that the calculator triples of the phrase select, in their order, with the save button",
                         "type_id": 288,
@@ -11490,8 +11496,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1626,
-                        "id": 483,
+                        "link_id": 1624,
+                        "id": 484,
                         "name": "calculation result",
                         "description": "the result table and the detail tables that the calculator triples of the phrase select, with the notes of the formulas and the sources of the values",
                         "type_id": 289,
@@ -28456,39 +28462,17 @@
             {
                 "id": 196,
                 "name": "Calculator editor",
-                "description": "placeholder to define the calculator page of a word or triple",
+                "description": "the editor to define the calculator page of a word or triple",
                 "type_id": 11,
                 "code_id": "calculator_editor",
                 "components": [
                     {
                         "link_id": 1584,
-                        "id": 440,
-                        "name": "system title calculation editor",
-                        "description": "show the language specific title of the calculation editor",
-                        "type_id": 268,
-                        "code_id": "system_title_calculation_editor",
-                        "ui_msg_code_id": "system_title_calculation_editor",
+                        "id": 445,
+                        "name": "calculator editor",
+                        "description": "the editor of the calculator page of the phrase with its own phrase selector, built by a script from the phrase data of the phrase",
+                        "type_id": 290,
                         "position": 1,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1585,
-                        "id": 441,
-                        "name": "phrase selector",
-                        "description": "placeholder to select the word or triple that an editor starts from",
-                        "type_id": 146,
-                        "code_id": "phrase_selector",
-                        "position": 2,
-                        "position_type": 1
-                    },
-                    {
-                        "link_id": 1586,
-                        "id": 444,
-                        "name": "button show editor phrase",
-                        "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
-                        "type_id": 275,
-                        "ui_msg_code_id": "editor_button_show",
-                        "position": 3,
                         "position_type": 1
                     }
                 ]
@@ -28501,8 +28485,8 @@
                 "code_id": "process_catch_start",
                 "components": [
                     {
-                        "link_id": 1587,
-                        "id": 445,
+                        "link_id": 1585,
+                        "id": 446,
                         "name": "title process catch start",
                         "description": "the translated title of the start page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28511,8 +28495,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1588,
-                        "id": 446,
+                        "link_id": 1586,
+                        "id": 447,
                         "name": "text explain process catch start",
                         "description": "the translated text that explains the start page of a process catch",
                         "type_id": 270,
@@ -28521,8 +28505,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1589,
-                        "id": 447,
+                        "link_id": 1587,
+                        "id": 448,
                         "name": "process catch initial input fields",
                         "description": "the one easy to answer question of the start page, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -28530,8 +28514,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1590,
-                        "id": 448,
+                        "link_id": 1588,
+                        "id": 449,
                         "name": "button next process catch start",
                         "description": "opens the main page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -28548,8 +28532,8 @@
                 "code_id": "process_catch_main",
                 "components": [
                     {
-                        "link_id": 1591,
-                        "id": 449,
+                        "link_id": 1589,
+                        "id": 450,
                         "name": "title process catch main",
                         "description": "the translated title of the main page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28558,8 +28542,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1592,
-                        "id": 450,
+                        "link_id": 1590,
+                        "id": 451,
                         "name": "text explain process catch main",
                         "description": "the translated text that explains the main page of a process catch",
                         "type_id": 270,
@@ -28568,8 +28552,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1593,
-                        "id": 451,
+                        "link_id": 1591,
+                        "id": 452,
                         "name": "process catch main input fields",
                         "description": "the about three input fields that are most relevant for the result, defined by the field triples of the question phrase",
                         "type_id": 271,
@@ -28577,8 +28561,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1594,
-                        "id": 452,
+                        "link_id": 1592,
+                        "id": 453,
                         "name": "button next process catch main",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -28595,8 +28579,8 @@
                 "code_id": "process_catch_detail",
                 "components": [
                     {
-                        "link_id": 1595,
-                        "id": 453,
+                        "link_id": 1593,
+                        "id": 454,
                         "name": "title process catch detail",
                         "description": "the translated title of the detail page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28605,8 +28589,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1596,
-                        "id": 454,
+                        "link_id": 1594,
+                        "id": 455,
                         "name": "text explain process catch detail",
                         "description": "the translated text that explains the detail page of a process catch",
                         "type_id": 270,
@@ -28615,8 +28599,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1597,
-                        "id": 455,
+                        "link_id": 1595,
+                        "id": 456,
                         "name": "process catch detail tab one",
                         "description": "tab 1 of the detail page of a process catch",
                         "type_id": 272,
@@ -28625,8 +28609,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1598,
-                        "id": 456,
+                        "link_id": 1596,
+                        "id": 457,
                         "name": "process catch detail tab two",
                         "description": "tab 2 of the detail page of a process catch",
                         "type_id": 272,
@@ -28635,8 +28619,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1599,
-                        "id": 457,
+                        "link_id": 1597,
+                        "id": 458,
                         "name": "process catch detail tab three",
                         "description": "tab 3 of the detail page of a process catch",
                         "type_id": 272,
@@ -28645,8 +28629,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1600,
-                        "id": 458,
+                        "link_id": 1598,
+                        "id": 459,
                         "name": "process catch detail tab four",
                         "description": "tab 4 of the detail page of a process catch",
                         "type_id": 272,
@@ -28655,8 +28639,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1601,
-                        "id": 459,
+                        "link_id": 1599,
+                        "id": 460,
                         "name": "process catch detail tab five",
                         "description": "tab 5 of the detail page of a process catch",
                         "type_id": 272,
@@ -28665,8 +28649,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1602,
-                        "id": 460,
+                        "link_id": 1600,
+                        "id": 461,
                         "name": "process catch detail tab one fields",
                         "description": "the input fields of tab 1 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28675,8 +28659,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1603,
-                        "id": 461,
+                        "link_id": 1601,
+                        "id": 462,
                         "name": "process catch detail tab two fields",
                         "description": "the input fields of tab 2 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28685,8 +28669,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1604,
-                        "id": 462,
+                        "link_id": 1602,
+                        "id": 463,
                         "name": "process catch detail tab three fields",
                         "description": "the input fields of tab 3 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28695,8 +28679,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1605,
-                        "id": 463,
+                        "link_id": 1603,
+                        "id": 464,
                         "name": "process catch detail tab four fields",
                         "description": "the input fields of tab 4 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28705,8 +28689,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1606,
-                        "id": 464,
+                        "link_id": 1604,
+                        "id": 465,
                         "name": "process catch detail tab five fields",
                         "description": "the input fields of tab 5 of the detail page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28715,8 +28699,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1607,
-                        "id": 479,
+                        "link_id": 1605,
+                        "id": 480,
                         "name": "button refresh process catch detail",
                         "description": "shows the detail page of the process catch again with the changed assumptions",
                         "type_id": 275,
@@ -28725,8 +28709,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1608,
-                        "id": 465,
+                        "link_id": 1606,
+                        "id": 466,
                         "name": "button next process catch detail",
                         "description": "opens the result page of the process catch for the same question phrase",
                         "type_id": 273,
@@ -28743,8 +28727,8 @@
                 "code_id": "process_catch_result",
                 "components": [
                     {
-                        "link_id": 1609,
-                        "id": 466,
+                        "link_id": 1607,
+                        "id": 467,
                         "name": "title process catch result",
                         "description": "the translated title of the result page of a process catch with the name of the question phrase",
                         "type_id": 268,
@@ -28753,8 +28737,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1610,
-                        "id": 467,
+                        "link_id": 1608,
+                        "id": 468,
                         "name": "text explain process catch result",
                         "description": "the translated text that explains the result page of a process catch",
                         "type_id": 270,
@@ -28763,8 +28747,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1611,
-                        "id": 468,
+                        "link_id": 1609,
+                        "id": 469,
                         "name": "process catch result tab one",
                         "description": "tab 1 of the result page of a process catch",
                         "type_id": 272,
@@ -28773,8 +28757,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1612,
-                        "id": 469,
+                        "link_id": 1610,
+                        "id": 470,
                         "name": "process catch result tab two",
                         "description": "tab 2 of the result page of a process catch",
                         "type_id": 272,
@@ -28783,8 +28767,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1613,
-                        "id": 470,
+                        "link_id": 1611,
+                        "id": 471,
                         "name": "process catch result tab three",
                         "description": "tab 3 of the result page of a process catch",
                         "type_id": 272,
@@ -28793,8 +28777,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1614,
-                        "id": 471,
+                        "link_id": 1612,
+                        "id": 472,
                         "name": "process catch result tab four",
                         "description": "tab 4 of the result page of a process catch",
                         "type_id": 272,
@@ -28803,8 +28787,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1615,
-                        "id": 472,
+                        "link_id": 1613,
+                        "id": 473,
                         "name": "process catch result tab five",
                         "description": "tab 5 of the result page of a process catch",
                         "type_id": 272,
@@ -28813,8 +28797,8 @@
                         "position_type": 8
                     },
                     {
-                        "link_id": 1616,
-                        "id": 473,
+                        "link_id": 1614,
+                        "id": 474,
                         "name": "process catch result tab one fields",
                         "description": "the input fields of tab 1 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28823,8 +28807,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1617,
-                        "id": 474,
+                        "link_id": 1615,
+                        "id": 475,
                         "name": "process catch result tab two fields",
                         "description": "the input fields of tab 2 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28833,8 +28817,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1618,
-                        "id": 475,
+                        "link_id": 1616,
+                        "id": 476,
                         "name": "process catch result tab three fields",
                         "description": "the input fields of tab 3 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28843,8 +28827,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1619,
-                        "id": 476,
+                        "link_id": 1617,
+                        "id": 477,
                         "name": "process catch result tab four fields",
                         "description": "the input fields of tab 4 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28853,8 +28837,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1620,
-                        "id": 477,
+                        "link_id": 1618,
+                        "id": 478,
                         "name": "process catch result tab five fields",
                         "description": "the input fields of tab 5 of the result page of a process catch, shown if the tab is selected",
                         "type_id": 271,
@@ -28863,8 +28847,8 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1621,
-                        "id": 478,
+                        "link_id": 1619,
+                        "id": 479,
                         "name": "button back process catch result",
                         "description": "opens the detail page of the process catch for the same question phrase",
                         "type_id": 274,
@@ -28881,7 +28865,7 @@
                 "code_id": "comparison_table",
                 "components": [
                     {
-                        "link_id": 1622,
+                        "link_id": 1620,
                         "id": 140,
                         "name": "phrase title",
                         "description": "show the phrase name as the page title with the subheader of a word (the related phrases) or of a triple (the from, verb and to with links)",
@@ -28891,7 +28875,7 @@
                         "position_type": 1
                     },
                     {
-                        "link_id": 1623,
+                        "link_id": 1621,
                         "id": 192,
                         "name": "table with related columns",
                         "description": "all values related to this word or triple as a table with one column per phrase used most often within the values and one row per remaining phrase combination",
@@ -31204,9 +31188,9 @@
             {
                 "id": 2777,
                 "name": "g\/kWh is symbol for gram per kWh",
-                "from_id": 2137,
+                "from_id": 2139,
                 "from_phrase": {
-                    "id": 2137,
+                    "id": 2139,
                     "name": "g\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -31713,7 +31697,7 @@
                 "class": "triple"
             },
             {
-                "id": 2137,
+                "id": 2139,
                 "name": "g\/kWh",
                 "type_id": 1,
                 "class": "word"
@@ -31867,9 +31851,9 @@
             {
                 "id": 2827,
                 "name": "kg\/kWh is symbol for kg per kWh",
-                "from_id": 2138,
+                "from_id": 2140,
                 "from_phrase": {
-                    "id": 2138,
+                    "id": 2140,
                     "name": "kg\/kWh",
                     "description": null,
                     "type_id": 1,
@@ -32169,9 +32153,9 @@
             {
                 "id": 2823,
                 "name": "kWh\/a is symbol for kilowatthours per year",
-                "from_id": 2134,
+                "from_id": 2136,
                 "from_phrase": {
-                    "id": 2134,
+                    "id": 2136,
                     "name": "kWh\/a",
                     "description": null,
                     "type_id": 1,
@@ -32206,9 +32190,9 @@
             {
                 "id": 2824,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
-                "from_id": 2135,
+                "from_id": 2137,
                 "from_phrase": {
-                    "id": 2135,
+                    "id": 2137,
                     "name": "kWh\/kWp\u00b7a",
                     "description": null,
                     "type_id": 1,
@@ -32583,7 +32567,7 @@
                 "class": "word"
             },
             {
-                "id": 2138,
+                "id": 2140,
                 "name": "kg\/kWh",
                 "type_id": 1,
                 "class": "word"
@@ -32668,7 +32652,7 @@
                 "class": "word"
             },
             {
-                "id": 2134,
+                "id": 2136,
                 "name": "kWh\/a",
                 "type_id": 1,
                 "class": "word"
@@ -32681,7 +32665,7 @@
                 "class": "triple"
             },
             {
-                "id": 2135,
+                "id": 2137,
                 "name": "kWh\/kWp\u00b7a",
                 "type_id": 1,
                 "class": "word"

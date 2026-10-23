@@ -1,6 +1,92 @@
 # pending - list of planned llm prompts with prio 1
 
+## calculation editor
+
+### update json message
+
+if in the 'Calculator editor' save is pressed a json should be created and send to the api endpoint /api/updateDrop, which needs to be created
+The json should be similar to the import json that is described in docs/llm/json_structure.md, but the 'api_json' differs in some ways
+1. it uses the api header including the execution time report if needed
+2. it contains the database id which is used as the prime key if given
+3. also for types the database id is preferred used  
+
+create some tests that adds / updates / compares message files in src/test/resources/api/calculator_editor
+
+### test case
+
+create test cased for all possible change types in the calculation editor.
+For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
+
+for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
+
+### general
+
+add to /docs/llm/* that no concrete word, triple, formula or any other name should be never part of the code.
+The ONLY link between production code and concrete database rows is the code_id. This is way it is named code id.
+This is a general rules that does not allow ANY exception. 
+
+For testing the name, id and other fields can be used. But ONLY for testing!
+
+### javascript
+
+add to /docs/llm/* that js files should not have any const that is not takes from a php const to fulfill the "on point of change" rule
+this implies that all js files must be written by a php script
+
+### api updateDrop
+
+create a new api 'updateDrop' that takes json messages and saves them in the database
+
+## api security
+
+if it does not yet exist create a test that checks if an api request is rejected if it is not part of a previous created session
+
+session can only be created either via a proper session start via gui
+or using a predefined api session login that uses e.g. a public / private key pair and other extra security 
+
+## other editors
+
+be aware (or better create a solution concept) for the case that in production the id of system triples used for testing will differ from the id in the development databases
+
+### table editor
+
+uss the calculation editor as a base and create a similar table editor
+
+### view editor
+
+uss the calculation editor as a base and create a view and component editor
+
+### process editor
+
+uss the calculation editor as a base and process editor, so multi step input views
+
+## phrase data api
+
+### speed up user data creations
+
+include the phraseData calls in the api cache handling 
+
+if the phraseData for a user is requested and the cache contains the standard data already 
+get the standard data from the cache, read the user overwrites from the database 
+and overwrite the standard data with the user overwrites
+
+### open API update
+
+write a script that recreates the open API yaml based on the code and create a test that reports the differences between
+the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
+
+## prime group id within 2^53
+
+a prime group id is an integer of at most 2^53 (9'007'199'254'740'992), so that a json reader
+like javascript `JSON.parse` reads it exactly; a group whose 64-bit key would be bigger
+e.g. 500463902488562396 (example PV installation, PV capacity, kWp, assumed) gets the compact
+text key instead (see `group_id::get_id`, `docs/llm/group_id.md`); this changes the table of the
+affected values, so it needs a database upgrade and the minor version raise (`docs/llm/versions.md`)
+
 ## cleanup
+
+### id usage
+
+create a code test script that checks that the pinned word, triple, ... id (*_ID) are never used in the real code and only used for testing
 
 ### test coverage
 

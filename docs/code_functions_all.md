@@ -169,6 +169,8 @@
 \-- group
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /group/group
             .php
+    \-- has_description - section for function has_description not yet defined that it should be set and get in /group/g
+            roup.php
     \-- phrase_list - section for function phrase_list is expected to be cast in /group/group.php
     \-- has_phrase_list - section for function has_phrase_list not yet defined that it should be set and get in /group/g
             roup.php
@@ -1833,6 +1835,8 @@
             hp
     \-- add - section for function add not yet defined that it should be modify in /export/export_type_list.php
     \-- remove - section for function remove not yet defined that it should be modify in /export/export_type_list.php
+\-- phrase_data
+    \-- export_json - section for function export_json is expected to be im- and export in /export/phrase_data.php
 \-- expression
     \-- term_id_list - section for function term_id_list not yet defined that it should be id lists in /formula/expressi
             on.php
@@ -2491,6 +2495,8 @@
             php
     \-- import_config_yaml - section for function import_config_yaml not yet defined that it should be set and get in /i
             mport/import_file.php
+    \-- drop_config_cache - section for function drop_config_cache not yet defined that it should be set and get in /imp
+            ort/import_file.php
     \-- import_system_data - section for function import_system_data not yet defined that it should be set and get in /i
             mport/import_file.php
     \-- import_pod_config - section for function import_pod_config not yet defined that it should be set and get in /imp
@@ -5219,6 +5225,8 @@
         \-- import_file - import a single yaml file
     \-- import_config_yaml
         \-- import_file - import the initial system configuration
+    \-- drop_config_cache
+        \-- import_file - the imported values are part of the cached config of every user, which the database cache
     \-- import_system_data
         \-- import_file - TODO Prio 2 fill a user_message with the warning and error messages and return true if success
                 ful
@@ -5834,6 +5842,9 @@
         \-- element_list - remove all duplicate links from this list
     \-- phrases
         \-- expression - get the phrases that are user to calculate the expression result
+\-- export
+    \-- export_json
+        \-- phrase_data - all data of one phrase in the import format with the database id of each object
 \-- id lists
     \-- term_id_list
         \-- expression - get a term list with all term ids used in the formula expression
@@ -6781,6 +6792,8 @@
             ponent/execute/system_page.php
     \-- calculator_input - section for function calculator_input not yet defined that it should be process catch in /com
             ponent/execute/system_page.php
+    \-- calculator_editor - section for function calculator_editor not yet defined that it should be process catch in /c
+            omponent/execute/system_page.php
     \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
             /component/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
@@ -7081,6 +7094,8 @@
     \-- execute_and_next - section for function execute_and_next not yet defined that it should be cached page in /front
             end.php
     \-- show_view - section for function show_view not yet defined that it should be cached page in /frontend.php
+    \-- calculator_saved_text - section for function calculator_saved_text not yet defined that it should be execute in 
+            /frontend.php
     \-- calculator_changes - section for function calculator_changes not yet defined that it should be execute in /front
             end.php
     \-- url_to_back_url - section for function url_to_back_url not yet defined that it should be execute in /frontend.ph
@@ -7540,6 +7555,7 @@
             .php
     \-- script_data - section for function script_data not yet defined that it should be internal in /html/html_base.php
     \-- script_src - section for function script_src not yet defined that it should be internal in /html/html_base.php
+    \-- link_style - section for function link_style is expected to be link in /html/html_base.php
 \-- html_selector
     \-- display - section for function display missing in /html/html_selector.php
     \-- end_selector - section for function end_selector missing in /html/html_selector.php
@@ -8350,6 +8366,10 @@
     \-- add_message - section for function add_message not yet defined that it should be add in /user/user_message.php
     \-- add_info - section for function add_info not yet defined that it should be add in /user/user_message.php
     \-- get_last_info - section for function get_last_info is expected to be set and get in /user/user_message.php
+    \-- add_info_html - section for function add_info_html not yet defined that it should be add in /user/user_message.p
+            hp
+    \-- get_last_info_html - section for function get_last_info_html is expected to be set and get in /user/user_message
+            .php
     \-- has_msg_id - section for function has_msg_id not yet defined that it should be add in /user/user_message.php
     \-- has_info - section for function has_info not yet defined that it should be add in /user/user_message.php
     \-- merge - section for function merge not yet defined that it should be add in /user/user_message.php
@@ -9718,6 +9738,8 @@
     \-- dsp_hist_links
         \-- user_log_display - @param array $url_arr the url vars of the calling page for the back link of the undo butt
                 ons
+    \-- load_from_walk
+        \-- phrase_data - the answer of the phraseData api is the export json without the api message header, so it
     \-- 1
         \-- language_list - 
         \-- view_link_type_list - @return int the database id of the default view link type
@@ -10097,6 +10119,8 @@
         \-- system_page - the title of a calculator page: the calculator label of the page phrase, or of the phrase it
     \-- calculator_input
         \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+    \-- calculator_editor
+        \-- system_page - the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
     \-- calculation_result
         \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- process_catch_fields
@@ -10279,6 +10303,9 @@
 \-- execute
     \-- url_to_action
         \-- frontend - execute the user request e.g. a database update and create the url for the next page
+    \-- calculator_saved_text
+        \-- frontend - the confirmation of one saved number as html,
+                 because the new number links to the default view of the value
     \-- calculator_changes
         \-- frontend - the values of a calculator save whose number the user has changed: each number field sends its
     \-- url_to_back_url
@@ -10691,6 +10718,8 @@
         \-- html_base - the data of a page script as json, which the browser never runs as code; a "<" is written
     \-- script_src
         \-- html_base - @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
+    \-- link_style
+        \-- html_base - @param string $stylesheet path to the stylesheet file
 \-- table
     \-- tr
         \-- change_log_link - @param array $url_arr the url vars of the calling page for the back link of the undo butto

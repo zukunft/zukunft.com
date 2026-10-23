@@ -3900,7 +3900,7 @@ class html_base
      *                         that is not served by the pod (e.g. a html test snapshot)
      * @return string the HTML link element for the stylesheet
      */
-    private function link_style(string $stylesheet, string $base_url = ''): string
+    function link_style(string $stylesheet, string $base_url = ''): string
     {
         $url = $stylesheet;
         if ($base_url != '') {

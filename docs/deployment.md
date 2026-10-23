@@ -28,6 +28,14 @@ The recommended steps to test any code changes are
 
 if an additional entry in any of the files in src/main/resources/db_code_links is done run test/reset_db.php at least once and update src/test/resources/api/ui_config/ui_config.json and src/test/resources/api/type_lists/type_lists.json based on the difference reported in the run to refresh the preloaded type list. After that refresh the local deployment to update the api tests. 
 
+### use case pages and their samples
+
+A use case page, e.g. src/test/resources/web/html/use_cases/calculator_editor.html, is
+written by the test run and checked only against its own last version: if the page has
+changed, the test fails and you decide if the new page is right. The hand made target
+next to it, e.g. calculator_editor_sample.html, is never checked by a test; compare the
+two pages yourself in a browser.
+
 ## local web server for the api tests and the html snapshots
 
 The api tests and the html snapshot pages use a local web server on http://localhost/

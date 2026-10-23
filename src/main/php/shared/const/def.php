@@ -50,6 +50,9 @@ class def
      * (the api sends api::CACHE_HEADER and rest_call::api_call shows it)
      */
     const bool DEBUG_API_CACHE = false;
+    // true to show each step of the phrase data (api/phraseData) with its number of objects and,
+    // by log_debug, the seconds since the last message, to find the slow step
+    const bool DEBUG_PHRASE_DATA = false;
 
 
     /*
