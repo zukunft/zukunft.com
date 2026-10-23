@@ -267,7 +267,7 @@ user_request: $req
 user_status: $usr_sta
 user_type: $usr_typ
 value_geo: $obj_to_add, $result, $val
-value_list: $add_lst, $db_lst, $empty_keep_lst, $empty_lst, $lst, $num_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
+value_list: $add_lst, $db_lst, $desc_lst, $empty_keep_lst, $empty_lst, $lst, $num_lst, $plain_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
 value_list_dsp: $val_lst
 value_text: $obj_to_add, $result, $val
 value_time: $obj_to_add, $result, $val

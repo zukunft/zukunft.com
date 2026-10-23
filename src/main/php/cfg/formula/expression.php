@@ -800,8 +800,10 @@ class expression extends shared_expression
             // add triple ids to selection
             $new_trp_id = $this->get_triple_id($ref_text);
             while ($new_trp_id != 0) {
-                if (!in_array($new_wrd_id, $id_lst)) {
-                    $id_lst[] = $new_trp_id * -1;
+                // the phrase id of a triple is negative, so the negative id is checked like a word id
+                $trp_phr_id = $new_trp_id * -1;
+                if (!in_array($trp_phr_id, $id_lst)) {
+                    $id_lst[] = $trp_phr_id;
                 }
                 $ref_text = $lib->str_right_of($ref_text, chars::TRIPLE_START . $new_trp_id . chars::TRIPLE_END);
                 $new_trp_id = $this->get_triple_id($ref_text);

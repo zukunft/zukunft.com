@@ -120,6 +120,16 @@ class test_values extends test_objects
     }
 
     /**
+     * the standard test value with the description of its group, which is the description of the value
+     * @return value the test value with the group description groups::TN_READ_COM
+     */
+    function value_with_description(user_message $msg): value
+    {
+        $t_grp = new test_groups($this->env);
+        return new value($this->env->usr1, round(values::PI_LONG, 13), $t_grp->group_filled());
+    }
+
+    /**
      * the standard test value but with a non-default (admin) protection so that the
      * frontend value title shows the protection in its subtitle, mirroring the word
      * @return value the test value with admin protection set

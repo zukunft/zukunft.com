@@ -182,6 +182,10 @@ class url_var
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string INCL_RELATED = 'ir'; // include the related phrases (api_types::INCL_RELATED) in a word/triple api response
     const string INCL_USED = 'iu'; // include the values, formulas and results used (api_types::INCL_USED) in a result api response
+    const string INCL_RESULTS = 'is'; // 1 to include the results of the phrases in the phrase data api response
+    const string PHRASE_DATA_WALK = 'pw'; // how the phrase data api collects the data of a phrase, one of the PHRASE_DATA_WALK_* values
+    const string PHRASE_DATA_WALK_VALUE = 'pwv'; // the values of the phrase with their phrases (the default)
+    const string PHRASE_DATA_WALK_FROM = 'pwf'; // the triples on the from side of the phrase e.g. the calculator tree
     const string JOB = 'j'; // for system batch jobs
     const string JOB_PARAMETER = 'ja'; // pArameter passed to a job e.g. the id of the phrase set
     const string JOB_START_TIME = 'jb'; // Begin time of the job execution
@@ -624,6 +628,10 @@ class url_var
     const string WITH_PHRASES_HUMAN = 'incl_phrases';
     const string INCL_RELATED_HUMAN = 'incl_related';
     const string INCL_USED_HUMAN = 'incl_used';
+    const string INCL_RESULTS_HUMAN = 'incl_results';
+    const string PHRASE_DATA_WALK_HUMAN = 'phrase_data_walk';
+    const string PHRASE_DATA_WALK_VALUE_HUMAN = 'values_of_phrase';
+    const string PHRASE_DATA_WALK_FROM_HUMAN = 'triples_from_phrase';
 
     // view
     const string VIEW_HUMAN = 'view_id';
@@ -873,6 +881,8 @@ class url_var
         [self::WITH_PHRASES_HUMAN, self::WITH_PHRASES],
         [self::INCL_RELATED_HUMAN, self::INCL_RELATED],
         [self::INCL_USED_HUMAN, self::INCL_USED],
+        [self::INCL_RESULTS_HUMAN, self::INCL_RESULTS],
+        [self::PHRASE_DATA_WALK_HUMAN, self::PHRASE_DATA_WALK],
 
         // view
         [self::VIEW_HUMAN, self::VIEW],
@@ -961,6 +971,12 @@ class url_var
         self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
         self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
         self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
+    ];
+
+    // map human-readable url values to standard url values
+    const array HUMAN_TO_STD_PHRASE_DATA_WALK_VAL = [
+        self::PHRASE_DATA_WALK_VALUE => self::PHRASE_DATA_WALK_VALUE_HUMAN,
+        self::PHRASE_DATA_WALK_FROM => self::PHRASE_DATA_WALK_FROM_HUMAN,
     ];
 
     // map human-readable url values to standard url values

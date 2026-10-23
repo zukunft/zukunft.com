@@ -285,6 +285,8 @@ class system_view_ui_tests
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($msg, file_get_contents(test_files::TYPE_LISTS_CACHE));
+        $t->assert_msg('the user and the type list cache of the page tests are loaded', $msg);
+        $msg->reset();
         $usr_sys_ui = $tl->cast_user($t->usr1);
 
         $t->subheader($ts . 'phrase without a view');
@@ -528,7 +530,6 @@ class system_view_ui_tests
         $test_name = 'an html info is the last html info';
         // e.g. the confirmation of a calculator save, whose new number links to the value
         $info_html = $html_base->ref($html_base->url_back(views::VALUE, values::PI_MATH_ID), $saved_txt);
-        $msg->reset();
         $msg->add_info_html($info_html);
         $t->assert($test_name, $msg->get_last_info_html(), $info_html);
         $msg->reset();

@@ -1833,6 +1833,8 @@
             hp
     \-- add - section for function add not yet defined that it should be modify in /export/export_type_list.php
     \-- remove - section for function remove not yet defined that it should be modify in /export/export_type_list.php
+\-- phrase_data
+    \-- export_json - section for function export_json is expected to be im- and export in /export/phrase_data.php
 \-- expression
     \-- term_id_list - section for function term_id_list not yet defined that it should be id lists in /formula/expressi
             on.php
@@ -5834,6 +5836,9 @@
         \-- element_list - remove all duplicate links from this list
     \-- phrases
         \-- expression - get the phrases that are user to calculate the expression result
+\-- export
+    \-- export_json
+        \-- phrase_data - all data of one phrase in the import format with the database id of each object
 \-- id lists
     \-- term_id_list
         \-- expression - get a term list with all term ids used in the formula expression

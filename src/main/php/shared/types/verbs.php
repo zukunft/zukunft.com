@@ -457,6 +457,10 @@ class verbs
         [self::ACRONYM, foaf_direction::DOWN], // "CHF is an acronym for Confoederatio Helvetica Franc" — abbreviated form of a name (asymmetric)
     );
 
+    // the verbs that name a phrase by another text e.g. "kWh/a is symbol for kilowatthours per year",
+    // so the data of a phrase (see phrase_data) includes these triples of its phrases from both sides
+    const array NAME_VERBS = [self::SYMBOL, self::ACRONYM, self::ALIAS];
+
     // ordered list of the verbs that connect an argument to the claim it is about;
     // ordering goes from the strongest backing to the weakest, so a renderer that
     // shows only the first match names the most load-bearing argument first.

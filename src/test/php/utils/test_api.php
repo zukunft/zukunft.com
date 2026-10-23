@@ -1177,6 +1177,7 @@ class test_api extends test_base
         }
         $path = test_paths::RESOURCE . self::API_PATH . DIRECTORY_SEPARATOR . $class_for_file
             . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
+        $this->write_api_actual_file($path, $actual);
 
         if ($expected === null) {
             // an expected file that does not exist yet is created from the api answer if the auto

@@ -78,6 +78,7 @@ class paths
     const string API_SYSTEM_RES = self::API_RES . 'system' . DIRECTORY_SEPARATOR;
     const string API_TYPE_LIST_RES = self::API_RES . 'type_lists' . DIRECTORY_SEPARATOR;
     const string API_SYS_LOG_RES = self::API_RES . 'sys_log_list' . DIRECTORY_SEPARATOR;
+    const string API_PHRASE_DATA_RES = self::API_RES . 'phrase_data' . DIRECTORY_SEPARATOR;
     const string DB_FORMULA = self::DB . self::FORMULA;
     const string DB_RES = self::RESOURCE . self::DB;
     const string DB_RES_FORMULA = self::DB_RES . self::FORMULA;

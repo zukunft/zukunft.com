@@ -1227,6 +1227,28 @@ class base_ui_tests
         $t->assert($test_name, $url_array[url_var::DISPLAY_LIST_ORDER_HUMAN] ?? '', $prime_order);
         $t->assert($test_name . ' (sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB_HUMAN] ?? '', $sub_order);
         $t->assert($test_name . ' (sub sub)', $url_array[url_var::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN] ?? '', $sub_sub_order);
+        // the walk of the phrase data api is a url var with fixed values like the refresh part
+        $test_name = 'the human-readable phrase data walk maps to the short url var and value';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=' . views::START_CODE
+            . '&' . url_var::PHRASE_DATA_WALK_HUMAN . '=' . url_var::PHRASE_DATA_WALK_FROM_HUMAN;
+        $url_array = $url_map->url_to_standard($lib->url_array($url), $msg);
+        $walk = $url_array[url_var::PHRASE_DATA_WALK] ?? '';
+        $t->assert($test_name, $walk, url_var::PHRASE_DATA_WALK_FROM);
+        $test_name = '... and the short url var and value map back to the human-readable names';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?' . url_var::MASK . '=2&'
+            . url_var::PHRASE_DATA_WALK . '=' . url_var::PHRASE_DATA_WALK_VALUE;
+        $url_human = $url_test->test_url($url_map->standard_url_to_human($lib->url_array_with($url), $msg));
+        $url_array = $lib->url_array($url_human);
+        $walk_human = $url_array[url_var::PHRASE_DATA_WALK_HUMAN] ?? '';
+        $t->assert($test_name, $walk_human, url_var::PHRASE_DATA_WALK_VALUE_HUMAN);
+        // negative: a value that names no walk is reported and not mapped silently
+        $test_name = '... but an unknown walk value is reported';
+        $url = 'http://localhost' . api::MAIN_SCRIPT . '?mask_id=' . views::START_CODE
+            . '&' . url_var::PHRASE_DATA_WALK_HUMAN . '=' . url_var::PHRASE_DATA_WALK_HUMAN;
+        $msg->reset();
+        $url_map->url_to_standard($lib->url_array($url), $msg);
+        $t->assert_true($test_name, $msg->has_msg_id(msg_id::URL_MAP_MISSING));
+        $msg->reset();
 
         // TODO Prio 1 review
         // url_mapper::to_row_format: the flat standard url array (as produced by url_to_standard) is

@@ -376,6 +376,14 @@ class triples
         self::CALCULATOR_HIGHLIGHT => self::CALCULATOR_HIGHLIGHT_CODE_ID,
         self::CALCULATOR_SIGNED => self::CALCULATOR_SIGNED_CODE_ID,
     ];
+    // the keywords of the calculator and of the input fields by their code id, which the data of a
+    // phrase (see phrase_data) never walks through, because every page phrase links to them
+    const array CALCULATOR_KEYWORDS = [
+        ...triples::CALCULATOR_LISTS,
+        ...triples::CALCULATOR_PROPERTIES,
+        ...triples::FIELD_PROPERTIES,
+        ...triples::FIELD_TYPES,
+    ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';
     const string TIME_PERCENT = 'time percent';

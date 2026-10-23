@@ -198,6 +198,19 @@ class phrase_list_tests
         $test_name = '... but not if an asked phrase is missing';
         $t->assert_false($test_name, $t_phr->phrase_list()->loaded(new phr_ids([word_names::LOSS_ID])));
 
+        // a phrase id smaller than the number of phrases before it is not mistaken for a position
+        $test_name = 'the id list contains a small word id after more phrases than its id';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase($t, word_names::PI_ID, word_names::PI));
+        $phr_lst->add($this->get_phrase($t, word_names::FLOW_ID, word_names::FLOW));
+        $phr_lst->add($this->get_phrase($t, word_names::LOSS_ID, word_names::LOSS));
+        $phr_lst->add($this->get_phrase($t, word_names::CONST_ID, word_names::CONST_NAME));
+        $t->assert_true($test_name, in_array(word_names::CONST_ID, $phr_lst->id_lst()));
+        $test_name = '... but a phrase without an id adds no id';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase($t, 0, word_names::PI));
+        $t->assert($test_name, $phr_lst->id_lst(), []);
+
 
         $t->subheader($ts . 'remove_terms');
 

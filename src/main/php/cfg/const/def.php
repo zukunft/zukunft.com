@@ -283,6 +283,7 @@ class def
     const int FALLBACK_IMPORT_BYTE_PER_SEC = 10000; // expected number of bytes per second that could be processed in import
     const int FALLBACK_PERCENT_STEP = 1; // the percent step size for the progress bar and of process parts
     const int FALLBACK_RETRY = 10; // the default number of retries for a failed process
+    const float FALLBACK_TEST_TOLERANCE = 1.0; // the share of objects that an api answer may have more than its expected sample
     const int FALLBACK_RECURSIVE_MAX = 99; // the maximal number of recursive calls of a function
     const int FALLBACK_DB_PAGE_ROWS = 20; // the number of database rows that should be loaded at once
     const float FALLBACK_RESPONSE_TIME = 1.0; // the response time to update the frontend in seconds

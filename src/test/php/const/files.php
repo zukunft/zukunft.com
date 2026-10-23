@@ -45,6 +45,7 @@ class files
 
     CONST bool AUTO_UPDATE_TEST_FILES = false;
     CONST bool AUTO_RE_PIN_OBJECT_ID = false;
+    CONST string API_ACTUAL_SUFFIX = '_actual';
 
     /*
      * types and extensions
@@ -66,6 +67,13 @@ class files
      */
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
+    // the data that api/phraseData returns at least for the example PV installation
+    CONST string PHRASE_DATA_PV_INSTALL_NAME = 'phrase_data_pv_install';
+    CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
+    // the expected api files whose received json is written next to them e.g. as
+    // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
+    // files are never committed (.gitignore) and an api test without its file here writes none
+    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL];
 
     // the static forward pages in the docroot by their url path, which the test run rewrites
     // from the view of api::FORWARD_VIEWS (see base_ui_tests)

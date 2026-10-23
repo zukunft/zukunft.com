@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -42,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -369,6 +371,10 @@ class expression_tests
         $msg->reset();
         $test_name = 'a text without a phrase has no phrase ids';
         $t->assert($test_name, $exp_no_calc->phr_id_lst('')->lst, []);
+        // negative: a triple used twice in the text is one phrase, like a word used twice
+        $test_name = 'a triple used twice is listed once with its negative phrase id';
+        $trp_ref = chars::TRIPLE_START . triple_names::PI_ID . chars::TRIPLE_END;
+        $t->assert($test_name, $exp_no_calc->phr_id_lst($trp_ref . $trp_ref)->lst, [-triple_names::PI_ID]);
 
         $t->subheader($ts . 'debug id');
 

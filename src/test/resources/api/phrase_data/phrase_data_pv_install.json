@@ -284,10 +284,6 @@
       ]
     },
     {
-      "id": 2125,
-      "name": "orientation"
-    },
-    {
       "id": 2126,
       "name": "south"
     },
@@ -710,14 +706,6 @@
       "to": "kWh",
       "type": "measure_unit",
       "description": "the unit of the production emission of a battery per kWh of storage capacity"
-    },
-    {
-      "id": 2745,
-      "from": "kg",
-      "verb": "per",
-      "to": "kWp",
-      "type": "measure_unit",
-      "description": "the unit of the embodied emission of a PV system per kWp of rated power"
     },
     {
       "id": 1999,
@@ -2675,18 +2663,6 @@
       "url": "https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf"
     },
     {
-      "id": 254,
-      "name": "Lithium-ion cell LCA comparison 2025",
-      "description": "Comparative life cycle assessment of lithium-ion, sodium-ion, and solid-state battery cells for electric vehicles. Journal of Industrial Ecology 29(1):113-128, 2025. Cradle-to-gate production of lithium-ion cells emits about 58 to 92 kg CO2-eq per kWh of cell capacity, optimised LFP cells about 37 kg; the figure covers the cells only, not the housing, inverter and control of a home storage system.",
-      "url": "https://ideas.repec.org/a/bla/inecol/v29y2025i1p113-128.html"
-    },
-    {
-      "id": 255,
-      "name": "HTW Berlin solar storage climate 2019",
-      "description": "Weniger J., Orth N., Böhme N., Quaschning V. (HTW Berlin): Sind Solarstromspeicher Klimaschützer? 2019. Uses 212 kg CO2-eq per kWh of battery capacity for the production of a lithium home storage system, the upper end of the literature.",
-      "url": "https://solar.htw-berlin.de/wp-content/uploads/WENIGER-2019-Sind-Solarstromspeicher-Klimaschuetzer.pdf"
-    },
-    {
       "id": 256,
       "name": "gruenes.haus tilt and orientation table",
       "description": "Janßen K.: Photovoltaik-Neigungswinkel: Tabelle und optimale Dachneigung. gruenes.haus. Annual yield relative to south with 30 degree tilt at 30 degree tilt: south 100, south-east or south-west 95, east or west 82, north 59 percent; flat roof without tilt about 88, east-west with flat tilt about 85 percent. A German installer table, so the figures are indicative for the Swiss plateau.",
@@ -3601,15 +3577,6 @@
       ],
       "number": "10",
       "description": "the specific yield is entered in steps of 10 kWh per kWp and year"
-    },
-    {
-      "id": 52923017,
-      "words": [
-        "lifetime",
-        "field step"
-      ],
-      "number": "1",
-      "description": "the lifetime is entered in years"
     },
     {
       "id": 2276690569,

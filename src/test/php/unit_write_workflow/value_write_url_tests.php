@@ -137,6 +137,7 @@ class value_write_url_tests extends value_url_tests
         $val->load_by_id($val_id, $msg);
         // the number is compared as text, because assert takes no float
         $t->assert($test_name, (string)$val->number(), (string)values::SAMPLE_INT);
+        $t->assert_msg($test_name, $msg);
         $msg->reset();
 
         // negative: the same number again is no change, so nothing is saved or confirmed

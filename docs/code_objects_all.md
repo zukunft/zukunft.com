@@ -31,6 +31,7 @@ the object structure is:
 ├── element_db - the database const for the element table
 ├── export - create an object to export data - the object can be converted to a json, yaml or XML message
 ├── export_type_list - a list of parameters to configure the export message
+├── phrase_data - $phd - all data of one phrase in the import format with the database ids
 ├── xml_serializer - turning an array or object into XML using PHP
 ├── fig_ids - helper class for figure id lists
 ├── formula_db - the database const for formula tables

@@ -37,8 +37,13 @@ use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+// the frontend first, because it loads the web classes in an order that defines a parent class
+// before its child; entered later e.g. via test_db_load -> test_api -> change_log_list, the web
+// sandbox_list_named is still being included when component_list extends it (fatal)
+include_once paths::WEB . 'frontend.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::MODEL . 'application.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -48,6 +53,7 @@ include_once test_paths::CONST . 'files.php';
 include_once test_paths::CREATE . 'test_db_load.php';
 include_once test_paths::CREATE . 'unit_env.php';
 include_once test_paths::UNIT . 'user_tests.php';
+include_once test_paths::UNIT_READ . 'phrase_data_read_tests.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'value_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
@@ -64,6 +70,7 @@ include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
@@ -73,6 +80,7 @@ use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\phrase_data_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\system_views_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\unit_write_workflow\word_write_url_tests;
@@ -240,10 +248,22 @@ class a_selected_test extends all_unit_tests
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             */
             //new import_write_tests()->run($t);
-            // import just the json files selected in SELECTED_IMPORT_FILES for a fast single-file cycle
+            // import config.yaml and the files selected in SELECTED_IMPORT_FILES again, so that a
+            // changed config value e.g. the test tolerance and the changed import e.g. of the value
+            // descriptions reach the database without a new setup; the global config is reloaded,
+            // because the tests read it e.g. phrase_data_read_tests
+            $test_name = 'the config.yaml is imported again';
             $imf = new import_file();
+            $imf->import_config_yaml(user::system(), $sys_msg);
+            $this->assert_msg($test_name, $sys_msg, $this::TIMEOUT_LIMIT_IMPORT);
+            $sys_msg->reset();
+            global $cfg;
+            $cfg = new config_numbers($usr);
+            $cfg->load_cfg($sys_msg, null, $usr);
             foreach (self::SELECTED_IMPORT_FILES as $import_file) {
-                $imf->json_file($import_file, $usr, false);
+                $test_name = 'the selected file ' . basename($import_file) . ' is imported again';
+                $imp_msg = $imf->json_file($import_file, $usr, false);
+                $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
             }
 
 
@@ -277,8 +297,10 @@ class a_selected_test extends all_unit_tests
             // the system view pages by section; only the view of the use case imported above is
             // rendered into resources/web/html/use_cases/pv_lifetime_balance.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
+            // the data of a phrase for api/phraseData, checked against the hand made sample
+            new phrase_data_read_tests()->run($this);
             $msk_tests = new system_views_read_tests();
-            $cfg = $msk_tests->context($this);
+            //$cfg = $msk_tests->context($this);
             //$msk_tests->run_start($this);
             //$msk_tests->run_words($this, $cfg);
             //$msk_tests->run_verbs($this, $cfg);
@@ -293,7 +315,7 @@ class a_selected_test extends all_unit_tests
             //$msk_tests->run_users($this, $cfg);
             //$msk_tests->run_system_pages($this);
             //$msk_tests->run_use_cases($this, $cfg);
-            $msk_tests->run_pv_lifetime_balance($this);
+            //$msk_tests->run_pv_lifetime_balance($this);
             //$msk_tests->run_web_frontend($this);
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);
@@ -322,7 +344,7 @@ class a_selected_test extends all_unit_tests
 
             // run the selected db write tests
             //run_system_test($this);
-            $t_db->create_test_db_entries($this);
+            //$t_db->create_test_db_entries($this);
             //new user_write_tests()->run($this);
             //new sys_log_write_tests()->run($this);
             //new horizontal_write_tests()->run($this);

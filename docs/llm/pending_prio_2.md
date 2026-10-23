@@ -87,7 +87,7 @@ if the value if updated use the frontend cache to update the results within the 
 
 the html page cache (db_cache_page) is dropped only after a data change (frontend::drop_cached_pages), so after a code change of a renderer a page cached before the change is still served until a data change or `nc=1` bypasses it; add the program version (version.txt) to the cache key or drop all cached pages when the frontend starts with a new version, so that a deployment never shows a stale page
 
-the resultList, the valueList and the phraseList api messages are cached in db_cache_page (db_cache_page::api_key, json_by_key, save_json) and dropped with the html pages of the user, but a result that the batch job recalculates or a value, word or triple written via the api of another client or an import drops nothing, so it is renewed only after CACHE_MAX_AGE (by decision); each phraseList search pattern (kp) is its own cache row; the api has no `nc=1` bypass, the pod switch is the html page switch (config_numbers::page_cache_allowed) and its off branch has no test yet; a very long phrase id list could exceed the btree index limit of the url column, which only logs a failed cache write
+the resultList, the valueList, the phraseList and the phraseData api messages are cached in db_cache_page (db_cache_page::api_key, json_by_key, save_json) and dropped with the html pages of the user, but a result that the batch job recalculates or a value, word or triple written via the api of another client or an import drops nothing, so it is renewed only after CACHE_MAX_AGE (by decision); each phraseList search pattern (kp) is its own cache row; the api has no `nc=1` bypass, the pod switch is the html page switch (config_numbers::page_cache_allowed) and its off branch has no test yet; a very long phrase id list could exceed the btree index limit of the url column, which only logs a failed cache write
 
 the url form of a group id (shared/group_id_url.php) has known limits:
 - the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "/x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
@@ -1911,3 +1911,28 @@ each point needs a source change and a test that shows the bug first
   (e.g. `user…`), and `php_code_function` skips the `public` and `private` functions
 - the doc comments of `ids_not_empty` (negative ids are dropped) and `array_merge_by_key`
   (numeric keys are merged) do not match the code
+
+## code id of a triple
+
+the save of a triple never writes its code id: `triple::db_fields_changed` compares the type, the
+verb, the exclusion, the names, the weight and the condition, but not `code_id`, so the code ids of
+the system triples in the import files (e.g. `system_calculator_label` in calculator_keywords.json,
+`system_field_phrase_selector_type` in process_catch_fields.json) never reach the database and no
+triple of the test database has one (src/test/resources/unit/triple/list.csv); the frontend
+calculator and `phrase_data::keyword_ids` therefore select their keywords by the name; the fix needs
+the code id in the triple insert and update statements with their sql fixtures and change log row
+(`change_fields.csv`), and then `phrase_data::keyword_ids` can use `triple_list::load_by_code_ids`,
+whose statement still needs its sql fixture and unit test
+
+## circular includes of the web classes
+
+the web classes include each other in a circle, so an entry point works only if it includes
+`web/frontend.php` before any other web class: `web/sandbox/sandbox_list_named.php` includes
+`word.php` before its own class is defined, and that chain (word, change_log_named, component_exe,
+system_form) reaches `web/component/component_list.php`, which extends the still undefined
+`sandbox_list_named` and stops php with a fatal; e.g. `a_selected_test.php` loaded the web package
+first via test_db_load, test_pinned_ids, test_cleanup, test_api and change_log_list and failed, so
+it now includes `web/frontend.php` first; no include_once is removed until the includes are
+changed to a proper dynamic loading (docs/llm/file-layout.md), which also removes this order
+dependency; until then a coded check could load each web class file alone in a fresh php process
+and report the files that fail
