@@ -984,6 +984,12 @@ class use_case_ui_tests
             . $html->ref($val_url, (string)values::SAMPLE_FLOAT)
             . ' (from ' . values::CITY_ZH_INHABITANTS_2019 . ')';
         $t->assert($test_name, $no_unit_txt, $no_unit_expected);
+        // negative: an entered number with a trailing zero is shown in the format of the shown number
+        $test_name = '... in the same format as the shown number';
+        $zero_form = $no_unit_form;
+        $zero_form[url_var::NUMERIC_VALUE . $changed] = values::SAMPLE_FLOAT . '0';
+        $zero_txt = $lib->msg_var_text([$ui->calculator_saved_text($zero_form, $changed)]);
+        $t->assert($test_name, $zero_txt, $no_unit_expected);
         // negative: the label is free text of the form, so a placeholder in it is never filled
         $test_name = '... and keeps a placeholder in the label as text';
         $marker = msg_id::VAR_START . msg_id::VAR_VALUE . msg_id::VAR_END;

@@ -327,7 +327,7 @@ class value_url_tests extends url_test_base
      * @param array $phr_ids the ids of the phrases of the value
      * @return int the value id, an int because the phrases of the test value are prime phrases
      */
-    private function value_id(array $phr_ids): int
+    protected function value_id(array $phr_ids): int
     {
         $phr_lst = new phrase_list($this->t->usr1);
         foreach ($phr_ids as $phr_id) {

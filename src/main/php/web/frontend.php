@@ -2754,10 +2754,13 @@ class frontend
             $unit = sandbox_value_ui::UNIT_SEPARATOR . $unit;
         }
         $val_url = $html->url_back(views::VALUE, (string)$url_array[url_var::GROUP . $field], $url_array);
+        // both numbers in the same format, because the entered one can be e.g. "1e1" or "9.50"
+        $new_num = $html->number_value((float)$url_array[url_var::NUMERIC_VALUE . $field]);
+        $old_num = $html->number_value((float)$url_array[url_var::PRE . url_var::NUMERIC_VALUE . $field]);
         // the label is the only free text and therefore filled in last, so it never fills a placeholder itself
         $vars = [
-            msg_id::VAR_VALUE => $html->ref($val_url, $url_array[url_var::NUMERIC_VALUE . $field] . $unit),
-            msg_id::VAR_VALUE_CHK => $html->esc($url_array[url_var::PRE . url_var::NUMERIC_VALUE . $field] . $unit),
+            msg_id::VAR_VALUE => $html->ref($val_url, $new_num . $unit),
+            msg_id::VAR_VALUE_CHK => $html->esc($old_num . $unit),
             msg_id::VAR_NAME => $html->esc((string)($url_array[url_var::NAME . $field] ?? '')),
         ];
         return [$html->esc($mtr->txt(msg_id::CALCULATOR_SAVED)), $vars];

@@ -14,6 +14,14 @@ if the phraseData for a user is requested and the cache contains the standard da
 get the standard data from the cache, read the user overwrites from the database 
 and overwrite the standard data with the user overwrites 
 
+## prime group id within 2^53
+
+a prime group id is an integer of at most 2^53 (9'007'199'254'740'992), so that a json reader
+like javascript `JSON.parse` reads it exactly; a group whose 64-bit key would be bigger
+e.g. 500463902488562396 (example PV installation, PV capacity, kWp, assumed) gets the compact
+text key instead (see `group_id::get_id`, `docs/llm/group_id.md`); this changes the table of the
+affected values, so it needs a database upgrade and the minor version raise (`docs/llm/versions.md`)
+
 ## cleanup
 
 ### test coverage
