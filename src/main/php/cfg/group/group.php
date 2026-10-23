@@ -368,6 +368,14 @@ class group extends sandbox_multi
         return $this->description;
     }
 
+    /**
+     * @return bool true if the group has a description that is not empty
+     */
+    function has_description(): bool
+    {
+        return ($this->description !== null and $this->description !== '');
+    }
+
     function phrase_list(): phrase_list
     {
         return $this->phr_lst;

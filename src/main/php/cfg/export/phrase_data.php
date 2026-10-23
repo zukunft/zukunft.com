@@ -175,9 +175,11 @@ class phrase_data
         $frm_lst = $phr_lst->frm_lst($msg);
         $frm_lst->filter_readable_by($usr);
         $this->debug_step('formulas loaded', $frm_lst->count());
-        $phr_lst = $this->complete_phrases(array_merge($phr_lst->id_lst(), $this->formula_phrase_ids($frm_lst)), $msg);
+        $frm_ids = array_merge($phr_lst->id_lst(), $this->formula_phrase_ids($frm_lst));
+        $phr_lst = $this->complete_phrases($frm_ids, $msg);
         // the naming triples after the sides, because a side e.g. PV has its own label and acronym
-        $phr_lst = $this->complete_phrases(array_merge($phr_lst->id_lst(), $this->naming_triple_ids($phr_lst, $kwd_ids, $msg)), $msg);
+        $nam_ids = array_merge($phr_lst->id_lst(), $this->naming_triple_ids($phr_lst, $kwd_ids, $msg));
+        $phr_lst = $this->complete_phrases($nam_ids, $msg);
         $this->report_missing_value_phrases($val_lst, $phr_lst, $msg);
         $trp_lst = $this->full_triples($phr_lst, $msg);
         $trp_lst->filter_readable_by($usr);
@@ -293,6 +295,7 @@ class phrase_data
             $loops++;
             $this->debug_step('walk step ' . $loops . ' of ' . $found_lst->count() . ' walked, next', $next->count());
         }
+        $this->report_loop_limit(!$next->is_empty(), 'walk', $msg);
         return $found_lst;
     }
 
@@ -307,14 +310,25 @@ class phrase_data
         $result->add($phr, false, $msg);
         $from_id = $this->from_id($phr, $msg);
         $loops = 0;
-        while ($from_id != 0 and !in_array($from_id, $result->id_lst()) and $loops < def::MAX_LOOP) {
+        while ($this->is_new_from($from_id, $result) and $loops < def::MAX_LOOP) {
             $from = new phrase($msg->usr);
             $from->load_by_id($from_id, $msg);
             $result->add($from, false, $msg);
             $from_id = $this->from_id($from, $msg);
             $loops++;
         }
+        $this->report_loop_limit($this->is_new_from($from_id, $result), 'built from chain', $msg);
         return $result;
+    }
+
+    /**
+     * @param int $from_id the phrase id of the from side of the last phrase of the chain or zero for a word
+     * @param phrase_list $chain the phrases of the chain so far
+     * @return bool true if the from side is a phrase that the chain does not yet contain
+     */
+    private function is_new_from(int $from_id, phrase_list $chain): bool
+    {
+        return ($from_id != 0 and !$chain->has_id($from_id));
     }
 
     /**
@@ -423,24 +437,33 @@ class phrase_data
      * @return void
      */
     private function add_new(
-        phrase_list                           $next,
-        phrase_list                           $walked,
-        array                                 $kwd_ids,
+        phrase_list                             $next,
+        phrase_list                             $walked,
+        array                                   $kwd_ids,
         phrase|sandbox_named|combine_named|null $phr,
-        user_message                          $msg
+        user_message                            $msg
     ): void
     {
         if ($phr instanceof phrase) {
-            if ($phr->id() != 0
-                and !in_array($phr->id(), $kwd_ids)
-                and !in_array($phr->id(), $walked->id_lst())
-                and !in_array($phr->id(), $next->id_lst())) {
+            if ($this->is_new($phr, $kwd_ids, $walked) and !$next->has_id($phr->id())) {
                 $next->add($phr, false, $msg);
             }
         } elseif ($phr != null) {
             // a side of a loaded triple is a phrase, because only a phrase has the signed phrase id
             log_err_msg('the side ' . $phr->dsp_id() . ' of a triple is not a phrase', $msg);
         }
+    }
+
+    /**
+     * @param phrase $phr the phrase that has been found e.g. the to side of a triple
+     * @param array $kwd_ids the phrase ids of the keywords that are never walked
+     * @param phrase_list $walked all phrases walked so far
+     * @return bool true if the phrase has an id, is no keyword and has not been walked yet
+     */
+    private function is_new(phrase $phr, array $kwd_ids, phrase_list $walked): bool
+    {
+        $id = $phr->id();
+        return ($id != 0 and !in_array($id, $kwd_ids) and !$walked->has_id($id));
     }
 
 
@@ -549,6 +572,7 @@ class phrase_data
             $loops++;
             $this->debug_step('side step ' . $loops . ' of ' . count($all_ids) . ' phrases, added', $load_lst->count());
         }
+        $this->report_loop_limit(!$load_lst->is_empty(), 'side completion', $msg);
         $this->report_not_loaded($not_loaded, $msg);
         $result = $this->phrases_by_ids($all_ids, $msg);
         $result->filter_readable_by($msg->usr);
@@ -627,6 +651,23 @@ class phrase_data
     }
 
     /**
+     * a loop that still finds phrases after def::MAX_LOOP steps is stopped, so the data is
+     * incomplete; the user cannot fix a phrase tree that deep, so it is reported to the admin
+     *
+     * @param bool $incomplete true if the loop has been stopped by the limit and not by its end
+     * @param string $loop the name of the loop for the admin e.g. walk
+     * @param user_message $msg to add the internal warning with the link to the log entry
+     * @return void
+     */
+    private function report_loop_limit(bool $incomplete, string $loop, user_message $msg): void
+    {
+        if ($incomplete) {
+            log_warning_msg('the phrase data ' . $loop . ' has been stopped after '
+                . def::MAX_LOOP . ' steps, so the data is incomplete', $msg);
+        }
+    }
+
+    /**
      * the triples are read by the triple list, because a phrase load maps a triple without its
      * from and to (see phrase::row_mapper_sandbox)
      *
@@ -655,12 +696,23 @@ class phrase_data
         $result = [];
         foreach ($this->full_triples($check_lst, $msg)->lst() as $trp) {
             foreach ([$trp->from_id(), $trp->to_id()] as $side_id) {
-                if ($side_id != 0 and !in_array($side_id, $ids) and !in_array($side_id, $result)) {
+                if ($this->is_missing_side($side_id, $ids, $result)) {
                     $result[] = $side_id;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * @param int $side_id the phrase id of the from or to side of a triple or zero if the side is not set
+     * @param array $ids the phrase ids of all phrases of the data
+     * @param array $found the missing side ids found so far
+     * @return bool true if the side is a phrase that is neither in the data nor found yet
+     */
+    private function is_missing_side(int $side_id, array $ids, array $found): bool
+    {
+        return ($side_id != 0 and !in_array($side_id, $ids) and !in_array($side_id, $found));
     }
 
 
@@ -691,7 +743,7 @@ class phrase_data
     }
 
     /**
-     * show a step of the phrase data if def::DEBUG_PHRASE_DATA is switched on; log_debug adds the
+     * show a step of the phrase data if shared_def::DEBUG_PHRASE_DATA is switched on; log_debug adds the
      * seconds since the last message, so the slow step is the line with the most seconds
      *
      * @param string $step what has been done e.g. "values loaded"

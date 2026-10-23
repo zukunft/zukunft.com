@@ -241,12 +241,8 @@ class import_file
             $imf = new import_file();
             $msg->merge($imf->yaml_file(files::SYSTEM_CONFIG, $usr));
 
-            // the imported values are part of the cached config of every user, which the database
-            // cache renews only after its max age (db_cache::is_outdated), so it is dropped here;
-            // the file cache is renewed by the time of config.yaml (config_numbers::is_file_cache_valid)
             if ($msg->is_ok()) {
-                $cac = new db_cache($usr);
-                $cac->del_by_types(config_numbers::CACHE_TYPES, $msg);
+                $this->drop_config_cache($usr, $msg);
             }
 
             // check the import if needed or requested
@@ -334,6 +330,21 @@ class import_file
         }
 
         return $msg;
+    }
+
+    /**
+     * the imported values are part of the cached config of every user, which the database cache
+     * renews only after its max age (db_cache::is_outdated), so it is dropped after the import;
+     * the file cache is renewed by the time of config.yaml (config_numbers::is_file_cache_valid)
+     *
+     * @param user $usr who has imported the config
+     * @param user_message $msg to report a failed delete
+     * @return bool true if the config cache entries of all users have been dropped
+     */
+    function drop_config_cache(user $usr, user_message $msg): bool
+    {
+        $cac = new db_cache($usr);
+        return $cac->del_by_types(config_numbers::CACHE_TYPES, $msg);
     }
 
     /**

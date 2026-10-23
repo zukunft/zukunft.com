@@ -1594,9 +1594,8 @@ class value_base extends sandbox_value
             $vars[json_fields::NAME] = $this->grp()->name_given();
         }
         // the description of the group, which the import sets from the value description (see import_mapper)
-        $description = $this->get_description();
-        if ($description !== null and $description !== '') {
-            $vars[json_fields::DESCRIPTION] = $description;
+        if ($this->grp()->has_description()) {
+            $vars[json_fields::DESCRIPTION] = $this->get_description();
         }
 
         return $vars;

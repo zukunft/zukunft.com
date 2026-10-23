@@ -123,10 +123,11 @@ class test_values extends test_objects
      * the standard test value with the description of its group, which is the description of the value
      * @return value the test value with the group description groups::TN_READ_COM
      */
-    function value_with_description(user_message $msg): value
+    function value_with_description(): value
     {
         $t_grp = new test_groups($this->env);
-        return new value($this->env->usr1, round(values::PI_LONG, 13), $t_grp->group_filled());
+        $grp = $t_grp->group_filled();
+        return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
     /**

@@ -2,17 +2,13 @@
 
 ## calculation editor
 
-remove from src/test/resources/web/html/use_cases/calculator_editor_sample.html all external links like https://fonts.googleapis.com and if something like a style is needed add the style to /main/resources/style/style_html.css
-
-remove the demo data hints from src/test/resources/web/html/use_cases/calculator_editor_sample.html
-
 check if the missing data in phrase_data_pv_install_actual.json compared to the json in
 src/test/resources/web/html/use_cases/calculator_editor_sample.html changes everything in the output
 
 fix the button ref to use a relative path or localhost e.g btnDiscard
 
-similar to src/test/resources/web/html/use_cases/pv_lifetime_balance.html and src/test/resources/web/html/use_cases/pv_lifetime_balance.html
-create src/test/resources/web/html/use_cases/calculator_editor.html from the script and compare the result with src/test/resources/web/html/use_cases/calculator_editor.html
+similar to src/test/resources/web/html/use_cases/pv_lifetime_balance.html and src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
+create src/test/resources/web/html/use_cases/calculator_editor.html from the script and compare the result with src/test/resources/web/html/use_cases/calculator_editor_sample.html
 but unlike pv_lifetime_balance.html the main database link should be the seed json which should come from /api/phraseData/ 
 so the data should be basically src/test/resources/api/phrase_data/phrase_data_pv_install_actual.json 
 
@@ -28,8 +24,8 @@ and overwrite the standard data with the user overwrites
 
 ### open API update
 
-write a script that recreates th open API yaml based on the code and create a test that reports the differences between
-the create openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
+write a script that recreates the open API yaml based on the code and create a test that reports the differences between
+the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
 
 ## prime group id within 2^53
 
@@ -43,7 +39,7 @@ affected values, so it needs a database upgrade and the minor version raise (`do
 
 ### id usage
 
-create a code test script that checks that the pinned word. triple, ... id (*_ID) are never used in the real code and only used for testing
+create a code test script that checks that the pinned word, triple, ... id (*_ID) are never used in the real code and only used for testing
 
 ### test coverage
 

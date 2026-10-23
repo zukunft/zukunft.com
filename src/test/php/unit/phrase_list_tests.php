@@ -205,7 +205,8 @@ class phrase_list_tests
         $phr_lst->add($this->get_phrase($t, word_names::FLOW_ID, word_names::FLOW));
         $phr_lst->add($this->get_phrase($t, word_names::LOSS_ID, word_names::LOSS));
         $phr_lst->add($this->get_phrase($t, word_names::CONST_ID, word_names::CONST_NAME));
-        $t->assert_true($test_name, in_array(word_names::CONST_ID, $phr_lst->id_lst()));
+        $phr_ids = $phr_lst->id_lst();
+        $t->assert_contains($test_name, $phr_ids, [word_names::CONST_ID]);
         $test_name = '... but a phrase without an id adds no id';
         $phr_lst = new phrase_list($t->usr1);
         $phr_lst->add($this->get_phrase($t, 0, word_names::PI));

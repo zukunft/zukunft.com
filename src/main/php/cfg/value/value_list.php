@@ -221,9 +221,8 @@ class value_list extends sandbox_value_list
         if ($old_grp->name_given() != '') {
             $grp->set_name($old_grp->name_given());
         }
-        $description = $old_grp->get_description();
-        if ($description !== null and $description !== '') {
-            $grp->set_description($description);
+        if ($old_grp->has_description()) {
+            $grp->set_description($old_grp->get_description());
         }
     }
 

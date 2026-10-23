@@ -67,6 +67,14 @@ class phrase_data_read_tests
 
     // the separator of the parts of a triple or value key e.g. "PV|is an acronym for|photovoltaic"
     const string KEY_SEP = '|';
+    // the json fields of the objects that the phrase data contains without the results
+    const array OBJECT_FIELDS = [
+        json_fields::WORDS,
+        json_fields::TRIPLES,
+        json_fields::FORMULAS,
+        json_fields::SOURCES,
+        json_fields::VALUES
+    ];
 
     function run(test_cleanup $t): void
     {
@@ -118,13 +126,13 @@ class phrase_data_read_tests
         $val_descriptions = $this->value_descriptions($vars[json_fields::VALUES] ?? []);
         $t->assert_contains($test_name, $val_descriptions, $this->value_descriptions($sample[json_fields::VALUES]));
         $test_name = '... and the database id of each object';
-        $objects = array_merge($vars[json_fields::WORDS] ?? [], $vars[json_fields::TRIPLES] ?? [],
-            $vars[json_fields::FORMULAS] ?? [], $vars[json_fields::SOURCES] ?? [], $vars[json_fields::VALUES] ?? []);
+        $objects = $this->objects($vars);
         $without_id = $this->names_without_id($objects);
         $t->assert($test_name, $without_id, []);
         $test_name = '... and not much more objects than the sample';
         $max_count = $this->max_object_count($sample);
-        $t->assert_max($test_name, $max_count, count($objects));
+        $obj_count = count($objects);
+        $t->assert_max($test_name, $max_count, $obj_count);
         $test_name = 'the header names the type of the data';
         $type = $vars[json_fields::TYPE_NAME] ?? '';
         $t->assert($test_name, $type, $lib->class_to_api_route(phrase_data::class));
@@ -144,8 +152,10 @@ class phrase_data_read_tests
         $t->assert_msg($test_name, $msg);
         $msg->reset();
         $test_name = '... and only values that name the phrase';
-        $other_vals = $this->values_by_phrase($val_vars[json_fields::VALUES] ?? [], triple_names::EXAMPLE_PV_INSTALLATION, false);
-        $t->assert($test_name, $this->value_keys($other_vals), []);
+        $walk_vals = $val_vars[json_fields::VALUES] ?? [];
+        $other_vals = $this->values_by_phrase($walk_vals, triple_names::EXAMPLE_PV_INSTALLATION, false);
+        $other_keys = $this->value_keys($other_vals);
+        $t->assert($test_name, $other_keys, []);
         // negative: a value of the sample without the phrase e.g. a yield factor is not part of the value walk
         $test_name = '... but not the values of the sample without the phrase';
         $sample_other = $this->values_by_phrase($sample[json_fields::VALUES], triple_names::EXAMPLE_PV_INSTALLATION, false);
@@ -156,6 +166,11 @@ class phrase_data_read_tests
         $t->assert_msg($test_name, $msg, $t::TIMEOUT_LIMIT_IMPORT);
         $t->assert_key_exists($test_name, json_fields::RESULTS, $res_vars);
         $msg->reset();
+        // a result is reloaded for the export by its own id, because its group id selects all results of the group
+        $test_name = '... and each exported result names its phrases';
+        $res_objs = $res_vars[json_fields::RESULTS] ?? [];
+        $without_words = $this->count_without_field($res_objs, json_fields::WORDS);
+        $t->assert($test_name, $without_words, 0);
 
         $test_name = 'the received api json is written next to the expected file';
         $actual_name = basename($t->api_actual_path(test_files::PHRASE_DATA_PV_INSTALL));
@@ -184,11 +199,21 @@ class phrase_data_read_tests
     {
         global $cfg;
         $tolerance = $cfg->get_by([words::TEST, words::TOLERANCE, words::PERCENT], def::FALLBACK_TEST_TOLERANCE);
-        $count = 0;
-        foreach ([json_fields::WORDS, json_fields::TRIPLES, json_fields::FORMULAS, json_fields::SOURCES, json_fields::VALUES] as $fld) {
-            $count += count($sample[$fld] ?? []);
-        }
+        $count = count($this->objects($sample));
         return (int)floor($count * (1 + $tolerance));
+    }
+
+    /**
+     * @param array $vars the json of the phrase data
+     * @return array the words, triples, formulas, sources and values of the data in one list
+     */
+    private function objects(array $vars): array
+    {
+        $result = [];
+        foreach (self::OBJECT_FIELDS as $fld) {
+            $result = array_merge($result, $vars[$fld] ?? []);
+        }
+        return $result;
     }
 
     /**
@@ -298,13 +323,39 @@ class phrase_data_read_tests
     {
         $result = [];
         foreach ($objects as $obj) {
-            // a value id can be a text key, so it is never compared with a number
-            $id = $obj[json_fields::ID] ?? null;
-            if ($id === null or $id === 0 or $id === '') {
-                $result[] = $obj[json_fields::NAME] ?? implode(self::KEY_SEP, $obj[json_fields::WORDS] ?? []);
+            if (!$this->has_db_id($obj)) {
+                $phr_names = $obj[json_fields::WORDS] ?? [];
+                $result[] = $obj[json_fields::NAME] ?? implode(self::KEY_SEP, $phr_names);
             }
         }
         return $result;
+    }
+
+    /**
+     * @param array $objects the json of the objects of the data e.g. the results
+     * @param string $fld the json field that each object should have e.g. the words
+     * @return int the number of objects without the field
+     */
+    private function count_without_field(array $objects, string $fld): int
+    {
+        $result = 0;
+        foreach ($objects as $obj) {
+            if (!array_key_exists($fld, $obj)) {
+                $result++;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $obj the json of one object of the data
+     * @return bool true if the object has a database id that is neither zero nor empty
+     */
+    private function has_db_id(array $obj): bool
+    {
+        // a value id can be a text key, so it is never compared with a number
+        $id = $obj[json_fields::ID] ?? null;
+        return ($id !== null and $id !== 0 and $id !== '');
     }
 
 }

@@ -49,9 +49,11 @@ use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
@@ -73,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -80,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -107,6 +111,10 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::EXPORT . 'phrase_data.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'json_fields.php';
 
 class api_tests
 {
@@ -222,6 +230,27 @@ class api_tests
         */
         // the admin dashboard of the own frontend gets the system log only for an admin
         $t->assert_api_sys_log_list_admin_only();
+
+        // the use case phrase is selected by its name, because its id follows the import order
+        $t->subheader($ts . 'phrase data');
+        $test_name = 'the phrase data api names the requested phrase as the selection';
+        $lib = new library();
+        $phr = new phrase($t->usr1);
+        $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
+        $phd_url = THIS_URL . url_var::API_PATH . $lib->class_to_api_route(phrase_data::class);
+        $phd_par = [url_var::ID => $phr->id(), url_var::PHRASE_DATA_WALK => url_var::PHRASE_DATA_WALK_FROM];
+        $phd_txt = $t->api_call_timed(rest_ctrl::GET, $phd_url, $phd_par);
+        $phd_json = json_decode($phd_txt, true) ?? [];
+        $selection = $phd_json[json_fields::SELECTION] ?? [];
+        $sel_name = $selection[0][json_fields::NAME] ?? '';
+        $t->assert($test_name, $sel_name, triple_names::EXAMPLE_PV_INSTALLATION, $t::TIMEOUT_LIMIT_REST);
+        // negative: an unknown walk is reported instead of answered with a guessed walk
+        $test_name = '... but an unknown walk returns no data';
+        $phd_par = [url_var::ID => $phr->id(), url_var::PHRASE_DATA_WALK => url_var::PHRASE_DATA_WALK];
+        $phd_txt = $t->api_call_timed(rest_ctrl::GET, $phd_url, $phd_par);
+        $phd_json = json_decode($phd_txt, true) ?? [];
+        $t->assert_key_not_exists($test_name, json_fields::WORDS, $phd_json);
+        $msg->reset();
         // $t->assert_rest(new word($usr, words::TN_READ));
         // TODO Prio 2 add value_list tests for prime, normal and big value tables
         // TODO Prio 2 add a test case for empty list, no key found, and more  values than the page size

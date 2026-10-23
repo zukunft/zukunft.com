@@ -12,9 +12,6 @@
 </head>
 <body>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
 /* layout: a sticky toolbar, then three working columns: the page structure (tree), the settings */
 /* of the selected part (inspector) and the live page with texts, changes and json as tabs */
@@ -46,8 +43,8 @@
   --pv-sec: #dbe4f5;
   --pv-assumed: #6b86c2;
   --pv-neg: #dc3545;
-  --font-ui: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --font-page: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --r: 6px;
 }
@@ -92,7 +89,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .btn:hover { border-color: var(--accent); }
 a.btn { text-decoration: none; color: inherit; display: inline-block; }
 .chip.live { background: var(--ok-soft); border-color: transparent; color: var(--ok); }
-.chip.demo { background: var(--shared-soft); border-color: transparent; color: var(--shared); }
 .btn:disabled { opacity: .45; cursor: default; border-color: var(--line); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 500; }
 .btn.small { padding: 2px 8px; font-size: 12px; }
@@ -5406,7 +5402,7 @@ function refreshStatus() {
   const save = document.getElementById("btnSave");
   save.disabled = SOURCE.mode !== "api" || lastOutput.changed === 0 || saving;
   save.textContent = saving ? "Saving…" : "Save";
-  save.title = SOURCE.mode === "api" ? "Write the changes to the database" : "Demo data: saving is off";
+  save.title = "Write the changes to the database";
   document.getElementById("btnUndo").disabled = history.undo.length === 0;
   document.getElementById("btnRedo").disabled = history.redo.length === 0;
   let count = 0;
@@ -5981,9 +5977,6 @@ function changesPane() {
   if (o.warnings.length > 0) {
     html += "<div><h3>Check before saving</h3><ul>" + o.warnings.map(function (w) { return '<li class="wrn">' + esc(w) + "</li>"; }).join("") + "</ul></div>";
   }
-  if (SOURCE.mode !== "api") {
-    html += '<p style="color:var(--shared);margin:0">Demo data: these changes are not saved anywhere.</p>';
-  }
   if (o.changed === 0) {
     html += '<p style="color:var(--muted);margin:0">No changes since the last save.</p>';
   } else if (SOURCE.mode === "api") {
@@ -6041,16 +6034,17 @@ function renderAll() {
     phraseIn.value = state.page;
   }
   const hint = document.getElementById("phraseHint");
-  if (!SOURCE.online) {
-    hint.innerHTML = "demo data from <span class=\"mono\">" + esc(DOC_NAME) + "</span>, not connected to a pod: saving is off";
-  } else if (state.page) {
+  if (SOURCE.online && state.page) {
     hint.innerHTML = "phrase id <span class=\"mono\">" + esc(String(SOURCE.pageId)) + "</span>, built from <span class=\"mono\">" + esc(state.base) + "</span>";
-  } else {
+  } else if (SOURCE.online) {
     hint.textContent = "choose the phrase whose calculator you want to edit";
+  } else {
+    hint.textContent = "";
   }
   const chip = document.getElementById("srcChip");
-  chip.className = SOURCE.mode === "api" ? "chip live" : "chip demo";
-  chip.textContent = SOURCE.mode === "api" ? "database" : "demo data";
+  chip.hidden = SOURCE.mode !== "api";
+  chip.className = "chip live";
+  chip.textContent = "database";
   chip.title = DOC_NAME;
   const view = document.getElementById("btnView");
   view.hidden = SOURCE.mode !== "api" || !SOURCE.pageId;
@@ -7048,7 +7042,7 @@ async function loadPhrase(force) {
       loadDoc(seed.doc, seed.name, null);
       toast("Loaded “" + name + "”.");
     } else {
-      notice("This page is not connected to a zukunft.com pod, so only “" + esc((seed.doc.selection || [])[0]) + "” of the demo data can be loaded.", "err");
+      notice("This page is not connected to a zukunft.com pod, so only “" + esc((seed.doc.selection || [])[0]) + "” can be loaded.", "err");
     }
   } else {
     const btn = document.getElementById("btnLoad");

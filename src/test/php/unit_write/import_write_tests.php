@@ -39,12 +39,17 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once test_paths::CONST . 'files.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -61,6 +66,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -267,6 +273,27 @@ class import_write_tests
         $test_name = 'json_file version-newer message text';
         $target = 'Import file has been created with version "9.9.9"';
         $t->assert_text_contains($test_name, $imp_msg->all_message_text(), $target);
+
+        // the config import drops the cached config, because the cache is else renewed only by its age
+        $t->subheader($ts . 'config cache');
+        $test_name = 'a config load caches the config of the user';
+        $cfg_usr = new config_numbers($t->usr1);
+        $cfg_usr->load_cfg($msg, null, $t->usr1);
+        $cac = new db_cache($t->usr1);
+        $cac_id = $cac->load_by_type_and_user(db_cache_types::SYSTEM_CONFIG, $msg);
+        $t->assert_greater($test_name, 0, $cac_id);
+        $msg->reset();
+        $test_name = 'the drop of the config cache removes the cached config';
+        $imf->drop_config_cache($t->usr1, $msg);
+        $cac = new db_cache($t->usr1);
+        $cac_id = $cac->load_by_type_and_user(db_cache_types::SYSTEM_CONFIG, $msg);
+        $t->assert($test_name, $cac_id, 0);
+        $msg->reset();
+        // negative: a drop without a cached config finds nothing to remove and reports no error
+        $test_name = '... and a second drop without a cached config reports no error';
+        $imf->drop_config_cache($t->usr1, $msg);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
 
         $db_con->check_sequences();
     }

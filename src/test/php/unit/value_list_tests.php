@@ -101,7 +101,7 @@ class value_list_tests
         // group that set_grp_ids builds from the phrases must keep them for the save
         $test_name = 'setting the group ids keeps the description of the group';
         $desc_lst = new value_list($t->usr1);
-        $desc_lst->add($t_val->value_with_description($msg));
+        $desc_lst->add($t_val->value_with_description());
         $desc_lst->set_grp_ids();
         $desc_txt = $desc_lst->lst()[0]->get_description() ?? '';
         $t->assert($test_name, $desc_txt, groups::TN_READ_COM);

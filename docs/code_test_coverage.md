@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1450 of 6215 public functions have at least 2 unit test calls; the 4560 functions below do not; the 205 functions of the last section are called nowhere
+1453 of 6217 public functions have at least 2 unit test calls; the 4559 functions below do not; the 205 functions of the last section are called nowhere
 
-## 2050 functions of main backend have no test at all
+## 2049 functions of main backend have no test at all
 
 ```
 \-- application
@@ -258,7 +258,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- del_by_types - 0 unit test calls
     \-- del_sql_by_type_ids - 0 unit test calls
     \-- del_sql_by_user - 0 unit test calls
-    \-- load_by_type_and_user - 0 unit test calls
     \-- load_by_type_id - 0 unit test calls
     \-- load_sql - 0 unit test calls shared by 45 classes
     \-- load_sql_by_type_id - 0 unit test calls

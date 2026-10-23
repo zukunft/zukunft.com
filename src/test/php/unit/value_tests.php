@@ -173,7 +173,7 @@ class value_tests
         $t->assert($test_name, $val_imported->grp()->name_given(), '');
         $msg->reset();
         $test_name = 'the export json of a value has the description of its group';
-        $described_ex_json = $t_val->value_with_description($msg)->export_json($msg, [], false);
+        $described_ex_json = $t_val->value_with_description()->export_json($msg, [], false);
         $t->assert($test_name, $described_ex_json[json_fields::DESCRIPTION] ?? '', groups::TN_READ_COM);
         $test_name = '... which the import takes as the description of the group';
         $val_imported = new value($t->usr1);

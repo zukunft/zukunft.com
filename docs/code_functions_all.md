@@ -169,6 +169,8 @@
 \-- group
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /group/group
             .php
+    \-- has_description - section for function has_description not yet defined that it should be set and get in /group/g
+            roup.php
     \-- phrase_list - section for function phrase_list is expected to be cast in /group/group.php
     \-- has_phrase_list - section for function has_phrase_list not yet defined that it should be set and get in /group/g
             roup.php
@@ -2493,6 +2495,8 @@
             php
     \-- import_config_yaml - section for function import_config_yaml not yet defined that it should be set and get in /i
             mport/import_file.php
+    \-- drop_config_cache - section for function drop_config_cache not yet defined that it should be set and get in /imp
+            ort/import_file.php
     \-- import_system_data - section for function import_system_data not yet defined that it should be set and get in /i
             mport/import_file.php
     \-- import_pod_config - section for function import_pod_config not yet defined that it should be set and get in /imp
@@ -5221,6 +5225,8 @@
         \-- import_file - import a single yaml file
     \-- import_config_yaml
         \-- import_file - import the initial system configuration
+    \-- drop_config_cache
+        \-- import_file - the imported values are part of the cached config of every user, which the database cache
     \-- import_system_data
         \-- import_file - TODO Prio 2 fill a user_message with the warning and error messages and return true if success
                 ful
