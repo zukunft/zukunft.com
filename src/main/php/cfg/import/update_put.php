@@ -138,11 +138,6 @@ class update_put
         $lib = new library();
         $api_msg = new api_message();
         $body = $this->put($json, $msg);
-        // the api sends the messages only for a refused put, so the warnings of a done put are part of the body
-        $warnings = $msg->all_message_text();
-        if ($msg->is_ok() and $warnings != '') {
-            $body[json_fields::WARNINGS] = $warnings;
-        }
         $vars = $api_msg->api_header_array(
             $api_msg->api_site_name($db_con),
             $lib->class_to_api_route(self::class),
@@ -157,7 +152,7 @@ class update_put
      *
      * @param array $json the update put message with or without the api header
      * @param user_message $msg with the requesting user, to report e.g. a phrase that does not exist
-     * @return array the body of the message with the database id of each saved object
+     * @return array the body of the message with the database id of each saved object, what the save has done and the warnings of the put
      */
     function put(array $json, user_message $msg): array
     {
@@ -190,6 +185,12 @@ class update_put
         }
         // also after a problem, because the objects before the problem are saved
         $this->drop_cached_answers();
+        // the api sends the messages only for a refused put, so the warnings of a done put are part
+        // of the body, and only the ones of this put, not the messages of the request before it
+        $warnings = $put_msg->all_message_text();
+        if ($put_msg->is_ok() and $warnings != '') {
+            $result[json_fields::WARNINGS] = $warnings;
+        }
         $msg->merge($put_msg);
         return $result;
     }
@@ -238,6 +239,9 @@ class update_put
         $db_obj = null;
         if ($msg->is_ok() and key_exists(json_fields::ID, $obj_json)) {
             $db_obj = $this->fill_from_db($dbo, $msg);
+        } elseif ($msg->is_ok()) {
+            // the row that the save changes instead of adding one, so that the answer never confirms it as added
+            $db_obj = $this->existing($dbo, $msg);
         }
         if ($msg->is_ok()) {
             $dbo->save($msg);
@@ -302,6 +306,34 @@ class update_put
         $result[json_fields::ACTION] = $action;
         $result[json_fields::CHANGES] = $changes;
         $result[json_fields::USER_OVERWRITE] = $saved->has_usr_cfg();
+        return $result;
+    }
+
+    /**
+     * the row that the save of an object without id in the message changes, because the save finds
+     * an existing row by the name or the linked phrases (get_similar) or a value by its phrase group
+     *
+     * @param word|triple|value $dbo the object of the message without database id
+     * @param user_message $msg with the requesting user, to report a problem of the database read
+     * @return word|triple|value|null the existing row or null if the save adds the object
+     */
+    private function existing(word|triple|value $dbo, user_message $msg): word|triple|value|null
+    {
+        $result = null;
+        if ($dbo instanceof value) {
+            $db_val = new value($msg->usr);
+            // the id of a value is the id of its phrase group, which the load keeps also if no row is found
+            if ($dbo->id() != 0 and $dbo->id() != '' and $db_val->load_by_id($dbo->id(), $msg) != 0) {
+                $result = $db_val;
+            }
+        } else {
+            $sim_msg = new user_message($msg->usr); // not reported, because a duplicate message only decides here if the row exists and the save reports it with its own check
+            $sim = $dbo->get_similar($sim_msg);
+            // e.g. a formula with the name of the word is not the row that the save of the word changes
+            if ($sim instanceof $dbo) {
+                $result = $sim;
+            }
+        }
         return $result;
     }
 

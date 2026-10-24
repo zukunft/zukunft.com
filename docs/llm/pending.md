@@ -7,6 +7,14 @@
 add a typeList json to the Calculator Editor that contains the result of a /api/typeLists call
 the json is expected to contain all verbs so instead of calling the api to get the verbs, pick the verbs from the type json
 
+### system phrases
+
+create a fixed api for the system phrases that have a code_id including the children e,g, of scaling, unit, ... and scaling formulas
+
+### reject no change users
+
+the 'Calculation editor' view (id 196) is a an edit view, so change the type of the view and if a user, that has not permission to do database changes reaches and edit view, show an reject message and redirect to the back view or the start view 
+
 ## prime group id within 2^53
 
 limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)

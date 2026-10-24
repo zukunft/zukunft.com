@@ -1738,7 +1738,9 @@ of the changes after it that are not saved (`UPDATE_PUT_SKIPPED`).
 The answer is the body of the message with the database `id` of each saved
 object and what the save has done, confirmed by the reload of the saved row
 (`update_put::confirmed`): `action` is `added`, `changed`, `unchanged` or, for
-a `delete` entry, `removed`; `changes` lists each changed field of the message
+a `delete` entry, `removed`; an object without `id` is `added` only if the save
+has found no row with the same name, the same linked phrases or, for a value,
+the same phrase group, because otherwise the save changes that row; `changes` lists each changed field of the message
 with its `old_value` and `new_value`; `user_overwrite` is true if the
 requesting user has an own version of the object after the save and false if
 the user sees the shared row, e.g. also after an undo that removes the own
