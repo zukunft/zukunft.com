@@ -159,16 +159,18 @@ class rest_call
     }
 
     /**
-     * add the id of the logged-in user to the url vars of an api get call,
-     * so that the backend returns the sandbox of this user (see user::data_user)
+     * add the id of the requesting user to the url vars of an api get call, so that the backend
+     * returns the sandbox of this user (see user::data_user); unlike the page url (id_for_url) also a
+     * user of the standard data is named, because the backend sees the call of the own pod without
+     * the session and would otherwise answer for the ip user of the pod
      * @param array $data the url vars of the api get call
      * @param user_message $msg with the requesting user
-     * @return array the url vars with the user id; unchanged if nobody is logged in
+     * @return array the url vars with the user id; unchanged if the requesting user has no id
      *               or if the caller has already named a data user e.g. an admin viewing another user
      */
     function data_with_user(array $data, user_message $msg): array
     {
-        $usr_id = $msg->usr?->id_for_url() ?? 0;
+        $usr_id = $msg->usr?->id() ?? 0;
         if ($usr_id > 0) {
             $data[url_var::USER] ??= $usr_id;
         }

@@ -1317,8 +1317,10 @@ class system_page extends component
         if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
             $html = new html_base();
             $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            // the session token, which the save of the editor sends to the api in the csrf header
             $result = $html->link_style(files::CALCULATOR_EDITOR_STYLE)
                 . $html->div('', styles::CALC_EDITOR, self::CALC_EDITOR_HOST_ID)
+                . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }

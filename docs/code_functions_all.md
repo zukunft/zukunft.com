@@ -2520,6 +2520,10 @@
             rt_wikidata.php
     \-- cleanup_file - section for function cleanup_file not yet defined that it should be convert in /import/import_wik
             idata.php
+\-- update_put
+    \-- api_json - section for function api_json not yet defined that it should be put in /import/update_put.php
+    \-- put - section for function put not yet defined that it should be put in /import/update_put.php
+    \-- db_id - section for function db_id not yet defined that it should be internal in /import/update_put.php
 \-- language
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /language/language.php
@@ -5874,6 +5878,8 @@
         \-- expression - @returns phrase_list with the word and triple ids from a given formula text
     \-- get_usr_names
         \-- expression - @return array of the term names used in the expression based on the user text
+    \-- db_id
+        \-- update_put - @param int|string $id the database id of the message e.g. "81495585085949938" for the group id
     \-- get_all_messages
         \-- user_message - @return array with all the text messages
 \-- extract helper
@@ -6153,6 +6159,11 @@
         \-- import - @param string $key the yaml key with the words of the triple e.g. "system configuration"
     \-- seq_id
         \-- import - @return int the next dummy id for unit testing
+\-- put
+    \-- api_json
+        \-- update_put - save the changes of an update put message and create the answer for the api
+    \-- put
+        \-- update_put - save the changes of an update put message
 \-- format
     \-- dsp
         \-- change - @return string the current change as a human-readable text
@@ -9714,7 +9725,7 @@
     \-- api_get
         \-- rest_call - create and execute an api get call to get a json message of a database object
     \-- data_with_user
-        \-- rest_call - add the id of the logged-in user to the url vars of an api get call,
+        \-- rest_call - add the id of the requesting user to the url vars of an api get call, so that the backend
     \-- api_post
         \-- rest_call - create and execute an api post call add an object to the database based on the given json
     \-- api_put

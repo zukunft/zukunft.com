@@ -72,6 +72,14 @@ class files
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
+    // the update put messages of the calculator editor save without the database ids, which the test adds
+    CONST string UPDATE_PUT_ADD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_add' . self::JSON;
+    CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
+    CONST string UPDATE_PUT_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_undo' . self::JSON;
+    CONST string UPDATE_PUT_WITHOUT_WORD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_without_word' . self::JSON;
+    // a description change of the use case triple PV capacity label as the editor has sent it and its undo
+    CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label' . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_LABEL_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label_undo' . self::JSON;
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none

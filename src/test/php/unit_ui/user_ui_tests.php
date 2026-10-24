@@ -555,10 +555,14 @@ class user_ui_tests
         $t->assert_true($test_name, $ip_ui->uses_standard_data());
         $test_name = 'the system user sees the standard data';
         $t->assert_true($test_name, $sys_ui->uses_standard_data());
-        $test_name = 'the api url of the system user carries no user id';
-        $sys_msg = new user_message($sys_ui);
-        $sys_data = $rest->data_with_user([], $sys_msg);
-        $t->assert_key_not_exists($test_name, url_var::USER, $sys_data);
+        // unlike the page url the api url names every user with an id, because the backend sees
+        // the call of the own pod and would otherwise answer for the ip user of the pod
+        $test_name = 'the api url of the system user carries its id';
+        $sys_data = $rest->data_with_user([], new user_message($sys_ui));
+        $t->assert($test_name, $sys_data[url_var::USER] ?? 0, users::SYSTEM_ID);
+        $test_name = 'the api url of the system test user carries its id';
+        $sys_test_data = $rest->data_with_user([], new user_message($sys_test_ui));
+        $t->assert($test_name, $sys_test_data[url_var::USER] ?? 0, users::SYSTEM_TEST_ID);
 
         // the page of a logged in user shows the user name, the logout link and the black add and
         // edit icons, so it is never stored as or taken from the shared page cache; the requesting

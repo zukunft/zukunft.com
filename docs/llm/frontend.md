@@ -54,7 +54,12 @@ phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and
 static files `src/main/resources/script/calculator_editor.js` and
 `style/calculator_editor.css` (`files::CALCULATOR_EDITOR_SCRIPT`,
 `files::CALCULATOR_EDITOR_STYLE`); the script builds the editor from that seed and
-reads another phrase with one phraseData call.
+reads another phrase with one phraseData call. The save posts one update put
+message with the changes to `/api/updatePut` (`cfg/import/update_put.php`, see
+`docs/llm/json_structure.md` "Update put message"), with the session token of
+the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
+beyond the safe integer of javascript e.g. the group id of a value is read and
+sent as text.
 
 ### The save of a calculator page
 
@@ -203,6 +208,17 @@ direct-DB bootstrap (`start` / `open_db` / `load_cache`) still opens a connectio
 and is therefore the one file excluded from the coded check. It is being migrated
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
+
+### An api url always ends with a slash
+
+Every api route is a directory with an `index.php` (e.g. `api/updatePut/index.php`),
+so every client writes the api url with the trailing slash, e.g. `/api/updatePut/`
+or `/api/phraseData/?id=-2780`: `html_base` and `rest_call` for the php frontend
+and `apiUrl` of `calculator_editor.js`. Without the slash the web server answers
+with a redirect to the directory (Apache `mod_dir`), and a browser repeats a
+redirected post as a get without its body, so a change is lost without a
+message. The slash makes the call independent of the web server, so no install
+needs a rewrite rule.
 
 The type preload of this bootstrap (and of `application::start_api`) uses the
 **cached types json**: `type_lists::load_cached` fills all type lists with one

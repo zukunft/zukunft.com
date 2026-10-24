@@ -484,6 +484,8 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $editor_html, $html->script_src(files::CALCULATOR_EDITOR_SCRIPT));
         $test_name = '... with the phrase data as the seed of the script';
         $t->assert_text_contains($test_name, $editor_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, []));
+        $test_name = '... and the session token, which the save sends to the api in the csrf header';
+        $t->assert_text_contains($test_name, $editor_html, $html->form_session_token());
         // negative: a component without a page phrase e.g. in a preview has no editor to show
         $test_name = '... but nothing for a component without a phrase';
         $t->assert($test_name, $this->render($t_cmp->component_calculator_editor(), new word_ui(), $msk, $dto, $msg), '');

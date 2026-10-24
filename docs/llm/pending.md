@@ -1,5 +1,68 @@
 # pending - list of planned llm prompts with prio 1
 
+## Calculator editor
+
+### don't load verbs from api
+
+add a typeList json to the Calculator Editor that contains the result of a /api/typeLists call
+the json is expected to contain all verbs so instead of calling the api to get the verbs, pick the verbs from the type json
+
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
+## start view
+
+in the start view e.g. http://localhost/http/view.php?m=1&dla=table_chart&dlc=3&dlv=1 and all similar views 
+that have a '...' menu in the top right corner, move the menu entries to the navbar edit icon menu
+e.g. for http://localhost/http/view.php?m=1&dla=table_chart&dlc=3&dlv=1
+the '...' menu is now:
+
+columns and values
+mayor
+mayor + variance
+main
+main + variance
+minor
+minor + variance
+all
+all + variance
+as
+table
+chart
+
+and the edit icon menu is 
+
+alternative
+... more
+change view
+add view
+
+new should be the edit icon menu
+
+columns and values
+mayor
+mayor + variance
+main
+main + variance
+minor
+minor + variance
+all
+all + variance
+as
+table
+chart
+alternative
+... more
+change view
+add view
+
+where alternative is the same style as 'columns and values'
+
+if done the '...' menu can be removed
+
 ## calculation editor
 
 ### update json message
@@ -32,9 +95,26 @@ For testing the name, id and other fields can be used. But ONLY for testing!
 add to /docs/llm/* that js files should not have any const that is not takes from a php const to fulfill the "on point of change" rule
 this implies that all js files must be written by a php script
 
-### api updateDrop
+#### unitNames
 
-create a new api 'updateDrop' that takes json messages and saves them in the database
+src/main/resources/script/calculator_editor.js contains unitNames (e.g. 'const unitNames = new Set(["kWh", "kWp", "kg", "gram", "t", "percent", "a", "kWh/a"]);')
+there should be no specific const in the js file. the unitNames should be taken either from the seed json 
+or if this takes too long by execution time a units json should be included
+or the script should be updated automatically by a php script every time a unit is updated 
+which can be detected by a parent phrase with a code_id
+for the moment the preferred option is to use the exists seed json, which might need to be extended
+but all other options with the pros and cons should be documented in /docs/*
+
+#### verb names
+
+src/main/resources/script/calculator_editor.js contains verb names (e.g. '        if (t.verb === "is symbol for") {')
+to cover the case that a verb name changes the js script should be created by a php script that updated the js script
+every time a verb is renamed. for the moment it is fine if the script is updated with the full test run because 
+adding or changing a verb is at the moment a code change which requires a full test run
+
+### api updatePut
+
+create a new api 'updatePut' that takes json messages and saves them in the database
 
 ## api security
 
@@ -42,6 +122,29 @@ if it does not yet exist create a test that checks if an api request is rejected
 
 session can only be created either via a proper session start via gui
 or using a predefined api session login that uses e.g. a public / private key pair and other extra security 
+
+### button colours
+
+use for the calculator editor buttons for main active buttons (load and sometimes save in the top row) the same colours
+(grey background -> hover to dark blue / grey) that is used on the other pages.
+if a button is not active (save if there are no changes) reduce the intensity of the colors
+try to reduce the number of colour sets and name the colours set in the css with comments
+
+create a buttons.html test page in src/test/resources/web/html/object_pages that shows all colors sets used for buttones each with its own sample button and the name of the color set
+
+### change top row
+
+in the top row of the calculation editor is written 'Calculator editor  Phrase ... example PV installation  load'
+replace the 'Phrase' with 'for' (translatable if possible)
+
+### move colour sets to the config.yaml
+
+if possible add all named colour sets to the config yaml
+
+### relogin
+
+if the calculation editor gets a message from the backend that might indicate that e.g. the session id is missing or invalide
+suggest to the user to login again with a link in the message shown to the user
 
 ## other editors
 
@@ -73,14 +176,6 @@ and overwrite the standard data with the user overwrites
 
 write a script that recreates the open API yaml based on the code and create a test that reports the differences between
 the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
-
-## prime group id within 2^53
-
-a prime group id is an integer of at most 2^53 (9'007'199'254'740'992), so that a json reader
-like javascript `JSON.parse` reads it exactly; a group whose 64-bit key would be bigger
-e.g. 500463902488562396 (example PV installation, PV capacity, kWp, assumed) gets the compact
-text key instead (see `group_id::get_id`, `docs/llm/group_id.md`); this changes the table of the
-affected values, so it needs a database upgrade and the minor version raise (`docs/llm/versions.md`)
 
 ## cleanup
 

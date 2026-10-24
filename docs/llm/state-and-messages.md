@@ -650,11 +650,15 @@ Every page url and api url of a logged-in user carries the user id as `u`
 shows for whom the page is created. `html_base::ref` adds it to each link of
 this pod, `html_base::form_user` adds it as a hidden field to each form (a get
 form drops the parameters of its action), `frontend::redirect_url` sets it for
-the page after an action and `rest_call::data_with_user` for the api calls; the
-id comes from `user::id_for_url`, which is 0 for the profiles of
-`user_profiles::STANDARD_DATA`: an ip user is not unique, so it must not use the
-user sandbox, and the system users (system, system test, system log) see the
-standard data without user overwrites, so e.g. the test pages carry no `u`. The url never
+the page after an action and `rest_call::data_with_user` for the api calls. The
+id of a page url comes from `user::id_for_url`, which is 0 for the profiles of
+`user_profiles::STANDARD_DATA` (an ip user is not unique, and the system users
+system, system test and system log), so e.g. the test pages carry no `u`. An api
+call names every requesting user with an id, also of these profiles: the
+frontend calls the api of its own pod without the session, so a call without
+`u` would be answered for the ip user of the pod, while with `u` the api
+(`user::data_user` with `server_guard::from_own_pod`) answers for the same user
+whose objects the page shows. The url never
 decides who the user is: the session does, and a url with another `u` only gets
 the `URL_USER_NOT_SESSION_USER` notice (`frontend::url_user_matches`). A user
 that is shown or changed is therefore never named by `u`, but by `ue`
@@ -668,6 +672,17 @@ posts it as `ue`, and `url_mapper::url_to_standard` moves `ue` back to the id,
 so that the frontend loads every object by its id; the page cache key and the
 page vars of a back target read the user by `ue` too. An old url with `id`
 (e.g. an activation link of a mail sent before the change) still selects the user.
+
+In an api call `u` names the data user: the user whose view of the data the
+api answers with, e.g. the user sandbox values, descriptions and exclusions of
+that user. The session user stays the requesting user and decides if the data
+user of `u` is allowed (`user::data_user` / `user::data_user_id`): an admin or
+the system user may read the data of any user, e.g. an admin checks what a user
+would see, and a call of the own pod (`server_guard::from_own_pod`) gets the data
+of the browsing user, whose session the frontend has checked. A normal or ip user
+that names another user by `u` gets its own data, so a foreign id never shows the
+data of another user. Every api call that reads user specific data e.g.
+`phraseData` resolves the data user this way and keys its cache by the data user.
 
 The back part (`9`-prefixed params) only names the page to return to, so it is
 no part of the page cache key (`url_var::without_back`): a page called e.g. from

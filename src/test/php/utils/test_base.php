@@ -374,6 +374,7 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'wikidata_write_tests.php';
 
@@ -848,6 +849,28 @@ class test_base
         } else {
             return $this->assert_dsp($msg, false, 'true', 'false', '', $exe_max_time);
         }
+    }
+
+    /**
+     * check if the result is identical to the target including its type e.g. that a numeric text id
+     * has become a number; both are shown with their type, because the text "1" and the number 1 look the same
+     *
+     * @param string $msg (unique) description of the test
+     * @param int|string $result the result of the previously called test
+     * @param int|string $target the expected result
+     * @return bool true is the result is fine
+     */
+    function assert_same(
+        string     $msg,
+        int|string $result,
+        int|string $target
+    ): bool
+    {
+        $ok = true;
+        if ($result !== $target) {
+            $ok = $this->assert_dsp($msg, false, var_export($target, true), var_export($result, true), '');
+        }
+        return $ok;
     }
 
     /**
@@ -1576,6 +1599,10 @@ class test_base
             $map_ui = new MapObject();
             $cfg->usr = $map_ui->convertToUi($usr, $msg_ui);
         }
+        // the requesting user like http/view.php sets it, so that an api call of the page e.g. the
+        // phrase data of the calculator editor loads the data of the fixed test user and not of
+        // the ip user that the backend creates for a call without a user
+        $msg_ui->usr = $cfg->usr;
         // render in test mode so that the result is reproducible without backend calls
         // the wait for the backend is part of the rendering, but not frontend work
         frontend::book_times();
@@ -1829,9 +1856,17 @@ class test_base
      */
     function fix_volatile_phrase_data_time(string $html): string
     {
-        $fixed = new DateTime(test_const::DUMMY_DATETIME);
         $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
-        return preg_replace($pattern, '${1}' . $fixed->format(phrase_data::TIME_FORMAT) . '${2}', $html, 1);
+        return preg_replace($pattern, '${1}' . $this->phrase_data_test_time() . '${2}', $html, 1);
+    }
+
+    /**
+     * @return string the fixed test time in the format of the phrase data header
+     */
+    private function phrase_data_test_time(): string
+    {
+        $fixed = new DateTime(test_const::DUMMY_DATETIME);
+        return $fixed->format(phrase_data::TIME_FORMAT);
     }
 
     // the html attributes of a snapshot page that carry a root relative url to the pod
@@ -6491,7 +6526,9 @@ class test_base
 
     /**
      * write the json that an api test has received next to its expected file, if the expected
-     * file is listed in test_files::WRITE_API_ACTUAL_FILES, to compare the two e.g. with a diff tool
+     * file is listed in test_files::WRITE_API_ACTUAL_FILES, to compare the two e.g. with a diff tool;
+     * an unchanged actual file is not written again, so that its timestamp shows the last change,
+     * and the creation time of the answer is the fixed test time, because it differs by run
      *
      * @param string $expected_path the path of the expected json file e.g. ../phrase_data_pv_install.json
      * @param array|null $actual the json that the api test has received; null writes nothing
@@ -6501,7 +6538,14 @@ class test_base
     {
         if (in_array($expected_path, test_files::WRITE_API_ACTUAL_FILES) and $actual !== null) {
             $actual_path = $this->api_actual_path($expected_path);
-            $this->update_path_file($actual_path, library::json_for_humans($actual) . "\n");
+            // in the format of the phrase data, which is the only answer of WRITE_API_ACTUAL_FILES
+            if (array_key_exists(json_fields::TIME, $actual)) {
+                $actual[json_fields::TIME] = $this->phrase_data_test_time();
+            }
+            $result = library::json_for_humans($actual) . "\n";
+            if (!is_file($actual_path) or file_get_contents($actual_path) !== $result) {
+                $this->update_path_file($actual_path, $result);
+            }
         }
     }
 

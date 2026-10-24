@@ -1910,7 +1910,12 @@ class sandbox_multi extends db_object_multi_user
                     if (!$fvt_lst->is_empty_except_internal_fields()) {
                         $sc_par_lst->add(sql_type::UPDATE);
                         $qp = $std->sql_write($sc, $db_std, $std->db_fields_all(), $own_msg, $sc_par_lst);
-                        $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                        // no statement if only the key fields differ, like in save_fields_func
+                        if ($qp != null) {
+                            $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                        } else {
+                            $this->report_empty_write('owner change', $own_msg);
+                        }
                     }
                 }
 
@@ -3618,7 +3623,12 @@ class sandbox_multi extends db_object_multi_user
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
-                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    // no statement if only the key fields differ, like in the user row branches below
+                    if ($qp != null) {
+                        $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    } else {
+                        $this->report_empty_write('update', $msg);
+                    }
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
                         $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
@@ -3662,7 +3672,12 @@ class sandbox_multi extends db_object_multi_user
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
                     // TODO Prio 2 compare sql_write with sql_insert_switch
-                    $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+                    // no statement if only the key fields differ e.g. the placeholder source of the user row
+                    if ($qp != null) {
+                        $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+                    } else {
+                        $this->report_empty_write('user overwrite', $msg);
+                    }
                 }
             }
         }
@@ -3756,6 +3771,20 @@ class sandbox_multi extends db_object_multi_user
             $qp = null;
         }
         return $qp;
+    }
+
+    /**
+     * report a write without a statement, because the caller has found a change that sql_write
+     * does not see e.g. a field that is not part of the write, so the change is not saved
+     *
+     * @param string $write the name of the skipped write e.g. 'update'
+     * @param user_message $msg to show the link to the system log entry
+     * @return void
+     */
+    private function report_empty_write(string $write, user_message $msg): void
+    {
+        log_warning_msg('the ' . $write . ' of ' . $this->dsp_id()
+            . ' is not saved, because sql_write finds no changed field', $msg);
     }
 
     /**

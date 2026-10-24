@@ -356,6 +356,11 @@ class json_fields
     // the shared overwrites of other users with the name of the overwriting user (USER_NAME),
     // used by the 'others' tab of the object page
     const string OTHER_OVERWRITES = 'other_overwrites';
+    // true if the requesting user has an own version of the object after the update put,
+    // false if the user sees the shared row e.g. also after an undo that removes the own version
+    const string USER_OVERWRITE = 'user_overwrite';
+    // the warnings of a save that has been done, e.g. an object of the update put that is not changed
+    const string WARNINGS = 'warnings';
 
     // to review
     const string ACTION = 'action';
@@ -506,6 +511,8 @@ class json_fields
     const string WORDS = 'words';
     const string VERBS = 'verbs';
     const string TRIPLES = 'triples';
+    // the objects that an update put message deletes resp. excludes for the user, by class and id
+    const string DELETE = 'delete';
 
     // for ip ranges
     const string IP_FROM = 'ip_from';

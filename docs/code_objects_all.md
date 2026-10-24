@@ -55,6 +55,7 @@ the object structure is:
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
 ├── import_file - IMPORT a json in the zukunft.com exchange format
 ├── import_wikidata - retrieve and capture wikidata entity data
+├── update_put - $upd - save the changes of an update put message with the database ids
 ├── change_table_field - helper class to create the database view with the log table and field name
 ├── text_log - object to handle standard io logging
 ├── phr_ids - helper class for phrase id lists

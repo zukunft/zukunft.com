@@ -231,6 +231,10 @@ class controller
      */
     function not_permitted(user_message $msg): void
     {
+        // a refusal without a reason is still named, because an empty answer would be read as a success
+        if ($msg->all_message_text() == '') {
+            $msg->add(msg_id::REQUEST_NOT_PERMITTED, []);
+        }
         $this->set_response_code(401);
         $this->curl_response('', $msg->all_message_text(), rest_ctrl::GET);
     }
