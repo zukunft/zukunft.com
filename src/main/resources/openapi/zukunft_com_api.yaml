@@ -4,6 +4,8 @@ info:
   description: |-
     the open API for zukunft.com that includes the user AND admin interface
     WARNING: this API is a alpha release and is not yet fully implemented and will change overtime
+    each path is a directory of the pod, so a client calls it with the trailing slash e.g. POST /api/updatePut/;
+    without the slash the web server redirects to the directory and a redirected POST arrives as a GET without its body
     TODO: add the missing find APIs e.g. get Word by Name
     TODO: combine external (without id) and internal objects (with id)
     TODO: add multi defence layer security levels (valueList for normal user but user only for admin)
@@ -605,7 +607,7 @@ paths:
               type: object
       responses:
         '200':
-          description: the message with the database id of each saved object
+          description: the message with the database id of each saved object and what the save has done, confirmed by the reload of the saved row - the action (added, changed, unchanged or removed), the changes with the field, the old and the new value, user_overwrite if the user has an own version of the object after the save and the warnings of the save
           content:
             application/json:
               schema:

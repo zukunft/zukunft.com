@@ -49,6 +49,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -74,6 +75,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -314,10 +316,22 @@ class update_put_write_tests
         $t->assert($test_name, $trp->get_description(), triple_names::PV_CAPACITY_LABEL_COM, test_base::TIMEOUT_LIMIT_DB);
 
         $test_name = 'put the description change of the calculator editor';
-        $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL, $trp), $msg);
+        $put_body = $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL, $trp), $msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
-        // TODO Prio 0 why message reset without check? Report any unexpected message before reset
         $msg->reset();
+        // the answer confirms only what the reload of the saved row shows, so that the editor can tell the user
+        $test_name = '... and the answer confirms the change';
+        $trp_res = $put_body[json_fields::TRIPLES][0] ?? [];
+        $t->assert($test_name, $trp_res[json_fields::ACTION] ?? '', update_put::CHANGED);
+        $test_name = '... with the old and the new description';
+        $expected = [[
+            json_fields::FIELD => json_fields::DESCRIPTION,
+            json_fields::OLD_VALUE => triple_names::PV_CAPACITY_LABEL_COM,
+            json_fields::NEW_VALUE => triple_names::PV_CAPACITY_LABEL_COM_CHANGED
+        ]];
+        $t->assert($test_name, $trp_res[json_fields::CHANGES] ?? [], $expected);
+        $test_name = '... as the own version of the user';
+        $t->assert_true($test_name, $trp_res[json_fields::USER_OVERWRITE] ?? false);
         $test_name = 'the database has the changed description';
         $trp_chk = new triple($usr);
         $trp_chk->load_by_id($trp->id(), $chk_msg);
@@ -335,14 +349,26 @@ class update_put_write_tests
         $description = $this->phrase_data_description($phd_msg);
         $t->assert($test_name, $description, triple_names::PV_CAPACITY_LABEL_COM_CHANGED, test_base::TIMEOUT_LIMIT_IMPORT);
         $t->assert_msg($test_name, $phd_msg);
-        // TODO Prio 0 add an actual api call to check if the user is correctly taken from the url_par 'u'
+        $test_name = '... and the phraseData api answers for the user named by u';
+        $phd_msg = new user_message($usr);
+        $api_json = $this->phrase_data_api($t, $phd_msg);
+        $t->assert($test_name, (int)($api_json[json_fields::USER_ID] ?? 0), $usr->id(), test_base::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... with the changed description';
+        $t->assert($test_name, $this->label_description($api_json), triple_names::PV_CAPACITY_LABEL_COM_CHANGED);
+        $t->assert_msg($test_name, $phd_msg);
         // negative: the change is a user overwrite, so another user still gets the original description
         $test_name = '... but the phrase data of another user has the original description';
         $phd_msg = new user_message($t->usr1);
         $description = $this->phrase_data_description($phd_msg);
         $t->assert($test_name, $description, triple_names::PV_CAPACITY_LABEL_COM, test_base::TIMEOUT_LIMIT_IMPORT);
         $t->assert_msg($test_name, $phd_msg);
-        // TODO Prio 0 add an actual api call to check if the user is correctly taken from the url_par 'u'
+        $test_name = '... and the phraseData api answers for the other user named by u';
+        $phd_msg = new user_message($t->usr1);
+        $api_json = $this->phrase_data_api($t, $phd_msg);
+        $t->assert($test_name, (int)($api_json[json_fields::USER_ID] ?? 0), $t->usr1->id(), test_base::TIMEOUT_LIMIT_IMPORT);
+        $test_name = '... with the original description';
+        $t->assert($test_name, $this->label_description($api_json), triple_names::PV_CAPACITY_LABEL_COM);
+        $t->assert_msg($test_name, $phd_msg);
 
         $test_name = 'put the undo of the description change';
         $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL_UNDO, $trp), $msg);
@@ -369,6 +395,43 @@ class update_put_write_tests
         $phr = new phrase($msg->usr);
         $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
         $vars = $phd->export_json($phr->id(), phrase_data_walks::FROM, false, $msg);
+        return $this->label_description($vars);
+    }
+
+    /**
+     * the phrase data of the example PV installation as the calculator editor receives it from
+     * the phraseData api of this pod, which answers for the user named by url_var::USER,
+     * because the test calls the api of its own pod
+     *
+     * @param test_cleanup $t the test environment that calls the api
+     * @param user_message $msg with the user named by u and to report the reason of a failed api call
+     * @return array the json answer of the api, empty if the answer is no json
+     */
+    private function phrase_data_api(test_cleanup $t, user_message $msg): array
+    {
+        $lib = new library();
+        $phr = new phrase($msg->usr);
+        $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
+        $url = THIS_URL . url_var::API_PATH . $lib->class_to_api_route(phrase_data::class);
+        $par = [
+            url_var::ID => $phr->id(),
+            url_var::PHRASE_DATA_WALK => url_var::PHRASE_DATA_WALK_FROM,
+            url_var::USER => $msg->usr->id()
+        ];
+        $result = json_decode($t->api_call_timed(rest_ctrl::GET, $url, $par), true) ?? [];
+        // the reason of the api e.g. an unknown phrase, so that the test shows it
+        if (array_key_exists(json_fields::MSG, $result)) {
+            $msg->add(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $result[json_fields::MSG]]);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $vars the phrase data as the export or the api returns it
+     * @return string the description of the PV capacity label or an empty string if the phrase data has no such triple
+     */
+    private function label_description(array $vars): string
+    {
         $result = '';
         foreach ($vars[json_fields::TRIPLES] ?? [] as $trp_json) {
             if (($trp_json[json_fields::NAME] ?? '') == triple_names::PV_CAPACITY_LABEL) {

@@ -209,6 +209,17 @@ and is therefore the one file excluded from the coded check. It is being migrate
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
 
+### An api url always ends with a slash
+
+Every api route is a directory with an `index.php` (e.g. `api/updatePut/index.php`),
+so every client writes the api url with the trailing slash, e.g. `/api/updatePut/`
+or `/api/phraseData/?id=-2780`: `html_base` and `rest_call` for the php frontend
+and `apiUrl` of `calculator_editor.js`. Without the slash the web server answers
+with a redirect to the directory (Apache `mod_dir`), and a browser repeats a
+redirected post as a get without its body, so a change is lost without a
+message. The slash makes the call independent of the web server, so no install
+needs a rewrite rule.
+
 The type preload of this bootstrap (and of `application::start_api`) uses the
 **cached types json**: `type_lists::load_cached` fills all type lists with one
 read of the `db_cache` `types` entry — the same api message that

@@ -68,6 +68,7 @@ include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 
 class update_put
 {
@@ -112,6 +114,12 @@ class update_put
         result_list::class,
     ];
 
+    // what the save has done with an object of the message, confirmed by the reload of the saved row
+    const string ADDED = 'added';
+    const string CHANGED = 'changed';
+    const string UNCHANGED = 'unchanged';
+    const string REMOVED = 'removed';
+
 
     /*
      * put
@@ -130,6 +138,11 @@ class update_put
         $lib = new library();
         $api_msg = new api_message();
         $body = $this->put($json, $msg);
+        // the api sends the messages only for a refused put, so the warnings of a done put are part of the body
+        $warnings = $msg->all_message_text();
+        if ($msg->is_ok() and $warnings != '') {
+            $body[json_fields::WARNINGS] = $warnings;
+        }
         $vars = $api_msg->api_header_array(
             $api_msg->api_site_name($db_con),
             $lib->class_to_api_route(self::class),
@@ -167,8 +180,7 @@ class update_put
         $result[json_fields::DELETE] = [];
         foreach ($body[json_fields::DELETE] ?? [] as $del_json) {
             if ($put_msg->is_ok()) {
-                $this->delete_object($del_json, $put_msg);
-                $result[json_fields::DELETE][] = $del_json;
+                $result[json_fields::DELETE][] = $this->delete_object($del_json, $put_msg);
             } else {
                 $skipped++;
             }
@@ -213,7 +225,7 @@ class update_put
      * @param string $class the class of the object e.g. triple::class
      * @param array $obj_json the object of the message with the database ids and the names
      * @param user_message $msg with the requesting user
-     * @return array the object of the message with the database id of the saved object
+     * @return array the object of the message with the database id of the saved object and what the save has done
      */
     private function save_object(string $class, array $obj_json, user_message $msg): array
     {
@@ -223,14 +235,73 @@ class update_put
             $dbo->api_mapper($api_json, $msg);
         }
         // only for an id of the message, because e.g. a new value has the id of its phrase group
+        $db_obj = null;
         if ($msg->is_ok() and key_exists(json_fields::ID, $obj_json)) {
-            $this->fill_from_db($dbo, $msg);
+            $db_obj = $this->fill_from_db($dbo, $msg);
         }
         if ($msg->is_ok()) {
             $dbo->save($msg);
         }
         $result = $obj_json;
+        if ($msg->is_ok()) {
+            $result = $this->confirmed($obj_json, $dbo, $db_obj, $msg);
+        }
         $result[json_fields::ID] = $dbo->id();
+        return $result;
+    }
+
+    /**
+     * reload the saved row and compare it with the row before the save, so that the answer
+     * confirms only what is in the database and a change that has not been written is reported
+     *
+     * @param array $obj_json the object of the message
+     * @param word|triple|value $dbo the saved object
+     * @param word|triple|value|null $db_obj the database row before the save or null for an added object
+     * @param user_message $msg with the requesting user, to warn about an object that the save has not changed
+     * @return array the object of the message with the action, the changed fields and if the user has an own version after the save
+     */
+    private function confirmed(
+        array                  $obj_json,
+        word|triple|value      $dbo,
+        word|triple|value|null $db_obj,
+        user_message           $msg
+    ): array
+    {
+        $lib = new library();
+        $class = $dbo::class;
+        $saved = new $class($msg->usr);
+        $saved->load_by_id($dbo->id(), $msg);
+        // with the excluded objects, because the api json of an excluded object is empty
+        $typ_lst = [api_types::WITH_EXCLUDED];
+        $after = $saved->api_json_array($typ_lst, $msg);
+        $before = $db_obj?->api_json_array($typ_lst, $msg) ?? [];
+        $changes = [];
+        foreach (array_keys($obj_json) as $fld) {
+            $old = $before[$fld] ?? null;
+            $new = $after[$fld] ?? null;
+            if ($fld != json_fields::ID and $old !== $new) {
+                $changes[] = [
+                    json_fields::FIELD => $fld,
+                    json_fields::OLD_VALUE => $old,
+                    json_fields::NEW_VALUE => $new
+                ];
+            }
+        }
+        if ($db_obj === null) {
+            $action = self::ADDED;
+        } elseif ($changes == []) {
+            $action = self::UNCHANGED;
+            $msg->add_warning_with_vars(msg_id::UPDATE_PUT_UNCHANGED, [
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
+                msg_id::VAR_ID => (string)$dbo->id()
+            ]);
+        } else {
+            $action = self::CHANGED;
+        }
+        $result = $obj_json;
+        $result[json_fields::ACTION] = $action;
+        $result[json_fields::CHANGES] = $changes;
+        $result[json_fields::USER_OVERWRITE] = $saved->has_usr_cfg();
         return $result;
     }
 
@@ -240,10 +311,11 @@ class update_put
      *
      * @param word|triple|value $dbo the object of the message with its database id
      * @param user_message $msg with the requesting user, to report an id that does not exist
-     * @return void
+     * @return word|triple|value|null the database row before the save or null if the id does not exist
      */
-    private function fill_from_db(word|triple|value $dbo, user_message $msg): void
+    private function fill_from_db(word|triple|value $dbo, user_message $msg): word|triple|value|null
     {
+        $result = null;
         $lib = new library();
         $class = $dbo::class;
         $db_obj = new $class($msg->usr);
@@ -252,12 +324,14 @@ class update_put
         // only if the load has not reported another reason
         if (!$found and $msg->is_ok()) {
             $msg->add(msg_id::OBJECT_NOT_FOUND, [
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($dbo::class),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
                 msg_id::VAR_ID => (string)$dbo->id()
             ]);
         } elseif ($found) {
             $msg->merge($dbo->fill($db_obj, $msg->usr));
+            $result = $db_obj;
         }
+        return $result;
     }
 
     /**
@@ -265,16 +339,20 @@ class update_put
      *
      * @param array $del_json the class name and the database id e.g. "class": "triple", "id": 1
      * @param user_message $msg with the requesting user
-     * @return void
+     * @return array the delete entry of the message with the action, which the reload confirms
      */
-    private function delete_object(array $del_json, user_message $msg): void
+    private function delete_object(array $del_json, user_message $msg): array
     {
+        $result = $del_json;
         $lib = new library();
         $cls_name = $del_json[json_fields::OBJECT_CLASS] ?? '';
         $id = $this->db_id($del_json[json_fields::ID] ?? 0);
         $dbo = null;
+        // the class is kept for the reload, because the object may stay null
+        $dbo_class = '';
         foreach (self::SECTION_CLASSES as $class) {
             if ($lib->class_to_name($class) == $cls_name) {
+                $dbo_class = $class;
                 $dbo = new $class($msg->usr);
             }
         }
@@ -292,6 +370,19 @@ class update_put
         } elseif ($found) {
             $dbo->del($msg);
         }
+        if ($found and $msg->is_ok()) {
+            // an excluded row is removed for the user even if the load still finds it
+            $chk = new $dbo_class($msg->usr);
+            $removed = ($chk->load_by_id($id, $msg) == 0 or $chk->is_excluded() === true);
+            $result[json_fields::ACTION] = $removed ? self::REMOVED : self::UNCHANGED;
+            if (!$removed) {
+                $msg->add_warning_with_vars(msg_id::UPDATE_PUT_UNCHANGED, [
+                    msg_id::VAR_CLASS_NAME => $cls_name,
+                    msg_id::VAR_ID => (string)$id
+                ]);
+            }
+        }
+        return $result;
     }
 
     /**

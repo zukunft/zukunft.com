@@ -1735,6 +1735,35 @@ of the changes after it that are not saved (`UPDATE_PUT_SKIPPED`).
 }
 ```
 
+The answer is the body of the message with the database `id` of each saved
+object and what the save has done, confirmed by the reload of the saved row
+(`update_put::confirmed`): `action` is `added`, `changed`, `unchanged` or, for
+a `delete` entry, `removed`; `changes` lists each changed field of the message
+with its `old_value` and `new_value`; `user_overwrite` is true if the
+requesting user has an own version of the object after the save and false if
+the user sees the shared row, e.g. also after an undo that removes the own
+version. An excluded object is compared with its excluded fields, so that its
+change is confirmed too. An object that the save has not changed is reported with the warning
+`UPDATE_PUT_UNCHANGED`, and the warnings of a done save are the `warnings` of
+the body, because the api sends the messages only for a refused put.
+
+```json
+{
+  "pod": "zukunft.com",
+  "type": "updatePut",
+  "user_id": 11,
+  "user": "heang",
+  "body": {
+    "words": [],
+    "triples": [{"id": 2795, "name": "PV capacity label", "description": "Installation size", "action": "changed",
+      "changes": [{"field": "description", "old_value": "System size", "new_value": "Installation size"}],
+      "user_overwrite": true}],
+    "values": [],
+    "delete": []
+  }
+}
+```
+
 `src/test/resources/api/calculator_editor/` has the add, update and undo
 messages of the write test, which adds the database ids.
 

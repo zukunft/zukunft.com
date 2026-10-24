@@ -2511,7 +2511,8 @@ function apiUrl(route, params) {
     }).map(function (k) {
         return encodeURIComponent(k) + "=" + encodeURIComponent(p[k]);
     }).join("&");
-    const result = SOURCE.base + route + (qs ? "?" + qs : "");
+    /* with the slash of the api directory, because the redirect of the server would turn a post into a get without the body */
+    const result = SOURCE.base + route + "/" + (qs ? "?" + qs : "");
     return result;
 }
 
@@ -2564,12 +2565,13 @@ async function apiCall(method, route, params, body) {
             json = null;
         }
         let message = "";
-        if (json && !Array.isArray(json) && json.msg) {
-            message = String(json.msg);
+        /* the reason of a refusal, which the pod sends as json_fields::MSG */
+        if (json && !Array.isArray(json) && json.message) {
+            message = String(json.message);
         } else if (!resp.ok) {
             message = "the pod answered " + resp.status + " " + resp.statusText + " for " + method + " " + route;
         }
-        result = {ok: resp.ok && !(json && json.msg), status: resp.status, json: json, message: message};
+        result = {ok: resp.ok && !(json && json.message), status: resp.status, json: json, message: message};
     } catch (e) {
         result = {ok: false, status: 0, json: null, message: "the pod could not be reached (" + e.message + ")"};
     }
@@ -2701,14 +2703,54 @@ async function save() {
         saving = false;
         if (r.ok) {
             clearDraft();
-            await reload();
-            toast("Saved " + out.changed + (out.changed === 1 ? " change." : " changes."));
+            const loaded = await reload();
+            /* after the reload, which clears the notice, and with the reason of a failed reload */
+            const report = savedReport(unwrap(r.json) || {});
+            const failed = loaded ? "" : "<br>" + esc(document.getElementById("noticeHost").textContent);
+            notice(report.html + failed, report.warn || !loaded ? "err" : "");
+            if (!report.warn && loaded) {
+                toast("Saved " + out.changed + (out.changed === 1 ? " change." : " changes."));
+            }
         } else {
             refreshStatus();
             notice("Not all changes are saved. The pod refused the save: " + esc(r.message || "no answer") +
                 ". The changes before the problem may be saved; Load shows the database.", "err");
         }
     }
+}
+
+/* what the pod has saved, confirmed by the reload of each saved row (update_put::confirmed): the
+   action, the changed fields with the old and the new value and if the user has an own version of
+   the object after the save; a missing confirmation, an unchanged object or a warning of the pod is a warning */
+function savedReport(body) {
+    const lines = [];
+    let warn = Boolean(body.warnings);
+    ["words", "triples", "values"].forEach(function (section) {
+        (body[section] || []).forEach(function (o) {
+            const name = o.name || (section.slice(0, -1) + " " + o.id);
+            const own = o.user_overwrite ? " (your own version)" : " (the shared version)";
+            const fields = (o.changes || []).map(function (c) {
+                const old = c.old_value === null ? "" : JSON.stringify(c.old_value) + " → ";
+                return c.field + " " + old + JSON.stringify(c.new_value);
+            });
+            warn = warn || !o.action || o.action === "unchanged";
+            lines.push(esc(name) + ": " + esc(o.action || "not confirmed") + own + (fields.length ? ": " + esc(fields.join(", ")) : ""));
+        });
+    });
+    (body.delete || []).forEach(function (d) {
+        warn = warn || d.action !== "removed";
+        lines.push(esc(d.class + " " + d.id) + ": " + esc(d.action || "not confirmed"));
+    });
+    if (body.warnings) {
+        lines.push(esc(body.warnings));
+    }
+    /* a save is only called with changes, so an answer without any confirmation is never a success */
+    if (lines.length === 0) {
+        warn = true;
+        lines.push("The pod has not confirmed the save, so the changes may not be saved. Load shows the database.");
+    }
+    const result = {html: lines.join("<br>"), warn: warn};
+    return result;
 }
 
 /* phrases that match the typed text, so a new item can use any phrase of the pod */

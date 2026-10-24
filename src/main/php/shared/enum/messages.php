@@ -2232,12 +2232,16 @@ enum messages: string
     case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
     // shown if the url names another user than the one of the session e.g. a link shared by another user
     case URL_USER_NOT_SESSION_USER = 'url_user_not_session_user';
+    // shown if an api request is refused without a more specific reason e.g. a get to an api that only saves a post
+    case REQUEST_NOT_PERMITTED = 'request_not_permitted';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
     // shown if an update put message names another user than the one of the session e.g. a page loaded before a login
     case UPDATE_PUT_OTHER_USER = 'update_put_other_user';
     // shown if an update put stops at a problem, with the number of the changes that are not saved
     case UPDATE_PUT_SKIPPED = 'update_put_skipped';
+    // shown if an object of an update put is not changed by the save, so that a lost change is never confirmed as saved
+    case UPDATE_PUT_UNCHANGED = 'update_put_unchanged';
 
     // the start page, which ranks the global problems by the potential loss they can avoid
     case SOLUTION_PRIO_TITLE = 'solution_prio_title';
