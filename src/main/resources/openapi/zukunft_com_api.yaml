@@ -37,6 +37,8 @@ tags:
     description: get a list of words or triples by id or related phrase or phrase list
   - name: phraseData
     description: get all data of one phrase in the import format with the database ids
+  - name: updatePut
+    description: save the changes of a message in the import format with the database ids
   - name: termList
     description: get a list of words, triples, verbs or formulas either id or name
   - name: value
@@ -577,6 +579,33 @@ paths:
       responses:
         '200':
           description: the phrase data in the import format
+          content:
+            application/json:
+              schema:
+                type: object
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /updatePut:
+    post:
+      tags:
+        - updatePut
+      summary: save the changes of a message
+      description: add or update the words, triples and values and delete or exclude the objects of the message e.g. of the calculator editor; the database id of an object, a phrase, a verb or a type is used if given
+      operationId: updatePut
+      requestBody:
+        description: the message with the api header and the changes in the import format with the database ids
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: the message with the database id of each saved object
           content:
             application/json:
               schema:

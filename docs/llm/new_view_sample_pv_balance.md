@@ -800,9 +800,13 @@ shows the parts of the editor in three columns:
 | all texts | all label and hint triples of this calculator in one table for proofreading and translating; a label of a phrase is marked, because a change of it changes every calculator that lists the phrase |
 | changes | the triples and values that the save writes |
 
+The save sends all changes in one update put message to `/api/updatePut`:
+the new words, the added and changed triples and values with their database
+ids, and the class and id of each removed triple and value.
 Each change is a change of the user's own sandbox triple or value. The
 calculator of other users stays unchanged until they take over the change.
-A removed item is deleted through the logged `del()`.
+A removed item is deleted through the logged `del()`, which excludes it only
+for the user if another user uses it.
 
 ## 7. Implementation steps
 

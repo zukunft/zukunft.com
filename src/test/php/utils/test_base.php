@@ -374,6 +374,7 @@ include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'update_put_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'xbrl_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'wikidata_write_tests.php';
 
@@ -1576,6 +1577,10 @@ class test_base
             $map_ui = new MapObject();
             $cfg->usr = $map_ui->convertToUi($usr, $msg_ui);
         }
+        // the requesting user like http/view.php sets it, so that an api call of the page e.g. the
+        // phrase data of the calculator editor loads the data of the fixed test user and not of
+        // the ip user that the backend creates for a call without a user
+        $msg_ui->usr = $cfg->usr;
         // render in test mode so that the result is reproducible without backend calls
         // the wait for the backend is part of the rendering, but not frontend work
         frontend::book_times();

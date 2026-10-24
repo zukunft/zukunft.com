@@ -191,11 +191,17 @@ const SOURCE = {
     base: "",
     root: "",
     pageId: 0,
+    seedUsed: false,
     phraseIds: new Map(),
     verbIds: new Map()
 };
 /* the walk of the phraseData api that sends the triples on the from side of a phrase (url_var::PHRASE_DATA_WALK_FROM) */
 const PHRASE_DATA_WALK_FROM = "pwf";
+/* the api that saves the changes of a message (cfg/import/update_put.php) */
+const UPDATE_PUT_ROUTE = "updatePut";
+/* the header of a change with the session token of the page (api::CSRF_TOKEN_HEADER, url_var::SESSION_TOKEN) */
+const CSRF_HEADER = "X-CSRF-Token";
+const SESSION_TOKEN_NAME = "token";
 let saving = false;
 let IDX = null;          /* lookup indexes of the loaded file */
 let MANAGED = null;      /* the triple and value indexes that the editor owns */
@@ -2509,6 +2515,13 @@ function apiUrl(route, params) {
     return result;
 }
 
+/* the json of the pod, where an id beyond the safe integer of javascript e.g. the group id of a value
+   is kept as text, so that a save sends the id unchanged; a shorter id stays a number */
+function parseJson(text) {
+    const result = JSON.parse(text.replace(/("id":\s*)(-?\d{16,})(?=\s*[,}\]])/g, '$1"$2"'));
+    return result;
+}
+
 /* the body of an api answer; a message may come with or without the "body" header */
 function unwrap(json) {
     let result = json;
@@ -2536,13 +2549,17 @@ async function apiCall(method, route, params, body) {
         opts.headers["Content-Type"] = "application/json";
         opts.body = JSON.stringify(body);
     }
+    const token = document.querySelector('input[name="' + SESSION_TOKEN_NAME + '"]');
+    if (method !== "GET" && token) {
+        opts.headers[CSRF_HEADER] = token.value;
+    }
     let result = {ok: false, status: 0, json: null, message: ""};
     try {
         const resp = await fetch(apiUrl(route, params), opts);
         const text = await resp.text();
         let json = null;
         try {
-            json = text ? JSON.parse(text) : null;
+            json = text ? parseJson(text) : null;
         } catch (e) {
             json = null;
         }
@@ -2568,123 +2585,70 @@ function idOf(json) {
     return result;
 }
 
-/* the body of a triple for the api: the phrases and the verb by their database id */
-function tripleBody(t, id) {
-    const fromId = SOURCE.phraseIds.get(t.from);
-    const toId = SOURCE.phraseIds.get(t.to);
-    const verbId = SOURCE.verbIds.get(t.verb);
-    let result = {error: "", json: null};
-    if (fromId === undefined) {
-        result.error = "“" + t.from + "” has no database id";
-    } else if (toId === undefined) {
-        result.error = "“" + t.to + "” has no database id";
-    } else if (verbId === undefined) {
-        result.error = "the verb “" + t.verb + "” has no database id";
+/* a reference of the update put message by its database id, or by its name only if it has no id yet
+   e.g. a word that the same message adds */
+function addRef(json, idKey, nameKey, id, name) {
+    if (id !== undefined) {
+        json[idKey] = id;
     } else {
-        const json = {};
-        if (id) {
-            json.id = id;
-        }
-        if (t.name) {
-            json.name = t.name;
-        }
-        if (t.description) {
-            json.description = t.description;
-        }
-        json.from_id = fromId;
-        json.verb_id = verbId;
-        json.to_id = toId;
-        result.json = json;
+        json[nameKey] = name;
     }
-    return result;
 }
 
-async function sendTriple(method, route, t, id) {
-    const body = tripleBody(t, id);
-    let result = {ok: false, message: body.error};
-    if (!body.error) {
-        result = await apiCall(method, route, {}, body.json);
+/* a triple of the update put message with the phrases and the verb by their database id if known */
+function tripleJson(t, id) {
+    const json = {};
+    if (id) {
+        json.id = id;
     }
-    return result;
+    if (t.name) {
+        json.name = t.name;
+    }
+    if (t.description) {
+        json.description = t.description;
+    }
+    addRef(json, "from_id", "from", SOURCE.phraseIds.get(t.from), t.from);
+    addRef(json, "verb_id", "verb", SOURCE.verbIds.get(t.verb), t.verb);
+    addRef(json, "to_id", "to", SOURCE.phraseIds.get(t.to), t.to);
+    return json;
 }
 
-/* the api calls of a save, in an order that never points to a phrase that does not exist yet:
-   new words, new triples (parents first), changed triples, values, then the removed triples
-   (children first) and values */
-function planOps(changes) {
+/* a new value of the update put message with its phrases by their database id if known, else by their name */
+function valueJson(v) {
+    const json = {};
+    v.words.forEach(function (w) {
+        const id = SOURCE.phraseIds.get(w);
+        if (id !== undefined) {
+            json.phrases = (json.phrases || []).concat([{id: id}]);
+        } else {
+            json.words = (json.words || []).concat([w]);
+        }
+    });
+    json.number = Number(v.number);
+    return json;
+}
+
+/* the message of a save for the updatePut api: the api header and the changes in the import format
+   with the database ids; the sections are saved in the order new words, triples, values and deletes,
+   so a triple can use a new word, and the removed triples are sorted children first */
+function putMessage(changes) {
     const T = IDX.T;
     const V = DOC.values || [];
-    const ops = [];
+    const body = {words: [], triples: [], values: [], delete: []};
     changes.words.forEach(function (w) {
-        ops.push({
-            label: "add the word “" + w + "”",
-            run: async function () {
-                const r = await apiCall("POST", "word", {}, {name: w});
-                if (r.ok) {
-                    SOURCE.phraseIds.set(w, idOf(r.json));
-                }
-                return r;
-            }
-        });
+        body.words.push({name: w});
     });
     changes.add.forEach(function (t) {
-        ops.push({
-            label: "add " + tripleLine(t),
-            run: async function () {
-                const r = await sendTriple("POST", "triple", t, 0);
-                if (r.ok && t.name) {
-                    SOURCE.phraseIds.set(t.name, -Math.abs(idOf(r.json)));
-                }
-                return r;
-            }
-        });
+        body.triples.push(tripleJson(t, 0));
     });
     changes.mod.forEach(function (m) {
-        const id = T[m.src].id;
-        ops.push({
-            label: "change " + tripleLine(m.after),
-            run: async function () {
-                const r = await sendTriple("PUT", "triple/" + encodeURIComponent(id), m.after, id);
-                if (r.ok && m.after.name) {
-                    SOURCE.phraseIds.set(m.after.name, -Math.abs(id));
-                }
-                return r;
-            }
-        });
+        body.triples.push(tripleJson(m.after, T[m.src].id));
     });
     changes.values.forEach(function (v) {
         if (v.kind === "add") {
-            ops.push({
-                label: "add the value " + v.text,
-                run: async function () {
-                    const ids = v.words.map(function (w) {
-                        return SOURCE.phraseIds.get(w);
-                    });
-                    let r = {ok: false, message: "a phrase of the value has no database id"};
-                    if (ids.every(function (x) {
-                        return x !== undefined;
-                    })) {
-                        r = await apiCall("POST", "value", {}, {
-                            phrases: ids.map(function (x) {
-                                return {id: x};
-                            }), number: Number(v.number)
-                        });
-                    }
-                    return r;
-                }
-            });
+            body.values.push(valueJson(v));
         } else if (v.kind === "mod") {
-            const id = V[v.src].id;
-            ops.push({
-                label: "change the value " + v.text,
-                run: async function () {
-                    const r = await apiCall("PUT", "value/" + encodeURIComponent(id), {}, {
-                        id: id,
-                        number: Number(v.number)
-                    });
-                    return r;
-                }
-            });
+            body.values.push({id: V[v.src].id, number: Number(v.number)});
         }
     });
     const delNames = new Set(changes.del.map(function (d) {
@@ -2707,64 +2671,42 @@ function planOps(changes) {
     changes.del.slice().sort(function (a, b) {
         return depth(b) - depth(a);
     }).forEach(function (d) {
-        const id = T[d.src].id;
-        ops.push({
-            label: "remove " + tripleLine(d.t),
-            run: async function () {
-                const r = await apiCall("DELETE", "triple/" + encodeURIComponent(id), {}, undefined);
-                return r;
-            }
-        });
+        body.delete.push({class: "triple", id: T[d.src].id});
     });
     changes.values.forEach(function (v) {
         if (v.kind === "del") {
-            const id = V[v.src].id;
-            ops.push({
-                label: "remove the value " + v.text,
-                run: async function () {
-                    const r = await apiCall("DELETE", "value/" + encodeURIComponent(id), {}, undefined);
-                    return r;
-                }
-            });
+            body.delete.push({class: "value", id: V[v.src].id});
         }
     });
-    return ops;
+    const result = {
+        pod: DOC.pod,
+        type: UPDATE_PUT_ROUTE,
+        user_id: DOC.user_id,
+        user: DOC.user,
+        version: DOC.version,
+        timestamp: new Date().toISOString(),
+        body: body
+    };
+    return result;
 }
 
+/* one call that saves all changes; the pod stops at the first problem, so after a refusal the edits
+   stay for a fix and the notice tells that the changes before the problem may be saved */
 async function save() {
     const out = buildOutput();
     if (SOURCE.mode === "api" && out.changed > 0 && !saving) {
         saving = true;
         refreshStatus();
-        const ops = planOps(out.changes);
-        let done = 0;
-        let failed = null;
-        for (const op of ops) {
-            if (!failed) {
-                const r = await op.run();
-                if (r.ok) {
-                    done = done + 1;
-                } else {
-                    failed = {label: op.label, message: r.message || "no answer"};
-                }
-            }
-        }
+        const r = await apiCall("POST", UPDATE_PUT_ROUTE, {}, putMessage(out.changes));
         saving = false;
-        if (!failed) {
+        if (r.ok) {
             clearDraft();
             await reload();
-            toast("Saved " + done + (done === 1 ? " change." : " changes."));
-        } else if (done === 0) {
-            refreshStatus();
-            notice("Nothing was saved. The pod refused to " + esc(failed.label) + ": " + esc(failed.message) + ".", "err");
+            toast("Saved " + out.changed + (out.changed === 1 ? " change." : " changes."));
         } else {
-            const rest = ops.slice(done).map(function (o) {
-                return "<li>" + esc(o.label) + "</li>";
-            }).join("");
-            clearDraft();
-            await reload();
-            notice("Saved " + done + " of " + ops.length + " changes. The pod refused to " + esc(failed.label) + ": " + esc(failed.message) +
-                ". The page shows the database now; these changes are not saved:<ul style=\"margin:4px 0 0;padding-left:18px\">" + rest + "</ul>", "err");
+            refreshStatus();
+            notice("Not all changes are saved. The pod refused the save: " + esc(r.message || "no answer") +
+                ". The changes before the problem may be saved; Load shows the database.", "err");
         }
     }
 }
@@ -2851,16 +2793,18 @@ function loadDoc(doc, name, savedState) {
 
 /* the data of the page phrase as the phraseData api sends it (cfg/export/phrase_data.php): the
    triples on the from side of the phrase with their values and results in one call; the view
-   embeds the answer of its phrase as the seed, so that the start needs no call */
+   embeds the answer of its phrase as the seed, so that the start needs no call, but a reload
+   e.g. after a save reads the database */
 async function loadFromApi() {
     const seed = seedDoc().doc;
     let doc = seed;
     let message = "";
-    if (selectionId(seed) !== SOURCE.pageId) {
+    if (SOURCE.seedUsed || selectionId(seed) !== SOURCE.pageId) {
         const r = await apiCall("GET", "phraseData", {id: SOURCE.pageId, pw: PHRASE_DATA_WALK_FROM, is: 1});
         doc = unwrap(r.json) || {};
         message = r.ok ? "" : r.message;
     }
+    SOURCE.seedUsed = true;
     if (!message && !selectionName(doc)) {
         message = "the phrase " + SOURCE.pageId + " was not found";
     }
@@ -3133,7 +3077,7 @@ document.getElementById("btnReset").addEventListener("click", function () {
    anywhere else the embedded demo file is shown; a draft of unsaved edits is offered if one was left */
 function seedDoc() {
     const seedText = document.getElementById("seed").textContent.replace(/<\\\//g, "</");
-    const doc = JSON.parse(seedText);
+    const doc = parseJson(seedText);
     /* the seed of the view names no file, so the page phrase names it */
     const nameEl = document.getElementById("seedName");
     const name = nameEl ? JSON.parse(nameEl.textContent) : selectionName(doc);
@@ -3285,7 +3229,7 @@ async function boot() {
         removeNode: removeNode,
         moveNode: moveNode,
         findNode: findNode,
-        planOps: planOps,
+        putMessage: putMessage,
         source: SOURCE
     };
 }

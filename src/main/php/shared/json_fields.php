@@ -506,6 +506,8 @@ class json_fields
     const string WORDS = 'words';
     const string VERBS = 'verbs';
     const string TRIPLES = 'triples';
+    // the objects that an update put message deletes resp. excludes for the user, by class and id
+    const string DELETE = 'delete';
 
     // for ip ranges
     const string IP_FROM = 'ip_from';

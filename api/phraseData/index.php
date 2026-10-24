@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::EXPORT . 'phrase_data.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
+include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'phrase_data_walks.php';
 
@@ -47,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\cfg\application;
 use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -63,6 +65,10 @@ if ($db_con->is_open()) {
     // load the session user parameters store the requesting user on the single message
     $usr = new user;
     $usr->get($msg);
+    // the session user may differ from the data user e.g. the own frontend asks for the browsing
+    // user of the page; the data user is included in the request in url_var::USER and the walk
+    // reads it from the message
+    $usr = $usr->data_user($_GET[url_var::USER] ?? 0, $msg, server_guard::from_own_pod());
     $msg->usr = $usr;
 
     $result = ''; // reset the json message string

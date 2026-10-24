@@ -193,6 +193,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
+                new update_put_write_tests()->run($t);
 
                 // url tests
                 new word_url_tests()->run($t);

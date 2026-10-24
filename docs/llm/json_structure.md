@@ -1688,6 +1688,53 @@ if a base word), and the mapper fails loudly otherwise. Any DB access —
 loading rows, cross-file lookups, merging — belongs to the **save** step, not
 `import_mapper`.
 
+## Update put message
+
+The message that a client of the pod e.g. the calculator editor posts to
+`/api/updatePut` (`cfg/import/update_put.php`) to save its changes. It
+differs from an import file in three ways:
+
+1. It has the api header: `pod`, `type` (`updatePut`), `user_id`, `user`,
+   `version`, `timestamp` and the changes in `body`. The answer has the same
+   header and the body of the message with the database `id` of each saved
+   object; a slow answer starts with the seconds of its steps (`api_time`).
+2. An object carries its database `id`, which is the prime key if given: a
+   triple with an `id` is renamed instead of added, and a value with an `id`
+   (the id of its phrase group, as text if it is beyond the safe integer of
+   javascript) needs no phrases.
+3. A reference carries its database id instead of its name: `from_id`,
+   `to_id`, `verb_id`, `type_id` and the `phrases` of a new value by `id`; the
+   name (`from`, `to`, `verb`, `type`, `words`) only if the referenced object
+   has no id yet, e.g. a word that the same message adds.
+
+The body holds only the changed objects, each with the fields that the client
+manages; a field that the message does not name keeps its database value.
+`words`, `triples` and `values` are added or changed in this order, then each
+entry of `delete` (`class` and `id`) is removed by the `del()` of the object,
+which decides if it is deleted or only excluded for the user. The save stops at
+the first problem.
+
+```json
+{
+  "pod": "zukunft.com",
+  "type": "updatePut",
+  "version": "0.0.3",
+  "timestamp": "2026-10-24T12:00:00+00:00",
+  "body": {
+    "words": [{"name": "System Test Word To"}],
+    "triples": [{"id": 2846, "name": "System Test Triple", "from_id": 1295, "verb_id": 2, "to": "System Test Word To"}],
+    "values": [
+      {"id": "81495585085949938", "number": 123.456},
+      {"phrases": [{"id": -2846}], "words": ["System Test Word To"], "number": 123456}
+    ],
+    "delete": [{"class": "triple", "id": 2868}]
+  }
+}
+```
+
+`src/test/resources/api/calculator_editor/` has the add, update and undo
+messages of the write test, which adds the database ids.
+
 ## Related
 
 - `docs/llm/architecture.md` — domain noun definitions (*word*, *triple*,
