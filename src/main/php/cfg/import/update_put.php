@@ -247,8 +247,7 @@ class update_put
         $lib = new library();
         $class = $dbo::class;
         $db_obj = new $class($msg->usr);
-        $db_obj->load_by_id($dbo->id(), $msg);
-        if (!$this->is_found($db_obj)) {
+        if (!$this->load_found($db_obj, $dbo->id(), $msg)) {
             $msg->add(msg_id::OBJECT_NOT_FOUND, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($dbo::class),
                 msg_id::VAR_ID => (string)$dbo->id()
@@ -259,16 +258,20 @@ class update_put
     }
 
     /**
-     * @param word|triple|value $dbo the object after the load by its id
+     * @param word|triple|value $dbo the object that is loaded by its id
+     * @param int|string $id the database id of the object
+     * @param user_message $msg with the requesting user
      * @return bool true if the object is in the database, which a value does not show by its id,
      *              because the id of a value is the id of its phrase group and kept by the load
      */
-    private function is_found(word|triple|value $dbo): bool
+    private function load_found(word|triple|value $dbo, int|string $id, user_message $msg): bool
     {
         if ($dbo instanceof value) {
-            return $dbo->is_saved();
+            $found = $dbo->load_by_id_found($id, $msg);
+        } else {
+            $found = $dbo->load_by_id($id, $msg) != 0;
         }
-        return $dbo->id() != 0;
+        return $found;
     }
 
     /**
@@ -289,10 +292,11 @@ class update_put
                 $dbo = new $class($msg->usr);
             }
         }
+        $found = false;
         if ($dbo != null and $id != 0) {
-            $dbo->load_by_id($id, $msg);
+            $found = $this->load_found($dbo, $id, $msg);
         }
-        if ($dbo == null or $id == 0 or !$this->is_found($dbo)) {
+        if (!$found) {
             $msg->add(msg_id::OBJECT_NOT_FOUND, [
                 msg_id::VAR_CLASS_NAME => $cls_name,
                 msg_id::VAR_ID => (string)$id

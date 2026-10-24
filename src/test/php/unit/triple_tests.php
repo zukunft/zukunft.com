@@ -210,6 +210,25 @@ class triple_tests
         $diff = $trp_full->diff_msg($trp_other_from, true);
         $t->assert_false($test_name, $diff->is_ok());
 
+        $t->subheader($ts . 'fill');
+        // the fill takes over only the fields that the request does not name, so a requested
+        // type or name is the change and never a conflict (see update_put::fill_from_db)
+        $trp_db = $t_trp->triple_filled_public();
+        $trp_req = new triple($t->usr1);
+        $trp_req->set_type(phrase_types::TIME, new user_message($t->usr1));
+        $fill_msg = $trp_req->fill($trp_db, $t->usr1);
+        $test_name = 'the fill with another requested type reports no conflict';
+        $t->assert_true($test_name, $fill_msg->is_ok());
+        $test_name = '... and keeps the requested type';
+        $t->assert($test_name, $trp_req->type_code_id($msg), phrase_types::TIME);
+        $test_name = '... but takes over the given name, because the name is not requested';
+        $t->assert($test_name, $trp_req->name_given(), triple_names::MATH_CONST_GIVEN);
+        $trp_ren = new triple($t->usr1);
+        $trp_ren->set_name(triple_names::SYSTEM_TEST_RENAMED);
+        $trp_ren->fill($trp_db, $t->usr1);
+        $test_name = 'the fill of a renamed triple does not take over the old given name';
+        $t->assert_null($test_name, $trp_ren->name_given());
+
         $t->subheader($ts . 'api');
         $trp = $t_trp->triple_filled_public();
         $t->assert_api_json($trp);

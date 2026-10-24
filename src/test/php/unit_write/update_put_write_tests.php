@@ -257,6 +257,15 @@ class update_put_write_tests
         $upd->put($json, $msg);
         $expected = $this->expected_text(msg_id::UPDATE_PUT_SKIPPED, [msg_id::VAR_COUNTER => self::UNDO_SKIPPED]);
         $t->assert_msg_false($test_name, $msg, $expected);
+        $test_name = 'the update of a deleted value is refused, because the id of a value is kept by the load';
+        $json = $this->update_message($trp->id(), (string)$val_id, verbs::IS_NAME, phrase_types::MATH_CONST);
+        unset($json[json_fields::BODY][json_fields::TRIPLES]);
+        $upd->put($json, $msg);
+        $expected = $this->expected_text(msg_id::OBJECT_NOT_FOUND, [
+            msg_id::VAR_CLASS_NAME => $lib->class_to_name(value::class),
+            msg_id::VAR_ID => (string)$val_id
+        ]);
+        $t->assert_msg_false($test_name, $msg, $expected);
 
         // a change log entry must never point to a deleted test row
         $t->cleanup_change_log_value($val_grp, $val_grp->phrase_list());

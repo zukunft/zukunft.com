@@ -866,11 +866,11 @@ class test_base
         int|string $target
     ): bool
     {
-        if ($result === $target) {
-            return true;
-        } else {
-            return $this->assert_dsp($msg, false, var_export($target, true), var_export($result, true), '');
+        $ok = true;
+        if ($result !== $target) {
+            $ok = $this->assert_dsp($msg, false, var_export($target, true), var_export($result, true), '');
         }
+        return $ok;
     }
 
     /**
@@ -1856,9 +1856,17 @@ class test_base
      */
     function fix_volatile_phrase_data_time(string $html): string
     {
-        $fixed = new DateTime(test_const::DUMMY_DATETIME);
         $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
-        return preg_replace($pattern, '${1}' . $fixed->format(phrase_data::TIME_FORMAT) . '${2}', $html, 1);
+        return preg_replace($pattern, '${1}' . $this->phrase_data_test_time() . '${2}', $html, 1);
+    }
+
+    /**
+     * @return string the fixed test time in the format of the phrase data header
+     */
+    private function phrase_data_test_time(): string
+    {
+        $fixed = new DateTime(test_const::DUMMY_DATETIME);
+        return $fixed->format(phrase_data::TIME_FORMAT);
     }
 
     // the html attributes of a snapshot page that carry a root relative url to the pod
@@ -6519,7 +6527,8 @@ class test_base
     /**
      * write the json that an api test has received next to its expected file, if the expected
      * file is listed in test_files::WRITE_API_ACTUAL_FILES, to compare the two e.g. with a diff tool;
-     * an unchanged actual file is not written again, so that its timestamp shows the last change
+     * an unchanged actual file is not written again, so that its timestamp shows the last change,
+     * and the creation time of the answer is the fixed test time, because it differs by run
      *
      * @param string $expected_path the path of the expected json file e.g. ../phrase_data_pv_install.json
      * @param array|null $actual the json that the api test has received; null writes nothing
@@ -6529,6 +6538,9 @@ class test_base
     {
         if (in_array($expected_path, test_files::WRITE_API_ACTUAL_FILES) and $actual !== null) {
             $actual_path = $this->api_actual_path($expected_path);
+            if (array_key_exists(json_fields::TIME, $actual)) {
+                $actual[json_fields::TIME] = $this->phrase_data_test_time();
+            }
             $result = library::json_for_humans($actual) . "\n";
             if (!is_file($actual_path) or file_get_contents($actual_path) !== $result) {
                 $this->update_path_file($actual_path, $result);
