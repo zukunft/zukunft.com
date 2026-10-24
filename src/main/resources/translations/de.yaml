@@ -143,6 +143,8 @@ messages:
   change_blocked_for_ip_user: "Dieser Pod erlaubt keine Änderungen ohne Anmeldung. Bitte melden Sie sich an, um Daten zu erfassen oder zu ändern."
   url_user_not_session_user: "Dieser Link wurde für den Benutzer mit der ID z$VarObjId$z erstellt, daher wird die Seite so angezeigt, wie sie für Sie aussieht."
   change_blocked_cross_origin: "Diese Änderungsanfrage wurde blockiert, weil sie nicht von dieser Website stammt. Bitte versuchen Sie es erneut aus der zukunft.com-Anwendung."
+  update_put_other_user: "Diese Änderungen wurden für den Benutzer mit der ID z$VarObjId$z vorbereitet, Sie sind aber als z$VarUserName$z angemeldet, daher wird nichts gespeichert. Bitte laden Sie die Seite neu und wiederholen Sie die Änderungen."
+  update_put_skipped: "z$VarCounter$z Änderungen nach dem Problem sind nicht gespeichert. Bitte beheben Sie das Problem und speichern Sie erneut."
   solution_prio_title: "Welches Problem lohnt sich zuerst zu lösen?"
   solution_prio_ranking_table: "Globale Probleme nach dem Verlust, den eine Lösung vermeiden kann"
   phrase_has: "hat"

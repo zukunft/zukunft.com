@@ -852,6 +852,28 @@ class test_base
     }
 
     /**
+     * check if the result is identical to the target including its type e.g. that a numeric text id
+     * has become a number; both are shown with their type, because the text "1" and the number 1 look the same
+     *
+     * @param string $msg (unique) description of the test
+     * @param int|string $result the result of the previously called test
+     * @param int|string $target the expected result
+     * @return bool true is the result is fine
+     */
+    function assert_same(
+        string     $msg,
+        int|string $result,
+        int|string $target
+    ): bool
+    {
+        if ($result === $target) {
+            return true;
+        } else {
+            return $this->assert_dsp($msg, false, var_export($target, true), var_export($result, true), '');
+        }
+    }
+
+    /**
      * check if the result is null
      *
      * @param string $msg (unique) description of the test
@@ -6496,7 +6518,8 @@ class test_base
 
     /**
      * write the json that an api test has received next to its expected file, if the expected
-     * file is listed in test_files::WRITE_API_ACTUAL_FILES, to compare the two e.g. with a diff tool
+     * file is listed in test_files::WRITE_API_ACTUAL_FILES, to compare the two e.g. with a diff tool;
+     * an unchanged actual file is not written again, so that its timestamp shows the last change
      *
      * @param string $expected_path the path of the expected json file e.g. ../phrase_data_pv_install.json
      * @param array|null $actual the json that the api test has received; null writes nothing
@@ -6506,7 +6529,10 @@ class test_base
     {
         if (in_array($expected_path, test_files::WRITE_API_ACTUAL_FILES) and $actual !== null) {
             $actual_path = $this->api_actual_path($expected_path);
-            $this->update_path_file($actual_path, library::json_for_humans($actual) . "\n");
+            $result = library::json_for_humans($actual) . "\n";
+            if (!is_file($actual_path) or file_get_contents($actual_path) !== $result) {
+                $this->update_path_file($actual_path, $result);
+            }
         }
     }
 

@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
+include_once paths::MODEL_IMPORT . 'update_put.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -60,6 +61,7 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
+use Zukunft\ZukunftCom\main\php\cfg\import\update_put;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
@@ -86,6 +88,13 @@ use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_tests
 {
+
+    // the group id of a value as the calculator editor sends it and as the database uses it
+    const string TV_GROUP_ID_TEXT = '81495585085949938';
+    const int TV_GROUP_ID = 81495585085949938;
+    // a text id like the one of a value with more than four phrases, which must not become a number
+    const string TV_GROUP_ID_KEY = '-2780+1295+1296+1297+1298';
+
     function run(test_cleanup $t): void
     {
         global $sys;
@@ -1277,6 +1286,19 @@ class import_tests
         $exp = $dto->export_json($msg);
         $t->assert_key_not_exists($test_name, json_fields::WORDS, $exp);
         $msg->reset();
+
+        $t->subheader($ts . 'update put');
+        $upd = new update_put();
+
+        $test_name = 'a group id as text, which the editor sends beyond the safe integer of javascript, is a number';
+        $grp_id = $upd->db_id(self::TV_GROUP_ID_TEXT);
+        $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID);
+        $test_name = '... and a number stays a number';
+        $grp_id = $upd->db_id(self::TV_GROUP_ID);
+        $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID);
+        $test_name = 'the text id of a value with more than four phrases stays a text';
+        $grp_id = $upd->db_id(self::TV_GROUP_ID_KEY);
+        $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID_KEY);
 
     }
 

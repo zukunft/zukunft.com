@@ -1711,8 +1711,11 @@ The body holds only the changed objects, each with the fields that the client
 manages; a field that the message does not name keeps its database value.
 `words`, `triples` and `values` are added or changed in this order, then each
 entry of `delete` (`class` and `id`) is removed by the `del()` of the object,
-which decides if it is deleted or only excluded for the user. The save stops at
-the first problem.
+which decides if it is deleted or only excluded for the user. The session
+decides who saves: a message whose header `user_id` names another user is
+refused (`UPDATE_PUT_OTHER_USER`), and a message without `user_id` is saved for
+the requesting user. The save stops at the first problem and reports the number
+of the changes after it that are not saved (`UPDATE_PUT_SKIPPED`).
 
 ```json
 {

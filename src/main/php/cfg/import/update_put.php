@@ -18,7 +18,8 @@
       by their name only if they have no id yet, e.g. a word that the same message adds
     - delete: the class and id of the objects that the user removes; the del() of the object
       decides if the object is deleted or only excluded for the user
-    the sections are saved in this order and the save stops at the first problem; then the cached
+    a message whose header names another user than the requesting one is refused; the sections
+    are saved in this order and the save stops at the first problem; then the cached
     pages and api answers are dropped, so that e.g. the editor reads the saved data
 
     The main sections of this object are
@@ -149,24 +150,35 @@ class update_put
     {
         $api_msg = new api_message();
         $body = $api_msg->validate($json);
+        $put_msg = new user_message($msg->usr); // the problems of this put, merged into $msg below, so that only a problem of the put stops it
+        $this->check_user($json, $put_msg);
+        $skipped = 0;
         $result = [];
         foreach (self::SECTION_CLASSES as $section => $class) {
             $result[$section] = [];
             foreach ($body[$section] ?? [] as $obj_json) {
-                if ($msg->is_ok()) {
-                    $result[$section][] = $this->save_object($class, $obj_json, $msg);
+                if ($put_msg->is_ok()) {
+                    $result[$section][] = $this->save_object($class, $obj_json, $put_msg);
+                } else {
+                    $skipped++;
                 }
             }
         }
         $result[json_fields::DELETE] = [];
         foreach ($body[json_fields::DELETE] ?? [] as $del_json) {
-            if ($msg->is_ok()) {
-                $this->delete_object($del_json, $msg);
+            if ($put_msg->is_ok()) {
+                $this->delete_object($del_json, $put_msg);
                 $result[json_fields::DELETE][] = $del_json;
+            } else {
+                $skipped++;
             }
+        }
+        if ($skipped > 0) {
+            $put_msg->add(msg_id::UPDATE_PUT_SKIPPED, [msg_id::VAR_COUNTER => (string)$skipped]);
         }
         // also after a problem, because the objects before the problem are saved
         $this->drop_cached_answers();
+        $msg->merge($put_msg);
         return $result;
     }
 
@@ -174,6 +186,26 @@ class update_put
     /*
      * internal
      */
+
+    /**
+     * refuse a message that names another user than the requesting user in its header, e.g. the
+     * edits of a page that has been loaded before a login as another user; the session decides
+     * who saves, so a message without a user in the header is saved for the requesting user
+     *
+     * @param array $json the update put message with or without the api header
+     * @param user_message $msg with the requesting user, to report the other user
+     * @return void
+     */
+    private function check_user(array $json, user_message $msg): void
+    {
+        $msg_usr_id = (int)($json[json_fields::USER_ID] ?? 0);
+        if ($msg_usr_id != 0 and $msg_usr_id != $msg->usr->id()) {
+            $msg->add(msg_id::UPDATE_PUT_OTHER_USER, [
+                msg_id::VAR_ID => (string)$msg_usr_id,
+                msg_id::VAR_USER_NAME => $msg->usr->name()
+            ]);
+        }
+    }
 
     /**
      * add or update one object of the message
@@ -216,7 +248,7 @@ class update_put
         $class = $dbo::class;
         $db_obj = new $class($msg->usr);
         $db_obj->load_by_id($dbo->id(), $msg);
-        if ($db_obj->id() == 0) {
+        if (!$this->is_found($db_obj)) {
             $msg->add(msg_id::OBJECT_NOT_FOUND, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($dbo::class),
                 msg_id::VAR_ID => (string)$dbo->id()
@@ -224,6 +256,19 @@ class update_put
         } else {
             $msg->merge($dbo->fill($db_obj, $msg->usr));
         }
+    }
+
+    /**
+     * @param word|triple|value $dbo the object after the load by its id
+     * @return bool true if the object is in the database, which a value does not show by its id,
+     *              because the id of a value is the id of its phrase group and kept by the load
+     */
+    private function is_found(word|triple|value $dbo): bool
+    {
+        if ($dbo instanceof value) {
+            return $dbo->is_saved();
+        }
+        return $dbo->id() != 0;
     }
 
     /**
@@ -247,7 +292,7 @@ class update_put
         if ($dbo != null and $id != 0) {
             $dbo->load_by_id($id, $msg);
         }
-        if ($dbo == null or $id == 0 or $dbo->id() == 0) {
+        if ($dbo == null or $id == 0 or !$this->is_found($dbo)) {
             $msg->add(msg_id::OBJECT_NOT_FOUND, [
                 msg_id::VAR_CLASS_NAME => $cls_name,
                 msg_id::VAR_ID => (string)$id
@@ -331,8 +376,9 @@ class update_put
      *                       of a value, which the editor sends as text, because it is beyond the safe
      *                       integer of javascript, or the text id of a value with more than four phrases
      * @return int|string the id as a number if it is a number, else the text id
+     * public only so that the conversion can be checked by a unit test (see import_tests)
      */
-    private function db_id(int|string $id): int|string
+    function db_id(int|string $id): int|string
     {
         $result = $id;
         if (is_string($id) and ctype_digit($id)) {

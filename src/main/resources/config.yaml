@@ -277,12 +277,12 @@ zukunft.com:
               tooltip: "the global issues that are expected to cause the damage with the suggested solution to solve the problem"
             pv:
               url: "http://localhost/http/view.php?m=16&id=-2780"
-              name: "Photovoltaic calculator"
-              tooltip: "calculate the effects of photovoltaic"
+              name: "PV and climate"
+              tooltip: "calculate the effects of a local photovoltaic installation on the climate gas emissions"
             panels:
               url: "/http/view.php?m=4&id=1954"
-              name: "PV panels installation"
-              tooltip: "step by step process to calculate the installation of PV panels"
+              name: "PV payoff"
+              tooltip: "step by step process to calculate the installation of photovoltaic panels including the prices and payoff"
             cbam:
               url: "/http/view.php?m=4&id=1954"
               name: "CBAM Calculator"

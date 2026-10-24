@@ -1,5 +1,65 @@
 # pending - list of planned llm prompts with prio 1
 
+## updatePut
+
+implement the updatePut backend so that a message like this
+
+`{
+    "pod": "zukunft.com",
+    "timestamp": "2026-10-24T09:49:16.580Z",
+    "type": "updatePut",
+    "user": "heang",
+    "user_id": 11,
+    "version": "0.0.3",
+    "body": {
+        "triples": [
+        {
+            "id": 2795,
+            "name": "PV capacity label",
+            "description": "Installation size",
+            "from_id": -2748,
+            "to_id": -2727,
+            "verb_id": 23
+        }
+        ]
+    }
+}
+`
+
+can be processed 
+and add a db write test that checks if the database has been actually updated 
+and after that add an undo test based on this message
+
+`{
+    "pod": "zukunft.com",
+    "timestamp": "2026-10-24T09:49:16.580Z",
+    "type": "updatePut",
+    "user": "heang",
+    "user_id": 11,
+    "version": "0.0.3",
+    "body": {
+        "triples": [
+        {
+            "id": 2795,
+            "name": "PV capacity label",
+            "description": "System size",
+            "from_id": -2748,
+            "to_id": -2727,
+            "verb_id": 23
+        }
+        ]
+    }
+}
+`
+and check that the database has the original values
+probably the best is to save the messages as json e.g. here src/test/resources/api/calculator_editor
+
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
 ## start view
 
 in the start view e.g. http://localhost/http/view.php?m=1&dla=table_chart&dlc=3&dlv=1 and all similar views 
@@ -163,14 +223,6 @@ and overwrite the standard data with the user overwrites
 
 write a script that recreates the open API yaml based on the code and create a test that reports the differences between
 the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
-
-## prime group id within 2^53
-
-a prime group id is an integer of at most 2^53 (9'007'199'254'740'992), so that a json reader
-like javascript `JSON.parse` reads it exactly; a group whose 64-bit key would be bigger
-e.g. 500463902488562396 (example PV installation, PV capacity, kWp, assumed) gets the compact
-text key instead (see `group_id::get_id`, `docs/llm/group_id.md`); this changes the table of the
-affected values, so it needs a database upgrade and the minor version raise (`docs/llm/versions.md`)
 
 ## cleanup
 

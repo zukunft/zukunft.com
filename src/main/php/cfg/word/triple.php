@@ -1912,8 +1912,10 @@ class triple extends sandbox_link_named
                 $this->get_to()->fill($trp->get_to(), $usr_req);
             }
 
-            // fill the names
-            if ($this->name_given === null and $trp->name_given != null) {
+            // fill the names, but not the given name of the database if another name is requested,
+            // because it is the old name e.g. of the user overlay row on a rename back
+            $is_renamed = ($this->name !== null and $this->name != $trp->name(true));
+            if ($this->name_given === null and $trp->name_given != null and !$is_renamed) {
                 $this->name_given = $trp->name_given;
             }
             if ($this->name_generated === null and $trp->name_generated != '') {

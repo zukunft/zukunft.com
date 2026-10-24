@@ -2523,6 +2523,7 @@
 \-- update_put
     \-- api_json - section for function api_json not yet defined that it should be put in /import/update_put.php
     \-- put - section for function put not yet defined that it should be put in /import/update_put.php
+    \-- db_id - section for function db_id not yet defined that it should be internal in /import/update_put.php
 \-- language
     \-- row_mapper_typ_obj - section for function row_mapper_typ_obj not yet defined that it should be construct and map
              in /language/language.php
@@ -5877,6 +5878,8 @@
         \-- expression - @returns phrase_list with the word and triple ids from a given formula text
     \-- get_usr_names
         \-- expression - @return array of the term names used in the expression based on the user text
+    \-- db_id
+        \-- update_put - @param int|string $id the database id of the message e.g. "81495585085949938" for the group id
     \-- get_all_messages
         \-- user_message - @return array with all the text messages
 \-- extract helper

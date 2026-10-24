@@ -650,11 +650,15 @@ Every page url and api url of a logged-in user carries the user id as `u`
 shows for whom the page is created. `html_base::ref` adds it to each link of
 this pod, `html_base::form_user` adds it as a hidden field to each form (a get
 form drops the parameters of its action), `frontend::redirect_url` sets it for
-the page after an action and `rest_call::data_with_user` for the api calls; the
-id comes from `user::id_for_url`, which is 0 for the profiles of
-`user_profiles::STANDARD_DATA`: an ip user is not unique, so it must not use the
-user sandbox, and the system users (system, system test, system log) see the
-standard data without user overwrites, so e.g. the test pages carry no `u`. The url never
+the page after an action and `rest_call::data_with_user` for the api calls. The
+id of a page url comes from `user::id_for_url`, which is 0 for the profiles of
+`user_profiles::STANDARD_DATA` (an ip user is not unique, and the system users
+system, system test and system log), so e.g. the test pages carry no `u`. An api
+call names every requesting user with an id, also of these profiles: the
+frontend calls the api of its own pod without the session, so a call without
+`u` would be answered for the ip user of the pod, while with `u` the api
+(`user::data_user` with `server_guard::from_own_pod`) answers for the same user
+whose objects the page shows. The url never
 decides who the user is: the session does, and a url with another `u` only gets
 the `URL_USER_NOT_SESSION_USER` notice (`frontend::url_user_matches`). A user
 that is shown or changed is therefore never named by `u`, but by `ue`
