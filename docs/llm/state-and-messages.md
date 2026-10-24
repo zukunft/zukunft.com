@@ -673,6 +673,17 @@ so that the frontend loads every object by its id; the page cache key and the
 page vars of a back target read the user by `ue` too. An old url with `id`
 (e.g. an activation link of a mail sent before the change) still selects the user.
 
+In an api call `u` names the data user: the user whose view of the data the
+api answers with, e.g. the user sandbox values, descriptions and exclusions of
+that user. The session user stays the requesting user and decides if the data
+user of `u` is allowed (`user::data_user` / `user::data_user_id`): an admin or
+the system user may read the data of any user, e.g. an admin checks what a user
+would see, and a call of the own pod (`server_guard::from_own_pod`) gets the data
+of the browsing user, whose session the frontend has checked. A normal or ip user
+that names another user by `u` gets its own data, so a foreign id never shows the
+data of another user. Every api call that reads user specific data e.g.
+`phraseData` resolves the data user this way and keys its cache by the data user.
+
 The back part (`9`-prefixed params) only names the page to return to, so it is
 no part of the page cache key (`url_var::without_back`): a page called e.g. from
 the start page with the main columns (`…&9m=1&9dlc=2`) is cached once under its

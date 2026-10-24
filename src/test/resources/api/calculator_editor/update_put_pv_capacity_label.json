@@ -1,0 +1,20 @@
+{
+  "pod": "zukunft.com",
+  "timestamp": "2026-10-24T09:49:16.580Z",
+  "type": "updatePut",
+  "user": "heang",
+  "user_id": 11,
+  "version": "0.0.3",
+  "body": {
+    "triples": [
+      {
+        "id": 2795,
+        "name": "PV capacity label",
+        "description": "Installation size",
+        "from_id": -2748,
+        "to_id": -2727,
+        "verb_id": 23
+      }
+    ]
+  }
+}

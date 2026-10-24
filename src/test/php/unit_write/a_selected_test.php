@@ -60,6 +60,7 @@ include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_WORKFLOW . 'word_url_tests.php';
 include_once test_paths::UNIT_WRITE . 'horizontal_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'value_by_id_write_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'word_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'triple_write_url_tests.php';
 include_once test_paths::UNIT_WRITE_WORKFLOW . 'formula_write_url_tests.php';
@@ -343,6 +344,10 @@ class a_selected_test extends all_unit_tests
             $this->cleanup_objects_ex_user();
 
             // run the selected db write tests
+            // the change and delete of a value given only by its id, as the update put does it
+            new value_by_id_write_tests()->run($this);
+            // the triple description change of the calculator editor and its undo
+            new update_put_write_tests()->run_use_case($this);
             //run_system_test($this);
             //$t_db->create_test_db_entries($this);
             //new user_write_tests()->run($this);

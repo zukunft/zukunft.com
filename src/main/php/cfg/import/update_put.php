@@ -247,31 +247,17 @@ class update_put
         $lib = new library();
         $class = $dbo::class;
         $db_obj = new $class($msg->usr);
-        if (!$this->load_found($db_obj, $dbo->id(), $msg)) {
+        // the returned id, because a value keeps its id, which is the id of its group, also if no row is found
+        $found = $db_obj->load_by_id($dbo->id(), $msg) != 0;
+        // only if the load has not reported another reason
+        if (!$found and $msg->is_ok()) {
             $msg->add(msg_id::OBJECT_NOT_FOUND, [
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($dbo::class),
                 msg_id::VAR_ID => (string)$dbo->id()
             ]);
-        } else {
+        } elseif ($found) {
             $msg->merge($dbo->fill($db_obj, $msg->usr));
         }
-    }
-
-    /**
-     * @param word|triple|value $dbo the object that is loaded by its id
-     * @param int|string $id the database id of the object
-     * @param user_message $msg with the requesting user
-     * @return bool true if the object is in the database, which a value does not show by its id,
-     *              because the id of a value is the id of its phrase group and kept by the load
-     */
-    private function load_found(word|triple|value $dbo, int|string $id, user_message $msg): bool
-    {
-        if ($dbo instanceof value) {
-            $found = $dbo->load_by_id_found($id, $msg);
-        } else {
-            $found = $dbo->load_by_id($id, $msg) != 0;
-        }
-        return $found;
     }
 
     /**
@@ -294,14 +280,16 @@ class update_put
         }
         $found = false;
         if ($dbo != null and $id != 0) {
-            $found = $this->load_found($dbo, $id, $msg);
+            // the returned id, see fill_from_db
+            $found = $dbo->load_by_id($id, $msg) != 0;
         }
-        if (!$found) {
+        // only if the load has not reported another reason
+        if (!$found and $msg->is_ok()) {
             $msg->add(msg_id::OBJECT_NOT_FOUND, [
                 msg_id::VAR_CLASS_NAME => $cls_name,
                 msg_id::VAR_ID => (string)$id
             ]);
-        } else {
+        } elseif ($found) {
             $dbo->del($msg);
         }
     }

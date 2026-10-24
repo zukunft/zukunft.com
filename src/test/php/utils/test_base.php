@@ -6538,6 +6538,7 @@ class test_base
     {
         if (in_array($expected_path, test_files::WRITE_API_ACTUAL_FILES) and $actual !== null) {
             $actual_path = $this->api_actual_path($expected_path);
+            // in the format of the phrase data, which is the only answer of WRITE_API_ACTUAL_FILES
             if (array_key_exists(json_fields::TIME, $actual)) {
                 $actual[json_fields::TIME] = $this->phrase_data_test_time();
             }

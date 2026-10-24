@@ -43,13 +43,16 @@ include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_IMPORT . 'update_put.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST_FIELDS . 'fields.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'phrase_data_walks.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -65,13 +68,16 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\import\update_put;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\phrase_data_walks;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
@@ -258,8 +264,9 @@ class update_put_write_tests
         $expected = $this->expected_text(msg_id::UPDATE_PUT_SKIPPED, [msg_id::VAR_COUNTER => self::UNDO_SKIPPED]);
         $t->assert_msg_false($test_name, $msg, $expected);
         $test_name = 'the update of a deleted value is refused, because the id of a value is kept by the load';
-        $json = $this->update_message($trp->id(), (string)$val_id, verbs::IS_NAME, phrase_types::MATH_CONST);
+        $json = $this->message(test_files::UPDATE_PUT_UPDATE);
         unset($json[json_fields::BODY][json_fields::TRIPLES]);
+        $json[json_fields::BODY][json_fields::VALUES][0][json_fields::ID] = (string)$val_id;
         $upd->put($json, $msg);
         $expected = $this->expected_text(msg_id::OBJECT_NOT_FOUND, [
             msg_id::VAR_CLASS_NAME => $lib->class_to_name(value::class),
@@ -271,6 +278,126 @@ class update_put_write_tests
         $t->cleanup_change_log_value($val_grp, $val_grp->phrase_list());
         $t->cleanup_change_log($trp, [triple_names::SYSTEM_TEST_ADD, triple_names::SYSTEM_TEST_RENAMED]);
         $t->cleanup_change_log($wrd, [word_names::TEST_ADD, word_names::TEST_ADD_TO]);
+
+        $this->run_use_case($t);
+    }
+
+    /**
+     * the description change of a use case triple as the calculator editor has sent it, by a user
+     * who does not own the triple, and its undo, which must restore the original description
+     * public to run the use case also alone from the selected tests
+     *
+     * @param test_cleanup $t the test environment with the normal test user
+     * @return void
+     */
+    function run_use_case(test_cleanup $t): void
+    {
+        $upd = new update_put();
+        $ts = 'db write update put use case ';
+        $t->subheader($ts . 'change and undo of a triple description');
+        $usr = $t->usr_normal;
+        $msg = new user_message($usr);
+        $chk_msg = new user_message($usr);
+
+        // a run that has stopped before the undo leaves the user overwrite, which the logged undo removes
+        $trp = new triple($usr);
+        $trp->load_by_name(triple_names::PV_CAPACITY_LABEL, $chk_msg);
+        if ($trp->get_description() != triple_names::PV_CAPACITY_LABEL_COM) {
+            $test_name = 'the user overwrite left by an earlier run is removed by the undo';
+            $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL_UNDO, $trp), $msg);
+            $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->reset();
+            $trp = new triple($usr);
+            $trp->load_by_name(triple_names::PV_CAPACITY_LABEL, $chk_msg);
+        }
+        $test_name = 'the triple of the use case has the original description';
+        $t->assert($test_name, $trp->get_description(), triple_names::PV_CAPACITY_LABEL_COM, test_base::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'put the description change of the calculator editor';
+        $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL, $trp), $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        // TODO Prio 0 why message reset without check? Report any unexpected message before reset
+        $msg->reset();
+        $test_name = 'the database has the changed description';
+        $trp_chk = new triple($usr);
+        $trp_chk->load_by_id($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_chk->get_description(), triple_names::PV_CAPACITY_LABEL_COM_CHANGED, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... and the change of the description is logged';
+        $log_ui = $t->log_last_ui_by_field($trp_chk, fields::FLD_DESCRIPTION, $trp_chk->id(), $chk_msg);
+        $expected = $usr->name() . ' changed ' . msg_id::LOG_USER->value . ' to "'
+            . triple_names::PV_CAPACITY_LABEL_COM_CHANGED . '" from "' . triple_names::PV_CAPACITY_LABEL_COM . '"';
+        $t->assert($test_name, $log_ui->entry(), $expected, test_base::TIMEOUT_LIMIT_DB);
+        // the user does not own the triple, so the change must be logged as its user overwrite
+        $test_name = '... as a user overwrite';
+        $t->assert_true($test_name, $log_ui->is_user_sandbox_change());
+        $test_name = '... and the phrase data of the user who has changed it has the changed description';
+        $phd_msg = new user_message($usr);
+        $description = $this->phrase_data_description($phd_msg);
+        $t->assert($test_name, $description, triple_names::PV_CAPACITY_LABEL_COM_CHANGED, test_base::TIMEOUT_LIMIT_IMPORT);
+        $t->assert_msg($test_name, $phd_msg);
+        // TODO Prio 0 add an actual api call to check if the user is correctly taken from the url_par 'u'
+        // negative: the change is a user overwrite, so another user still gets the original description
+        $test_name = '... but the phrase data of another user has the original description';
+        $phd_msg = new user_message($t->usr1);
+        $description = $this->phrase_data_description($phd_msg);
+        $t->assert($test_name, $description, triple_names::PV_CAPACITY_LABEL_COM, test_base::TIMEOUT_LIMIT_IMPORT);
+        $t->assert_msg($test_name, $phd_msg);
+        // TODO Prio 0 add an actual api call to check if the user is correctly taken from the url_par 'u'
+
+        $test_name = 'put the undo of the description change';
+        $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL_UNDO, $trp), $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = 'the database has the original description again';
+        $trp_chk = new triple($usr);
+        $trp_chk->load_by_id($trp->id(), $chk_msg);
+        $t->assert($test_name, $trp_chk->get_description(), triple_names::PV_CAPACITY_LABEL_COM, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... and no user overwrite is left';
+        $t->assert_false($test_name, $trp_chk->has_usr_cfg());
+    }
+
+    /**
+     * the description of the use case triple as the calculator editor receives it with the
+     * phrase data of the example PV installation
+     *
+     * @param user_message $msg with the user of the phrase data and to report a problem of the load
+     * @return string the description of the PV capacity label or an empty string if the phrase data has no such triple
+     */
+    private function phrase_data_description(user_message $msg): string
+    {
+        $phd = new phrase_data();
+        $phr = new phrase($msg->usr);
+        $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
+        $vars = $phd->export_json($phr->id(), phrase_data_walks::FROM, false, $msg);
+        $result = '';
+        foreach ($vars[json_fields::TRIPLES] ?? [] as $trp_json) {
+            if (($trp_json[json_fields::NAME] ?? '') == triple_names::PV_CAPACITY_LABEL) {
+                $result = $trp_json[json_fields::DESCRIPTION] ?? '';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the database ids differ by database, so the test sets the ids of the loaded triple and its
+     * user in the message as the calculator editor has sent it
+     *
+     * @param string $filename the path of the message e.g. test_files::UPDATE_PUT_PV_CAPACITY_LABEL
+     * @param triple $trp the triple of the message loaded by its name for the user of the message
+     * @return array the message with the database ids of this database
+     */
+    private function use_case_message(string $filename, triple $trp): array
+    {
+        $json = $this->message($filename);
+        $json[json_fields::USER_ID] = $trp->get_user()->id();
+        $json[json_fields::USER] = $trp->get_user()->name();
+        $trp_json = $json[json_fields::BODY][json_fields::TRIPLES][0];
+        $trp_json[json_fields::ID] = $trp->id();
+        $trp_json[json_fields::FROM] = $trp->from_id();
+        $trp_json[json_fields::TO] = $trp->to_id();
+        $trp_json[json_fields::VERB] = $trp->get_verb_id();
+        $json[json_fields::BODY][json_fields::TRIPLES][0] = $trp_json;
+        return $json;
     }
 
     /**

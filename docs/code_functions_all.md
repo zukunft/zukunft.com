@@ -2248,7 +2248,6 @@
     \-- isset - section for function isset not yet defined that it should be info in /helper/db_object_multi.php
     \-- name - section for function name is expected to be debug in /helper/db_object_multi.php
     \-- load_by_id - section for function load_by_id is expected to be load in /helper/db_object_multi.php
-    \-- load_by_id_found - section for function load_by_id_found is expected to be load in /helper/db_object_multi.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /helper/db_obje
             ct_multi.php
 \-- db_object_multi_user
@@ -6041,8 +6040,6 @@
         \-- db_object_multi - get the name of the database object (only used by named objects)
     \-- load_by_id
         \-- db_object_multi - load a row from the database selected by id
-    \-- load_by_id_found
-        \-- db_object_multi - load a row by id like load_by_id and tell if the row has been found, which the id does not
     \-- load_by_id_with_related
         \-- db_object_multi - load a row by id like load_by_id, but also populate the "most often used related
 \-- json

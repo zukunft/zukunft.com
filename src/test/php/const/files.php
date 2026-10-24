@@ -77,6 +77,9 @@ class files
     CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
     CONST string UPDATE_PUT_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_undo' . self::JSON;
     CONST string UPDATE_PUT_WITHOUT_WORD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_without_word' . self::JSON;
+    // a description change of the use case triple PV capacity label as the editor has sent it and its undo
+    CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label' . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_LABEL_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label_undo' . self::JSON;
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none

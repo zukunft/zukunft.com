@@ -465,6 +465,10 @@ class triple_names
     const string PV_IN_SWITZERLAND = 'PV in Switzerland';
     // the worked example of the use case pv_lifetime_balance.json, selected by the name only as well
     const string EXAMPLE_PV_INSTALLATION = 'example PV installation';
+    // the label of an input of the calculator editor from pv_lifetime_balance.json, changed by the update put test
+    const string PV_CAPACITY_LABEL = 'PV capacity label';
+    const string PV_CAPACITY_LABEL_COM = 'System size';
+    const string PV_CAPACITY_LABEL_COM_CHANGED = 'Installation size';
     // a general triple of electricity, a row phrase of the PV page, from cbam_calculator.json that is no calculator triple
     const string COAL_ELECTRICITY = 'coal electricity';
     // the phrase id of a triple that no test database reaches, to test the answer for a missing phrase

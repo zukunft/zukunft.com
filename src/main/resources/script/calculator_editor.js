@@ -2800,7 +2800,8 @@ async function loadFromApi() {
     let doc = seed;
     let message = "";
     if (SOURCE.seedUsed || selectionId(seed) !== SOURCE.pageId) {
-        const r = await apiCall("GET", "phraseData", {id: SOURCE.pageId, pw: PHRASE_DATA_WALK_FROM, is: 1});
+        /* the user of the seed, because DOC is not yet loaded on startup; apiUrl skips a missing id */
+        const r = await apiCall("GET", "phraseData", {id: SOURCE.pageId, pw: PHRASE_DATA_WALK_FROM, is: 1, u: seed.user_id});
         doc = unwrap(r.json) || {};
         message = r.ok ? "" : r.message;
     }

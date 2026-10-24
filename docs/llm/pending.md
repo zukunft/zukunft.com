@@ -1,58 +1,11 @@
 # pending - list of planned llm prompts with prio 1
 
-## updatePut
+## Calculator editor
 
-implement the updatePut backend so that a message like this
+### don't load verbs from api
 
-`{
-    "pod": "zukunft.com",
-    "timestamp": "2026-10-24T09:49:16.580Z",
-    "type": "updatePut",
-    "user": "heang",
-    "user_id": 11,
-    "version": "0.0.3",
-    "body": {
-        "triples": [
-        {
-            "id": 2795,
-            "name": "PV capacity label",
-            "description": "Installation size",
-            "from_id": -2748,
-            "to_id": -2727,
-            "verb_id": 23
-        }
-        ]
-    }
-}
-`
-
-can be processed 
-and add a db write test that checks if the database has been actually updated 
-and after that add an undo test based on this message
-
-`{
-    "pod": "zukunft.com",
-    "timestamp": "2026-10-24T09:49:16.580Z",
-    "type": "updatePut",
-    "user": "heang",
-    "user_id": 11,
-    "version": "0.0.3",
-    "body": {
-        "triples": [
-        {
-            "id": 2795,
-            "name": "PV capacity label",
-            "description": "System size",
-            "from_id": -2748,
-            "to_id": -2727,
-            "verb_id": 23
-        }
-        ]
-    }
-}
-`
-and check that the database has the original values
-probably the best is to save the messages as json e.g. here src/test/resources/api/calculator_editor
+add a typeList json to the Calculator Editor that contains the result of a /api/typeLists call
+the json is expected to contain all verbs so instead of calling the api to get the verbs, pick the verbs from the type json
 
 ## prime group id within 2^53
 

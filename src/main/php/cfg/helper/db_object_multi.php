@@ -418,26 +418,6 @@ class db_object_multi extends db_object_key
     }
 
     /**
-     * load a row by id like load_by_id and tell if the row has been found, which the id does not
-     * show, because the id is kept also if no row is found (see load_by_id)
-     *
-     * @param int|string $id the id of the row to load e.g. the group id of a value
-     * @param user_message $msg to report a problem of the database read
-     * @return bool true if the database row has been found
-     */
-    function load_by_id_found(int|string $id, user_message $msg): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
-        $db_row = $db_con->get1($qp, $msg);
-        $found = (is_array($db_row) and $db_row !== []);
-        if ($found) {
-            $this->row_mapper($db_row, $msg);
-        }
-        return $found;
-    }
-
-    /**
      * load a row by id like load_by_id, but also populate the "most often used related
      * objects" view-models that the page-title renderer expects (e.g. the related phrases
      * of a value shown in its title); the base implementation is a no-op beyond load_by_id

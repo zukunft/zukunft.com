@@ -1910,7 +1910,10 @@ class sandbox_multi extends db_object_multi_user
                     if (!$fvt_lst->is_empty_except_internal_fields()) {
                         $sc_par_lst->add(sql_type::UPDATE);
                         $qp = $std->sql_write($sc, $db_std, $std->db_fields_all(), $own_msg, $sc_par_lst);
-                        $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                        // no statement if only the key fields differ, like in save_fields_func
+                        if ($qp != null) {
+                            $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                        }
                     }
                 }
 
@@ -3618,7 +3621,10 @@ class sandbox_multi extends db_object_multi_user
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
-                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    // no statement if only the key fields differ, like in the user row branches below
+                    if ($qp != null) {
+                        $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    }
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
                         $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
@@ -3662,7 +3668,10 @@ class sandbox_multi extends db_object_multi_user
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
                     // TODO Prio 2 compare sql_write with sql_insert_switch
-                    $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+                    // no statement if only the key fields differ e.g. the placeholder source of the user row
+                    if ($qp != null) {
+                        $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+                    }
                 }
             }
         }
