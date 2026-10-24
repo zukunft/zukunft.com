@@ -67,6 +67,7 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED_CONST . 'components.php';
@@ -106,6 +107,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use DateTime;
@@ -137,6 +140,7 @@ class system_page extends component
     // the html ids that the calculator editor script reads (script/calculator_editor.js)
     const string CALC_EDITOR_HOST_ID = 'calcEditor';
     const string CALC_EDITOR_SEED_ID = 'seed';
+    const string CALC_EDITOR_TYPES_ID = 'types';
 
     /**
      * HTML for a page title
@@ -1322,9 +1326,27 @@ class system_page extends component
                 . $html->div('', styles::CALC_EDITOR, self::CALC_EDITOR_HOST_ID)
                 . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types())
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }
         return $result;
+    }
+
+    /**
+     * the verbs of the type lists in the format of the typeLists api, so that the editor finds the
+     * id of a verb without an api call; only the verbs with their id and name, because the whole
+     * typeLists answer is much larger than the page and the save needs only the verb ids
+     *
+     * @return array the verbs of the frontend type cache e.g. ["verbs" => [["id" => 2, "name" => "is a"], ...]]
+     */
+    private function calculator_editor_types(): array
+    {
+        global $ui_sys;
+        $vrb_lst = [];
+        foreach ($ui_sys?->typ_lst_cache?->vrb?->lst() ?? [] as $vrb) {
+            $vrb_lst[] = [json_fields::ID => $vrb->id(), json_fields::NAME => $vrb->name()];
+        }
+        return [api::JSON_LIST_VERBS => $vrb_lst];
     }
 
     /**

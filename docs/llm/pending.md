@@ -2,14 +2,10 @@
 
 ## Calculator editor
 
-### don't load verbs from api
-
-add a typeList json to the Calculator Editor that contains the result of a /api/typeLists call
-the json is expected to contain all verbs so instead of calling the api to get the verbs, pick the verbs from the type json
-
 ### system phrases
 
 create a fixed api for the system phrases that have a code_id including the children e,g, of scaling, unit, ... and scaling formulas
+target is to replace in src/main/resources/script/calculator_editor.js the unitNames const with values from the unit json
 
 ### reject no change users
 

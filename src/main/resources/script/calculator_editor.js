@@ -2578,15 +2578,6 @@ async function apiCall(method, route, params, body) {
     return result;
 }
 
-function idOf(json) {
-    const body = unwrap(json);
-    let result = 0;
-    if (body && body.id !== undefined) {
-        result = body.id;
-    }
-    return result;
-}
-
 /* a reference of the update put message by its database id, or by its name only if it has no id yet
    e.g. a word that the same message adds */
 function addRef(json, idKey, nameKey, id, name) {
@@ -2852,14 +2843,14 @@ async function loadFromApi() {
         message = "the phrase " + SOURCE.pageId + " was not found";
     }
     if (!message) {
-        message = await readIds(doc);
+        message = readIds(doc);
     }
     const result = {ok: message === "", doc: doc, message: message};
     return result;
 }
 
 /* the database ids that a save needs: the phrases by their name, and the verbs, which the data names only */
-async function readIds(doc) {
+function readIds(doc) {
     SOURCE.phraseIds = new Map();
     (doc.words || []).forEach(function (w) {
         SOURCE.phraseIds.set(w.name, Number(w.id));
@@ -2869,22 +2860,26 @@ async function readIds(doc) {
             SOURCE.phraseIds.set(t.name, -Math.abs(Number(t.id)));
         }
     });
-    SOURCE.verbIds = new Map();
-    const verbs = new Set((doc.triples || []).map(function (t) {
-        return t.verb;
-    }));
+    SOURCE.verbIds = typeVerbs();
     let message = "";
-    for (const name of verbs) {
-        if (!message) {
-            const r = await apiCall("GET", "verb", {k: name});
-            if (r.ok) {
-                SOURCE.verbIds.set(name, Number(idOf(r.json)));
-            } else {
-                message = r.message;
-            }
+    (doc.triples || []).forEach(function (t) {
+        if (!message && t.verb && !SOURCE.verbIds.has(t.verb)) {
+            message = "the verb \"" + t.verb + "\" is not in the type lists of the page";
         }
-    }
+    });
     return message;
+}
+
+/* the verb ids by the verb name from the type lists that the view embeds in the format of the
+   typeLists api (system_page::calculator_editor_types), so that no verb is read from the api */
+function typeVerbs() {
+    const el = document.getElementById("types");
+    const types = el ? parseJson(el.textContent) : {};
+    const result = new Map();
+    (types.verbs || []).forEach(function (v) {
+        result.set(v.name, Number(v.id));
+    });
+    return result;
 }
 
 async function reload() {
