@@ -1,5 +1,24 @@
 # pending prio 2
 
+## calculator field value of the page triple
+
+`ui_list::calculator_value` ranks a value that has a part of the page triple directly after a value
+with the page phrase, and takes both sides of the triple as parts; the `to` side is a class or a
+qualifier that many unrelated values share, e.g. "example" of "example PV installation" (PV
+installation kind of example), so the PV yield field of the PV lifetime balance page shows the
+assumed 1000 kWh per kWp of `pv_yield.json` with the word "example" instead of the measured 976
+kWh/kWp·a with its source (snapshot `src/test/resources/web/html/use_cases/pv_lifetime_balance.html`,
+field n-1997)
+
+count only the `from` side of the page triple, the phrase the page is about e.g. PV installation or
+Zurich of Zurich (city), so that the lifetime of a new NPP still ranks below the lifetime of the PV
+installation and the PV yield shows 976 again; then:
+- change the tie fixture `test_values::value_list_calculator_input_tie_ui`, whose second value uses
+  city (the `to` side of Zurich (city)) to rank the same as Zurich, to two values that rank the same
+  without a part of the page triple
+- add a negative test to `use_case_ui_tests` that a value with the `to` side of the page triple e.g.
+  city does not win over a value with a smaller context
+
 ## test of the page object of a phrase view
 
 frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple

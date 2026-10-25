@@ -1677,9 +1677,10 @@ class test_values extends test_objects
     }
 
     /**
-     * the values of the calculator input test and the inhabitants of Bern, which fit the field
-     * inhabitants as well as the inhabitants of Zurich, so that the field has to pick one of two
-     * values that rank the same
+     * the values of the calculator input test and the inhabitants of a city, which fit the field
+     * inhabitants of the page Zurich (city) as well as the inhabitants of Zurich, because city and
+     * Zurich are both parts of the page triple, so that the field has to pick one of two values
+     * that rank the same
      *
      * @return value_list_ui the frontend values for unit testing
      */
@@ -1688,7 +1689,23 @@ class test_values extends test_objects
         $tl = new test_lib();
         $t_wrd = new test_words($this->env);
         $lst = $this->calculator_values(false);
-        $lst->add($this->value_for_phrases([$t_wrd->word_bern()->phrase(), $t_wrd->word_inhabitant()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase(), $t_wrd->word_inhabitant()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the calculator input test and the inhabitants of Bern with a bigger number,
+     * which the preferred order of numbers would pick, but Bern is no part of the page triple
+     * Zurich (city), like the lifetime of a new NPP on the page of a PV installation
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_input_foreign_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = $this->calculator_values(false);
+        $lst->add($this->value_for_phrases([$t_wrd->word_bern()->phrase(), $t_wrd->word_inhabitant()->phrase()], values::SAMPLE_BIG));
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 

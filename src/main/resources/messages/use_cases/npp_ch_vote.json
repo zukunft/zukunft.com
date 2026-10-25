@@ -212,8 +212,7 @@
       "name": "capital"
     },
     {
-      "name": "operating",
-      "description": "the running of a plant"
+      "name": "operating"
     },
     {
       "name": "levelised",
@@ -258,8 +257,7 @@
       "name": "value"
     },
     {
-      "name": "security",
-      "description": "security of electricity supply"
+      "name": "security"
     },
     {
       "name": "market"
@@ -327,8 +325,10 @@
       "description": "the recommendation the calculator derives from the numbers: yes, no or undecided"
     },
     {
-      "name": "break-even",
-      "description": "the input value at which two options cost the same"
+      "name": "break"
+    },
+    {
+      "name": "even"
     },
     {
       "name": "difference"
@@ -367,8 +367,8 @@
       "name": "maximum"
     },
     {
-      "name": "ETH",
-      "description": "ETH Zurich, the Swiss Federal Institute of Technology",
+      "name": "ETH Zurich",
+      "description": "the Swiss Federal Institute of Technology in Zurich",
       "refs": [
         {
           "name": "ETH_Zurich",
@@ -391,8 +391,7 @@
       ]
     },
     {
-      "name": "model",
-      "description": "an energy system model that computes the cheapest supply"
+      "name": "model"
     },
     {
       "name": "PV"
@@ -954,6 +953,12 @@
       "from": "bill",
       "verb": "of",
       "to": "household"
+    },
+    {
+      "name": "break-even",
+      "from": "break",
+      "verb": "and",
+      "to": "even"
     },
     {
       "name": "break-even construction cost",
