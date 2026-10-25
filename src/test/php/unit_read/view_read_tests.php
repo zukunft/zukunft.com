@@ -224,6 +224,40 @@ class view_read_tests
         $test_name = 'the word usage and log is a sub view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_LOG)?->type_code_id();
         $t->assert($test_name, $msk_typ_code, view_type_shared::SUB);
+        $test_name = 'the formula test is a formula view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::FORMULA_TEST)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::FORMULA);
+
+        $test_name = 'the export of one object is an export view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::EXPORT_OBJECT)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::EXPORT);
+        $test_name = 'the job control is a system view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::JOB_CONTROL)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::SYSTEM);
+        $test_name = 'the admin view to complete the word tree is a system view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::COMPLETE)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::SYSTEM);
+        $test_name = 'the language selection is a system view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::LANGUAGE_SELECT)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::SYSTEM);
+        $test_name = 'the term default view has the standard type';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::TERM)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::DEFAULT);
+
+        $test_name = 'the word detail view is a word view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_DEFAULT_DETAIL)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::WORD);
+        $test_name = 'the value detail view is a value view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::VALUE_DEFAULT_DETAIL)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::VALUE);
+        $test_name = 'the word range view is a word view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_DEFAULT_RANGE)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::WORD);
+        // the type of a detail view does not say its object, so it is not offered for a word or triple
+        $test_name = 'a detail view is not offered for a word or triple';
+        $t->assert_true($test_name, in_array(view_type_shared::DETAIL, view_type_shared::NON_PHRASE_TYPES));
+        $test_name = '... but a phrase view is';
+        $t->assert_false($test_name, in_array(view_type_shared::PHRASE, view_type_shared::NON_PHRASE_TYPES));
 
         // check all system views
         // TODO Prio 2 activate

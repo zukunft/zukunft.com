@@ -584,8 +584,6 @@ class views
     const string TEST_COMPLETE_NAME = 'System Test View Complete';
     const string TEST_EXCLUDED_NAME = 'System Test View Excluded';
     const string TEST_TABLE_NAME = 'System Test View Table';
-    // the name of the view with the code id self::COMPLETE, which is capitalised unlike the code id
-    const string TEST_ALL_NAME = 'Complete';
 
     // to test a system view (add word) as unit test without database
     const string TEST_FORM_NAME = 'Add word';

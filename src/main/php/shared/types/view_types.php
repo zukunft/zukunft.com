@@ -83,7 +83,9 @@ class view_types
 
     // list of view types that are specific for other objects than words or triples
     // and should not be assignable to words or triples
+    // the detail views are included, because their type does not say for which object they are
     const array NON_PHRASE_TYPES = array(
+        self::DETAIL,
         self::VERB,
         self::SOURCE,
         self::REF,

@@ -266,6 +266,7 @@ class files
     CONST string IMPORT_CBAM_COSTS = test_paths::IMPORT . 'CBAM_costs' . self::JSON;
     CONST string IMPORT_CBAM_PREREQUISITE = test_paths::IMPORT . 'CBAM_ prerequisite' . self::JSON;
     CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
+    CONST string IMPORT_CH_BANKING_AND_TAX = test_paths::IMPORT . 'ch_banking_and_tax' . self::JSON;
     CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
     CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
     CONST string IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850 = test_paths::IMPORT . 'cumulative_anthropogenic_co2_since_1850' . self::JSON;
@@ -456,6 +457,7 @@ class files
         self::IMPORT_MODERATION_LATENCY_VS_SPREAD,
         self::IMPORT_OSTRACISM,
         self::IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850,
+        self::IMPORT_CH_BANKING_AND_TAX,
     ];
 
 

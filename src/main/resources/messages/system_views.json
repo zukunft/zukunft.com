@@ -6254,7 +6254,7 @@
       "name": "Test formula",
       "description": "debug the formula results",
       "code_id": "formula_test",
-      "type": "system",
+      "type": "formula",
       "protection": "admin_protection",
       "components": [
         {
@@ -9355,7 +9355,8 @@
     {
       "name": "Term (default)",
       "description": "the default view for a word, triple, verb or formula",
-      "code_id": "term_default"
+      "code_id": "term_default",
+      "type": "default"
     },
     {
       "name": "Values of a phrase",
@@ -9956,7 +9957,8 @@
     {
       "name": "System log",
       "description": "show the most relevant system log entries (placeholder only at the moment)",
-      "code_id": "system_log"
+      "code_id": "system_log",
+      "type": "system"
     },
     {
       "name": "User jobs",
@@ -10463,7 +10465,7 @@
       "name": "Export selections",
       "description": "List the saved export selections of the user",
       "code_id": "export_selections",
-      "type": "system",
+      "type": "export",
       "protection": "admin_protection",
       "components": [
         {
@@ -10480,7 +10482,7 @@
       "name": "Export object",
       "description": "Export one word, triple or formula with the related objects up to the selected depth",
       "code_id": "export_object",
-      "type": "system",
+      "type": "export",
       "protection": "admin_protection",
       "components": [
         {
@@ -10497,7 +10499,7 @@
       "name": "Export ready",
       "description": "Offer the download of an export that has been created by a job",
       "code_id": "export_ready",
-      "type": "system",
+      "type": "export",
       "protection": "admin_protection",
       "components": [
         {
@@ -10514,6 +10516,7 @@
       "name": "Language selection",
       "description": "List all language in an overview page to select the ui language and allow to request an additional language",
       "code_id": "language_select",
+      "type": "system",
       "components": [
         {
           "position": "1",
@@ -10902,7 +10905,7 @@
       "name": "Complete",
       "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
       "code_id": "complete",
-      "type": "phrase",
+      "type": "system",
       "components": [
         {
           "position": "1",

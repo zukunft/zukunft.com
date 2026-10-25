@@ -73,7 +73,9 @@ and have the view type `editor`. These and the `sub` views are system types
 (`view_types::SYSTEM_TYPES`), so a user cannot assign them to a word or triple. A view
 for a word or a triple, e.g. the calculator or the table, has the view type `phrase`,
 so that a view without a fixed view id gets the word or triple of the url
-(`frontend::dbo_ui_by_view_type`). The editors show the phrase of the
+(`frontend::dbo_ui_by_view_type`). The detail views of an object have the type of
+the object, e.g. `word` or `value`; the view type `detail_view` says nothing about
+the object, so a view of this type is not offered for a word or triple (`view_types::NON_PHRASE_TYPES`). The editors show the phrase of the
 url like the page they edit (`views::PHRASE_MASKS_IDS`). A user
 who may not change the database (`user::is_blocked`) is answered like on every
 other change view (`views::IP_BLOCKED_MASKS_IDS`, `http/view.php`): the message

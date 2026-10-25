@@ -1,0 +1,4152 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-25 14:30:00",
+  "user": "zukunftcom",
+  "selection": [
+    "Switzerland",
+    "tax evasion"
+  ],
+  "description": "Estimates of domestic tax evasion in Switzerland from 1932 to 2009 as compiled by Stefan Howald (December 2010, published by Erklärung von Bern / Public Eye): the 1940 Wehropfer evaluation of the federal tax administration (1944), the federal council report on the motion Eggenberger (1962) with the first withholding-tax extrapolation, the income tax evasion rates of Weck-Hannemann/Pommerehne and Feld/Frey (1965 to 1995), tax morale survey ranks (ISSP, WVS), shadow economy shares (Schneider, seco), the political estimates of Strahm (2003) and Badertscher (2010), and Howald's own withholding-tax extrapolation for 2008 and 2009 with the tax rates proposed by Olivier Longchamp. Every number of the paper is a value with its original source; the extrapolation chains are formulas with calc-validation. Where a recomputation differs from the rounded number printed in the paper, the printed number is kept as the value and the exact recomputation carries the word calculated, with the difference stated in the description. Only the two withholding tax rates of 1958 and 1960 (25 % and 27 %) are not in the paper; they come from the ESTV history of the withholding tax and reproduce the paper's figures. Parameters that the sources set by judgement (yields, tax rates, the unclaimed share of foreigners) carry the word assumed with a confidence; a value read off a bar chart carries assumed as well.",
+  "words": [
+    {
+      "name": "Switzerland"
+    },
+    {
+      "name": "Germany"
+    },
+    {
+      "name": "France"
+    },
+    {
+      "name": "Finland"
+    },
+    {
+      "name": "Sweden"
+    },
+    {
+      "name": "Norway"
+    },
+    {
+      "name": "Iraq"
+    },
+    {
+      "name": "United Kingdom"
+    },
+    {
+      "name": "canton"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "calculated"
+    },
+    {
+      "name": "average"
+    },
+    {
+      "name": "minimum"
+    },
+    {
+      "name": "maximum"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "tax"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "wealth"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "revenue"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "count"
+    },
+    {
+      "name": "country"
+    },
+    {
+      "name": "total"
+    },
+    {
+      "name": "evasion"
+    },
+    {
+      "name": "withholding",
+      "description": "deducted at source by the payer and handed to the state before the recipient gets the payment."
+    },
+    {
+      "name": "security",
+      "description": "a tradable financial asset such as a stock or a bond.",
+      "refs": [
+        {
+          "name": "Security_(finance)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "stock",
+      "description": "all of the shares into which ownership of a corporation is divided.",
+      "refs": [
+        {
+          "name": "Stock",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11467",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "bond",
+      "description": "a type of security under which the issuer owes the holder a debt and is obliged to repay the principal and interest.",
+      "refs": [
+        {
+          "name": "Bond_(finance)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q6515751",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "savings",
+      "description": "income not spent, or deferred consumption.",
+      "refs": [
+        {
+          "name": "Saving",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "deposit",
+      "description": "money placed with a bank for safekeeping or to earn interest."
+    },
+    {
+      "name": "banknote",
+      "description": "a type of negotiable promissory note issued by a bank and used as money.",
+      "refs": [
+        {
+          "name": "Banknote",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q47433",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "gold",
+      "description": "a chemical element with the symbol Au, held as a store of value.",
+      "refs": [
+        {
+          "name": "Gold",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q897",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "holdings",
+      "description": "the assets owned by a person or a group of persons at a point in time."
+    },
+    {
+      "name": "target"
+    },
+    {
+      "name": "declared",
+      "description": "reported to the tax authority in the tax return."
+    },
+    {
+      "name": "undeclared",
+      "description": "not reported to the tax authority although liable to tax."
+    },
+    {
+      "name": "exempt",
+      "description": "not subject to the tax in question."
+    },
+    {
+      "name": "liable",
+      "description": "subject to the tax in question."
+    },
+    {
+      "name": "natural"
+    },
+    {
+      "name": "legal"
+    },
+    {
+      "name": "partnership",
+      "description": "an arrangement where parties agree to cooperate to advance their mutual interests; here the general and limited partnerships without legal personality.",
+      "refs": [
+        {
+          "name": "Partnership",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "reclaimed",
+      "description": "of a withholding tax: refunded to the taxpayer after the income has been declared."
+    },
+    {
+      "name": "unclaimed",
+      "description": "of a withholding tax: never refunded because no refund was requested."
+    },
+    {
+      "name": "resident",
+      "description": "a person domiciled in the country, here in Switzerland.",
+      "refs": [
+        {
+          "name": "Residency_(domicile)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "foreigner",
+      "description": "a person domiciled outside the country, here outside Switzerland."
+    },
+    {
+      "name": "foreign"
+    },
+    {
+      "name": "domestic"
+    },
+    {
+      "name": "yield",
+      "description": "the income return on an investment as a ratio of its value.",
+      "refs": [
+        {
+          "name": "Yield_(finance)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "lost",
+      "description": "of a tax: not collected because the tax base was hidden."
+    },
+    {
+      "name": "federal",
+      "description": "of the Swiss Confederation as opposed to the cantons and municipalities."
+    },
+    {
+      "name": "municipality"
+    },
+    {
+      "name": "shadow",
+      "description": "of an economy: hidden from the state."
+    },
+    {
+      "name": "economy"
+    },
+    {
+      "name": "national"
+    },
+    {
+      "name": "GNP",
+      "description": "gross national product: the market value of all the goods and services produced in one year by the labour and property supplied by the citizens of a country.",
+      "refs": [
+        {
+          "name": "Gross_national_product",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "morale",
+      "description": "the willingness of a group to comply with a norm; here the intrinsic motivation to pay taxes."
+    },
+    {
+      "name": "justified",
+      "description": "of an action: held to be acceptable; a survey answer category."
+    },
+    {
+      "name": "never",
+      "description": "at no time; the lowest category of a justifiability scale."
+    },
+    {
+      "name": "bribe",
+      "description": "money given to a person in a position of trust to influence their behaviour.",
+      "refs": [
+        {
+          "name": "Bribery",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "marginal",
+      "description": "of a tax rate: the rate on the last unit of income."
+    },
+    {
+      "name": "taxable",
+      "description": "subject to tax after the deductions of the tax law."
+    },
+    {
+      "name": "rank"
+    },
+    {
+      "name": "Wehropfer",
+      "description": "the one-off Swiss federal levy on wealth of 1940 (first Wehropfer) raised to cover the extraordinary armament and war economy expenditure; the 1944 study of the federal tax administration compared its declarations with the statistical stock of securities and savings."
+    },
+    {
+      "name": "ISSP",
+      "description": "International Social Survey Programme, a cross-national collaboration on social science surveys.",
+      "refs": [
+        {
+          "name": "International_Social_Survey_Programme",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "WVS",
+      "description": "World Values Survey, a global research project exploring people's values and beliefs.",
+      "refs": [
+        {
+          "name": "World_Values_Survey",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2545285",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Basel-Stadt",
+      "description": "the canton of Basel-Stadt in the north-west of Switzerland.",
+      "refs": [
+        {
+          "name": "Basel-Stadt",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12172",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Schwyz",
+      "description": "the canton of Schwyz in central Switzerland.",
+      "refs": [
+        {
+          "name": "Canton_of_Schwyz",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q12433",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "1932",
+      "type": "time"
+    },
+    {
+      "name": "1940",
+      "type": "time"
+    },
+    {
+      "name": "1944",
+      "type": "time"
+    },
+    {
+      "name": "1958",
+      "type": "time"
+    },
+    {
+      "name": "1960",
+      "type": "time"
+    },
+    {
+      "name": "1965",
+      "type": "time"
+    },
+    {
+      "name": "1970",
+      "type": "time"
+    },
+    {
+      "name": "1975",
+      "type": "time"
+    },
+    {
+      "name": "1978",
+      "type": "time"
+    },
+    {
+      "name": "1985",
+      "type": "time"
+    },
+    {
+      "name": "1990",
+      "type": "time"
+    },
+    {
+      "name": "1995",
+      "type": "time"
+    },
+    {
+      "name": "1998",
+      "type": "time"
+    },
+    {
+      "name": "2000",
+      "type": "time"
+    },
+    {
+      "name": "2002",
+      "type": "time"
+    },
+    {
+      "name": "2003",
+      "type": "time"
+    },
+    {
+      "name": "2004",
+      "type": "time"
+    },
+    {
+      "name": "2005",
+      "type": "time"
+    },
+    {
+      "name": "2006",
+      "type": "time"
+    },
+    {
+      "name": "2007",
+      "type": "time"
+    },
+    {
+      "name": "2008",
+      "type": "time"
+    },
+    {
+      "name": "2009",
+      "type": "time"
+    },
+    {
+      "name": "2010",
+      "type": "time"
+    }
+  ],
+  "triples": [
+    {
+      "from": "1932",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1940",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1944",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1958",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1960",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1965",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1970",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1975",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1978",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1985",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1990",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1995",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "1998",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2000",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2002",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2003",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2004",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2005",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2006",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2007",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2008",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2009",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2010",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2003",
+      "verb": "is follower of",
+      "to": "2002"
+    },
+    {
+      "from": "2004",
+      "verb": "is follower of",
+      "to": "2003"
+    },
+    {
+      "from": "2005",
+      "verb": "is follower of",
+      "to": "2004"
+    },
+    {
+      "from": "2006",
+      "verb": "is follower of",
+      "to": "2005"
+    },
+    {
+      "from": "2007",
+      "verb": "is follower of",
+      "to": "2006"
+    },
+    {
+      "from": "2008",
+      "verb": "is follower of",
+      "to": "2007"
+    },
+    {
+      "from": "2009",
+      "verb": "is follower of",
+      "to": "2008"
+    },
+    {
+      "from": "2010",
+      "verb": "is follower of",
+      "to": "2009"
+    },
+    {
+      "name": "2005 to 2007",
+      "from": "2005",
+      "verb": "to",
+      "to": "2007",
+      "description": "the fifth wave of the World Values Survey, fielded from 2005 to 2007."
+    },
+    {
+      "name": "Basel-Stadt (canton)",
+      "from": "Basel-Stadt",
+      "verb": "is a",
+      "to": "canton"
+    },
+    {
+      "name": "Schwyz (canton)",
+      "from": "Schwyz",
+      "verb": "is a",
+      "to": "canton"
+    },
+    {
+      "name": "canton and municipality",
+      "from": "canton",
+      "verb": "and",
+      "to": "municipality",
+      "description": "the cantonal and the municipal level of the Swiss state taken together, as the tax statistics report them."
+    },
+    {
+      "name": "tax evasion",
+      "from": "evasion",
+      "verb": "of",
+      "to": "tax",
+      "description": "an illegal attempt to lessen the payment of taxes by individuals, corporations or trusts; in Swiss law an administrative offence distinct from tax fraud.",
+      "refs": [
+        {
+          "name": "Tax_evasion",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "tax evasion rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "tax evasion",
+      "description": "the evaded part of the tax base as a ratio of the true tax base; with the phrase withholding tax the ratio of the unclaimed to the total withholding tax of residents."
+    },
+    {
+      "name": "tax rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "tax",
+      "description": "the ratio at which a tax base is taxed."
+    },
+    {
+      "name": "marginal tax rate",
+      "from": "tax rate",
+      "verb": "kind of",
+      "to": "marginal",
+      "description": "the tax rate on the last unit of income."
+    },
+    {
+      "name": "average marginal tax rate",
+      "from": "marginal tax rate",
+      "verb": "kind of",
+      "to": "average"
+    },
+    {
+      "name": "income tax",
+      "from": "tax",
+      "verb": "of",
+      "to": "income",
+      "description": "a tax imposed on individuals or entities in respect of the income or profits earned by them.",
+      "refs": [
+        {
+          "name": "Income_tax",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wealth tax",
+      "from": "tax",
+      "verb": "of",
+      "to": "wealth",
+      "description": "a tax on an entity's holdings of assets; in Switzerland levied by the cantons and municipalities only.",
+      "refs": [
+        {
+          "name": "Wealth_tax",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "income and wealth tax",
+      "from": "income tax",
+      "verb": "and",
+      "to": "wealth tax",
+      "description": "the income tax and the wealth tax of the cantons and municipalities taken together."
+    },
+    {
+      "name": "income tax evasion",
+      "from": "evasion",
+      "verb": "of",
+      "to": "income tax"
+    },
+    {
+      "name": "income tax evasion rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "income tax evasion",
+      "description": "the difference between the household income reported to the cantonal tax authority and the independently measured household income, as a ratio of gross household income (Weck-Hannemann and Pommerehne 1989, p. 524)."
+    },
+    {
+      "name": "income tax rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "income tax"
+    },
+    {
+      "name": "average income tax rate",
+      "from": "income tax rate",
+      "verb": "kind of",
+      "to": "average"
+    },
+    {
+      "name": "wealth tax rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "wealth tax"
+    },
+    {
+      "name": "average wealth tax rate",
+      "from": "wealth tax rate",
+      "verb": "kind of",
+      "to": "average"
+    },
+    {
+      "name": "withholding tax",
+      "from": "tax",
+      "verb": "kind of",
+      "to": "withholding",
+      "description": "the Swiss Verrechnungssteuer, a federal tax deducted at source from capital income since 1944 and refunded to recipients who declare the income, so that the unclaimed part indicates undeclared capital income.",
+      "refs": [
+        {
+          "name": "Withholding_tax",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "withholding tax rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "withholding tax",
+      "description": "the legal rate of the Swiss withholding tax on capital income: 25 % from 1945, 27 % from 1959, 30 % from 1967 and 35 % from 1976."
+    },
+    {
+      "name": "withholding tax revenue",
+      "from": "revenue",
+      "verb": "of",
+      "to": "withholding tax",
+      "description": "the gross receipts of the withholding tax before refunds (row A of Howald's table)."
+    },
+    {
+      "name": "reclaimed withholding tax",
+      "from": "withholding tax",
+      "verb": "kind of",
+      "to": "reclaimed",
+      "description": "the withholding tax refunded to the taxpayers who declared the income."
+    },
+    {
+      "name": "unclaimed withholding tax",
+      "from": "withholding tax",
+      "verb": "kind of",
+      "to": "unclaimed",
+      "description": "the withholding tax that was never reclaimed (row B of Howald's table)."
+    },
+    {
+      "name": "reclaimed withholding tax of residents",
+      "from": "reclaimed withholding tax",
+      "verb": "of",
+      "to": "resident",
+      "description": "row E of Howald's table: refunds to Swiss residents."
+    },
+    {
+      "name": "reclaimed withholding tax of foreigners",
+      "from": "reclaimed withholding tax",
+      "verb": "of",
+      "to": "foreigner",
+      "description": "row C of Howald's table: refunds to foreign applicants under double taxation treaties."
+    },
+    {
+      "name": "unclaimed withholding tax of residents",
+      "from": "unclaimed withholding tax",
+      "verb": "of",
+      "to": "resident",
+      "description": "row F of Howald's table: the unclaimed withholding tax attributed to Swiss residents, B minus D."
+    },
+    {
+      "name": "unclaimed withholding tax of foreigners",
+      "from": "unclaimed withholding tax",
+      "verb": "of",
+      "to": "foreigner",
+      "description": "row D of Howald's table: the part of the unclaimed withholding tax attributed to foreign owners."
+    },
+    {
+      "name": "unclaimed share",
+      "from": "share",
+      "verb": "kind of",
+      "to": "unclaimed",
+      "description": "the unclaimed part of a withholding tax as a ratio of the total."
+    },
+    {
+      "name": "unclaimed share of foreigners",
+      "from": "unclaimed share",
+      "verb": "of",
+      "to": "foreigner",
+      "description": "the ratio of the withholding tax that foreign owners fail to reclaim to the withholding tax they do reclaim; Howald sets it to 25 %."
+    },
+    {
+      "name": "foreigner share",
+      "from": "share",
+      "verb": "of",
+      "to": "foreigner",
+      "description": "the part of a withholding tax amount that belongs to foreign owners."
+    },
+    {
+      "name": "capital income",
+      "from": "income",
+      "verb": "of",
+      "to": "capital",
+      "description": "interest and dividends; the income the Swiss withholding tax is levied on."
+    },
+    {
+      "name": "undeclared capital income",
+      "from": "capital income",
+      "verb": "kind of",
+      "to": "undeclared",
+      "description": "the capital income implied by the unclaimed withholding tax of residents, divided by the withholding tax rate."
+    },
+    {
+      "name": "undeclared wealth",
+      "from": "wealth",
+      "verb": "kind of",
+      "to": "undeclared",
+      "description": "the wealth implied by the undeclared capital income at an average yield."
+    },
+    {
+      "name": "undeclared income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "undeclared"
+    },
+    {
+      "name": "undeclared capital",
+      "from": "capital",
+      "verb": "kind of",
+      "to": "undeclared"
+    },
+    {
+      "name": "taxable income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "taxable"
+    },
+    {
+      "name": "undeclared share",
+      "from": "share",
+      "verb": "kind of",
+      "to": "undeclared",
+      "description": "the undeclared part of a tax base as a ratio of the whole."
+    },
+    {
+      "name": "undeclared share of taxable income",
+      "from": "undeclared share",
+      "verb": "of",
+      "to": "taxable income"
+    },
+    {
+      "name": "average yield",
+      "from": "yield",
+      "verb": "kind of",
+      "to": "average",
+      "description": "the average return on capital used to capitalise undeclared capital income into undeclared wealth."
+    },
+    {
+      "name": "lost tax",
+      "from": "tax",
+      "verb": "kind of",
+      "to": "lost",
+      "description": "the tax revenue not collected because of tax evasion."
+    },
+    {
+      "name": "lost income tax",
+      "from": "income tax",
+      "verb": "kind of",
+      "to": "lost"
+    },
+    {
+      "name": "lost wealth tax",
+      "from": "wealth tax",
+      "verb": "kind of",
+      "to": "lost"
+    },
+    {
+      "name": "federal lost tax",
+      "from": "lost tax",
+      "verb": "kind of",
+      "to": "federal",
+      "description": "the tax revenue lost by the Swiss Confederation."
+    },
+    {
+      "name": "cantonal and municipal lost tax",
+      "from": "lost tax",
+      "verb": "of",
+      "to": "canton and municipality",
+      "description": "the tax revenue lost by the cantons and municipalities together."
+    },
+    {
+      "name": "target holdings",
+      "from": "holdings",
+      "verb": "kind of",
+      "to": "target",
+      "description": "the Sollbestand of the 1944 study: the stock of securities at market value from the statistical yearbook and of savings deposits from the banking statistics, less Swiss securities in foreign hands, plus foreign securities in Swiss hands."
+    },
+    {
+      "name": "declared holdings",
+      "from": "holdings",
+      "verb": "kind of",
+      "to": "declared",
+      "description": "the holdings declared for the Wehropfer."
+    },
+    {
+      "name": "undeclared holdings",
+      "from": "holdings",
+      "verb": "kind of",
+      "to": "undeclared",
+      "description": "the holdings that remained untaxed by the Wehropfer: target holdings less declared and exempt holdings."
+    },
+    {
+      "name": "exempt holdings",
+      "from": "holdings",
+      "verb": "kind of",
+      "to": "exempt",
+      "description": "the holdings of owners not liable to the Wehropfer."
+    },
+    {
+      "name": "liable holdings",
+      "from": "holdings",
+      "verb": "kind of",
+      "to": "liable",
+      "description": "the target holdings less the exempt holdings; the base Munz used for his 30 % evasion rate."
+    },
+    {
+      "name": "undeclared share of target holdings",
+      "from": "undeclared share",
+      "verb": "of",
+      "to": "target holdings",
+      "description": "the undeclared holdings as a ratio of the target holdings; the rate of the 1944 study."
+    },
+    {
+      "name": "undeclared share of liable holdings",
+      "from": "undeclared share",
+      "verb": "of",
+      "to": "liable holdings",
+      "description": "the undeclared holdings as a ratio of the liable holdings; the rate of Munz (1944)."
+    },
+    {
+      "name": "natural person",
+      "from": "person",
+      "verb": "kind of",
+      "to": "natural",
+      "refs": [
+        {
+          "name": "Natural_person",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "legal person",
+      "from": "person",
+      "verb": "kind of",
+      "to": "legal",
+      "refs": [
+        {
+          "name": "Legal_person",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "natural and legal person",
+      "from": "natural person",
+      "verb": "and",
+      "to": "legal person",
+      "description": "the row of the 1944 table that joins natural and legal persons."
+    },
+    {
+      "name": "savings deposit",
+      "from": "deposit",
+      "verb": "kind of",
+      "to": "savings",
+      "description": "the Sparguthaben of the Swiss banking statistics."
+    },
+    {
+      "name": "domestic security",
+      "from": "security",
+      "verb": "kind of",
+      "to": "domestic",
+      "description": "a security issued in Switzerland, subject to the withholding tax."
+    },
+    {
+      "name": "foreign security",
+      "from": "security",
+      "verb": "kind of",
+      "to": "foreign",
+      "description": "a security issued abroad, free of the Swiss withholding tax."
+    },
+    {
+      "name": "banknote and gold",
+      "from": "banknote",
+      "verb": "and",
+      "to": "gold",
+      "description": "cash and gold holdings, the category the 1962 report estimated together."
+    },
+    {
+      "name": "shadow economy",
+      "from": "economy",
+      "verb": "kind of",
+      "to": "shadow",
+      "description": "the part of an economy that is neither taxed nor monitored by the government.",
+      "refs": [
+        {
+          "name": "Informal_economy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "national income",
+      "from": "income",
+      "verb": "kind of",
+      "to": "national",
+      "description": "the total income of the residents of a country in a year.",
+      "refs": [
+        {
+          "name": "Measures_of_national_income_and_output",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "tax morale",
+      "from": "morale",
+      "verb": "of",
+      "to": "tax",
+      "description": "the intrinsic motivation to pay taxes, measured by surveys that ask whether cheating on taxes can be justified."
+    },
+    {
+      "name": "never justified",
+      "from": "justified",
+      "verb": "kind of",
+      "to": "never",
+      "description": "the survey answer that the behaviour asked about can never be justified; the share of respondents choosing it."
+    },
+    {
+      "name": "country count",
+      "from": "count",
+      "verb": "of",
+      "to": "country",
+      "description": "the number of countries in a survey ranking."
+    }
+  ],
+  "formulas": [
+    {
+      "name": "unclaimed foreign withholding tax (formula)",
+      "description": "row D of Howald's table: the withholding tax that foreign owners presumably failed to reclaim, as a share of what they did reclaim",
+      "expression": "\"unclaimed withholding tax of foreigners\" = \"reclaimed withholding tax of foreigners\" * \"unclaimed share of foreigners\"",
+      "assigned_word": "reclaimed withholding tax of foreigners"
+    },
+    {
+      "name": "unclaimed resident withholding tax (formula)",
+      "description": "row F = B - D of Howald's table: the unclaimed withholding tax attributed to Swiss residents",
+      "expression": "\"unclaimed withholding tax of residents\" = \"unclaimed withholding tax\" - \"unclaimed withholding tax of foreigners\"",
+      "assigned": [
+        "unclaimed withholding tax",
+        "unclaimed withholding tax of foreigners"
+      ]
+    },
+    {
+      "name": "unclaimed share (formula)",
+      "description": "the unclaimed withholding tax as a ratio of the gross withholding tax revenue (column % of row B)",
+      "expression": "\"unclaimed share\" = \"unclaimed withholding tax\" / \"withholding tax revenue\"",
+      "assigned": [
+        "unclaimed withholding tax",
+        "withholding tax revenue"
+      ]
+    },
+    {
+      "name": "withholding tax evasion rate (formula)",
+      "description": "Howald's evasion rate: F divided by E + F, the unclaimed withholding tax of residents as a ratio of all withholding tax of residents",
+      "expression": "\"tax evasion rate\" = \"unclaimed withholding tax of residents\" / ( \"reclaimed withholding tax of residents\" + \"unclaimed withholding tax of residents\" )",
+      "assigned": [
+        "unclaimed withholding tax of residents",
+        "reclaimed withholding tax of residents"
+      ]
+    },
+    {
+      "name": "undeclared capital income (formula)",
+      "description": "the capital income on which the unclaimed withholding tax of residents was withheld, so the income that was not declared; used by the 1962 report and by Howald",
+      "expression": "\"undeclared capital income\" = \"unclaimed withholding tax of residents\" / \"withholding tax rate\"",
+      "assigned_word": "unclaimed withholding tax of residents"
+    },
+    {
+      "name": "undeclared wealth (formula)",
+      "description": "the wealth that yields the undeclared capital income at the average yield",
+      "expression": "\"undeclared wealth\" = \"undeclared capital income\" / \"average yield\"",
+      "assigned_word": "undeclared capital income"
+    },
+    {
+      "name": "lost income tax (formula)",
+      "description": "the income tax lost on the undeclared capital income at the average income tax rate",
+      "expression": "\"lost income tax\" = \"undeclared capital income\" * \"average income tax rate\"",
+      "assigned_word": "undeclared capital income"
+    },
+    {
+      "name": "lost wealth tax (formula)",
+      "description": "the wealth tax lost on the undeclared wealth at the average wealth tax rate",
+      "expression": "\"lost wealth tax\" = \"undeclared wealth\" * \"average wealth tax rate\"",
+      "assigned_word": "undeclared wealth"
+    },
+    {
+      "name": "lost tax (formula)",
+      "description": "the lost income tax and the lost wealth tax together",
+      "expression": "\"lost tax\" = \"lost income tax\" + \"lost wealth tax\"",
+      "assigned": [
+        "lost income tax",
+        "lost wealth tax"
+      ]
+    },
+    {
+      "name": "foreigner share of refunds (formula)",
+      "description": "the refunds to foreign applicants as a ratio of all refunds (footnote 20 of Howald)",
+      "expression": "\"foreigner share\" = \"reclaimed withholding tax of foreigners\" / ( \"reclaimed withholding tax of foreigners\" + \"reclaimed withholding tax of residents\" )",
+      "assigned": [
+        "reclaimed withholding tax of foreigners",
+        "reclaimed withholding tax of residents"
+      ]
+    },
+    {
+      "name": "undeclared share of target holdings (formula)",
+      "description": "the rate of the 1944 study: undeclared holdings as a ratio of the target holdings",
+      "expression": "\"undeclared share of target holdings\" = \"undeclared holdings\" / \"target holdings\"",
+      "assigned": [
+        "undeclared holdings",
+        "target holdings"
+      ]
+    },
+    {
+      "name": "exempt holdings (formula)",
+      "description": "the exempt holdings of natural and legal persons together",
+      "expression": "\"exempt holdings\" = \"natural person\" + \"legal person\"",
+      "assigned": [
+        "natural person",
+        "legal person"
+      ]
+    },
+    {
+      "name": "liable holdings (formula)",
+      "description": "the target holdings less the exempt holdings, the base of Munz (1944)",
+      "expression": "\"liable holdings\" = \"target holdings\" - \"exempt holdings\"",
+      "assigned": [
+        "target holdings",
+        "exempt holdings"
+      ]
+    },
+    {
+      "name": "undeclared share of liable holdings (formula)",
+      "description": "the rate of Munz (1944): undeclared holdings as a ratio of the liable holdings",
+      "expression": "\"undeclared share of liable holdings\" = \"undeclared holdings\" / \"liable holdings\"",
+      "assigned": [
+        "undeclared holdings",
+        "liable holdings"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "name": "Howald 2010",
+      "description": "Stefan Howald: «Eine ressentimentgeladene Einstellung provozieren». Kurzer Abriss über Versuche, die einheimische Steuerhinterziehung in der Schweiz zu berechnen. December 2010, 12 pages, published by Erklärung von Bern (now Public Eye)",
+      "url": "https://www.publiceye.ch/fileadmin/doc/_migration/Steuern/Steuerhinterziehung_Howald.pdf"
+    },
+    {
+      "name": "Grossmann 1938",
+      "description": "Eugen Grossmann: Die Reform der Vermögens- und Einkommenssteuer in der Schweiz. Sonderdruck aus dem Schweizerischen Zentralblatt für Staats- und Gemeindeverwaltung. Zürich: Orell Füssli 1938; cited after Munz 1944, p. 3"
+    },
+    {
+      "name": "ESTV 1944",
+      "description": "Eidgenössische Steuerverwaltung: Über das Ausmass der Steuerhinterziehung bei Wertschriften und Sparguthaben. Schweizerische Zeitschrift für Volkswirtschaft und Statistik 1944, pp. 183-188; evaluation of the first Wehropfer of 1940"
+    },
+    {
+      "name": "Munz 1944",
+      "description": "Hans Munz: Steuerhinterziehung - ein Massenphänomen in der Schweiz. Erweiterter Sonderabdruck aus der Tat, Sommer 1944, Schriftenreihe 33 Landesring der Unabhängigen, Zürich, 36 pages; postulate of 6 June 1944"
+    },
+    {
+      "name": "Bundesrat 1962",
+      "description": "Bericht des Bundesrates an die Bundesversammlung zur Motion Eggenberger betreffend wirksamere Bekämpfung der Steuerdefraudation (25 May 1962). Bundesblatt, 7 June 1962, pp. 1057-1115; the last official Swiss estimate of tax evasion"
+    },
+    {
+      "name": "Weck-Hannemann and Pommerehne 1989",
+      "description": "Hannelore Weck-Hannemann, Werner W. Pommerehne: Einkommensteuerhinterziehung in der Schweiz: Eine empirische Analyse. Schweizerische Zeitschrift für Volkswirtschaft und Statistik 4/1989, pp. 515-556"
+    },
+    {
+      "name": "Pommerehne and Weck-Hannemann 1996",
+      "description": "Werner W. Pommerehne, Hannelore Weck-Hannemann: Tax Rates, Tax Administration and Income Tax Evasion in Switzerland. Public Choice 88 (1996), pp. 161-170",
+      "doi": "10.1007/BF00130416"
+    },
+    {
+      "name": "Feld and Frey 2002",
+      "description": "Lars P. Feld, Bruno S. Frey: Deterrence and Morale in Taxation. An Empirical Analysis. CESifo Working Paper 760, August 2002, 41 pages",
+      "url": "https://www.cesifo.org/en/publications/2002/working-paper/deterrence-and-morale-taxation-empirical-analysis"
+    },
+    {
+      "name": "Feld and Frey 2004",
+      "description": "Lars P. Feld, Bruno S. Frey: Illegal, Immoral, Fattening or What? How Deterrence and Responsive Regulations Shape Tax Morale. Volkswirtschaftliche Beiträge, Philipps-Universität Marburg 2004, 26 pages; figure 1 gives the average level of income tax evasion in the Swiss cantons 1965 to 1995 in percent of gross household income"
+    },
+    {
+      "name": "Kirchgässner 2007",
+      "description": "Gebhard Kirchgässner: Direkte Demokratie, Steuermoral und Steuerhinterziehung: Erfahrungen aus der Schweiz. Perspektiven der Wirtschaftspolitik 8 (2007) 1, pp. 38-64",
+      "doi": "10.1111/j.1468-2516.2007.00229.x"
+    },
+    {
+      "name": "World Values Survey wave 5",
+      "description": "World Values Survey, fifth wave 2005-2007, question whether cheating on taxes is justifiable; country shares as cited by Howald 2010, p. 8",
+      "url": "https://www.worldvaluessurvey.org/WVSDocumentationWV5.jsp"
+    },
+    {
+      "name": "Schneider 2000",
+      "description": "Friedrich Schneider: Schattenwirtschaft - Tatbestand, Ursachen, Auswirkungen. Mönchengladbach 2000"
+    },
+    {
+      "name": "seco keine-schwarzarbeit.ch 2010",
+      "description": "Staatssekretariat für Wirtschaft seco: campaign material of www.keine-schwarzarbeit.ch, downloaded November 2010; cited by Howald 2010, p. 9"
+    },
+    {
+      "name": "Buomberger 2007",
+      "description": "Thomas Buomberger: Die wahren Schmarotzer. Beobachter 17/2007, 15 August 2007; cites Friedrich Schneider for 2007"
+    },
+    {
+      "name": "Schaltegger 2010",
+      "description": "Christoph A. Schaltegger (economiesuisse): Schattenwirtschaft und Steuerhinterziehung. Opinion piece on www.GoldwynReports.com/?p=1551, downloaded November 2010"
+    },
+    {
+      "name": "Strahm 2003",
+      "description": "Rudolf Strahm: Eine andere Finanzpolitik ist möglich. Wochenzeitung WOZ, Zürich, 16 October 2003, p. 18; builds on Feld and Frey 2002"
+    },
+    {
+      "name": "Badertscher 2010",
+      "description": "Marc Badertscher: Schweizer Steuerzahler hinterziehen jährlich Milliarden. Tages-Anzeiger, Zürich, 3 February 2010; summary of earlier estimates with reactions of Paul Aschwanden, Bruno S. Frey, Gebhard Kirchgässner and Adrian Hug"
+    },
+    {
+      "name": "ESTV Fiskaleinnahmen 2009",
+      "description": "EFD/ESTV: Fiskaleinnahmen des Bundes 2009. Bern 2010, p. 16f; withholding tax receipts and refunds 2008 and 2009"
+    },
+    {
+      "name": "Longchamp 2010",
+      "description": "Olivier Longchamp (Déclaration de Berne): Estimation des pertes fiscales due à la soustraction d'avoirs placés en valeurs mobilières suisses sur la base des rendements de l'impôt anticipé. Unpublished manuscript, Lausanne, June 2010"
+    },
+    {
+      "name": "ESTV withholding tax history",
+      "description": "Eidgenössische Steuerverwaltung, Steuerinformationen: Die eidgenössische Verrechnungssteuer; history of the rate: 15 % in 1944, 25 % from 1945, 27 % from 1959, 30 % from 1967, 35 % from 1 January 1976",
+      "url": "https://www.estv2.admin.ch/stp/ds/d-eidgenoessische-verrechnungssteuer-de.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "Switzerland",
+        "undeclared capital",
+        "1932",
+        "billion",
+        "CHF"
+      ],
+      "number": "18",
+      "source": "Grossmann 1938",
+      "description": "Grossmann's supposition that 18 billion francs of capital were not taxed in 1932"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared share",
+        "wealth",
+        "1932",
+        "percent"
+      ],
+      "number": "0.5",
+      "source": "Grossmann 1938",
+      "description": "the 18 billion francs corresponded to 50 percent of the wealth"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "target holdings",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "7.9",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "target holdings",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "13.0",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "target holdings",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "6.1",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "target holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "27.0",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "natural and legal person",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "5.7",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "natural and legal person",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "6.4",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "natural and legal person",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "1.9",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "natural and legal person",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "14.0",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "partnership",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.2",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "partnership",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.2",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "partnership",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.1",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "partnership",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.5",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "5.9",
+      "source": "ESTV 1944",
+      "description": "all declarants"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "6.6",
+      "source": "ESTV 1944",
+      "description": "all declarants"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "2.0",
+      "source": "ESTV 1944",
+      "description": "all declarants"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "declared holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "14.5",
+      "source": "ESTV 1944",
+      "description": "all declarants"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "natural person",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.3",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "natural person",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.3",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "natural person",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "1.9",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "natural person",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "2.5",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "legal person",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.2",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "legal person",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "3.4",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "legal person",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "0.2",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "legal person",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "3.8",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "6.3",
+      "source": "Munz 1944",
+      "description": "natural and legal persons together, the amount Munz deducted from the target holdings"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "1.5",
+      "source": "ESTV 1944",
+      "description": "remained untaxed by the Wehropfer"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "2.7",
+      "source": "ESTV 1944",
+      "description": "remained untaxed by the Wehropfer"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "2.0",
+      "source": "ESTV 1944",
+      "description": "remained untaxed by the Wehropfer"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "6.2",
+      "source": "ESTV 1944",
+      "description": "remained untaxed by the Wehropfer"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "stock",
+        "1940",
+        "percent"
+      ],
+      "number": "0.19",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "bond",
+        "1940",
+        "percent"
+      ],
+      "number": "0.21",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "savings deposit",
+        "1940",
+        "percent"
+      ],
+      "number": "0.33",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "total",
+        "1940",
+        "percent"
+      ],
+      "number": "0.23",
+      "source": "ESTV 1944"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "liable holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "number": "20.7",
+      "source": "Munz 1944",
+      "description": "target holdings of 27 billion less 6.3 billion not liable to the Wehropfer"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of liable holdings",
+        "total",
+        "1940",
+        "percent"
+      ],
+      "number": "0.30",
+      "source": "Munz 1944",
+      "description": "6.2 billion in relation to the 20.7 billion liable holdings; Munz held the tax administration's calculation to be rather cautious because evasion on tangible assets was not considered"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "1944",
+        "million",
+        "CHF"
+      ],
+      "number": "150",
+      "source": "Munz 1944",
+      "description": "tax money unlawfully withheld from the Confederation according to the postulate of 6 June 1944, p. 34"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "1958",
+        "million",
+        "CHF"
+      ],
+      "number": "146",
+      "source": "Bundesrat 1962",
+      "description": "the so called gross yield (Bruttoertrag) of the withholding tax the 1962 report started from; reading of Howald, p. 3"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "1960",
+        "million",
+        "CHF"
+      ],
+      "number": "188",
+      "source": "Bundesrat 1962",
+      "description": "the so called gross yield (Bruttoertrag) of the withholding tax the 1962 report started from; reading of Howald, p. 3"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of foreigners",
+        "1958",
+        "million",
+        "CHF"
+      ],
+      "number": "65",
+      "source": "Bundesrat 1962",
+      "description": "assumed by the report to be the yield of capital in foreign hands"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of foreigners",
+        "1960",
+        "million",
+        "CHF"
+      ],
+      "number": "70",
+      "source": "Bundesrat 1962",
+      "description": "assumed by the report to be the yield of capital in foreign hands"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "1958",
+        "million",
+        "CHF"
+      ],
+      "number": "81",
+      "source": "Bundesrat 1962",
+      "description": "unclaimed withholding tax on capital in Swiss hands"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "1960",
+        "million",
+        "CHF"
+      ],
+      "number": "118",
+      "source": "Bundesrat 1962",
+      "description": "unclaimed withholding tax on capital in Swiss hands"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "foreigner share",
+        "1958",
+        "percent"
+      ],
+      "number": "0.15",
+      "source": "Bundesrat 1962",
+      "description": "the withholding tax of foreigners, reclaimed and unclaimed, as a share of the total receipts according to the 1962 study (Howald, footnote 21); not consistent with 65 of 146 million in the text, which would be 45 %"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "foreigner share",
+        "1960",
+        "percent"
+      ],
+      "number": "0.13",
+      "source": "Bundesrat 1962",
+      "description": "the withholding tax of foreigners, reclaimed and unclaimed, as a share of the total receipts according to the 1962 study (Howald, footnote 21)"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax rate",
+        "1958",
+        "percent"
+      ],
+      "number": "0.25",
+      "source": "ESTV withholding tax history",
+      "description": "legal rate from 1945 to 1958; reproduces the 323 million of the report (81 / 0.25)"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax rate",
+        "1960",
+        "percent"
+      ],
+      "number": "0.27",
+      "source": "ESTV withholding tax history",
+      "description": "legal rate from 1959 to 1966; reproduces the 437 million of the report (118 / 0.27)"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "1958",
+        "million",
+        "CHF"
+      ],
+      "number": "323",
+      "source": "Bundesrat 1962",
+      "description": "capital income not declared, the unclaimed withholding tax of residents grossed up with the withholding tax rate"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "1960",
+        "million",
+        "CHF"
+      ],
+      "number": "437",
+      "source": "Bundesrat 1962",
+      "description": "capital income not declared, the unclaimed withholding tax of residents grossed up with the withholding tax rate"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "1958",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.035",
+      "source": "Bundesrat 1962",
+      "description": "the capitalisation rate of the 1962 report"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "1960",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.035",
+      "source": "Bundesrat 1962",
+      "description": "the capitalisation rate of the 1962 report"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "1958",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6",
+      "description": "a single average yield for all domestic securities of the late 1950s; plausible for bonds, rough for stocks"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "1960",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.6",
+      "description": "a single average yield for all domestic securities of the late 1950s; plausible for bonds, rough for stocks"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "domestic security",
+        "1958",
+        "billion",
+        "CHF"
+      ],
+      "number": "9.2",
+      "source": "Bundesrat 1962",
+      "description": "undeclared securities, the undeclared capital income capitalised at 3.5 %"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "domestic security",
+        "1960",
+        "billion",
+        "CHF"
+      ],
+      "number": "12.5",
+      "source": "Bundesrat 1962",
+      "description": "undeclared securities, the undeclared capital income capitalised at 3.5 %"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "domestic security",
+        "1960",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "10",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068; the report gives no year for the table, the data year of its calculation is 1960"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "domestic security",
+        "1960",
+        "maximum",
+        "billion",
+        "CHF"
+      ],
+      "number": "13",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "savings deposit",
+        "1960",
+        "billion",
+        "CHF"
+      ],
+      "number": "1",
+      "source": "Bundesrat 1962",
+      "description": "savings deposits free of withholding tax, estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "foreign security",
+        "1960",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "4",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "foreign security",
+        "1960",
+        "maximum",
+        "billion",
+        "CHF"
+      ],
+      "number": "5",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "banknote",
+        "1960",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "1",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "banknote",
+        "1960",
+        "maximum",
+        "billion",
+        "CHF"
+      ],
+      "number": "2",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "gold",
+        "1960",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "1",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "gold",
+        "1960",
+        "maximum",
+        "billion",
+        "CHF"
+      ],
+      "number": "2",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "total",
+        "1960",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "17",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "total",
+        "1960",
+        "maximum",
+        "billion",
+        "CHF"
+      ],
+      "number": "23",
+      "source": "Bundesrat 1962",
+      "description": "estimate table of the report, p. 1068"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared income",
+        "1960",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "2",
+      "source": "Bundesrat 1962",
+      "description": "at least 2 billion francs of untaxed income, p. 1071; beyond the mandate of the motion Eggenberger, which asked for wealth only"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "security",
+        "1960",
+        "minimum",
+        "million",
+        "CHF"
+      ],
+      "number": "125",
+      "source": "Bundesrat 1962",
+      "description": "tax loss through concealed capital income, cantonal average with progression, p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "security",
+        "1960",
+        "maximum",
+        "million",
+        "CHF"
+      ],
+      "number": "160",
+      "source": "Bundesrat 1962",
+      "description": "tax loss through concealed capital income, cantonal average with progression, p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "banknote and gold",
+        "1960",
+        "minimum",
+        "million",
+        "CHF"
+      ],
+      "number": "8",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "banknote and gold",
+        "1960",
+        "maximum",
+        "million",
+        "CHF"
+      ],
+      "number": "16",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "income",
+        "1960",
+        "minimum",
+        "million",
+        "CHF"
+      ],
+      "number": "100",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "income",
+        "1960",
+        "maximum",
+        "million",
+        "CHF"
+      ],
+      "number": "120",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "total",
+        "1960",
+        "minimum",
+        "million",
+        "CHF"
+      ],
+      "number": "233",
+      "source": "Bundesrat 1962",
+      "description": "total, at least; p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "total",
+        "1960",
+        "maximum",
+        "million",
+        "CHF"
+      ],
+      "number": "296",
+      "source": "Bundesrat 1962",
+      "description": "total, at least; p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "security",
+        "1960",
+        "minimum",
+        "million",
+        "CHF"
+      ],
+      "number": "10",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "security",
+        "1960",
+        "maximum",
+        "million",
+        "CHF"
+      ],
+      "number": "15",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "income",
+        "1960",
+        "minimum",
+        "million",
+        "CHF"
+      ],
+      "number": "25",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075; no federal loss on banknotes and gold, the Confederation levies no wealth tax"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "income",
+        "1960",
+        "maximum",
+        "million",
+        "CHF"
+      ],
+      "number": "35",
+      "source": "Bundesrat 1962",
+      "description": "p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "total",
+        "1960",
+        "minimum",
+        "million",
+        "CHF"
+      ],
+      "number": "35",
+      "source": "Bundesrat 1962",
+      "description": "total, at least; p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "total",
+        "1960",
+        "maximum",
+        "million",
+        "CHF"
+      ],
+      "number": "50",
+      "source": "Bundesrat 1962",
+      "description": "total, at least; p. 1075"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "security",
+        "share",
+        "income and wealth tax",
+        "1960",
+        "percent"
+      ],
+      "number": "0.06",
+      "source": "Bundesrat 1962",
+      "description": "the 125 to 160 million francs made up around 6 percent of the total income and wealth tax of the cantons and municipalities, informal figure, p. 1074"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "total",
+        "share",
+        "income and wealth tax",
+        "1960",
+        "percent"
+      ],
+      "number": "0.11",
+      "source": "Bundesrat 1962",
+      "description": "the 233 to 296 million francs would then be about 11 percent of the total income and wealth tax of the cantons and municipalities; Howald's extension of the informal 6 percent"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "1965",
+        "percent"
+      ],
+      "number": "0.25",
+      "source": "Weck-Hannemann and Pommerehne 1989",
+      "description": "cantonal average, share of gross household income not reported"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "1970",
+        "percent"
+      ],
+      "number": "0.22",
+      "source": "Weck-Hannemann and Pommerehne 1989",
+      "description": "cantonal average, share of gross household income not reported"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "1978",
+        "percent"
+      ],
+      "number": "0.126",
+      "source": "Weck-Hannemann and Pommerehne 1989",
+      "description": "cantonal average, share of gross household income not reported; the lowest value of the 1965 to 1995 series"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "1985",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.245",
+      "source": "Feld and Frey 2004",
+      "description": "read off the bar of figure 1; the paper gives no number for 1985, Howald reports only the extremes 12.6 (1978) and 35.1 (1990) and the 1995 average"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "1985",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.7",
+      "description": "a bar chart reading with a scale of 10 percentage points per grid line; the true value is probably within one percentage point"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "1990",
+        "percent"
+      ],
+      "number": "0.351",
+      "source": "Feld and Frey 2004",
+      "description": "cantonal average; the highest value of the 1965 to 1995 series"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "1995",
+        "percent"
+      ],
+      "number": "0.223",
+      "source": "Feld and Frey 2004",
+      "description": "cantonal average of 22.3 percent; Feld and Frey 2002 mention 22.4 percent in passing"
+    },
+    {
+      "words": [
+        "Basel-Stadt (canton)",
+        "income tax evasion rate",
+        "1970",
+        "percent"
+      ],
+      "number": "0.02",
+      "source": "Feld and Frey 2004",
+      "description": "approximately 2 percent, as reported by Howald from the cantonal breakdown"
+    },
+    {
+      "words": [
+        "Basel-Stadt (canton)",
+        "income tax evasion rate",
+        "1995",
+        "percent"
+      ],
+      "number": "0.22",
+      "source": "Feld and Frey 2004",
+      "description": "approximately 22 percent, as reported by Howald from the cantonal breakdown"
+    },
+    {
+      "words": [
+        "Schwyz (canton)",
+        "income tax evasion rate",
+        "1970",
+        "percent"
+      ],
+      "number": "0.35",
+      "source": "Feld and Frey 2004",
+      "description": "approximately 35 percent, as reported by Howald from the cantonal breakdown"
+    },
+    {
+      "words": [
+        "Schwyz (canton)",
+        "income tax evasion rate",
+        "1995",
+        "percent"
+      ],
+      "number": "0.20",
+      "source": "Feld and Frey 2004",
+      "description": "approximately 20 percent, as reported by Howald from the cantonal breakdown"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "tax morale",
+        "rank",
+        "ISSP",
+        "1998"
+      ],
+      "number": "24",
+      "source": "Kirchgässner 2007",
+      "description": "rank of Switzerland among the ISSP 1998 countries on the question whether it is legitimate not to declare all of one's wealth; a low rank means a poor tax morale"
+    },
+    {
+      "words": [
+        "tax morale",
+        "country count",
+        "ISSP",
+        "1998"
+      ],
+      "number": "32",
+      "source": "Kirchgässner 2007"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "tax morale",
+        "rank",
+        "WVS",
+        "2002"
+      ],
+      "number": "60",
+      "source": "Kirchgässner 2007",
+      "description": "rank of Switzerland in the World Values Survey 2002 on the question whether evading taxes can be justified"
+    },
+    {
+      "words": [
+        "tax morale",
+        "country count",
+        "WVS",
+        "2002"
+      ],
+      "number": "80",
+      "source": "Kirchgässner 2007"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "tax evasion",
+        "never justified",
+        "share",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.618",
+      "source": "World Values Survey wave 5",
+      "description": "share of respondents who hold tax evasion to be never justified"
+    },
+    {
+      "words": [
+        "tax evasion",
+        "never justified",
+        "share",
+        "average",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.613",
+      "source": "World Values Survey wave 5",
+      "description": "average of the 57 surveyed countries"
+    },
+    {
+      "words": [
+        "tax evasion",
+        "never justified",
+        "country count",
+        "WVS",
+        "2005 to 2007"
+      ],
+      "number": "57",
+      "source": "World Values Survey wave 5"
+    },
+    {
+      "words": [
+        "United Kingdom",
+        "tax evasion",
+        "never justified",
+        "share",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.578",
+      "source": "World Values Survey wave 5"
+    },
+    {
+      "words": [
+        "Germany",
+        "tax evasion",
+        "never justified",
+        "share",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.566",
+      "source": "World Values Survey wave 5"
+    },
+    {
+      "words": [
+        "Finland",
+        "tax evasion",
+        "never justified",
+        "share",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.562",
+      "source": "World Values Survey wave 5"
+    },
+    {
+      "words": [
+        "Sweden",
+        "tax evasion",
+        "never justified",
+        "share",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.535",
+      "source": "World Values Survey wave 5"
+    },
+    {
+      "words": [
+        "Norway",
+        "tax evasion",
+        "never justified",
+        "share",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.497",
+      "source": "World Values Survey wave 5"
+    },
+    {
+      "words": [
+        "France",
+        "tax evasion",
+        "never justified",
+        "share",
+        "WVS",
+        "2005 to 2007",
+        "percent"
+      ],
+      "number": "0.479",
+      "source": "World Values Survey wave 5"
+    },
+    {
+      "words": [
+        "Iraq",
+        "bribe",
+        "never justified",
+        "share",
+        "WVS",
+        "2006",
+        "percent"
+      ],
+      "number": "0.944",
+      "source": "World Values Survey wave 5",
+      "description": "share of respondents in Iraq 2006 who hold accepting bribes to be never justified; Howald's example that such surveys have entertainment value rather than being unbreakable truths"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "share",
+        "national income",
+        "1975",
+        "percent"
+      ],
+      "number": "0.032",
+      "source": "Schneider 2000"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "share",
+        "national income",
+        "2000",
+        "percent"
+      ],
+      "number": "0.0887",
+      "source": "Schneider 2000"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "2000",
+        "billion",
+        "CHF"
+      ],
+      "number": "35",
+      "source": "Schneider 2000"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "share",
+        "GNP",
+        "1975",
+        "percent"
+      ],
+      "number": "0.032",
+      "source": "seco keine-schwarzarbeit.ch 2010"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "share",
+        "GNP",
+        "2006",
+        "percent"
+      ],
+      "number": "0.099",
+      "source": "seco keine-schwarzarbeit.ch 2010"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "share",
+        "GDP",
+        "2007",
+        "percent"
+      ],
+      "number": "0.094",
+      "source": "Buomberger 2007",
+      "description": "a small decline of 0.5 percentage points, with reference to Friedrich Schneider"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "2007",
+        "billion",
+        "CHF"
+      ],
+      "number": "37",
+      "source": "Buomberger 2007",
+      "description": "with reference to Friedrich Schneider"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "shadow economy",
+        "share",
+        "GDP",
+        "2010",
+        "maximum",
+        "percent"
+      ],
+      "number": "0.10",
+      "source": "Schaltegger 2010",
+      "description": "just under 10 percent of GDP after tripling in thirty years; every twelfth franc earned in Switzerland bypasses the tax authority, social insurance and health insurance"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared share of taxable income",
+        "2003",
+        "percent"
+      ],
+      "number": "0.23",
+      "source": "Strahm 2003",
+      "description": "23 percent of taxable income not taxed, cited from Feld and Frey 2002"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average marginal tax rate",
+        "2003",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.24",
+      "source": "Strahm 2003",
+      "description": "the mean marginal tax rate Strahm applied to the evaded income"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average marginal tax rate",
+        "2003",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "a single mean marginal rate across all cantons and income classes"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "federal lost tax",
+        "2003",
+        "billion",
+        "CHF"
+      ],
+      "number": "3",
+      "source": "Strahm 2003",
+      "description": "what could theoretically be flushed into the federal coffers"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "2003",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "6",
+      "source": "Strahm 2003"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "cantonal and municipal lost tax",
+        "2003",
+        "maximum",
+        "billion",
+        "CHF"
+      ],
+      "number": "8",
+      "source": "Strahm 2003"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "tax evasion rate",
+        "2010",
+        "percent"
+      ],
+      "number": "0.20",
+      "source": "Badertscher 2010",
+      "description": "summary of the earlier estimates without a new calculation; held to be plausible by the Zurich city tax chief Paul Aschwanden and not unreasonable by Bruno S. Frey"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost tax",
+        "2010",
+        "minimum",
+        "billion",
+        "CHF"
+      ],
+      "number": "5",
+      "source": "Badertscher 2010",
+      "description": "five to ten billion francs of evaded taxes per year; disputed by nobody"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost tax",
+        "2010",
+        "maximum",
+        "billion",
+        "CHF"
+      ],
+      "number": "10",
+      "source": "Badertscher 2010",
+      "description": "five to ten billion francs of evaded taxes per year; disputed by nobody"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "income tax evasion rate",
+        "2010",
+        "percent"
+      ],
+      "number": "0.20",
+      "source": "Schaltegger 2010",
+      "description": "the available studies assume an evasion rate of about 20 percent for the income tax; the economiesuisse view"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "29943",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row A, gross receipts of the withholding tax"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "23680",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row A, gross receipts of the withholding tax"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "6409",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row B, withholding tax not reclaimed"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "4350",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row B, withholding tax not reclaimed"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed share",
+        "withholding tax",
+        "2008",
+        "percent"
+      ],
+      "number": "0.214",
+      "source": "Howald 2010",
+      "description": "row B in percent of row A"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed share",
+        "withholding tax",
+        "2009",
+        "percent"
+      ],
+      "number": "0.194",
+      "source": "Howald 2010",
+      "description": "row B in percent of row A as printed; 4350 / 23680 gives 18.4 %, so the printed 19.4 % does not follow from the printed rows"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax of foreigners",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "3350",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row C, refunds to foreign owners"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax of foreigners",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "3397",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row C, refunds to foreign owners"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed share of foreigners",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.25",
+      "source": "Howald 2010",
+      "description": "Howald's assumption that foreign owners fail to reclaim 25 percent on top of what they reclaim, because in recent years relatively more foreign than domestic owners missed the refund"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed share of foreigners",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.4",
+      "description": "a round assumption without a published basis; the evasion rate moves by about one percentage point for every five percentage points of this share"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of foreigners",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "838",
+      "source": "Howald 2010",
+      "description": "row D, 25 percent of row C"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of foreigners",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "849",
+      "source": "Howald 2010",
+      "description": "row D, 25 percent of row C"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax of residents",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "20183",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row E, refunds to Swiss residents"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax of residents",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "15932",
+      "source": "ESTV Fiskaleinnahmen 2009",
+      "description": "row E, refunds to Swiss residents"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "5571",
+      "source": "Howald 2010",
+      "description": "row F = B - D"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "3501",
+      "source": "Howald 2010",
+      "description": "row F = B - D"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "tax evasion rate",
+        "withholding tax",
+        "2008",
+        "percent"
+      ],
+      "number": "0.22",
+      "source": "Howald 2010",
+      "description": "F divided by E + F, in the order of the generally estimated 20 percent"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "tax evasion rate",
+        "withholding tax",
+        "2009",
+        "percent"
+      ],
+      "number": "0.18",
+      "source": "Howald 2010",
+      "description": "F divided by E + F, in the order of the generally estimated 20 percent"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax",
+        "foreigner share",
+        "2004",
+        "percent"
+      ],
+      "number": "0.68",
+      "source": "Howald 2010",
+      "description": "refunds to foreign applicants as a share of all refunds, a massive outlier probably due to new double taxation treaties; in the early 2000s the share was about 30 percent (footnote 20)"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax",
+        "foreigner share",
+        "2008",
+        "percent"
+      ],
+      "number": "0.14",
+      "source": "Howald 2010",
+      "description": "refunds to foreign applicants as a share of all refunds, footnote 20"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax",
+        "foreigner share",
+        "2009",
+        "percent"
+      ],
+      "number": "0.176",
+      "source": "Howald 2010",
+      "description": "refunds to foreign applicants as a share of all refunds, footnote 20"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "foreigner share",
+        "2008",
+        "percent"
+      ],
+      "number": "0.17",
+      "source": "Howald 2010",
+      "description": "the share of foreign holdings rises from 14 to 17 percent once the assumed 25 percent unclaimed foreign tax is added (footnote 21); the arithmetic of the footnote could not be reproduced from the printed rows"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax revenue",
+        "foreigner share",
+        "2009",
+        "percent"
+      ],
+      "number": "0.19",
+      "source": "Howald 2010",
+      "description": "the share of foreign holdings rises from 17.5 to 19 percent once the assumed 25 percent unclaimed foreign tax is added (footnote 21); the arithmetic of the footnote could not be reproduced from the printed rows"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax rate",
+        "2008",
+        "percent"
+      ],
+      "number": "0.35",
+      "source": "Howald 2010",
+      "description": "legal rate since 1976"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "withholding tax rate",
+        "2009",
+        "percent"
+      ],
+      "number": "0.35",
+      "source": "Howald 2010",
+      "description": "legal rate since 1976"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "15917",
+      "source": "Howald 2010",
+      "description": "row F grossed up with the 35 percent withholding tax rate"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "10003",
+      "source": "Howald 2010",
+      "description": "row F grossed up with the 35 percent withholding tax rate"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "2008",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.03",
+      "source": "Howald 2010",
+      "description": "the average interest Howald applies to capitalise the undeclared capital income"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "2009",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.03",
+      "source": "Howald 2010",
+      "description": "the average interest Howald applies to capitalise the undeclared capital income"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "2008",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "a single yield for a mix of bonds, deposits and stocks in a crisis year; a yield of 2 or 4 percent moves the wealth by a third"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average yield",
+        "2009",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "a single yield for a mix of bonds, deposits and stocks in a crisis year; a yield of 2 or 4 percent moves the wealth by a third"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "530567",
+      "source": "Howald 2010",
+      "description": "undeclared capital income capitalised at 3 percent"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "333433",
+      "source": "Howald 2010",
+      "description": "undeclared capital income capitalised at 3 percent"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average income tax rate",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.09",
+      "source": "Longchamp 2010",
+      "description": "the average income tax rate on the evaded capital income proposed by Olivier Longchamp, called a very conservative estimate by him"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average income tax rate",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "a deliberately conservative single rate; the true marginal rates of the wealthy owners of undeclared securities are higher"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average wealth tax rate",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.0016",
+      "source": "Longchamp 2010",
+      "description": "the average wealth tax rate on the evaded wealth proposed by Olivier Longchamp, called a very conservative estimate by him"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "average wealth tax rate",
+        "confidence",
+        "percent"
+      ],
+      "number": "0.5",
+      "description": "a deliberately conservative single rate; cantonal wealth tax rates on large fortunes range from about 0.1 to 1 percent"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost income tax",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "1433",
+      "source": "Longchamp 2010",
+      "description": "15917 million at 9 percent, as printed; the exact product is 1432.5"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost income tax",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "1111",
+      "source": "Longchamp 2010",
+      "description": "as printed; 10003 million at 9 percent would give 900, the printed 1111 implies a rate of 11.1 percent, so the table of the paper does not follow from its stated rate for 2009"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost wealth tax",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "852",
+      "source": "Longchamp 2010",
+      "description": "as printed; 530567 million at 0.16 percent gives 849"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost wealth tax",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "533",
+      "source": "Longchamp 2010",
+      "description": "333433 million at 0.16 percent"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost tax",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "number": "2285",
+      "source": "Longchamp 2010",
+      "description": "lost income tax and lost wealth tax on the capital income and wealth hidden behind the unclaimed withholding tax; a partial estimate that covers neither indirect taxes, property taxes, corporate profit taxes, stamp duties, inheritance taxes nor the income tax of the self-employed"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "lost tax",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "number": "1644",
+      "source": "Longchamp 2010",
+      "description": "lost income tax and lost wealth tax on the capital income and wealth hidden behind the unclaimed withholding tax; a partial estimate"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "target holdings",
+        "stock",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "formula": "undeclared share of target holdings (formula)",
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "stock",
+        "1940",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.1899",
+      "note": "1.5 / 7.9; printed as 19 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "target holdings",
+        "bond",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "formula": "undeclared share of target holdings (formula)",
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "bond",
+        "1940",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.2077",
+      "note": "2.7 / 13.0; printed as 21 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "target holdings",
+        "savings deposit",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "formula": "undeclared share of target holdings (formula)",
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "savings deposit",
+        "1940",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.3279",
+      "note": "2.0 / 6.1; printed as 33 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "target holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "formula": "undeclared share of target holdings (formula)",
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of target holdings",
+        "total",
+        "1940",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.2296",
+      "note": "6.2 / 27.0; printed as 23 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "natural person",
+        "legal person",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "formula": "exempt holdings (formula)",
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "exempt holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF",
+        "calculated"
+      ],
+      "number": "6.3",
+      "note": "2.5 + 3.8"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "Wehropfer",
+        "target holdings",
+        "exempt holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "formula": "liable holdings (formula)",
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "liable holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF",
+        "calculated"
+      ],
+      "number": "20.7",
+      "note": "27.0 - 6.3"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared holdings",
+        "liable holdings",
+        "total",
+        "1940",
+        "billion",
+        "CHF"
+      ],
+      "formula": "undeclared share of liable holdings (formula)",
+      "words": [
+        "Switzerland",
+        "Wehropfer",
+        "undeclared share of liable holdings",
+        "total",
+        "1940",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.2995",
+      "note": "6.2 / 20.7; Munz printed 30 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "withholding tax rate",
+        "1958",
+        "million",
+        "CHF",
+        "percent"
+      ],
+      "formula": "undeclared capital income (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "1958",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "324",
+      "note": "81 / 0.25; the report printed 323"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "withholding tax rate",
+        "1960",
+        "million",
+        "CHF",
+        "percent"
+      ],
+      "formula": "undeclared capital income (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "1960",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "437.04",
+      "note": "118 / 0.27; the report printed 437"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared capital income",
+        "average yield",
+        "1958",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "undeclared wealth (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "1958",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "9228.57",
+      "note": "323 / 0.035; the report printed 9.2 billion"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared capital income",
+        "average yield",
+        "1960",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "undeclared wealth (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "1960",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "12485.71",
+      "note": "437 / 0.035; the report printed 12.5 billion"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "reclaimed withholding tax of foreigners",
+        "unclaimed share of foreigners",
+        "2008",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "unclaimed foreign withholding tax (formula)",
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of foreigners",
+        "2008",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "837.5",
+      "note": "3350 * 0.25; printed as 838"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "reclaimed withholding tax of foreigners",
+        "unclaimed share of foreigners",
+        "2009",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "unclaimed foreign withholding tax (formula)",
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of foreigners",
+        "2009",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "849.25",
+      "note": "3397 * 0.25; printed as 849"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax",
+        "unclaimed withholding tax of foreigners",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "formula": "unclaimed resident withholding tax (formula)",
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "2008",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "5571",
+      "note": "6409 - 838"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax",
+        "unclaimed withholding tax of foreigners",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "formula": "unclaimed resident withholding tax (formula)",
+      "words": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "2009",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "3501",
+      "note": "4350 - 849"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax",
+        "withholding tax revenue",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "formula": "unclaimed share (formula)",
+      "words": [
+        "Switzerland",
+        "unclaimed share",
+        "withholding tax",
+        "2008",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.2140",
+      "note": "6409 / 29943; printed as 21.4 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax",
+        "withholding tax revenue",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "formula": "unclaimed share (formula)",
+      "words": [
+        "Switzerland",
+        "unclaimed share",
+        "withholding tax",
+        "2009",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.1837",
+      "note": "4350 / 23680; printed as 19.4 %, which does not follow from the rows"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "reclaimed withholding tax of residents",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "formula": "withholding tax evasion rate (formula)",
+      "words": [
+        "Switzerland",
+        "tax evasion rate",
+        "withholding tax",
+        "2008",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.2163",
+      "note": "5571 / (20183 + 5571); printed as 22 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "reclaimed withholding tax of residents",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "formula": "withholding tax evasion rate (formula)",
+      "words": [
+        "Switzerland",
+        "tax evasion rate",
+        "withholding tax",
+        "2009",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.1802",
+      "note": "3501 / (15932 + 3501); printed as 18 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "reclaimed withholding tax of foreigners",
+        "reclaimed withholding tax of residents",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "formula": "foreigner share of refunds (formula)",
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax",
+        "foreigner share",
+        "2008",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.1424",
+      "note": "3350 / (3350 + 20183); footnote 20 gives 14 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "reclaimed withholding tax of foreigners",
+        "reclaimed withholding tax of residents",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "formula": "foreigner share of refunds (formula)",
+      "words": [
+        "Switzerland",
+        "reclaimed withholding tax",
+        "foreigner share",
+        "2009",
+        "percent",
+        "calculated"
+      ],
+      "number": "0.1757",
+      "note": "3397 / (3397 + 15932); footnote 20 gives 17.6 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "withholding tax rate",
+        "2008",
+        "million",
+        "CHF",
+        "percent"
+      ],
+      "formula": "undeclared capital income (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "2008",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "15917.14",
+      "note": "5571 / 0.35; printed as 15917"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "unclaimed withholding tax of residents",
+        "withholding tax rate",
+        "2009",
+        "million",
+        "CHF",
+        "percent"
+      ],
+      "formula": "undeclared capital income (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared capital income",
+        "2009",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "10002.86",
+      "note": "3501 / 0.35; printed as 10003"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared capital income",
+        "average yield",
+        "2008",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "undeclared wealth (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "2008",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "530566.67",
+      "note": "15917 / 0.03; printed as 530567"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared capital income",
+        "average yield",
+        "2009",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "undeclared wealth (formula)",
+      "words": [
+        "Switzerland",
+        "undeclared wealth",
+        "2009",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "333433.33",
+      "note": "10003 / 0.03; printed as 333433"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared capital income",
+        "average income tax rate",
+        "2008",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "lost income tax (formula)",
+      "words": [
+        "Switzerland",
+        "lost income tax",
+        "2008",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "1432.53",
+      "note": "15917 * 0.09; printed as 1433"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared capital income",
+        "average income tax rate",
+        "2009",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "lost income tax (formula)",
+      "words": [
+        "Switzerland",
+        "lost income tax",
+        "2009",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "900.27",
+      "note": "10003 * 0.09; the paper prints 1111, which implies 11.1 % instead of the stated 9 %"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared wealth",
+        "average wealth tax rate",
+        "2008",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "lost wealth tax (formula)",
+      "words": [
+        "Switzerland",
+        "lost wealth tax",
+        "2008",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "848.9072",
+      "note": "530567 * 0.0016; printed as 852"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "undeclared wealth",
+        "average wealth tax rate",
+        "2009",
+        "million",
+        "CHF",
+        "assumed",
+        "percent"
+      ],
+      "formula": "lost wealth tax (formula)",
+      "words": [
+        "Switzerland",
+        "lost wealth tax",
+        "2009",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "533.4928",
+      "note": "333433 * 0.0016; printed as 533"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "lost income tax",
+        "lost wealth tax",
+        "2008",
+        "million",
+        "CHF"
+      ],
+      "formula": "lost tax (formula)",
+      "words": [
+        "Switzerland",
+        "lost tax",
+        "2008",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "2285",
+      "note": "1433 + 852"
+    },
+    {
+      "context": [
+        "Switzerland",
+        "lost income tax",
+        "lost wealth tax",
+        "2009",
+        "million",
+        "CHF"
+      ],
+      "formula": "lost tax (formula)",
+      "words": [
+        "Switzerland",
+        "lost tax",
+        "2009",
+        "million",
+        "CHF",
+        "calculated"
+      ],
+      "number": "1644",
+      "note": "1111 + 533"
+    }
+  ]
+}
