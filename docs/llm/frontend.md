@@ -54,11 +54,11 @@ phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and
 static files `src/main/resources/script/calculator_editor.js` and
 `style/calculator_editor.css` (`files::CALCULATOR_EDITOR_SCRIPT`,
 `files::CALCULATOR_EDITOR_STYLE`); the script builds the editor from that seed and
-reads another phrase with one phraseData call. The page also embeds the verbs of
-the frontend type cache with their id and name in the format of the typeLists api
-(`system_page::calculator_editor_types`), so that the script finds the id of a
-verb without an api call; only the verbs, because the whole typeLists answer is
-much larger than the page. The save posts one update put
+reads another phrase with one phraseData call. The page also embeds the verbs and
+the unit and scaling phrases of the frontend type cache with their id and name in
+the format of the typeLists api (`system_page::calculator_editor_types`), so that
+the script finds the id of a verb and knows a unit without an api call; only
+these, because the whole typeLists answer is much larger than the page. The save posts one update put
 message with the changes to `/api/updatePut/` (`cfg/import/update_put.php`, see
 `docs/llm/json_structure.md` "Update put message"), with the session token of
 the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
@@ -853,7 +853,7 @@ digits (default 4):
   2'000 kg is 2.0 t
 
 A detail table names the unit in its header, so its columns share the decimals
-only. The formulas are the ones linked to the measure units of the system phrases
+only. The formulas are the ones linked to the measure units and the scaling words of the system phrases
 (`data_object::load_system_formulas`, `system_formulas` of the ui config api), and
 the browser recalculation writes a cell with the factor and the decimals of its
 group (`ui_list::calculator_cell_format`, `calculator.js`). A percent symbol is a

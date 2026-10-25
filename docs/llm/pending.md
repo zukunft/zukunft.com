@@ -2,10 +2,12 @@
 
 ## Calculator editor
 
-### system phrases
+1. The phrase selectors got longer (28 html snapshots, +118 to +670 lines). The datalist of a phrase selector is built from the system phrases of the frontend cache. So every triple, component, ref and value edit page now also offers the 59 new unit and scaling words (are, becquerel, Bq, °C, …).
+    - The new options are added after the existing ones (e.g. after "tn can be symbol for tn (weight)"), in load order (usage, then name), not merged into the list's order. That conflicts with the rule "Always sort lists before rendering" (frontend.md).
+    - Whether units belong in those pickers is a product decision. If not, the selector could leave out the words of PRELOAD_TYPES, or use only the page's own phrases. If they do belong, the datalist should sort the whole list.
+2. The hidden scaling words count as units in the editor. calculator_editor_types takes every phrase for which is_scaling() is true. That includes the hidden scaling words one and zero. In the editor, unitOf() would then show "one" as the unit of a value that carries the hidden scaling word "one". That follows your choice "Also scaling types", but the hidden ones may not be wanted. Filtering with phrase_types::SCALING only would leave them out.
+3. Unit triples are only loaded through symbol triples. load_system_phrases adds the words of the preload types. A triple of a unit type (e.g. "kilowatthours per year") is in the list only if a symbol triple links it, as now. Your new TODO Prio 1 better use a phrase list points at this. Today all the editor's units are covered, either as words or through their symbol triples.
 
-create a fixed api for the system phrases that have a code_id including the children e,g, of scaling, unit, ... and scaling formulas
-target is to replace in src/main/resources/script/calculator_editor.js the unitNames const with values from the unit json
 
 ### reject no change users
 

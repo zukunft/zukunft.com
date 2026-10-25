@@ -140,7 +140,7 @@ class system_page extends component
     // the html ids that the calculator editor script reads (script/calculator_editor.js)
     const string CALC_EDITOR_HOST_ID = 'calcEditor';
     const string CALC_EDITOR_SEED_ID = 'seed';
-    const string CALC_EDITOR_TYPES_ID = 'types';
+    const string CALC_EDITOR_TYPES_ID = 'calcEditorTypes';
 
     /**
      * HTML for a page title
@@ -1326,27 +1326,40 @@ class system_page extends component
                 . $html->div('', styles::CALC_EDITOR, self::CALC_EDITOR_HOST_ID)
                 . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
-                . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types())
+                . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }
         return $result;
     }
 
     /**
-     * the verbs of the type lists in the format of the typeLists api, so that the editor finds the
-     * id of a verb without an api call; only the verbs with their id and name, because the whole
-     * typeLists answer is much larger than the page and the save needs only the verb ids
+     * the verbs and the unit and scaling phrases of the type lists in the format of the typeLists
+     * api, so that the editor finds the id of a verb and knows a unit without an api call; only these
+     * with their id and name, because the whole typeLists answer is much larger than the page
      *
-     * @return array the verbs of the frontend type cache e.g. ["verbs" => [["id" => 2, "name" => "is a"], ...]]
+     * @param user_message $msg with the requesting user to read the phrase types
+     * @return array the verbs and the unit phrases of the frontend type cache
+     *               e.g. ["verbs" => [["id" => 2, "name" => "is a"], ...], "system_phrases" => [["id" => 28, "name" => "kg"], ...]]
      */
-    private function calculator_editor_types(): array
+    private function calculator_editor_types(user_message $msg): array
     {
         global $ui_sys;
         $vrb_lst = [];
         foreach ($ui_sys?->typ_lst_cache?->vrb?->lst() ?? [] as $vrb) {
             $vrb_lst[] = [json_fields::ID => $vrb->id(), json_fields::NAME => $vrb->name()];
         }
-        return [api::JSON_LIST_VERBS => $vrb_lst];
+        // keyed by the name, because the editor knows a unit by its name only
+        $unit_lst = [];
+        $sys_lst = $ui_sys?->typ_lst_cache?->phr_sys;
+        foreach ($sys_lst?->lst() ?? [] as $phr) {
+            if ($phr->is_measure($msg) or $phr->is_percent($msg) or $phr->is_scaling($msg)) {
+                $unit_lst[$phr->name()] = [json_fields::ID => $phr->id(), json_fields::NAME => $phr->name()];
+            }
+        }
+        return [
+            api::JSON_LIST_VERBS => $vrb_lst,
+            api::JSON_LIST_SYSTEM_PHRASES => array_values($unit_lst)
+        ];
     }
 
     /**

@@ -1037,7 +1037,11 @@ for, so the triples of `verbs::PRELOAD_VERBS` (`is symbol for`, `is alias of`)
 and the phrases they link travel with the **initial cache load**, next to the
 types and the system views (`data_object::load_system_phrases` fills them,
 `api\ui_config` sends them as `system_phrases`). A new symbol triple therefore
-needs no display code and no api change, only the seed entry.
+needs no display code and no api change, only the seed entry. The system phrases
+also hold every word of `phrase_types::PRELOAD_TYPES` (the measure unit, percent
+and scaling types), because a unit without a symbol triple e.g. `kWh` is shown
+behind a number too, and the system formulas are the ones linked to these units
+and scaling words e.g. `scale million to one`.
 
 ### A `percent` value is stored as the decimal ratio, never as the ×100 number
 

@@ -220,7 +220,7 @@ function buildIndex(doc) {
     const byName = new Map();
     const known = new Set();
     const symbolFor = new Map();
-    const unitNames = new Set(["kWh", "kWp", "kg", "gram", "t", "percent", "a", "kWh/a"]);
+    const unitNames = typeUnits();
     T.forEach(function (t, i) {
         if (!byFrom.has(t.from)) {
             byFrom.set(t.from, []);
@@ -2870,14 +2870,28 @@ function readIds(doc) {
     return message;
 }
 
-/* the verb ids by the verb name from the type lists that the view embeds in the format of the
-   typeLists api (system_page::calculator_editor_types), so that no verb is read from the api */
+/* the type lists that the view embeds in the format of the typeLists api
+   (system_page::calculator_editor_types): the verbs and the unit and scaling phrases */
+function embeddedTypes() {
+    const el = document.getElementById("calcEditorTypes");
+    const result = el ? parseJson(el.textContent) : {};
+    return result;
+}
+
+/* the verb ids by the verb name, so that no verb is read from the api */
 function typeVerbs() {
-    const el = document.getElementById("types");
-    const types = el ? parseJson(el.textContent) : {};
     const result = new Map();
-    (types.verbs || []).forEach(function (v) {
+    (embeddedTypes().verbs || []).forEach(function (v) {
         result.set(v.name, Number(v.id));
+    });
+    return result;
+}
+
+/* the names of the unit and scaling phrases of the pod e.g. kWh or million, so that a number is shown with its unit */
+function typeUnits() {
+    const result = new Set();
+    (embeddedTypes().system_phrases || []).forEach(function (p) {
+        result.add(p.name);
     });
     return result;
 }
