@@ -7,6 +7,16 @@ of a negative phrase id, e.g. the calculator editor of example PV installation w
 it is private and only reached by url_to_html with the view in the cache, so add a unit test
 via url_to_html for a word view and a triple view, each called with a word and with a triple id
 
+## units in the phrase selector of a value
+
+the phrase selector of a value edit page (`ui_select::phrase_offer`) fills up the matching phrases with
+the system phrases of the frontend cache, which hold every unit and scaling word of
+`phrase_types::PRELOAD_TYPES`; these are offered in the load order (usage, then name) and not by the
+relevance that the docblock of `phrase_field` names, and they use part of the preload limit
+(config.yaml "user > frontend > lists > preload > phrase list"); whether the units belong in this
+selector is the developer's decision: if yes, the offered phrases need one deterministic order, if not,
+the selector leaves out the words of the preload types
+
 ## start page global problem
 
 add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'

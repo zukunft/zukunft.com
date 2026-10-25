@@ -4249,7 +4249,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_update - 2 unit test calls shared by 8 classes
 \-- user_list
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
+    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- id_lst - 6 unit test calls shared by 8 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
@@ -4478,7 +4478,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedCodeObjects
     \-- clone_reset - 9 unit test calls shared by 11 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
+    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedObjects
     \-- clone_reset - 9 unit test calls shared by 11 classes
@@ -4525,7 +4525,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 ```
 \-- ListBase
     \-- api_array - 13 unit test calls shared by 37 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
+    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- id_lst - 6 unit test calls shared by 8 classes
     \-- list - 8 unit test calls shared by 7 classes
     \-- load_like - 9 unit test calls shared by 6 classes
@@ -4968,7 +4968,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- type_list
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
+    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
@@ -5090,7 +5090,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- selector - 2 unit test calls shared by 24 classes
 \-- view_list
     \-- default_id - 1 unit test calls shared by 46 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
+    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- load_by_component_id - 1 unit test calls shared by 2 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes

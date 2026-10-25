@@ -65,6 +65,14 @@ the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
 beyond the safe integer of javascript e.g. the group id of a value is read and
 sent as text.
 
+The editors (`views::EDITOR_MASKS_IDS`, the calculator and the table editor) have
+the view type `mask_default`, because their save changes the database, and show
+the phrase of the url like the page they edit (`views::PHRASE_MASKS_IDS`). A user
+who may not change the database (`user::is_blocked`) is answered like on every
+other change view (`views::IP_BLOCKED_MASKS_IDS`, `http/view.php`): the message
+`CHANGE_BLOCKED_FOR_IP_USER` on the back page or, without one, on the page the
+editor edits (`views::change_to_show_id`), e.g. the calculator of the phrase.
+
 ### The save of a calculator page
 
 The save button of a calculator page is a post form with the session token

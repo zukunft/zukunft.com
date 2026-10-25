@@ -81,7 +81,7 @@
       "name": "Table editor",
       "description": "placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",
       "code_id": "table_editor",
-      "type": "word",
+      "type": "mask_default",
       "components": [
         {
           "position": "1",
@@ -109,7 +109,7 @@
       "name": "Calculator editor",
       "description": "the editor to define the calculator page of a word or triple",
       "code_id": "calculator_editor",
-      "type": "word",
+      "type": "mask_default",
       "components": [
         {
           "position": "1",

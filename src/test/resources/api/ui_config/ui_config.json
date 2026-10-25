@@ -28404,7 +28404,7 @@
                 "id": 195,
                 "name": "Table editor",
                 "description": "placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",
-                "type_id": 11,
+                "type_id": 3,
                 "code_id": "table_editor",
                 "components": [
                     {
@@ -28463,7 +28463,7 @@
                 "id": 196,
                 "name": "Calculator editor",
                 "description": "the editor to define the calculator page of a word or triple",
-                "type_id": 11,
+                "type_id": 3,
                 "code_id": "calculator_editor",
                 "components": [
                     {

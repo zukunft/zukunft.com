@@ -174,7 +174,7 @@ class system_read_tests
         $t->subheader($ts . 'system phrases');
 
         // the words of the preload types are loaded also if no symbol triple links them
-        $cac_sys = new data_object($t->usr1);
+        $cac_sys = new data_object($t->usr1); // not $cac, which would be mistaken for the global request cache
         $test_name = 'the system phrases load from the database';
         $t->assert_true($test_name, $cac_sys->load_system_phrases($msg));
         $msg->reset();

@@ -164,6 +164,18 @@ class view_read_tests
         $test_name = '... but a view without an editor relation has no editor';
         $t->assert_null($test_name, $sys_word->editor_id);
 
+        // the editors change the database, so editor_views.json gives them the edit type
+        $test_name = 'the calculator editor is an edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::CALCULATOR_EDITOR)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        $test_name = 'the table editor is an edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::TABLE_EDITOR)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        // negative: the calculator only shows the phrase, so it keeps its phrase type
+        $test_name = '... but the calculator is no edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::CALCULATOR)?->type_code_id();
+        $t->assert_not($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+
         // check all system views
         // TODO Prio 2 activate
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1);

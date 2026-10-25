@@ -1,12 +1,25 @@
 # pending - list of planned llm prompts with prio 1
 
-## Calculator editor
+## view types
 
-### reject no change users
+add a new view_type 'editor' that is a view to change other views.
+Change the description of the 'edit' (mask_default) view type so that these are views to change data
+whereas 'editor' views are views to change other views
+Assign the 'Calculator Editor' view and the 'Table editor' view to 'editor'
+and assign the add, change and delete views to the 'edit' view type.
 
-the 'Calculation editor' view (id 196) is an edit view, so change the type of the view and if a user, 
-that has no permission to do database changes reaches and edit view, show a reject message 
-and redirect to the back view or the start view 
+Review the view types of all views and create here a list of suggested changes
+
+### view selector
+
+in the navbar 'edit icon' menu the top entry is at the moment 'alternative'.
+Replace this with the concrete names of the suggested views related to the object shown
+e.g.
+for a word first show the view names that have a direct link to the word
+and create a sample test case for it if there is none yet
+second list the views linked to the parent with a test case
+and third show the names of the 'for words only' views
+after each name should be a switch and an edit icon like in the views tab
 
 ## prime group id within 2^53
 
