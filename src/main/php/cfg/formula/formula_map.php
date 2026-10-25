@@ -2110,8 +2110,12 @@ class formula_map extends sandbox_code_id
         }
         // preserve the stored expression when a partial update does not carry one (e.g. changing
         // only the description of a predefined formula whose expression field is not shown to the
-        // user), so the expression is neither cleared nor reported as a missing mandatory field
-        if ($this->ref_text != null and $obj->ref_text !== $this->ref_text) {
+        // user), so the expression is neither cleared nor reported as a missing mandatory field;
+        // in the user overlay an empty expression means the standard expression, so there it
+        // clears the own expression of the user e.g. on the undo of an expression change
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
+        $ref_text_changed = (($this->ref_text != null or $usr_tbl) and $obj->ref_text !== $this->ref_text);
+        if ($ref_text_changed) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_TEXT,
@@ -2126,7 +2130,7 @@ class formula_map extends sandbox_code_id
                 $obj->ref_text
             );
         }
-        if ($this->usr_text != null and $obj->usr_text !== $this->usr_text) {
+        if (($this->usr_text != null or $usr_tbl) and $obj->usr_text !== $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_fields::FLD_FORMULA_USER_TEXT,
@@ -2173,7 +2177,7 @@ class formula_map extends sandbox_code_id
         }
         // an expression only counts as changed if the update actually carries one (see above),
         // so a partial update that keeps the stored expression does not bump the last update time
-        if (($this->ref_text != null and $obj->ref_text !== $this->ref_text)
+        if ($ref_text_changed
             or $obj->type_id($msg) <> $this->type_id($msg)
             or $obj->need_all_val <> $this->need_all_val
             or $this->last_update == null) {

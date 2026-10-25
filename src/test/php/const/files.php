@@ -80,6 +80,8 @@ class files
     // a description change of the use case triple PV capacity label as the editor has sent it and its undo
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label' . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label_undo' . self::JSON;
+    // an expression change of the use case formula of the autarky as the editor sends it; the undo puts the loaded expression
+    CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_autarky_formula' . self::JSON;
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none

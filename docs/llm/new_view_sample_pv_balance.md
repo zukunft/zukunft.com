@@ -794,16 +794,17 @@ shows the parts of the editor in three columns:
 | part | shows |
 |---|---|
 | phrase bar | the page phrase; another phrase is read with one phraseData call |
-| page structure | one section per keyword below `calculator (system)`, each with the items of this calculator in their order, with up, down and remove links and an add link per list; sub-items are indented below their item |
-| settings | the phrase, label and hint of the selected item, with the general label or hint of the phrase as placeholder, and the general triples and values of its phrase: the field triples of the input and assumption phrases (type, limits, step, value phrases, selector options) and the highlights and side results of the row phrases (rule 6), with a note that a change here changes every page that uses the phrase |
+| page structure | one section per keyword below `calculator (system)`, each with the items of this calculator in their order, with up, down and remove links and an add link per list; sub-items are indented below their item; below a result row the formulas that calculate its number: every formula whose result is the row phrase (a number may have more than one, e.g. one per mix) and then the formulas of their operands, each once |
+| settings | the phrase, label and hint of the selected item, with the general label or hint of the phrase as placeholder, and the general triples and values of its phrase: the field triples of the input and assumption phrases (type, limits, step, value phrases, selector options) and the highlights and side results of the row phrases (rule 6), with a note that a change here changes every page that uses the phrase; for a selected formula its expression to change, its description and the operands with the number that the page shows as sample input values |
 | page preview | the page as the `Calculator` view shows it, with the derived notes and sources read only |
 | all texts | all label and hint triples of this calculator in one table for proofreading and translating; a label of a phrase is marked, because a change of it changes every calculator that lists the phrase |
-| changes | the triples and values that the save writes |
+| changes | the triples, formulas and values that the save writes |
 
 The save sends all changes in one update put message to `/api/updatePut`:
 the new words, the added and changed triples and values with their database
-ids, and the class and id of each removed triple and value.
-Each change is a change of the user's own sandbox triple or value. The
+ids, the changed formulas by their id with the new expression, and the class
+and id of each removed triple and value.
+Each change is a change of the user's own sandbox triple, formula or value. The
 calculator of other users stays unchanged until they take over the change.
 A removed item is deleted through the logged `del()`, which excludes it only
 for the user if another user uses it.

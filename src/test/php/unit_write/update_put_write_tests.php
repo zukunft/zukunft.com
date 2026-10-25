@@ -60,6 +60,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CONST . 'formula_names.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
@@ -282,6 +284,97 @@ class update_put_write_tests
         $t->cleanup_change_log($wrd, [word_names::TEST_ADD, word_names::TEST_ADD_TO]);
 
         $this->run_use_case($t);
+        $this->run_formula($t);
+    }
+
+    /**
+     * the expression change of a use case formula as the calculator editor sends it, by a user who
+     * does not own the formula, and its undo with the loaded expression
+     * public to run the formula change also alone from the selected tests
+     *
+     * @param test_cleanup $t the test environment with the normal test user
+     * @return void
+     */
+    function run_formula(test_cleanup $t): void
+    {
+        $upd = new update_put();
+        $ts = 'db write update put use case ';
+        $t->subheader($ts . 'change and undo of a formula');
+        $usr = $t->usr_normal;
+        $msg = new user_message($usr);
+        $chk_msg = new user_message($usr);
+
+        // a run that has stopped before the undo leaves the user overwrite, which the undo with
+        // the standard expression of another user removes
+        $frm = new formula($usr);
+        $frm->load_by_name(formula_names::AUTARKY, $chk_msg);
+        if (!str_contains($frm->get_usr_text(), formula_names::AUTARKY_OPERAND_REMOVED)) {
+            $test_name = 'the user overwrite left by an earlier run is removed by the undo';
+            $frm_std = new formula($t->usr1);
+            $frm_std->load_by_id($frm->id(), $chk_msg);
+            $upd->put($this->formula_message($frm, $frm_std->get_usr_text()), $msg);
+            $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+            $msg->reset();
+            $frm = new formula($usr);
+            $frm->load_by_name(formula_names::AUTARKY, $chk_msg);
+        }
+        $exp_original = $frm->get_usr_text();
+        $test_name = 'the formula of the use case uses the operand that the change removes';
+        $t->assert_text_contains($test_name, $exp_original, formula_names::AUTARKY_OPERAND_REMOVED, test_base::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'put the expression change of the calculator editor';
+        $put_body = $upd->put($this->formula_message($frm), $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = '... and the answer confirms the change';
+        $frm_res = $put_body[json_fields::FORMULAS][0] ?? [];
+        $t->assert($test_name, $frm_res[json_fields::ACTION] ?? '', update_put::CHANGED);
+        $test_name = '... as the own version of the user';
+        $t->assert_true($test_name, $frm_res[json_fields::USER_OVERWRITE] ?? false);
+        $test_name = 'the database has the changed expression without the removed operand';
+        $frm_chk = new formula($usr);
+        $frm_chk->load_by_id($frm->id(), $chk_msg);
+        $t->assert_text_not_contains($test_name, $frm_chk->get_usr_text(), formula_names::AUTARKY_OPERAND_REMOVED, test_base::TIMEOUT_LIMIT_DB);
+        // the latex is derived from the expression, so the save updates it as well
+        $test_name = '... and the latex follows the changed expression';
+        $t->assert_text_not_contains($test_name, $frm_chk->get_latex() ?? '', formula_names::AUTARKY_OPERAND_REMOVED, test_base::TIMEOUT_LIMIT_DB);
+        // negative: the message changes only the expression, so e.g. the description of the formula stays
+        $test_name = '... but keeps the description of the database';
+        $t->assert($test_name, $frm_chk->get_description(), $frm->get_description());
+        // negative: the change is a user overwrite, so another user still gets the original expression
+        $test_name = '... but another user still has the original expression';
+        $frm_other = new formula($t->usr1);
+        $frm_other->load_by_id($frm->id(), $chk_msg);
+        $t->assert($test_name, $frm_other->get_usr_text(), $exp_original, test_base::TIMEOUT_LIMIT_DB);
+
+        $test_name = 'put the undo of the expression change';
+        $upd->put($this->formula_message($frm, $exp_original), $msg);
+        $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
+        $msg->reset();
+        $test_name = 'the database has the original expression again';
+        $frm_chk = new formula($usr);
+        $frm_chk->load_by_id($frm->id(), $chk_msg);
+        $t->assert($test_name, $frm_chk->get_usr_text(), $exp_original, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... and no user overwrite is left';
+        $t->assert_false($test_name, $frm_chk->has_usr_cfg());
+
+        // negative: a formula is changed but never deleted by a message, so its delete is refused
+        $test_name = 'the delete of a formula is refused';
+        $lib = new library();
+        $cls_name = $lib->class_to_name(formula::class);
+        $json = $this->formula_message($frm);
+        $json[json_fields::BODY] = [json_fields::DELETE => [[json_fields::OBJECT_CLASS => $cls_name, json_fields::ID => $frm->id()]]];
+        $upd->put($json, $msg);
+        $expected = $this->expected_text(msg_id::OBJECT_NOT_FOUND, [
+            msg_id::VAR_CLASS_NAME => $cls_name,
+            msg_id::VAR_ID => (string)$frm->id()
+        ]);
+        $t->assert_msg_false($test_name, $msg, $expected);
+        $msg->reset();
+        $test_name = '... and the formula is still in the database';
+        $frm_chk = new formula($usr);
+        $frm_chk->load_by_id($frm->id(), $chk_msg);
+        $t->assert($test_name, $frm_chk->id(), $frm->id(), test_base::TIMEOUT_LIMIT_DB);
     }
 
     /**
@@ -460,6 +553,28 @@ class update_put_write_tests
         $trp_json[json_fields::TO] = $trp->to_id();
         $trp_json[json_fields::VERB] = $trp->get_verb_id();
         $json[json_fields::BODY][json_fields::TRIPLES][0] = $trp_json;
+        return $json;
+    }
+
+    /**
+     * the database ids differ by database, so the test sets the id of the loaded formula and its
+     * user in the message as the calculator editor has sent it
+     *
+     * @param formula $frm the formula of the message loaded by its name for the user of the message
+     * @param string|null $usr_text the expression to send e.g. the loaded one for the undo, else the one of the message
+     * @return array the message with the database ids of this database
+     */
+    private function formula_message(formula $frm, ?string $usr_text = null): array
+    {
+        $json = $this->message(test_files::UPDATE_PUT_AUTARKY_FORMULA);
+        $json[json_fields::USER_ID] = $frm->get_user()->id();
+        $json[json_fields::USER] = $frm->get_user()->name();
+        $frm_json = $json[json_fields::BODY][json_fields::FORMULAS][0];
+        $frm_json[json_fields::ID] = $frm->id();
+        if ($usr_text !== null) {
+            $frm_json[json_fields::USR_TEXT] = $usr_text;
+        }
+        $json[json_fields::BODY][json_fields::FORMULAS][0] = $frm_json;
         return $json;
     }
 

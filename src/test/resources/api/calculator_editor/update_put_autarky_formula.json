@@ -1,0 +1,16 @@
+{
+  "pod": "zukunft.com",
+  "timestamp": "2026-10-25T18:00:00.000Z",
+  "type": "updatePut",
+  "user": "heang",
+  "user_id": 11,
+  "version": "0.0.3",
+  "body": {
+    "formulas": [
+      {
+        "id": 1,
+        "user_text": "\"autarky\" = \"direct use\" / \"household consumption\""
+      }
+    ]
+  }
+}

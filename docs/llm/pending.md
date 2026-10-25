@@ -75,6 +75,19 @@ limit the use of the prime value table to the javascript int limit of 9,007,199,
 if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
 and the use of the values table instead of values_prime
 
+## pure HTML ans javascript views
+
+add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a javasript version exists use the javascrip version
+
+create a javascript version of the formula editor view
+
+## calculator
+
+### base on json
+
+check if the calculator e.g. http://localhost/http/view.php?m=16&id=-2780&debug=9 can be 
+based on the /api/phraseData and /api/typeLists json similar to the  'Calculator editor' e.g. http://localhost/http/view.php?m=196&id=-2780&u=11
+
 ## calculation editor
 
 ### update json message
@@ -94,11 +107,6 @@ For each change type do the change in the frontend and write / compare the messa
 
 for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
 
-### formula editor
-
-in the 'Calculator Editor' on the left side are the 'Row Groups and rows' and below that is e.g. 'Electricity' and 'Autarky'
-the Calculation of 'Autarky' may be depending on more than one formula, so list all formulas used below on the left column
-if a formula is selected show in the settings column the formula and sample input values and allow the user to change the formula
 
 ### general
 

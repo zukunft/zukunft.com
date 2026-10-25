@@ -28,7 +28,7 @@ change_log: $chg, $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_map, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
 element: $elm_map, $elm_ui
 figure: $fig_ui
-formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_be, $frm_empty, $frm_error, $frm_fn, $frm_has_next, $frm_hour, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_no_typ, $frm_order, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_scaled, $frm_tab, $frm_this, $frm_trm, $frm_typ, $frm_ui, $frm_unknown, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
+formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_be, $frm_chk, $frm_empty, $frm_error, $frm_fn, $frm_has_next, $frm_hour, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_no_typ, $frm_order, $frm_other, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_scaled, $frm_std, $frm_tab, $frm_this, $frm_trm, $frm_typ, $frm_ui, $frm_unknown, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
 group: $db_grp, $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_add, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_lst, $grp_map, $grp_no_names, $grp_used, $grp_zh, $obj, $phr_grp, $phr_grp_reload, $result, $unnamed_grp, $val_grp
 import: $imp_cnt
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_new, $job_newer, $job_older, $job_oldest, $job_upd
