@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1479 of 6224 public functions have at least 2 unit test calls; the 4540 functions below do not; the 205 functions of the last section are called nowhere
+1484 of 6224 public functions have at least 2 unit test calls; the 4535 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 2036 functions of main backend have no test at all
 
@@ -3285,7 +3285,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1015 functions of main backend have incomplete tests
+## 1014 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -4249,7 +4249,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_update - 2 unit test calls shared by 8 classes
 \-- user_list
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- id_lst - 6 unit test calls shared by 8 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
@@ -4463,7 +4462,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- save - 51 unit test calls shared by 27 classes
 ```
 
-## 37 functions of shared have incomplete tests
+## 36 functions of shared have incomplete tests
 
 ```
 \-- CombineObject
@@ -4478,7 +4477,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedCodeObjects
     \-- clone_reset - 9 unit test calls shared by 11 classes
-    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedObjects
     \-- clone_reset - 9 unit test calls shared by 11 classes
@@ -4520,12 +4518,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 508 functions of frontend have incomplete tests
+## 505 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
     \-- api_array - 13 unit test calls shared by 37 classes
-    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- id_lst - 6 unit test calls shared by 8 classes
     \-- list - 8 unit test calls shared by 7 classes
     \-- load_like - 9 unit test calls shared by 6 classes
@@ -4968,7 +4965,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- type_list
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
@@ -5090,7 +5086,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- selector - 2 unit test calls shared by 24 classes
 \-- view_list
     \-- default_id - 1 unit test calls shared by 46 classes
-    \-- get_by_code_id - 6 unit test calls shared by 5 classes
     \-- load_by_component_id - 1 unit test calls shared by 2 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes

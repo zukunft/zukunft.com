@@ -164,17 +164,32 @@ class view_read_tests
         $test_name = '... but a view without an editor relation has no editor';
         $t->assert_null($test_name, $sys_word->editor_id);
 
-        // the editors change the database, so editor_views.json gives them the edit type
-        $test_name = 'the calculator editor is an edit view';
+        // the editors change other views, so editor_views.json gives them the editor type
+        $test_name = 'the calculator editor is an editor view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::CALCULATOR_EDITOR)?->type_code_id();
-        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
-        $test_name = 'the table editor is an edit view';
+        $t->assert($test_name, $msk_typ_code, view_type_shared::EDITOR);
+        $test_name = 'the table editor is an editor view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::TABLE_EDITOR)?->type_code_id();
-        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        $t->assert($test_name, $msk_typ_code, view_type_shared::EDITOR);
         // negative: the calculator only shows the phrase, so it keeps its phrase type
-        $test_name = '... but the calculator is no edit view';
+        $test_name = '... but the calculator is no editor view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::CALCULATOR)?->type_code_id();
-        $t->assert_not($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        $t->assert_not($test_name, $msk_typ_code, view_type_shared::EDITOR);
+
+        // the add, change and delete views change data, so system_views.json gives them the edit type
+        $test_name = 'the add word view is an edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_ADD)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        $test_name = 'the change word view is an edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_EDIT)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        $test_name = 'the delete word view is an edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_DEL)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        // negative: the login changes no data, so it keeps the system type
+        $test_name = '... but the login is no edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::LOGIN)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::SYSTEM);
 
         // check all system views
         // TODO Prio 2 activate

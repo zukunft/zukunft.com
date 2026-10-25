@@ -46,6 +46,7 @@ class view_types
     const string DETAIL = "detail_view";
     const string SYSTEM = "system";
     const string EXPORT = "export";
+    const string EDITOR = "editor";
 
     // object specific views
     const string WORD = "word";
@@ -72,6 +73,7 @@ class view_types
         self::MASK_DEFAULT,
         self::SYSTEM,
         self::EXPORT,
+        self::EDITOR,
     );
 
     // list of view types that are specific for other objects than words or triples

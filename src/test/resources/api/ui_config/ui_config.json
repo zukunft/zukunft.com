@@ -8202,7 +8202,7 @@
             {
                 "name": "edit",
                 "code_id": "mask_default",
-                "description": "a edit mask that is used to change data",
+                "description": "a view to change data e.g. to add, change or delete a word",
                 "id": 3
             },
             {
@@ -8336,6 +8336,12 @@
                 "code_id": "view_relation",
                 "description": "only expected to be used for view relation objects",
                 "id": 25
+            },
+            {
+                "name": "editor",
+                "code_id": "editor",
+                "description": "a view to change other views e.g. the calculator page of a word",
+                "id": 26
             }
         ],
         "view_styles": [
@@ -11512,7 +11518,7 @@
                 "protection": 3,
                 "name": "Change value",
                 "description": "Change just the number, text, time or geolocation of a value for the user without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_overwrite",
                 "components": [
                     {
@@ -11552,7 +11558,7 @@
                 "protection": 3,
                 "name": "Change result",
                 "description": "Change just the number of a result for the user without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_overwrite",
                 "components": [
                     {
@@ -11592,7 +11598,7 @@
                 "protection": 3,
                 "name": "Add value pure",
                 "description": "Create a new value by selecting its words and triples step by step without javascript and  without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_add_phrases",
                 "components": [
                     {
@@ -11642,7 +11648,7 @@
                 "protection": 3,
                 "name": "Add value",
                 "description": "Create a new value just by selecting its words and triples and entering the number without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_add_simple",
                 "components": [
                     {
@@ -11692,7 +11698,7 @@
                 "protection": 3,
                 "name": "Add word",
                 "description": "Create a new word just by its name without the confirm view if no term with the same name exists",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_add_simple",
                 "components": [
                     {
@@ -11732,7 +11738,7 @@
                 "protection": 3,
                 "name": "Add triple",
                 "description": "Create a new triple just by the phrases to connect",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_add_simple",
                 "components": [
                     {
@@ -15024,7 +15030,7 @@
                 "protection": 3,
                 "name": "Add word with details",
                 "description": "Create a new word with all parameters e.g. the phrase type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_add",
                 "components": [
                     {
@@ -15195,7 +15201,7 @@
                 "protection": 3,
                 "name": "Change word",
                 "description": "Change name, description or settings of a word",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_edit",
                 "components": [
                     {
@@ -15507,7 +15513,7 @@
                 "protection": 3,
                 "name": "Delete word",
                 "description": "Exclude or delete a word",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_del",
                 "components": [
                     {
@@ -15760,7 +15766,7 @@
                 "protection": 3,
                 "name": "Add triple with details",
                 "description": "Create a new triple with all parameters",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_add",
                 "components": [
                     {
@@ -16003,7 +16009,7 @@
                 "protection": 3,
                 "name": "Change triple",
                 "description": "Rename a triple",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_edit",
                 "components": [
                     {
@@ -16407,7 +16413,7 @@
                 "protection": 3,
                 "name": "Delete triple",
                 "description": "Exclude or delete a triple",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_del",
                 "components": [
                     {
@@ -16680,7 +16686,7 @@
                 "protection": 3,
                 "name": "Add value with details",
                 "description": "Create a new value",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_add",
                 "components": [
                     {
@@ -16849,7 +16855,7 @@
                 "protection": 3,
                 "name": "Change value with details",
                 "description": "Change a the details of a numeric value",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_edit",
                 "components": [
                     {
@@ -17031,7 +17037,7 @@
                 "protection": 3,
                 "name": "Delete value",
                 "description": "Exclude or delete a number",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_del",
                 "components": [
                     {
@@ -17133,7 +17139,7 @@
                 "protection": 3,
                 "name": "Add new formula",
                 "description": "Create a new formula with all parameters e.g. the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_add",
                 "components": [
                     {
@@ -17345,7 +17351,7 @@
                 "protection": 3,
                 "name": "Change formula",
                 "description": "Change a formula, the name or the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_edit",
                 "components": [
                     {
@@ -17676,7 +17682,7 @@
                 "protection": 3,
                 "name": "Delete formula",
                 "description": "To confirm the exclusion or deleting of a formula",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_del",
                 "components": [
                     {
@@ -17918,7 +17924,7 @@
                 "protection": 3,
                 "name": "Add result number",
                 "description": "Administrator can add manually a formula result e.g. for debugging",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_add",
                 "components": [
                     {
@@ -18089,7 +18095,7 @@
                 "protection": 3,
                 "name": "Change result with details",
                 "description": "Overwrite a result",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_edit",
                 "components": [
                     {
@@ -18260,7 +18266,7 @@
                 "protection": 3,
                 "name": "Delete result",
                 "description": "Exclude or delete a result",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_del",
                 "components": [
                     {
@@ -18393,7 +18399,7 @@
                 "protection": 3,
                 "name": "Add new source",
                 "description": "Create a new source with all parameters e.g. the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "source_add",
                 "components": [
                     {
@@ -18587,7 +18593,7 @@
                 "protection": 3,
                 "name": "Change source",
                 "description": "Rename a triple or change the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "source_edit",
                 "components": [
                     {
@@ -18910,7 +18916,7 @@
                 "protection": 3,
                 "name": "Delete source",
                 "description": "To confirm the exclusion or deleting of an external source",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "source_del",
                 "components": [
                     {
@@ -19151,7 +19157,7 @@
                 "protection": 3,
                 "name": "Add new reference",
                 "description": "Create a new data link to external systems",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "ref_add",
                 "components": [
                     {
@@ -19336,7 +19342,7 @@
                 "protection": 3,
                 "name": "Change reference",
                 "description": "Change then link to external system",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "ref_edit",
                 "components": [
                     {
@@ -19560,7 +19566,7 @@
                 "protection": 3,
                 "name": "Delete reference",
                 "description": "To confirm the exclusion or deleting of a reference",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "ref_del",
                 "components": [
                     {
@@ -19750,7 +19756,7 @@
                 "protection": 3,
                 "name": "Add new verb",
                 "description": "Request to add a new verb\/predicate",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "verb_add",
                 "components": [
                     {
@@ -19901,7 +19907,7 @@
                 "protection": 3,
                 "name": "Change verb",
                 "description": "Rename a verb\/predicate",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "verb_edit",
                 "components": [
                     {
@@ -20141,7 +20147,7 @@
                 "protection": 3,
                 "name": "Delete verb",
                 "description": "Exclude or delete a verb",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "verb_del",
                 "components": [
                     {
@@ -20342,7 +20348,7 @@
                 "protection": 3,
                 "name": "Add a group name",
                 "description": "Add a new group name",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "group_add",
                 "components": [
                     {
@@ -20437,7 +20443,7 @@
                 "protection": 3,
                 "name": "Change group",
                 "description": "Change a group name",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "group_edit",
                 "components": [
                     {
@@ -20532,7 +20538,7 @@
                 "protection": 3,
                 "name": "Delete group",
                 "description": "Exclude or delete a group name",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "group_del",
                 "components": [
                     {
@@ -20614,7 +20620,7 @@
                 "protection": 3,
                 "name": "Add formula link",
                 "description": "Create a new link between a formula and a phrase",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_link_add",
                 "components": [
                     {
@@ -20783,7 +20789,7 @@
                 "protection": 3,
                 "name": "Change formula link",
                 "description": "Change a link between a formula and a phrase",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_link_edit",
                 "components": [
                     {
@@ -20952,7 +20958,7 @@
                 "protection": 3,
                 "name": "Delete formula link",
                 "description": "To confirm the exclusion or deleting of a formula link",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_link_del",
                 "components": [
                     {
@@ -21123,7 +21129,7 @@
                 "protection": 3,
                 "name": "Add view link",
                 "description": "Create a new link between a view and a term",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_link_add",
                 "components": [
                     {
@@ -21303,7 +21309,7 @@
                 "protection": 3,
                 "name": "Change view link",
                 "description": "Change a link between a view and a term",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_link_edit",
                 "components": [
                     {
@@ -21483,7 +21489,7 @@
                 "protection": 3,
                 "name": "Delete view link",
                 "description": "To confirm the exclusion or deleting of a view link",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_link_del",
                 "components": [
                     {
@@ -21665,7 +21671,7 @@
                 "protection": 3,
                 "name": "Add view",
                 "description": "Create a new view and set the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_add",
                 "components": [
                     {
@@ -21930,7 +21936,7 @@
                 "protection": 3,
                 "name": "Change view",
                 "description": "Rename a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_edit",
                 "components": [
                     {
@@ -22209,7 +22215,7 @@
                 "protection": 3,
                 "name": "Delete view",
                 "description": "Exclude or delete a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_del",
                 "components": [
                     {
@@ -22393,7 +22399,7 @@
                 "protection": 3,
                 "name": "Add new view component",
                 "description": "Create a new view component with all parameters",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_add",
                 "components": [
                     {
@@ -22639,7 +22645,7 @@
                 "protection": 3,
                 "name": "Change view component",
                 "description": "Adjust a view component",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_edit",
                 "components": [
                     {
@@ -22908,7 +22914,7 @@
                 "protection": 3,
                 "name": "Delete view component",
                 "description": "Exclude or delete a view component",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_del",
                 "components": [
                     {
@@ -23093,7 +23099,7 @@
                 "protection": 3,
                 "name": "Add component link",
                 "description": "Create a new link between a component and a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_link_add",
                 "components": [
                     {
@@ -23273,7 +23279,7 @@
                 "protection": 3,
                 "name": "Change component link",
                 "description": "Change a link between a component and a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_link_edit",
                 "components": [
                     {
@@ -23453,7 +23459,7 @@
                 "protection": 3,
                 "name": "Delete component link",
                 "description": "To confirm the exclusion or deleting of a component link",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_link_del",
                 "components": [
                     {
@@ -23625,7 +23631,7 @@
                 "protection": 3,
                 "name": "Add view relation",
                 "description": "Create a new relation between two views",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_relation_add",
                 "components": [
                     {
@@ -23794,7 +23800,7 @@
                 "protection": 3,
                 "name": "Change view relation",
                 "description": "Change a relation between a component and a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_relation_edit",
                 "components": [
                     {
@@ -23972,7 +23978,7 @@
                 "protection": 3,
                 "name": "Delete view relation",
                 "description": "To confirm the exclusion or deleting of a view relation",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_relation_del",
                 "components": [
                     {
@@ -24192,7 +24198,7 @@
                 "protection": 3,
                 "name": "Confirm adding",
                 "description": "Ask the user for confirmation of the changes to be written to the database",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "confirm_add",
                 "components": [
                     {
@@ -24293,7 +24299,7 @@
                 "protection": 3,
                 "name": "Confirm update",
                 "description": "Show the impact of the changes to the user and ask the user for confirmation",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "confirm_update",
                 "components": [
                     {
@@ -24402,7 +24408,7 @@
                 "protection": 3,
                 "name": "Confirm delete",
                 "description": "Show the impact of the deletion to the user and ask the user for confirmation",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "confirm_delete",
                 "components": [
                     {
@@ -24502,7 +24508,7 @@
                 "protection": 3,
                 "name": "Change confirm view",
                 "description": "show the old and the new view and let the user confirm the change",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_preview",
                 "components": [
                     {
@@ -25619,7 +25625,7 @@
                 "protection": 3,
                 "name": "Admin add user",
                 "description": "View for administrators to create a new user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "admin_user_add",
                 "components": [
                     {
@@ -25744,7 +25750,7 @@
                 "protection": 3,
                 "name": "Admin change user",
                 "description": "View for administrators to update a user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "admin_user_edit",
                 "components": [
                     {
@@ -25880,7 +25886,7 @@
                 "protection": 3,
                 "name": "Admin delete user",
                 "description": "View for administrators to delete or exclude a new user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "admin_user_del",
                 "components": [
                     {
@@ -26023,7 +26029,7 @@
                 "id": 134,
                 "name": "System Error List",
                 "description": "List the system errors and allow the user to change the status",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "error_update",
                 "components": [
                     {
@@ -27473,7 +27479,7 @@
                 "protection": 3,
                 "name": "Add language",
                 "description": "Add a language by an admin user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "language_add",
                 "components": [
                     {
@@ -27598,7 +27604,7 @@
                 "protection": 3,
                 "name": "Change language",
                 "description": "Change a language name or symbol by an admin user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "language_edit",
                 "components": [
                     {
@@ -27723,7 +27729,7 @@
                 "protection": 3,
                 "name": "Delete language",
                 "description": "View for administrators to delete a language",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "language_del",
                 "components": [
                     {
@@ -28404,7 +28410,7 @@
                 "id": 195,
                 "name": "Table editor",
                 "description": "placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",
-                "type_id": 3,
+                "type_id": 26,
                 "code_id": "table_editor",
                 "components": [
                     {
@@ -28463,7 +28469,7 @@
                 "id": 196,
                 "name": "Calculator editor",
                 "description": "the editor to define the calculator page of a word or triple",
-                "type_id": 3,
+                "type_id": 26,
                 "code_id": "calculator_editor",
                 "components": [
                     {
@@ -35951,6 +35957,16 @@
                 "latex": "\\text{one} = \\text{thousand} \\cdot 1000"
             },
             {
+                "id": 16,
+                "protection": 3,
+                "name": "scale million to one",
+                "description": "convert numbers in millions to one and back",
+                "type_id": 1,
+                "user_text": "\"one\" = \"million\" * 1000000",
+                "ref_text": "{w4}={w158}*1000000",
+                "latex": "\\text{one} = \\text{m} \\cdot 1000000"
+            },
+            {
                 "id": 17,
                 "name": "scale billion to one",
                 "description": "convert numbers in billions (thousand millions) to one and back, so that a value given in billions can be compared and calculated with values given in ones",
@@ -35976,16 +35992,6 @@
                 "user_text": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
                 "ref_text": "{w283}={w283},{w160}*{w198},{w14},{w282}",
                 "latex": "\\text{htp} = \\text{htp},\\text{%} \\cdot \\text{global},\\text{human},\\text{population}"
-            },
-            {
-                "id": 16,
-                "protection": 3,
-                "name": "scale million to one",
-                "description": "convert numbers in millions to one and back",
-                "type_id": 1,
-                "user_text": "\"one\" = \"million\" * 1000000",
-                "ref_text": "{w4}={w158}*1000000",
-                "latex": "\\text{one} = \\text{m} \\cdot 1000000"
             },
             {
                 "id": 109,

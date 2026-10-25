@@ -393,7 +393,7 @@ class system_view_ui_tests
         $t->assert_false($test_name, in_array(views::EXPORT_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the start view is not blocked for an ip user';
         $t->assert_false($test_name, in_array(views::START_ID, views::IP_BLOCKED_MASKS_IDS));
-        // the editors are edit views, because their save changes the database
+        // the editors are blocked like the edit views, because their save changes the database
         $test_name = 'the calculator editor is blocked for an ip user';
         $t->assert_true($test_name, in_array(views::CALCULATOR_EDITOR_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the table editor is blocked for an ip user';

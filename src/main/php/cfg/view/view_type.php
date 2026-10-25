@@ -50,11 +50,14 @@ class view_type extends type_object
     const string WORD_DEFAULT = "word_default";
     const string DETAIL = "detail_view";
     const string SYSTEM = "system";
+    const string EDITOR = "editor";
 
     // list of view types that are used by the system
     // and should not be assignable by users
     const array SYSTEM_TYPES = array(
-        self::SYSTEM
+        self::SYSTEM,
+        self::MASK_DEFAULT,
+        self::EDITOR,
     );
 
 

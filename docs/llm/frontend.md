@@ -65,9 +65,12 @@ the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
 beyond the safe integer of javascript e.g. the group id of a value is read and
 sent as text.
 
-The editors (`views::EDITOR_MASKS_IDS`, the calculator and the table editor) have
-the view type `mask_default`, because their save changes the database, and show
-the phrase of the url like the page they edit (`views::PHRASE_MASKS_IDS`). A user
+The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
+views) have the view type `mask_default` ("edit"); the editors
+(`views::EDITOR_MASKS_IDS`, the calculator and the table editor) change other views
+and have the view type `editor`. Both are system types (`view_types::SYSTEM_TYPES`),
+so a user cannot assign them to a word or triple. The editors show the phrase of the
+url like the page they edit (`views::PHRASE_MASKS_IDS`). A user
 who may not change the database (`user::is_blocked`) is answered like on every
 other change view (`views::IP_BLOCKED_MASKS_IDS`, `http/view.php`): the message
 `CHANGE_BLOCKED_FOR_IP_USER` on the back page or, without one, on the page the

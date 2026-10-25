@@ -2,12 +2,6 @@
 
 ## view types
 
-add a new view_type 'editor' that is a view to change other views.
-Change the description of the 'edit' (mask_default) view type so that these are views to change data
-whereas 'editor' views are views to change other views
-Assign the 'Calculator Editor' view and the 'Table editor' view to 'editor'
-and assign the add, change and delete views to the 'edit' view type.
-
 Review the view types of all views and create here a list of suggested changes
 
 ### view selector

@@ -3261,7 +3261,7 @@
       "name": "Change value",
       "description": "Change just the number, text, time or geolocation of a value for the user without the confirm view",
       "code_id": "value_overwrite",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -3282,7 +3282,7 @@
       "name": "Change result",
       "description": "Change just the number of a result for the user without the confirm view",
       "code_id": "result_overwrite",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -3303,7 +3303,7 @@
       "name": "Add value pure",
       "description": "Create a new value by selecting its words and triples step by step without javascript and  without the confirm view",
       "code_id": "value_add_phrases",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -3328,7 +3328,7 @@
       "name": "Add value",
       "description": "Create a new value just by selecting its words and triples and entering the number without the confirm view",
       "code_id": "value_add_simple",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -3353,7 +3353,7 @@
       "name": "Add word",
       "description": "Create a new word just by its name without the confirm view if no term with the same name exists",
       "code_id": "word_add_simple",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -3374,7 +3374,7 @@
       "name": "Add triple",
       "description": "Create a new triple just by the phrases to connect",
       "code_id": "triple_add_simple",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5000,7 +5000,7 @@
       "name": "Add word with details",
       "description": "Create a new word with all parameters e.g. the phrase type",
       "code_id": "word_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5074,7 +5074,7 @@
       "name": "Change word",
       "description": "Change name, description or settings of a word",
       "code_id": "word_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5212,7 +5212,7 @@
       "name": "Delete word",
       "description": "Exclude or delete a word",
       "code_id": "word_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5325,7 +5325,7 @@
       "name": "Add triple with details",
       "description": "Create a new triple with all parameters",
       "code_id": "triple_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5431,7 +5431,7 @@
       "name": "Change triple",
       "description": "Rename a triple",
       "code_id": "triple_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5609,7 +5609,7 @@
       "name": "Delete triple",
       "description": "Exclude or delete a triple",
       "code_id": "triple_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5730,7 +5730,7 @@
       "name": "Add value with details",
       "description": "Create a new value",
       "code_id": "value_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5802,7 +5802,7 @@
       "name": "Change value with details",
       "description": "Change a the details of a numeric value",
       "code_id": "value_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5880,7 +5880,7 @@
       "name": "Delete value",
       "description": "Exclude or delete a number",
       "code_id": "value_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -5925,7 +5925,7 @@
       "name": "Add new formula",
       "description": "Create a new formula with all parameters e.g. the type",
       "code_id": "formula_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6016,7 +6016,7 @@
       "name": "Change formula",
       "description": "Change a formula, the name or the type",
       "code_id": "formula_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6160,7 +6160,7 @@
       "name": "Delete formula",
       "description": "To confirm the exclusion or deleting of a formula",
       "code_id": "formula_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6271,7 +6271,7 @@
       "name": "Add result number",
       "description": "Administrator can add manually a formula result e.g. for debugging",
       "code_id": "result_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6342,7 +6342,7 @@
       "name": "Change result with details",
       "description": "Overwrite a result",
       "code_id": "result_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6413,7 +6413,7 @@
       "name": "Delete result",
       "description": "Exclude or delete a result",
       "code_id": "result_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6475,7 +6475,7 @@
       "name": "Add new source",
       "description": "Create a new source with all parameters e.g. the type",
       "code_id": "source_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6559,7 +6559,7 @@
       "name": "Change source",
       "description": "Rename a triple or change the type",
       "code_id": "source_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6699,7 +6699,7 @@
       "name": "Delete source",
       "description": "To confirm the exclusion or deleting of an external source",
       "code_id": "source_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6804,7 +6804,7 @@
       "name": "Add new reference",
       "description": "Create a new data link to external systems",
       "code_id": "ref_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6886,7 +6886,7 @@
       "name": "Change reference",
       "description": "Change then link to external system",
       "code_id": "ref_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -6985,7 +6985,7 @@
       "name": "Delete reference",
       "description": "To confirm the exclusion or deleting of a reference",
       "code_id": "ref_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7072,7 +7072,7 @@
       "name": "Add new verb",
       "description": "Request to add a new verb/predicate",
       "code_id": "verb_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7139,7 +7139,7 @@
       "name": "Change verb",
       "description": "Rename a verb/predicate",
       "code_id": "verb_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7245,7 +7245,7 @@
       "name": "Delete verb",
       "description": "Exclude or delete a verb",
       "code_id": "verb_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7333,7 +7333,7 @@
       "name": "Add a group name",
       "description": "Add a new group name",
       "code_id": "group_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7375,7 +7375,7 @@
       "name": "Change group",
       "description": "Change a group name",
       "code_id": "group_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7417,7 +7417,7 @@
       "name": "Delete group",
       "description": "Exclude or delete a group name",
       "code_id": "group_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7454,7 +7454,7 @@
       "name": "Add formula link",
       "description": "Create a new link between a formula and a phrase",
       "code_id": "formula_link_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7527,7 +7527,7 @@
       "name": "Change formula link",
       "description": "Change a link between a formula and a phrase",
       "code_id": "formula_link_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7600,7 +7600,7 @@
       "name": "Delete formula link",
       "description": "To confirm the exclusion or deleting of a formula link",
       "code_id": "formula_link_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7677,7 +7677,7 @@
       "name": "Add view link",
       "description": "Create a new link between a view and a term",
       "code_id": "view_link_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7755,7 +7755,7 @@
       "name": "Change view link",
       "description": "Change a link between a view and a term",
       "code_id": "view_link_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7833,7 +7833,7 @@
       "name": "Delete view link",
       "description": "To confirm the exclusion or deleting of a view link",
       "code_id": "view_link_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -7916,7 +7916,7 @@
       "name": "Add view",
       "description": "Create a new view and set the type",
       "code_id": "view_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8032,7 +8032,7 @@
       "name": "Change view",
       "description": "Rename a view",
       "code_id": "view_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8153,7 +8153,7 @@
       "name": "Delete view",
       "description": "Exclude or delete a view",
       "code_id": "view_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8241,7 +8241,7 @@
       "name": "Add new view component",
       "description": "Create a new view component with all parameters",
       "code_id": "component_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8344,7 +8344,7 @@
       "name": "Change view component",
       "description": "Adjust a view component",
       "code_id": "component_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8456,7 +8456,7 @@
       "name": "Delete view component",
       "description": "Exclude or delete a view component",
       "code_id": "component_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8545,7 +8545,7 @@
       "name": "Add component link",
       "description": "Create a new link between a component and a view",
       "code_id": "component_link_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8625,7 +8625,7 @@
       "name": "Change component link",
       "description": "Change a link between a component and a view",
       "code_id": "component_link_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8705,7 +8705,7 @@
       "name": "Delete component link",
       "description": "To confirm the exclusion or deleting of a component link",
       "code_id": "component_link_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8784,7 +8784,7 @@
       "name": "Add view relation",
       "description": "Create a new relation between two views",
       "code_id": "view_relation_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8857,7 +8857,7 @@
       "name": "Change view relation",
       "description": "Change a relation between a component and a view",
       "code_id": "view_relation_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -8934,7 +8934,7 @@
       "name": "Delete view relation",
       "description": "To confirm the exclusion or deleting of a view relation",
       "code_id": "view_relation_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9031,7 +9031,7 @@
       "name": "Confirm adding",
       "description": "Ask the user for confirmation of the changes to be written to the database",
       "code_id": "confirm_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9077,7 +9077,7 @@
       "name": "Confirm update",
       "description": "Show the impact of the changes to the user and ask the user for confirmation",
       "code_id": "confirm_update",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9127,7 +9127,7 @@
       "name": "Confirm delete",
       "description": "Show the impact of the deletion to the user and ask the user for confirmation",
       "code_id": "confirm_delete",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9172,7 +9172,7 @@
       "name": "Change confirm view",
       "description": "show the old and the new view and let the user confirm the change",
       "code_id": "view_preview",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9745,7 +9745,7 @@
       "name": "Admin add user",
       "description": "View for administrators to create a new user",
       "code_id": "admin_user_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9799,7 +9799,7 @@
       "name": "Admin change user",
       "description": "View for administrators to update a user",
       "code_id": "admin_user_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9857,7 +9857,7 @@
       "name": "Admin delete user",
       "description": "View for administrators to delete or exclude a new user",
       "code_id": "admin_user_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -9922,7 +9922,7 @@
     {
       "name": "System Error List",
       "description": "List the system errors and allow the user to change the status",
-      "type": "system",
+      "type": "mask_default",
       "code_id": "error_update",
       "components": [
         {
@@ -10616,7 +10616,7 @@
       "name": "Add language",
       "description": "Add a language by an admin user",
       "code_id": "language_add",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -10670,7 +10670,7 @@
       "name": "Change language",
       "description": "Change a language name or symbol by an admin user",
       "code_id": "language_edit",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -10724,7 +10724,7 @@
       "name": "Delete language",
       "description": "View for administrators to delete a language",
       "code_id": "language_del",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
