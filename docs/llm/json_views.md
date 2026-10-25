@@ -284,8 +284,8 @@ object type:
 
 - `name` is the unique display name; `code_id` is the stable internal key
   (`word_default`, `triple_default`, …).
-- `type` is the main object the view renders (`word`, `triple`, `verb`, `source`,
-  `formula`, …).
+- `type` is the main object the view renders (`word`, `triple`, `phrase` for a word
+  or a triple, `verb`, `source`, `formula`, …).
 - `components` is the ordered list of component links. Each entry references a
   component **by `name`** — defined in the `components` block above or re-declared
   canonically (see *Components*) — plus the link-only fields `position`,

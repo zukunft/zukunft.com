@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1478 of 6223 public functions have at least 2 unit test calls; the 4540 functions below do not; the 205 functions of the last section are called nowhere
+1486 of 6224 public functions have at least 2 unit test calls; the 4533 functions below do not; the 205 functions of the last section are called nowhere
 
-## 2038 functions of main backend have no test at all
+## 2035 functions of main backend have no test at all
 
 ```
 \-- application
@@ -242,8 +242,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_term_by_name - 0 unit test calls shared by 2 classes
     \-- get_word_by_name - 0 unit test calls
     \-- has_view_list - 0 unit test calls shared by 2 classes
-    \-- load_system_formulas - 0 unit test calls
-    \-- load_system_phrases - 0 unit test calls
     \-- load_system_views - 0 unit test calls
     \-- reference_list - 0 unit test calls
     \-- set_term_list - 0 unit test calls
@@ -497,7 +495,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- delta - 0 unit test calls shared by 32 classes
     \-- formula_word - 0 unit test calls
     \-- generate_ref_text - 0 unit test calls shared by 2 classes
-    \-- get_usr_text - 0 unit test calls shared by 2 classes
     \-- import_obj - 0 unit test calls shared by 18 classes
     \-- is_predefined - 0 unit test calls
     \-- is_std - 0 unit test calls shared by 5 classes
@@ -2298,7 +2295,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 887 functions of frontend have no test at all
+## 886 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2469,7 +2466,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- dsp_type_selector - 0 unit test calls shared by 2 classes
     \-- dsp_unlink_phr - 0 unit test calls
     \-- edit_link - 0 unit test calls shared by 3 classes
-    \-- get_usr_text - 0 unit test calls shared by 2 classes
     \-- impact - 0 unit test calls shared by 9 classes
     \-- need_all - 0 unit test calls shared by 2 classes
     \-- ref_text - 0 unit test calls shared by 2 classes
@@ -3287,7 +3283,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1013 functions of main backend have incomplete tests
+## 1014 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3318,7 +3314,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- combine_named
     \-- exclude - 4 unit test calls shared by 4 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- include - 2 unit test calls shared by 4 classes
     \-- is_excluded - 3 unit test calls shared by 7 classes
     \-- obj_id - 4 unit test calls shared by 6 classes
@@ -3386,6 +3382,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- ip_range_list - 1 unit test calls
     \-- load - 6 unit test calls shared by 17 classes
+    \-- load_system_formulas - 1 unit test calls
+    \-- load_system_phrases - 1 unit test calls
     \-- result_list - 5 unit test calls shared by 3 classes
     \-- save - 51 unit test calls shared by 27 classes
     \-- set_user - 10 unit test calls shared by 15 classes
@@ -3559,7 +3557,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- del - 17 unit test calls shared by 21 classes
     \-- fill - 15 unit test calls shared by 36 classes
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- id_fvt_lst - 3 unit test calls shared by 3 classes
     \-- id_lst - 6 unit test calls shared by 8 classes
     \-- import_mapper - 16 unit test calls shared by 38 classes
@@ -3674,7 +3672,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- direct_children - 1 unit test calls shared by 3 classes
     \-- fill - 15 unit test calls shared by 36 classes
     \-- from_id - 1 unit test calls shared by 3 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- get_impact - 1 unit test calls shared by 4 classes
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- get_verb_id - 1 unit test calls shared by 3 classes
@@ -3745,7 +3743,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- fill - 15 unit test calls shared by 36 classes
     \-- from_id - 1 unit test calls shared by 3 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- get_key - 2 unit test calls shared by 3 classes
     \-- get_source - 2 unit test calls shared by 4 classes
     \-- import_mapper - 16 unit test calls shared by 38 classes
@@ -3872,7 +3870,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
     \-- diff_msg - 32 unit test calls shared by 28 classes
     \-- fill - 15 unit test calls shared by 36 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- import_mapper - 16 unit test calls shared by 38 classes
     \-- is_id_key_updated - 2 unit test calls shared by 3 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
@@ -3940,7 +3938,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
     \-- diff_msg - 32 unit test calls shared by 28 classes
     \-- fill - 15 unit test calls shared by 36 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- import_mapper - 16 unit test calls shared by 38 classes
     \-- is_id_key_updated - 2 unit test calls shared by 3 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
@@ -3968,7 +3966,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- dsp - 5 unit test calls shared by 4 classes
     \-- fill - 15 unit test calls shared by 36 classes
     \-- formula_id - 1 unit test calls shared by 4 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- get_source - 2 unit test calls shared by 4 classes
     \-- get_value - 8 unit test calls shared by 7 classes
     \-- id_fvt_lst - 3 unit test calls shared by 3 classes
@@ -4148,7 +4146,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- diff_msg - 32 unit test calls shared by 28 classes
     \-- fill - 15 unit test calls shared by 36 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- get_from - 5 unit test calls shared by 3 classes
     \-- get_impact - 1 unit test calls shared by 4 classes
     \-- get_to - 4 unit test calls shared by 3 classes
@@ -4203,7 +4201,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
     \-- fill - 15 unit test calls shared by 36 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- import_mapper - 16 unit test calls shared by 38 classes
     \-- is_key_updated - 1 unit test calls shared by 7 classes
     \-- is_same - 6 unit test calls shared by 14 classes
@@ -4249,7 +4247,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- sql_update - 2 unit test calls shared by 8 classes
 \-- user_list
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- id_lst - 6 unit test calls shared by 8 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
@@ -4348,7 +4345,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- del - 17 unit test calls shared by 21 classes
     \-- fill - 15 unit test calls shared by 36 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- import_mapper - 16 unit test calls shared by 38 classes
     \-- load_by_code_id - 1 unit test calls shared by 6 classes
@@ -4463,7 +4460,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- save - 51 unit test calls shared by 27 classes
 ```
 
-## 37 functions of shared have incomplete tests
+## 36 functions of shared have incomplete tests
 
 ```
 \-- CombineObject
@@ -4478,7 +4475,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedCodeObjects
     \-- clone_reset - 9 unit test calls shared by 11 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
     \-- set_lst - 5 unit test calls shared by 5 classes
 \-- ListOfIdNamedObjects
     \-- clone_reset - 9 unit test calls shared by 11 classes
@@ -4520,12 +4516,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 508 functions of frontend have incomplete tests
+## 505 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
     \-- api_array - 13 unit test calls shared by 37 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
     \-- id_lst - 6 unit test calls shared by 8 classes
     \-- list - 8 unit test calls shared by 7 classes
     \-- load_like - 9 unit test calls shared by 6 classes
@@ -4555,7 +4550,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- field - 1 unit test calls shared by 2 classes
 \-- combine_named
     \-- api_array - 13 unit test calls shared by 37 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- obj_id - 4 unit test calls shared by 6 classes
     \-- set_description - 9 unit test calls shared by 10 classes
     \-- set_type_id - 1 unit test calls shared by 7 classes
@@ -4616,7 +4611,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- del - 17 unit test calls shared by 21 classes
     \-- formula_selector - 2 unit test calls shared by 4 classes
     \-- formula_type_selector - 2 unit test calls shared by 2 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- phrase_name - 2 unit test calls shared by 4 classes
     \-- ref_selector - 1 unit test calls shared by 2 classes
@@ -4662,7 +4657,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
     \-- display - 9 unit test calls shared by 24 classes
     \-- formula_selector - 2 unit test calls shared by 4 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- link_preview - 2 unit test calls shared by 2 classes
     \-- link_type - 2 unit test calls shared by 5 classes
     \-- phrase_name - 2 unit test calls shared by 4 classes
@@ -4783,7 +4778,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
     \-- display - 9 unit test calls shared by 24 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- has_phrase - 2 unit test calls shared by 2 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- name_link - 12 unit test calls shared by 22 classes
@@ -4810,7 +4805,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- expression_latex_link - 4 unit test calls shared by 3 classes
     \-- formula_id - 1 unit test calls shared by 4 classes
     \-- formula_selector - 2 unit test calls shared by 4 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
 \-- result_list
     \-- add_result - 1 unit test calls shared by 2 classes
@@ -4845,7 +4840,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- calc_view_id - 1 unit test calls shared by 2 classes
     \-- display - 9 unit test calls shared by 24 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
     \-- set_description - 9 unit test calls shared by 10 classes
@@ -4928,7 +4923,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- term_view
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- get_style_id - 2 unit test calls shared by 8 classes
     \-- link_type - 2 unit test calls shared by 5 classes
     \-- set_type_id - 1 unit test calls shared by 7 classes
@@ -4968,7 +4963,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- type_list
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
@@ -4985,7 +4979,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- type_object
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- get_code_id - 11 unit test calls shared by 12 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
     \-- select_list_item - 1 unit test calls shared by 3 classes
@@ -5005,7 +4999,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- can_set_code_id - 2 unit test calls shared by 2 classes
     \-- display - 9 unit test calls shared by 24 classes
     \-- form_edit - 1 unit test calls shared by 2 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- is_developer - 2 unit test calls shared by 2 classes
     \-- is_system - 2 unit test calls shared by 3 classes
     \-- is_unique - 2 unit test calls shared by 4 classes
@@ -5041,7 +5035,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
     \-- display - 9 unit test calls shared by 24 classes
     \-- get - 15 unit test calls shared by 14 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- is_id_set - 4 unit test calls shared by 6 classes
     \-- load_by_id_with_related - 3 unit test calls shared by 17 classes
     \-- name_link - 12 unit test calls shared by 22 classes
@@ -5090,7 +5084,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- selector - 2 unit test calls shared by 24 classes
 \-- view_list
     \-- default_id - 1 unit test calls shared by 46 classes
-    \-- get_by_code_id - 3 unit test calls shared by 5 classes
     \-- load_by_component_id - 1 unit test calls shared by 2 classes
     \-- name_link - 12 unit test calls shared by 22 classes
     \-- name_tip - 3 unit test calls shared by 15 classes
@@ -5099,7 +5092,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- api_array - 13 unit test calls shared by 37 classes
     \-- child - 1 unit test calls shared by 2 classes
     \-- db_fld_to_url - 6 unit test calls shared by 13 classes
-    \-- get_description - 21 unit test calls shared by 21 classes
+    \-- get_description - 23 unit test calls shared by 21 classes
     \-- link_type - 2 unit test calls shared by 5 classes
     \-- url_mapper - 42 unit test calls shared by 27 classes
 \-- view_relation_type_list

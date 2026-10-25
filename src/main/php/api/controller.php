@@ -235,8 +235,7 @@ class controller
         if ($msg->all_message_text() == '') {
             $msg->add(msg_id::REQUEST_NOT_PERMITTED, []);
         }
-        $this->set_response_code(401);
-        $this->curl_response('', $msg->all_message_text(), rest_ctrl::GET);
+        $this->get_response('', $msg->all_message_text(), 401);
     }
 
     /**
@@ -358,9 +357,10 @@ class controller
      *
      * @param string $api_obj the object as a json string that should be returned
      * @param string $msg the message as a json string that should be returned
+     * @param int $err_code the http status of an answer with a message e.g. 401 for a refused request
      * @return void
      */
-    private function get_response(string $api_obj, string $msg): void
+    private function get_response(string $api_obj, string $msg, int $err_code = 400): void
     {
         // required headers
         if (!headers_sent()) {
@@ -383,8 +383,8 @@ class controller
 
         } else {
 
-            // set response code - 400 Bad Request
-            $this->set_response_code(400);
+            // set response code e.g. 400 Bad Request
+            $this->set_response_code($err_code);
 
             // tell the user no products found
             echo json_encode(

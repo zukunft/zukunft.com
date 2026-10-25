@@ -205,6 +205,7 @@
       "name": "Ranking",
       "description": "the default view for all phrases where a better could be selected",
       "code_id": "ranking",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
@@ -227,6 +228,7 @@
       "name": "Science",
       "description": "show mainly related words that are relevant in sciences",
       "code_id": "science",
+      "type": "phrase",
       "assigned": [
         "mathematics"
       ]
@@ -235,6 +237,7 @@
       "name": "Historic",
       "description": "show the related words in historic order",
       "code_id": "hist",
+      "type": "phrase",
       "assigned": [
         "mathematics"
       ]
@@ -243,6 +246,7 @@
       "name": "Biological",
       "description": "show what is relevant from the biological point of view",
       "code_id": "bio",
+      "type": "phrase",
       "assigned": [
         "Tomatoes"
       ]
@@ -251,6 +255,7 @@
       "name": "Education",
       "description": "sort related topics by difficulty",
       "code_id": "edu",
+      "type": "phrase",
       "assigned": [
         "mathematics"
       ]
@@ -259,6 +264,7 @@
       "name": "Touristic",
       "description": "show things to see",
       "code_id": "touristic",
+      "type": "phrase",
       "assigned": [
         "mathematics"
       ]
@@ -267,6 +273,7 @@
       "name": "Graph",
       "description": "show the related topics as a visual graph",
       "code_id": "graph",
+      "type": "phrase",
       "assigned": [
         "mathematics"
       ]
@@ -275,6 +282,7 @@
       "name": "Simple",
       "description": "show only the most relevant facts",
       "code_id": "simple",
+      "type": "phrase",
       "assigned": [
         "mathematics"
       ]
@@ -283,6 +291,7 @@
       "name": "Mathematical constant",
       "description": "Show a mathematical constant and the related words and formulas",
       "code_id": "math_const",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
@@ -306,6 +315,7 @@
       "name": "problem with solutions",
       "description": "Explain a problem and show the potential solutions",
       "code_id": "global_problem",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
@@ -332,6 +342,7 @@
       "name": "Currency",
       "description": "Show a currency with the most relevant exchange rates and related formulas",
       "code_id": "currency",
+      "type": "phrase",
       "components": [
         {
           "position": "1",

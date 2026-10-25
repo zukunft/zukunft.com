@@ -1,17 +1,23 @@
 # pending - list of planned llm prompts with prio 1
 
-## Calculator editor
+## assigned views
 
-### don't load verbs from api
+change the existing view 'Mathematical constant' (185, code_id math_const in base_views.json)
+so that it mainly shows all math const with the description and some main formulas
+and assign it to the triple 'mathematical constant'
+add a test that the direct assigned view is on top of the views in the view tab
+add a test that the parent view is shown almost on top of the views in the view tab for a math const like pi
 
-add a typeList json to the Calculator Editor that contains the result of a /api/typeLists call
-the json is expected to contain all verbs so instead of calling the api to get the verbs, pick the verbs from the type json
+### view selector
 
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
+in the navbar 'edit icon' menu the top entry is at the moment 'alternative'.
+Replace this with the concrete names of the suggested views related to the object shown
+e.g.
+for a word first show the view names that have a direct link to the word
+and create a sample test case for it if there is none yet
+second list the views linked to the parent with a test case
+and third show the names of the 'for words only' views
+after each name should be a switch and an edit icon like in the views tab
 
 ## start view
 
@@ -63,6 +69,25 @@ where alternative is the same style as 'columns and values'
 
 if done the '...' menu can be removed
 
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
+## pure HTML ans javascript views
+
+add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a javasript version exists use the javascrip version
+
+create a javascript version of the formula editor view
+
+## calculator
+
+### base on json
+
+check if the calculator e.g. http://localhost/http/view.php?m=16&id=-2780&debug=9 can be 
+based on the /api/phraseData and /api/typeLists json similar to the  'Calculator editor' e.g. http://localhost/http/view.php?m=196&id=-2780&u=11
+
 ## calculation editor
 
 ### update json message
@@ -81,6 +106,7 @@ create test cased for all possible change types in the calculation editor.
 For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
 
 for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
+
 
 ### general
 

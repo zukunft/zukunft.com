@@ -54,12 +54,33 @@ phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and
 static files `src/main/resources/script/calculator_editor.js` and
 `style/calculator_editor.css` (`files::CALCULATOR_EDITOR_SCRIPT`,
 `files::CALCULATOR_EDITOR_STYLE`); the script builds the editor from that seed and
-reads another phrase with one phraseData call. The save posts one update put
-message with the changes to `/api/updatePut` (`cfg/import/update_put.php`, see
+reads another phrase with one phraseData call. The page also embeds the verbs and
+the unit and scaling phrases of the frontend type cache with their id and name in
+the format of the typeLists api (`system_page::calculator_editor_types`), so that
+the script finds the id of a verb and knows a unit without an api call; only
+these, because the whole typeLists answer is much larger than the page. The save posts one update put
+message with the changes to `/api/updatePut/` (`cfg/import/update_put.php`, see
 `docs/llm/json_structure.md` "Update put message"), with the session token of
 the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
 beyond the safe integer of javascript e.g. the group id of a value is read and
 sent as text.
+
+The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
+views, and e.g. the undo or the paste table view) have the view type `mask_default`
+("edit"); the import views have the view type `import`; the editors
+(`views::EDITOR_MASKS_IDS`, the calculator and the table editor) change other views
+and have the view type `editor`. These and the `sub` views are system types
+(`view_types::SYSTEM_TYPES`), so a user cannot assign them to a word or triple. A view
+for a word or a triple, e.g. the calculator or the table, has the view type `phrase`,
+so that a view without a fixed view id gets the word or triple of the url
+(`frontend::dbo_ui_by_view_type`). The detail views of an object have the type of
+the object, e.g. `word` or `value`; the view type `detail_view` says nothing about
+the object, so a view of this type is not offered for a word or triple (`view_types::NON_PHRASE_TYPES`). The editors show the phrase of the
+url like the page they edit (`views::PHRASE_MASKS_IDS`). A user
+who may not change the database (`user::is_blocked`) is answered like on every
+other change view (`views::IP_BLOCKED_MASKS_IDS`, `http/view.php`): the message
+`CHANGE_BLOCKED_FOR_IP_USER` on the back page or, without one, on the page the
+editor edits (`views::change_to_show_id`), e.g. the calculator of the phrase.
 
 ### The save of a calculator page
 
@@ -849,7 +870,7 @@ digits (default 4):
   2'000 kg is 2.0 t
 
 A detail table names the unit in its header, so its columns share the decimals
-only. The formulas are the ones linked to the measure units of the system phrases
+only. The formulas are the ones linked to the measure units and the scaling words of the system phrases
 (`data_object::load_system_formulas`, `system_formulas` of the ui config api), and
 the browser recalculation writes a cell with the factor and the decimals of its
 group (`ui_list::calculator_cell_format`, `calculator.js`). A percent symbol is a

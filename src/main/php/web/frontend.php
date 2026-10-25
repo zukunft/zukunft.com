@@ -3221,18 +3221,20 @@ class frontend
     /**
      * the page object of a view that no system view id list names, e.g. a view defined by a
      * data file such as the use case view of "PV in Switzerland": the type of the view says
-     * which object the page shows, so a view typed "triple" gets a triple and a view typed
-     * "word" a word; any other type falls back to a word and is reported, because the page
-     * would show the wrong object
+     * which object the page shows, so a view typed "triple" gets a triple, a view typed
+     * "word" a word and a view typed "phrase" the word or triple of the url; any other type
+     * falls back to a word and is reported, because the page would show the wrong object
      *
      * @param int $view_id the id of the view to show
-     * @return word_ui|triple_ui the object the view shows
+     * @return word_ui|triple_ui|phrase_ui the object the view shows
      */
-    private function dbo_ui_by_view_type(int $view_id): word_ui|triple_ui
+    private function dbo_ui_by_view_type(int $view_id): word_ui|triple_ui|phrase_ui
     {
         $msk = $this->dto?->typ_lst_cache?->get_view_by_id($view_id);
         $typ_id = $msk?->type_id(new user_message_ui());
-        if ($typ_id == $this->dto?->typ_lst_cache?->msk_typ?->id(view_types::TRIPLE)) {
+        if ($typ_id == $this->dto?->typ_lst_cache?->msk_typ?->id(view_types::PHRASE)) {
+            $dbo_ui = new phrase_ui();
+        } elseif ($typ_id == $this->dto?->typ_lst_cache?->msk_typ?->id(view_types::TRIPLE)) {
             $dbo_ui = new triple_ui();
         } elseif ($typ_id == $this->dto?->typ_lst_cache?->msk_typ?->id(view_types::WORD)) {
             $dbo_ui = new word_ui();

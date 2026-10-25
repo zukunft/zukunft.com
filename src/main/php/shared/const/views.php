@@ -115,6 +115,7 @@ class views
     const int TABLE_EDITOR_ID = 195;
     const string TABLE_EDITOR_NAME = 'Table editor';
     const string CALCULATOR_EDITOR = 'calculator_editor';
+    const int CALCULATOR_EDITOR_ID = 196;
     const string CALCULATOR_EDITOR_NAME = 'Calculator editor';
     // the views whose phrase selector sends the name of the phrase that the view shows next
     // (see frontend::url_with_selected_phrase)
@@ -583,8 +584,6 @@ class views
     const string TEST_COMPLETE_NAME = 'System Test View Complete';
     const string TEST_EXCLUDED_NAME = 'System Test View Excluded';
     const string TEST_TABLE_NAME = 'System Test View Table';
-    // the name of the view with the code id self::COMPLETE, which is capitalised unlike the code id
-    const string TEST_ALL_NAME = 'Complete';
 
     // to test a system view (add word) as unit test without database
     const string TEST_FORM_NAME = 'Add word';
@@ -804,7 +803,13 @@ class views
         self::TABLE_ID,
         self::CALCULATOR_ID,
         self::COMPARISON_TABLE_ID,
+        ...views::EDITOR_MASKS_IDS,
+    ];
+
+    // the editors of a phrase view, which change the database with their save e.g. the calculator editor
+    const array EDITOR_MASKS_IDS = [
         self::TABLE_EDITOR_ID,
+        self::CALCULATOR_EDITOR_ID,
     ];
 
     // system masks that have a source as the main object
@@ -1265,6 +1270,7 @@ class views
     // but never the login, signup and export masks that an ip user must be able to use
     const array IP_BLOCKED_MASKS_IDS = [
         ...views::CHANGE_MASKS_IDS,
+        ...views::EDITOR_MASKS_IDS,
         self::FORMULA_TEST_ID,
         self::UNDO_ID,
         self::PASTE_TABLE_ID,
@@ -1848,6 +1854,8 @@ class views
             self::VIEW_LINK_ADD_ID, self::VIEW_LINK_EDIT_ID, self::VIEW_LINK_DEL_ID => self::TERM_VIEW_DEFAULT_ID,
             self::COMPONENT_LINK_ADD_ID, self::COMPONENT_LINK_EDIT_ID, self::COMPONENT_LINK_DEL_ID => self::COMPONENT_LINK_DEFAULT_ID,
             self::VIEW_RELATION_ADD_ID, self::VIEW_RELATION_EDIT_ID, self::VIEW_RELATION_DEL_ID => self::VIEW_RELATION_DEFAULT_ID,
+            self::TABLE_EDITOR_ID => self::TABLE_ID,
+            self::CALCULATOR_EDITOR_ID => self::CALCULATOR_ID,
             default => self::START_ID
         };
     }

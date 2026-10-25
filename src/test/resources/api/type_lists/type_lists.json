@@ -8202,7 +8202,7 @@
             {
                 "name": "edit",
                 "code_id": "mask_default",
-                "description": "a edit mask that is used to change data",
+                "description": "a view to change data e.g. to add, change or delete a word",
                 "id": 3
             },
             {
@@ -8336,6 +8336,24 @@
                 "code_id": "view_relation",
                 "description": "only expected to be used for view relation objects",
                 "id": 25
+            },
+            {
+                "name": "editor",
+                "code_id": "editor",
+                "description": "a view to define the layout of another view for a word or triple e.g. the calculator page",
+                "id": 26
+            },
+            {
+                "name": "import",
+                "code_id": "import",
+                "description": "a view to import data e.g. from a file or from Wikidata",
+                "id": 27
+            },
+            {
+                "name": "for phrases only",
+                "code_id": "phrase",
+                "description": "only expected to be used for word or triple objects",
+                "id": 28
             }
         ],
         "view_styles": [
@@ -10279,7 +10297,7 @@
                 "id": 2,
                 "name": "Table",
                 "description": "the values related to a word or triple as a table with one column per phrase used most often within the values",
-                "type_id": 11,
+                "type_id": 28,
                 "code_id": "table",
                 "editor_id": 195,
                 "components": [
@@ -11470,7 +11488,7 @@
                 "id": 16,
                 "name": "Calculator",
                 "description": "the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",
-                "type_id": 13,
+                "type_id": 28,
                 "code_id": "calculator",
                 "style": 8,
                 "editor_id": 196,
@@ -11512,7 +11530,7 @@
                 "protection": 3,
                 "name": "Change value",
                 "description": "Change just the number, text, time or geolocation of a value for the user without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_overwrite",
                 "components": [
                     {
@@ -11552,7 +11570,7 @@
                 "protection": 3,
                 "name": "Change result",
                 "description": "Change just the number of a result for the user without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_overwrite",
                 "components": [
                     {
@@ -11592,7 +11610,7 @@
                 "protection": 3,
                 "name": "Add value pure",
                 "description": "Create a new value by selecting its words and triples step by step without javascript and  without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_add_phrases",
                 "components": [
                     {
@@ -11642,7 +11660,7 @@
                 "protection": 3,
                 "name": "Add value",
                 "description": "Create a new value just by selecting its words and triples and entering the number without the confirm view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_add_simple",
                 "components": [
                     {
@@ -11692,7 +11710,7 @@
                 "protection": 3,
                 "name": "Add word",
                 "description": "Create a new word just by its name without the confirm view if no term with the same name exists",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_add_simple",
                 "components": [
                     {
@@ -11732,7 +11750,7 @@
                 "protection": 3,
                 "name": "Add triple",
                 "description": "Create a new triple just by the phrases to connect",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_add_simple",
                 "components": [
                     {
@@ -15024,7 +15042,7 @@
                 "protection": 3,
                 "name": "Add word with details",
                 "description": "Create a new word with all parameters e.g. the phrase type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_add",
                 "components": [
                     {
@@ -15195,7 +15213,7 @@
                 "protection": 3,
                 "name": "Change word",
                 "description": "Change name, description or settings of a word",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_edit",
                 "components": [
                     {
@@ -15507,7 +15525,7 @@
                 "protection": 3,
                 "name": "Delete word",
                 "description": "Exclude or delete a word",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "word_del",
                 "components": [
                     {
@@ -15760,7 +15778,7 @@
                 "protection": 3,
                 "name": "Add triple with details",
                 "description": "Create a new triple with all parameters",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_add",
                 "components": [
                     {
@@ -16003,7 +16021,7 @@
                 "protection": 3,
                 "name": "Change triple",
                 "description": "Rename a triple",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_edit",
                 "components": [
                     {
@@ -16407,7 +16425,7 @@
                 "protection": 3,
                 "name": "Delete triple",
                 "description": "Exclude or delete a triple",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "triple_del",
                 "components": [
                     {
@@ -16680,7 +16698,7 @@
                 "protection": 3,
                 "name": "Add value with details",
                 "description": "Create a new value",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_add",
                 "components": [
                     {
@@ -16849,7 +16867,7 @@
                 "protection": 3,
                 "name": "Change value with details",
                 "description": "Change a the details of a numeric value",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_edit",
                 "components": [
                     {
@@ -17031,7 +17049,7 @@
                 "protection": 3,
                 "name": "Delete value",
                 "description": "Exclude or delete a number",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "value_del",
                 "components": [
                     {
@@ -17133,7 +17151,7 @@
                 "protection": 3,
                 "name": "Add new formula",
                 "description": "Create a new formula with all parameters e.g. the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_add",
                 "components": [
                     {
@@ -17345,7 +17363,7 @@
                 "protection": 3,
                 "name": "Change formula",
                 "description": "Change a formula, the name or the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_edit",
                 "components": [
                     {
@@ -17676,7 +17694,7 @@
                 "protection": 3,
                 "name": "Delete formula",
                 "description": "To confirm the exclusion or deleting of a formula",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_del",
                 "components": [
                     {
@@ -17918,7 +17936,7 @@
                 "protection": 3,
                 "name": "Add result number",
                 "description": "Administrator can add manually a formula result e.g. for debugging",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_add",
                 "components": [
                     {
@@ -18089,7 +18107,7 @@
                 "protection": 3,
                 "name": "Change result with details",
                 "description": "Overwrite a result",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_edit",
                 "components": [
                     {
@@ -18260,7 +18278,7 @@
                 "protection": 3,
                 "name": "Delete result",
                 "description": "Exclude or delete a result",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "result_del",
                 "components": [
                     {
@@ -18362,7 +18380,7 @@
                 "protection": 3,
                 "name": "Explain result",
                 "description": "explains one formula result",
-                "type_id": 7,
+                "type_id": 19,
                 "code_id": "result_explain",
                 "components": [
                     {
@@ -18393,7 +18411,7 @@
                 "protection": 3,
                 "name": "Add new source",
                 "description": "Create a new source with all parameters e.g. the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "source_add",
                 "components": [
                     {
@@ -18587,7 +18605,7 @@
                 "protection": 3,
                 "name": "Change source",
                 "description": "Rename a triple or change the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "source_edit",
                 "components": [
                     {
@@ -18910,7 +18928,7 @@
                 "protection": 3,
                 "name": "Delete source",
                 "description": "To confirm the exclusion or deleting of an external source",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "source_del",
                 "components": [
                     {
@@ -19151,7 +19169,7 @@
                 "protection": 3,
                 "name": "Add new reference",
                 "description": "Create a new data link to external systems",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "ref_add",
                 "components": [
                     {
@@ -19336,7 +19354,7 @@
                 "protection": 3,
                 "name": "Change reference",
                 "description": "Change then link to external system",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "ref_edit",
                 "components": [
                     {
@@ -19560,7 +19578,7 @@
                 "protection": 3,
                 "name": "Delete reference",
                 "description": "To confirm the exclusion or deleting of a reference",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "ref_del",
                 "components": [
                     {
@@ -19750,7 +19768,7 @@
                 "protection": 3,
                 "name": "Add new verb",
                 "description": "Request to add a new verb\/predicate",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "verb_add",
                 "components": [
                     {
@@ -19901,7 +19919,7 @@
                 "protection": 3,
                 "name": "Change verb",
                 "description": "Rename a verb\/predicate",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "verb_edit",
                 "components": [
                     {
@@ -20141,7 +20159,7 @@
                 "protection": 3,
                 "name": "Delete verb",
                 "description": "Exclude or delete a verb",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "verb_del",
                 "components": [
                     {
@@ -20342,7 +20360,7 @@
                 "protection": 3,
                 "name": "Add a group name",
                 "description": "Add a new group name",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "group_add",
                 "components": [
                     {
@@ -20437,7 +20455,7 @@
                 "protection": 3,
                 "name": "Change group",
                 "description": "Change a group name",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "group_edit",
                 "components": [
                     {
@@ -20532,7 +20550,7 @@
                 "protection": 3,
                 "name": "Delete group",
                 "description": "Exclude or delete a group name",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "group_del",
                 "components": [
                     {
@@ -20614,7 +20632,7 @@
                 "protection": 3,
                 "name": "Add formula link",
                 "description": "Create a new link between a formula and a phrase",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_link_add",
                 "components": [
                     {
@@ -20783,7 +20801,7 @@
                 "protection": 3,
                 "name": "Change formula link",
                 "description": "Change a link between a formula and a phrase",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_link_edit",
                 "components": [
                     {
@@ -20952,7 +20970,7 @@
                 "protection": 3,
                 "name": "Delete formula link",
                 "description": "To confirm the exclusion or deleting of a formula link",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "formula_link_del",
                 "components": [
                     {
@@ -21123,7 +21141,7 @@
                 "protection": 3,
                 "name": "Add view link",
                 "description": "Create a new link between a view and a term",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_link_add",
                 "components": [
                     {
@@ -21303,7 +21321,7 @@
                 "protection": 3,
                 "name": "Change view link",
                 "description": "Change a link between a view and a term",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_link_edit",
                 "components": [
                     {
@@ -21483,7 +21501,7 @@
                 "protection": 3,
                 "name": "Delete view link",
                 "description": "To confirm the exclusion or deleting of a view link",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_link_del",
                 "components": [
                     {
@@ -21665,7 +21683,7 @@
                 "protection": 3,
                 "name": "Add view",
                 "description": "Create a new view and set the type",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_add",
                 "components": [
                     {
@@ -21930,7 +21948,7 @@
                 "protection": 3,
                 "name": "Change view",
                 "description": "Rename a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_edit",
                 "components": [
                     {
@@ -22209,7 +22227,7 @@
                 "protection": 3,
                 "name": "Delete view",
                 "description": "Exclude or delete a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_del",
                 "components": [
                     {
@@ -22393,7 +22411,7 @@
                 "protection": 3,
                 "name": "Add new view component",
                 "description": "Create a new view component with all parameters",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_add",
                 "components": [
                     {
@@ -22639,7 +22657,7 @@
                 "protection": 3,
                 "name": "Change view component",
                 "description": "Adjust a view component",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_edit",
                 "components": [
                     {
@@ -22908,7 +22926,7 @@
                 "protection": 3,
                 "name": "Delete view component",
                 "description": "Exclude or delete a view component",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_del",
                 "components": [
                     {
@@ -23093,7 +23111,7 @@
                 "protection": 3,
                 "name": "Add component link",
                 "description": "Create a new link between a component and a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_link_add",
                 "components": [
                     {
@@ -23273,7 +23291,7 @@
                 "protection": 3,
                 "name": "Change component link",
                 "description": "Change a link between a component and a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_link_edit",
                 "components": [
                     {
@@ -23453,7 +23471,7 @@
                 "protection": 3,
                 "name": "Delete component link",
                 "description": "To confirm the exclusion or deleting of a component link",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "component_link_del",
                 "components": [
                     {
@@ -23625,7 +23643,7 @@
                 "protection": 3,
                 "name": "Add view relation",
                 "description": "Create a new relation between two views",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_relation_add",
                 "components": [
                     {
@@ -23794,7 +23812,7 @@
                 "protection": 3,
                 "name": "Change view relation",
                 "description": "Change a relation between a component and a view",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_relation_edit",
                 "components": [
                     {
@@ -23972,7 +23990,7 @@
                 "protection": 3,
                 "name": "Delete view relation",
                 "description": "To confirm the exclusion or deleting of a view relation",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_relation_del",
                 "components": [
                     {
@@ -24192,7 +24210,7 @@
                 "protection": 3,
                 "name": "Confirm adding",
                 "description": "Ask the user for confirmation of the changes to be written to the database",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "confirm_add",
                 "components": [
                     {
@@ -24293,7 +24311,7 @@
                 "protection": 3,
                 "name": "Confirm update",
                 "description": "Show the impact of the changes to the user and ask the user for confirmation",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "confirm_update",
                 "components": [
                     {
@@ -24402,7 +24420,7 @@
                 "protection": 3,
                 "name": "Confirm delete",
                 "description": "Show the impact of the deletion to the user and ask the user for confirmation",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "confirm_delete",
                 "components": [
                     {
@@ -24502,7 +24520,7 @@
                 "protection": 3,
                 "name": "Change confirm view",
                 "description": "show the old and the new view and let the user confirm the change",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "view_preview",
                 "components": [
                     {
@@ -24604,7 +24622,7 @@
                 "id": 104,
                 "name": "Undo",
                 "description": "show the last changes of the user and offer selective undo",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "undo",
                 "components": [
                     {
@@ -24849,7 +24867,7 @@
                 "id": 112,
                 "name": "Phrase (default)",
                 "description": "the default view for a word or triple",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "phrase_default",
                 "components": []
             },
@@ -24857,7 +24875,7 @@
                 "id": 113,
                 "name": "Term (default)",
                 "description": "the default view for a word, triple, verb or formula",
-                "type_id": null,
+                "type_id": 1,
                 "code_id": "term_default",
                 "components": []
             },
@@ -24865,7 +24883,7 @@
                 "id": 114,
                 "name": "Values of a phrase",
                 "description": "all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",
-                "type_id": 11,
+                "type_id": 28,
                 "code_id": "phrase_values",
                 "components": [
                     {
@@ -24905,7 +24923,7 @@
                 "id": 115,
                 "name": "Related phrases",
                 "description": "the full list of the phrases related to a word or triple grouped by verb, which the title of a phrase page links with its '...' if the title shows only some related phrases",
-                "type_id": 11,
+                "type_id": 28,
                 "code_id": "word_related",
                 "components": [
                     {
@@ -24975,7 +24993,7 @@
                 "protection": 3,
                 "name": "word usage and log",
                 "description": "subview to show the usage and changes of a word",
-                "type_id": 7,
+                "type_id": 8,
                 "code_id": "word_usage",
                 "components": [
                     {
@@ -25126,7 +25144,7 @@
                 "protection": 3,
                 "name": "Value detail",
                 "description": "show all details of one value",
-                "type_id": 7,
+                "type_id": 17,
                 "code_id": "value_detail",
                 "components": [
                     {
@@ -25310,7 +25328,7 @@
                 "id": 123,
                 "name": "User Settings",
                 "description": "to change the user settings",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "user",
                 "components": [
                     {
@@ -25619,7 +25637,7 @@
                 "protection": 3,
                 "name": "Admin add user",
                 "description": "View for administrators to create a new user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "admin_user_add",
                 "components": [
                     {
@@ -25744,7 +25762,7 @@
                 "protection": 3,
                 "name": "Admin change user",
                 "description": "View for administrators to update a user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "admin_user_edit",
                 "components": [
                     {
@@ -25880,7 +25898,7 @@
                 "protection": 3,
                 "name": "Admin delete user",
                 "description": "View for administrators to delete or exclude a new user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "admin_user_del",
                 "components": [
                     {
@@ -26084,7 +26102,7 @@
                 "id": 136,
                 "name": "System log",
                 "description": "show the most relevant system log entries (placeholder only at the moment)",
-                "type_id": null,
+                "type_id": 7,
                 "code_id": "system_log",
                 "components": []
             },
@@ -26307,7 +26325,7 @@
                 "protection": 3,
                 "name": "Paste table",
                 "description": "add more than one values by pasting a table",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "paste_table",
                 "components": [
                     {
@@ -26349,7 +26367,7 @@
                 "id": 145,
                 "name": "Import",
                 "description": "Select a file to import data",
-                "type_id": 7,
+                "type_id": 27,
                 "code_id": "import",
                 "components": [
                     {
@@ -26423,7 +26441,7 @@
                 "protection": 3,
                 "name": "Import preview",
                 "description": "Show what an import would add, change or clash with before anything is written",
-                "type_id": 7,
+                "type_id": 27,
                 "code_id": "import_preview",
                 "components": [
                     {
@@ -26454,7 +26472,7 @@
                 "protection": 3,
                 "name": "Import result",
                 "description": "Show the objects of an import with the warnings and the links to the added objects",
-                "type_id": 7,
+                "type_id": 27,
                 "code_id": "import_result",
                 "components": [
                     {
@@ -26485,7 +26503,7 @@
                 "protection": 3,
                 "name": "Import from url",
                 "description": "Import the data of a file given by an url",
-                "type_id": 7,
+                "type_id": 27,
                 "code_id": "import_url",
                 "components": [
                     {
@@ -26516,7 +26534,7 @@
                 "protection": 3,
                 "name": "Import from Wikidata",
                 "description": "Import an object and the related data by the Wikidata id",
-                "type_id": 7,
+                "type_id": 27,
                 "code_id": "import_wikidata",
                 "components": [
                     {
@@ -27188,7 +27206,7 @@
                 "protection": 3,
                 "name": "Export selections",
                 "description": "List the saved export selections of the user",
-                "type_id": 7,
+                "type_id": 10,
                 "code_id": "export_selections",
                 "components": [
                     {
@@ -27219,7 +27237,7 @@
                 "protection": 3,
                 "name": "Export object",
                 "description": "Export one word, triple or formula with the related objects up to the selected depth",
-                "type_id": 7,
+                "type_id": 10,
                 "code_id": "export_object",
                 "components": [
                     {
@@ -27250,7 +27268,7 @@
                 "protection": 3,
                 "name": "Export ready",
                 "description": "Offer the download of an export that has been created by a job",
-                "type_id": 7,
+                "type_id": 10,
                 "code_id": "export_ready",
                 "components": [
                     {
@@ -27280,7 +27298,7 @@
                 "id": 158,
                 "name": "Language selection",
                 "description": "List all language in an overview page to select the ui language and allow to request an additional language",
-                "type_id": null,
+                "type_id": 7,
                 "code_id": "language_select",
                 "components": [
                     {
@@ -27380,7 +27398,7 @@
                 "protection": 3,
                 "name": "Phrase translations",
                 "description": "Show and change the names of a word or triple in all languages",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "phrase_translations",
                 "components": [
                     {
@@ -27442,7 +27460,7 @@
                 "protection": 3,
                 "name": "Language forms",
                 "description": "Show and change the language forms of a language e.g. the plural",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "language_forms",
                 "components": [
                     {
@@ -27473,7 +27491,7 @@
                 "protection": 3,
                 "name": "Add language",
                 "description": "Add a language by an admin user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "language_add",
                 "components": [
                     {
@@ -27598,7 +27616,7 @@
                 "protection": 3,
                 "name": "Change language",
                 "description": "Change a language name or symbol by an admin user",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "language_edit",
                 "components": [
                     {
@@ -27723,7 +27741,7 @@
                 "protection": 3,
                 "name": "Delete language",
                 "description": "View for administrators to delete a language",
-                "type_id": 7,
+                "type_id": 3,
                 "code_id": "language_del",
                 "components": [
                     {
@@ -28068,7 +28086,7 @@
                 "id": 175,
                 "name": "Complete",
                 "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
-                "type_id": null,
+                "type_id": 7,
                 "code_id": "complete",
                 "components": [
                     {
@@ -28154,7 +28172,7 @@
                 "id": 177,
                 "name": "Ranking",
                 "description": "the default view for all phrases where a better could be selected",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "ranking",
                 "components": [
                     {
@@ -28190,7 +28208,7 @@
                 "id": 178,
                 "name": "Science",
                 "description": "show mainly related words that are relevant in sciences",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "science",
                 "components": []
             },
@@ -28198,7 +28216,7 @@
                 "id": 179,
                 "name": "Historic",
                 "description": "show the related words in historic order",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "hist",
                 "components": []
             },
@@ -28206,7 +28224,7 @@
                 "id": 180,
                 "name": "Biological",
                 "description": "show what is relevant from the biological point of view",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "bio",
                 "components": []
             },
@@ -28214,7 +28232,7 @@
                 "id": 181,
                 "name": "Education",
                 "description": "sort related topics by difficulty",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "edu",
                 "components": []
             },
@@ -28222,7 +28240,7 @@
                 "id": 182,
                 "name": "Touristic",
                 "description": "show things to see",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "touristic",
                 "components": []
             },
@@ -28230,7 +28248,7 @@
                 "id": 183,
                 "name": "Graph",
                 "description": "show the related topics as a visual graph",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "graph",
                 "components": []
             },
@@ -28238,7 +28256,7 @@
                 "id": 184,
                 "name": "Simple",
                 "description": "show only the most relevant facts",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "simple",
                 "components": []
             },
@@ -28246,7 +28264,7 @@
                 "id": 185,
                 "name": "Mathematical constant",
                 "description": "Show a mathematical constant and the related words and formulas",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "math_const",
                 "components": [
                     {
@@ -28282,7 +28300,7 @@
                 "id": 186,
                 "name": "problem with solutions",
                 "description": "Explain a problem and show the potential solutions",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "global_problem",
                 "components": [
                     {
@@ -28327,7 +28345,7 @@
                 "id": 187,
                 "name": "Currency",
                 "description": "Show a currency with the most relevant exchange rates and related formulas",
-                "type_id": null,
+                "type_id": 28,
                 "code_id": "currency",
                 "components": [
                     {
@@ -28404,7 +28422,7 @@
                 "id": 195,
                 "name": "Table editor",
                 "description": "placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",
-                "type_id": 11,
+                "type_id": 26,
                 "code_id": "table_editor",
                 "components": [
                     {
@@ -28463,7 +28481,7 @@
                 "id": 196,
                 "name": "Calculator editor",
                 "description": "the editor to define the calculator page of a word or triple",
-                "type_id": 11,
+                "type_id": 26,
                 "code_id": "calculator_editor",
                 "components": [
                     {
@@ -28861,7 +28879,7 @@
                 "id": 201,
                 "name": "Comparison table",
                 "description": "the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",
-                "type_id": 11,
+                "type_id": 28,
                 "code_id": "comparison_table",
                 "components": [
                     {
@@ -35343,9 +35361,541 @@
                     "class": "triple"
                 },
                 "class": "triple"
+            },
+            {
+                "id": 114,
+                "protection": 3,
+                "name": "are",
+                "description": "A unit of area equal to 100 square metres, defined by older forms of the metric system but now outside the modern International System of Units.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 75,
+                "protection": 3,
+                "name": "becquerel",
+                "description": "The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one decay per second, on average, for aperiodic decay events of a radionuclide.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 76,
+                "protection": 3,
+                "name": "Bq",
+                "description": "Is a symbol for becquerel",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 70,
+                "protection": 3,
+                "name": "\u00b0C",
+                "description": "Is a symbol for celsius",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 54,
+                "protection": 3,
+                "name": "C",
+                "description": "Is a symbol for coulomb",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 69,
+                "protection": 3,
+                "name": "celsius",
+                "description": "The degree Celsius is the unit of temperature on the Celsius temperature scale one of two temperature scales used in the International System of Units (SI), the other being the closely related Kelvin scale.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 53,
+                "protection": 3,
+                "name": "coulomb",
+                "description": "The SI defines the coulomb as \"the quantity of electricity carried in 1 second by a current of 1 ampere\". Then the value of the elementary charge e is defined to be 1.602176634\u00d710\u221219 C.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 281,
+                "name": "DALY",
+                "description": "a measure of overall disease burden, expressed as the number of years lost to ill health, disability, or early death; one DALY is one lost year of healthy life.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 62,
+                "protection": 3,
+                "name": "F",
+                "description": "Is a symbol for farad",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 61,
+                "protection": 3,
+                "name": "farad",
+                "description": "The farad is the unit of electrical capacitance, the ability of a body to store an electrical charge, in the International System of Units (SI), equivalent to 1 coulomb per volt (C\/V).",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 124,
+                "protection": 3,
+                "name": "g",
+                "description": "Is a symbol for gram",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 123,
+                "protection": 3,
+                "name": "gram",
+                "description": "The gram is a unit of mass in the International System of Units (SI) equal to one thousandth of a kilogram.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 77,
+                "protection": 3,
+                "name": "gray",
+                "description": "The gray is the unit of ionizing radiation dose in the International System of Units (SI), defined as the absorption of one joule of radiation energy per kilogram of matter.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 992,
+                "name": "GWh",
+                "description": "gigawatt hour, unit of energy",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 78,
+                "protection": 3,
+                "name": "Gy",
+                "description": "Is a symbol for gray",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 68,
+                "protection": 3,
+                "name": "H",
+                "description": "Is a symbol for henry",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 117,
+                "protection": 3,
+                "name": "ha",
+                "description": "Is a symbol for hectare",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 116,
+                "protection": 3,
+                "name": "hectare",
+                "description": "A non-SI metric unit of area equal to a square with 100-metre sides, or 10,000 square metres, primarily used in land measurement.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 67,
+                "protection": 3,
+                "name": "henry",
+                "description": "The henry is the unit of electrical inductance in the International System of Units (SI).[1] If a current of 1 ampere flowing through a coil produces flux linkage of 1 weber turn, that coil has a self-inductance of 1 henry.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 39,
+                "protection": 3,
+                "name": "hertz",
+                "description": "The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 101,
+                "protection": 3,
+                "name": "hour",
+                "description": "An hour is a unit of time equal to 60 minutes, or 3600 seconds.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 874,
+                "name": "HTP",
+                "description": "Happy Time Point, the zukunft.com DALY-extended wellbeing unit",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 40,
+                "protection": 3,
+                "name": "Hz",
+                "description": "Is a symbol for hertz, which is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 50,
+                "protection": 3,
+                "name": "J",
+                "description": "Is a symbol for joule",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 49,
+                "protection": 3,
+                "name": "joule",
+                "description": "One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 82,
+                "protection": 3,
+                "name": "kat",
+                "description": "Is a symbol for katal",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 81,
+                "protection": 3,
+                "name": "katal",
+                "description": "The katal is a unit of the International System of Units (SI) used for quantifying the catalytic activity of enzymes (that is, measuring the enzymatic activity level in enzyme catalysis) and other catalysts.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 111,
+                "protection": 3,
+                "name": "kilometre",
+                "description": "A kilometre is a unit of length in the International System of Units (SI) equal to one thousand metres.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 112,
+                "protection": 3,
+                "name": "km",
+                "description": "Is a symbol for kilometre",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 873,
+                "name": "km2",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 122,
+                "protection": 3,
+                "name": "kWh",
+                "description": "A kilowatt-hour is a non-SI unit of energy equal to 3.6 megajoules in SI units, which is the energy delivered by one kilowatt of power for one hour.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 1778,
+                "name": "kWp",
+                "description": "kilowatt peak, the nominal power of photovoltaic panels under the standard test conditions of 1000 W per m2 at 25 degree Celsius",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 72,
+                "protection": 3,
+                "name": "lm",
+                "description": "Is a symbol for lumen",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 71,
+                "protection": 3,
+                "name": "lumen",
+                "description": "The lumen is the unit of luminous flux, a measure of the perceived power of visible light emitted by a source, in the International System of Units (SI).",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 73,
+                "protection": 3,
+                "name": "lux",
+                "description": "The lux is the unit of illuminance, or luminous flux per unit area, in the International System of Units (SI).",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 74,
+                "protection": 3,
+                "name": "lx",
+                "description": "Is a symbol for lux",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 115,
+                "protection": 3,
+                "name": "m2",
+                "description": "Is a symbol for square metre",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 119,
+                "protection": 3,
+                "name": "m3",
+                "description": "Is a symbol for cubic metre",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 930,
+                "name": "millimetre",
+                "description": "one thousandth of a metre",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 24,
+                "protection": 3,
+                "name": "millisecond",
+                "description": "The 1\/1000th part of a second.",
+                "type_id": 2,
+                "code_id": "millisecond",
+                "plural": "milliseconds",
+                "class": "word"
+            },
+            {
+                "id": 104,
+                "protection": 3,
+                "name": "month",
+                "description": "A month is a unit of time, used with calendars, that is approximately as long as a natural orbital period of the Moon, roughly 30 days.",
+                "type_id": 2,
+                "plural": "months",
+                "class": "word"
+            },
+            {
+                "id": 46,
+                "protection": 3,
+                "name": "N",
+                "description": "Is a symbol for newton",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 45,
+                "protection": 3,
+                "name": "newton",
+                "description": "The newton is the unit of force in the International System of Units (SI). Expressed in terms of SI base units, it is 1 kg\u22c5m\/s2, the force that accelerates a mass of one kilogram at one metre per second squared.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 63,
+                "protection": 3,
+                "name": "ohm",
+                "description": "The ohm is the unit of electrical resistance in the International System of Units (SI).",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 48,
+                "protection": 3,
+                "name": "Pa",
+                "description": "Is a symbol for pascal",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 47,
+                "protection": 3,
+                "name": "pascal",
+                "description": "The pascal is the unit of pressure in the International System of Units (SI). It is also used to quantify internal pressure, stress, Young's modulus, and ultimate tensile strength.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 205,
+                "name": "person",
+                "description": "an individual human being",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 42,
+                "protection": 3,
+                "name": "rad",
+                "description": "Is a symbol for radian",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 41,
+                "protection": 3,
+                "name": "radian",
+                "description": "The radian, denoted by the symbol rad, is the unit of angle in the International System of Units (SI) and is the standard unit of angular measure used in many areas of mathematics.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 66,
+                "protection": 3,
+                "name": "S",
+                "description": "Is a symbol for siemens",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 65,
+                "protection": 3,
+                "name": "siemens",
+                "description": "The siemens is the unit of electric conductance, electric susceptance, and electric admittance in the International System of Units (SI). Conductance, susceptance, and admittance are the reciprocals of resistance, reactance, and impedance respectively; hence one siemens is equal to the reciprocal of one ohm (\u03a9\u22121) and is also referred to as the mho.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 79,
+                "protection": 3,
+                "name": "sievert",
+                "description": "The sievert is a derived unit in the International System of Units (SI) intended to represent the stochastic health risk of ionizing radiation, which is defined as the probability of causing radiation-induced cancer and genetic damage.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 44,
+                "protection": 3,
+                "name": "sr",
+                "description": "Is a symbol for steradian",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 43,
+                "protection": 3,
+                "name": "steradian",
+                "description": "The steradian or square radian[1][2] is the unit of solid angle in the International System of Units (SI). It is used in three dimensional geometry, and is analogous to the radian, which quantifies planar angles.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 80,
+                "protection": 3,
+                "name": "Sv",
+                "description": "Is a symbol for sievert",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 60,
+                "protection": 3,
+                "name": "T",
+                "description": "Is a symbol for tesla",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 59,
+                "protection": 3,
+                "name": "tesla",
+                "description": "The tesla is the unit of magnetic flux density (also called magnetic B-field strength) in the International System of Units (SI).\n\nOne tesla is equal to one weber per square metre.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 56,
+                "protection": 3,
+                "name": "V",
+                "description": "Is a symbol for volt",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 55,
+                "protection": 3,
+                "name": "volt",
+                "description": "One volt is defined as the electric potential between two points of a conducting wire when an electric current of one ampere dissipates one watt of power between those points.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 52,
+                "protection": 3,
+                "name": "W",
+                "description": "Is a symbol for watt",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 51,
+                "protection": 3,
+                "name": "watt",
+                "description": "The watt is the unit of power or radiant flux in the International System of Units (SI), equal to 1 joule per second or 1 kg\u22c5m2\u22c5s\u22123",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 58,
+                "protection": 3,
+                "name": "Wb",
+                "description": "Is a symbol for Weber",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 57,
+                "protection": 3,
+                "name": "Weber",
+                "description": "Is the unit of magnetic flux in the International System of Units (SI). The unit is derived (through Faraday's law of induction) from the relationship 1 Wb = 1 V\u22c5s (volt-second). A magnetic flux density of 1 Wb\/m2 (one weber per square metre) is one tesla.",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 64,
+                "protection": 3,
+                "name": "\u03a9",
+                "description": "Is a symbol for ohm",
+                "type_id": 2,
+                "class": "word"
+            },
+            {
+                "id": 4,
+                "protection": 3,
+                "name": "one",
+                "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
+                "type_id": 7,
+                "class": "word"
+            },
+            {
+                "id": 3,
+                "protection": 3,
+                "name": "zero",
+                "description": "0 (zero) is a number representing an empty quantity. Adding (or subtracting) 0 to any number leaves that number unchanged; in mathematical terminology, 0 is the additive identity of the integers, rational numbers, real numbers, and complex numbers, as well as other algebraic structures",
+                "type_id": 7,
+                "class": "word"
             }
         ],
         "system_formulas": [
+            {
+                "id": 2,
+                "name": "scale hour to sec",
+                "description": "to convert times in hours to seconds and the other way round, so that durations given in hours can be calculated with durations in seconds",
+                "type_id": 1,
+                "user_text": "\"second (time)\" = \"hour\" * 3600",
+                "ref_text": "{t65}={w101}*3600",
+                "latex": "\\text{s} = 3600 \\cdot \\text{h}"
+            },
             {
                 "id": 8,
                 "name": "scale litre to m3",
@@ -35356,6 +35906,15 @@
                 "latex": "\\text{m}^3 = \\text{L} \/ 1000"
             },
             {
+                "id": 9,
+                "name": "scale gram to kg",
+                "description": "to convert masses in grams to kilograms and the other way round",
+                "type_id": 1,
+                "user_text": "\"kg\" = \"gram\" \/ 1000",
+                "ref_text": "{w28}={w123}\/1000",
+                "latex": "\\text{kg} = \\text{g} \/ 1000"
+            },
+            {
                 "id": 10,
                 "name": "scale tonne to kg",
                 "description": "to convert masses in metric tonnes to kilograms and the other way round",
@@ -35363,6 +35922,79 @@
                 "user_text": "\"kg\" = \"tonne\" * 1000",
                 "ref_text": "{w28}={w125}*1000",
                 "latex": "\\text{kg} = 1000 \\cdot \\text{t}"
+            },
+            {
+                "id": 11,
+                "name": "scale kWh to joule",
+                "description": "to convert energies in kilowatt hours, the unit of electricity bills, to joules, the SI unit, and the other way round",
+                "type_id": 1,
+                "user_text": "\"joule\" = \"kWh\" * 3600000",
+                "ref_text": "{w49}={w122}*3600000",
+                "latex": "\\text{J} = 3600000 \\cdot \\text{kWh}"
+            },
+            {
+                "id": 12,
+                "name": "scale km to metre",
+                "description": "to convert distances in kilometres to metres and the other way round",
+                "type_id": 1,
+                "user_text": "\"metre\" = \"km\" * 1000",
+                "ref_text": "{w25}={w112}*1000",
+                "latex": "\\text{m} = 1000 \\cdot \\text{km}"
+            },
+            {
+                "id": 13,
+                "name": "scale km to 100 km",
+                "description": "to convert a value per kilometre to a value per 100 kilometres and the other way round, e.g. the fuel consumption of a car",
+                "type_id": 1,
+                "user_text": "\"per 100 km\" = \"km\" * 100",
+                "ref_text": "{t81}={w112}*100",
+                "latex": "\\text{per 100 km} = 100 \\cdot \\text{km}"
+            },
+            {
+                "id": 14,
+                "name": "definition of joule",
+                "description": "the SI definition of the unit joule",
+                "type_id": 1,
+                "user_text": "\"joule\" = ( \"kg\" * \"metre\" * \"metre\" ) \/ ( \"second (time)\" * \"second (time)\" )",
+                "ref_text": "{w49}=({w28}*{w25}*{w25})\/({t65}*{t65})",
+                "latex": "\\text{J} = \\dfrac{\\text{kg} \\cdot \\text{m}^2}{\\text{s}^2}"
+            },
+            {
+                "id": 15,
+                "name": "scale thousand to one",
+                "description": "convert numbers in thousands to one and back, so that a value given in thousands can be compared and calculated with values given in ones",
+                "type_id": 1,
+                "user_text": "\"one\" = \"thousand\" * 1000",
+                "ref_text": "{w4}={w157}*1000",
+                "latex": "\\text{one} = \\text{thousand} \\cdot 1000"
+            },
+            {
+                "id": 16,
+                "protection": 3,
+                "name": "scale million to one",
+                "description": "convert numbers in millions to one and back",
+                "type_id": 1,
+                "user_text": "\"one\" = \"million\" * 1000000",
+                "ref_text": "{w4}={w158}*1000000",
+                "latex": "\\text{one} = \\text{m} \\cdot 1000000"
+            },
+            {
+                "id": 17,
+                "name": "scale billion to one",
+                "description": "convert numbers in billions (thousand millions) to one and back, so that a value given in billions can be compared and calculated with values given in ones",
+                "type_id": 1,
+                "user_text": "\"one\" = \"billion\" * 1000000000",
+                "ref_text": "{w4}={w159}*1000000000",
+                "latex": "\\text{one} = \\text{b} \\cdot 1000000000"
+            },
+            {
+                "id": 23,
+                "name": "scale trillion to one",
+                "description": "convert numbers in trillions (million millions) to one and back, so that a value given in trillions can be compared and calculated with values given in ones",
+                "type_id": 1,
+                "user_text": "\"one\" = \"trillion\" * 1000000000000",
+                "ref_text": "{w4}={w284}*1000000000000",
+                "latex": "\\text{one} = \\text{tn} \\cdot 1000000000000"
             },
             {
                 "id": 24,

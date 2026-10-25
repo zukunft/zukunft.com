@@ -60,10 +60,10 @@ class view_list_read_tests
 
         // test loading view names
         $test_name = 'loading view names with pattern return the expected view';
-        $pattern = substr(views::TEST_ALL_NAME, 0, -1);
+        $pattern = substr(views::CALCULATOR_NAME, 0, -1);
         $msk_lst = new view_list($t->usr1);
         $msk_lst->load_names($pattern, $msg);
-        $t->assert_contains($test_name, $msk_lst->names(), views::TEST_ALL_NAME);
+        $t->assert_contains($test_name, $msk_lst->names(), views::CALCULATOR_NAME);
         // TODO Prio 2 do not exclude all system views
         //      e.g. allow the user to select the system default view Word aka TN_READ
         //      but do not allow to select system forms aka TN_FORM

@@ -68,6 +68,10 @@ class formula_names
     const int SCALE_TO_SEC_ID = 1;
     // the unit conversion of units.json that the number format uses to show kg in tonne
     const string SCALE_TONNE = 'scale tonne to kg';
+    // the formula of the result row autarky of pv_lifetime_balance.json, which the calculator
+    // editor changes; the changed expression leaves out the battery discharge of the original
+    const string AUTARKY = 'autarky formula';
+    const string AUTARKY_OPERAND_REMOVED = 'battery discharge';
     const int SCALE_TONNE_ID = 10;
     const string SCALE_TONNE_EXP = '"' . word_names::KG . '" = "' . word_names::TONNE . '" * 1000';
     const string SCALE_HOUR = 'scale hour to sec';

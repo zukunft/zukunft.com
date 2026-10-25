@@ -92,6 +92,13 @@ class phrase_types
         self::SCALING,
         self::SCALING_HIDDEN,
     ];
+    // the types whose words every page preloads, because a number is shown with its unit or
+    // scaling word also if no symbol triple links it e.g. "kWh" (see data_object::load_system_phrases)
+    const array PRELOAD_TYPES = [
+        self::MEASURE,
+        self::PERCENT,
+        ...phrase_types::SCALING_TYPES,
+    ];
     const string SCALING_PCT = "scaling_percent"; // TODO Prio 3 used to define the scaling formula word to scale percentage values ?
     const string SCALING_PCT_NAME = "scaling word percent";
     const string SCALED_MEASURE = "scaled_measure"; // TODO Prio 3 add usage sample

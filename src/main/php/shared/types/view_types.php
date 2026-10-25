@@ -46,8 +46,12 @@ class view_types
     const string DETAIL = "detail_view";
     const string SYSTEM = "system";
     const string EXPORT = "export";
+    const string EDITOR = "editor";
+    const string IMPORT = "import";
+    const string SUB = "sub";
 
     // object specific views
+    const string PHRASE = "phrase";
     const string WORD = "word";
     const string VERB = "verb";
     const string TRIPLE = "triple";
@@ -72,11 +76,16 @@ class view_types
         self::MASK_DEFAULT,
         self::SYSTEM,
         self::EXPORT,
+        self::EDITOR,
+        self::IMPORT,
+        self::SUB,
     );
 
     // list of view types that are specific for other objects than words or triples
     // and should not be assignable to words or triples
+    // the detail_view type is included, because it does not say for which object the view is
     const array NON_PHRASE_TYPES = array(
+        self::DETAIL,
         self::VERB,
         self::SOURCE,
         self::REF,

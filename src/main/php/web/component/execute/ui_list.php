@@ -2718,10 +2718,12 @@ class ui_list extends ui_base
 
     /**
      * the value that a calculator field shows: a value of the item phrase with the field value
-     * phrases, the one with the page phrase first, else the one with the fewest context phrases,
-     * so the general value of a use case wins over the value of a place e.g. PV yield of Switzerland
-     * over the PV yield of a municipality, and else the one with the fewest phrases, but never a
-     * property of the field e.g. its step or the confidence of a value
+     * phrases, the one with the page phrase first, then the one with a phrase that the page triple
+     * is built from e.g. PV installation of example PV installation, so that the value of another
+     * use case with the same field phrase e.g. the lifetime of a new NPP is not shown, else the one
+     * with the fewest context phrases, so the general value of a use case wins over the value of a
+     * place e.g. PV yield of Switzerland over the PV yield of a municipality, and else the one with
+     * the fewest phrases, but never a property of the field e.g. its step or the confidence of a value
      *
      * @param phrase $phr the phrase of the field e.g. PV capacity
      * @param word|triple $dbo the phrase of the page
@@ -2732,13 +2734,21 @@ class ui_list extends ui_base
     private function calculator_value(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
     {
         $properties = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE];
+        $page_phr = $dbo->phrase();
+        $page_parts = array_filter([$page_phr->get_from(), $page_phr->get_to()]);
         $best_vals = [];
         $best = null;
         foreach ($dto->val_lst->lst() as $val) {
             $names = $val->phr_lst()->names();
             if ($val->has_phrase($phr, $msg) and array_intersect($names, $properties) == []
                 and $this->has_field_value_phrases($phr, $val, $dto, $msg)) {
-                $rank = [$val->has_phrase($dbo->phrase(), $msg) ? 0 : 1, $this->context_count($phr, $val, $msg), count($names)];
+                $page_rank = 2;
+                if ($val->has_phrase($page_phr, $msg)) {
+                    $page_rank = 0;
+                } elseif (array_filter($page_parts, fn($part) => $val->has_phrase($part, $msg)) != []) {
+                    $page_rank = 1;
+                }
+                $rank = [$page_rank, $this->context_count($phr, $val, $msg), count($names)];
                 if ($best == null or $rank < $best) {
                     $best_vals = [$val];
                     $best = $rank;

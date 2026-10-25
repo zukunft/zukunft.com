@@ -174,6 +174,8 @@ class files
     // sample page (src/test/resources/web/html/use_cases/)
     const string PORTFOLIO_SPLIT_CALCULATOR = 'portfolio_split_calculator';
     const string PORTFOLIO_SPLIT_CALCULATOR_FILE = self::USE_CASE_PATH . self::PORTFOLIO_SPLIT_CALCULATOR . self::JSON;
+    // the cost calculator for the Swiss vote on lifting the ban on new nuclear power plants
+    const string NPP_CH_VOTE_FILE = self::USE_CASE_PATH . 'npp_ch_vote' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -394,6 +396,7 @@ class files
     // end of this list, because its phrases get the next free ids
     const array USE_CASE_FILES_APPENDED = [
         self::PV_LIFETIME_BALANCE_FILE,
+        self::NPP_CH_VOTE_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

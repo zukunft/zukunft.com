@@ -488,42 +488,76 @@ I4-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the vi
 I5-0a-0T+32+52+,1,,"the cost to set up the solution worldwide: the cost of stocks, plans and exercises"
 I6-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the transfers and the rule changes
 I8-0a-0T+32+52+,1,,"the cost to set up the solution worldwide: the cost is small, the agreement itself"
+i8-1G+32+Lm+Px+W8+,1,,"grid 10.75, metering 1.65 and levies 3.76 of 2026 kept in real terms; the word levies stands for the whole non-energy part here"
+i8-1G+8U+GS+Px+,1,,median grid tariff without metering; metering adds 1.65 Rp
+i8-1G+8U+Px+W8+,1,,"grid surcharge 2.3, electricity reserve 0.41, solidarised costs 0.05, municipalities 1.0"
+i8-TO-1G+8U+Px+,1,,median of all grid operators
 IA-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of oversight bodies and disclosure
+ib-0U+1G+32+35+Lm+W2+,1,,depends on the decarbonisation and the price spreads of the neighbours
+ib-i5-1G+32+Lm+W2+,1,,between the annual average of about 90 and the winter peak of 130 to 135 CHF per MWh of the BAK scenario without new NPP
 IC-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of building or reforming broadcasters in many countries
+ic-i5-1G+32+Lm+W3+,1,,low because all neighbours export PV at noon
 ID-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of audits and disclosure rules for the large platforms
+iD-0U+1G+2w+Cp+,1,,share of the Swiss electricity production today
 IE-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of a redistribution large enough to be felt in most countries
+ie-iC-0U+32+35+,1,,"a value judgement of the reader, not a measurement"
 IF-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of extending the nets in the countries without them
 IG-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of public funding and enforcement
 IH-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of court reform and judge training in many countries
+ih-i8-1G+8U+Px+,1,,median
 II-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the change and the voter information
 IJ-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of party reform and outreach
 IK-0a-0T+32+52+,1,,"the cost to set up the solution worldwide: the cost of border management, processing and integration"
 IL-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the portals and the data preparation
 IM-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the funding in many countries
+im-iC-F/+Gd+Vq+,1,,built by the models with state support and a WACC of 5 percent
 IN-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of teacher training and material
 IO-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of extended programmes
 IP-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of cultural and educational programmes
+ip-iC-Qu-0S+5G+Vw+,1,,per year incl. the state support of 625 million; 938 million net of it
+ip-iI-iC-0S+5G+Vw+,1,,S-curve of the capital outflow 2040 to 2050
+ip-iS-iC-Vw+WR+,1,,per year over 60 years of operation incl. the annualised construction
+ip-iV-iC-i5-Vx+,1,,the low variant of the study: one unit
+ip-iX-iC-0S+5G+Vw+,1,,per year; the market pays 55 percent of the levelised cost
 IR-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of regulators and compliance
+is-iK-iC-0U+32+Ac+,1,,"r / (1 - (1 + r)^-n) with r = 0.05 and n = 60 years; computed outside the engine, see the annuity factor formula; assumed, because no published table lists the factor for 60 years"
+iV-i8-2Y+Gd+PI+,1,,"ground-mounted, Germany, EUR cent treated as Rp"
+iV-iC-i5-Gd+Lm+,1,,range of the Axpo Energy Report 2026 and PSI 2017
+iV-iC-i8-2Y+Ga+,1,,"EUR cent per kWh treated as Rp, Germany"
+iV-iC-i8-2Y+Gd+,1,,"EUR cent per kWh treated as Rp, Germany"
 Iw-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the public investment that growth needs
+iW-iC-i5-Cp+Lm+,1,,"Axpo market simulation, real in prices of 2024"
 Ix-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of registries and courts
 Iy-0a-0T+32+52+,1,,"the cost to set up the solution worldwide: the cost of courts, police reform and training"
+iY-iM-0U+32+35+,1,,"order of magnitude only; the ETH/PSI models optimise storage endogenously, so the published results carry no separate number"
 Iz-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of independent agencies and courts in many countries
 J1-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the vaccines and the delivery
 J2-0a-0T+32+52+,1,,"the cost to set up the solution worldwide: the cost of wells, pipes and treatment"
 J3-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the systems
 J4-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the meals and supplements
+j5-io-iC-i6-,1,,the level of recent projects in Europe and the US
+j6-iC-0U+32+35+,1,,calibrated on one study
 J7-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the assets and the coaching
 J9-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the payments
+j9-ip-iC-0S+5G+Vw+,1,,"per year: avoided hedging cost 50, avoided outage damage 50, avoided shortage damage 420 million CHF, conservative"
 JA-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of one year of a payment at the poverty line
 JB-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the pensions
 JC-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the subsidised premiums
 JD-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of extending the nets
+jD-ih-i8-1G+32+Lm+Px+,1,,"today's median energy tariff kept in real terms; shifts only the level of the household price, not the difference"
+jD-j8-1G+Ga+Lm+Vp+,1,,the highest of the four models
+jD-j8-1G+Gd+Lm+Vp+,1,,the lowest of the four models
+jD-j8-1G+Lm+Vp+,1,,balance model; peak 8.1 TWh in 2045
 JE-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the grid and the solar systems
+jE-iK-iC-0U+32+Ac+,1,,r / (1 - (1 + r)^-n) with r = 0.08 and n = 60 years; assumed like the factor for the de-risked WACC
 JF-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the roads
 JG-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the systems and the agents
 JH-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the surveys and registries
+jH-St-1G+95+W2+,1,,"winter import mix 2022/23 from France, Germany, Austria and Italy"
 JI-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the advisers and the inputs
+jI-ip-iC-i5-Vw+,1,,"7 to 9 CHF per MWh against the scenario without new NPP, derived from Schwarz et al. 2023"
 JJ-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the negotiations and the adjustment
+jJ-jD-i5-1G+Lm+,1,,130 to 135 CHF per MWh in the most expensive winter month
 JK-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the enforcement
 JL-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of public building in the growing cities
 JM-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the homes
@@ -537,6 +571,7 @@ JU-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the cl
 JV-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of one year of transfers to the extreme poor
 JW-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of one year of transfers
 JX-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the credits
+jX-ip-1G+Lm+Vp+,1,,with one EPR
 JY-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of the wages
 Kc-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of public funding and enforcement
 Kd-0a-0T+32+52+,1,,the cost to set up the solution worldwide: the cost of independent agencies and courts in many countries

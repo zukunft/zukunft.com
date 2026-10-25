@@ -1037,7 +1037,11 @@ for, so the triples of `verbs::PRELOAD_VERBS` (`is symbol for`, `is alias of`)
 and the phrases they link travel with the **initial cache load**, next to the
 types and the system views (`data_object::load_system_phrases` fills them,
 `api\ui_config` sends them as `system_phrases`). A new symbol triple therefore
-needs no display code and no api change, only the seed entry.
+needs no display code and no api change, only the seed entry. The system phrases
+also hold every word of `phrase_types::PRELOAD_TYPES` (the measure unit, percent
+and scaling types), because a unit without a symbol triple e.g. `kWh` is shown
+behind a number too, and the system formulas are the ones linked to these units
+and scaling words e.g. `scale million to one`.
 
 ### A `percent` value is stored as the decimal ratio, never as the ×100 number
 
@@ -1709,9 +1713,13 @@ differs from an import file in three ways:
 
 The body holds only the changed objects, each with the fields that the client
 manages; a field that the message does not name keeps its database value.
-`words`, `triples` and `values` are added or changed in this order, then each
-entry of `delete` (`class` and `id`) is removed by the `del()` of the object,
-which decides if it is deleted or only excluded for the user. The session
+`words`, `triples`, `formulas` and `values` are added or changed in this order,
+then each entry of `delete` (`class` and `id`) is removed by the `del()` of the
+object, which decides if it is deleted or only excluded for the user. A formula
+is named by its `id` and changed by its expression in the user format
+(`user_text`, the same text as the `expression` of an import file); it is never
+deleted by a message, so a `delete` entry of a formula is refused
+(`OBJECT_NOT_FOUND`), like the one of any other class except word, triple and value. The session
 decides who saves: a message whose header `user_id` names another user is
 refused (`UPDATE_PUT_OTHER_USER`), and a message without `user_id` is saved for
 the requesting user. The save stops at the first problem and reports the number
@@ -1726,6 +1734,7 @@ of the changes after it that are not saved (`UPDATE_PUT_SKIPPED`).
   "body": {
     "words": [{"name": "System Test Word To"}],
     "triples": [{"id": 2846, "name": "System Test Triple", "from_id": 1295, "verb_id": 2, "to": "System Test Word To"}],
+    "formulas": [{"id": 1, "user_text": "\"autarky\" = \"direct use\" / \"household consumption\""}],
     "values": [
       {"id": "81495585085949938", "number": 123.456},
       {"phrases": [{"id": -2846}], "words": ["System Test Word To"], "number": 123456}
@@ -1738,7 +1747,9 @@ of the changes after it that are not saved (`UPDATE_PUT_SKIPPED`).
 The answer is the body of the message with the database `id` of each saved
 object and what the save has done, confirmed by the reload of the saved row
 (`update_put::confirmed`): `action` is `added`, `changed`, `unchanged` or, for
-a `delete` entry, `removed`; `changes` lists each changed field of the message
+a `delete` entry, `removed`; an object without `id` is `added` only if the save
+has found no row with the same name, the same linked phrases or, for a value,
+the same phrase group, because otherwise the save changes that row; `changes` lists each changed field of the message
 with its `old_value` and `new_value`; `user_overwrite` is true if the
 requesting user has an own version of the object after the save and false if
 the user sees the shared row, e.g. also after an undo that removes the own

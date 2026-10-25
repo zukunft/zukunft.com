@@ -603,7 +603,17 @@ class use_case_ui_tests
         $test_name = '... but a phrase selector sends no group id';
         $canton_id = $dto_in->phr_lst->get_by_name(word_names::CANTON, $msg)->id();
         $t->assert_text_not_contains($test_name, $in_html, 'name="' . url_var::GROUP . $canton_id . '"');
-        // two values that fit a field equally e.g. the inhabitants of Zurich and of Bern are picked
+        // the value of another use case with the same field phrase is not shown e.g. the lifetime
+        // of a new NPP on the page of a PV installation, even if the preferred order of numbers would pick it
+        $dto_foreign = clone $dto_in;
+        $dto_foreign->val_lst = $t_val->value_list_calculator_input_foreign_ui();
+        $foreign_html = $page->calculator_input($zh_city, $msg, $dto_foreign, $form, views::CALCULATOR, []);
+        $test_name = 'a field shows the value with a part of the page triple';
+        $t->assert_text_contains($test_name, $foreign_html, 'value="' . values::CITY_ZH_INHABITANTS_2019 . '"');
+        // negative: the bigger value of Bern, which is no part of Zurich (city), is not shown
+        $test_name = '... and not the value of a phrase outside the page triple';
+        $t->assert_text_not_contains($test_name, $foreign_html, 'value="' . values::SAMPLE_BIG . '"');
+        // two values that fit a field equally e.g. the inhabitants of Zurich and of a city are picked
         // by the preferred order of numbers and not by the order of the list, which the backend
         // returns in any order; here the bigger number of the same unit
         $dto_tie = clone $dto_in;

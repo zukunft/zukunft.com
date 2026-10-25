@@ -80,6 +80,8 @@ class files
     // a description change of the use case triple PV capacity label as the editor has sent it and its undo
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label' . self::JSON;
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label_undo' . self::JSON;
+    // an expression change of the use case formula of the autarky as the editor sends it; the undo puts the loaded expression
+    CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_autarky_formula' . self::JSON;
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none
@@ -266,6 +268,7 @@ class files
     CONST string IMPORT_CBAM_COSTS = test_paths::IMPORT . 'CBAM_costs' . self::JSON;
     CONST string IMPORT_CBAM_PREREQUISITE = test_paths::IMPORT . 'CBAM_ prerequisite' . self::JSON;
     CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
+    CONST string IMPORT_CH_BANKING_AND_TAX = test_paths::IMPORT . 'ch_banking_and_tax' . self::JSON;
     CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
     CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
     CONST string IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850 = test_paths::IMPORT . 'cumulative_anthropogenic_co2_since_1850' . self::JSON;
@@ -456,6 +459,7 @@ class files
         self::IMPORT_MODERATION_LATENCY_VS_SPREAD,
         self::IMPORT_OSTRACISM,
         self::IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850,
+        self::IMPORT_CH_BANKING_AND_TAX,
     ];
 
 

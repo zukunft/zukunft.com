@@ -703,6 +703,18 @@ class import_tests
         $trp_none = $dto->get_triple_by_name(triple_names::PI, $msg);
         $t->assert_null($test_name, $trp_none?->name());
 
+        // the Swiss NPP vote use case chains the levelised cost of the new plant, the cost of the
+        // alternative and the average cost difference per kWh, so every pre-calculated result of
+        // the file must be reproduced from its values and formulas
+        $test_name = 'the import of the Swiss NPP vote use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::NPP_CH_VOTE_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+
         // the CBAM calculator use case chains the embedded emission, the free allocation
         // adjustment, the carbon price deduction, the obligation and the cost of an import, so
         // every pre-calculated result of the file must be reproduced from its values and formulas

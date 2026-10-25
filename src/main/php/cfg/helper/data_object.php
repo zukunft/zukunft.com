@@ -765,7 +765,8 @@ class data_object
      * load the phrases that the frontend needs on every page: the triples of the verbs of
      * verbs::PRELOAD_VERBS and the phrases they link, e.g. the triple "% is symbol for percent"
      * with the words "%" and "percent", so that a page can show the symbol behind a number
-     * without knowing the triple that defines it (see web\phrase::symbol_name)
+     * without knowing the triple that defines it (see web\phrase::symbol_name), and the words
+     * of phrase_types::PRELOAD_TYPES, so that every unit and scaling word is known e.g. "kWh"
      *
      * @param user_message $msg to report a verb that the pod does not have
      * @return bool true if at least one phrase has been preloaded
@@ -793,12 +794,27 @@ class data_object
                 } while ($trp_lst->count() >= sql_db::ROW_LIMIT);
             }
         }
+        // the words of the unit and scaling types, because a unit without a symbol triple e.g. "kWh"
+        // would be missing; the load by type has no row limit, so no unit is cut off
+        foreach (phrase_types::PRELOAD_TYPES as $code_id) {
+            // without the log of id(), because the message below names the consequence
+            $typ_id = $sys->typ_lst->phr_typ->id($code_id, false);
+            if ($typ_id <= 0) {
+                log_err_msg('the phrase type ' . $code_id . ' is missing, so its words cannot be '
+                    . 'preloaded and a number with such a word is shown without it', $msg);
+            } else {
+                // TODO Prio 1 better use a phrase list
+                $wrd_lst = new word_list($this->get_user());
+                $wrd_lst->load_by_type($typ_id, $msg);
+                $this->sys_phr->merge($wrd_lst->phrase_list());
+            }
+        }
         return !$this->sys_phr->is_empty();
     }
 
     /**
-     * load the formulas linked to the measure units of the system phrases e.g. "scale tonne to kg",
-     * so that the frontend can show 123'456 kg as 123.5 t (see web\helper\number_format);
+     * load the formulas linked to the measure units and the scaling words of the system phrases
+     * e.g. "scale tonne to kg", so that the frontend can show 123'456 kg as 123.5 t (see web\helper\number_format);
      * called after load_system_phrases, because the units are taken from the system phrases
      *
      * @param user_message $msg to report a problem of the load
@@ -810,6 +826,10 @@ class data_object
         // only the own type of a phrase is used, because the from and to of a symbol triple can be an
         // id-only triple, which measure_lst would try to reload without a verb, one db read each
         $unit_lst = $this->sys_phr->get_by_type(phrase_types::MEASURE);
+        // the scaling words too, so that the scaling formulas e.g. "scale million to one" are preloaded
+        foreach (phrase_types::SCALING_TYPES as $code_id) {
+            $unit_lst->merge($this->sys_phr->get_by_type($code_id));
+        }
         $result = false;
         if (!$unit_lst->is_empty()) {
             $result = $this->sys_frm->load_by_phr_lst($unit_lst, $msg);

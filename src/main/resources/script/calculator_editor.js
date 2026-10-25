@@ -220,7 +220,7 @@ function buildIndex(doc) {
     const byName = new Map();
     const known = new Set();
     const symbolFor = new Map();
-    const unitNames = new Set(["kWh", "kWp", "kg", "gram", "t", "percent", "a", "kWh/a"]);
+    const unitNames = typeUnits();
     T.forEach(function (t, i) {
         if (!byFrom.has(t.from)) {
             byFrom.set(t.from, []);
@@ -448,7 +448,7 @@ function parseDoc(doc) {
             base = page;
         }
     }
-    const model = {base: base, page: page, lists: {}, phrases: {}, valueEdits: {}};
+    const model = {base: base, page: page, lists: {}, phrases: {}, valueEdits: {}, formulaEdits: {}};
     state = model;
     const itemNames = new Set();
     LISTS.forEach(function (L) {
@@ -1142,7 +1142,7 @@ function buildOutput() {
     const emitted = emitAll();
     const bySrc = new Map();
     const fresh = [];
-    const changes = {add: [], del: [], mod: [], words: [], values: []};
+    const changes = {add: [], del: [], mod: [], words: [], values: [], formulas: []};
     emitted.forEach(function (e) {
         if (e.src !== null && e.src !== undefined && !bySrc.has(e.src)) {
             bySrc.set(e.src, e);
@@ -1222,6 +1222,14 @@ function buildOutput() {
         });
     });
 
+    /* formulas: the changed expressions, which are saved as the own version of the user */
+    (DOC.formulas || []).forEach(function (f) {
+        const after = formulaExpression(f);
+        if (after !== (f.expression || "")) {
+            changes.formulas.push({id: f.id, name: f.name, before: f.expression || "", after: after});
+        }
+    });
+
     /* words: every phrase that is not in the database yet is added as a word */
     const knownNow = new Set(IDX.known);
     finalTriples.forEach(function (t) {
@@ -1237,7 +1245,7 @@ function buildOutput() {
         });
     });
 
-    const changed = changes.add.length + changes.del.length + changes.mod.length + changes.values.length + changes.words.length;
+    const changed = changes.add.length + changes.del.length + changes.mod.length + changes.values.length + changes.words.length + changes.formulas.length;
     const warnings = validate(finalTriples);
     const result = {changes: changes, changed: changed, warnings: warnings};
     return result;
@@ -1434,15 +1442,17 @@ function nodeRow(n, parent, listKey, arr, i) {
     const verbNote = n.verb === WITH ? "with " : "";
     const sel = selected === n.uid ? " sel" : "";
     const kidKinds = KIND[n.kind].kids;
+    /* a result row lists the formulas that calculate its number, which may be more than one */
+    const formulas = n.kind === "row" && n.to ? formulasUsed(n.to).map(formulaRow).join("") : "";
     let kids = "";
-    if (n.children.length > 0 || kidKinds.length > 0) {
+    if (n.children.length > 0 || kidKinds.length > 0 || formulas) {
         const inner = n.children.map(function (c, j) {
             return nodeRow(c, n, listKey, n.children, j);
         }).join("");
         const adds = kidKinds.map(function (k) {
             return '<button class="addlink" data-act="addChild" data-uid="' + n.uid + '" data-kind="' + k + '">' + esc(ADD_TEXT[k]) + "</button>";
         }).join("");
-        kids = '<div class="kids">' + inner + (adds ? '<div class="addrow">' + adds + "</div>" : "") + "</div>";
+        kids = '<div class="kids">' + inner + formulas + (adds ? '<div class="addrow">' + adds + "</div>" : "") + "</div>";
     }
     const result =
         '<div class="node' + sel + '" data-uid="' + n.uid + '" data-kind="' + n.kind + '" draggable="true" tabindex="0" role="treeitem" aria-selected="' + (sel ? "true" : "false") + '">' +
@@ -1515,6 +1525,8 @@ function renderInspector() {
     let html = "";
     if (selected === "page") {
         html = pageInspector();
+    } else if (findFormula(selected)) {
+        html = formulaInspector(findFormula(selected));
     } else {
         const hit = findNode(selected);
         if (hit) {
@@ -2012,11 +2024,118 @@ function detailTable(d) {
     return html;
 }
 
+/* ------------------------------------------------------------------ */
+/* formulas                                                             */
+/* ------------------------------------------------------------------ */
+/* the selection key of a formula in the structure, so that it never matches the uid of an item */
+const FORMULA_SEL = "formula:";
+const FORMULA_PHRASE = /"([^"]+)"/g;
+
+/* the expression of a formula with the change of this session e.g. "autarky" = ( "direct use" + ... ) / ... */
+function formulaExpression(f) {
+    const edits = state.formulaEdits || {};
+    const result = edits[f.id] !== undefined ? edits[f.id] : (f.expression || "");
+    return result;
+}
+
+/* the phrase names of an expression: the phrases left of the "=" get the result, the others are the operands */
+function expressionPhrases(expression) {
+    const text = String(expression);
+    const pos = text.indexOf("=");
+    const names = function (part) {
+        return Array.from(part.matchAll(FORMULA_PHRASE), function (m) {
+            return m[1];
+        });
+    };
+    const result = {
+        result: pos < 0 ? [] : names(text.slice(0, pos)),
+        operands: names(pos < 0 ? text : text.slice(pos + 1))
+    };
+    return result;
+}
+
+/* the formulas that a number of the phrase depends on: every formula whose result is the phrase,
+   because e.g. a result can be calculated by one formula per mix, and then the formulas of their
+   operands, each formula once and in the order of the calculation chain */
+function formulasUsed(name) {
+    const result = [];
+    const seen = new Set();
+
+    function visit(phr) {
+        (DOC.formulas || []).forEach(function (f) {
+            if (!seen.has(f.id) && expressionPhrases(formulaExpression(f)).result[0] === phr) {
+                seen.add(f.id);
+                result.push(f);
+                expressionPhrases(formulaExpression(f)).operands.forEach(visit);
+            }
+        });
+    }
+
+    visit(name);
+    return result;
+}
+
+/* the formula of a selection key of the structure or null if the key selects no formula */
+function findFormula(sel) {
+    const key = String(sel);
+    const id = key.indexOf(FORMULA_SEL) === 0 ? key.slice(FORMULA_SEL.length) : null;
+    const result = id === null ? null : (DOC.formulas || []).find(function (f) {
+        return String(f.id) === id;
+    }) || null;
+    return result;
+}
+
+function formulaRow(f) {
+    const key = FORMULA_SEL + f.id;
+    const sel = selected === key ? " sel" : "";
+    const changed = formulaExpression(f) !== (f.expression || "") ? '<span class="chip new">changed</span>' : "";
+    const result = '<div class="node formula' + sel + '" data-uid="' + esc(key) + '" tabindex="0" role="treeitem" aria-selected="' + (sel ? "true" : "false") + '">' +
+        '<span class="txt"><span class="lbl">' + esc(f.name) + "</span>" +
+        '<span class="ph mono">' + esc(formulaExpression(f)) + "</span></span>" +
+        '<span class="side">' + changed + "</span></div>";
+    return result;
+}
+
+/* the number of the phrases that the page shows, with its unit, as a sample input or result of a formula */
+function sampleNumber(names) {
+    const entry = findEntry(names);
+    const result = entry ? fmtNumber(poolNumber(entry), unitOf(entry.words)) : "—";
+    return result;
+}
+
+function formulaInspector(f) {
+    const exp = formulaExpression(f);
+    const phr = expressionPhrases(exp);
+    const changed = exp !== (f.expression || "");
+    let html = '<div class="insp-title"><span class="kind">Formula</span><span class="big">' + esc(f.name) + "</span></div>";
+    html += inputHtml({t: "frm", id: f.id}, exp, {
+        label: "Formula", area: true, mono: true, id: "formula_" + f.id,
+        note: changed ? "Changed: Save stores it as your own version of the formula." :
+            "The phrase left of the = gets the result; each operand is a phrase in quotes."
+    });
+    if (f.description) {
+        html += '<div class="note">' + esc(f.description) + "</div>";
+    }
+    const rows = phr.operands.filter(function (name, i, all) {
+        return all.indexOf(name) === i;
+    }).map(function (name) {
+        return '<tr><td>' + esc(name) + '</td><td class="n">' + esc(sampleNumber([name])) + "</td></tr>";
+    }).join("");
+    html += '<div class="box"><div class="box-head"><h4>Sample input values</h4></div>';
+    html += rows ? '<table class="samples"><tbody>' + rows + "</tbody></table>" : '<div class="note">The formula has no operand.</div>';
+    if (phr.result.length > 0) {
+        html += '<div class="note">The page shows ' + esc(phr.result.join(", ")) + " = " + esc(sampleNumber(phr.result)) +
+            (changed ? ", calculated with the stored formula" : "") + ".</div>";
+    }
+    html += "</div>";
+    return html;
+}
+
 function notesHtml() {
     const notes = (DOC.formulas || []).map(function (f) {
         return "<p><b>" + esc(f.name) + "</b> " + esc(f.description || "") + "</p>";
     }).join("");
-    const result = notes ? '<div class="notes">' + notes + '<p class="derived">derived from the formulas, not editable here</p></div>' : "";
+    const result = notes ? '<div class="notes">' + notes + '<p class="derived">derived from the formulas; a formula is changed in the structure below the result row it calculates</p></div>' : "";
     return result;
 }
 
@@ -2162,6 +2281,11 @@ function changesPane() {
     if (c.words.length) {
         html += "<div><h3>New words (" + c.words.length + ")</h3><ul>" + c.words.map(function (w) {
             return '<li class="add">+ ' + esc(w) + "</li>";
+        }).join("") + "</ul></div>";
+    }
+    if (c.formulas.length) {
+        html += "<div><h3>Changed formulas (" + c.formulas.length + ")</h3><ul>" + c.formulas.map(function (f) {
+            return '<li class="mod">' + esc(f.name) + ": " + esc(f.before) + "<br>→ " + esc(f.after) + "</li>";
         }).join("") + "</ul></div>";
     }
     html += "</div>";
@@ -2414,6 +2538,15 @@ function setBound(b, value) {
         } else {
             state.valueEdits[b.v] = String(value).trim();
         }
+    } else if (b.t === "frm") {
+        /* a draft of an older editor has no formula edits yet */
+        state.formulaEdits = state.formulaEdits || {};
+        const f = findFormula(FORMULA_SEL + b.id);
+        if (f && (f.expression || "") === value) {
+            delete state.formulaEdits[b.id];
+        } else {
+            state.formulaEdits[b.id] = value;
+        }
     } else if (b.t === "side") {
         const s = phrase(b.p).side.find(function (x) {
             return x.uid === b.uid;
@@ -2578,15 +2711,6 @@ async function apiCall(method, route, params, body) {
     return result;
 }
 
-function idOf(json) {
-    const body = unwrap(json);
-    let result = 0;
-    if (body && body.id !== undefined) {
-        result = body.id;
-    }
-    return result;
-}
-
 /* a reference of the update put message by its database id, or by its name only if it has no id yet
    e.g. a word that the same message adds */
 function addRef(json, idKey, nameKey, id, name) {
@@ -2636,7 +2760,7 @@ function valueJson(v) {
 function putMessage(changes) {
     const T = IDX.T;
     const V = DOC.values || [];
-    const body = {words: [], triples: [], values: [], delete: []};
+    const body = {words: [], triples: [], formulas: [], values: [], delete: []};
     changes.words.forEach(function (w) {
         body.words.push({name: w});
     });
@@ -2645,6 +2769,10 @@ function putMessage(changes) {
     });
     changes.mod.forEach(function (m) {
         body.triples.push(tripleJson(m.after, T[m.src].id));
+    });
+    /* the expression in the user format, which the formula api names user_text */
+    changes.formulas.forEach(function (f) {
+        body.formulas.push({id: f.id, user_text: f.after});
     });
     changes.values.forEach(function (v) {
         if (v.kind === "add") {
@@ -2725,7 +2853,7 @@ async function save() {
 function savedReport(body) {
     const lines = [];
     let warn = Boolean(body.warnings);
-    ["words", "triples", "values"].forEach(function (section) {
+    ["words", "triples", "formulas", "values"].forEach(function (section) {
         (body[section] || []).forEach(function (o) {
             const name = o.name || (section.slice(0, -1) + " " + o.id);
             const own = o.user_overwrite ? " (your own version)" : " (the shared version)";
@@ -2852,14 +2980,14 @@ async function loadFromApi() {
         message = "the phrase " + SOURCE.pageId + " was not found";
     }
     if (!message) {
-        message = await readIds(doc);
+        message = readIds(doc);
     }
     const result = {ok: message === "", doc: doc, message: message};
     return result;
 }
 
 /* the database ids that a save needs: the phrases by their name, and the verbs, which the data names only */
-async function readIds(doc) {
+function readIds(doc) {
     SOURCE.phraseIds = new Map();
     (doc.words || []).forEach(function (w) {
         SOURCE.phraseIds.set(w.name, Number(w.id));
@@ -2869,22 +2997,40 @@ async function readIds(doc) {
             SOURCE.phraseIds.set(t.name, -Math.abs(Number(t.id)));
         }
     });
-    SOURCE.verbIds = new Map();
-    const verbs = new Set((doc.triples || []).map(function (t) {
-        return t.verb;
-    }));
+    SOURCE.verbIds = typeVerbs();
     let message = "";
-    for (const name of verbs) {
-        if (!message) {
-            const r = await apiCall("GET", "verb", {k: name});
-            if (r.ok) {
-                SOURCE.verbIds.set(name, Number(idOf(r.json)));
-            } else {
-                message = r.message;
-            }
+    (doc.triples || []).forEach(function (t) {
+        if (!message && t.verb && !SOURCE.verbIds.has(t.verb)) {
+            message = "the verb \"" + t.verb + "\" is not in the type lists of the page";
         }
-    }
+    });
     return message;
+}
+
+/* the type lists that the view embeds in the format of the typeLists api
+   (system_page::calculator_editor_types): the verbs and the unit and scaling phrases */
+function embeddedTypes() {
+    const el = document.getElementById("calcEditorTypes");
+    const result = el ? parseJson(el.textContent) : {};
+    return result;
+}
+
+/* the verb ids by the verb name, so that no verb is read from the api */
+function typeVerbs() {
+    const result = new Map();
+    (embeddedTypes().verbs || []).forEach(function (v) {
+        result.set(v.name, Number(v.id));
+    });
+    return result;
+}
+
+/* the names of the unit and scaling phrases of the pod e.g. kWh or million, so that a number is shown with its unit */
+function typeUnits() {
+    const result = new Set();
+    (embeddedTypes().system_phrases || []).forEach(function (p) {
+        result.add(p.name);
+    });
+    return result;
 }
 
 async function reload() {
@@ -2972,8 +3118,9 @@ function onChange(e) {
         const b = JSON.parse(el.dataset.bind);
         const isText = el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && el.type !== "checkbox");
         if (isText) {
-            /* the text was stored while typing; refresh the inspector for the new placeholders */
-            const structural = b.t === "node" && (b.f === "to" || b.f === "name");
+            /* the text was stored while typing; refresh the inspector for the new placeholders
+               and the sample values of the operands of a changed formula */
+            const structural = (b.t === "node" && (b.f === "to" || b.f === "name")) || b.t === "frm";
             if (structural && document.getElementById("insp").contains(el)) {
                 setTimeout(function () {
                     const active = document.activeElement;

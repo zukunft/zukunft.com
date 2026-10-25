@@ -212,7 +212,8 @@ class expression extends shared_expression
         $this->reset();
         $this->frm = $frm;
         $this->usr = $frm->get_user();
-        $this->frm_name = $frm->name();
+        // empty for a formula given only by its id e.g. by an update put message, whose name the fill adds later
+        $this->frm_name = $frm->name() ?? '';
     }
 
 

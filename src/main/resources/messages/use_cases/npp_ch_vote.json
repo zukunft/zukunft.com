@@ -1,0 +1,3409 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-25 17:30:00",
+  "user": "timon",
+  "selection": [
+    "new NPP vote 2027"
+  ],
+  "description": "Use case: the Swiss vote of 28 February 2027 on lifting the ban on new nuclear power plants (amendment of the Nuclear Energy Act, indirect counter-proposal to the initiative 'Jederzeit Strom für alle (Blackout stoppen)', referendum filed with 131793 signatures). The file holds the numbers of the main studies of both sides (ETH/PSI white paper of June 2026, BAK Economics for economiesuisse of July 2026, Swiss Academies of August 2026, SES, Fraunhofer ISE, operator cost, ElCom tariffs), the pro and contra claims as supports and limits triples on the phrase 'lifting the NPP ban', and the formulas of a decision calculator: from the overnight construction cost, the cost of capital, the construction time and the capacity the levelised cost of the new plant, against the cost of the renewable alternative plus the shifted winter trade and an optional security value; the annual cost difference spread over the demand of 2050 is the average cost difference in Rp per kWh, and its ratio to a threshold gives the verdict yes, no or undecided. The BAK base case is reproduced in the calc-validation chain (12.137 TWh, 17264 million CHF, 114.4 CHF per MWh, 612 million CHF subsidy, average cost difference -0.009 Rp per kWh: undecided). The html prototype npp_ch_vote_sample.html renders this use case stand-alone. ADDITIONALLY NEEDED, marked PROPOSED NEW ELEMENT in the triple descriptions: (1) a slider field type 'calculator slider' with the field property values field min, field max and field step; (2) scenario result columns 'calculator scenario column' with a computed difference column; (3) an argument component 'calculator argument' that lists the supports and limits triples of the page phrase with the numbers of the claim phrases; (4) a verdict component 'calculator verdict' that maps a result over a threshold to yes, no or undecided with a meter; (5) in the engine a power or annuity function, because the annuity factor formula needs (1 + r)^-n and chars.php evaluates + - * / only, so the annuity factors are stored as assumed values here; (6) a max function for the subsidy need and a comparison for the verdict, or the verdict component takes the sign; (7) preset buttons that set several inputs at once (the four scenarios of the html page: ETH low, BAK base, ETH high, Academies pessimistic), which can be data as triples from the page phrase to a scenario phrase with the input values of the scenario. Values without a source are the calculator defaults and are tagged assumed with their own confidence; the measured values carry their study as source. Not in the file: the Academies report pdf itself (numbers via sda), the Axpo Energy Report 2026 and Schwarz et al. 2023 (both only via BAK), the VSE demand projection of 90 TWh, a CO2 price, risk costs and the grid expansion difference between central and decentral supply.",
+  "words": [
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "EUR"
+    },
+    {
+      "name": "Rp"
+    },
+    {
+      "name": "kW"
+    },
+    {
+      "name": "kWh"
+    },
+    {
+      "name": "MWh"
+    },
+    {
+      "name": "GWh"
+    },
+    {
+      "name": "TWh"
+    },
+    {
+      "name": "GW"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "hour"
+    },
+    {
+      "name": "km2"
+    },
+    {
+      "name": "gram"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "full-time"
+    },
+    {
+      "name": "equivalent"
+    },
+    {
+      "name": "2024",
+      "type": "time"
+    },
+    {
+      "name": "2026",
+      "type": "time"
+    },
+    {
+      "name": "2027",
+      "type": "time"
+    },
+    {
+      "name": "2050",
+      "type": "time"
+    },
+    {
+      "name": "NPP",
+      "description": "nuclear power plant; a plant that generates electricity from nuclear fission",
+      "refs": [
+        {
+          "name": "Nuclear_power_plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Switzerland",
+      "refs": [
+        {
+          "name": "Switzerland",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "new"
+    },
+    {
+      "name": "existing"
+    },
+    {
+      "name": "vote"
+    },
+    {
+      "name": "ban",
+      "description": "a legal prohibition"
+    },
+    {
+      "name": "lifting",
+      "description": "the removal of a ban"
+    },
+    {
+      "name": "EPR",
+      "description": "European Pressurized Reactor of EDF/Framatome, generation III+, 1.63 GW net in the BAK study",
+      "refs": [
+        {
+          "name": "EPR_(nuclear_reactor)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "AP1000",
+      "description": "pressurized water reactor of Westinghouse, generation III+, 1.157 GW net in the BAK study",
+      "refs": [
+        {
+          "name": "AP1000",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Olkiluoto 3",
+      "description": "EPR in Finland, in commercial operation since 2023 after 18 years of construction",
+      "refs": [
+        {
+          "name": "Olkiluoto_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Flamanville 3",
+      "description": "EPR in France, in operation since 2024 after about 17 years of construction",
+      "refs": [
+        {
+          "name": "Flamanville_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Leibstadt",
+      "description": "the largest Swiss NPP, 1.2 GW, in operation since 1984",
+      "refs": [
+        {
+          "name": "Leibstadt_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Gösgen",
+      "description": "Swiss NPP of 1 GW, in operation since 1979",
+      "refs": [
+        {
+          "name": "G%C3%B6sgen_Nuclear_Power_Plant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "capacity"
+    },
+    {
+      "name": "factor"
+    },
+    {
+      "name": "lifetime"
+    },
+    {
+      "name": "construction"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "cost"
+    },
+    {
+      "name": "overnight"
+    },
+    {
+      "name": "interest"
+    },
+    {
+      "name": "investment"
+    },
+    {
+      "name": "annuity",
+      "description": "the equal yearly payment that pays back a capital and its interest over a fixed number of years"
+    },
+    {
+      "name": "capital"
+    },
+    {
+      "name": "operating"
+    },
+    {
+      "name": "levelised",
+      "description": "all costs over the lifetime divided by all kilowatt-hours over the lifetime"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "production"
+    },
+    {
+      "name": "annual"
+    },
+    {
+      "name": "winter",
+      "description": "the winter half-year October to March"
+    },
+    {
+      "name": "summer",
+      "description": "the summer half-year April to September"
+    },
+    {
+      "name": "share"
+    },
+    {
+      "name": "import"
+    },
+    {
+      "name": "export"
+    },
+    {
+      "name": "net"
+    },
+    {
+      "name": "shifted"
+    },
+    {
+      "name": "trade"
+    },
+    {
+      "name": "value"
+    },
+    {
+      "name": "security"
+    },
+    {
+      "name": "market"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "subsidy"
+    },
+    {
+      "name": "need"
+    },
+    {
+      "name": "renewable"
+    },
+    {
+      "name": "alternative"
+    },
+    {
+      "name": "WACC",
+      "description": "weighted average cost of capital, the real interest rate of the financing"
+    },
+    {
+      "name": "rate"
+    },
+    {
+      "name": "de-risked",
+      "description": "with the state bearing part of the financing risk, e.g. by guarantees or contracts for difference"
+    },
+    {
+      "name": "demand"
+    },
+    {
+      "name": "average"
+    },
+    {
+      "name": "household"
+    },
+    {
+      "name": "tariff"
+    },
+    {
+      "name": "energy"
+    },
+    {
+      "name": "grid"
+    },
+    {
+      "name": "levies",
+      "description": "the federal grid surcharge, the electricity reserve, the solidarised costs and the fees of the municipalities"
+    },
+    {
+      "name": "bill"
+    },
+    {
+      "name": "H4",
+      "description": "the ElCom consumption profile of a household with 4500 kWh per year: a five room flat with electric cooker and tumble dryer but without electric boiler"
+    },
+    {
+      "name": "threshold"
+    },
+    {
+      "name": "verdict",
+      "description": "the recommendation the calculator derives from the numbers: yes, no or undecided"
+    },
+    {
+      "name": "break"
+    },
+    {
+      "name": "even"
+    },
+    {
+      "name": "difference"
+    },
+    {
+      "name": "scenario"
+    },
+    {
+      "name": "with"
+    },
+    {
+      "name": "without"
+    },
+    {
+      "name": "optimistic"
+    },
+    {
+      "name": "pessimistic"
+    },
+    {
+      "name": "base"
+    },
+    {
+      "name": "low"
+    },
+    {
+      "name": "moderate"
+    },
+    {
+      "name": "high"
+    },
+    {
+      "name": "minimum"
+    },
+    {
+      "name": "maximum"
+    },
+    {
+      "name": "ETH Zurich",
+      "description": "the Swiss Federal Institute of Technology in Zurich",
+      "refs": [
+        {
+          "name": "ETH_Zurich",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "BAK",
+      "description": "BAK Economics AG, Basel, the author of the economiesuisse study"
+    },
+    {
+      "name": "Academies",
+      "description": "the Swiss Academies of Arts and Sciences",
+      "refs": [
+        {
+          "name": "Swiss_Academies_of_Arts_and_Sciences",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "model"
+    },
+    {
+      "name": "PV"
+    },
+    {
+      "name": "rooftop"
+    },
+    {
+      "name": "small",
+      "description": "rooftop PV up to 100 kW"
+    },
+    {
+      "name": "large",
+      "description": "rooftop PV above 100 kW"
+    },
+    {
+      "name": "wind"
+    },
+    {
+      "name": "onshore"
+    },
+    {
+      "name": "hydro"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "CO2-eq"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "cycle"
+    },
+    {
+      "name": "intensity"
+    },
+    {
+      "name": "land"
+    },
+    {
+      "name": "added"
+    },
+    {
+      "name": "jobs"
+    },
+    {
+      "name": "signatures"
+    },
+    {
+      "name": "referendum"
+    },
+    {
+      "name": "wholesale"
+    },
+    {
+      "name": "reduction"
+    },
+    {
+      "name": "peak"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "calculated"
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "supply"
+    },
+    {
+      "name": "gap"
+    },
+    {
+      "name": "timing",
+      "description": "when a new NPP could deliver relative to the shutdown of the existing ones"
+    },
+    {
+      "name": "option"
+    },
+    {
+      "name": "cluster"
+    },
+    {
+      "name": "risk"
+    },
+    {
+      "name": "residual"
+    },
+    {
+      "name": "net zero",
+      "description": "the Swiss climate target of net zero greenhouse-gas emissions by 2050"
+    },
+    {
+      "name": "competitiveness"
+    },
+    {
+      "name": "stability"
+    },
+    {
+      "name": "overrun"
+    },
+    {
+      "name": "calculator"
+    },
+    {
+      "name": "input"
+    },
+    {
+      "name": "assumption"
+    },
+    {
+      "name": "column"
+    },
+    {
+      "name": "highlight"
+    },
+    {
+      "name": "sign"
+    },
+    {
+      "name": "label"
+    },
+    {
+      "name": "hint"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    },
+    {
+      "name": "argument"
+    },
+    {
+      "name": "slider"
+    },
+    {
+      "name": "example"
+    }
+  ],
+  "triples": [
+    {
+      "from": "CHF",
+      "verb": "per",
+      "to": "MWh",
+      "type": "measure_unit"
+    },
+    {
+      "from": "CHF",
+      "verb": "per",
+      "to": "kW",
+      "type": "measure_unit"
+    },
+    {
+      "from": "EUR",
+      "verb": "per",
+      "to": "kW",
+      "type": "measure_unit"
+    },
+    {
+      "from": "Rp",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure_unit"
+    },
+    {
+      "from": "gram",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure_unit"
+    },
+    {
+      "from": "GWh",
+      "verb": "per",
+      "to": "km2",
+      "type": "measure_unit"
+    },
+    {
+      "from": "2027",
+      "verb": "is follower of",
+      "to": "2026"
+    },
+    {
+      "from": "2050",
+      "verb": "is follower of",
+      "to": "2027"
+    },
+    {
+      "from": "2024",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2026",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2027",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "from": "2050",
+      "verb": "is a",
+      "to": "year"
+    },
+    {
+      "name": "new NPP",
+      "description": "a nuclear power plant built after the vote of 2027, in operation from about 2050",
+      "from": "NPP",
+      "verb": "kind of",
+      "to": "new"
+    },
+    {
+      "name": "existing NPP",
+      "description": "Beznau 1 and 2, Gösgen and Leibstadt",
+      "from": "NPP",
+      "verb": "kind of",
+      "to": "existing"
+    },
+    {
+      "name": "NPP ban",
+      "description": "art. 12a of the Nuclear Energy Act, in force since 2018: no general licence for new nuclear power plants",
+      "from": "ban",
+      "verb": "of",
+      "to": "new NPP"
+    },
+    {
+      "name": "lifting the NPP ban",
+      "description": "the amendment of the Nuclear Energy Act passed by parliament in 2026 as the indirect counter-proposal to the initiative 'Jederzeit Strom für alle (Blackout stoppen)'; a yes lifts the ban, a no keeps it",
+      "from": "lifting",
+      "verb": "of",
+      "to": "NPP ban"
+    },
+    {
+      "name": "NPP vote 2027",
+      "description": "the referendum vote of the Swiss electorate, expected on 28 February 2027, after the referendum against the amendment was filed on 6 October 2026 with 131'793 signatures",
+      "from": "vote",
+      "verb": "of",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "new NPP vote 2027",
+      "description": "the page phrase of the decision calculator",
+      "from": "NPP vote 2027",
+      "verb": "kind of",
+      "to": "example",
+      "view": "Calculator"
+    },
+    {
+      "from": "EPR",
+      "verb": "is a",
+      "to": "new NPP"
+    },
+    {
+      "from": "AP1000",
+      "verb": "is a",
+      "to": "new NPP"
+    },
+    {
+      "from": "Olkiluoto 3",
+      "verb": "is a",
+      "to": "EPR"
+    },
+    {
+      "from": "Flamanville 3",
+      "verb": "is a",
+      "to": "EPR"
+    },
+    {
+      "from": "Leibstadt",
+      "verb": "is a",
+      "to": "existing NPP"
+    },
+    {
+      "from": "Gösgen",
+      "verb": "is a",
+      "to": "existing NPP"
+    },
+    {
+      "from": "Switzerland",
+      "verb": "has a",
+      "to": "NPP ban"
+    },
+    {
+      "name": "construction cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "construction"
+    },
+    {
+      "name": "overnight construction cost",
+      "description": "OCC: the construction cost as if paid at once, without interest during construction",
+      "from": "construction cost",
+      "verb": "kind of",
+      "to": "overnight"
+    },
+    {
+      "name": "construction time",
+      "from": "time",
+      "verb": "of",
+      "to": "construction"
+    },
+    {
+      "name": "interest during construction",
+      "description": "IDC: the interest on the capital spent before commercial operation",
+      "from": "interest",
+      "verb": "of",
+      "to": "construction"
+    },
+    {
+      "name": "interest-during-construction factor",
+      "description": "the share of the construction time over which the full investment is on average financed; 0.4 for an S-curve of the payments",
+      "from": "factor",
+      "verb": "of",
+      "to": "interest during construction"
+    },
+    {
+      "name": "capacity factor",
+      "description": "the annual production divided by the production at full power over all hours of the year",
+      "from": "factor",
+      "verb": "of",
+      "to": "capacity"
+    },
+    {
+      "name": "annuity factor",
+      "description": "the share of an investment to be recovered every year so that the capital and its interest are paid back over the lifetime",
+      "from": "factor",
+      "verb": "of",
+      "to": "annuity"
+    },
+    {
+      "name": "shifted energy",
+      "description": "the energy that a new NPP moves from imports in winter to exports in summer because its winter share is higher than that of the renewable alternative",
+      "from": "energy",
+      "verb": "kind of",
+      "to": "shifted"
+    },
+    {
+      "name": "system cost",
+      "description": "the cost of storage, backup and grid that intermittent supply adds to its levelised cost",
+      "from": "cost",
+      "verb": "of",
+      "to": "system"
+    },
+    {
+      "name": "market rate",
+      "description": "the cost of capital an investor asks without state guarantees",
+      "from": "rate",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "supply gap",
+      "description": "the difference between the winter demand and the domestic winter production",
+      "from": "gap",
+      "verb": "of",
+      "to": "supply"
+    },
+    {
+      "name": "cluster risk",
+      "description": "the risk of one large unit failing at once",
+      "from": "risk",
+      "verb": "of",
+      "to": "cluster"
+    },
+    {
+      "name": "residual risk",
+      "description": "the remaining risk of a severe accident",
+      "from": "risk",
+      "verb": "kind of",
+      "to": "residual"
+    },
+    {
+      "name": "price stability",
+      "from": "stability",
+      "verb": "of",
+      "to": "price"
+    },
+    {
+      "name": "full-time equivalent",
+      "description": "one full-time job over one year",
+      "from": "equivalent",
+      "verb": "kind of",
+      "to": "full-time"
+    },
+    {
+      "name": "life cycle",
+      "from": "cycle",
+      "verb": "of",
+      "to": "life"
+    },
+    {
+      "name": "value added",
+      "from": "value",
+      "verb": "kind of",
+      "to": "added"
+    },
+    {
+      "name": "cost overrun",
+      "from": "overrun",
+      "verb": "of",
+      "to": "cost"
+    },
+    {
+      "name": "capital cost",
+      "description": "the annual recovery of the investment per MWh",
+      "from": "cost",
+      "verb": "of",
+      "to": "capital"
+    },
+    {
+      "name": "operating cost",
+      "description": "personnel, maintenance, retrofits, fuel, decommissioning fund and waste fund per MWh",
+      "from": "cost",
+      "verb": "of",
+      "to": "operating"
+    },
+    {
+      "name": "levelised cost",
+      "description": "LCOE: capital cost plus operating cost per MWh",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "levelised"
+    },
+    {
+      "name": "market price",
+      "description": "the wholesale price a plant earns per MWh",
+      "from": "price",
+      "verb": "of",
+      "to": "market"
+    },
+    {
+      "name": "subsidy need",
+      "description": "the annual production times the levelised cost above the market price",
+      "from": "need",
+      "verb": "of",
+      "to": "subsidy"
+    },
+    {
+      "name": "renewable alternative",
+      "description": "the PV and wind that supply the same annual kilowatt-hours in the scenario without the new NPP",
+      "from": "alternative",
+      "verb": "kind of",
+      "to": "renewable"
+    },
+    {
+      "name": "alternative cost",
+      "description": "the levelised cost of the renewable alternative plus the system cost of intermittent supply",
+      "from": "cost",
+      "verb": "of",
+      "to": "renewable alternative"
+    },
+    {
+      "name": "winter share",
+      "description": "the share of the annual production that falls into the winter half-year",
+      "from": "share",
+      "verb": "of",
+      "to": "winter"
+    },
+    {
+      "name": "net import",
+      "from": "import",
+      "verb": "kind of",
+      "to": "net"
+    },
+    {
+      "name": "winter net import",
+      "description": "the electricity imported minus exported in the winter half-year",
+      "from": "net import",
+      "verb": "of",
+      "to": "winter"
+    },
+    {
+      "name": "import price",
+      "description": "the price of imported electricity in winter",
+      "from": "price",
+      "verb": "of",
+      "to": "import"
+    },
+    {
+      "name": "export price",
+      "description": "the price of exported electricity in summer",
+      "from": "price",
+      "verb": "of",
+      "to": "export"
+    },
+    {
+      "name": "trade value",
+      "description": "the shifted energy times the import price minus the shifted energy times the export price",
+      "from": "value",
+      "verb": "of",
+      "to": "trade"
+    },
+    {
+      "name": "security value",
+      "description": "the value the reader gives to one MWh of secured winter supply",
+      "from": "value",
+      "verb": "of",
+      "to": "security"
+    },
+    {
+      "name": "annual security value",
+      "description": "the security value per year: the shifted energy times the security value per MWh",
+      "from": "security value",
+      "verb": "kind of",
+      "to": "annual"
+    },
+    {
+      "name": "renewable winter share",
+      "description": "the share of the renewable alternative that is produced in the winter half-year",
+      "from": "winter share",
+      "verb": "of",
+      "to": "renewable alternative"
+    },
+    {
+      "name": "winter net import with new NPP",
+      "description": "the winter net import of the scenario with the new NPP",
+      "from": "winter net import",
+      "verb": "with",
+      "to": "new NPP"
+    },
+    {
+      "name": "electricity demand",
+      "from": "demand",
+      "verb": "of",
+      "to": "electricity"
+    },
+    {
+      "name": "average cost",
+      "from": "cost",
+      "verb": "kind of",
+      "to": "average"
+    },
+    {
+      "name": "energy tariff",
+      "from": "tariff",
+      "verb": "of",
+      "to": "energy"
+    },
+    {
+      "name": "household price",
+      "description": "energy tariff plus grid, metering and levies",
+      "from": "price",
+      "verb": "of",
+      "to": "household"
+    },
+    {
+      "name": "household bill",
+      "description": "the household price times 4500 kWh",
+      "from": "bill",
+      "verb": "of",
+      "to": "household"
+    },
+    {
+      "name": "break-even",
+      "from": "break",
+      "verb": "and",
+      "to": "even"
+    },
+    {
+      "name": "break-even construction cost",
+      "description": "the overnight construction cost at which the new NPP and the renewable alternative cost the same",
+      "from": "construction cost",
+      "verb": "kind of",
+      "to": "break-even"
+    },
+    {
+      "name": "cost difference",
+      "description": "the annual cost with the new NPP minus the annual cost without it; negative means the new NPP is cheaper",
+      "from": "difference",
+      "verb": "of",
+      "to": "cost"
+    },
+    {
+      "name": "with new NPP",
+      "description": "the scenario in which the new NPP is built and its kilowatt-hours replace renewable kilowatt-hours and winter imports",
+      "from": "scenario",
+      "verb": "with",
+      "to": "new NPP"
+    },
+    {
+      "name": "without new NPP",
+      "description": "the scenario in which the same kilowatt-hours come from the renewable alternative and winter imports",
+      "from": "scenario",
+      "verb": "with",
+      "to": "renewable alternative"
+    },
+    {
+      "name": "ETH low scenario",
+      "description": "overnight construction cost of 5000 CHF per kW in the ETH/PSI white paper",
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "low"
+    },
+    {
+      "name": "ETH moderate scenario",
+      "description": "overnight construction cost of 8000 CHF per kW in the ETH/PSI white paper",
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "moderate"
+    },
+    {
+      "name": "ETH high scenario",
+      "description": "overnight construction cost of 12000 CHF per kW in the ETH/PSI white paper, the level of recent projects in Europe and the US",
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "high"
+    },
+    {
+      "name": "BAK base case",
+      "description": "the base scenario of the BAK study: one EPR of 1.63 GW, 8826 CHF per kW, WACC 5 percent, 10 years of construction, operation from 2050; the word tells the results reported by BAK apart from the results this file recomputes",
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "base"
+    },
+    {
+      "name": "Academies optimistic scenario",
+      "description": "no cost overrun in the report of the Swiss Academies",
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "optimistic"
+    },
+    {
+      "name": "Academies pessimistic scenario",
+      "description": "the cost overruns of Olkiluoto, Flamanville, Hinkley Point and Vogtle repeat",
+      "from": "scenario",
+      "verb": "kind of",
+      "to": "pessimistic"
+    },
+    {
+      "name": "WACC at market rate",
+      "from": "WACC",
+      "verb": "kind of",
+      "to": "market rate"
+    },
+    {
+      "name": "WACC de-risked",
+      "from": "WACC",
+      "verb": "kind of",
+      "to": "de-risked"
+    },
+    {
+      "name": "rooftop PV",
+      "from": "PV",
+      "verb": "kind of",
+      "to": "rooftop"
+    },
+    {
+      "name": "small rooftop PV",
+      "from": "rooftop PV",
+      "verb": "kind of",
+      "to": "small"
+    },
+    {
+      "name": "large rooftop PV",
+      "from": "rooftop PV",
+      "verb": "kind of",
+      "to": "large"
+    },
+    {
+      "name": "onshore wind",
+      "from": "wind",
+      "verb": "kind of",
+      "to": "onshore"
+    },
+    {
+      "name": "CO2-eq intensity",
+      "from": "intensity",
+      "verb": "of",
+      "to": "CO2-eq"
+    },
+    {
+      "name": "life cycle CO2-eq intensity",
+      "from": "CO2-eq intensity",
+      "verb": "of",
+      "to": "life cycle"
+    },
+    {
+      "name": "wholesale price",
+      "from": "price",
+      "verb": "of",
+      "to": "wholesale"
+    },
+    {
+      "name": "wholesale price reduction",
+      "from": "reduction",
+      "verb": "of",
+      "to": "wholesale price"
+    },
+    {
+      "name": "winter price peak",
+      "description": "the monthly wholesale price in the most expensive winter month",
+      "from": "peak",
+      "verb": "of",
+      "to": "wholesale price"
+    },
+    {
+      "name": "annual production",
+      "from": "production",
+      "verb": "kind of",
+      "to": "annual"
+    },
+    {
+      "name": "electricity price",
+      "from": "price",
+      "verb": "of",
+      "to": "electricity"
+    },
+    {
+      "name": "household electricity price",
+      "from": "electricity price",
+      "verb": "kind of",
+      "to": "household"
+    },
+    {
+      "name": "supply gap supports lifting the NPP ban",
+      "description": "the existing NPP deliver 36 percent of the Swiss electricity and almost half of the winter electricity; without a new NPP the winter net import grows to 7.5 TWh in 2050, one EPR cuts it to 3.2 TWh",
+      "from": "supply gap",
+      "verb": "supports",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "competitiveness supports lifting the NPP ban",
+      "description": "with state support and a de-risked cost of capital of 5 percent two of four ETH/PSI models build 2 GW at 8000 CHF per kW, all four build 2.6 to 4.9 GW at 5000 CHF per kW",
+      "from": "competitiveness",
+      "verb": "supports",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "price stability supports lifting the NPP ban",
+      "description": "a new NPP lowers the average wholesale price by 7 to 9 CHF per MWh and dampens the winter peaks of 130 to 135 CHF per MWh; BAK values the avoided volatility, outage and shortage risk at 520 million CHF per year",
+      "from": "price stability",
+      "verb": "supports",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "value added supports lifting the NPP ban",
+      "description": "1.56 billion CHF value added and 2905 full-time jobs per year over 60 years of operation in the BAK model",
+      "from": "value added",
+      "verb": "supports",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "option supports lifting the NPP ban",
+      "description": "lifting the ban keeps the nuclear option open; the build decision follows on cost and demand in the 2030s",
+      "from": "option",
+      "verb": "supports",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "subsidy need limits lifting the NPP ban",
+      "description": "even the BAK study calculates a levelised cost of 115.5 CHF per MWh against a market price of 64 CHF per MWh: the state covers about 625 million CHF per year; no Western new build of the last twenty years was financed without state support",
+      "from": "subsidy need",
+      "verb": "limits",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "cost overrun limits lifting the NPP ban",
+      "description": "the Swiss Academies put one plant at 14 to 21 billion CHF without and 25 to 43 billion CHF with the overruns of recent projects; at 12000 CHF per kW three of four ETH/PSI models build nothing even with support",
+      "from": "cost overrun",
+      "verb": "limits",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "timing limits lifting the NPP ban",
+      "description": "about 23 years from the vote to commercial operation in 2050 while the existing plants stop in the 2030s and 2040s",
+      "from": "timing",
+      "verb": "limits",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "net zero limits lifting the NPP ban",
+      "description": "all four ETH/PSI models reach net zero 2050 without new NPP with 36 to 43 TWh of solar; winter imports remain in every scenario",
+      "from": "net zero",
+      "verb": "limits",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "cluster risk limits lifting the NPP ban",
+      "description": "one unit of 1.63 GW is about 16 percent of the demand of 2050; its outage must be covered",
+      "from": "cluster risk",
+      "verb": "limits",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "name": "residual risk limits lifting the NPP ban",
+      "description": "the accident risk is left out of the BAK study; an insurance study prices it below 0.0001 Rp per kWh, the opponents call it uninsurable",
+      "from": "residual risk",
+      "verb": "limits",
+      "to": "lifting the NPP ban"
+    },
+    {
+      "from": "winter net import",
+      "verb": "is evidence for",
+      "to": "supply gap"
+    },
+    {
+      "description": "the subsidy need is the number both sides read differently: a cost of state support for the no side, the price of secured winter supply for the yes side",
+      "from": "subsidy need",
+      "verb": "is evidence for",
+      "to": "competitiveness"
+    },
+    {
+      "from": "renewable alternative",
+      "verb": "competes with",
+      "to": "new NPP"
+    },
+    {
+      "from": "new NPP",
+      "verb": "reduces",
+      "to": "winter net import"
+    },
+    {
+      "name": "zukunft.com system",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system"
+    },
+    {
+      "name": "calculator (system)",
+      "from": "calculator",
+      "verb": "can be",
+      "to": "zukunft.com system"
+    },
+    {
+      "name": "calculator input",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "input"
+    },
+    {
+      "name": "calculator assumption",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "assumption"
+    },
+    {
+      "name": "calculator result column",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "column"
+    },
+    {
+      "name": "calculator highlight",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "highlight"
+    },
+    {
+      "name": "calculator signed",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "sign"
+    },
+    {
+      "name": "calculator label",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "label"
+    },
+    {
+      "name": "calculator hint",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "hint"
+    },
+    {
+      "name": "calculator slider",
+      "description": "PROPOSED NEW ELEMENT: field type: an input phrase with a triple to this keyword is shown as a range slider coupled to its number field; min, max and step are values with the input phrase and the field property triples (field min, field max, field step); needs a new field type in the frontend code, the rest is data",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "slider"
+    },
+    {
+      "name": "calculator scenario column",
+      "description": "PROPOSED NEW ELEMENT: list: the columns of the main result table are scenarios (with new NPP, without new NPP) plus a difference column that the component computes as the first column minus the second; a row phrase is looked up once per scenario phrase, so one formula serves both columns; needs a difference column in the calculation_result component",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "scenario"
+    },
+    {
+      "name": "calculator argument",
+      "description": "PROPOSED NEW ELEMENT: a component that lists the supports triples to the page phrase as the pro arguments and the limits triples as the contra arguments, each with the description of the triple as the text and the values of the claim phrase with their sources as the numbers; needs a new component type calculator_argument placed above the calculator input",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "argument"
+    },
+    {
+      "name": "calculator verdict",
+      "description": "PROPOSED NEW ELEMENT: a component that compares one result (the average cost difference) with a threshold value and shows yes, no or undecided with a headline, a sentence built from the results and a meter from minus to plus; the three texts are the descriptions of the triples from the page phrase to the words yes, no and undecided; needs a new component type calculator_verdict placed above the calculation result",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "verdict"
+    },
+    {
+      "name": "new NPP label",
+      "description": "New nuclear power plants in Switzerland: the vote of 28 February 2027",
+      "from": "new NPP",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP hint",
+      "description": "The electorate decides whether the ban on new nuclear power plants is lifted. Set your own assumptions and see whether a new plant lowers or raises the average electricity cost in 2050 - and what that suggests for your vote.",
+      "from": "new NPP",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP inputs",
+      "from": "new NPP",
+      "verb": "has a",
+      "to": "calculator input"
+    },
+    {
+      "name": "new NPP input overnight construction cost",
+      "from": "new NPP inputs",
+      "verb": "has a",
+      "to": "overnight construction cost"
+    },
+    {
+      "name": "new NPP input overnight construction cost label",
+      "description": "Construction cost (overnight)",
+      "from": "new NPP input overnight construction cost",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input overnight construction cost hint",
+      "description": "Olkiluoto 3: 6875 EUR per kW nominal; Flamanville 3 about 10000 CHF per kW; BAK base case 8826 CHF per kW incl. 11 percent Swiss surcharge",
+      "from": "new NPP input overnight construction cost",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input overnight construction cost slider",
+      "from": "new NPP input overnight construction cost",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input WACC",
+      "from": "new NPP inputs",
+      "verb": "has a",
+      "to": "WACC"
+    },
+    {
+      "name": "new NPP input WACC label",
+      "description": "Cost of capital (WACC, real)",
+      "from": "new NPP input WACC",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input WACC hint",
+      "description": "8 percent market rate for nuclear, 5 percent if the state bears part of the risk",
+      "from": "new NPP input WACC",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input WACC slider",
+      "from": "new NPP input WACC",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input WACC order",
+      "from": "new NPP input WACC",
+      "verb": "is follower of",
+      "to": "new NPP input overnight construction cost"
+    },
+    {
+      "name": "new NPP input construction time",
+      "from": "new NPP inputs",
+      "verb": "has a",
+      "to": "construction time"
+    },
+    {
+      "name": "new NPP input construction time label",
+      "description": "Construction time",
+      "from": "new NPP input construction time",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input construction time hint",
+      "description": "Olkiluoto 3 took 18 years, Flamanville 3 about 17; BAK assumes 10",
+      "from": "new NPP input construction time",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input construction time slider",
+      "from": "new NPP input construction time",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input construction time order",
+      "from": "new NPP input construction time",
+      "verb": "is follower of",
+      "to": "new NPP input WACC"
+    },
+    {
+      "name": "new NPP input capacity",
+      "from": "new NPP inputs",
+      "verb": "has a",
+      "to": "capacity"
+    },
+    {
+      "name": "new NPP input capacity label",
+      "description": "New nuclear capacity",
+      "from": "new NPP input capacity",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input capacity hint",
+      "description": "one EPR 1.63 GW, one AP1000 1.157 GW, two AP1000 2.314 GW",
+      "from": "new NPP input capacity",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input capacity slider",
+      "from": "new NPP input capacity",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input capacity order",
+      "from": "new NPP input capacity",
+      "verb": "is follower of",
+      "to": "new NPP input construction time"
+    },
+    {
+      "name": "new NPP input alternative cost",
+      "from": "new NPP inputs",
+      "verb": "has a",
+      "to": "alternative cost"
+    },
+    {
+      "name": "new NPP input alternative cost label",
+      "description": "Cost of the renewable alternative",
+      "from": "new NPP input alternative cost",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input alternative cost hint",
+      "description": "levelised cost 2050 of the PV and wind that replace the nuclear kilowatt-hours",
+      "from": "new NPP input alternative cost",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input alternative cost slider",
+      "from": "new NPP input alternative cost",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input alternative cost order",
+      "from": "new NPP input alternative cost",
+      "verb": "is follower of",
+      "to": "new NPP input capacity"
+    },
+    {
+      "name": "new NPP input system cost",
+      "from": "new NPP inputs",
+      "verb": "has a",
+      "to": "system cost"
+    },
+    {
+      "name": "new NPP input system cost label",
+      "description": "System cost of intermittent supply",
+      "from": "new NPP input system cost",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input system cost hint",
+      "description": "storage, backup and grid cost per renewable MWh beyond the plant itself; no Swiss figure exists",
+      "from": "new NPP input system cost",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input system cost slider",
+      "from": "new NPP input system cost",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input system cost order",
+      "from": "new NPP input system cost",
+      "verb": "is follower of",
+      "to": "new NPP input alternative cost"
+    },
+    {
+      "name": "new NPP input security value",
+      "from": "new NPP inputs",
+      "verb": "has a",
+      "to": "security value"
+    },
+    {
+      "name": "new NPP input security value label",
+      "description": "Value of secured winter supply",
+      "from": "new NPP input security value",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "new NPP input security value hint",
+      "description": "per MWh of avoided winter import; 0 counts only the cost; BAK's 520 million CHF per year for 4.3 TWh is about 120 CHF per MWh",
+      "from": "new NPP input security value",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "new NPP input security value slider",
+      "from": "new NPP input security value",
+      "verb": "has a",
+      "to": "calculator slider"
+    },
+    {
+      "name": "new NPP input security value order",
+      "from": "new NPP input security value",
+      "verb": "is follower of",
+      "to": "new NPP input system cost"
+    },
+    {
+      "name": "new NPP assumptions",
+      "from": "new NPP",
+      "verb": "has a",
+      "to": "calculator assumption"
+    },
+    {
+      "name": "new NPP assumption capacity factor",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "capacity factor"
+    },
+    {
+      "name": "new NPP assumption lifetime",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "lifetime"
+    },
+    {
+      "name": "new NPP assumption lifetime order",
+      "from": "new NPP assumption lifetime",
+      "verb": "is follower of",
+      "to": "new NPP assumption capacity factor"
+    },
+    {
+      "name": "new NPP assumption operating cost",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "operating cost"
+    },
+    {
+      "name": "new NPP assumption operating cost order",
+      "from": "new NPP assumption operating cost",
+      "verb": "is follower of",
+      "to": "new NPP assumption lifetime"
+    },
+    {
+      "name": "new NPP assumption interest-during-construction factor",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "interest-during-construction factor"
+    },
+    {
+      "name": "new NPP assumption interest-during-construction factor order",
+      "from": "new NPP assumption interest-during-construction factor",
+      "verb": "is follower of",
+      "to": "new NPP assumption operating cost"
+    },
+    {
+      "name": "new NPP assumption electricity demand",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "electricity demand"
+    },
+    {
+      "name": "new NPP assumption electricity demand order",
+      "from": "new NPP assumption electricity demand",
+      "verb": "is follower of",
+      "to": "new NPP assumption interest-during-construction factor"
+    },
+    {
+      "name": "new NPP assumption winter share",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "winter share"
+    },
+    {
+      "name": "new NPP assumption winter share order",
+      "from": "new NPP assumption winter share",
+      "verb": "is follower of",
+      "to": "new NPP assumption electricity demand"
+    },
+    {
+      "name": "new NPP assumption import price",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "import price"
+    },
+    {
+      "name": "new NPP assumption import price order",
+      "from": "new NPP assumption import price",
+      "verb": "is follower of",
+      "to": "new NPP assumption winter share"
+    },
+    {
+      "name": "new NPP assumption export price",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "export price"
+    },
+    {
+      "name": "new NPP assumption export price order",
+      "from": "new NPP assumption export price",
+      "verb": "is follower of",
+      "to": "new NPP assumption import price"
+    },
+    {
+      "name": "new NPP assumption market price",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "market price"
+    },
+    {
+      "name": "new NPP assumption market price order",
+      "from": "new NPP assumption market price",
+      "verb": "is follower of",
+      "to": "new NPP assumption export price"
+    },
+    {
+      "name": "new NPP assumption winter net import",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "winter net import"
+    },
+    {
+      "name": "new NPP assumption winter net import order",
+      "from": "new NPP assumption winter net import",
+      "verb": "is follower of",
+      "to": "new NPP assumption market price"
+    },
+    {
+      "name": "new NPP assumption energy tariff",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "energy tariff"
+    },
+    {
+      "name": "new NPP assumption energy tariff order",
+      "from": "new NPP assumption energy tariff",
+      "verb": "is follower of",
+      "to": "new NPP assumption winter net import"
+    },
+    {
+      "name": "new NPP assumption threshold",
+      "from": "new NPP assumptions",
+      "verb": "has a",
+      "to": "threshold"
+    },
+    {
+      "name": "new NPP assumption threshold order",
+      "from": "new NPP assumption threshold",
+      "verb": "is follower of",
+      "to": "new NPP assumption energy tariff"
+    },
+    {
+      "name": "new NPP scenario columns",
+      "from": "new NPP",
+      "verb": "has a",
+      "to": "calculator scenario column"
+    },
+    {
+      "name": "new NPP column with",
+      "from": "new NPP scenario columns",
+      "verb": "has a",
+      "to": "with new NPP"
+    },
+    {
+      "name": "new NPP column without",
+      "from": "new NPP scenario columns",
+      "verb": "has a",
+      "to": "without new NPP"
+    },
+    {
+      "name": "new NPP column without order",
+      "from": "new NPP column without",
+      "verb": "is follower of",
+      "to": "new NPP column with"
+    },
+    {
+      "name": "new NPP arguments",
+      "from": "new NPP",
+      "verb": "has a",
+      "to": "calculator argument"
+    },
+    {
+      "name": "new NPP verdict",
+      "from": "new NPP",
+      "verb": "has a",
+      "to": "calculator verdict"
+    },
+    {
+      "name": "new NPP verdict result",
+      "description": "the result the verdict compares with the threshold",
+      "from": "new NPP verdict",
+      "verb": "with",
+      "to": "average cost"
+    },
+    {
+      "name": "average cost highlight",
+      "from": "average cost",
+      "verb": "has a",
+      "to": "calculator highlight"
+    },
+    {
+      "name": "cost difference signed",
+      "from": "cost difference",
+      "verb": "has a",
+      "to": "calculator signed"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "annual production formula",
+      "expression": "\"annual production\" = \"capacity\" * \"capacity factor\" * 8760 / 1000",
+      "latex": "E = P \\cdot CF \\cdot 8760 / 1000",
+      "assigned": [
+        "capacity",
+        "capacity factor"
+      ],
+      "description": "the electricity of the plant in TWh: the capacity in GW times the capacity factor times the hours of a year; GW times hours gives GWh, divided by 1000 TWh"
+    },
+    {
+      "name": "interest during construction formula",
+      "expression": "\"interest during construction\" = \"overnight construction cost\" * \"capacity\" * \"WACC\" * \"construction time\" * \"interest-during-construction factor\"",
+      "latex": "IDC = OCC \\cdot P \\cdot r \\cdot T_{build} \\cdot f_{IDC}",
+      "assigned": [
+        "overnight construction cost"
+      ],
+      "description": "the interest on the capital spent before operation in million CHF: CHF per kW times GW is million CHF; the factor is the share of the construction time over which the capital is on average outstanding"
+    },
+    {
+      "name": "investment formula",
+      "expression": "\"investment\" = \"overnight construction cost\" * \"capacity\" + \"interest during construction\"",
+      "latex": "I = OCC \\cdot P + IDC",
+      "assigned": [
+        "overnight construction cost"
+      ],
+      "description": "the total capital until commercial operation in million CHF"
+    },
+    {
+      "name": "annuity factor formula",
+      "expression": "\"annuity factor\" = \"WACC\" / (1 - (1 + \"WACC\") ^ (0 - \"lifetime\"))",
+      "latex": "a = \\frac{r}{1 - (1 + r)^{-n}}",
+      "assigned": [
+        "WACC",
+        "lifetime"
+      ],
+      "description": "the share of the investment to recover every year; NEEDS THE POWER OPERATOR, which the calculation engine does not evaluate yet (chars.php knows + - * / only), so the annuity factor is stored as an assumed value per WACC and lifetime until the engine gets a power or an annuity function"
+    },
+    {
+      "name": "capital cost formula",
+      "expression": "\"capital cost\" = \"investment\" * \"annuity factor\" / \"annual production\"",
+      "latex": "c_{cap} = I \\cdot a / E",
+      "assigned": [
+        "investment"
+      ],
+      "description": "the annual recovery of the investment per MWh: million CHF per TWh equals CHF per MWh"
+    },
+    {
+      "name": "levelised cost formula",
+      "expression": "\"levelised cost\" = \"capital cost\" + \"operating cost\"",
+      "latex": "LCOE = c_{cap} + c_{op}",
+      "assigned": [
+        "capital cost",
+        "operating cost"
+      ],
+      "description": "capital cost plus operating cost per MWh"
+    },
+    {
+      "name": "subsidy need formula",
+      "expression": "\"subsidy need\" = \"annual production\" * (\"levelised cost\" - \"market price\")",
+      "latex": "S = E \\cdot (LCOE - p_{market})",
+      "assigned": [
+        "levelised cost",
+        "market price"
+      ],
+      "description": "what the market does not pay, in million CHF per year; zero if the levelised cost is below the market price (the engine has no max function yet, so a negative result means no subsidy)"
+    },
+    {
+      "name": "alternative cost formula",
+      "expression": "\"alternative cost\" = \"levelised cost\" + \"system cost\"",
+      "latex": "c_{alt} = LCOE_{ren} + c_{sys}",
+      "assigned": [
+        "system cost"
+      ],
+      "description": "the levelised cost of the renewable alternative plus the system cost of intermittent supply per MWh"
+    },
+    {
+      "name": "shifted energy formula",
+      "expression": "\"shifted energy\" = \"annual production\" * (\"winter share\" - \"renewable winter share\")",
+      "latex": "E_{shift} = E \\cdot (ws_{NPP} - ws_{ren})",
+      "assigned": [
+        "winter share",
+        "renewable winter share"
+      ],
+      "description": "the energy the new NPP moves from winter imports to summer exports: its production times the difference of its winter share and the winter share of the renewable alternative"
+    },
+    {
+      "name": "trade value formula",
+      "expression": "\"trade value\" = \"shifted energy\" * \"import price\" - \"shifted energy\" * \"export price\"",
+      "latex": "V_{trade} = E_{shift} \\cdot (p_{imp} - p_{exp})",
+      "assigned": [
+        "shifted energy"
+      ],
+      "description": "the value of the shifted trade in million CHF per year: avoided winter imports minus lost summer exports"
+    },
+    {
+      "name": "winter net import formula",
+      "expression": "\"winter net import with new NPP\" = \"winter net import\" - \"shifted energy\"",
+      "latex": "M_{with} = M_{without} - E_{shift}",
+      "assigned": [
+        "shifted energy"
+      ],
+      "description": "the winter net import with the new NPP: the winter net import without it minus the shifted energy"
+    },
+    {
+      "name": "security value formula",
+      "expression": "\"annual security value\" = \"shifted energy\" * \"security value\"",
+      "latex": "V_{sec} = E_{shift} \\cdot v_{sec}",
+      "assigned": [
+        "shifted energy"
+      ],
+      "description": "the value of the secured winter supply in million CHF per year: the shifted energy times the value per MWh the reader sets"
+    },
+    {
+      "name": "cost difference formula",
+      "expression": "\"cost difference\" = \"annual production\" * \"levelised cost\" - \"annual production\" * \"alternative cost\" - \"trade value\" - \"annual security value\"",
+      "latex": "\\Delta C = E \\cdot LCOE - E \\cdot c_{alt} - V_{trade} - V_{sec}",
+      "assigned": [
+        "levelised cost",
+        "alternative cost"
+      ],
+      "description": "the annual cost with the new NPP minus the annual cost without it in million CHF; negative means the new NPP is cheaper"
+    },
+    {
+      "name": "average cost formula",
+      "expression": "\"average cost\" = \"cost difference\" / \"electricity demand\" / 10",
+      "latex": "\\Delta p = \\Delta C / D / 10",
+      "assigned": [
+        "cost difference"
+      ],
+      "description": "the cost difference spread over all consumption in Rp per kWh: million CHF per TWh is 0.1 Rp per kWh"
+    },
+    {
+      "name": "household price formula",
+      "expression": "\"household price\" = \"energy tariff\" + \"average cost\" + \"levies\"",
+      "latex": "p_{hh} = p_{energy} + \\Delta p + p_{grid}",
+      "assigned": [
+        "energy tariff"
+      ],
+      "description": "the household price in the scenario with the new NPP: the energy tariff without it plus the average cost difference plus grid, metering and levies; the levies value carries the grid part too"
+    },
+    {
+      "name": "household bill formula",
+      "expression": "\"household bill\" = \"household price\" * 4500 / 100",
+      "latex": "B = p_{hh} \\cdot 4500 / 100",
+      "assigned": [
+        "household price"
+      ],
+      "description": "the annual bill of an H4 household in CHF"
+    },
+    {
+      "name": "break-even construction cost formula",
+      "expression": "\"break-even construction cost\" = (\"alternative cost\" + (\"winter share\" - \"renewable winter share\") * (\"import price\" - \"export price\" + \"security value\") - \"operating cost\") / (\"annuity factor\" * (1 + \"WACC\" * \"construction time\" * \"interest-during-construction factor\") / (\"capacity factor\" * 8760) * 1000)",
+      "latex": "OCC^{*} = \\frac{c_{alt} + (ws_{NPP} - ws_{ren})(p_{imp} - p_{exp} + v_{sec}) - c_{op}}{a (1 + r T_{build} f_{IDC}) \\cdot 1000 / (CF \\cdot 8760)}",
+      "assigned": [
+        "alternative cost"
+      ],
+      "description": "the overnight construction cost at which both options cost the same: the levelised cost that makes the cost difference zero minus the operating cost, divided by the capital cost per MWh of one CHF per kW"
+    },
+    {
+      "name": "verdict formula",
+      "expression": "\"verdict\" = \"average cost\" / \"threshold\"",
+      "latex": "v = \\Delta p / \\theta",
+      "assigned": [
+        "average cost"
+      ],
+      "description": "a ratio below -1 is yes (new NPP cheaper by more than the threshold), above +1 is no, in between undecided; the mapping of the ratio to the three texts is the job of the proposed verdict component, because the engine has no comparison operator"
+    }
+  ],
+  "sources": [
+    {
+      "name": "ETH PSI white paper 2026",
+      "description": "Bardow A, Burgherr P, Darudi A, Fernandez de Losada L, Filippini M, Guidati G, Hug G, Lordan-Perret R, Manera A, McKenna R, Moret S, Panos E, Patt A, Pautz A, Sansavini G, Schaffner C, Schmidt T, Savelsberg J, Turan E (2026). Nuclear Power and the Future Swiss Energy System: A Techno-Economic Modelling Analysis. Joint White Paper by ETH Zurich and the Paul Scherrer Institute, 29 June 2026. Four energy system models, 45 TWh expansion target, net zero 2050. Numbers taken from the PSI media release of the same day.",
+      "doi": "10.3929/ethz-c-000801809",
+      "url": "https://www.psi.ch/en/news/media-releases/when-new-nuclear-power-plants-are-worth-it-in-switzerland"
+    },
+    {
+      "name": "BAK economiesuisse study 2026",
+      "description": "BAK Economics (2026). Volkswirtschaftliche Auswirkungen eines Ersatzneubaus der Schweizer Kernkraftwerke. Study commissioned by economiesuisse, July 2026. Base case: one EPR of 1.63 GW, commercial operation 2050, 60 years, capacity factor 85 percent, WACC 5 percent after tax, prices of 2024. Commissioned by the business federation that campaigns for a yes; the LCOE inputs come from Schwarz et al. 2023 (ETH Nexus-e) and the Axpo Energy Report 2026.",
+      "url": "https://backend.economiesuisse.ch/sites/default/files/2026-07/BAK_Economics_ecnoomiesuisse_Impact-Analyse_KKW-Ersatzneubau.pdf"
+    },
+    {
+      "name": "Swiss Academies NPP cost report 2026",
+      "description": "Akademien der Wissenschaften Schweiz, Energiekommission (21 August 2026): report on the cost of a new nuclear power plant in Switzerland, two reactor types, an optimistic and a pessimistic scenario. Numbers taken from the sda agency report, because the report pdf was not retrieved; reliability medium.",
+      "url": "https://www.suedostschweiz.ch/schweiz-und-welt/14-bis-43-milliarden-franken-so-teuer-waere-ein-neues-schweizer-akw-2129904"
+    },
+    {
+      "name": "SES fact sheet ETH study 2026",
+      "description": "Schweizerische Energie-Stiftung SES (29 June 2026). Fact Sheet: Einordnung des ETH White Paper vom 29. Juni 2026. The reading of the ETH white paper by the organisation that campaigns for a no.",
+      "url": "https://energiestiftung.ch/files/energiestiftung/Medienmitteilungen/Beilagen/20260629_Fact-Sheet_ETH-Studie_AKW-Kosten.pdf"
+    },
+    {
+      "name": "Fraunhofer ISE LCOE 2024 via Faktenfackel",
+      "description": "Fraunhofer ISE (July 2024), Stromgestehungskosten erneuerbare Energien, as cited by the fact check site Faktenfackel (July 2026): new nuclear 13.6 to 49.0, onshore wind 4.3 to 9.2, ground-mounted PV 4.1 to 5.0 EUR cent per kWh in Germany. Secondary citation; reliability medium.",
+      "url": "https://faktenfackel.de/faktenchecks/politik/energie/akw-fast-gratis-manera"
+    },
+    {
+      "name": "Nuklearforum production cost",
+      "description": "Nuklearforum Schweiz, page Wirtschaftlichkeit: production cost of Leibstadt 2025 (4.9 Rp per kWh, 9558 GWh) and the normalised production cost of Gösgen 2024 (4.44 Rp per kWh, 7994 GWh), as reported by the operators. Industry association that campaigns for a yes.",
+      "url": "https://www.nuklearforum.ch/de/stromzukunft/wirtschaftlichkeit"
+    },
+    {
+      "name": "ElCom tariffs 2026 media release",
+      "description": "Swiss Federal Electricity Commission ElCom, media release of September 2025 on the tariffs 2026: median values for an H4 household of 4500 kWh.",
+      "url": "https://www.admin.ch/de/newnsb/8nuE_fvwnfqCu8OHNOwKu"
+    },
+    {
+      "name": "20 Minuten referendum filed 2026",
+      "description": "20 Minuten (October 2026): the alliance 'Nein zu neuen AKW' filed 131793 signatures against the amendment of the Nuclear Energy Act; the vote is expected in February 2027.",
+      "url": "https://www.20min.ch/story/132-000-unterschriften-schweiz-stimmt-im-februar-ueber-akw-neubauverbot-ab-103645222"
+    },
+    {
+      "name": "SRF Axpo energy report 2026",
+      "description": "SRF Tagesgespräch (25 March 2026) with Axpo CEO Christoph Brand on the Axpo Energy Report: Axpo favours renewables and gas over new NPP because of the construction cost and the risk of a decade of debate without building.",
+      "url": "https://www.srf.ch/news/schweiz/axpo-studie-zur-energiepolitik-axpo-chef-ein-neues-kernkraftwerk-ist-im-bau-sehr-teuer"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "NPP vote 2027",
+        "referendum",
+        "signatures",
+        "person"
+      ],
+      "number": "131793",
+      "source": "20 Minuten referendum filed 2026",
+      "description": "filed on 6 October 2026; 50000 were needed"
+    },
+    {
+      "words": [
+        "existing NPP",
+        "Switzerland",
+        "electricity",
+        "share",
+        "percent"
+      ],
+      "number": "0.36",
+      "source": "BAK economiesuisse study 2026",
+      "description": "share of the Swiss electricity production today"
+    },
+    {
+      "words": [
+        "EPR",
+        "capacity",
+        "GW"
+      ],
+      "number": "1.63",
+      "source": "BAK economiesuisse study 2026",
+      "description": "net"
+    },
+    {
+      "words": [
+        "AP1000",
+        "capacity",
+        "GW"
+      ],
+      "number": "1.157",
+      "source": "BAK economiesuisse study 2026",
+      "description": "net"
+    },
+    {
+      "words": [
+        "new NPP",
+        "capacity factor",
+        "percent"
+      ],
+      "number": "0.85",
+      "source": "BAK economiesuisse study 2026",
+      "description": "conservative; Swiss plants reach 85 to 90 percent, the OECD median is 88 percent"
+    },
+    {
+      "words": [
+        "new NPP",
+        "lifetime",
+        "year"
+      ],
+      "number": "60",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "overnight construction cost",
+        "CHF per kW"
+      ],
+      "number": "8826",
+      "source": "BAK economiesuisse study 2026",
+      "description": "Olkiluoto 3 inflated to prices of 2024 plus a Swiss surcharge of 11.3 percent"
+    },
+    {
+      "words": [
+        "new NPP",
+        "AP1000",
+        "overnight construction cost",
+        "CHF per kW"
+      ],
+      "number": "9383",
+      "source": "BAK economiesuisse study 2026",
+      "description": "MIT estimate for the next AP1000 plus 15 percent risk buffer"
+    },
+    {
+      "words": [
+        "Olkiluoto 3",
+        "overnight construction cost",
+        "EUR per kW"
+      ],
+      "number": "6875",
+      "source": "BAK economiesuisse study 2026",
+      "description": "11 billion EUR nominal over 2005 to 2023 for 1600 MW"
+    },
+    {
+      "words": [
+        "Olkiluoto 3",
+        "construction time",
+        "year"
+      ],
+      "number": "18",
+      "source": "BAK economiesuisse study 2026",
+      "description": "2005 to 2023"
+    },
+    {
+      "words": [
+        "Flamanville 3",
+        "construction time",
+        "year"
+      ],
+      "number": "17",
+      "source": "Swiss Academies NPP cost report 2026",
+      "description": "planned 5 years"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "construction time",
+        "year"
+      ],
+      "number": "10",
+      "source": "BAK economiesuisse study 2026",
+      "description": "2040 to 2050 after 13 years of political process and licensing"
+    },
+    {
+      "words": [
+        "new NPP",
+        "ETH low scenario",
+        "overnight construction cost",
+        "CHF per kW"
+      ],
+      "number": "5000",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "ETH moderate scenario",
+        "overnight construction cost",
+        "CHF per kW"
+      ],
+      "number": "8000",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "ETH high scenario",
+        "overnight construction cost",
+        "CHF per kW"
+      ],
+      "number": "12000",
+      "source": "ETH PSI white paper 2026",
+      "description": "the level of recent projects in Europe and the US"
+    },
+    {
+      "words": [
+        "new NPP",
+        "WACC at market rate",
+        "percent"
+      ],
+      "number": "0.08",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "WACC de-risked",
+        "percent"
+      ],
+      "number": "0.05",
+      "source": "ETH PSI white paper 2026",
+      "description": "the rate of other large carbon-neutral plants, reached by state loans or guarantees"
+    },
+    {
+      "words": [
+        "new NPP",
+        "WACC",
+        "percent"
+      ],
+      "number": "0.05",
+      "source": "BAK economiesuisse study 2026",
+      "description": "after tax, one third state equity, one third private equity, one third debt"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "operating cost",
+        "CHF per MWh"
+      ],
+      "number": "39.3",
+      "source": "BAK economiesuisse study 2026",
+      "description": "personnel, maintenance, retrofits, fuel, decommissioning and waste"
+    },
+    {
+      "words": [
+        "new NPP",
+        "AP1000",
+        "operating cost",
+        "CHF per MWh"
+      ],
+      "number": "37",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "annual production",
+        "TWh"
+      ],
+      "number": "12.137",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "winter share",
+        "percent"
+      ],
+      "number": "0.55",
+      "source": "BAK economiesuisse study 2026",
+      "description": "6.675 TWh of 12.137 TWh fall into the winter half-year"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "interest during construction",
+        "million",
+        "CHF"
+      ],
+      "number": "2868",
+      "source": "BAK economiesuisse study 2026",
+      "description": "S-curve of the capital outflow 2040 to 2050"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "investment",
+        "million",
+        "CHF"
+      ],
+      "number": "17250",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "capital cost",
+        "CHF per MWh"
+      ],
+      "number": "76.2",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "levelised cost",
+        "CHF per MWh"
+      ],
+      "number": "115.5",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "AP1000",
+        "BAK base case",
+        "levelised cost",
+        "CHF per MWh"
+      ],
+      "number": "118.3",
+      "source": "BAK economiesuisse study 2026",
+      "description": "the low variant of the study: one unit"
+    },
+    {
+      "words": [
+        "new NPP",
+        "electricity",
+        "market price",
+        "2050",
+        "CHF per MWh"
+      ],
+      "number": "64",
+      "source": "BAK economiesuisse study 2026",
+      "description": "Axpo market simulation, real in prices of 2024"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "subsidy need",
+        "million",
+        "CHF"
+      ],
+      "number": "625",
+      "source": "BAK economiesuisse study 2026",
+      "description": "per year; the market pays 55 percent of the levelised cost"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "wholesale price reduction",
+        "CHF per MWh"
+      ],
+      "number": "8",
+      "source": "BAK economiesuisse study 2026",
+      "description": "7 to 9 CHF per MWh against the scenario without new NPP, derived from Schwarz et al. 2023"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "winter price peak",
+        "2050",
+        "without new NPP",
+        "CHF per MWh"
+      ],
+      "number": "132.5",
+      "source": "BAK economiesuisse study 2026",
+      "description": "130 to 135 CHF per MWh in the most expensive winter month"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "electricity demand",
+        "2050",
+        "TWh"
+      ],
+      "number": "76",
+      "source": "BAK economiesuisse study 2026",
+      "description": "Energy Perspectives 2050+, scenario ZERO basis"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "winter net import",
+        "2050",
+        "without new NPP",
+        "TWh"
+      ],
+      "number": "7.5",
+      "source": "BAK economiesuisse study 2026",
+      "description": "balance model; peak 8.1 TWh in 2045"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "BAK base case",
+        "winter net import with new NPP",
+        "2050",
+        "TWh"
+      ],
+      "number": "3.2",
+      "source": "BAK economiesuisse study 2026",
+      "description": "with one EPR"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "winter net import",
+        "2050",
+        "without new NPP",
+        "minimum",
+        "TWh"
+      ],
+      "number": "5.4",
+      "source": "ETH PSI white paper 2026",
+      "description": "the lowest of the four models"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "winter net import",
+        "2050",
+        "without new NPP",
+        "maximum",
+        "TWh"
+      ],
+      "number": "12.4",
+      "source": "ETH PSI white paper 2026",
+      "description": "the highest of the four models"
+    },
+    {
+      "words": [
+        "new NPP",
+        "winter net import",
+        "reduction",
+        "minimum",
+        "TWh"
+      ],
+      "number": "1",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "winter net import",
+        "reduction",
+        "maximum",
+        "TWh"
+      ],
+      "number": "6",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "ETH low scenario",
+        "capacity",
+        "minimum",
+        "GW"
+      ],
+      "number": "2.6",
+      "source": "ETH PSI white paper 2026",
+      "description": "built by the models with state support and a WACC of 5 percent"
+    },
+    {
+      "words": [
+        "new NPP",
+        "ETH low scenario",
+        "capacity",
+        "maximum",
+        "GW"
+      ],
+      "number": "4.9",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "ETH moderate scenario",
+        "capacity",
+        "GW"
+      ],
+      "number": "2",
+      "source": "ETH PSI white paper 2026",
+      "description": "in two of the four models; the other two build none"
+    },
+    {
+      "words": [
+        "new NPP",
+        "ETH high scenario",
+        "capacity",
+        "GW"
+      ],
+      "number": "0",
+      "source": "ETH PSI white paper 2026",
+      "description": "in three of the four models even with support"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV",
+        "2050",
+        "without new NPP",
+        "minimum",
+        "TWh"
+      ],
+      "number": "36",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "PV",
+        "2050",
+        "without new NPP",
+        "maximum",
+        "TWh"
+      ],
+      "number": "43",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "wind",
+        "2050",
+        "without new NPP",
+        "minimum",
+        "TWh"
+      ],
+      "number": "0.3",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "wind",
+        "2050",
+        "without new NPP",
+        "maximum",
+        "TWh"
+      ],
+      "number": "8.6",
+      "source": "ETH PSI white paper 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "AP1000",
+        "Academies optimistic scenario",
+        "investment",
+        "billion",
+        "CHF"
+      ],
+      "number": "14",
+      "source": "Swiss Academies NPP cost report 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "AP1000",
+        "Academies pessimistic scenario",
+        "investment",
+        "billion",
+        "CHF"
+      ],
+      "number": "25",
+      "source": "Swiss Academies NPP cost report 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "Academies optimistic scenario",
+        "investment",
+        "billion",
+        "CHF"
+      ],
+      "number": "21",
+      "source": "Swiss Academies NPP cost report 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "Academies pessimistic scenario",
+        "investment",
+        "billion",
+        "CHF"
+      ],
+      "number": "43",
+      "source": "Swiss Academies NPP cost report 2026"
+    },
+    {
+      "words": [
+        "new NPP",
+        "levelised cost",
+        "2050",
+        "minimum",
+        "CHF per MWh"
+      ],
+      "number": "80",
+      "source": "BAK economiesuisse study 2026",
+      "description": "range of the Axpo Energy Report 2026 and PSI 2017"
+    },
+    {
+      "words": [
+        "new NPP",
+        "levelised cost",
+        "2050",
+        "maximum",
+        "CHF per MWh"
+      ],
+      "number": "155",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "existing NPP",
+        "levelised cost",
+        "2050",
+        "minimum",
+        "CHF per MWh"
+      ],
+      "number": "40",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "existing NPP",
+        "levelised cost",
+        "2050",
+        "maximum",
+        "CHF per MWh"
+      ],
+      "number": "60",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "large rooftop PV",
+        "levelised cost",
+        "2050",
+        "minimum",
+        "CHF per MWh"
+      ],
+      "number": "50",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "large rooftop PV",
+        "levelised cost",
+        "2050",
+        "maximum",
+        "CHF per MWh"
+      ],
+      "number": "120",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "small rooftop PV",
+        "levelised cost",
+        "2050",
+        "minimum",
+        "CHF per MWh"
+      ],
+      "number": "60",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "small rooftop PV",
+        "levelised cost",
+        "2050",
+        "maximum",
+        "CHF per MWh"
+      ],
+      "number": "130",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelised cost",
+        "2050",
+        "minimum",
+        "CHF per MWh"
+      ],
+      "number": "60",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelised cost",
+        "2050",
+        "maximum",
+        "CHF per MWh"
+      ],
+      "number": "100",
+      "source": "BAK economiesuisse study 2026"
+    },
+    {
+      "words": [
+        "hydro",
+        "levelised cost",
+        "2050",
+        "CHF per MWh"
+      ],
+      "number": "70",
+      "source": "BAK economiesuisse study 2026",
+      "description": "large hydro"
+    },
+    {
+      "words": [
+        "gas",
+        "levelised cost",
+        "2050",
+        "CHF per MWh"
+      ],
+      "number": "113",
+      "source": "BAK economiesuisse study 2026",
+      "description": "combined cycle, the reference of the CO2 abatement cost"
+    },
+    {
+      "words": [
+        "new NPP",
+        "life cycle CO2-eq intensity",
+        "gram per kWh"
+      ],
+      "number": "15",
+      "source": "BAK economiesuisse study 2026",
+      "description": "PSI 2017: 10 to 20 g"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "import",
+        "winter",
+        "life cycle CO2-eq intensity",
+        "gram per kWh"
+      ],
+      "number": "198",
+      "source": "BAK economiesuisse study 2026",
+      "description": "winter import mix 2022/23 from France, Germany, Austria and Italy"
+    },
+    {
+      "words": [
+        "NPP",
+        "land",
+        "production",
+        "GWh per km2"
+      ],
+      "number": "7466",
+      "source": "BAK economiesuisse study 2026",
+      "description": "54 times rooftop PV, 679 times onshore wind"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "value added",
+        "million",
+        "CHF"
+      ],
+      "number": "1563",
+      "source": "BAK economiesuisse study 2026",
+      "description": "per year incl. the state support of 625 million; 938 million net of it"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "jobs",
+        "full-time equivalent"
+      ],
+      "number": "2905",
+      "source": "BAK economiesuisse study 2026",
+      "description": "per year over 60 years of operation incl. the annualised construction"
+    },
+    {
+      "words": [
+        "new NPP",
+        "EPR",
+        "BAK base case",
+        "annual security value",
+        "million",
+        "CHF"
+      ],
+      "number": "520",
+      "source": "BAK economiesuisse study 2026",
+      "description": "per year: avoided hedging cost 50, avoided outage damage 50, avoided shortage damage 420 million CHF, conservative"
+    },
+    {
+      "words": [
+        "Leibstadt",
+        "2026",
+        "levelised cost",
+        "Rp per kWh"
+      ],
+      "number": "4.9",
+      "source": "Nuklearforum production cost",
+      "description": "production cost of the year 2025 incl. decommissioning and waste funds"
+    },
+    {
+      "words": [
+        "Gösgen",
+        "2024",
+        "levelised cost",
+        "Rp per kWh"
+      ],
+      "number": "4.44",
+      "source": "Nuklearforum production cost",
+      "description": "normalised production cost of the year 2024"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "H4",
+        "2026",
+        "household electricity price",
+        "Rp per kWh"
+      ],
+      "number": "27.7",
+      "source": "ElCom tariffs 2026 media release",
+      "description": "median of all grid operators"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "H4",
+        "2026",
+        "energy tariff",
+        "Rp per kWh"
+      ],
+      "number": "12.11",
+      "source": "ElCom tariffs 2026 media release",
+      "description": "median"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "H4",
+        "2026",
+        "grid",
+        "Rp per kWh"
+      ],
+      "number": "10.75",
+      "source": "ElCom tariffs 2026 media release",
+      "description": "median grid tariff without metering; metering adds 1.65 Rp"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "H4",
+        "2026",
+        "levies",
+        "Rp per kWh"
+      ],
+      "number": "3.76",
+      "source": "ElCom tariffs 2026 media release",
+      "description": "grid surcharge 2.3, electricity reserve 0.41, solidarised costs 0.05, municipalities 1.0"
+    },
+    {
+      "words": [
+        "new NPP",
+        "levelised cost",
+        "2024",
+        "minimum",
+        "Rp per kWh"
+      ],
+      "number": "13.6",
+      "source": "Fraunhofer ISE LCOE 2024 via Faktenfackel",
+      "description": "EUR cent per kWh treated as Rp, Germany"
+    },
+    {
+      "words": [
+        "new NPP",
+        "levelised cost",
+        "2024",
+        "maximum",
+        "Rp per kWh"
+      ],
+      "number": "49",
+      "source": "Fraunhofer ISE LCOE 2024 via Faktenfackel",
+      "description": "EUR cent per kWh treated as Rp, Germany"
+    },
+    {
+      "words": [
+        "PV",
+        "levelised cost",
+        "2024",
+        "minimum",
+        "Rp per kWh"
+      ],
+      "number": "4.1",
+      "source": "Fraunhofer ISE LCOE 2024 via Faktenfackel",
+      "description": "ground-mounted, Germany, EUR cent treated as Rp"
+    },
+    {
+      "words": [
+        "PV",
+        "levelised cost",
+        "2024",
+        "maximum",
+        "Rp per kWh"
+      ],
+      "number": "5.0",
+      "source": "Fraunhofer ISE LCOE 2024 via Faktenfackel"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelised cost",
+        "2024",
+        "minimum",
+        "Rp per kWh"
+      ],
+      "number": "4.3",
+      "source": "Fraunhofer ISE LCOE 2024 via Faktenfackel"
+    },
+    {
+      "words": [
+        "onshore wind",
+        "levelised cost",
+        "2024",
+        "maximum",
+        "Rp per kWh"
+      ],
+      "number": "9.2",
+      "source": "Fraunhofer ISE LCOE 2024 via Faktenfackel"
+    },
+    {
+      "words": [
+        "new NPP",
+        "interest-during-construction factor",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.4",
+      "description": "S-curve: the full investment is on average financed over 40 percent of the construction time; reproduces the 2868 million CHF of interest of the BAK base case within 1 percent"
+    },
+    {
+      "words": [
+        "new NPP",
+        "interest-during-construction factor",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "calibrated on one study"
+    },
+    {
+      "words": [
+        "renewable alternative",
+        "levelised cost",
+        "2050",
+        "CHF per MWh"
+      ],
+      "number": "80",
+      "source": "BAK economiesuisse study 2026",
+      "description": "default of the calculator: a level between the Swiss ranges of large rooftop PV (50 to 120) and small rooftop PV (60 to 130) and the German PV cost (41 to 50)"
+    },
+    {
+      "words": [
+        "renewable alternative",
+        "system cost",
+        "assumed",
+        "CHF per MWh"
+      ],
+      "number": "20",
+      "description": "storage, backup and grid per renewable MWh; BAK states that no Swiss figure exists"
+    },
+    {
+      "words": [
+        "renewable alternative",
+        "system cost",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.4",
+      "description": "order of magnitude only; the ETH/PSI models optimise storage endogenously, so the published results carry no separate number"
+    },
+    {
+      "words": [
+        "renewable winter share",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.3",
+      "description": "rooftop PV on the Swiss plateau yields about 30 percent in the winter half-year; alpine PV and wind raise the share of the mix"
+    },
+    {
+      "words": [
+        "renewable winter share",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.6",
+      "description": "the share of PV in the alternative mix is the uncertainty, not the PV profile"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "import price",
+        "winter",
+        "2050",
+        "assumed",
+        "CHF per MWh"
+      ],
+      "number": "110",
+      "description": "between the annual average of about 90 and the winter peak of 130 to 135 CHF per MWh of the BAK scenario without new NPP"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "import price",
+        "winter",
+        "2050",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5",
+      "description": "depends on the decarbonisation and the price spreads of the neighbours"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "export price",
+        "summer",
+        "2050",
+        "assumed",
+        "CHF per MWh"
+      ],
+      "number": "50",
+      "description": "low because all neighbours export PV at noon"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "export price",
+        "summer",
+        "2050",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.5"
+    },
+    {
+      "words": [
+        "new NPP",
+        "security value",
+        "assumed",
+        "CHF per MWh"
+      ],
+      "number": "0",
+      "description": "default of the calculator: only the cost counts; the BAK value of 520 million CHF per year for about 4.3 TWh of avoided winter import is about 120 CHF per MWh"
+    },
+    {
+      "words": [
+        "new NPP",
+        "security value",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3",
+      "description": "a value judgement of the reader, not a measurement"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "H4",
+        "2050",
+        "without new NPP",
+        "energy tariff",
+        "assumed",
+        "Rp per kWh"
+      ],
+      "number": "12.1",
+      "description": "today's median energy tariff kept in real terms; shifts only the level of the household price, not the difference"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "H4",
+        "2050",
+        "without new NPP",
+        "energy tariff",
+        "confidence",
+        "percent",
+        "assumed"
+      ],
+      "number": "0.3"
+    },
+    {
+      "words": [
+        "Switzerland",
+        "H4",
+        "2050",
+        "levies",
+        "assumed",
+        "Rp per kWh"
+      ],
+      "number": "15.6",
+      "description": "grid 10.75, metering 1.65 and levies 3.76 of 2026 kept in real terms; the word levies stands for the whole non-energy part here"
+    },
+    {
+      "words": [
+        "NPP vote 2027",
+        "threshold",
+        "assumed",
+        "Rp per kWh"
+      ],
+      "number": "0.25",
+      "description": "below this difference of the average cost the cost argument is called undecided; about 11 CHF per year for an H4 household"
+    },
+    {
+      "words": [
+        "new NPP",
+        "WACC de-risked",
+        "lifetime",
+        "annuity factor",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.052828",
+      "description": "r / (1 - (1 + r)^-n) with r = 0.05 and n = 60 years; computed outside the engine, see the annuity factor formula; assumed, because no published table lists the factor for 60 years"
+    },
+    {
+      "words": [
+        "new NPP",
+        "WACC at market rate",
+        "lifetime",
+        "annuity factor",
+        "assumed",
+        "percent"
+      ],
+      "number": "0.0808",
+      "description": "r / (1 - (1 + r)^-n) with r = 0.08 and n = 60 years; assumed like the factor for the de-risked WACC"
+    }
+  ],
+  "calc-validation": [
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "capacity",
+        "GW",
+        "capacity factor",
+        "percent"
+      ],
+      "formula": "annual production formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "annual production",
+        "calculated",
+        "TWh"
+      ],
+      "number": "12.1370",
+      "note": "1.63 GW times 0.85 times 8760 hours; BAK reports 12.137 TWh"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "overnight construction cost",
+        "CHF per kW",
+        "capacity",
+        "GW",
+        "WACC",
+        "percent",
+        "construction time",
+        "year",
+        "interest-during-construction factor",
+        "assumed"
+      ],
+      "formula": "interest during construction formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "interest during construction",
+        "calculated",
+        "million",
+        "CHF"
+      ],
+      "number": "2877.2760",
+      "note": "8826 times 1.63 times 0.05 times 10 times 0.4; BAK reports 2868 million CHF"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "overnight construction cost",
+        "CHF per kW",
+        "capacity",
+        "GW",
+        "interest during construction",
+        "calculated",
+        "million",
+        "CHF"
+      ],
+      "formula": "investment formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "investment",
+        "calculated",
+        "million",
+        "CHF"
+      ],
+      "number": "17263.6560",
+      "note": "BAK reports 17250 million CHF"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "investment",
+        "calculated",
+        "million",
+        "CHF",
+        "WACC de-risked",
+        "lifetime",
+        "annuity factor",
+        "assumed",
+        "percent",
+        "annual production",
+        "TWh"
+      ],
+      "formula": "capital cost formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "capital cost",
+        "calculated",
+        "CHF per MWh"
+      ],
+      "number": "75.1426",
+      "note": "investment times the annuity factor 0.052828 divided by the annual production; BAK reports 76.2 CHF per MWh"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "capital cost",
+        "calculated",
+        "CHF per MWh",
+        "operating cost"
+      ],
+      "formula": "levelised cost formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "levelised cost",
+        "calculated",
+        "CHF per MWh"
+      ],
+      "number": "114.4426",
+      "note": "BAK reports 115.5 CHF per MWh"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "annual production",
+        "calculated",
+        "TWh",
+        "levelised cost",
+        "CHF per MWh",
+        "electricity",
+        "market price",
+        "2050"
+      ],
+      "formula": "subsidy need formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "subsidy need",
+        "calculated",
+        "million",
+        "CHF"
+      ],
+      "number": "612.2210",
+      "note": "BAK reports 625 million CHF per year"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "annual production",
+        "calculated",
+        "TWh",
+        "winter share",
+        "renewable winter share",
+        "assumed",
+        "percent"
+      ],
+      "formula": "shifted energy formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "shifted energy",
+        "calculated",
+        "TWh"
+      ],
+      "number": "3.0342",
+      "note": "12.137 times (0.55 - 0.30)"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "shifted energy",
+        "calculated",
+        "TWh",
+        "Switzerland",
+        "import price",
+        "winter",
+        "export price",
+        "summer",
+        "2050",
+        "assumed",
+        "CHF per MWh"
+      ],
+      "formula": "trade value formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "trade value",
+        "calculated",
+        "million",
+        "CHF"
+      ],
+      "number": "182.0547",
+      "note": "3.034 TWh times (110 - 50) CHF per MWh"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "shifted energy",
+        "calculated",
+        "TWh",
+        "Switzerland",
+        "winter net import",
+        "2050",
+        "without new NPP"
+      ],
+      "formula": "winter net import formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "winter net import with new NPP",
+        "2050",
+        "calculated",
+        "TWh"
+      ],
+      "number": "4.4658",
+      "note": "7.5 minus 3.034; the BAK balance model gives 3.2 TWh because it does not replace the nuclear output by PV"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "shifted energy",
+        "calculated",
+        "TWh",
+        "security value",
+        "assumed",
+        "CHF per MWh"
+      ],
+      "formula": "security value formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "annual security value",
+        "calculated",
+        "million",
+        "CHF"
+      ],
+      "number": "0.0000",
+      "note": "the default counts only the cost"
+    },
+    {
+      "context": [
+        "renewable alternative",
+        "levelised cost",
+        "2050",
+        "CHF per MWh",
+        "system cost",
+        "assumed"
+      ],
+      "formula": "alternative cost formula",
+      "words": [
+        "renewable alternative",
+        "alternative cost",
+        "calculated",
+        "CHF per MWh"
+      ],
+      "number": "100.0000"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "annual production",
+        "levelised cost",
+        "calculated",
+        "TWh",
+        "CHF per MWh",
+        "renewable alternative",
+        "alternative cost",
+        "trade value",
+        "annual security value",
+        "million",
+        "CHF"
+      ],
+      "formula": "cost difference formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "cost difference",
+        "calculated",
+        "million",
+        "CHF"
+      ],
+      "number": "-6.7649",
+      "note": "negative means the new NPP is cheaper"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "cost difference",
+        "calculated",
+        "million",
+        "CHF",
+        "Switzerland",
+        "electricity demand",
+        "2050",
+        "TWh"
+      ],
+      "formula": "average cost formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "average cost",
+        "calculated",
+        "Rp per kWh"
+      ],
+      "number": "-0.0089",
+      "note": "million CHF over 76 TWh: within the threshold of 0.25 Rp per kWh, so the verdict of the default assumptions is undecided"
+    },
+    {
+      "context": [
+        "new NPP",
+        "EPR",
+        "average cost",
+        "calculated",
+        "Rp per kWh",
+        "NPP vote 2027",
+        "threshold",
+        "assumed"
+      ],
+      "formula": "verdict formula",
+      "words": [
+        "new NPP",
+        "EPR",
+        "verdict",
+        "calculated",
+        "percent"
+      ],
+      "number": "-0.0356",
+      "note": "between -1 and +1, so undecided; below -1 would be yes, above +1 no"
+    }
+  ]
+}

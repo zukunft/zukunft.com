@@ -159,6 +159,19 @@
         "class": "triple"
     },
     {
+        "id": 2172,
+        "name": "EPR",
+        "description": "European Pressurized Reactor of EDF\/Framatome, generation III+, 1.63 GW net in the BAK study",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
+        "id": 2959,
+        "name": "existing NPP",
+        "description": "Beznau 1 and 2, G\u00f6sgen and Leibstadt",
+        "class": "triple"
+    },
+    {
         "id": 2364,
         "name": "GDP mismeasurement reason",
         "description": "a reason of the potential loss of GDP mismeasurement; the page of this phrase shows the table of the reasons with the loss that each causes",
@@ -277,6 +290,12 @@
         "class": "triple"
     },
     {
+        "id": 2958,
+        "name": "new NPP",
+        "description": "a nuclear power plant built after the vote of 2027, in operation from about 2050",
+        "class": "triple"
+    },
+    {
         "id": 7,
         "protection": 3,
         "name": "Physical constant",
@@ -345,7 +364,7 @@
         "id": 621,
         "name": "scaling",
         "description": "the multiplication of a quantity by a constant factor",
-        "type_id": 6,
+        "type_id": 1,
         "class": "word"
     },
     {

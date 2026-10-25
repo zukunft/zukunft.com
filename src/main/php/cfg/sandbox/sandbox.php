@@ -2175,7 +2175,9 @@ class sandbox extends db_object_seq_id_user
     protected function no_usr_fld_used(array $fld_lst, array $db_row): bool
     {
         $result = true;
-        foreach ($fld_lst as $field_name) {
+        // the last update is an internal field like in is_empty_except_internal_fields, so it
+        // never keeps a user row e.g. after the undo of a formula expression change
+        foreach (array_diff($fld_lst, [fields::FLD_LAST_UPDATE]) as $field_name) {
             $val = $db_row[$field_name] ?? '';
             // an empty or zero value is never a user overwrite: the merged load falls back to
             // the standard value for null and '', a type id is never zero and a zero of a system

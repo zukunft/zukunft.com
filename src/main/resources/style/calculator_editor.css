@@ -459,6 +459,36 @@ details.sect[open] > summary.sect-head::before {
     grid-template-columns: minmax(0, 1fr) auto;
 }
 
+/* a formula below its result row: no grip, because it is not moved, and a dashed line, because
+   it is no item of the calculator but the calculation of one */
+.node.formula {
+    grid-template-columns: minmax(0, 1fr) auto;
+    border-left: 2px dashed var(--line);
+    border-radius: 0 var(--r) var(--r) 0;
+}
+
+.node.formula.sel {
+    border-left-style: solid;
+}
+
+/* the operands of a formula with the number that the page shows */
+table.samples {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 12px;
+}
+
+table.samples td {
+    padding: 3px 4px;
+    border-bottom: 1px solid var(--line);
+}
+
+table.samples td.n {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
 .node .grip {
     color: var(--muted);
     cursor: grab;

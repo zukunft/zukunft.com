@@ -220,6 +220,7 @@
     {
       "name": "country ratios",
       "description": "List all countries with the main ratios",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
