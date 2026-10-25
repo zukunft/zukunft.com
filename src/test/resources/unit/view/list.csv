@@ -57,7 +57,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 56,1,Add new formula,Create a new formula with all parameters e.g. the type,3,,,formula_add,,,3
 57,1,Change formula,"Change a formula, the name or the type",3,,,formula_edit,,,3
 58,1,Delete formula,To confirm the exclusion or deleting of a formula,3,,,formula_del,,,3
-59,1,Test formula,debug the formula results,18,,,formula_test,,,3
+59,1,Test formula,debug the formula results,7,,,formula_test,,,3
 60,1,Add result number,Administrator can add manually a formula result e.g. for debugging,3,,,result_add,,,3
 61,1,Change result with details,Overwrite a result,3,,,result_edit,,,3
 62,1,Delete result,Exclude or delete a result,3,,,result_del,,,3

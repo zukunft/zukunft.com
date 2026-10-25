@@ -224,9 +224,10 @@ class view_read_tests
         $test_name = 'the word usage and log is a sub view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_LOG)?->type_code_id();
         $t->assert($test_name, $msk_typ_code, view_type_shared::SUB);
-        $test_name = 'the formula test is a formula view';
+        // the formula test is an admin debug view, so it is not offered in the view selectors
+        $test_name = 'the formula test is a system view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::FORMULA_TEST)?->type_code_id();
-        $t->assert($test_name, $msk_typ_code, view_type_shared::FORMULA);
+        $t->assert($test_name, $msk_typ_code, view_type_shared::SYSTEM);
 
         $test_name = 'the export of one object is an export view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::EXPORT_OBJECT)?->type_code_id();
@@ -253,7 +254,7 @@ class view_read_tests
         $test_name = 'the word range view is a word view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_DEFAULT_RANGE)?->type_code_id();
         $t->assert($test_name, $msk_typ_code, view_type_shared::WORD);
-        // the type of a detail view does not say its object, so it is not offered for a word or triple
+        // the detail_view type does not say the object, so a view of this type is not offered for a word or triple
         $test_name = 'a detail view is not offered for a word or triple';
         $t->assert_true($test_name, in_array(view_type_shared::DETAIL, view_type_shared::NON_PHRASE_TYPES));
         $test_name = '... but a phrase view is';

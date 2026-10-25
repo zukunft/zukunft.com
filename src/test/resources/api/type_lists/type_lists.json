@@ -17905,7 +17905,7 @@
                 "protection": 3,
                 "name": "Test formula",
                 "description": "debug the formula results",
-                "type_id": 18,
+                "type_id": 7,
                 "code_id": "formula_test",
                 "components": [
                     {

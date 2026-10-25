@@ -6254,7 +6254,7 @@
       "name": "Test formula",
       "description": "debug the formula results",
       "code_id": "formula_test",
-      "type": "formula",
+      "type": "system",
       "protection": "admin_protection",
       "components": [
         {
