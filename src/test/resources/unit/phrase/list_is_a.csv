@@ -1,4 +1,11 @@
 phrase_id,phrase_name
+-3013,Gösgen (existing NPP)
+-3012,Leibstadt (existing NPP)
+-3011,AP1000 (new NPP)
+-3010,EPR (new NPP)
+-2961,Flamanville 3 (EPR)
+-2960,Olkiluoto 3 (EPR)
+-2957,2050 (year)
 -2791,production mix (replacement mix)
 -2790,residual mix (replacement mix)
 -2673,TreasuryUS27 (bond (finance))

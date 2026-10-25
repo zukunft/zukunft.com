@@ -3,7 +3,8 @@
 ## assigned views
 
 change the existing view 'Mathematical constant' (185, code_id math_const in base_views.json)
-so that it mainly shows related values, and assign it to the triple 'mathematical constant'
+so that it mainly shows all math const with the description and some main formulas
+and assign it to the triple 'mathematical constant'
 add a test that the direct assigned view is on top of the views in the view tab
 add a test that the parent view is shown almost on top of the views in the view tab for a math const like pi
 
@@ -92,6 +93,12 @@ create test cased for all possible change types in the calculation editor.
 For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
 
 for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
+
+### formula editor
+
+in the 'Calculator Editor' on the left side are the 'Row Groups and rows' and below that is e.g. 'Electricity' and 'Autarky'
+the Calculation of 'Autarky' may be depending on more than one formula, so list all formulas used below on the left column
+if a formula is selected show in the settings column the formula and sample input values and allow the user to change the formula
 
 ### general
 
