@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1478 of 6223 public functions have at least 2 unit test calls; the 4540 functions below do not; the 205 functions of the last section are called nowhere
+1479 of 6224 public functions have at least 2 unit test calls; the 4540 functions below do not; the 205 functions of the last section are called nowhere
 
-## 2038 functions of main backend have no test at all
+## 2036 functions of main backend have no test at all
 
 ```
 \-- application
@@ -242,8 +242,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_term_by_name - 0 unit test calls shared by 2 classes
     \-- get_word_by_name - 0 unit test calls
     \-- has_view_list - 0 unit test calls shared by 2 classes
-    \-- load_system_formulas - 0 unit test calls
-    \-- load_system_phrases - 0 unit test calls
     \-- load_system_views - 0 unit test calls
     \-- reference_list - 0 unit test calls
     \-- set_term_list - 0 unit test calls
@@ -3287,7 +3285,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1013 functions of main backend have incomplete tests
+## 1015 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3386,6 +3384,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_user - 1 unit test calls shared by 17 classes
     \-- ip_range_list - 1 unit test calls
     \-- load - 6 unit test calls shared by 17 classes
+    \-- load_system_formulas - 1 unit test calls
+    \-- load_system_phrases - 1 unit test calls
     \-- result_list - 5 unit test calls shared by 3 classes
     \-- save - 51 unit test calls shared by 27 classes
     \-- set_user - 10 unit test calls shared by 15 classes

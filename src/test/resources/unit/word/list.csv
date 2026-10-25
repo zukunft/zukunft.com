@@ -619,7 +619,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 618,1,Migros,,,1,,,,,,,,
 619,1,Cooperative,,,1,,,,,,,,
 620,1,2012,,,11,,,,,,,,
-621,1,scaling,,the multiplication of a quantity by a constant factor,6,,,,,,,,
+621,1,scaling,,the multiplication of a quantity by a constant factor,1,,,,,,,,
 622,1,Revenues,,,1,,,,,,,,
 623,1,balance,,the difference between the incoming and the outgoing part,1,,,,,,,,
 624,1,sheet,,,1,,,,,,,,

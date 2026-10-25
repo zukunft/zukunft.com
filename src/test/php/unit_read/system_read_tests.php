@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'system_time_slow_list.php';
@@ -53,6 +54,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
@@ -64,6 +66,8 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -166,6 +170,35 @@ class system_read_tests
         $t->assert_key_not_exists($test_name, json_fields::USER_ID, $typ_header);
         $test_name = '... and without the name of the requesting user';
         $t->assert_key_not_exists($test_name, json_fields::USER_NAME, $typ_header);
+
+        $t->subheader($ts . 'system phrases');
+
+        // the words of the preload types are loaded also if no symbol triple links them
+        $cac_sys = new data_object($t->usr1);
+        $test_name = 'the system phrases load from the database';
+        $t->assert_true($test_name, $cac_sys->load_system_phrases($msg));
+        $msg->reset();
+        $sys_names = $cac_sys->sys_phr->names();
+        $test_name = '... with a measure word without a symbol triple';
+        $t->assert_contains($test_name, $sys_names, word_names::KWH);
+        $test_name = '... and with the hidden scaling word, which the scaling formulas need';
+        $t->assert_contains($test_name, $sys_names, word_names::ONE);
+        // negative: a word of another type is not preloaded
+        $test_name = '... but without a word of another type';
+        $t->assert_contains_not($test_name, $sys_names, word_names::MATH);
+
+        // the formulas of the units and of the scaling words are loaded from the system phrases
+        $test_name = 'the system formulas load from the database';
+        $t->assert_true($test_name, $cac_sys->load_system_formulas($msg));
+        $msg->reset();
+        $frm_names = $cac_sys->sys_frm->names();
+        $test_name = '... with the formula of a scaling word';
+        $t->assert_contains($test_name, $frm_names, formula_names::SCALE_MIO_TO_ONE);
+        $test_name = '... and with the formula of a measure unit';
+        $t->assert_contains($test_name, $frm_names, formula_names::SCALE_TONNE);
+        // negative: a formula that is not linked to a unit or a scaling word is not preloaded
+        $test_name = '... but without a formula of another phrase';
+        $t->assert_contains_not($test_name, $frm_names, formula_names::PRIOR);
 
         /*
          * SQL database read unit tests

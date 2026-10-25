@@ -97,8 +97,7 @@ class phrase_types
     const array PRELOAD_TYPES = [
         self::MEASURE,
         self::PERCENT,
-        self::SCALING,
-        self::SCALING_HIDDEN,
+        ...phrase_types::SCALING_TYPES,
     ];
     const string SCALING_PCT = "scaling_percent"; // TODO Prio 3 used to define the scaling formula word to scale percentage values ?
     const string SCALING_PCT_NAME = "scaling word percent";

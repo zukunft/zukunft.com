@@ -1352,7 +1352,7 @@ class system_page extends component
         $unit_lst = [];
         $sys_lst = $ui_sys?->typ_lst_cache?->phr_sys;
         foreach ($sys_lst?->lst() ?? [] as $phr) {
-            if ($phr->is_measure($msg) or $phr->is_percent($msg) or $phr->is_scaling($msg)) {
+            if ($phr->is_shown_unit($msg)) {
                 $unit_lst[$phr->name()] = [json_fields::ID => $phr->id(), json_fields::NAME => $phr->name()];
             }
         }

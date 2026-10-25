@@ -854,6 +854,30 @@ class test_phrases
         return $this->ui_list($this->list_unit_symbol_cache());
     }
 
+    /**
+     * @return phrase_list the unit, percent and scaling words of the system phrases with the hidden scaling
+     *                     word "one" and the word "mathematics" without a type to test which phrase is a unit
+     */
+    function list_units_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_kwh()->phrase());
+        $lst->add($t_wrd->word_percent()->phrase());
+        $lst->add($t_wrd->word_million()->phrase());
+        $lst->add($t_wrd->word_one()->phrase());
+        $lst->add($t_wrd->word_math()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend cache of the unit, percent and scaling words
+     */
+    function list_units_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_units_cache());
+    }
+
     function phrase_list_zh_mio(): phrase_list
     {
         $t_wrd = new test_words($this->env);

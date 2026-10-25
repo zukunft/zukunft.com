@@ -345,7 +345,7 @@
         "id": 621,
         "name": "scaling",
         "description": "the multiplication of a quantity by a constant factor",
-        "type_id": 6,
+        "type_id": 1,
         "class": "word"
     },
     {

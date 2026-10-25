@@ -35852,13 +35852,6 @@
                 "class": "word"
             },
             {
-                "id": 621,
-                "name": "scaling",
-                "description": "the multiplication of a quantity by a constant factor",
-                "type_id": 6,
-                "class": "word"
-            },
-            {
                 "id": 4,
                 "protection": 3,
                 "name": "one",

@@ -145,6 +145,31 @@ class phrase_ui_tests
         $dsp = $phr_dsp->dsp_id();
         $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
 
+        $t->subheader($ts . 'shown unit');
+        // the calculator editor shows a number with these phrases as its unit (system_page::calculator_editor_types)
+        $unit_lst = $t_phr->list_units_cache_ui();
+        $test_name = 'a measure word is a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::KWH, $msg);
+        $t->assert_true($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        $test_name = 'percent is a shown unit';
+        $phr_unit = $unit_lst->get_by_name(words::PCT, $msg);
+        $t->assert_true($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        $test_name = 'a scaling word is a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::MIO, $msg);
+        $t->assert_true($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        // negative: the hidden scaling word "one" is needed only for the calculation, so "5 one" is never shown
+        $test_name = 'the hidden scaling word is not a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::ONE, $msg);
+        $t->assert_false($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        $test_name = 'a word without a type is not a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::MATH, $msg);
+        $t->assert_false($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+
         $t->subheader($ts . 'default view');
         // a phrase with an own view e.g. the calculator of a PV installation is linked to that
         // view with the phrase id, which is negative for a triple (frontend::dbo_for_url)

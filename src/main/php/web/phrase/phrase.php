@@ -549,6 +549,19 @@ class phrase extends combine_named
     }
 
     /**
+     * @param user_message $msg to report a missing phrase type list
+     * @return bool true if a number is shown with this phrase as its unit e.g. "kWh", "percent" or "million",
+     *              but not with the hidden scaling word "one", which is needed only for the calculation
+     */
+    function is_shown_unit(user_message $msg): bool
+    {
+        $is_unit = ($this->is_measure($msg) or $this->is_percent($msg));
+        $is_shown_scaling = ($this->is_scaling($msg) and !$this->obj()->is_hidden($msg));
+        $result = ($is_unit or $is_shown_scaling);
+        return $result;
+    }
+
+    /**
      * @return bool true if the wrapped word or triple has the type "time" e.g. "2022 (year)"
      */
     function is_time(user_message $msg): bool
