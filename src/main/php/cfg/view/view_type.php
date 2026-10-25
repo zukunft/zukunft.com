@@ -51,6 +51,8 @@ class view_type extends type_object
     const string DETAIL = "detail_view";
     const string SYSTEM = "system";
     const string EDITOR = "editor";
+    const string IMPORT = "import";
+    const string SUB = "sub";
 
     // list of view types that are used by the system
     // and should not be assignable by users
@@ -58,6 +60,8 @@ class view_type extends type_object
         self::SYSTEM,
         self::MASK_DEFAULT,
         self::EDITOR,
+        self::IMPORT,
+        self::SUB,
     );
 
 

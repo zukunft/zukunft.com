@@ -44,7 +44,7 @@
       "name": "Comparison table",
       "description": "the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",
       "code_id": "comparison_table",
-      "type": "word",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
@@ -61,7 +61,7 @@
       "name": "Calculator",
       "description": "the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",
       "code_id": "calculator",
-      "type": "triple",
+      "type": "phrase",
       "style": "use-case",
       "components": [
         {

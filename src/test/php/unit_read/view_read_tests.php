@@ -186,10 +186,44 @@ class view_read_tests
         $test_name = 'the delete word view is an edit view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_DEL)?->type_code_id();
         $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+        $test_name = 'the undo view is an edit view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::UNDO)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
         // negative: the login changes no data, so it keeps the system type
         $test_name = '... but the login is no edit view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::LOGIN)?->type_code_id();
         $t->assert($test_name, $msk_typ_code, view_type_shared::SYSTEM);
+        $test_name = '... and the system error list is a system view for an admin';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::ERROR_UPDATE)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::SYSTEM);
+
+        $test_name = 'the import view has the import type';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::IMPORT)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::IMPORT);
+        // negative: the paste of a table adds values without a file, so it is an edit view
+        $test_name = '... but the paste table view is no import view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::PASTE_TABLE)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::MASK_DEFAULT);
+
+        // the views of a word or a triple have the phrase type
+        $test_name = 'the calculator is a phrase view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::CALCULATOR)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::PHRASE);
+        $test_name = 'the table is a phrase view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::TABLE)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::PHRASE);
+
+        // a view that shows one object has the type of the object
+        $test_name = 'the value detail is a value view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::VALUE_DETAIL)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::VALUE);
+        $test_name = 'the result explanation is a result view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::RESULT_EXPLAIN)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::RESULT);
+
+        $test_name = 'the word usage and log is a sub view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::WORD_LOG)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::SUB);
 
         // check all system views
         // TODO Prio 2 activate

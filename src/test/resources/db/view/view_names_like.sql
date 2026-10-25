@@ -7,7 +7,7 @@ PREPARE view_names_like (bigint, text, bigint, bigint) AS
      LEFT JOIN user_views u ON s.view_id = u.view_id
                            AND u.user_id = $1
          WHERE s.view_name ilike $2
-           AND ( s.view_type_id NOT IN (7,3,26)
+           AND ( s.view_type_id NOT IN (7,3,26,27,8)
             OR   s.view_type_id IS NULL )
       ORDER BY s.view_name
          LIMIT $3

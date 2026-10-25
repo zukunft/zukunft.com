@@ -2,7 +2,34 @@
 
 ## view types
 
-Review the view types of all views and create here a list of suggested changes
+suggested changes of the view types (ids and names as in src/test/resources/unit/view/list.csv);
+each point is a developer decision before it is done:
+
+- system for System log (136) and Language selection (158), which have no type
+- standard (default) for Term (default) (113), which has no type
+- export for Export selections (155), Export object (156) and Export ready (157),
+  which are system although they belong to the five export views (150 to 154)
+- edit for the system views that change data or start a change:
+  Admin system configuration (125) "with the possibility to adjust it",
+  Job and process overview (142) "offer process control" and
+  Job overview (143) "to start ... the system consistency check"; 142 and 143 are already
+  blocked for an ip user (`views::IP_BLOCKED_MASKS_IDS`)
+- formula for Test formula (59), which shows the results of one formula like Explain result (63)
+- system for Complete (175), which is an admin view (`views::ADMIN_MASK_IDS`) to edit the word tree,
+  but as phrase type it is offered to every user in the view selector of a word or triple
+- the editor description says "a view to define the layout of another view for a word or triple";
+  the add, change and delete views of views, components and their links (80 to 98) and
+  Change confirm view (103) change a view object and stay edit
+- the types without any view are removed or used:
+  presentation (4), word default (5), child (9); word default could be the type of Word (default) (3);
+  standard (1) has no view but stays as the fallback type of a new view (`view::set_type_id`)
+- detail_view (6) is used only by base units (176), company sheet (190) and company list (191),
+  while the detail views 23 to 46 use the object type; use one rule for both
+
+create a view 'mathematical constant' that mainly show related values 
+and assign it to the triple 'mathematical constant'
+add a test that the direct assigned view is on top of the views in the view tab
+add a test that the parent view is shown almost on top of the views in the view tab for a math const like pi
 
 ### view selector
 
@@ -14,12 +41,6 @@ and create a sample test case for it if there is none yet
 second list the views linked to the parent with a test case
 and third show the names of the 'for words only' views
 after each name should be a switch and an edit icon like in the views tab
-
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
 
 ## start view
 
@@ -70,6 +91,12 @@ add view
 where alternative is the same style as 'columns and values'
 
 if done the '...' menu can be removed
+
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
 
 ## calculation editor
 

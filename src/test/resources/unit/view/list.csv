@@ -1,6 +1,6 @@
 view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,excluded,share_type_id,protect_id
 1,1,Start view,A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.,2,,,entry_view,,,3
-2,1,Table,the values related to a word or triple as a table with one column per phrase used most often within the values,11,,,table,,,
+2,1,Table,the values related to a word or triple as a table with one column per phrase used most often within the values,28,,,table,,,
 3,1,Word (default),the default view for words,11,,,word_default,,,
 4,1,Triple (default),the default view for triples,13,,,triple_default,,,
 5,1,Value (default),the default view for values,17,,,value_default,,,
@@ -14,7 +14,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 13,1,Signup,the system signup form,7,,,signup,,,
 14,1,Login activate,the system login activate form,7,,,login_activate,,,
 15,1,Login reset,reset the password of a login user name,7,,,login_reset,,,
-16,1,Calculator,"the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",13,8,,calculator,,,
+16,1,Calculator,"the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",28,8,,calculator,,,
 17,1,Change value,"Change just the number, text, time or geolocation of a value for the user without the confirm view",3,,,value_overwrite,,,3
 18,1,Change result,Change just the number of a result for the user without the confirm view,3,,,result_overwrite,,,3
 19,1,Add value pure,Create a new value by selecting its words and triples step by step without javascript and  without the confirm view,3,,,value_add_phrases,,,3
@@ -61,7 +61,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 60,1,Add result number,Administrator can add manually a formula result e.g. for debugging,3,,,result_add,,,3
 61,1,Change result with details,Overwrite a result,3,,,result_edit,,,3
 62,1,Delete result,Exclude or delete a result,3,,,result_del,,,3
-63,1,Explain result,explains one formula result,7,,,result_explain,,,3
+63,1,Explain result,explains one formula result,19,,,result_explain,,,3
 64,1,Add new source,Create a new source with all parameters e.g. the type,3,,,source_add,,,3
 65,1,Change source,Rename a triple or change the type,3,,,source_edit,,,3
 66,1,Delete source,To confirm the exclusion or deleting of an external source,3,,,source_del,,,3
@@ -102,7 +102,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 101,1,Confirm update,Show the impact of the changes to the user and ask the user for confirmation,3,,,confirm_update,,,3
 102,1,Confirm delete,Show the impact of the deletion to the user and ask the user for confirmation,3,,,confirm_delete,,,3
 103,1,Change confirm view,show the old and the new view and let the user confirm the change,3,,,view_preview,,,3
-104,1,Undo,show the last changes of the user and offer selective undo,7,,,undo,,,
+104,1,Undo,show the last changes of the user and offer selective undo,3,,,undo,,,
 105,1,View list,List the views with paging and sorting,7,,,list_views,,,3
 106,1,Component list,List the view components with paging and sorting,7,,,list_components,,,3
 107,1,Search,"The search page for all words, triples, verbs and formulas",7,,,word_find,,,
@@ -110,18 +110,18 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 109,1,Find values,Find the values by a set of phrases and show them as a table,7,,,value_find,,,3
 110,1,Find by reference,Find an object by the external reference e.g. the Wikidata id,7,,,ref_find,,,3
 111,1,Find duplicates,List for an admin the terms with the same or a similar name for the cleanup,7,,,find_duplicates,,,3
-112,1,Phrase (default),the default view for a word or triple,,,,phrase_default,,,
+112,1,Phrase (default),the default view for a word or triple,28,,,phrase_default,,,
 113,1,Term (default),"the default view for a word, triple, verb or formula",,,,term_default,,,
-114,1,Values of a phrase,"all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",11,,,phrase_values,,,
-115,1,Related phrases,"the full list of the phrases related to a word or triple grouped by verb, which the title of a phrase page links with its '...' if the title shows only some related phrases",11,,,word_related,,,
-116,1,word usage and log,subview to show the usage and changes of a word,7,,,word_usage,,,3
-117,1,Value detail,show all details of one value,7,,,value_detail,,,3
+114,1,Values of a phrase,"all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",28,,,phrase_values,,,
+115,1,Related phrases,"the full list of the phrases related to a word or triple grouped by verb, which the title of a phrase page links with its '...' if the title shows only some related phrases",28,,,word_related,,,
+116,1,word usage and log,subview to show the usage and changes of a word,8,,,word_usage,,,3
+117,1,Value detail,show all details of one value,17,,,value_detail,,,3
 118,1,Sandbox,show the differences between the user sandbox and the standard and offer a selective switch to the standard,7,,,sandbox,,,
 119,1,Own changes,List all changes of the user across all objects with the possibility to undo a change,7,,,change_log_user,,,3
 120,1,Recent changes,List the latest changes of all users,7,,,change_log_recent,,,3
 121,1,Object history,Show all changes of one object including the changes of its links,7,,,object_history,,,3
 122,1,Change detail,Show one change with the old and the new value and the possibility to revert it,7,,,change_detail,,,3
-123,1,User Settings,to change the user settings,7,,,user,,,
+123,1,User Settings,to change the user settings,3,,,user,,,
 124,1,User configuration,Show to the user the standard user configuration and the overwrites of the user,7,,,user_config,,,3
 125,1,Admin system configuration,Allow an admin to see the full system configuration with the possibility to adjust it,7,,,admin_config,,,3
 126,1,System configuration,Show to the user the system configuration as read only with the possibility to request changes,7,,,system_config,,,3
@@ -132,7 +132,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 131,1,Admin change user,View for administrators to update a user,3,,,admin_user_edit,,,3
 132,1,Admin delete user,View for administrators to delete or exclude a new user,3,,,admin_user_del,,,3
 133,1,Error Log,simple confirm page for a new error that has been logged in the database,7,,,error_log,,,
-134,1,System Error List,List the system errors and allow the user to change the status,3,,,error_update,,,
+134,1,System Error List,List the system errors and allow the user to change the status,7,,,error_update,,,
 135,1,System error detail,"Show one system error with the trace, the status, the assigned admin and the solution",7,,,sys_log_detail,,,3
 136,1,System log,show the most relevant system log entries (placeholder only at the moment),,,,system_log,,,
 137,1,User jobs,"Show to the user the jobs that the user has caused with the status, the pending jobs on the top and the possibility to downgrade or cancel jobs",7,,,user_jobs,,,3
@@ -142,12 +142,12 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 141,1,Asynchronous process,Show the progress of one asynchronous process,7,,,job_async,,,
 142,1,Job and process overview,Show all batch progress jobs with the progress and offer process control,7,,,job_control,,,
 143,1,Job overview,Show the control board to start and monitor the system consistency check e.g. to calc again all formula results,7,,,job_check,,,
-144,1,Paste table,add more than one values by pasting a table,7,,,paste_table,,,3
-145,1,Import,Select a file to import data,7,,,import,,,
-146,1,Import preview,"Show what an import would add, change or clash with before anything is written",7,,,import_preview,,,3
-147,1,Import result,Show the objects of an import with the warnings and the links to the added objects,7,,,import_result,,,3
-148,1,Import from url,Import the data of a file given by an url,7,,,import_url,,,3
-149,1,Import from Wikidata,Import an object and the related data by the Wikidata id,7,,,import_wikidata,,,3
+144,1,Paste table,add more than one values by pasting a table,3,,,paste_table,,,3
+145,1,Import,Select a file to import data,27,,,import,,,
+146,1,Import preview,"Show what an import would add, change or clash with before anything is written",27,,,import_preview,,,3
+147,1,Import result,Show the objects of an import with the warnings and the links to the added objects,27,,,import_result,,,3
+148,1,Import from url,Import the data of a file given by an url,27,,,import_url,,,3
+149,1,Import from Wikidata,Import an object and the related data by the Wikidata id,27,,,import_wikidata,,,3
 150,1,Export,Show the control page to export a selection from this pod in the selected format,10,,,export_in_selected_format,,,
 151,1,Export JSON,Show the control page to export a selection from this pod in the json format,10,,,export_json,,,
 152,1,Export XML,Show the control page to export a selection from this pod in the xml format,10,,,export_xml,,,
@@ -159,9 +159,9 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 158,1,Language selection,List all language in an overview page to select the ui language and allow to request an additional language,,,,language_select,,,
 159,1,Language,the default view for languages,16,,,language_default,,,
 160,1,Language list,List all languages with a link to the language,7,,,list_languages,,,3
-161,1,Phrase translations,Show and change the names of a word or triple in all languages,7,,,phrase_translations,,,3
+161,1,Phrase translations,Show and change the names of a word or triple in all languages,3,,,phrase_translations,,,3
 162,1,Missing translations,List the words and triples that have no name in the language of the user,7,,,translations_missing,,,3
-163,1,Language forms,Show and change the language forms of a language e.g. the plural,7,,,language_forms,,,3
+163,1,Language forms,Show and change the language forms of a language e.g. the plural,3,,,language_forms,,,3
 164,1,Add language,Add a language by an admin user,3,,,language_add,,,3
 165,1,Change language,Change a language name or symbol by an admin user,3,,,language_edit,,,3
 166,1,Delete language,View for administrators to delete a language,3,,,language_del,,,3
@@ -173,21 +173,21 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 172,1,Source list,List the sources with paging and sorting,7,,,list_sources,,,3
 173,1,Reference list,List the references with paging and sorting,7,,,list_refs,,,3
 174,1,Formula list,List the formulas with paging and sorting,7,,,list_formulas,,,3
-175,1,Complete,"Show a word, all related words to edit the word tree and the linked formulas with some results",,,,complete,,,
+175,1,Complete,"Show a word, all related words to edit the word tree and the linked formulas with some results",28,,,complete,,,
 176,1,base units,view the base units with the formulas,6,,,base_units,,,
-177,1,Ranking,the default view for all phrases where a better could be selected,,,,ranking,,,
-178,1,Science,show mainly related words that are relevant in sciences,,,,science,,,
-179,1,Historic,show the related words in historic order,,,,hist,,,
-180,1,Biological,show what is relevant from the biological point of view,,,,bio,,,
-181,1,Education,sort related topics by difficulty,,,,edu,,,
-182,1,Touristic,show things to see,,,,touristic,,,
-183,1,Graph,show the related topics as a visual graph,,,,graph,,,
-184,1,Simple,show only the most relevant facts,,,,simple,,,
-185,1,Mathematical constant,Show a mathematical constant and the related words and formulas,,,,math_const,,,
-186,1,problem with solutions,Explain a problem and show the potential solutions,,,,global_problem,,,
-187,1,Currency,Show a currency with the most relevant exchange rates and related formulas,,,,currency,,,
+177,1,Ranking,the default view for all phrases where a better could be selected,28,,,ranking,,,
+178,1,Science,show mainly related words that are relevant in sciences,28,,,science,,,
+179,1,Historic,show the related words in historic order,28,,,hist,,,
+180,1,Biological,show what is relevant from the biological point of view,28,,,bio,,,
+181,1,Education,sort related topics by difficulty,28,,,edu,,,
+182,1,Touristic,show things to see,28,,,touristic,,,
+183,1,Graph,show the related topics as a visual graph,28,,,graph,,,
+184,1,Simple,show only the most relevant facts,28,,,simple,,,
+185,1,Mathematical constant,Show a mathematical constant and the related words and formulas,28,,,math_const,,,
+186,1,problem with solutions,Explain a problem and show the potential solutions,28,,,global_problem,,,
+187,1,Currency,Show a currency with the most relevant exchange rates and related formulas,28,,,currency,,,
 188,1,solution priority validation,"the ranking of the global problems by potential loss with the solution, its loss reduction, the initial effort and the reward ratio",11,,,solution_prio_validation,,,
-189,1,country ratios,List all countries with the main ratios,,,,,,,
+189,1,country ratios,List all countries with the main ratios,28,,,,,,
 190,1,company sheet,"The income statement, balance sheet or cash flow sheet of a big company",6,,,,,,
 191,1,company list with main ratios,list the most interesting companies with the main ratios,6,,,,,,
 192,1,PV in Switzerland emission comparison,the climate benefit of photovoltaic electricity in Switzerland with and without the displacement concept,13,,,,,,
@@ -199,4 +199,4 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 198,1,process catch main page,"the page of a process catch with the about three inputs that are most relevant for the result, with pre-selection options for complex answers, and a next button to the detail page",11,,,process_catch_main,,,
 199,1,process catch detail page,the page of a process catch with the fine tuning of the assumptions in up to five tabs and a next button to the result page,11,,,process_catch_detail,,,
 200,1,process catch result page,the last page of a process catch with the result in up to five tabs and a back button to the detail page,11,,,process_catch_result,,,
-201,1,Comparison table,"the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",11,,,comparison_table,,,
+201,1,Comparison table,"the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",28,,,comparison_table,,,

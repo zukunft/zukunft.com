@@ -2657,7 +2657,7 @@
       "name": "Table",
       "description": "the values related to a word or triple as a table with one column per phrase used most often within the values",
       "code_id": "table",
-      "type": "word",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
@@ -3254,7 +3254,7 @@
       "name": "Calculator",
       "description": "the inputs, the assumptions and the results of a calculation for a word or triple, selected by its calculator triples",
       "code_id": "calculator",
-      "type": "triple",
+      "type": "phrase",
       "style": "use-case"
     },
     {
@@ -6458,7 +6458,7 @@
       "name": "Explain result",
       "description": "explains one formula result",
       "code_id": "result_explain",
-      "type": "system",
+      "type": "result",
       "protection": "admin_protection",
       "components": [
         {
@@ -9217,7 +9217,7 @@
       "name": "Undo",
       "description": "show the last changes of the user and offer selective undo",
       "code_id": "undo",
-      "type": "system",
+      "type": "mask_default",
       "components": [
         {
           "position": "1",
@@ -9349,7 +9349,8 @@
     {
       "name": "Phrase (default)",
       "description": "the default view for a word or triple",
-      "code_id": "phrase_default"
+      "code_id": "phrase_default",
+      "type": "phrase"
     },
     {
       "name": "Term (default)",
@@ -9360,7 +9361,7 @@
       "name": "Values of a phrase",
       "description": "all values related to a word or triple, grouped into up to four columns by the phrases used most often within the values",
       "code_id": "phrase_values",
-      "type": "word",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
@@ -9381,7 +9382,7 @@
       "name": "Related phrases",
       "description": "the full list of the phrases related to a word or triple grouped by verb, which the title of a phrase page links with its '...' if the title shows only some related phrases",
       "code_id": "word_related",
-      "type": "word",
+      "type": "phrase",
       "components": [
         {
           "position": "1",
@@ -9413,7 +9414,7 @@
       "name": "word usage and log",
       "description": "subview to show the usage and changes of a word",
       "code_id": "word_usage",
-      "type": "system",
+      "type": "sub",
       "protection": "admin_protection",
       "components": [
         {
@@ -9486,7 +9487,7 @@
       "name": "Value detail",
       "description": "show all details of one value",
       "code_id": "value_detail",
-      "type": "system",
+      "type": "value",
       "protection": "admin_protection",
       "components": [
         {
@@ -9587,7 +9588,7 @@
       "name": "User Settings",
       "description": "to change the user settings",
       "code_id": "user",
-      "type": "system",
+      "type": "mask_default",
       "components": [
         {
           "position": "1",
@@ -9922,7 +9923,7 @@
     {
       "name": "System Error List",
       "description": "List the system errors and allow the user to change the status",
-      "type": "mask_default",
+      "type": "system",
       "code_id": "error_update",
       "components": [
         {
@@ -10077,7 +10078,7 @@
       "name": "Paste table",
       "description": "add more than one values by pasting a table",
       "code_id": "paste_table",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -10097,7 +10098,7 @@
     {
       "name": "Import",
       "description": "Select a file to import data",
-      "type": "system",
+      "type": "import",
       "code_id": "import",
       "components": [
         {
@@ -10130,7 +10131,7 @@
       "name": "Import preview",
       "description": "Show what an import would add, change or clash with before anything is written",
       "code_id": "import_preview",
-      "type": "system",
+      "type": "import",
       "protection": "admin_protection",
       "components": [
         {
@@ -10147,7 +10148,7 @@
       "name": "Import result",
       "description": "Show the objects of an import with the warnings and the links to the added objects",
       "code_id": "import_result",
-      "type": "system",
+      "type": "import",
       "protection": "admin_protection",
       "components": [
         {
@@ -10164,7 +10165,7 @@
       "name": "Import from url",
       "description": "Import the data of a file given by an url",
       "code_id": "import_url",
-      "type": "system",
+      "type": "import",
       "protection": "admin_protection",
       "components": [
         {
@@ -10181,7 +10182,7 @@
       "name": "Import from Wikidata",
       "description": "Import an object and the related data by the Wikidata id",
       "code_id": "import_wikidata",
-      "type": "system",
+      "type": "import",
       "protection": "admin_protection",
       "components": [
         {
@@ -10565,7 +10566,7 @@
       "name": "Phrase translations",
       "description": "Show and change the names of a word or triple in all languages",
       "code_id": "phrase_translations",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -10599,7 +10600,7 @@
       "name": "Language forms",
       "description": "Show and change the language forms of a language e.g. the plural",
       "code_id": "language_forms",
-      "type": "system",
+      "type": "mask_default",
       "protection": "admin_protection",
       "components": [
         {
@@ -10901,6 +10902,7 @@
       "name": "Complete",
       "description": "Show a word, all related words to edit the word tree and the linked formulas with some results",
       "code_id": "complete",
+      "type": "phrase",
       "components": [
         {
           "position": "1",

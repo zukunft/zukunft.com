@@ -47,8 +47,11 @@ class view_types
     const string SYSTEM = "system";
     const string EXPORT = "export";
     const string EDITOR = "editor";
+    const string IMPORT = "import";
+    const string SUB = "sub";
 
     // object specific views
+    const string PHRASE = "phrase";
     const string WORD = "word";
     const string VERB = "verb";
     const string TRIPLE = "triple";
@@ -74,6 +77,8 @@ class view_types
         self::SYSTEM,
         self::EXPORT,
         self::EDITOR,
+        self::IMPORT,
+        self::SUB,
     );
 
     // list of view types that are specific for other objects than words or triples
