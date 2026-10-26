@@ -54,6 +54,7 @@ class files
     CONST string YAML = '.yaml';
     CONST string JSON = '.json';
     CONST string HTML = '.html';
+    CONST string JS = '.js';
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
     CONST string MD = '.md';
@@ -82,11 +83,27 @@ class files
     CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
     CONST string UPDATE_PUT_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_undo' . self::JSON;
     CONST string UPDATE_PUT_WITHOUT_WORD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_without_word' . self::JSON;
-    // a description change of the use case triple PV capacity label as the editor has sent it and its undo
-    CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label' . self::JSON;
-    CONST string UPDATE_PUT_PV_CAPACITY_LABEL_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label_undo' . self::JSON;
-    // an expression change of the use case formula of the autarky as the editor sends it; the undo puts the loaded expression
-    CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_autarky_formula' . self::JSON;
+    // the user actions that a headless browser runs in a copy of the calculator editor snapshot, selected by the
+    // scenario name as the url hash; the update put message that the editor sends after a scenario is compared
+    // with the file UI_PUT_PREFIX + scenario name in test_paths::WEB_CALCULATOR_EDITOR_RES
+    CONST string CALCULATOR_EDITOR_SCENARIOS = test_paths::JS . 'calculator_editor_scenarios' . self::JS;
+    CONST string UI_PUT_PREFIX = 'update_put_';
+    CONST string SCENARIO_AUTARKY_FORMULA = 'autarky_formula';
+    CONST string SCENARIO_AUTARKY_FORMULA_UNCHANGED = 'autarky_formula_unchanged';
+    CONST string SCENARIO_PV_CAPACITY_LABEL = 'pv_capacity_label';
+    CONST string SCENARIO_PV_CAPACITY_LABEL_UNDO = 'pv_capacity_label_undo';
+    CONST string SCENARIO_PV_CAPACITY_LABEL_UNDO_ALL = 'pv_capacity_label_undo_all';
+    CONST string SCENARIO_PV_CAPACITY_RENAME = 'pv_capacity_rename';
+    CONST string SCENARIO_PV_CAPACITY_NUMBER = 'pv_capacity_number';
+    CONST string SCENARIO_PV_CAPACITY_MAXIMUM = 'pv_capacity_maximum';
+    CONST string SCENARIO_PV_CAPACITY_MINIMUM_CLEARED = 'pv_capacity_minimum_cleared';
+    CONST string SCENARIO_ADD_INPUT = 'add_input';
+    CONST string SCENARIO_ADD_INPUT_WITHOUT_PHRASE = 'add_input_without_phrase';
+    CONST string SCENARIO_REMOVE_INPUT = 'remove_input';
+    // the messages of the scenarios that the write test saves: the description change of the use case triple
+    // PV capacity label and the expression change of the use case formula of the autarky; the undo puts the loaded text
+    CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
+    CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none

@@ -69,7 +69,9 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -81,12 +83,18 @@ use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\utils\headless_browser;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
 use DateTime;
 
 class use_case_ui_tests
 {
+
+    // the element of the page with the message of the save (PUT_MESSAGE_ID of calculator_editor_scenarios.js)
+    const string PUT_MESSAGE_ID = 'putMessage';
+    // the time of the save is replaced by this fixed time, so the message can be compared with the expected file
+    const string PUT_TIMESTAMP = '2026-10-25T18:00:00.000Z';
 
     /**
      * the components of a use case page e.g. the PV lifetime balance: the view title, the section
@@ -706,6 +714,7 @@ class use_case_ui_tests
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
 
         $this->calculator_save_tests($t, $ts);
+        $this->calculator_editor_scenario_tests($t, $ts);
 
         $t->subheader($ts . 'calculation result');
         // the page phrase Zurich has the result column 2019, the signed row group city with the rows
@@ -1135,6 +1144,92 @@ class use_case_ui_tests
         $test_name = '... and tells the user that nothing has been saved';
         $info = $act_msg->get_last_info();
         $t->assert($test_name, $info, $mtr->txt(msg_id::CALCULATOR_NOTHING_CHANGED));
+    }
+
+    /**
+     * the user actions of a scenario in the calculator editor snapshot create the update put message of
+     * the save, which is compared with the expected message in the test resources; the actions run in a
+     * headless browser, so without a browser the tests are skipped with a warning
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $ts the name of the test section
+     */
+    private function calculator_editor_scenario_tests(test_cleanup $t, string $ts): void
+    {
+        $browser = new headless_browser();
+        $browser_name = $browser->start();
+        $t->subheader($ts . 'calculator editor scenario in ' . $browser_name);
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the calculator editor scenario tests are skipped');
+        } else {
+            $page = $this->scenario_page();
+            // the scenarios that save a change by the description of the test
+            $saved = [
+                test_files::SCENARIO_AUTARKY_FORMULA => 'the changed expression of a formula is sent as its user text',
+                test_files::SCENARIO_PV_CAPACITY_LABEL => 'the general label of a phrase is sent as the description of its label triple',
+                test_files::SCENARIO_PV_CAPACITY_LABEL_UNDO => 'an undone change is not sent, but the change before it',
+                test_files::SCENARIO_PV_CAPACITY_RENAME => 'a renamed triple is sent with the triples that link to it',
+                test_files::SCENARIO_PV_CAPACITY_NUMBER => 'the changed shown number of a field is sent as the number of its value',
+                test_files::SCENARIO_PV_CAPACITY_MAXIMUM => 'a new limit of a field is sent as a new value',
+                test_files::SCENARIO_PV_CAPACITY_MINIMUM_CLEARED => 'a cleared limit of a field is sent as a deleted value',
+                test_files::SCENARIO_ADD_INPUT => 'a new input field with a new phrase is sent as a new word and new triples',
+                test_files::SCENARIO_REMOVE_INPUT => 'a removed input field is sent as deleted triples and a changed order',
+            ];
+            foreach ($saved as $scenario => $test_name) {
+                $put = $this->scenario_message($browser, $page, $scenario);
+                $t->assert_file($test_name, $put,
+                    test_paths::WEB_CALCULATOR_EDITOR_RES . test_files::UI_PUT_PREFIX . $scenario . test_files::JSON,
+                    test_files::JSON);
+            }
+            // negative: the scenarios that end without a change send nothing
+            $unchanged = [
+                test_files::SCENARIO_AUTARKY_FORMULA_UNCHANGED => '... but nothing is sent for the loaded expression typed again',
+                test_files::SCENARIO_PV_CAPACITY_LABEL_UNDO_ALL => '... nor for a change that is undone',
+                test_files::SCENARIO_ADD_INPUT_WITHOUT_PHRASE => '... nor for a new input field without a phrase',
+            ];
+            foreach ($unchanged as $scenario => $test_name) {
+                $t->assert($test_name, $this->scenario_message($browser, $page, $scenario), '');
+            }
+            unlink($page);
+        }
+        $browser->stop();
+    }
+
+    /**
+     * a copy of the calculator editor snapshot that loads the scripts of this checkout and the scenarios
+     *
+     * @return string the path of the copy in the temp folder, which the caller removes
+     */
+    private function scenario_page(): string
+    {
+        $html = file_get_contents(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES
+            . test_files::CALCULATOR_EDITOR . test_files::HTML);
+        $html = preg_replace('#src="[^"]*' . preg_quote(files::SCRIPT_PATH, '#') . '#',
+            'src="file://' . files::RESOURCE_PATH . 'script' . DIRECTORY_SEPARATOR, $html);
+        $html = str_replace('</body>',
+            '<script src="file://' . test_files::CALCULATOR_EDITOR_SCENARIOS . '"></script></body>', $html);
+        $page = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('calculator_editor_') . test_files::HTML;
+        file_put_contents($page, $html);
+        return $page;
+    }
+
+    /**
+     * run the user actions of a scenario in the headless browser and read the message of the save
+     *
+     * @param headless_browser $browser the started headless browser
+     * @param string $page the path of the calculator editor page with the scenarios
+     * @param string $scenario the name of the scenario e.g. test_files::SCENARIO_AUTARKY_FORMULA
+     * @return string the update put message as formatted json with a fixed time or an empty string if nothing is saved
+     */
+    private function scenario_message(headless_browser $browser, string $page, string $scenario): string
+    {
+        $result = $browser->text('file://' . $page . '#' . $scenario, self::PUT_MESSAGE_ID);
+        if ($result != '') {
+            $json = json_decode($result, true);
+            $json[json_fields::TIMESTAMP] = self::PUT_TIMESTAMP;
+            $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        }
+        return $result;
     }
 
     /**

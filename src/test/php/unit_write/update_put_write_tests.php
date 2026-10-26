@@ -399,7 +399,7 @@ class update_put_write_tests
         $trp->load_by_name(triple_names::PV_CAPACITY_LABEL, $chk_msg);
         if ($trp->get_description() != triple_names::PV_CAPACITY_LABEL_COM) {
             $test_name = 'the user overwrite left by an earlier run is removed by the undo';
-            $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL_UNDO, $trp), $msg);
+            $upd->put($this->use_case_message($trp, triple_names::PV_CAPACITY_LABEL_COM), $msg);
             $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
             $msg->reset();
             $trp = new triple($usr);
@@ -409,7 +409,7 @@ class update_put_write_tests
         $t->assert($test_name, $trp->get_description(), triple_names::PV_CAPACITY_LABEL_COM, test_base::TIMEOUT_LIMIT_DB);
 
         $test_name = 'put the description change of the calculator editor';
-        $put_body = $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL, $trp), $msg);
+        $put_body = $upd->put($this->use_case_message($trp), $msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
         $msg->reset();
         // the answer confirms only what the reload of the saved row shows, so that the editor can tell the user
@@ -464,7 +464,7 @@ class update_put_write_tests
         $t->assert_msg($test_name, $phd_msg);
 
         $test_name = 'put the undo of the description change';
-        $upd->put($this->use_case_message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL_UNDO, $trp), $msg);
+        $upd->put($this->use_case_message($trp, triple_names::PV_CAPACITY_LABEL_COM), $msg);
         $t->assert_msg($test_name, $msg, test_base::TIMEOUT_LIMIT_DB_MULTI);
         $msg->reset();
         $test_name = 'the database has the original description again';
@@ -535,23 +535,24 @@ class update_put_write_tests
     }
 
     /**
-     * the database ids differ by database, so the test sets the ids of the loaded triple and its
-     * user in the message as the calculator editor has sent it
+     * the message that the calculator editor has sent for the description change of the use case triple
+     * (calculator_editor_scenarios.js); the database ids differ by database, so the test sets the id of
+     * the loaded triple and its user, but keeps the phrases and the verb by their names as the editor sends them
      *
-     * @param string $filename the path of the message e.g. test_files::UPDATE_PUT_PV_CAPACITY_LABEL
      * @param triple $trp the triple of the message loaded by its name for the user of the message
+     * @param string|null $description the description to send e.g. the loaded one for the undo, else the one of the message
      * @return array the message with the database ids of this database
      */
-    private function use_case_message(string $filename, triple $trp): array
+    private function use_case_message(triple $trp, ?string $description = null): array
     {
-        $json = $this->message($filename);
+        $json = $this->message(test_files::UPDATE_PUT_PV_CAPACITY_LABEL);
         $json[json_fields::USER_ID] = $trp->get_user()->id();
         $json[json_fields::USER] = $trp->get_user()->name();
         $trp_json = $json[json_fields::BODY][json_fields::TRIPLES][0];
         $trp_json[json_fields::ID] = $trp->id();
-        $trp_json[json_fields::FROM] = $trp->from_id();
-        $trp_json[json_fields::TO] = $trp->to_id();
-        $trp_json[json_fields::VERB] = $trp->get_verb_id();
+        if ($description !== null) {
+            $trp_json[json_fields::DESCRIPTION] = $description;
+        }
         $json[json_fields::BODY][json_fields::TRIPLES][0] = $trp_json;
         return $json;
     }

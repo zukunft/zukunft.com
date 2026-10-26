@@ -203,6 +203,14 @@ create some tests that adds / updates / compares message files in src/test/resou
 create test cased for all possible change types in the calculation editor.
 For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
 
+`src/test/js/calculator_editor_scenarios.js` acts like a user in a copy of the calculator editor snapshot in a
+headless chromium and `use_case_ui_tests` compares the sent message with `src/test/resources/web/calculator_editor/`
+for a formula expression, a description, a renamed, a new and a removed triple, a new word, a new, a changed and a
+removed value and an undo. The write test saves the description and the formula change of these messages. Open:
+- the write test saves the other messages of the scenarios on the use case and undoes them: the renamed triple, the
+  changed and the new value; a cleared limit and a removed input delete rows of the use case, which an undo can not add again with the same id
+- scenarios for the sub-items: a row filter, a detail column, a side result, a value phrase and the options of a phrase selector
+
 for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
 
 

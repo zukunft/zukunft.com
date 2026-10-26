@@ -1777,6 +1777,12 @@ the body, because the api sends the messages only for a refused put.
 
 `src/test/resources/api/calculator_editor/` has the add, update and undo
 messages of the write test, which adds the database ids.
+`src/test/resources/web/calculator_editor/` has the messages that the calculator
+editor sends after the user actions of a scenario of
+`src/test/js/calculator_editor_scenarios.js`, with the database ids of the
+calculator editor snapshot and a fixed timestamp. The write test saves the
+description and the formula change of these messages and their undo, with the
+database id of the changed object and the user set by the test.
 
 ## Related
 

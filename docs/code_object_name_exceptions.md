@@ -144,6 +144,7 @@ formula_type_list: $lst
 group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj
 group_link: $grp_lnk
 group_list: $grp_lst, $grp_lst_add, $grp_lst_dsp, $lst, $phr_grp_lst_val
+headless_browser: $browser
 html_base: $head_html, $html, $html_base
 import_file: $imf, $import
 import_wikidata: $imp

@@ -15,6 +15,21 @@ make this text translatable so that the frontend language shows the warning in t
   side by side columns, set the column width by the view instead and remove the rule
 - the toolbar `.bar` of the formula editor sticks at `top: 0` and slides under the fixed site header
   when the page scrolls; stick it below the site header
+- the formula editor inside the calculator editor reports every keystroke, which the calculator editor
+  adds by `mutate` with the history key `frm:<id>`; check that `pushHistory` merges the keystrokes of one
+  formula, so that one undo after typing a few characters takes back the typed text and not one character
+- the `toggle` listener of `calculator_editor.js` on `document` does not skip the formula editor hosts
+  like `onClick`, `onInput`, `onChange` and `onKey` (`inFormulaEditor`); it only reacts to `details.sect`
+  and `data-preview`, which the formula editor has not, but skip the formula editor hosts there too,
+  so that a later collapsed block of the formula editor never changes the open lists of the structure
+
+## static files of the frontend
+
+the scripts and styles e.g. `formula_editor.js` and `calculator_editor.css` are served without a
+version, so a browser may run an old copy after a change, e.g. the calculator editor showed the old
+formula inspector after the formula editor was added; add the modification time of the file to the
+url of the script and the style (`html_base::script_src`, `html_base::link_style`, e.g. `?v=<time>`),
+with a fixed value in the test snapshots, so that the browser reads the changed file
 
 ## calculator field value of the page triple
 
