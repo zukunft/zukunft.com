@@ -117,6 +117,10 @@ class views
     const string CALCULATOR_EDITOR = 'calculator_editor';
     const int CALCULATOR_EDITOR_ID = 196;
     const string CALCULATOR_EDITOR_NAME = 'Calculator editor';
+    // the editor of the formulas of a page phrase, appended to calculator_views.json, so that no id moves
+    const string FORMULA_EDITOR = 'formula_editor';
+    const int FORMULA_EDITOR_ID = 202;
+    const string FORMULA_EDITOR_NAME = 'Formula editor';
     // the views whose phrase selector sends the name of the phrase that the view shows next
     // (see frontend::url_with_selected_phrase)
     const array PHRASE_SELECT_VIEWS = [self::TABLE_EDITOR, self::CALCULATOR_EDITOR];
@@ -810,6 +814,7 @@ class views
     const array EDITOR_MASKS_IDS = [
         self::TABLE_EDITOR_ID,
         self::CALCULATOR_EDITOR_ID,
+        self::FORMULA_EDITOR_ID,
     ];
 
     // system masks that have a source as the main object
@@ -1827,6 +1832,7 @@ class views
     }
 
     /**
+     * TODO Prio 3 use code id instead of database id
      * the mask to show the main object of a blocked change mask
      * e.g. if this pod does not allow an ip user to open the word edit mask
      *      show the word default view with the blocked message instead (see /http/view.php)
@@ -1855,7 +1861,7 @@ class views
             self::COMPONENT_LINK_ADD_ID, self::COMPONENT_LINK_EDIT_ID, self::COMPONENT_LINK_DEL_ID => self::COMPONENT_LINK_DEFAULT_ID,
             self::VIEW_RELATION_ADD_ID, self::VIEW_RELATION_EDIT_ID, self::VIEW_RELATION_DEL_ID => self::VIEW_RELATION_DEFAULT_ID,
             self::TABLE_EDITOR_ID => self::TABLE_ID,
-            self::CALCULATOR_EDITOR_ID => self::CALCULATOR_ID,
+            self::CALCULATOR_EDITOR_ID, self::FORMULA_EDITOR_ID => self::CALCULATOR_ID,
             default => self::START_ID
         };
     }

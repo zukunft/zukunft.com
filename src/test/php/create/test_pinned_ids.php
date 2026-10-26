@@ -535,6 +535,7 @@ class test_pinned_ids
         [views::CALCULATOR, views::CALCULATOR_ID],
         [views::COMPARISON_TABLE, views::COMPARISON_TABLE_ID],
         [views::TABLE_EDITOR, views::TABLE_EDITOR_ID],
+        [views::FORMULA_EDITOR, views::FORMULA_EDITOR_ID],
         [views::VALUE_OVERWRITE, views::VALUE_OVERWRITE_ID],
         [views::RESULT_OVERWRITE, views::RESULT_OVERWRITE_ID],
         [views::VALUE_ADD_NO_JS, views::VALUE_ADD_NO_JS_ID],

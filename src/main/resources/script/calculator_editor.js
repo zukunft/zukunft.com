@@ -35,6 +35,7 @@ document.getElementById(EDITOR_HOST_ID).innerHTML = [
     '<div class="col insp-col">',
     '<div class="col-head"><h2>Settings</h2></div>',
     '<div id="insp" class="insp"></div>',
+    '<div class="formula-editor" id="calcFormulaEditor" hidden></div>',
     '</div>',
     '<div class="col preview-col">',
     '<div class="tabs" role="tablist">',
@@ -43,6 +44,7 @@ document.getElementById(EDITOR_HOST_ID).innerHTML = [
     '<button class="tab" role="tab" id="tab-changes" aria-selected="false" data-tab="changes">Changes</button>',
     '</div>',
     '<div class="pane" id="pane"></div>',
+    '<div class="formula-editor" id="calcFormulaCompare" hidden></div>',
     '</div>',
     '</div>',
     '<div class="toast" id="toast"></div>',
@@ -1526,7 +1528,8 @@ function renderInspector() {
     if (selected === "page") {
         html = pageInspector();
     } else if (findFormula(selected)) {
-        html = formulaInspector(findFormula(selected));
+        /* the formula editor shows the formula in its own host */
+        html = "";
     } else {
         const hit = findNode(selected);
         if (hit) {
@@ -1537,6 +1540,7 @@ function renderInspector() {
         }
     }
     host.innerHTML = html;
+    showFormulaEditor(findFormula(selected));
 }
 
 function pageInspector() {
@@ -2096,39 +2100,45 @@ function formulaRow(f) {
     return result;
 }
 
-/* the number of the phrases that the page shows, with its unit, as a sample input or result of a formula */
-function sampleNumber(names) {
-    const entry = findEntry(names);
-    const result = entry ? fmtNumber(poolNumber(entry), unitOf(entry.words)) : "—";
-    return result;
+/* the formula editor (script/formula_editor.js) changes a selected formula in the settings column and
+   shows its results until now against the results after the save instead of the page preview; it
+   reports every changed expression, which this editor keeps in its change list, undo and save */
+const FORMULA_EDITOR_HOST_ID = "calcFormulaEditor";
+const FORMULA_COMPARE_HOST_ID = "calcFormulaCompare";
+let formulaEditor = null;
+let formulaEditorDoc = null;
+
+/* the formula editor of the loaded data, started once and loaded again if another phrase is loaded */
+function formulaEditorOfDoc() {
+    if (formulaEditor !== null && formulaEditorDoc !== DOC) {
+        formulaEditorDoc = DOC;
+        formulaEditor.load(DOC);
+    } else if (formulaEditor === null) {
+        formulaEditorDoc = DOC;
+        formulaEditor = startFormulaEditor({
+            editorHost: document.getElementById(FORMULA_EDITOR_HOST_ID),
+            compareHost: document.getElementById(FORMULA_COMPARE_HOST_ID),
+            doc: DOC,
+            onChange: function (id, text) {
+                mutate(function () {
+                    setBound({t: "frm", id: id}, text);
+                }, {key: "frm:" + id, keepInspector: true});
+            },
+            toast: toast
+        });
+    }
+    return formulaEditor;
 }
 
-function formulaInspector(f) {
-    const exp = formulaExpression(f);
-    const phr = expressionPhrases(exp);
-    const changed = exp !== (f.expression || "");
-    let html = '<div class="insp-title"><span class="kind">Formula</span><span class="big">' + esc(f.name) + "</span></div>";
-    html += inputHtml({t: "frm", id: f.id}, exp, {
-        label: "Formula", area: true, mono: true, id: "formula_" + f.id,
-        note: changed ? "Changed: Save stores it as your own version of the formula." :
-            "The phrase left of the = gets the result; each operand is a phrase in quotes."
-    });
-    if (f.description) {
-        html += '<div class="note">' + esc(f.description) + "</div>";
+/* show the formula editor instead of the settings if a formula is selected, with the changes of this editor */
+function showFormulaEditor(f) {
+    const editor = f ? formulaEditorOfDoc() : null;
+    document.getElementById("insp").hidden = editor !== null;
+    document.getElementById(FORMULA_EDITOR_HOST_ID).hidden = editor === null;
+    if (editor !== null) {
+        editor.setTexts(state.formulaEdits || {});
+        editor.select(f.id);
     }
-    const rows = phr.operands.filter(function (name, i, all) {
-        return all.indexOf(name) === i;
-    }).map(function (name) {
-        return '<tr><td>' + esc(name) + '</td><td class="n">' + esc(sampleNumber([name])) + "</td></tr>";
-    }).join("");
-    html += '<div class="box"><div class="box-head"><h4>Sample input values</h4></div>';
-    html += rows ? '<table class="samples"><tbody>' + rows + "</tbody></table>" : '<div class="note">The formula has no operand.</div>';
-    if (phr.result.length > 0) {
-        html += '<div class="note">The page shows ' + esc(phr.result.join(", ")) + " = " + esc(sampleNumber(phr.result)) +
-            (changed ? ", calculated with the stored formula" : "") + ".</div>";
-    }
-    html += "</div>";
-    return html;
 }
 
 function notesHtml() {
@@ -2309,6 +2319,10 @@ function renderPane() {
     document.querySelectorAll(".tab").forEach(function (t) {
         t.setAttribute("aria-selected", t.dataset.tab === activeTab ? "true" : "false");
     });
+    /* a selected formula shows the results until now against the results after the save of the formula editor */
+    const compare = activeTab === "page" && findFormula(selected) !== null;
+    host.hidden = compare;
+    document.getElementById(FORMULA_COMPARE_HOST_ID).hidden = !compare;
 }
 
 function renderPhraseList() {
@@ -3047,7 +3061,16 @@ async function reload() {
 /* ------------------------------------------------------------------ */
 /* events                                                               */
 /* ------------------------------------------------------------------ */
+/* the formula editor handles the events of its own hosts e.g. its data-act buttons and the delete key */
+function inFormulaEditor(e) {
+    const result = e.target.closest !== undefined && e.target.closest(".formula-editor") !== null;
+    return result;
+}
+
 function onClick(e) {
+    if (inFormulaEditor(e)) {
+        return;
+    }
     const btn = e.target.closest("[data-act]");
     const nodeEl = e.target.closest(".node");
     const prev = e.target.closest("[data-sel]");
@@ -3097,6 +3120,9 @@ function select(id) {
 }
 
 function onInput(e) {
+    if (inFormulaEditor(e)) {
+        return;
+    }
     const el = e.target;
     if (el.dataset && el.dataset.bind) {
         const b = JSON.parse(el.dataset.bind);
@@ -3113,14 +3139,16 @@ function onInput(e) {
 }
 
 function onChange(e) {
+    if (inFormulaEditor(e)) {
+        return;
+    }
     const el = e.target;
     if (el.dataset && el.dataset.bind) {
         const b = JSON.parse(el.dataset.bind);
         const isText = el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && el.type !== "checkbox");
         if (isText) {
-            /* the text was stored while typing; refresh the inspector for the new placeholders
-               and the sample values of the operands of a changed formula */
-            const structural = (b.t === "node" && (b.f === "to" || b.f === "name")) || b.t === "frm";
+            /* the text was stored while typing; refresh the inspector for the new placeholders */
+            const structural = b.t === "node" && (b.f === "to" || b.f === "name");
             if (structural && document.getElementById("insp").contains(el)) {
                 setTimeout(function () {
                     const active = document.activeElement;
@@ -3207,6 +3235,9 @@ function onDragEnd() {
 }
 
 function onKey(e) {
+    if (inFormulaEditor(e)) {
+        return;
+    }
     const mod = e.ctrlKey || e.metaKey;
     const inField = e.target.matches && e.target.matches("input, textarea, select");
     if (mod && !inField && e.key.toLowerCase() === "z") {

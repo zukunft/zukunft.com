@@ -1424,6 +1424,7 @@ class test_base
      *                          extension, if the snapshot is not named by the class and the names,
      *                          e.g. the page of a use case next to its hand made sample page
      *                          (test_paths::USE_CASES); '' for the default name
+     * @param array $url_array the url parameters of the page e.g. url_var::JAVASCRIPT for the page that the browser builds
      * @return bool true if the generated view matches the expected
      */
     function assert_view_by_name(
@@ -1432,7 +1433,8 @@ class test_base
         db_object_seq_id $dbo,
         string          $obj_name,
         ?data_object_ui $cfg = null,
-        string          $file_path = ''
+        string          $file_path = '',
+        array           $url_array = []
     ): bool
     {
         $msg = new user_message();
@@ -1458,7 +1460,7 @@ class test_base
         } else {
             $dbo->load_by_id_with_related($dbo->id(), $msg);
         }
-        return $this->assert_view_html($msk, $usr, $dbo, $dbo->id() != 0, $cfg, $file_path, $view_name);
+        return $this->assert_view_html($msk, $usr, $dbo, $dbo->id() != 0, $cfg, $file_path, $view_name, $url_array);
     }
 
     /**

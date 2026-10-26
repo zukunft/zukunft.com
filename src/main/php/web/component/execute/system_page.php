@@ -44,6 +44,7 @@ include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'config_tree.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HELPER . 'number_format.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -57,6 +58,7 @@ include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::SYSTEM . 'system_time_list.php';
+include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_log_sum_list.php';
@@ -74,6 +76,10 @@ include_once html_paths::SHARED_CONST . 'components.php';
 include_once html_paths::SHARED_CONST . 'files.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
@@ -81,11 +87,13 @@ use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\number_format;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
@@ -104,6 +112,10 @@ use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
@@ -137,10 +149,70 @@ class system_page extends component
     ];
     // the tab that a process catch page shows if the url selects none
     const int PROCESS_CATCH_TAB_DEFAULT = 1;
+    // the html ids of the hosts that the formula editor script fills (script/formula_editor.js)
+    const string FORMULA_EDITOR_HOST_ID = 'formulaEditor';
+    const string FORMULA_SELECTOR_HOST_ID = 'formulaSelector';
+    const string FORMULA_COMPARE_HOST_ID = 'formulaCompare';
     // the html ids that the calculator editor script reads (script/calculator_editor.js)
     const string CALC_EDITOR_HOST_ID = 'calcEditor';
     const string CALC_EDITOR_SEED_ID = 'seed';
     const string CALC_EDITOR_TYPES_ID = 'calcEditorTypes';
+    // the html ids and the keys of the settings that the calculator page script reads (script/calculator_json.js)
+    const string CALC_PAGE_HOST_ID = 'calcPage';
+    const string CALC_PAGE_SETTINGS_ID = 'calcPageSettings';
+    const string CALC_PAGE_FORMAT = 'format';
+    const string CALC_PAGE_FORM = 'form';
+    const string CALC_PAGE_SAVE = 'save';
+    const string CALC_PAGE_TEXTS = 'texts';
+    const string CALC_PAGE_KEYWORDS = 'keywords';
+    const string CALC_PAGE_VERBS = 'verbs';
+    const string CALC_PAGE_PHRASE_TYPES = 'phrase_types';
+    const string CALC_PAGE_CONVERSIONS = 'conversions';
+    // the code ids of the phrase types that decide the unit and the format of a number by the key that the script reads
+    const array CALC_PAGE_PHRASE_TYPE_CODE_IDS = [
+        'measure' => phrase_types::MEASURE,
+        'percent' => phrase_types::PERCENT,
+        'scaling' => phrase_types::SCALING,
+        'scaling_hidden' => phrase_types::SCALING_HIDDEN,
+        'time' => phrase_types::TIME,
+    ];
+    // the names of the calculator and field keywords by the key that the script reads
+    const array CALC_PAGE_KEYWORD_NAMES = [
+        'input' => triples::CALCULATOR_INPUT,
+        'assumption' => triples::CALCULATOR_ASSUMPTION,
+        'column' => triples::CALCULATOR_RESULT_COLUMN,
+        'rowgroup' => triples::CALCULATOR_ROW_GROUP,
+        'detail' => triples::CALCULATOR_DETAIL_TABLE,
+        'label' => triples::CALCULATOR_LABEL,
+        'hint' => triples::CALCULATOR_HINT,
+        'highlight' => triples::CALCULATOR_HIGHLIGHT,
+        'signed' => triples::CALCULATOR_SIGNED,
+        'selector' => triples::FIELD_PHRASE_SELECTOR_TYPE,
+        'limit_down' => triples::FIELD_LIMIT_DOWN,
+        'limit_up' => triples::FIELD_LIMIT_UP,
+        'step' => triples::FIELD_STEP,
+        'value_phrases' => triples::FIELD_VALUE_PHRASES,
+        'confidence' => words::CONFIDENCE,
+    ];
+    // the code ids of the verbs by the key that the script reads, which gets their names from the type cache
+    const array CALC_PAGE_VERB_CODE_IDS = [
+        'is' => verbs::IS,
+        'has' => verbs::HAS,
+        'with' => verbs::WITH,
+        'uses' => verbs::USES,
+        'follow' => verbs::FOLLOW,
+        'symbol' => verbs::SYMBOL,
+    ];
+    // the translated texts of the calculator page script by their message id
+    const array CALC_PAGE_TEXT_IDS = [
+        msg_id::CALCULATOR_INPUTS,
+        msg_id::CALCULATOR_ASSUMPTIONS,
+        msg_id::CALCULATOR_RESULT,
+        msg_id::CALCULATOR_DETAILS,
+        msg_id::CALCULATOR_SOURCES,
+        msg_id::FIELD_TAG_MEASURED,
+        msg_id::FIELD_TAG_ASSUMED,
+    ];
 
     /**
      * HTML for a page title
@@ -1293,8 +1365,9 @@ class system_page extends component
             $page_vars = $html->form_hidden(url_var::MASK, (string)$msk_key);
             $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
             $page_vars .= $html->form_hidden(url_var::ACTION, url_var::ACTION_SAVE);
-            $button = $html->button_bs($html->esc($mtr->txt(msg_id::CALCULATOR_SAVE)),
-                styles::PROCESS_CATCH_BUTTON_REFRESH, '', url_var::POST_SUBMIT);
+            // not button_bs, whose bootstrap column would cut the button to a twelfth of the form
+            $button = $html->button($html->esc($mtr->txt(msg_id::CALCULATOR_SAVE)), html_base::INPUT_SUBMIT,
+                styles::CALC_BUTTON_SAVE, url_var::POST_SUBMIT);
             $result = $html->form_post($form_name, $page_vars . $button);
         }
         return $result;
@@ -1303,7 +1376,9 @@ class system_page extends component
     /**
      * the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
      * the script builds the editor from the phrase data of the phrase, which the page embeds as
-     * the seed, so that the editor starts without an api call
+     * the seed, so that the editor starts without an api call; a selected formula is changed in the
+     * formula editor, whose script and style are added before the script of the calculator editor,
+     * so that the calculator editor can start it with its own hosts
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
      * @param user_message $msg with the requesting user and to report an api answer without the phrase data
@@ -1323,11 +1398,99 @@ class system_page extends component
             $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
             // the session token, which the save of the editor sends to the api in the csrf header
             $result = $html->link_style(files::CALCULATOR_EDITOR_STYLE)
+                . $html->link_style(files::FORMULA_EDITOR_STYLE)
                 . $html->div('', styles::CALC_EDITOR, self::CALC_EDITOR_HOST_ID)
                 . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
                 . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
+                . $html->script_src(files::FORMULA_EDITOR_SCRIPT)
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * the formula editor of the page phrase: the script builds the expression of the selected formula
+     * from the phrase data of the phrase with its results, which the page embeds as the seed like the
+     * calculator editor, so that the editor starts without an api call; the script also fills the
+     * hosts of the formula selector and the result compare if the view has these components
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = $this->formula_editor_host($dbo, $msg, self::FORMULA_EDITOR_HOST_ID);
+        if ($result != '') {
+            $html = new html_base();
+            $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            // the session token, which the save of the editor sends to the api in the csrf header
+            $result = $html->link_style(files::FORMULA_EDITOR_STYLE)
+                . $result
+                . $html->form_session_token()
+                . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_src(files::FORMULA_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * the formulas of the page phrase to select the formula that the formula editor shows;
+     * the script of the formula editor fills the host, so the view needs the formula editor too;
+     * not formula_selector, which is the formula select field of a component form
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @return string the empty host or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_editor_selector(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg
+    ): string
+    {
+        return $this->formula_editor_host($dbo, $msg, self::FORMULA_SELECTOR_HOST_ID);
+    }
+
+    /**
+     * the results of the page phrase until now against the results after the save of the formula
+     * editor and the changes; the script of the formula editor fills the host
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @return string the empty host or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_result_compare(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg
+    ): string
+    {
+        return $this->formula_editor_host($dbo, $msg, self::FORMULA_COMPARE_HOST_ID);
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @param string $host_id the html id of the host e.g. FORMULA_SELECTOR_HOST_ID
+     * @return string the empty host in which formula_editor.css nests its rules or an empty string
+     *                if the page has no phrase or no javascript is allowed
+     */
+    private function formula_editor_host(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        string                                                $host_id
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $result = $html->div('', styles::FORMULA_EDITOR, $host_id);
         }
         return $result;
     }
@@ -1422,8 +1585,122 @@ class system_page extends component
             }
             // the only page with javascript: it repeats the calculation when an input changes
             if ($this->calculator_uses_javascript($msg)) {
-                $result .= $list->calculator_script($calc, $dbo, $lst, $cfg, $msg);
+                $result .= $this->calculator_page_data($cfg, $msg)
+                    . $list->calculator_script($calc, $dbo, $lst, $cfg, $msg);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * the phraseData answer of the page and the verbs and units of the type cache with the html ids
+     * of the editor, so that one script can build the editor preview and the calculator page
+     *
+     * @param data_object $cfg the request cache with the phraseData answer of the page
+     * @param user_message $msg with the requesting user to read the phrase types
+     * @return string the html code of the seed and of the types as json data
+     */
+    private function calculator_page_data(data_object $cfg, user_message $msg): string
+    {
+        $html = new html_base();
+        return $html->script_data(self::CALC_EDITOR_SEED_ID, $cfg->page_data)
+            . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg));
+    }
+
+    /**
+     * the calculator page that the browser builds from the phraseData answer of the page
+     * (docs/llm/frontend.md "Javascript only for the calculator"): the empty host, the answer as the
+     * seed, the verbs and units of the type cache, the settings of the page and the script; without
+     * javascript for the calculator nothing, because the page has no html of its own
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user to read the phrase types
+     * @param data_object|null $cfg the request cache with the phraseData answer of the page
+     * @param string $form_name the id of the save form that the fields of the page join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @return string the html code of the host, the json data and the script
+     */
+    function calculator_json(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg,
+        string                                                $form_name,
+        string|int                                            $msk_key
+    ): string
+    {
+        $result = '';
+        if ($this->is_javascript_calculator($dbo, $msg, $cfg)) {
+            $html = new html_base();
+            // the host is the use case page itself, so that it has the width of the page of the server
+            $result = $html->div('', view_styles::USE_CASE, self::CALC_PAGE_HOST_ID)
+                . $this->calculator_page_data($cfg, $msg)
+                . $html->script_data(self::CALC_PAGE_SETTINGS_ID, $this->calculator_page_settings($dbo, $form_name, $msk_key, $msg))
+                . $html->script_src(files::CALCULATOR_JSON_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
+     * @param user_message $msg to report a problem of the config value
+     * @param data_object|null $cfg the request cache with the calculator triples of the page
+     * @return bool true if the browser builds the page: the page shows a phrase with calculator
+     *              triples and config.yaml allows javascript for the calculator
+     */
+    private function is_javascript_calculator(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): bool
+    {
+        $result = false;
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+            $result = ($calc->is_calculator() and $this->calculator_uses_javascript($msg));
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the page
+     * @param string $form_name the id of the save form that the fields of the page join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @param user_message $msg to report a problem of the unit lookup
+     * @return array the number format of the user, the id and the html of the save form, the
+     *               translated texts of the page by their message id, the names of the keywords,
+     *               the verbs and the phrase types and the unit conversions of the system formulas
+     */
+    private function calculator_page_settings(word|triple $dbo, string $form_name, string|int $msk_key, user_message $msg): array
+    {
+        global $mtr, $ui_sys;
+        $texts = [];
+        foreach (self::CALC_PAGE_TEXT_IDS as $txt_id) {
+            $texts[$txt_id->value] = $mtr->txt($txt_id);
+        }
+        return [
+            self::CALC_PAGE_FORMAT => new ui_list()->calculator_number_format(),
+            self::CALC_PAGE_FORM => $form_name,
+            self::CALC_PAGE_SAVE => $this->calculator_button_save($form_name, $msk_key, $dbo),
+            self::CALC_PAGE_TEXTS => $texts,
+            self::CALC_PAGE_KEYWORDS => self::CALC_PAGE_KEYWORD_NAMES,
+            self::CALC_PAGE_VERBS => $this->calculator_type_names($ui_sys?->typ_lst_cache?->vrb, self::CALC_PAGE_VERB_CODE_IDS),
+            self::CALC_PAGE_PHRASE_TYPES => $this->calculator_type_names($ui_sys?->typ_lst_cache?->phr_typ, self::CALC_PAGE_PHRASE_TYPE_CODE_IDS),
+            self::CALC_PAGE_CONVERSIONS => new number_format()->unit_conversions($msg),
+        ];
+    }
+
+    /**
+     * @param type_list|null $lst the verbs or the phrase types of the type cache
+     * @param array $code_ids the code ids by the key that the calculator page script reads
+     * @return array the name of each type by its key, because the seed names a verb or a phrase type
+     *               by its name e.g. "has a" or "measure unit"
+     */
+    private function calculator_type_names(?type_list $lst, array $code_ids): array
+    {
+        $result = [];
+        foreach ($code_ids as $key => $code_id) {
+            $typ = $lst?->get_by_code_id($code_id);
+            $result[$key] = $typ?->name() ?? '';
         }
         return $result;
     }

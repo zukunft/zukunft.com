@@ -257,6 +257,21 @@ class type_list
         return $result;
     }
 
+    /**
+     * @param string $name the name of a type e.g. "measure unit" or of a verb e.g. "is a"
+     * @return int the database id of the type or zero if no type has the name
+     */
+    function id_by_name(string $name): int
+    {
+        $result = 0;
+        foreach ($this->lst as $type) {
+            if ($result == 0 and $type->name() == $name) {
+                $result = $type->id();
+            }
+        }
+        return $result;
+    }
+
     function get_code_id(int $id): string
     {
         $result = '';

@@ -6805,8 +6805,16 @@
             ponent/execute/system_page.php
     \-- calculator_editor - section for function calculator_editor not yet defined that it should be process catch in /c
             omponent/execute/system_page.php
+    \-- formula_editor - section for function formula_editor not yet defined that it should be process catch in /compone
+            nt/execute/system_page.php
+    \-- formula_editor_selector - section for function formula_editor_selector not yet defined that it should be process
+             catch in /component/execute/system_page.php
+    \-- formula_result_compare - section for function formula_result_compare not yet defined that it should be process c
+            atch in /component/execute/system_page.php
     \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
             /component/execute/system_page.php
+    \-- calculator_json - section for function calculator_json not yet defined that it should be process catch in /compo
+            nent/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
              in /component/execute/system_page.php
     \-- process_catch_tab - section for function process_catch_tab not yet defined that it should be process catch in /c
@@ -6891,6 +6899,8 @@
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
     \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
+    \-- calculator_number_format - section for function calculator_number_format missing in /component/execute/ui_list.p
+            hp
     \-- calculator_needed_results - section for function calculator_needed_results missing in /component/execute/ui_list
             .php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
@@ -7252,6 +7262,7 @@
     \-- group - section for function group missing in /helper/number_format.php
     \-- text - section for function text missing in /helper/number_format.php
     \-- unit_text - section for function unit_text missing in /helper/number_format.php
+    \-- unit_conversions - section for function unit_conversions missing in /helper/number_format.php
 \-- url_mapper
     \-- url_to_standard - section for function url_to_standard missing in /helper/url_mapper.php
     \-- standard_url_to_human - section for function standard_url_to_human missing in /helper/url_mapper.php
@@ -7681,6 +7692,9 @@
     \-- wrd_lst - section for function wrd_lst not yet defined that it should be to review in /phrase/phrase.php
     \-- dsp_tbl - section for function dsp_tbl not yet defined that it should be to review in /phrase/phrase.php
     \-- order error - order of section set and get has difference at id should be before set_id
+\-- phrase_data
+    \-- load_from_walk - section for function load_from_walk is expected to be load in /phrase/phrase_data.php
+    \-- fill - section for function fill is expected to be modify in /phrase/phrase_data.php
 \-- phrase_list
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
@@ -8273,6 +8287,7 @@
     \-- lst - section for function lst missing in /types/type_list.php
     \-- db_id_list - section for function db_id_list missing in /types/type_list.php
     \-- id - section for function id missing in /types/type_list.php
+    \-- id_by_name - section for function id_by_name missing in /types/type_list.php
     \-- get_code_id - section for function get_code_id is expected to be set and get in /types/type_list.php
     \-- name - section for function name is expected to be debug in /types/type_list.php
     \-- get - section for function get missing in /types/type_list.php
@@ -9590,6 +9605,8 @@
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
     \-- calculator_script
         \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
+    \-- calculator_number_format
+        \-- ui_list - @return array the number format of the user for the calculator scripts: the decimal point,
     \-- calculator_needed_results
         \-- ui_list - the results that the calculator script calculates: the result of each cell and the results
     \-- sources_used
@@ -9695,6 +9712,8 @@
         \-- number_format - @param float $num a stored number of the group
     \-- unit_text
         \-- number_format - @param user_message $msg to report a problem of the symbol lookup
+    \-- unit_conversions
+        \-- number_format - every unit conversion of the preloaded formulas in both directions, so that a script can
     \-- url_to_standard
         \-- url_mapper - get the standard url array from all allowed url formats
     \-- standard_url_to_human
@@ -9751,6 +9770,8 @@
                 ons
     \-- load_from_walk
         \-- phrase_data - the answer of the phraseData api is the export json without the api message header, so it
+    \-- fill
+        \-- phrase_data - fill the request cache of a page from one answer of the phraseData api, so that the page
     \-- 1
         \-- language_list - 
         \-- view_link_type_list - @return int the database id of the default view link type
@@ -10132,8 +10153,17 @@
         \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- calculator_editor
         \-- system_page - the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
+    \-- formula_editor
+        \-- system_page - the formula editor of the page phrase: the script builds the expression of the selected formul
+                a
+    \-- formula_editor_selector
+        \-- system_page - the formulas of the page phrase to select the formula that the formula editor shows;
+    \-- formula_result_compare
+        \-- system_page - the results of the page phrase until now against the results after the save of the formula
     \-- calculation_result
         \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+    \-- calculator_json
+        \-- system_page - the calculator page that the browser builds from the phraseData answer of the page
     \-- process_catch_fields
         \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
     \-- process_catch_tab

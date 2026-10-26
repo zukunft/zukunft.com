@@ -914,6 +914,9 @@ class test_mappers
             case component_types::CALCULATOR_INPUT:
             case component_types::CALCULATION_RESULT:
             case component_types::CALCULATOR_EDITOR:
+            case component_types::FORMULA_EDITOR:
+            case component_types::FORMULA_SELECTOR:
+            case component_types::FORMULA_RESULT_COMPARE:
             case component_types::USED_IN_AS_TEXT:
             case component_types::USED_IN_AS_TEXT_WITH_LINK:
             case component_types::FORM_CLASS:

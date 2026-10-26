@@ -3535,16 +3535,22 @@ class html_base
      * @param string $txt the button label html code
      * @param string $typ the button type e.g. submit
      * @param string $class additional CSS classes for the button
+     * @param string $name the url key that the button posts e.g. url_var::POST_SUBMIT for a data-changing submit, '' for none
      * @return string the wrapped button code
      */
-    function button(string $txt, string $typ, string $class = ''): string
+    function button(string $txt, string $typ, string $class = '', string $name = ''): string
     {
         if ($class != '') {
             $class = self::CLASS_BUTTON . ' ' . $class;
         } else {
             $class = self::CLASS_BUTTON;
         }
-        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '">' . $txt . '</' . self::BUTTON . '>';
+        $name_attr = '';
+        if ($name != '') {
+            $name_attr = ' ' . self::NAME . '="' . $name . '"';
+        }
+        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '"'
+            . $name_attr . '>' . $txt . '</' . self::BUTTON . '>';
     }
 
     /**

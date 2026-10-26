@@ -519,6 +519,20 @@ class result_tests
         $t->assert($test_name, $exp[json_fields::FORMULA_NAME], '');
         $msg->reset();
 
+        // the context is exported by the phrase names as the import reads them
+        $test_name = 'export the context of the result';
+        $res = $t_res->result_main_max();
+        $exp = $res->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::CONTEXT] ?? [], [word_names::CONST_NAME]);
+        $msg->reset();
+
+        // negative: a result without a source group exports no context
+        $test_name = 'export no context without source group';
+        $res = $t_res->result_simple();
+        $exp = $res->export_json($msg, [], false);
+        $t->assert_false($test_name, key_exists(json_fields::CONTEXT, $exp));
+        $msg->reset();
+
 
         // the result page shows the formula with the numbers that the calculation has used, so the
         // right side of the formula is split at each element group symbol into texts and figures

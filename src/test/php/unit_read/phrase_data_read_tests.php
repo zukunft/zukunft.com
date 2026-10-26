@@ -154,6 +154,20 @@ class phrase_data_read_tests
         $test_name = '... and the formula that has created it';
         $without_frm = $this->count_without_field($res_objs, json_fields::FORMULA_NAME);
         $t->assert($test_name, $without_frm, 0);
+        // the context selects the operands, so that e.g. the calculator can list the values that a result uses
+        $test_name = '... and its context';
+        $without_ctx = $this->count_without_field($res_objs, json_fields::CONTEXT);
+        $t->assert($test_name, $without_ctx, 0);
+        // negative: a client resolves the phrase names by the data, so no name of a result is unknown
+        $test_name = '... whose phrases are all part of the data';
+        $phr_names = array_merge(
+            $this->names($vars[json_fields::WORDS] ?? []),
+            $this->names($vars[json_fields::TRIPLES] ?? []));
+        $t->assert($test_name, $this->result_names_not_in($res_objs, $phr_names), []);
+        // negative: no result of another page e.g. the stored result of a use case value of a walked phrase
+        $test_name = '... and that names the requested phrase';
+        $other_res = $this->values_by_phrase($res_objs, triple_names::EXAMPLE_PV_INSTALLATION, false);
+        $t->assert($test_name, $this->value_keys($other_res), []);
 
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';
@@ -348,6 +362,23 @@ class phrase_data_read_tests
                 $result++;
             }
         }
+        return $result;
+    }
+
+    /**
+     * @param array $results the json of the results of the data
+     * @param array $phr_names the names of the words and triples of the data
+     * @return array the sorted phrase names of the results and of their context that are not in the given names
+     */
+    private function result_names_not_in(array $results, array $phr_names): array
+    {
+        $result = [];
+        foreach ($results as $res) {
+            $names = array_merge($res[json_fields::WORDS] ?? [], $res[json_fields::CONTEXT] ?? []);
+            $result = array_merge($result, array_diff($names, $phr_names));
+        }
+        $result = array_values(array_unique($result));
+        sort($result);
         return $result;
     }
 

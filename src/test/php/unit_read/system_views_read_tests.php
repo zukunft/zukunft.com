@@ -115,6 +115,7 @@ class system_views_read_tests
         // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t);
         $this->run_calculator_editor($t);
+        $this->run_formula_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
         $this->run_portfolio_split_calculator($t, $cfg);
 
@@ -506,7 +507,9 @@ class system_views_read_tests
     /**
      * the PV lifetime balance use case has no view of its own: the system view Calculator shows
      * the example PV installation by the calculator triples of PV installation, which the view
-     * loads into the request cache before the components render; the page is written to the use
+     * loads with one phraseData call into the request cache before the components render
+     * (view_exe::add_calculator_data), so an unchanged page confirms that the answer has
+     * everything that the page shows; the page is written to the use
      * case folder next to the hand made sample page (pv_lifetime_balance_sample.html), so that
      * the generated page can be compared with the target layout
      *
@@ -518,13 +521,20 @@ class system_views_read_tests
      */
     function run_pv_lifetime_balance(test_cleanup $t): void
     {
+        // sc=0 asks for the page of the server, which shows the page also without javascript
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
-            test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
+            test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE,
+            [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the same page from the json data of the page, because
+        // config.yaml allows javascript for the calculator
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::PV_LIFETIME_BALANCE_JSON);
     }
 
     /**
-     * the calculator editor of the PV lifetime balance: unlike the calculator page the editor gets
+     * the calculator editor of the PV lifetime balance: like the calculator page the editor gets
      * its data from the phraseData api, which the page embeds as the seed of the editor script; the
      * page is written to the use case folder next to the hand made calculator_editor_sample.html
      *
@@ -533,9 +543,33 @@ class system_views_read_tests
      */
     function run_calculator_editor(test_cleanup $t): void
     {
-        $t->assert_view_by_name(views::CALCULATOR_EDITOR_NAME, $t->usr1, new triple($t->usr1),
+        $this->assert_editor_view($t, views::CALCULATOR_EDITOR_NAME, test_files::CALCULATOR_EDITOR);
+    }
+
+    /**
+     * the formula editor of the PV lifetime balance: like the calculator editor it gets the phrase
+     * data of the page phrase with the stored results as the seed of its script; the page is
+     * written to the use case folder next to the hand made formula_editor_sample.html
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_formula_editor(test_cleanup $t): void
+    {
+        $this->assert_editor_view($t, views::FORMULA_EDITOR_NAME, test_files::FORMULA_EDITOR);
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $view_name the name of the editor view e.g. views::FORMULA_EDITOR_NAME
+     * @param string $file_name the name of the snapshot in the use case folder e.g. test_files::FORMULA_EDITOR
+     * @return void
+     */
+    private function assert_editor_view(test_cleanup $t, string $view_name, string $file_name): void
+    {
+        $t->assert_view_by_name($view_name, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
-            test_paths::HTML . test_paths::USE_CASES . test_files::CALCULATOR_EDITOR);
+            test_paths::HTML . test_paths::USE_CASES . $file_name);
     }
 
     /**

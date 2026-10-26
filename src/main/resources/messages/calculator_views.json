@@ -6,7 +6,7 @@
   "selection": [
     "the calculator view with its three components"
   ],
-  "description": "The calculator page of a phrase (docs/llm/new_view_sample_pv_balance.md): the title, the inputs and the results are the same three components for every calculator, and what they show is selected by the calculator triples of the phrase (calculator_keywords.json). The view style use-case shows the title as the header and the inputs beside the results. The calculator view itself is created by system_views.json, so that it keeps its database id, and gets its components here; the comparison table, which shows the values of a phrase with the defined columns, is created here, and its two components of system_views.json are repeated unchanged, because the import links a view only to the components of its own file. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "description": "The calculator page of a phrase (docs/llm/new_view_sample_pv_balance.md): the title, the inputs and the results are the same three components for every calculator, and what they show is selected by the calculator triples of the phrase (calculator_keywords.json). The view style use-case shows the title as the header and the inputs beside the results. The calculator view itself is created by system_views.json, so that it keeps its database id, and gets its components here; the comparison table, which shows the values of a phrase with the defined columns, is created here, and its two components of system_views.json are repeated unchanged, because the import links a view only to the components of its own file. The formula editor and its three components, the formula selector, the editor of the selected formula and the result compare, are appended at the end. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
   "components": [
     {
       "name": "phrase title",
@@ -37,6 +37,24 @@
       "description": "the result table and the detail tables that the calculator triples of the phrase select, with the notes of the formulas and the sources of the values",
       "type": "calculation_result",
       "code_id": "calculation_result"
+    },
+    {
+      "name": "formula editor",
+      "description": "the expression of the selected formula of the page of the phrase with the save, built by a script from the phrase data of the phrase",
+      "type": "formula_editor",
+      "code_id": "formula_editor"
+    },
+    {
+      "name": "formula selector",
+      "description": "the formulas of the page of the phrase to select the formula that the formula editor shows",
+      "type": "formula_selector",
+      "code_id": "formula_selector"
+    },
+    {
+      "name": "formula result compare",
+      "description": "the results of the page of the phrase until now against the results after the save of the formula editor",
+      "type": "formula_result_compare",
+      "code_id": "formula_result_compare"
     }
   ],
   "views": [
@@ -81,6 +99,28 @@
     },
     {
       "name": "Calculator editor"
+    },
+    {
+      "name": "Formula editor",
+      "description": "the editor of the formulas that the calculator page of a word or triple uses, with the results until now and after the save",
+      "code_id": "formula_editor",
+      "type": "editor",
+      "components": [
+        {
+          "position": "1",
+          "name": "formula selector"
+        },
+        {
+          "position": "2",
+          "name": "formula editor",
+          "position_type": "side_or_below"
+        },
+        {
+          "position": "3",
+          "name": "formula result compare",
+          "position_type": "side_or_last_below"
+        }
+      ]
     }
   ],
   "view_relations": [

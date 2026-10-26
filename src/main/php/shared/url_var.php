@@ -215,6 +215,9 @@ class url_var
     // const string MASK = 'm'; // just the placeholder to remember that the char m is used for the url type selection
     const string NUMERIC_VALUE = 'n';
     const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
+    // 0 to show the page of the server instead of the page that the browser builds from its json data,
+    // which a calculator page shows by default if config.yaml allows javascript for the calculator
+    const string JAVASCRIPT = 'sc';
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
     const string OWNER = 'ow'; // the name of the user who owns the object, for display on the default page
     const string PHRASE = 'p'; // the id or name of one phrase
@@ -347,6 +350,7 @@ class url_var
     const string DEBUG = 'debug'; // to force the output of debug messages
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
+    const string JAVASCRIPT_HUMAN = 'javascript'; // the long form of self::JAVASCRIPT e.g. view.php?m=calculator&id=-2780&sc=0
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
     const int DEBUG_LEVEL_SWITCHED = 0; // a debug message switched on by a const in the code e.g. def::DEBUG_API_CACHE, so shown at every level
     const int DEBUG_LEVEL_EXTERNAL_CALLS = 1; // the first debug level is to show only the calls of external systems such as wikipedia
@@ -440,6 +444,8 @@ class url_var
         self::POST_SUBMIT,
         self::DEBUG,
         self::NO_CACHE,
+        // the page that the browser builds is a render mode of the same page
+        self::JAVASCRIPT,
         // how much of a list is shown is a render mode, so e.g. the "... more" link of the start
         // page must not turn the url into a form submit of an object without an id
         self::DISPLAY_LIST_SIZE,
@@ -752,6 +758,7 @@ class url_var
         [self::LINK_HUMAN, self::LINK],
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
+        [self::JAVASCRIPT_HUMAN, self::JAVASCRIPT],
 
         // user
         [self::USER_HUMAN, self::USER],

@@ -171,6 +171,9 @@ class view_read_tests
         $test_name = 'the table editor is an editor view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::TABLE_EDITOR)?->type_code_id();
         $t->assert($test_name, $msk_typ_code, view_type_shared::EDITOR);
+        $test_name = 'the formula editor is an editor view';
+        $msk_typ_code = $lst->get_by_code_id(view_shared::FORMULA_EDITOR)?->type_code_id();
+        $t->assert($test_name, $msk_typ_code, view_type_shared::EDITOR);
         // negative: the calculator only shows the phrase, so it keeps its phrase type
         $test_name = '... but the calculator is no editor view';
         $msk_typ_code = $lst->get_by_code_id(view_shared::CALCULATOR)?->type_code_id();
