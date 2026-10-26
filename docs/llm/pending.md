@@ -13,21 +13,17 @@ type, so that the edit menu offers both editors
 
 #### the formula editor inside the calculator editor
 
-the formula editor is split into the components formula selector, formula editor and formula result
-compare (`component_types::FORMULA_*`), which `formula_editor.js` fills if their host is on the page;
-use the formula editor and the result compare without the selector in the calculator editor:
-- if a formula is selected in the "Page structure" column (`calculator_editor.js` `findFormula(selected)`),
-  the "Settings" column (`#insp`, `formulaInspector`) shows the formula editor host and the
-  "Page preview" column (`#pane`) the result compare host instead of the preview; any other selection
-  shows the settings and the preview again
-- `formula_editor.js` gets a small api instead of starting itself: start with the hosts and the seed
-  that the calculator editor already has, select a formula by its id (replaces the selector), and report a
-  changed expression back, so that the calculator editor keeps one change list, one save and one toast
-  (the formula editor toolbar and its own save are hidden there)
-- the calculator editor component adds `formula_editor.css` and `formula_editor.js`; both scripts already
-  listen only to their own hosts for the formula editor, the calculator editor still on `document`
-- tests: the calculator editor page loads the formula editor script and style; negative: the formula
-  editor view without the selector still selects the first formula
+the calculator editor shows a formula selected in the "Page structure" column in the formula editor
+(`startFormulaEditor` of `formula_editor.js` with the hosts `calcFormulaEditor` and `calcFormulaCompare`)
+instead of the settings and on the "Page preview" tab the result compare instead of the preview; open:
+- check in the browser: typing, the token tools and the reset of one formula change the "changed" chip
+  of the formula in the structure and the change count; undo, discard changes and the save of the
+  calculator editor update the formula editor; loading another phrase shows its formulas
+- the "Page preview" tab keeps its name while it shows the result compare; name it "Results" while a
+  formula is selected
+- the global rules of `calculator_editor.css` e.g. `.col`, `.btn` and `.chip` also format the formula
+  editor hosts where `formula_editor.css` sets no value; nesting `calculator_editor.css` (see below)
+  removes this
 
 #### one code for both editors
 
@@ -36,13 +32,13 @@ save by the update put message, and `formula_editor.css` and `calculator_editor.
 tokens; share them in one file, and nest `calculator_editor.css` in its host like `formula_editor.css`,
 so that the calculator editor page also keeps the standard css
 
-#### show a list with all results
+#### show a list with all results (to review)
 
 list below the formula the results and values sets used in this calculator
 show the results and the values in the formula expression format and make the lines selectable
 if a line is selected show below the formula with the results in the latex format
 
-#### selector for phrases and terms
+#### selector for phrases and terms (to review)
 
 if in the formula expression a result phrase (left of the equal sign) 
 or a term used for the values selection (right of the equal sign)

@@ -1376,7 +1376,9 @@ class system_page extends component
     /**
      * the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
      * the script builds the editor from the phrase data of the phrase, which the page embeds as
-     * the seed, so that the editor starts without an api call
+     * the seed, so that the editor starts without an api call; a selected formula is changed in the
+     * formula editor, whose script and style are added before the script of the calculator editor,
+     * so that the calculator editor can start it with its own hosts
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
      * @param user_message $msg with the requesting user and to report an api answer without the phrase data
@@ -1396,10 +1398,12 @@ class system_page extends component
             $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
             // the session token, which the save of the editor sends to the api in the csrf header
             $result = $html->link_style(files::CALCULATOR_EDITOR_STYLE)
+                . $html->link_style(files::FORMULA_EDITOR_STYLE)
                 . $html->div('', styles::CALC_EDITOR, self::CALC_EDITOR_HOST_ID)
                 . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
                 . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
+                . $html->script_src(files::FORMULA_EDITOR_SCRIPT)
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }
         return $result;

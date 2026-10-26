@@ -103,7 +103,12 @@ phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and
 static files `src/main/resources/script/calculator_editor.js` and
 `style/calculator_editor.css` (`files::CALCULATOR_EDITOR_SCRIPT`,
 `files::CALCULATOR_EDITOR_STYLE`); the script builds the editor from that seed and
-reads another phrase with one phraseData call. The page also embeds the verbs and
+reads another phrase with one phraseData call. A formula selected in the page structure is changed in
+the formula editor: the page also loads `formula_editor.js` and `formula_editor.css` before its own
+script, which starts the formula editor (`startFormulaEditor`) with its own hosts in the settings
+column and instead of the page preview and with the loaded data; the formula editor then has no
+toolbar, no selector and no draft of its own, reports every changed expression to the change list of
+the calculator editor and gets the changes back after an undo, so that one save stores all changes. The page also embeds the verbs and
 the unit and scaling phrases of the frontend type cache with their id and name in
 the format of the typeLists api (`system_page::calculator_editor_types`), so that
 the script finds the id of a verb and knows a unit without an api call; only

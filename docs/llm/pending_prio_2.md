@@ -8,21 +8,13 @@ make this text translatable so that the frontend language shows the warning in t
 ## formula editor
 
 - the toast of a failed save in `src/main/resources/script/formula_editor.js` says "The message is shown
-  in the Changes tab", but a view without the formula result compare component has no Changes tab e.g.
-  the calculator editor that uses the formula editor without the compare; show the message in the
-  editor column if the compare host is missing
-- `startFormulaEditor` of `formula_editor.js` is a global function name of the page; wrap the start in
-  the function of the script, so that the script adds no global name to a page that also loads
-  `calculator_editor.js`
+  in the Changes tab", but a formula editor view without the formula result compare component has no
+  Changes tab; show the message in the editor column if the compare host is missing
 - the rule `.row:has(> .col > .formula-editor) > .col` of `style/formula_editor.css` overwrites the
   inline min width of `html_base::div_col_min_width` with `!important`; if more views need narrower
   side by side columns, set the column width by the view instead and remove the rule
 - the toolbar `.bar` of the formula editor sticks at `top: 0` and slides under the fixed site header
   when the page scrolls; stick it below the site header
-- in `pending.md` "the formula editor inside the calculator editor" the sentence "both scripts already
-  listen only to their own hosts for the formula editor, the calculator editor still on `document`" is
-  hard to read; it means that `formula_editor.js` listens only to its own hosts and
-  `calculator_editor.js` still to `document`
 
 ## calculator field value of the page triple
 

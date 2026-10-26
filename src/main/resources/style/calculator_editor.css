@@ -471,24 +471,6 @@ details.sect[open] > summary.sect-head::before {
     border-left-style: solid;
 }
 
-/* the operands of a formula with the number that the page shows */
-table.samples {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 12px;
-}
-
-table.samples td {
-    padding: 3px 4px;
-    border-bottom: 1px solid var(--line);
-}
-
-table.samples td.n {
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-}
-
 .node .grip {
     color: var(--muted);
     cursor: grab;
