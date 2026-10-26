@@ -128,46 +128,52 @@ class phrase_data
      */
     function fill(array $json, data_object $dto, user_message $msg): bool
     {
+        $fill_msg = new user_message($msg->usr); // merged into $msg at the end, so that only a problem of this answer leaves the cache incomplete
         $this->wrd_by_name = $this->by_name($json[json_fields::WORDS] ?? []);
         $this->trp_by_name = $this->triples_by_name($json[json_fields::TRIPLES] ?? []);
         $this->phr_json = [];
-        $frm_ids = array_map(fn($frm) => $frm[json_fields::ID], $this->by_name($json[json_fields::FORMULAS] ?? []));
-        $src_ids = array_map(fn($src) => $src[json_fields::ID], $this->by_name($json[json_fields::SOURCES] ?? []));
+        $frm_ids = $this->ids_by_name($json[json_fields::FORMULAS] ?? []);
+        $src_ids = $this->ids_by_name($json[json_fields::SOURCES] ?? []);
 
         $phr_lst = new phrase_list();
         $names = array_merge(array_keys($this->wrd_by_name), array_keys($this->trp_by_name));
-        $msg->merge($phr_lst->api_mapper($this->phrases_json($names, $msg)));
-        $dto->add_phrases($phr_lst, $msg);
+        $fill_msg->merge($phr_lst->api_mapper($this->phrases_json($names, $fill_msg)));
+        $dto->add_phrases($phr_lst, $fill_msg);
 
+        $frm_objs = $json[json_fields::FORMULAS] ?? [];
+        $frm_json = array_map(fn($frm) => $this->formula_json($frm, $fill_msg), $frm_objs);
         $frm_lst = new formula_list();
-        $msg->merge($frm_lst->api_mapper(array_map(
-            fn($frm) => $this->formula_json($frm, $msg), $json[json_fields::FORMULAS] ?? [])));
-        $dto->frm_lst->merge($frm_lst, $msg);
+        $fill_msg->merge($frm_lst->api_mapper($frm_json));
+        $dto->frm_lst->merge($frm_lst, $fill_msg);
 
         // a source of the answer has the fields of the api json
         $src_lst = new source_list();
-        $msg->merge($src_lst->api_mapper($json[json_fields::SOURCES] ?? []));
-        $dto->src_lst->merge($src_lst, $msg);
+        $fill_msg->merge($src_lst->api_mapper($json[json_fields::SOURCES] ?? []));
+        $dto->src_lst->merge($src_lst, $fill_msg);
 
+        $val_objs = $json[json_fields::VALUES] ?? [];
+        $val_json = array_map(fn($val) => $this->value_json($val, $src_ids, $fill_msg), $val_objs);
         $val_lst = new value_list();
-        $msg->merge($val_lst->api_mapper(array_map(
-            fn($val) => $this->value_json($val, $src_ids, $msg), $json[json_fields::VALUES] ?? [])));
-        $dto->val_lst->merge($val_lst, $msg);
+        $fill_msg->merge($val_lst->api_mapper($val_json));
+        $dto->val_lst->merge($val_lst, $fill_msg);
 
+        $res_objs = $json[json_fields::RESULTS] ?? [];
+        $res_json = array_map(fn($res) => $this->result_json($res, $frm_ids, $fill_msg), $res_objs);
         $res_lst = new result_list();
-        $msg->merge($res_lst->api_mapper(array_map(
-            fn($res) => $this->result_json($res, $frm_ids, $msg), $json[json_fields::RESULTS] ?? [])));
+        $fill_msg->merge($res_lst->api_mapper($res_json));
         foreach ($res_lst->lst() as $res) {
             $dto->res_lst->add_result($res);
         }
         // the results of the selected phrase are complete, so that the page does not load them again
         foreach ($json[json_fields::SELECTION] ?? [] as $sel) {
-            $sel_json = $this->phrase_json($sel[json_fields::NAME] ?? '', $msg);
+            $sel_json = $this->phrase_json($sel[json_fields::NAME] ?? '', $fill_msg);
             if ($sel_json != null) {
                 $dto->add_results_of($this->phrase_id($sel_json), new result_list());
             }
         }
-        return $msg->is_ok();
+        $result = $fill_msg->is_ok();
+        $msg->merge($fill_msg);
+        return $result;
     }
 
     /**
@@ -184,26 +190,69 @@ class phrase_data
     }
 
     /**
+     * @param array $objects the json of the formulas or sources of the answer
+     * @return array the id of each object by its name
+     */
+    private function ids_by_name(array $objects): array
+    {
+        $result = [];
+        foreach ($this->by_name($objects) as $name => $obj) {
+            $result[$name] = $obj[json_fields::ID];
+        }
+        return $result;
+    }
+
+    /**
      * @param array $triples the json of the triples of the answer
      * @return array the json of each triple by its name, which is the generated name for a triple
      *               without its own name, because the other objects name it so e.g. gram per kWh
      */
     private function triples_by_name(array $triples): array
     {
-        global $ui_sys;
-        $is_name = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS)?->name() ?? '';
+        $is_name = $this->is_verb_name();
         $result = [];
         foreach ($triples as $trp) {
             $name = $trp[json_fields::NAME] ?? '';
             if ($name == '') {
-                // like the backend triple::generate_name
-                $from = $trp[json_fields::EX_FROM] ?? '';
-                $vrb = $trp[json_fields::EX_VERB] ?? '';
-                $to = $trp[json_fields::EX_TO] ?? '';
-                $name = $vrb == $is_name ? $from . ' (' . $to . ')' : $from . ' ' . $vrb . ' ' . $to;
+                $name = $this->generated_name($trp, $is_name);
                 $trp[json_fields::NAME] = $name;
             }
             $result[$name] = $trp;
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the name of the verb "is" of the type cache or an empty string if the cache is missing
+     */
+    private function is_verb_name(): string
+    {
+        global $ui_sys;
+        $result = '';
+        $vrb_lst = $ui_sys?->typ_lst_cache?->vrb;
+        if ($vrb_lst != null) {
+            $is_vrb = $vrb_lst->get_by_code_id(verbs::IS);
+            $result = $is_vrb?->name() ?? '';
+        }
+        return $result;
+    }
+
+    /**
+     * like the backend triple::generate_name, because the other objects name a triple without its own name so
+     *
+     * @param array $trp the json of a triple of the answer without its own name
+     * @param string $is_name the name of the verb "is", which is shown as brackets
+     * @return string e.g. "Pi (math)" for the verb "is" or "gram per kWh" for every other verb
+     */
+    private function generated_name(array $trp, string $is_name): string
+    {
+        $from = $trp[json_fields::EX_FROM] ?? '';
+        $vrb = $trp[json_fields::EX_VERB] ?? '';
+        $to = $trp[json_fields::EX_TO] ?? '';
+        if ($vrb == $is_name) {
+            $result = $from . ' (' . $to . ')';
+        } else {
+            $result = $from . ' ' . $vrb . ' ' . $to;
         }
         return $result;
     }

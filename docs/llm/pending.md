@@ -1,5 +1,21 @@
 # pending - list of planned llm prompts with prio 1
 
+## Calculation editor
+
+### formula editor
+
+#### show a list with all results
+
+list below the formula the results and values sets used in this calculator
+show the results and the values in the formula expression format and make the lines selectable
+if a line is selected show below the formula with the results in the latex format
+
+#### selector for phrases and terms
+
+if in the formula expression a result phrase (left of the equal sign) 
+or a term used for the values selection (right of the equal sign)
+is selected show an interactive phrase or term selection that reloads the phrases or terms based on the pattern
+
 ## assigned views
 
 change the existing view 'Mathematical constant' (185, code_id math_const in base_views.json)

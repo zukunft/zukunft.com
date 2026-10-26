@@ -190,7 +190,7 @@ class phrase_data
         $ids = array_merge(
             $phr_lst->id_lst(),
             $this->value_phrase_ids($val_lst, $msg),
-            $this->result_phrase_ids($res_lst, $msg));
+            $this->result_phrase_ids($res_lst));
         $phr_lst = $this->complete_phrases($ids, $msg);
         $frm_lst = $phr_lst->frm_lst($msg);
         $frm_lst->filter_readable_by($usr);
@@ -620,19 +620,18 @@ class phrase_data
 
     /**
      * @param result_list $res_lst the results of the data
-     * @param user_message $msg with the requesting user
      * @return array the phrase ids of all results and of their context e.g. year (duration unit)
      *               of the values that the lifetime PV production is calculated from
      */
-    private function result_phrase_ids(result_list $res_lst, user_message $msg): array
+    private function result_phrase_ids(result_list $res_lst): array
     {
         $result = [];
         foreach ($res_lst->lst() as $res) {
-            // loads the phrases of the result and of its source group
-            $res->load_phrases($msg);
-            $result = array_merge($result,
-                $res->phrase_list()->id_lst(),
-                $res->source_group()->phrase_list()->id_lst());
+            // the group keys contain the phrase ids, so the phrases are loaded once with all others
+            $result = array_merge($result, $res->grp()->id_lst());
+            if ($res->source_group()->is_id_set()) {
+                $result = array_merge($result, $res->source_group()->id_lst());
+            }
         }
         return $result;
     }
