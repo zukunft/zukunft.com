@@ -506,7 +506,9 @@ class system_views_read_tests
     /**
      * the PV lifetime balance use case has no view of its own: the system view Calculator shows
      * the example PV installation by the calculator triples of PV installation, which the view
-     * loads into the request cache before the components render; the page is written to the use
+     * loads with one phraseData call into the request cache before the components render
+     * (view_exe::add_calculator_data), so an unchanged page confirms that the answer has
+     * everything that the page shows; the page is written to the use
      * case folder next to the hand made sample page (pv_lifetime_balance_sample.html), so that
      * the generated page can be compared with the target layout
      *
@@ -524,7 +526,7 @@ class system_views_read_tests
     }
 
     /**
-     * the calculator editor of the PV lifetime balance: unlike the calculator page the editor gets
+     * the calculator editor of the PV lifetime balance: like the calculator page the editor gets
      * its data from the phraseData api, which the page embeds as the seed of the editor script; the
      * page is written to the use case folder next to the hand made calculator_editor_sample.html
      *

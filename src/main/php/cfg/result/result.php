@@ -1754,7 +1754,12 @@ class result extends sandbox_value
         // the formula that has created the result
         $vars[json_fields::FORMULA_NAME] = $this->frm->name();
 
-        // TODO Prio 2 add source group
+        // the phrases that select the values used for the calculation, as the import reads them,
+        // e.g. so that a client of the phrase data can explain a result by its operands
+        $ctx = $this->source_group()->phrase_list()->names();
+        if ($ctx != []) {
+            $vars[json_fields::CONTEXT] = $ctx;
+        }
 
         // add the value itself
         $vars[json_fields::NUMBER] = $this->number();

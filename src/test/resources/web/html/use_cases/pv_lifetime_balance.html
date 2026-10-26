@@ -323,11 +323,11 @@
                                     Replacement mix
                                 </label>
                                 <select class="form-control" name="n-2766" form="calculator" id="n-2766_form_select" >
-                                    <option value="395"  >
-                                        Production mix
-                                    </option>
                                     <option value="523"  selected >
                                         Residual mix
+                                    </option>
+                                    <option value="395"  >
+                                        Production mix
                                     </option>
                                 </select>
                             </div>
@@ -339,7 +339,7 @@
                                     </span>
                                 </label>
                                 <div class="row">
-                                    <input type="number" name="n-2761" id="n-2761" value="0.35" form="calculator">
+                                    <input type="number" name="n-2761" id="n-2761" value="0.35" min="0" max="1" step="0.05" form="calculator">
                                     <input type="hidden" name="g-2761" value="fQ-fM-f7-f3-32+" form="calculator">
                                     <input type="hidden" name="8n-2761" value="0.35" form="calculator">
                                     <input type="hidden" name="k-2761" value="Load share during PV hours" form="calculator">
@@ -369,6 +369,9 @@
                                         share
                                     </span>
                                 </div>
+                                <span class="hint">
+                                    the usual system efficiency of a lithium-ion home storage incl. the inverter losses
+                                </span>
                             </div>
                             <div class="field">
                                 <label for="n-2756">
@@ -408,6 +411,9 @@
                                         a
                                     </span>
                                 </div>
+                                <span class="hint">
+                                    a lithium-ion home storage with one cycle a day lasts 10 to 20 years
+                                </span>
                             </div>
                             <div class="field">
                                 <label for="nSt-Ss-Sp-50+Cp+Nz+PM+">

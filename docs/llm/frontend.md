@@ -65,6 +65,18 @@ the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
 beyond the safe integer of javascript e.g. the group id of a value is read and
 sent as text.
 
+A phraseData answer fills the request cache of a page with `phrase_data::fill`:
+each word, triple, formula, source, value and result of the answer becomes the
+api json that the frontend object maps, with the phrases of a triple, value or
+result found by their name within the answer (a triple without its own name by
+its generated name) and the types and verbs by their code id or name in the type
+cache; a name that the answer does not contain is reported and never loaded by
+another api call. A result carries its group id like in the result api. The
+calculator page loads one answer for its phrase (`view_exe::add_calculator_data`)
+and, if the answer names nothing that it does not contain, marks the cache as
+complete (`data_object::$page_data_complete`), so that the components load no
+values and no field triples of their own.
+
 The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
 views, and e.g. the undo or the paste table view) have the view type `mask_default`
 ("edit"); the import views have the view type `import`; the editors

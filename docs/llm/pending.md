@@ -85,8 +85,12 @@ create a javascript version of the formula editor view
 
 ### base on json
 
-check if the calculator e.g. http://localhost/http/view.php?m=16&id=-2780&debug=9 can be 
-based on the /api/phraseData and /api/typeLists json similar to the  'Calculator editor' e.g. http://localhost/http/view.php?m=196&id=-2780&u=11
+the calculator e.g. http://localhost/http/view.php?m=16&id=-2780&debug=9 is based on one /api/phraseData
+answer (view_exe::add_calculator_data) like the 'Calculator editor' e.g. http://localhost/http/view.php?m=196&id=-2780&u=11
+
+1. switch to a javascript calculator that builds the page from the
+   same seed and the typeLists subset of the editor (verbs, units) plus the number formats; keep the value ids as
+   strings, because e.g. 500463902488562396 is above the javascript int limit
 
 ## calculation editor
 

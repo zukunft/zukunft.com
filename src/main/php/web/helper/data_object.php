@@ -239,6 +239,9 @@ class data_object
     private user_message $msg;
     // set to false if the api should not be used to reload missing data e.g. for unit tests
     public bool $online;
+    // true if one phraseData answer has filled the phrases, values and results of the page
+    // (view_exe::add_calculator_data), so that no part of them is loaded again
+    public bool $page_data_complete = false;
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;
@@ -310,6 +313,7 @@ class data_object
         $this->adm_usr_log_sum_lst = new user_log_sum_list();
         $this->snap_time = null;
         $this->online = true;
+        $this->page_data_complete = false;
     }
 
 
@@ -428,7 +432,7 @@ class data_object
      */
     function load_values_of(phrase_list $phr_lst, user_message $msg): void
     {
-        if ($this->online and !$this->has_values_of($phr_lst)) {
+        if ($this->online and !$this->page_data_complete and !$this->has_values_of($phr_lst)) {
             $val_lst = new value_list();
             $val_lst->load_by_phr_lst($phr_lst, $msg);
             // also an empty answer is kept, so that phrases without values are not asked again

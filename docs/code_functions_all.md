@@ -7681,6 +7681,9 @@
     \-- wrd_lst - section for function wrd_lst not yet defined that it should be to review in /phrase/phrase.php
     \-- dsp_tbl - section for function dsp_tbl not yet defined that it should be to review in /phrase/phrase.php
     \-- order error - order of section set and get has difference at id should be before set_id
+\-- phrase_data
+    \-- load_from_walk - section for function load_from_walk is expected to be load in /phrase/phrase_data.php
+    \-- fill - section for function fill is expected to be modify in /phrase/phrase_data.php
 \-- phrase_list
     \-- url_mapper - section for function url_mapper not yet defined that it should be set and get in /phrase/phrase_lis
             t.php
@@ -8273,6 +8276,7 @@
     \-- lst - section for function lst missing in /types/type_list.php
     \-- db_id_list - section for function db_id_list missing in /types/type_list.php
     \-- id - section for function id missing in /types/type_list.php
+    \-- id_by_name - section for function id_by_name missing in /types/type_list.php
     \-- get_code_id - section for function get_code_id is expected to be set and get in /types/type_list.php
     \-- name - section for function name is expected to be debug in /types/type_list.php
     \-- get - section for function get missing in /types/type_list.php
@@ -9751,6 +9755,8 @@
                 ons
     \-- load_from_walk
         \-- phrase_data - the answer of the phraseData api is the export json without the api message header, so it
+    \-- fill
+        \-- phrase_data - fill the request cache of a page from one answer of the phraseData api, so that the page
     \-- 1
         \-- language_list - 
         \-- view_link_type_list - @return int the database id of the default view link type

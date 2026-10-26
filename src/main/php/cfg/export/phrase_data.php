@@ -8,7 +8,8 @@
     $phd is the suggested var name
 
     the answer of api/phraseData; every object carries its database id, because the answer is for
-    a client of this pod e.g. the calculator editor and not for another pod
+    a client of this pod e.g. the calculator editor and not for another pod; a result carries its
+    group id like in the result api, so that a client finds the same result by the same id
     (src/test/resources/api/phrase_data/phrase_data_pv_install.json is a sample)
 
     the walk (phrase_data_walks) decides where the data starts
@@ -27,7 +28,8 @@
       the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
       symbols, acronyms and aliases (verbs::NAME_VERBS) of the phrases, the phrases that every
       triple is built from and the sources of the values
-    - on request the results of the phrase resp. of the walked triples
+    - on request the results of the phrase with their context, the phrases that select the
+      values used for the calculation, and the phrases of both
 
     The main sections of this object are
     - export:            the json array of the phrase data
@@ -73,6 +75,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
@@ -97,6 +100,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
@@ -129,7 +133,7 @@ class phrase_data
      *
      * @param int $phr_id the id of the requested phrase e.g. -2780 for the triple example PV installation
      * @param phrase_data_walks $walk VALUE for the values of the phrase, FROM for the triples on its from side
-     * @param bool $incl_res true to add the results of the phrase resp. of the walked triples
+     * @param bool $incl_res true to add the results of the phrase
      * @param user_message $msg with the requesting user, to report e.g. a phrase that does not exist
      * @return array the json array of the phrase data or an empty array if the phrase does not exist
      */
@@ -152,7 +156,7 @@ class phrase_data
     /**
      * @param phrase $phr the loaded requested phrase
      * @param phrase_data_walks $walk VALUE for the values of the phrase, FROM for the triples on its from side
-     * @param bool $incl_res true to add the results of the phrase resp. of the walked triples
+     * @param bool $incl_res true to add the results of the phrase
      * @param user_message $msg with the requesting user
      * @return array the header and the objects of the phrase data in the order of an import file
      */
@@ -170,8 +174,23 @@ class phrase_data
         $val_lst->filter_readable_by($usr);
         $this->add_field_values($val_lst, $phr_lst, $kwd_ids, $msg);
         $this->debug_step('values loaded for ' . $val_phr_lst->count() . ' phrases', $val_lst->count());
+        // the results before the phrases are completed, because the data must also name the
+        // phrases of a result and of its context; only the results of the requested phrase,
+        // because e.g. a walked unit or a use case value with a stored result of the same phrases
+        // would add the results of other pages
+        $res_lst = new result_list($usr);
+        if ($incl_res) {
+            $res_phr_lst = new phrase_list($usr);
+            $res_phr_lst->add($phr, false, $msg);
+            $res_lst->load_by_phrase_list($res_phr_lst, $msg);
+            $res_lst->filter_readable_by($usr);
+            $this->debug_step('results loaded', $res_lst->count());
+        }
         // the data is collected by the phrase ids and loaded once per step
-        $ids = array_merge($phr_lst->id_lst(), $this->value_phrase_ids($val_lst, $msg));
+        $ids = array_merge(
+            $phr_lst->id_lst(),
+            $this->value_phrase_ids($val_lst, $msg),
+            $this->result_phrase_ids($res_lst, $msg));
         $phr_lst = $this->complete_phrases($ids, $msg);
         $frm_lst = $phr_lst->frm_lst($msg);
         $frm_lst->filter_readable_by($usr);
@@ -198,9 +217,6 @@ class phrase_data
         $vars[json_fields::VALUES] = $this->with_ids($val_lst->lst(), $msg);
         $this->debug_step('values exported', count($vars[json_fields::VALUES]));
         if ($incl_res) {
-            $res_lst = new result_list($usr);
-            $res_lst->load_by_phrase_list($val_phr_lst, $msg, true);
-            $res_lst->filter_readable_by($usr);
             $vars[json_fields::RESULTS] = $this->with_ids($res_lst->lst(), $msg);
             $this->debug_step('results exported', count($vars[json_fields::RESULTS]));
         }
@@ -235,7 +251,7 @@ class phrase_data
      * @param phrase_list $phr_lst the start phrases of the walk
      * @param phrase_data_walks $walk VALUE for the values of the phrase, FROM for the triples on its from side
      * @param user_message $msg with the requesting user
-     * @return phrase_list the phrases whose values and results are part of the data: the phrase for the
+     * @return phrase_list the phrases whose values are part of the data: the phrase for the
      *                     value walk, the walked triples and the phrase for the from walk, because a walked
      *                     word e.g. kWh has the values of every use case
      */
@@ -533,7 +549,7 @@ class phrase_data
 
     /**
      * @param phrase_list $phr_lst the walked phrases
-     * @return phrase_list the walked triples, whose values and results are part of the data
+     * @return phrase_list the walked triples, whose values are part of the data
      */
     private function triple_phrases(phrase_list $phr_lst): phrase_list
     {
@@ -598,6 +614,25 @@ class phrase_data
             // a value of a list load knows its group id, the phrases come with the group
             $val->load_phrases($msg);
             $result = array_merge($result, $val->phrase_list()->id_lst());
+        }
+        return $result;
+    }
+
+    /**
+     * @param result_list $res_lst the results of the data
+     * @param user_message $msg with the requesting user
+     * @return array the phrase ids of all results and of their context e.g. year (duration unit)
+     *               of the values that the lifetime PV production is calculated from
+     */
+    private function result_phrase_ids(result_list $res_lst, user_message $msg): array
+    {
+        $result = [];
+        foreach ($res_lst->lst() as $res) {
+            // loads the phrases of the result and of its source group
+            $res->load_phrases($msg);
+            $result = array_merge($result,
+                $res->phrase_list()->id_lst(),
+                $res->source_group()->phrase_list()->id_lst());
         }
         return $result;
     }
@@ -867,12 +902,23 @@ class phrase_data
      */
     private function with_ids(array $lst, user_message $msg): array
     {
-        usort($lst, fn($a, $b) => $this->compare_ids($a->id(), $b->id()));
+        usort($lst, fn($a, $b) => $this->compare_ids($this->client_id($a), $this->client_id($b)));
         $result = [];
         foreach ($lst as $obj) {
-            $result[] = [json_fields::ID => $obj->id()] + $obj->export_json($msg);
+            $result[] = [json_fields::ID => $this->client_id($obj)] + $obj->export_json($msg);
         }
         return $result;
+    }
+
+    /**
+     * @param object $obj a word, triple, formula, source, value or result of the data
+     * @return int|string the id that the api sends for the object, which is the group id for a
+     *                    result like in the result api (result::api_json_array) and not the text
+     *                    key of a result that its source group has moved to a bigger table
+     */
+    private function client_id(object $obj): int|string
+    {
+        return $obj instanceof result ? $obj->grp()->id() : $obj->id();
     }
 
     /**

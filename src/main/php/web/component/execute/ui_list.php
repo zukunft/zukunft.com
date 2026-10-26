@@ -1909,7 +1909,8 @@ class ui_list extends ui_base
      */
     private function add_field_definitions(data_object $dto, user_message $msg): void
     {
-        if ($dto->online and $dto->phr_lst->get_by_name(triples::FIELD_NUMBER_WITH_LIMITS, $msg) == null) {
+        if ($dto->online and !$dto->page_data_complete
+            and $dto->phr_lst->get_by_name(triples::FIELD_NUMBER_WITH_LIMITS, $msg) == null) {
             $lst = new phrase_list();
             if ($lst->load_related_by_name(triples::SYSTEM_PROCESS_CATCH_FIELD, foaf_direction::BOTH, $msg, 3)) {
                 $dto->add_phrases($lst, $msg);
@@ -1929,7 +1930,7 @@ class ui_list extends ui_base
      */
     private function add_field_links(phrase $phr, data_object $dto, user_message $msg): void
     {
-        if ($dto->online) {
+        if ($dto->online and !$dto->page_data_complete) {
             $lst = new phrase_list();
             if ($lst->load_related_by_name($phr->name(), foaf_direction::UP, $msg, 2)) {
                 $dto->add_phrases($lst, $msg);
