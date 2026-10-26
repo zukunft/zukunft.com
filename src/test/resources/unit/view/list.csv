@@ -200,3 +200,4 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 199,1,process catch detail page,the page of a process catch with the fine tuning of the assumptions in up to five tabs and a next button to the result page,11,,,process_catch_detail,,,
 200,1,process catch result page,the last page of a process catch with the result in up to five tabs and a back button to the detail page,11,,,process_catch_result,,,
 201,1,Comparison table,"the values related to a word or triple as a table with the defined columns, so that the numbers of a question can be compared, e.g. the avoided emission of PV in Switzerland with and without the displacement mix concept",28,,,comparison_table,,,
+202,1,Formula editor,"the editor of the formulas that the calculator page of a word or triple uses, with the results until now and after the save",26,,,formula_editor,,,

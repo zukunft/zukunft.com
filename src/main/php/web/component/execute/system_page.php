@@ -149,6 +149,8 @@ class system_page extends component
     ];
     // the tab that a process catch page shows if the url selects none
     const int PROCESS_CATCH_TAB_DEFAULT = 1;
+    // the html id of the host that the formula editor script fills (script/formula_editor.js)
+    const string FORMULA_EDITOR_HOST_ID = 'formulaEditor';
     // the html ids that the calculator editor script reads (script/calculator_editor.js)
     const string CALC_EDITOR_HOST_ID = 'calcEditor';
     const string CALC_EDITOR_SEED_ID = 'seed';
@@ -1397,6 +1399,38 @@ class system_page extends component
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
                 . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * the formula editor of the page phrase: the script builds the editor from the phrase data of the
+     * phrase with its results, which the page embeds as the seed like the calculator editor, so that
+     * the editor starts without an api call and compares the results until now with the results
+     * after the save
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            // the session token, which the save of the editor sends to the api in the csrf header
+            $result = $html->link_style(files::FORMULA_EDITOR_STYLE)
+                . $html->div('', styles::FORMULA_EDITOR, self::FORMULA_EDITOR_HOST_ID)
+                . $html->form_session_token()
+                . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_src(files::FORMULA_EDITOR_SCRIPT);
         }
         return $result;
     }

@@ -115,6 +115,7 @@ class system_views_read_tests
         // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t);
         $this->run_calculator_editor($t);
+        $this->run_formula_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
         $this->run_portfolio_split_calculator($t, $cfg);
 
@@ -542,9 +543,33 @@ class system_views_read_tests
      */
     function run_calculator_editor(test_cleanup $t): void
     {
-        $t->assert_view_by_name(views::CALCULATOR_EDITOR_NAME, $t->usr1, new triple($t->usr1),
+        $this->assert_editor_view($t, views::CALCULATOR_EDITOR_NAME, test_files::CALCULATOR_EDITOR);
+    }
+
+    /**
+     * the formula editor of the PV lifetime balance: like the calculator editor it gets the phrase
+     * data of the page phrase with the stored results as the seed of its script; the page is
+     * written to the use case folder next to the hand made formula_editor_sample.html
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_formula_editor(test_cleanup $t): void
+    {
+        $this->assert_editor_view($t, views::FORMULA_EDITOR_NAME, test_files::FORMULA_EDITOR);
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $view_name the name of the editor view e.g. views::FORMULA_EDITOR_NAME
+     * @param string $file_name the name of the snapshot in the use case folder e.g. test_files::FORMULA_EDITOR
+     * @return void
+     */
+    private function assert_editor_view(test_cleanup $t, string $view_name, string $file_name): void
+    {
+        $t->assert_view_by_name($view_name, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
-            test_paths::HTML . test_paths::USE_CASES . test_files::CALCULATOR_EDITOR);
+            test_paths::HTML . test_paths::USE_CASES . $file_name);
     }
 
     /**

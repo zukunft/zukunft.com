@@ -489,6 +489,19 @@ class use_case_ui_tests
         // negative: a component without a page phrase e.g. in a preview has no editor to show
         $test_name = '... but nothing for a component without a phrase';
         $t->assert($test_name, $this->render($t_cmp->component_calculator_editor(), new word_ui(), $msk, $dto, $msg), '');
+        // the formula editor is built by its script into the host like the calculator editor
+        $test_name = 'the formula editor of a phrase loads the editor script';
+        $frm_editor_html = $this->render($t_cmp->component_formula_editor(), $wrd, $msk, $dto, $msg);
+        $t->assert_text_contains($test_name, $frm_editor_html, $html->script_src(files::FORMULA_EDITOR_SCRIPT));
+        $test_name = '... into its host with the style of the editor';
+        $t->assert_text_contains($test_name, $frm_editor_html, $html->div('', styles::FORMULA_EDITOR, system_page::FORMULA_EDITOR_HOST_ID));
+        $test_name = '... with the phrase data as the seed of the script';
+        $t->assert_text_contains($test_name, $frm_editor_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, []));
+        $test_name = '... and the session token, which the save sends to the api in the csrf header';
+        $t->assert_text_contains($test_name, $frm_editor_html, $html->form_session_token());
+        // negative: a component without a page phrase e.g. in a preview has no editor to show
+        $test_name = '... but nothing for a component without a phrase';
+        $t->assert($test_name, $this->render($t_cmp->component_formula_editor(), new word_ui(), $msk, $dto, $msg), '');
         // the seed carries the time of the phrase data, which the snapshot replaces by the fixed test time
         $test_name = 'the snapshot replaces the time of the phrase data seed by the test time';
         $later = (new DateTime(test_const::DUMMY_DATETIME_LATER))->format(phrase_data::TIME_FORMAT);

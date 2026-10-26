@@ -398,11 +398,15 @@ class system_view_ui_tests
         $t->assert_true($test_name, in_array(views::CALCULATOR_EDITOR_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the table editor is blocked for an ip user';
         $t->assert_true($test_name, in_array(views::TABLE_EDITOR_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the formula editor is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::FORMULA_EDITOR_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the calculator is not blocked for an ip user';
         $t->assert_false($test_name, in_array(views::CALCULATOR_ID, views::IP_BLOCKED_MASKS_IDS));
         // the calculator editor of a triple e.g. the example PV installation gets the phrase of the url
         $test_name = 'the calculator editor shows a word or a triple';
         $t->assert_true($test_name, in_array(views::CALCULATOR_EDITOR_ID, views::PHRASE_MASKS_IDS));
+        $test_name = 'the formula editor shows a word or a triple';
+        $t->assert_true($test_name, in_array(views::FORMULA_EDITOR_ID, views::PHRASE_MASKS_IDS));
 
         // a blocked change mask is answered with the calling page from the '9'-prefixed back
         // params or, if the request has no back e.g. a typed url, with the default view of
@@ -426,6 +430,8 @@ class system_view_ui_tests
         $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_RELATION_EDIT_ID) == views::VIEW_RELATION_DEFAULT_ID);
         $test_name = 'a blocked calculator editor shows the calculator of the phrase';
         $t->assert_true($test_name, $msk->change_to_show_id(views::CALCULATOR_EDITOR_ID) == views::CALCULATOR_ID);
+        $test_name = 'a blocked formula editor shows the calculator of the phrase';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::FORMULA_EDITOR_ID) == views::CALCULATOR_ID);
         $test_name = 'a blocked table editor shows the table of the phrase';
         $t->assert_true($test_name, $msk->change_to_show_id(views::TABLE_EDITOR_ID) == views::TABLE_ID);
         $test_name = 'a blocked mask without an object view falls back to the start view';

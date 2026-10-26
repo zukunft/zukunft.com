@@ -4,13 +4,19 @@
 
 ### formula editor
 
-#### the page of the formula editor as a test file
+#### reach the formula editor from the page
 
-`use_cases/formula_editor.html` is a copy of the hand made mock-up `use_cases/formula_editor_sample.html`
-until the formula editor view exists; then a database read test writes it like the calculator editor
-(`system_views_read_tests::run_calculator_editor`, `test_files::FORMULA_EDITOR`), so that the developer
-compares the generated page with the sample; both stay in the use case folder, because the view test
-removes every file below views_by_object that it has not written
+the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
+http://localhost/http/view.php?m=formula_editor&id=-2780, because the calculator has one editor relation
+(the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
+type, so that the edit menu offers both editors
+
+#### one code for both editors
+
+`formula_editor.js` and `calculator_editor.js` each have their own `esc`, the read of the seed and the
+save by the update put message, and `formula_editor.css` and `calculator_editor.css` the same colour
+tokens; share them in one file, and nest `calculator_editor.css` in its host like `formula_editor.css`,
+so that the calculator editor page also keeps the standard css
 
 #### show a list with all results
 

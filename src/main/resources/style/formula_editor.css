@@ -1,0 +1,747 @@
+        /* the formula editor (script/formula_editor.js, system_page::formula_editor) */
+        /* layout: a sticky toolbar, then three working columns: the formulas of the page, the */
+        /* expression of the selected formula as selectable tokens and the compare list of the */
+        /* results until now against the results after the save; the colors are the tokens of */
+        /* style/calculator_editor.css so that both editors look the same */
+        /* every rule is nested in the host of the editor, so that the page keeps the standard */
+        /* styles of style_html.css e.g. of the site header, its buttons and the footer */
+        .formula-editor {
+        width: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-ui);
+        font-size: 14px;
+        line-height: 1.45;
+        text-align: left;
+
+        & {
+            --bg: #eef2f8;
+            --surface: #ffffff;
+            --surface-2: #f6f8fc;
+            --ink: #1b2f5c;
+            --ink-2: #4b5d83;
+            --muted: #7b88a3;
+            --line: #d2dbe9;
+            --accent: #385eb7;
+            --accent-deep: #274b8f;
+            --accent-soft: #dbe4f5;
+            --accent-ink: #ffffff;
+            --shared: #8a5a07;
+            --shared-soft: #fbf0db;
+            --danger: #c23b30;
+            --danger-soft: #fbe4e1;
+            --ok: #2f7d55;
+            --ok-soft: #dff1e7;
+            --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
+            --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+            --r: 6px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) & {
+                --bg: #0e1524;
+                --surface: #151f33;
+                --surface-2: #1a263d;
+                --ink: #e3eaf7;
+                --ink-2: #b4c1da;
+                --muted: #8492ad;
+                --line: #2a3a57;
+                --accent: #7d9ef0;
+                --accent-deep: #a9c0f7;
+                --accent-soft: #233761;
+                --accent-ink: #0e1524;
+                --shared: #e9b45a;
+                --shared-soft: #3a2e17;
+                --danger: #f08a80;
+                --danger-soft: #42221f;
+                --ok: #7fd1a3;
+                --ok-soft: #1d3a2b;
+                color-scheme: dark;
+            }
+        }
+
+        :root[data-theme="dark"] & {
+            --bg: #0e1524;
+            --surface: #151f33;
+            --surface-2: #1a263d;
+            --ink: #e3eaf7;
+            --ink-2: #b4c1da;
+            --muted: #8492ad;
+            --line: #2a3a57;
+            --accent: #7d9ef0;
+            --accent-deep: #a9c0f7;
+            --accent-soft: #233761;
+            --accent-ink: #0e1524;
+            --shared: #e9b45a;
+            --shared-soft: #3a2e17;
+            --danger: #f08a80;
+            --danger-soft: #42221f;
+            --ok: #7fd1a3;
+            --ok-soft: #1d3a2b;
+            color-scheme: dark;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+        }
+
+        h2, h3, h4 {
+            margin: 0;
+            font-weight: 600;
+            text-wrap: balance;
+        }
+
+        h2 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--muted);
+        }
+
+        h3 {
+            font-size: 17px;
+        }
+
+        h4 {
+            font-size: 13px;
+            color: var(--ink-2);
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+            font-size: .9em;
+        }
+
+        .n {
+            font-variant-numeric: tabular-nums;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: 12.5px;
+        }
+
+        /* toolbar */
+        .bar {
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            z-index: 5;
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            padding-block: 10px;
+            padding-left: max(16px, env(safe-area-inset-left, 0px));
+            padding-right: max(16px, env(safe-area-inset-right, 0px));
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 18px;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* in the row of the toolbar and not above the input like a form label of the pod */
+        .tools label {
+            display: inline;
+        }
+
+        .brand b {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .brand span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tools.right {
+            margin-left: auto;
+        }
+
+        /* the pod forces white text and 1rem on every .btn with style_html.css, which is invisible */
+        /* on the light editor buttons, so the editor sets its own color like the calculator editor */
+        .btn {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: var(--r);
+            padding: 6px 11px;
+            cursor: pointer;
+            white-space: nowrap;
+            color: var(--ink) !important;
+            font-size: inherit;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: default;
+            border-color: var(--line);
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--accent-ink) !important;
+        }
+
+        .btn.small {
+            padding: 3px 8px;
+            font-size: 12.5px;
+        }
+
+        .btn.danger {
+            color: var(--danger) !important;
+        }
+
+        .inp {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: var(--r);
+            padding: 6px 9px;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .chip {
+            display: inline-block;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 1px 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            background: var(--surface-2);
+        }
+
+        .chip.changed {
+            background: var(--shared-soft);
+            border-color: transparent;
+            color: var(--shared);
+        }
+
+        .chip.ok {
+            background: var(--ok-soft);
+            border-color: transparent;
+            color: var(--ok);
+        }
+
+        .chip.missing {
+            background: var(--danger-soft);
+            border-color: transparent;
+            color: var(--danger);
+        }
+
+        .chip.same {
+            color: var(--muted);
+        }
+
+        /* columns */
+        .cols {
+            display: grid;
+            grid-template-columns: 290px minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 14px;
+            padding-block: 14px;
+            padding-left: max(16px, env(safe-area-inset-left, 0px));
+            padding-right: max(16px, env(safe-area-inset-right, 0px));
+            align-items: start;
+        }
+
+        @media (max-width: 1150px) {
+            .cols {
+                grid-template-columns: 260px minmax(0, 1fr);
+            }
+
+            .col.compare {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .cols {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .col.compare {
+                grid-column: auto;
+            }
+        }
+
+        .col {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .col-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* formula list */
+        .flist {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 70vh;
+            overflow: auto;
+        }
+
+        .flist li {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 7px 9px;
+            border-radius: var(--r);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .flist li:hover {
+            background: var(--surface-2);
+        }
+
+        .flist li.sel {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .flist .fname {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            align-items: baseline;
+        }
+
+        .flist .fexp {
+            color: var(--ink-2);
+            font-family: var(--font-mono);
+            font-size: 11.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* the expression as tokens */
+        .expr {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--surface-2);
+            min-height: 48px;
+        }
+
+        .tok {
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--surface);
+            padding: 4px 8px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        .tok.phr {
+            background: var(--accent-soft);
+            border-color: transparent;
+            color: var(--accent-deep);
+            font-family: var(--font-ui);
+            font-size: 13.5px;
+        }
+
+        .tok.phr .sep {
+            color: var(--muted);
+            margin: 0 2px;
+        }
+
+        .tok.eq, .tok.op, .tok.br {
+            font-weight: 600;
+        }
+
+        .tok.eq {
+            cursor: default;
+            border-color: transparent;
+            background: transparent;
+        }
+
+        .tok.sel {
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .tok.add {
+            border-style: dashed;
+            color: var(--muted);
+            background: transparent;
+        }
+
+        .tok.add:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .tok.unknown {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        textarea.inp {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            resize: vertical;
+            min-height: 52px;
+        }
+
+        .err {
+            color: var(--danger);
+            font-size: 12.5px;
+        }
+
+        /* token tools and the phrase picker */
+        .box {
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .box-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* the editor row and not the grid row of bootstrap, which the page loads too: no gutter, */
+        /* from which bootstrap calculates the margin of the row and the padding of each child, */
+        /* and each child as wide as its text instead of the full width of a bootstrap column */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            --bs-gutter-x: 0;
+            --bs-gutter-y: 0;
+        }
+
+        .row > * {
+            width: auto;
+        }
+
+        .names {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .name {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            padding: 2px 4px 2px 10px;
+            cursor: pointer;
+        }
+
+        .name.sel {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .name .x {
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            color: var(--muted);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+        }
+
+        .name .x:hover {
+            color: var(--danger);
+        }
+
+        .plist {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 260px;
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+        }
+
+        .plist li {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 5px 9px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .plist li:last-child {
+            border-bottom: 0;
+        }
+
+        .plist li:hover {
+            background: var(--surface-2);
+        }
+
+        .plist li.cur {
+            background: var(--accent-soft);
+        }
+
+        .plist .pdesc {
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 50%;
+        }
+
+        /* compare list */
+        .summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tab {
+            border: 0;
+            background: transparent;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--muted);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .tab.on {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .twrap {
+            overflow-x: auto;
+        }
+
+        table.cmp {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        table.cmp th {
+            text-align: left;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--muted);
+            font-weight: 600;
+            padding: 4px 6px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        table.cmp th.n {
+            text-align: right;
+        }
+
+        table.cmp td {
+            padding: 5px 6px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        table.cmp tr.grp td {
+            background: var(--surface-2);
+            font-weight: 600;
+            padding-top: 8px;
+        }
+
+        table.cmp tr.res {
+            cursor: pointer;
+        }
+
+        table.cmp tr.res:hover td {
+            background: var(--surface-2);
+        }
+
+        table.cmp tr.res.open td {
+            border-bottom: 0;
+        }
+
+        table.cmp td.new.changed {
+            color: var(--shared);
+            font-weight: 600;
+        }
+
+        table.cmp td.new.missing {
+            color: var(--danger);
+        }
+
+        table.cmp tr.det td {
+            padding-top: 0;
+        }
+
+        .wds {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+
+        .wd {
+            border-radius: 4px;
+            padding: 0 5px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            font-size: 12px;
+        }
+
+        .wd.page {
+            color: var(--muted);
+            border-style: dashed;
+        }
+
+        .wd.res {
+            background: var(--accent-soft);
+            border-color: transparent;
+            color: var(--accent-deep);
+            font-weight: 600;
+        }
+
+        table.ops {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 12.5px;
+            background: var(--surface-2);
+            border-radius: var(--r);
+        }
+
+        table.ops td {
+            padding: 3px 6px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        table.ops tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .delta {
+            font-size: 11.5px;
+            color: var(--muted);
+        }
+
+        /* changes */
+        pre.json {
+            margin: 0;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--surface-2);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            overflow: auto;
+            max-height: 50vh;
+            white-space: pre;
+        }
+
+        .diff {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 2px 10px;
+            font-size: 13px;
+        }
+
+        .diff .k {
+            color: var(--muted);
+        }
+
+        .diff .old {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        /* toast */
+        /* shown, because bootstrap hides a .toast without its show class; [hidden] still hides it */
+        .toast {
+            display: block;
+            position: fixed;
+            left: 50%;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            transform: translateX(-50%);
+            background: var(--ink);
+            color: var(--bg);
+            padding: 8px 14px;
+            border-radius: var(--r);
+            z-index: 20;
+            max-width: 90vw;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .toast {
+                transition: opacity .3s;
+            }
+        }
+        }

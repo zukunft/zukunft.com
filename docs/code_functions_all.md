@@ -6805,6 +6805,8 @@
             ponent/execute/system_page.php
     \-- calculator_editor - section for function calculator_editor not yet defined that it should be process catch in /c
             omponent/execute/system_page.php
+    \-- formula_editor - section for function formula_editor not yet defined that it should be process catch in /compone
+            nt/execute/system_page.php
     \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
             /component/execute/system_page.php
     \-- calculator_json - section for function calculator_json not yet defined that it should be process catch in /compo
@@ -10147,6 +10149,9 @@
         \-- system_page - the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- calculator_editor
         \-- system_page - the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
+    \-- formula_editor
+        \-- system_page - the formula editor of the page phrase: the script builds the editor from the phrase data of th
+                e
     \-- calculation_result
         \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
     \-- calculator_json

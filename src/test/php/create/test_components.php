@@ -379,6 +379,14 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component the formula editor, which the script builds from the phrase data of the page phrase
+     */
+    function component_formula_editor(): component
+    {
+        return $this->component_use_case(components::TEST_FORMULA_EDITOR_NAME, component_types::FORMULA_EDITOR);
+    }
+
+    /**
      * @param string $name the name of the component, which some use case types show
      * @param string $type the code id of the component type
      * @return component a component of a use case page with the name and the type set

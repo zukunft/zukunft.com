@@ -10160,6 +10160,12 @@
                 "code_id": "calculator_editor",
                 "description": "the editor of the calculator page of the phrase, built by a script from the phrase data of the phrase",
                 "id": 290
+            },
+            {
+                "name": "formula editor",
+                "code_id": "formula_editor",
+                "description": "the editor of the formulas of the page of the phrase, built by a script from the phrase data of the phrase with its results",
+                "id": 291
             }
         ],
         "component_link_types": [
@@ -28901,6 +28907,25 @@
                         "code_id": "table_with_related_columns_phrase",
                         "position": 2,
                         "position_type": 3
+                    }
+                ]
+            },
+            {
+                "id": 202,
+                "name": "Formula editor",
+                "description": "the editor of the formulas that the calculator page of a word or triple uses, with the results until now and after the save",
+                "type_id": 26,
+                "code_id": "formula_editor",
+                "components": [
+                    {
+                        "link_id": 1625,
+                        "id": 485,
+                        "name": "formula editor",
+                        "description": "the editor of the formulas of the page of the phrase with the results until now and after the save, built by a script from the phrase data of the phrase",
+                        "type_id": 291,
+                        "code_id": "formula_editor",
+                        "position": 1,
+                        "position_type": 1
                     }
                 ]
             }
