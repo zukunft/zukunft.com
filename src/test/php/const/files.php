@@ -74,6 +74,9 @@ class files
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
     // the calculator page of the example PV installation that the browser builds (url_var::JAVASCRIPT), next to pv_lifetime_balance.html
     CONST string PV_LIFETIME_BALANCE_JSON = 'pv_lifetime_balance_json';
+    // the formula editor of the example PV installation in the use case folder next to the hand made
+    // formula_editor_sample.html, because the view test removes every file below views_by_object that it has not written
+    CONST string FORMULA_EDITOR = 'formula_editor';
     // the update put messages of the calculator editor save without the database ids, which the test adds
     CONST string UPDATE_PUT_ADD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_add' . self::JSON;
     CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
@@ -271,6 +274,7 @@ class files
     CONST string IMPORT_CBAM_PREREQUISITE = test_paths::IMPORT . 'CBAM_ prerequisite' . self::JSON;
     CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
     CONST string IMPORT_CH_BANKING_AND_TAX = test_paths::IMPORT . 'ch_banking_and_tax' . self::JSON;
+    CONST string IMPORT_CH_NEWS_ADVERB_MARKET = test_paths::IMPORT . 'ch_news_adverb_market' . self::JSON;
     CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
     CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
     CONST string IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850 = test_paths::IMPORT . 'cumulative_anthropogenic_co2_since_1850' . self::JSON;
@@ -462,6 +466,7 @@ class files
         self::IMPORT_OSTRACISM,
         self::IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850,
         self::IMPORT_CH_BANKING_AND_TAX,
+        self::IMPORT_CH_NEWS_ADVERB_MARKET,
     ];
 
 

@@ -4,6 +4,14 @@
 
 ### formula editor
 
+#### the page of the formula editor as a test file
+
+`use_cases/formula_editor.html` is a copy of the hand made mock-up `use_cases/formula_editor_sample.html`
+until the formula editor view exists; then a database read test writes it like the calculator editor
+(`system_views_read_tests::run_calculator_editor`, `test_files::FORMULA_EDITOR`), so that the developer
+compares the generated page with the sample; both stay in the use case folder, because the view test
+removes every file below views_by_object that it has not written
+
 #### show a list with all results
 
 list below the formula the results and values sets used in this calculator

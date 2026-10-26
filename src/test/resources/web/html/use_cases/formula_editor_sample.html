@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>example PV installation - Formula editor - zukunft.com</title>
+    <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    <style>
+        /* the formula editor (mock up, see docs/llm/new_view_sample_pv_balance.md step 1) */
+        /* layout: a sticky toolbar, then three working columns: the formulas of the page, the */
+        /* expression of the selected formula as selectable tokens and the compare list of the */
+        /* results until now against the results after the save; the colors are the tokens of */
+        /* style/calculator_editor.css so that both editors look the same */
+        /* every rule is nested in the host of the editor, so that the page keeps the standard */
+        /* styles of style_html.css e.g. of the site header, its buttons and the footer */
+        .formula-editor {
+        width: 100%;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-ui);
+        font-size: 14px;
+        line-height: 1.45;
+        text-align: left;
+
+        & {
+            --bg: #eef2f8;
+            --surface: #ffffff;
+            --surface-2: #f6f8fc;
+            --ink: #1b2f5c;
+            --ink-2: #4b5d83;
+            --muted: #7b88a3;
+            --line: #d2dbe9;
+            --accent: #385eb7;
+            --accent-deep: #274b8f;
+            --accent-soft: #dbe4f5;
+            --accent-ink: #ffffff;
+            --shared: #8a5a07;
+            --shared-soft: #fbf0db;
+            --danger: #c23b30;
+            --danger-soft: #fbe4e1;
+            --ok: #2f7d55;
+            --ok-soft: #dff1e7;
+            --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
+            --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+            --r: 6px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root:not([data-theme="light"]) & {
+                --bg: #0e1524;
+                --surface: #151f33;
+                --surface-2: #1a263d;
+                --ink: #e3eaf7;
+                --ink-2: #b4c1da;
+                --muted: #8492ad;
+                --line: #2a3a57;
+                --accent: #7d9ef0;
+                --accent-deep: #a9c0f7;
+                --accent-soft: #233761;
+                --accent-ink: #0e1524;
+                --shared: #e9b45a;
+                --shared-soft: #3a2e17;
+                --danger: #f08a80;
+                --danger-soft: #42221f;
+                --ok: #7fd1a3;
+                --ok-soft: #1d3a2b;
+                color-scheme: dark;
+            }
+        }
+
+        :root[data-theme="dark"] & {
+            --bg: #0e1524;
+            --surface: #151f33;
+            --surface-2: #1a263d;
+            --ink: #e3eaf7;
+            --ink-2: #b4c1da;
+            --muted: #8492ad;
+            --line: #2a3a57;
+            --accent: #7d9ef0;
+            --accent-deep: #a9c0f7;
+            --accent-soft: #233761;
+            --accent-ink: #0e1524;
+            --shared: #e9b45a;
+            --shared-soft: #3a2e17;
+            --danger: #f08a80;
+            --danger-soft: #42221f;
+            --ok: #7fd1a3;
+            --ok-soft: #1d3a2b;
+            color-scheme: dark;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 1px;
+        }
+
+        h2, h3, h4 {
+            margin: 0;
+            font-weight: 600;
+            text-wrap: balance;
+        }
+
+        h2 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--muted);
+        }
+
+        h3 {
+            font-size: 17px;
+        }
+
+        h4 {
+            font-size: 13px;
+            color: var(--ink-2);
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+            font-size: .9em;
+        }
+
+        .n {
+            font-variant-numeric: tabular-nums;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .note {
+            color: var(--muted);
+            font-size: 12.5px;
+        }
+
+        /* toolbar */
+        .bar {
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            z-index: 5;
+            background: var(--surface);
+            border-bottom: 1px solid var(--line);
+            padding-block: 10px;
+            padding-left: max(16px, env(safe-area-inset-left, 0px));
+            padding-right: max(16px, env(safe-area-inset-right, 0px));
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 18px;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* in the row of the toolbar and not above the input like a form label of the pod */
+        .tools label {
+            display: inline;
+        }
+
+        .brand b {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .brand span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tools.right {
+            margin-left: auto;
+        }
+
+        /* the pod forces white text and 1rem on every .btn with style_html.css, which is invisible */
+        /* on the light editor buttons, so the editor sets its own color like the calculator editor */
+        .btn {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: var(--r);
+            padding: 6px 11px;
+            cursor: pointer;
+            white-space: nowrap;
+            color: var(--ink) !important;
+            font-size: inherit;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+        }
+
+        .btn:disabled {
+            opacity: .45;
+            cursor: default;
+            border-color: var(--line);
+        }
+
+        .btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--accent-ink) !important;
+        }
+
+        .btn.small {
+            padding: 3px 8px;
+            font-size: 12.5px;
+        }
+
+        .btn.danger {
+            color: var(--danger) !important;
+        }
+
+        .inp {
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: var(--r);
+            padding: 6px 9px;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .chip {
+            display: inline-block;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 1px 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            background: var(--surface-2);
+        }
+
+        .chip.changed {
+            background: var(--shared-soft);
+            border-color: transparent;
+            color: var(--shared);
+        }
+
+        .chip.ok {
+            background: var(--ok-soft);
+            border-color: transparent;
+            color: var(--ok);
+        }
+
+        .chip.missing {
+            background: var(--danger-soft);
+            border-color: transparent;
+            color: var(--danger);
+        }
+
+        .chip.same {
+            color: var(--muted);
+        }
+
+        /* columns */
+        .cols {
+            display: grid;
+            grid-template-columns: 290px minmax(0, 1fr) minmax(0, 1.15fr);
+            gap: 14px;
+            padding-block: 14px;
+            padding-left: max(16px, env(safe-area-inset-left, 0px));
+            padding-right: max(16px, env(safe-area-inset-right, 0px));
+            align-items: start;
+        }
+
+        @media (max-width: 1150px) {
+            .cols {
+                grid-template-columns: 260px minmax(0, 1fr);
+            }
+
+            .col.compare {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .cols {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .col.compare {
+                grid-column: auto;
+            }
+        }
+
+        .col {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 14px;
+        }
+
+        .col-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* formula list */
+        .flist {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            max-height: 70vh;
+            overflow: auto;
+        }
+
+        .flist li {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 7px 9px;
+            border-radius: var(--r);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .flist li:hover {
+            background: var(--surface-2);
+        }
+
+        .flist li.sel {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .flist .fname {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            align-items: baseline;
+        }
+
+        .flist .fexp {
+            color: var(--ink-2);
+            font-family: var(--font-mono);
+            font-size: 11.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* the expression as tokens */
+        .expr {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--surface-2);
+            min-height: 48px;
+        }
+
+        .tok {
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--surface);
+            padding: 4px 8px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        .tok.phr {
+            background: var(--accent-soft);
+            border-color: transparent;
+            color: var(--accent-deep);
+            font-family: var(--font-ui);
+            font-size: 13.5px;
+        }
+
+        .tok.phr .sep {
+            color: var(--muted);
+            margin: 0 2px;
+        }
+
+        .tok.eq, .tok.op, .tok.br {
+            font-weight: 600;
+        }
+
+        .tok.eq {
+            cursor: default;
+            border-color: transparent;
+            background: transparent;
+        }
+
+        .tok.sel {
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .tok.add {
+            border-style: dashed;
+            color: var(--muted);
+            background: transparent;
+        }
+
+        .tok.add:hover {
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .tok.unknown {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        textarea.inp {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            resize: vertical;
+            min-height: 52px;
+        }
+
+        .err {
+            color: var(--danger);
+            font-size: 12.5px;
+        }
+
+        /* token tools and the phrase picker */
+        .box {
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .box-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* the editor row and not the grid row of bootstrap, which the page loads too: no gutter, */
+        /* from which bootstrap calculates the margin of the row and the padding of each child, */
+        /* and each child as wide as its text instead of the full width of a bootstrap column */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+            --bs-gutter-x: 0;
+            --bs-gutter-y: 0;
+        }
+
+        .row > * {
+            width: auto;
+        }
+
+        .names {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .name {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+            padding: 2px 4px 2px 10px;
+            cursor: pointer;
+        }
+
+        .name.sel {
+            background: var(--accent-soft);
+            border-color: var(--accent);
+        }
+
+        .name .x {
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            color: var(--muted);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 1;
+        }
+
+        .name .x:hover {
+            color: var(--danger);
+        }
+
+        .plist {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            max-height: 260px;
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+        }
+
+        .plist li {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 5px 9px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .plist li:last-child {
+            border-bottom: 0;
+        }
+
+        .plist li:hover {
+            background: var(--surface-2);
+        }
+
+        .plist li.cur {
+            background: var(--accent-soft);
+        }
+
+        .plist .pdesc {
+            color: var(--muted);
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 50%;
+        }
+
+        /* compare list */
+        .summary {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .tab {
+            border: 0;
+            background: transparent;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--muted);
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+        }
+
+        .tab.on {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .twrap {
+            overflow-x: auto;
+        }
+
+        table.cmp {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 13px;
+        }
+
+        table.cmp th {
+            text-align: left;
+            font-size: 11.5px;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--muted);
+            font-weight: 600;
+            padding: 4px 6px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        table.cmp th.n {
+            text-align: right;
+        }
+
+        table.cmp td {
+            padding: 5px 6px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        table.cmp tr.grp td {
+            background: var(--surface-2);
+            font-weight: 600;
+            padding-top: 8px;
+        }
+
+        table.cmp tr.res {
+            cursor: pointer;
+        }
+
+        table.cmp tr.res:hover td {
+            background: var(--surface-2);
+        }
+
+        table.cmp tr.res.open td {
+            border-bottom: 0;
+        }
+
+        table.cmp td.new.changed {
+            color: var(--shared);
+            font-weight: 600;
+        }
+
+        table.cmp td.new.missing {
+            color: var(--danger);
+        }
+
+        table.cmp tr.det td {
+            padding-top: 0;
+        }
+
+        .wds {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3px;
+        }
+
+        .wd {
+            border-radius: 4px;
+            padding: 0 5px;
+            background: var(--surface-2);
+            border: 1px solid var(--line);
+            font-size: 12px;
+        }
+
+        .wd.page {
+            color: var(--muted);
+            border-style: dashed;
+        }
+
+        .wd.res {
+            background: var(--accent-soft);
+            border-color: transparent;
+            color: var(--accent-deep);
+            font-weight: 600;
+        }
+
+        table.ops {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 12.5px;
+            background: var(--surface-2);
+            border-radius: var(--r);
+        }
+
+        table.ops td {
+            padding: 3px 6px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        table.ops tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .delta {
+            font-size: 11.5px;
+            color: var(--muted);
+        }
+
+        /* changes */
+        pre.json {
+            margin: 0;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--r);
+            background: var(--surface-2);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            overflow: auto;
+            max-height: 50vh;
+            white-space: pre;
+        }
+
+        .diff {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            gap: 2px 10px;
+            font-size: 13px;
+        }
+
+        .diff .k {
+            color: var(--muted);
+        }
+
+        .diff .old {
+            text-decoration: line-through;
+            color: var(--muted);
+        }
+
+        /* toast */
+        /* shown, because bootstrap hides a .toast without its show class; [hidden] still hides it */
+        .toast {
+            display: block;
+            position: fixed;
+            left: 50%;
+            bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+            transform: translateX(-50%);
+            background: var(--ink);
+            color: var(--bg);
+            padding: 8px 14px;
+            border-radius: var(--r);
+            z-index: 20;
+            max-width: 90vw;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+            .toast {
+                transition: opacity .3s;
+            }
+        }
+        }
+    </style>
+</head>
+<body>
+<nav  class="navbar site-header fixed-top">
+    <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+        <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+    </a>
+    <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+        <input type="hidden" name="m" value="107">
+        <label for="kp" class="visually-hidden">
+            Search
+        </label>
+        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">
+            Get numbers
+        </button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="view-menu">
+                    <summary>
+                        <i class="fas fa-edit">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                alternative
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?view=more">
+                                ... more
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=85&amp;id=1">
+                                change view
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=84">
+                                add view
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+                <details class="lang-menu">
+                    <summary>
+                        <i class="fas fa-globe">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=en">
+                                English
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=en_us">
+                                US English
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
+                                Deutsch
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=fr" title="French">
+                                Français
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=es" title="Spanish">
+                                Español
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                漢語
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                العربية
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=language_select">
+                                ... more
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary>
+                        <i class="fas fa-user-circle">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=11">
+                                Log in
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=13">
+                                Signup
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/settings">
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="main-container">
+<div class="formula-editor">
+<header class="bar">
+    <div class="brand">
+        <b>Formula editor</b>
+        <span id="pageName">page</span>
+    </div>
+    <form class="tools" id="pageForm">
+        <label for="pageIn" class="note">Phrase</label>
+        <input class="inp" id="pageIn" type="text" placeholder="another page phrase" style="width: 200px;">
+        <button class="btn" type="submit">Load</button>
+    </form>
+    <div class="tools right">
+        <span class="chip" id="changeCount">no changes</span>
+        <button class="btn" id="btnResetAll" type="button" disabled>Discard all</button>
+        <button class="btn primary" id="btnSave" type="button" disabled>Save</button>
+    </div>
+</header>
+
+<div class="cols">
+    <section class="col formulas" aria-label="Formulas">
+        <div class="col-head">
+            <h2>Formulas of the page</h2>
+            <span class="note" id="formulaCount"></span>
+        </div>
+        <input class="inp" id="formulaFilter" type="search" placeholder="filter by name or phrase">
+        <ul class="flist" id="formulaList"></ul>
+    </section>
+
+    <section class="col editor" aria-label="Formula" id="editor"></section>
+
+    <section class="col compare" aria-label="Results">
+        <div class="tabs" role="tablist">
+            <button class="tab on" type="button" data-tab="compare" role="tab">Results until now vs. after save</button>
+            <button class="tab" type="button" data-tab="changes" role="tab">Changes</button>
+        </div>
+        <div id="compare"></div>
+        <div id="changes" hidden></div>
+    </section>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+</div>
+
+<!-- the seed: the answer of the phraseData api for the page phrase with the stored results -->
+<script type="application/json" id="seed">{"pod":"zukunft.com","type":"phraseData","version":"0.0.3","time":"2026-10-16 01:40:00","selection":[{"id":"2780","name":"example PV installation","description":"the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example"}],"description":"Use case: the main results of a rooftop photovoltaic installation in Switzerland over its lifetime, the electricity produced and the CO2-eq saved against the Swiss consumption mix and against a replacement mix, as shown by the system view 'Calculator' for the phrase 'example PV installation'; the inputs, the assumptions, the result rows, the detail table, the labels and the hints of the page are the calculator triples of 'PV installation' and the general calculator triples of the listed phrases. The inputs are the system size in kWp, the orientation as a yield factor, the usable battery capacity and the annual household consumption; the worked example is 10 kWp east-west, 10 kWh battery, 4500 kWh. Every delivered kWh, used at home or exported, is assumed to displace one kWh of the reference mix; the embodied emission of the PV system (IEA PVPS 2023 reference, converted to a fixed amount per kWp) and of the batteries bought over the lifetime is subtracted. The CO2-eq saving is stated three times: with the annual Swiss consumption mix of 2018 (KBOB), with the monthly Swiss consumption mix 2018 to 2022 (treeze) weighted by the PV electricity delivered in each month, which is lower because PV produces in summer when the Swiss mix is cleanest, and with the European residual mix (Swissolar) as the replacement mix. The monthly dispatch of the page (direct use capped by the day share of the consumption, battery charge capped by one cycle a day and the night consumption) needs a minimum function, so its two annual sums and the PV-weighted mix are stored as modelled values; all other results are formulas of the file and reproduced by the calc-validation. The inputs that are not measured carry the word assumed and a confidence.","words":[{"name":"photovoltaic"},{"name":"PV","description":"the usual acronym for photovoltaic"},{"name":"Switzerland"},{"name":"Europe"},{"name":"electricity","description":"energy from the flow of electric charge"},{"name":"mix","description":"the combination of generation technologies behind one kWh of electricity, weighted by their share"},{"name":"consumption"},{"name":"production","description":"the making of a good or an energy, here the electricity generated within a country"},{"name":"residual","description":"what remains after the tracked part is taken out; for electricity the mix that is left after all guarantees of origin have been assigned"},{"name":"emission"},{"name":"avoided","description":"not caused, because something else has taken its place"},{"name":"gross"},{"name":"net"},{"name":"CO2-eq","description":"carbon dioxide equivalent: the amount of CO2 with the same global warming effect as the mix of climate gases released"},{"name":"cycle"},{"name":"life"},{"name":"lifetime","description":"the years a system is operated before it is dismantled"},{"name":"embodied","description":"built into a product during its making, for an emission the greenhouse gases released by the production, transport and disposal of the product"},{"name":"intensity"},{"name":"payback","description":"the time until the saving has repaid the initial cost; for emissions the operating years until the avoided emission equals the embodied emission"},{"name":"gram"},{"name":"kg"},{"name":"kWh"},{"name":"kWp"},{"name":"year"},{"name":"month"},{"name":"annual"},{"name":"mean"},{"name":"percent"},{"name":"factor"},{"name":"share"},{"name":"yield"},{"name":"capacity"},{"name":"installation"},{"name":"example"},{"name":"household"},{"name":"battery","description":"an electrochemical store; here a stationary lithium-ion home storage system charged by the PV surplus"},{"name":"lithium-ion cell","description":"the battery cells alone, without the housing, the inverter and the control of a home storage system"},{"name":"home storage system","description":"a complete stationary battery of a house with the cells, the housing, the inverter and the control"},{"name":"charge"},{"name":"discharge"},{"name":"round-trip","description":"charge and discharge taken together"},{"name":"efficiency"},{"name":"count"},{"name":"direct"},{"name":"use"},{"name":"export"},{"name":"import"},{"name":"grid"},{"name":"delivered","description":"handed to a consumer, at home or through the grid"},{"name":"self-consumption"},{"name":"autarky","description":"the share of the own consumption that is covered by the own production"},{"name":"orientation"},{"name":"south"},{"name":"south-east"},{"name":"south-west"},{"name":"east"},{"name":"west"},{"name":"north"},{"name":"horizontal"},{"name":"day"},{"name":"2018"},{"name":"2019"},{"name":"2022"},{"name":"2023"},{"name":"2025"},{"name":"assumed"},{"name":"modelled"},{"name":"confidence"},{"name":"January"},{"name":"February"},{"name":"March"},{"name":"April"},{"name":"May"},{"name":"June"},{"name":"July"},{"name":"August"},{"name":"September"},{"name":"October"},{"name":"November"},{"name":"December"},{"name":"zukunft.com"},{"name":"system"},{"name":"process"},{"name":"catch"},{"name":"input"},{"name":"type"},{"name":"number"},{"name":"selector"},{"name":"minimum"},{"name":"step"},{"name":"value"},{"name":"phrase"},{"name":"losses"},{"name":"effect"},{"name":"site"},{"name":"replacement"},{"name":"calculator"},{"name":"label"},{"name":"hint"},{"name":"assumption"},{"name":"column"},{"name":"group"},{"name":"table"},{"name":"highlight"},{"name":"sign"},{"name":"kWh/a"},{"name":"kWh/kWp·a"},{"name":"duration unit"},{"name":"a"},{"name":"ratio"},{"name":"maximum"},{"name":"g/kWh"},{"name":"kg/kWh"}],"triples":[{"from":"PV","verb":"is an acronym for","to":"photovoltaic"},{"from":"PV","verb":"in","to":"Switzerland","description":"photovoltaic electricity generated in Switzerland, the subject of this use case; the table of this phrase compares its climate benefit with and without the displacement concept"},{"name":"PV installation","from":"installation","verb":"of","to":"PV","description":"a photovoltaic system on a building: the modules, the inverter and, if present, the battery"},{"name":"example PV installation","from":"PV installation","verb":"kind of","to":"example","description":"the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example"},{"name":"consumption mix","from":"mix","verb":"of","to":"consumption","description":"the average mix of the electricity consumed in a country including the imports; the reference of the classic comparison without the displacement concept"},{"name":"production mix","from":"mix","verb":"of","to":"production","description":"the average mix of the electricity generated within a country, without imports and exports"},{"name":"residual mix","from":"mix","verb":"kind of","to":"residual","description":"the European mix that remains after all guarantees of origin have been taken out, so the generation a consumer without a certificate gets; used on the page as the replacement mix, the second reference next to the Swiss consumption mix"},{"name":"PV-weighted consumption mix","from":"consumption mix","verb":"weighted by","to":"PV","description":"the Swiss consumption mix averaged over the twelve months with the PV electricity delivered in each month as the weight; lower than the annual mean, because PV produces most in summer when the Swiss mix is cleanest"},{"name":"life cycle","from":"cycle","verb":"of","to":"life","description":"the whole life of a product from the raw materials over the use to the disposal, the scope of a life cycle assessment"},{"name":"embodied emission","from":"emission","verb":"kind of","to":"embodied","description":"the greenhouse gases released to make, install and dispose of a system, before it has delivered any electricity"},{"name":"embodied intensity","from":"intensity","verb":"kind of","to":"embodied","description":"the embodied emission per unit of rated power"},{"name":"PV embodied emission","from":"embodied emission","verb":"of","to":"PV"},{"name":"PV embodied intensity","from":"embodied intensity","verb":"of","to":"PV","description":"the embodied emission of one kWp of PV, derived from the life cycle emission per kWh of the reference system times its reference yield and lifetime"},{"name":"battery embodied emission","from":"embodied emission","verb":"of","to":"battery"},{"name":"avoided emission","from":"emission","verb":"can be","to":"avoided","description":"the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source"},{"name":"gross avoided emission","from":"avoided emission","verb":"kind of","to":"gross","description":"the emission of the reference mix that the delivered PV electricity displaces, before the embodied emission of the installation is subtracted"},{"name":"net avoided emission","from":"avoided emission","verb":"kind of","to":"net","description":"the gross avoided emission minus the embodied emission of the PV system and the battery: the lifetime climate benefit of the installation"},{"name":"emission payback","from":"payback","verb":"of","to":"emission","description":"the years of operation until the avoided emission has repaid the embodied emission"},{"from":"gram","verb":"per","to":"kWh","description":"the unit of the emission intensity of electricity"},{"from":"kg","verb":"per","to":"kWh","description":"the unit of the production emission of a battery per kWh of storage capacity"},{"from":"kg","verb":"per","to":"kWp","description":"the unit of the embodied emission of a PV system per kWp of rated power"},{"from":"kWh","verb":"per","to":"kWp"},{"name":"PV yield","from":"yield","verb":"of","to":"PV"},{"name":"yield factor","from":"factor","verb":"of","to":"yield","description":"the annual yield of a panel orientation relative to the best orientation, south with 30 degree tilt"},{"name":"east-west","from":"east","verb":"and","to":"west","description":"half the modules facing east, half facing west, the usual layout on a flat roof"},{"name":"PV capacity","from":"capacity","verb":"of","to":"PV","description":"the rated power of the PV modules in kWp"},{"name":"PV production","from":"production","verb":"of","to":"PV","description":"the electricity the PV modules generate"},{"name":"battery capacity","from":"capacity","verb":"of","to":"battery","description":"the usable storage capacity of the battery in kWh"},{"name":"battery charge","from":"charge","verb":"of","to":"battery","description":"the PV surplus that goes into the battery"},{"name":"battery discharge","from":"discharge","verb":"of","to":"battery","description":"the electricity the battery gives back to the house, the charge minus the losses"},{"name":"round-trip efficiency","from":"efficiency","verb":"kind of","to":"round-trip","description":"the share of the charged energy that comes back out of the battery"},{"name":"battery count","from":"count","verb":"of","to":"battery","description":"how many batteries are bought over the lifetime of the installation, the lifetime divided by the battery lifetime rounded up"},{"name":"battery lifetime","from":"lifetime","verb":"of","to":"battery"},{"name":"battery production emission","from":"emission","verb":"of","to":"battery","description":"the greenhouse gases released to produce one kWh of battery storage capacity"},{"name":"household consumption","from":"consumption","verb":"kind of","to":"household","description":"the electricity the household uses in a year, the local consumption that the PV electricity can replace first"},{"name":"direct use","from":"use","verb":"kind of","to":"direct","description":"the PV electricity used in the house in the hour it is produced"},{"name":"grid import","from":"import","verb":"of","to":"grid","description":"the electricity the household still buys from the grid"},{"name":"delivered electricity","from":"electricity","verb":"kind of","to":"delivered","description":"the PV electricity that reaches a consumer: used directly, taken from the battery after the losses, or exported; every delivered kWh is assumed to displace one kWh of the reference mix"},{"name":"self-consumption share","from":"share","verb":"of","to":"self-consumption","description":"the share of the PV production that is used on site, directly or via the battery"},{"name":"day share","from":"share","verb":"of","to":"day","description":"the share of the household consumption that falls into the hours with PV production"},{"name":"monthly share","from":"share","verb":"of","to":"month","description":"the share of an annual amount that falls into one month"},{"from":"2018","verb":"to","to":"2022"},{"name":"zukunft.com system","from":"zukunft.com","verb":"is a","to":"system","description":"keyword for system internal triples such as the column definitions"},{"name":"process catch","from":"catch","verb":"kind of","to":"process"},{"name":"process catch field","from":"input","verb":"of","to":"process catch"},{"name":"process catch field (system)","from":"process catch field","verb":"can be","to":"zukunft.com system"},{"name":"field type","from":"process catch field (system)","verb":"has a","to":"type"},{"name":"number with limits","from":"field type","verb":"can be","to":"number"},{"name":"phrase selector","from":"field type","verb":"can be","to":"selector"},{"name":"field limit down","from":"process catch field (system)","verb":"has a","to":"minimum"},{"name":"field step","from":"process catch field (system)","verb":"has a","to":"step"},{"name":"field value phrases","from":"process catch field (system)","verb":"has a","to":"phrase"},{"name":"field phrase selector","from":"process catch field (system)","verb":"has a","to":"selector"},{"name":"field phrase selector value based","from":"field phrase selector","verb":"has a","to":"value"},{"name":"field PV capacity","from":"PV capacity","verb":"can be","to":"number with limits","description":"the input of the rated power of the PV modules on the page, a number between the field limits in the field steps"},{"name":"field battery capacity","from":"battery capacity","verb":"can be","to":"number with limits","description":"the input of the usable battery capacity on the page"},{"name":"field household consumption","from":"household consumption","verb":"can be","to":"number with limits","description":"the input of the annual electricity consumption of the household on the page"},{"name":"household consumption input period","from":"household consumption","verb":"has a","to":"annual","description":"the household consumption is entered as the annual consumption"},{"name":"household consumption field value phrase","from":"household consumption input period","verb":"can be","to":"field value phrases","description":"the input field of the household consumption shows and stores the annual value and not a monthly value or the day share"},{"name":"field yield factor","from":"yield factor","verb":"can be","to":"phrase selector","description":"the orientation of the modules as a selection on the page: one of the orientations with a yield factor"},{"name":"yield factor options","from":"yield factor","verb":"can be","to":"field phrase selector value based","description":"the orientations offered by the selector are the phrases of the yield factor values"},{"name":"orientation of the example PV installation","from":"example PV installation","verb":"uses","to":"east-west","description":"the example installation is an east-west split on a flat roof, so the selector of the page shows east-west selected"},{"name":"battery losses","from":"losses","verb":"of","to":"battery","description":"the part of the battery charge that the round-trip efficiency loses"},{"name":"battery effect","from":"effect","verb":"of","to":"battery","description":"the change of the net avoided emission by the battery compared with the same PV installation without battery: the battery losses reduce the delivered electricity and the battery production adds an embodied emission"},{"name":"PV site intensity","from":"PV embodied intensity","verb":"of","to":"site","description":"the embodied emission of the PV system per kWh produced at this site over the lifetime, in contrast to the intensity of the reference system"},{"name":"replacement mix","from":"mix","verb":"kind of","to":"replacement","description":"the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix"},{"from":"residual mix","verb":"is a","to":"replacement mix","description":"the European residual mix is the default replacement mix of the page"},{"from":"production mix","verb":"is a","to":"replacement mix","description":"the European production mix is the alternative replacement mix of the page"},{"name":"field replacement mix","from":"replacement mix","verb":"can be","to":"phrase selector","description":"the replacement mix as a selection on the page: one of the mixes that is a replacement mix"},{"name":"replacement mix of the example PV installation","from":"example PV installation","verb":"uses","to":"residual mix","description":"the example installation is compared with the European residual mix, so the selector of the page shows the residual mix selected"},{"name":"calculator (system)","from":"calculator","verb":"can be","to":"zukunft.com system"},{"name":"calculator label","from":"calculator (system)","verb":"has a","to":"label"},{"name":"calculator hint","from":"calculator (system)","verb":"has a","to":"hint"},{"name":"calculator input","from":"calculator (system)","verb":"has a","to":"input"},{"name":"calculator assumption","from":"calculator (system)","verb":"has a","to":"assumption"},{"name":"calculator result column","from":"calculator (system)","verb":"has a","to":"column"},{"name":"calculator row group","from":"calculator (system)","verb":"has a","to":"group"},{"name":"calculator detail table","from":"calculator (system)","verb":"has a","to":"table"},{"name":"calculator highlight","from":"calculator (system)","verb":"has a","to":"highlight"},{"name":"calculator signed","from":"calculator (system)","verb":"has a","to":"sign"},{"name":"PV installation label","from":"PV installation","verb":"has a","to":"calculator label","description":"PV lifetime CO₂ balance"},{"name":"PV installation hint","from":"PV installation","verb":"has a","to":"calculator hint","description":"Rooftop photovoltaic installation in the Swiss plateau: electricity produced over the lifetime and greenhouse-gas savings against the Swiss consumer mix and against a replacement (import) mix. Edit the four inputs; all assumptions are open below them."},{"name":"PV capacity label","from":"PV capacity","verb":"has a","to":"calculator label","description":"System size"},{"name":"yield factor label","from":"yield factor","verb":"has a","to":"calculator label","description":"Orientation"},{"name":"yield factor hint","from":"yield factor","verb":"has a","to":"calculator hint","description":"Yield factor relative to south 30°"},{"name":"battery capacity label","from":"battery capacity","verb":"has a","to":"calculator label","description":"Battery capacity (usable)"},{"name":"household consumption label","from":"household consumption","verb":"has a","to":"calculator label","description":"Local electricity consumption"},{"name":"day share label","from":"day share","verb":"has a","to":"calculator label","description":"Load share during PV hours"},{"name":"battery production emission label","from":"battery production emission","verb":"has a","to":"calculator label","description":"Battery production emissions"},{"name":"embodied emission label","from":"embodied emission","verb":"has a","to":"calculator label","description":"Production emissions"},{"name":"net avoided emission label","from":"net avoided emission","verb":"has a","to":"calculator label","description":"CO₂-eq saved, net of production emissions"},{"name":"direct use label","from":"direct use","verb":"has a","to":"calculator label","description":"Used directly"},{"name":"battery discharge label","from":"battery discharge","verb":"has a","to":"calculator label","description":"Used via battery"},{"name":"battery discharge hint","from":"battery discharge","verb":"has a","to":"calculator hint","description":"after losses"},{"name":"self-consumption share label","from":"self-consumption share","verb":"has a","to":"calculator label","description":"Self-consumption rate"},{"name":"self-consumption share hint","from":"self-consumption share","verb":"has a","to":"calculator hint","description":"share of PV used on site"},{"name":"autarky hint","from":"autarky","verb":"has a","to":"calculator hint","description":"share of load covered by PV"},{"name":"emission payback label","from":"emission payback","verb":"has a","to":"calculator label","description":"payback"},{"name":"battery effect label","from":"battery effect","verb":"has a","to":"calculator label","description":"Effect of the battery"},{"name":"annual label","from":"annual","verb":"has a","to":"calculator label","description":"Per year"},{"name":"PV label","from":"PV","verb":"has a","to":"calculator label","description":"PV system"},{"name":"PV production highlight","from":"PV production","verb":"has a","to":"calculator highlight"},{"name":"autarky highlight","from":"autarky","verb":"has a","to":"calculator highlight"},{"name":"net avoided emission highlight","from":"net avoided emission","verb":"has a","to":"calculator highlight"},{"name":"PV embodied emission side result","from":"PV embodied emission","verb":"has a","to":"PV site intensity"},{"name":"net avoided emission side result","from":"net avoided emission","verb":"has a","to":"emission payback"},{"name":"yield factor option south","from":"yield factor","verb":"has a","to":"south"},{"name":"yield factor option south label","from":"yield factor option south","verb":"has a","to":"calculator label","description":"South, ~30° tilt"},{"name":"yield factor option south-east","from":"yield factor","verb":"has a","to":"south-east"},{"name":"yield factor option south-east label","from":"yield factor option south-east","verb":"has a","to":"calculator label","description":"South-east / south-west, ~30°"},{"name":"yield factor option south-east order","from":"yield factor option south-east","verb":"is follower of","to":"yield factor option south"},{"name":"yield factor option east-west","from":"yield factor","verb":"has a","to":"east-west"},{"name":"yield factor option east-west label","from":"yield factor option east-west","verb":"has a","to":"calculator label","description":"East-west split, flat tilt"},{"name":"yield factor option east-west order","from":"yield factor option east-west","verb":"is follower of","to":"yield factor option south-east"},{"name":"yield factor option east","from":"yield factor","verb":"has a","to":"east"},{"name":"yield factor option east label","from":"yield factor option east","verb":"has a","to":"calculator label","description":"East or west only, ~30°"},{"name":"yield factor option east order","from":"yield factor option east","verb":"is follower of","to":"yield factor option east-west"},{"name":"yield factor option horizontal","from":"yield factor","verb":"has a","to":"horizontal"},{"name":"yield factor option horizontal label","from":"yield factor option horizontal","verb":"has a","to":"calculator label","description":"Flat (0°)"},{"name":"yield factor option horizontal order","from":"yield factor option horizontal","verb":"is follower of","to":"yield factor option east"},{"name":"yield factor option north","from":"yield factor","verb":"has a","to":"north"},{"name":"yield factor option north label","from":"yield factor option north","verb":"has a","to":"calculator label","description":"North, ~30°"},{"name":"yield factor option north order","from":"yield factor option north","verb":"is follower of","to":"yield factor option horizontal"},{"name":"PV installation inputs","from":"PV installation","verb":"has a","to":"calculator input"},{"name":"PV installation input PV capacity","from":"PV installation inputs","verb":"has a","to":"PV capacity"},{"name":"PV installation input yield factor","from":"PV installation inputs","verb":"has a","to":"yield factor"},{"name":"PV installation input yield factor order","from":"PV installation input yield factor","verb":"is follower of","to":"PV installation input PV capacity"},{"name":"PV installation input battery capacity","from":"PV installation inputs","verb":"has a","to":"battery capacity"},{"name":"PV installation input battery capacity order","from":"PV installation input battery capacity","verb":"is follower of","to":"PV installation input yield factor"},{"name":"PV installation input household consumption","from":"PV installation inputs","verb":"has a","to":"household consumption"},{"name":"PV installation input household consumption order","from":"PV installation input household consumption","verb":"is follower of","to":"PV installation input battery capacity"},{"name":"PV installation assumptions","from":"PV installation","verb":"has a","to":"calculator assumption"},{"name":"PV installation assumption PV yield","from":"PV installation assumptions","verb":"has a","to":"PV yield"},{"name":"PV installation assumption PV yield label","from":"PV installation assumption PV yield","verb":"has a","to":"calculator label","description":"Specific yield, south 30°"},{"name":"PV installation assumption lifetime","from":"PV installation assumptions","verb":"has a","to":"lifetime"},{"name":"PV installation assumption lifetime order","from":"PV installation assumption lifetime","verb":"is follower of","to":"PV installation assumption PV yield"},{"name":"PV installation assumption PV in Switzerland","from":"PV installation assumptions","verb":"has a","to":"PV in Switzerland"},{"name":"PV installation assumption PV in Switzerland label","from":"PV installation assumption PV in Switzerland","verb":"has a","to":"calculator label","description":"PV life-cycle emissions"},{"name":"PV installation assumption PV in Switzerland order","from":"PV installation assumption PV in Switzerland","verb":"is follower of","to":"PV installation assumption lifetime"},{"name":"PV installation assumption consumption mix","from":"PV installation assumptions","verb":"has a","to":"consumption mix"},{"name":"PV installation assumption consumption mix label","from":"PV installation assumption consumption mix","verb":"has a","to":"calculator label","description":"Swiss consumer mix, annual"},{"name":"PV installation assumption consumption mix order","from":"PV installation assumption consumption mix","verb":"is follower of","to":"PV installation assumption PV in Switzerland"},{"name":"PV installation assumption replacement mix","from":"PV installation assumptions","verb":"has a","to":"replacement mix"},{"name":"PV installation assumption replacement mix order","from":"PV installation assumption replacement mix","verb":"is follower of","to":"PV installation assumption consumption mix"},{"name":"PV installation assumption day share","from":"PV installation assumptions","verb":"has a","to":"day share"},{"name":"PV installation assumption day share order","from":"PV installation assumption day share","verb":"is follower of","to":"PV installation assumption replacement mix"},{"name":"PV installation assumption round-trip efficiency","from":"PV installation assumptions","verb":"has a","to":"round-trip efficiency"},{"name":"PV installation assumption round-trip efficiency label","from":"PV installation assumption round-trip efficiency","verb":"has a","to":"calculator label","description":"Battery round-trip efficiency"},{"name":"PV installation assumption round-trip efficiency order","from":"PV installation assumption round-trip efficiency","verb":"is follower of","to":"PV installation assumption day share"},{"name":"PV installation assumption battery production emission","from":"PV installation assumptions","verb":"has a","to":"battery production emission"},{"name":"PV installation assumption battery production emission order","from":"PV installation assumption battery production emission","verb":"is follower of","to":"PV installation assumption round-trip efficiency"},{"name":"PV installation assumption battery lifetime","from":"PV installation assumptions","verb":"has a","to":"battery lifetime"},{"name":"PV installation assumption battery lifetime order","from":"PV installation assumption battery lifetime","verb":"is follower of","to":"PV installation assumption battery production emission"},{"name":"PV installation result columns","from":"PV installation","verb":"has a","to":"calculator result column"},{"name":"PV installation result columns label","from":"PV installation result columns","verb":"has a","to":"calculator label","description":"Main results over the lifetime"},{"name":"PV installation column lifetime","from":"PV installation result columns","verb":"has a","to":"lifetime"},{"name":"PV installation column annual","from":"PV installation result columns","verb":"has a","to":"annual"},{"name":"PV installation column annual order","from":"PV installation column annual","verb":"is follower of","to":"PV installation column lifetime"},{"name":"PV installation row groups","from":"PV installation","verb":"has a","to":"calculator row group"},{"name":"PV installation rows electricity","from":"PV installation row groups","verb":"has a","to":"electricity"},{"name":"PV installation rows production emissions","from":"PV installation row groups","verb":"has a","to":"embodied emission"},{"name":"PV installation rows production emissions order","from":"PV installation rows production emissions","verb":"is follower of","to":"PV installation rows electricity"},{"name":"PV installation rows saving","from":"PV installation row groups","verb":"has a","to":"net avoided emission"},{"name":"PV installation rows saving signed","from":"PV installation rows saving","verb":"has a","to":"calculator signed"},{"name":"PV installation rows saving order","from":"PV installation rows saving","verb":"is follower of","to":"PV installation rows production emissions"},{"name":"PV installation row PV production","from":"PV installation rows electricity","verb":"has a","to":"PV production"},{"name":"PV installation row direct use","from":"PV installation rows electricity","verb":"has a","to":"direct use"},{"name":"PV installation row direct use order","from":"PV installation row direct use","verb":"is follower of","to":"PV installation row PV production"},{"name":"PV installation row battery discharge","from":"PV installation rows electricity","verb":"has a","to":"battery discharge"},{"name":"PV installation row battery discharge order","from":"PV installation row battery discharge","verb":"is follower of","to":"PV installation row direct use"},{"name":"PV installation row export","from":"PV installation rows electricity","verb":"has a","to":"export"},{"name":"PV installation row export label","from":"PV installation row export","verb":"has a","to":"calculator label","description":"Exported to grid"},{"name":"PV installation row export order","from":"PV installation row export","verb":"is follower of","to":"PV installation row battery discharge"},{"name":"PV installation row battery losses","from":"PV installation rows electricity","verb":"has a","to":"battery losses"},{"name":"PV installation row battery losses order","from":"PV installation row battery losses","verb":"is follower of","to":"PV installation row export"},{"name":"PV installation row grid import","from":"PV installation rows electricity","verb":"has a","to":"grid import"},{"name":"PV installation row grid import label","from":"PV installation row grid import","verb":"has a","to":"calculator label","description":"Grid import still needed"},{"name":"PV installation row grid import order","from":"PV installation row grid import","verb":"is follower of","to":"PV installation row battery losses"},{"name":"PV installation row self-consumption share","from":"PV installation rows electricity","verb":"has a","to":"self-consumption share"},{"name":"PV installation row self-consumption share order","from":"PV installation row self-consumption share","verb":"is follower of","to":"PV installation row grid import"},{"name":"PV installation row autarky","from":"PV installation rows electricity","verb":"has a","to":"autarky"},{"name":"PV installation row autarky order","from":"PV installation row autarky","verb":"is follower of","to":"PV installation row self-consumption share"},{"name":"PV installation row PV embodied emission","from":"PV installation rows production emissions","verb":"has a","to":"PV embodied emission"},{"name":"PV installation row battery embodied emission","from":"PV installation rows production emissions","verb":"has a","to":"battery embodied emission"},{"name":"PV installation row battery embodied emission order","from":"PV installation row battery embodied emission","verb":"is follower of","to":"PV installation row PV embodied emission"},{"name":"PV installation row saving consumption mix","from":"PV installation rows saving","verb":"has a","to":"consumption mix"},{"name":"PV installation row saving consumption mix label","from":"PV installation row saving consumption mix","verb":"has a","to":"calculator label","description":"vs. Swiss consumer mix, annual"},{"name":"PV installation row saving consumption mix filter","from":"PV installation row saving consumption mix","verb":"with","to":"net avoided emission"},{"name":"PV installation row saving PV-weighted mix","from":"PV installation rows saving","verb":"has a","to":"PV-weighted consumption mix"},{"name":"PV installation row saving PV-weighted mix label","from":"PV installation row saving PV-weighted mix","verb":"has a","to":"calculator label","description":"vs. Swiss consumer mix, monthly"},{"name":"PV installation row saving PV-weighted mix filter","from":"PV installation row saving PV-weighted mix","verb":"with","to":"net avoided emission"},{"name":"PV installation row saving PV-weighted mix order","from":"PV installation row saving PV-weighted mix","verb":"is follower of","to":"PV installation row saving consumption mix"},{"name":"PV installation row saving replacement mix","from":"PV installation rows saving","verb":"has a","to":"replacement mix"},{"name":"PV installation row saving replacement mix label","from":"PV installation row saving replacement mix","verb":"has a","to":"calculator label","description":"vs. replacement mix"},{"name":"PV installation row saving replacement mix filter","from":"PV installation row saving replacement mix","verb":"with","to":"net avoided emission"},{"name":"PV installation row saving replacement mix order","from":"PV installation row saving replacement mix","verb":"is follower of","to":"PV installation row saving PV-weighted mix"},{"name":"PV installation row battery effect","from":"PV installation rows saving","verb":"has a","to":"battery effect"},{"name":"PV installation row battery effect hint","from":"PV installation row battery effect","verb":"has a","to":"calculator hint","description":"vs. same PV without battery, annual Swiss mix"},{"name":"PV installation row battery effect filter","from":"PV installation row battery effect","verb":"with","to":"consumption mix"},{"name":"PV installation row battery effect order","from":"PV installation row battery effect","verb":"is follower of","to":"PV installation row saving replacement mix"},{"name":"PV installation detail tables","from":"PV installation","verb":"has a","to":"calculator detail table"},{"name":"PV installation detail tables label","from":"PV installation detail tables","verb":"has a","to":"calculator label","description":"Monthly details and sources"},{"name":"PV installation detail monthly balance","from":"PV installation detail tables","verb":"has a","to":"month"},{"name":"PV installation detail monthly balance label","from":"PV installation detail monthly balance","verb":"has a","to":"calculator label","description":"Monthly energy balance, average year"},{"name":"PV installation detail column PV production","from":"PV installation detail monthly balance","verb":"has a","to":"PV production"},{"name":"PV installation detail column PV production label","from":"PV installation detail column PV production","verb":"has a","to":"calculator label","description":"PV kWh"},{"name":"PV installation detail column household consumption","from":"PV installation detail monthly balance","verb":"has a","to":"household consumption"},{"name":"PV installation detail column household consumption label","from":"PV installation detail column household consumption","verb":"has a","to":"calculator label","description":"Load kWh"},{"name":"PV installation detail column household consumption order","from":"PV installation detail column household consumption","verb":"is follower of","to":"PV installation detail column PV production"},{"name":"PV installation detail column direct use","from":"PV installation detail monthly balance","verb":"has a","to":"direct use"},{"name":"PV installation detail column direct use label","from":"PV installation detail column direct use","verb":"has a","to":"calculator label","description":"Direct"},{"name":"PV installation detail column direct use order","from":"PV installation detail column direct use","verb":"is follower of","to":"PV installation detail column household consumption"},{"name":"PV installation detail column battery discharge","from":"PV installation detail monthly balance","verb":"has a","to":"battery discharge"},{"name":"PV installation detail column battery discharge label","from":"PV installation detail column battery discharge","verb":"has a","to":"calculator label","description":"Battery"},{"name":"PV installation detail column battery discharge order","from":"PV installation detail column battery discharge","verb":"is follower of","to":"PV installation detail column direct use"},{"name":"PV installation detail column export","from":"PV installation detail monthly balance","verb":"has a","to":"export"},{"name":"PV installation detail column export order","from":"PV installation detail column export","verb":"is follower of","to":"PV installation detail column battery discharge"},{"name":"PV installation detail column grid import","from":"PV installation detail monthly balance","verb":"has a","to":"grid import"},{"name":"PV installation detail column grid import order","from":"PV installation detail column grid import","verb":"is follower of","to":"PV installation detail column export"},{"name":"PV installation detail column consumption mix","from":"PV installation detail monthly balance","verb":"has a","to":"consumption mix"},{"name":"PV installation detail column consumption mix label","from":"PV installation detail column consumption mix","verb":"has a","to":"calculator label","description":"CH mix g/kWh"},{"name":"PV installation detail column consumption mix order","from":"PV installation detail column consumption mix","verb":"is follower of","to":"PV installation detail column grid import"},{"name":"PV installation detail total","from":"PV installation detail monthly balance","verb":"with","to":"annual"},{"name":"PV installation detail total label","from":"PV installation detail total","verb":"has a","to":"calculator label","description":"Year"},{"name":"PV installation detail total highlight","from":"PV installation detail total","verb":"has a","to":"calculator highlight"},{"name":"PV installation detail column consumption mix unit","from":"PV installation detail column consumption mix","verb":"with","to":"gram per kWh","description":"the column shows the mix in gram per kWh and not the net avoided emission or the battery effect, which name the consumption mix too"},{"name":"kilowatthours per year","from":"kWh","verb":"per","to":"year","description":"the unit of an annual electricity amount e.g. the household consumption"},{"from":"kWh/a","verb":"is symbol for","to":"kilowatthours per year"},{"name":"kilowatthours per kilowatt peak and year","from":"kWh per kWp","verb":"per","to":"year","description":"the unit of the specific yield of a PV system, the annual electricity per kWp of rated power"},{"from":"kWh/kWp·a","verb":"is symbol for","to":"kilowatthours per kilowatt peak and year"},{"name":"year (duration unit)","from":"year","verb":"must be one of","to":"duration unit","description":"the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time"},{"from":"a","verb":"is symbol for","to":"year (duration unit)"},{"name":"share (ratio)","from":"share","verb":"must be one of","to":"ratio","description":"a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent"},{"from":"share","verb":"is symbol for","to":"share (ratio)"},{"from":"g/kWh","verb":"is symbol for","to":"gram per kWh"},{"from":"kg/kWh","verb":"is symbol for","to":"kg per kWh"},{"name":"field limit up","from":"process catch field (system)","verb":"has a","to":"maximum"},{"name":"consumption mix input year","from":"consumption mix","verb":"has a","to":"2018","description":"the Swiss consumption mix of the page is the annual mix of 2018 and not the monthly mix or the avoided emission of another use case"},{"name":"consumption mix field value phrase","from":"consumption mix input year","verb":"can be","to":"field value phrases"},{"name":"PV in Switzerland input year","from":"PV in Switzerland","verb":"has a","to":"2023","description":"the life cycle emission of the page is the 2023 update and not the 2018 figure of KBOB"},{"name":"PV in Switzerland field value phrase","from":"PV in Switzerland input year","verb":"can be","to":"field value phrases"},{"name":"production mix order","from":"production mix","verb":"is follower of","to":"residual mix","description":"the residual mix is the first option of the replacement mix selector"},{"name":"PV installation assumption PV yield hint","from":"PV installation assumption PV yield","verb":"has a","to":"calculator hint","description":"Lifetime average incl. 0.7 %/a degradation"},{"name":"PV installation assumption lifetime hint","from":"PV installation assumption lifetime","verb":"has a","to":"calculator hint","description":"Reference lifetime used in the LCA"},{"name":"PV installation assumption PV in Switzerland hint","from":"PV installation assumption PV in Switzerland","verb":"has a","to":"calculator hint","description":"Swiss 3 kWp mono-Si pitched roof, 2023 update; converted to a fixed amount per kWp"},{"name":"PV installation assumption consumption mix hint","from":"PV installation assumption consumption mix","verb":"has a","to":"calculator hint","description":"2018 consumer mix, low voltage"},{"name":"PV installation assumption day share hint","from":"PV installation assumption day share","verb":"has a","to":"calculator hint","description":"Household; raise for home office or a heat pump running at noon"},{"name":"PV installation assumption battery production emission hint","from":"PV installation assumption battery production emission","verb":"has a","to":"calculator hint","description":"Literature spans ~37–212 kg CO₂-eq per kWh capacity"}],"formulas":[{"id":161,"name":"PV production by orientation","description":"the annual PV production: the rated power times the specific yield of the best orientation times the yield factor of the real orientation","expression":"\"PV production\" = \"PV capacity\" * \"PV yield\" * \"yield factor\""},{"id":162,"name":"battery discharge formula","description":"what the battery gives back: the charge times the round-trip efficiency","expression":"\"battery discharge\" = \"battery charge\" * \"round-trip efficiency\""},{"id":163,"name":"export formula","description":"the PV production that is neither used directly nor stored goes to the grid","expression":"\"export\" = \"PV production\" - \"direct use\" - \"battery charge\""},{"id":164,"name":"grid import formula","description":"the consumption not covered by direct use and battery discharge is bought from the grid","expression":"\"grid import\" = \"household consumption\" - \"direct use\" - \"battery discharge\""},{"id":165,"name":"delivered electricity formula","description":"the PV electricity that reaches a consumer, so the production minus the battery losses","expression":"\"delivered electricity\" = \"direct use\" + \"battery discharge\" + \"export\""},{"id":166,"name":"self-consumption share by dispatch","description":"the share of the production used on site; the battery charge counts in full, because the losses happen on site too. The self-consumption model has a monthly resolution: the direct use is capped at the load during the PV hours, the battery does at most one full cycle per day and only covers the evening and night load. Real day-to-day weather swings lower the battery share somewhat. The monthly PV and load profiles are assumed typical values for the Zurich region (confidence 0.6)","expression":"\"self-consumption share\" = ( \"direct use\" + \"battery charge\" ) / \"PV production\""},{"id":167,"name":"autarky formula","description":"the share of the household consumption covered by the own PV electricity","expression":"\"autarky\" = ( \"direct use\" + \"battery discharge\" ) / \"household consumption\""},{"id":168,"name":"PV embodied intensity formula","description":"turns the life cycle emission per kWh of the reference system into a fixed amount per kWp: the emission per kWh is spread over the reference yield and lifetime, so a site with a lower yield has the same embodied emission and a higher emission per kWh; the division by 1000 converts gram to kg","expression":"\"PV embodied intensity\" = \"PV in Switzerland\" * \"PV yield\" * \"lifetime\" / 1000"},{"id":169,"name":"PV embodied emission formula","description":"","expression":"\"PV embodied emission\" = \"PV embodied intensity\" * \"PV capacity\""},{"id":170,"name":"battery embodied emission formula","description":"the production emission of all batteries bought over the lifetime","expression":"\"battery embodied emission\" = \"battery capacity\" * \"battery production emission\" * \"battery count\""},{"id":171,"name":"gross avoided emission by consumption mix","description":"the emission of the Swiss consumption mix that the delivered PV electricity displaces over the lifetime; one formula per reference mix, because the mix is the operand; the division by 1000 converts gram to kg","expression":"\"gross avoided emission\" = \"delivered electricity\",\"lifetime\" * \"consumption mix\" / 1000"},{"id":172,"name":"gross avoided emission by PV-weighted consumption mix","description":"the same with the Swiss consumption mix weighted by the monthly PV delivery: PV produces mostly in summer, when the Swiss consumption mix is cleanest (about 70 to 90 g/kWh in May to August, 140 to 165 g/kWh in winter), so weighting the PV output of each month by the mix of that month gives a lower saving than the annual average","expression":"\"gross avoided emission\" = \"delivered electricity\",\"lifetime\" * \"PV-weighted consumption mix\" / 1000"},{"id":173,"name":"gross avoided emission by residual mix","description":"the same with the European residual mix as the replacement mix","expression":"\"gross avoided emission\" = \"delivered electricity\",\"lifetime\" * \"residual mix\" / 1000"},{"id":174,"name":"net avoided emission formula","description":"the gross avoided emission minus the embodied emission of the PV system and the battery; the reference mix is selected by the context. Every PV kilowatt-hour that reaches a consumer, used at home or exported, is assumed to displace one kilowatt-hour of grid electricity, the production emissions of the modules and the battery are subtracted, and the battery losses reduce the delivered energy","expression":"\"net avoided emission\" = \"gross avoided emission\" - \"PV embodied emission\" - \"battery embodied emission\""},{"id":175,"name":"emission payback formula","description":"the operating years until the gross avoided emission equals the embodied emission, assuming an even avoided emission per year","expression":"\"emission payback\" = ( \"PV embodied emission\" + \"battery embodied emission\" ) / \"gross avoided emission\" * \"lifetime\""},{"id":176,"name":"lifetime total formula","description":"the total of an annual number over the lifetime of the installation, e.g. the PV production or the export; the result carries the lifetime word in place of the annual word of the input, and the years are the lifetime of the PV installation","expression":"\"lifetime\" = \"annual\" * \"year (duration unit)\""},{"id":177,"name":"annual share formula","description":"the share of one year of a CO2-eq total over the lifetime, e.g. the embodied emission of the PV system or the net avoided emission; the result carries the annual word, and the years are the lifetime of the PV installation","expression":"\"annual\" = \"CO2-eq\" / \"year (duration unit)\""},{"id":178,"name":"battery losses formula","description":"the battery losses: the charge minus what the battery gives back","expression":"\"battery losses\" = \"battery charge\" - \"battery discharge\""},{"id":179,"name":"battery effect formula","description":"the effect of the battery on the net avoided emission against the same PV installation without battery, which delivers all its production: the lifetime battery losses do not displace the reference mix and the battery production adds its embodied emission; the division by 1000 converts gram to kg","expression":"\"battery effect\" = 0 - \"battery losses\",\"lifetime\" * \"consumption mix\" / 1000 - \"battery embodied emission\""},{"id":180,"name":"PV site intensity formula","description":"the embodied emission of the PV system divided by the lifetime production at this site; the multiplication by 1000 converts kg to gram","expression":"\"PV site intensity\" = \"PV embodied emission\" * 1000 / \"PV production\",\"lifetime\""},{"id":181,"name":"gross avoided emission by production mix","description":"the same with the European production mix as the replacement mix","expression":"\"gross avoided emission\" = \"delivered electricity\",\"lifetime\" * \"production mix\" / 1000"},{"id":182,"name":"annual consumption mix by PV weighting","description":"the consumption mix of a year as the PV installation uses it: the PV-weighted consumption mix, so that the year row of the monthly table shows the mix that the twelve monthly mixes give with the PV delivery as the weight","expression":"\"consumption mix\",\"annual\" = \"PV-weighted consumption mix\""}],"sources":[{"name":"IEA PVPS Task 12 fact sheet 2023","url":"https://iea-pvps.org/wp-content/uploads/2024/09/Task-12-Fact-Sheet-Stucki.pdf"},{"name":"KBOB energy systems 2022","url":"https://www.ecobau.ch/resources/uploads/Oekobilanzdaten/Hintergrundberichte/KBOB_BAFU_AHB_2022_Energiesysteme_v1_0.pdf"},{"name":"treeze monthly electricity mixes 2025","url":"https://www.stadt-zuerich.ch/content/dam/web/de/aktuell/publikationen/2025/studien-netto-null/oekobilanz-monatliche-strombereitstellung-studie.pdf"},{"name":"Swissolar PV fact sheet 2024","url":"https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf"},{"name":"Lithium-ion cell LCA comparison 2025","url":"https://ideas.repec.org/a/bla/inecol/v29y2025i1p113-128.html"},{"name":"HTW Berlin solar storage climate 2019","url":"https://solar.htw-berlin.de/wp-content/uploads/WENIGER-2019-Sind-Solarstromspeicher-Klimaschuetzer.pdf"},{"name":"gruenes.haus tilt and orientation table","url":"https://gruenes.haus/?p=485"},{"name":"BAFU Swiss electricity mixes 2018","url":"https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf.download.pdf/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf"}],"values":[{"words":["example PV installation","PV capacity","kWp","assumed"],"number":"10","description":"the system size, the first input of the page; 10 kWp is a typical single family roof"},{"words":["example PV installation","battery capacity","kWh","assumed"],"number":"10","description":"the usable battery capacity, the third input of the page; set it to 0 for an installation without battery"},{"words":["example PV installation","household consumption","annual","kilowatthours per year","assumed"],"number":"4500","description":"the local electricity consumption, the fourth input of the page; 4500 kWh is a typical Swiss family household without heat pump or electric car"},{"words":["yield factor","south","percent"],"number":"1","description":"the best case, the reference of the factor","source":"gruenes.haus tilt and orientation table"},{"words":["yield factor","south-east","percent"],"number":"0.95","description":"30 degree tilt facing south-east","source":"gruenes.haus tilt and orientation table"},{"words":["yield factor","south-west","percent"],"number":"0.95","description":"30 degree tilt facing south-west","source":"gruenes.haus tilt and orientation table"},{"words":["yield factor","east","percent"],"number":"0.82","description":"30 degree tilt facing east","source":"gruenes.haus tilt and orientation table"},{"words":["yield factor","west","percent"],"number":"0.82","description":"30 degree tilt facing west","source":"gruenes.haus tilt and orientation table"},{"words":["yield factor","north","percent"],"number":"0.59","description":"30 degree tilt facing north","source":"gruenes.haus tilt and orientation table"},{"words":["yield factor","horizontal","percent"],"number":"0.88","description":"flat roof without tilt","source":"gruenes.haus tilt and orientation table"},{"words":["yield factor","east-west","percent"],"number":"0.85","description":"half east, half west with a flat tilt of 10 to 15 degree, the usual flat roof layout; the orientation of the example installation, the second input of the page","source":"gruenes.haus tilt and orientation table"},{"words":["PV yield","annual","kilowatthours per kilowatt peak and year","2023"],"number":"976","description":"the lifetime average annual yield of the reference system, a pitched roof facing south in Switzerland, including the linear degradation of 0.7 percent per year","source":"IEA PVPS Task 12 fact sheet 2023"},{"words":["PV installation","lifetime","year (duration unit)"],"number":"30","description":"the reference lifetime of the life cycle assessment","source":"IEA PVPS Task 12 fact sheet 2023"},{"words":["PV in Switzerland","life cycle","CO2-eq","gram per kWh","2023"],"number":"35.8","description":"life cycle emission of one kWh AC from a 3 kWp mono-crystalline pitched roof system in Switzerland with the module technology of 2023; the 2018 figure of KBOB is 46.8, see the use case PV in Switzerland","source":"IEA PVPS Task 12 fact sheet 2023"},{"words":["Switzerland","electricity","consumption mix","life cycle","CO2-eq","gram per kWh","2018"],"number":"128","description":"the average Swiss consumption mix of 2018 incl. the imports per hour at low voltage as the BAFU report gives it; the KBOB table rounds it per MJ (CH-Verbrauchermix 0.035 kg CO2-eq/MJ times 3.6 MJ per kWh gives 126)","source":"BAFU Swiss electricity mixes 2018"},{"words":["Europe","electricity","production mix","life cycle","CO2-eq","gram per kWh","2022"],"number":"395","description":"the European production mix of 2022 as the alternative replacement mix: the midpoint of the monthly range of about 350 (May) to 440 (September) g CO2-eq per kWh","source":"treeze monthly electricity mixes 2025"},{"words":["Europe","electricity","residual mix","life cycle","CO2-eq","gram per kWh"],"number":"523","description":"the European residual mix that Swissolar uses as the replacement mix for the CO2 saving of PV; the European production mix 2022 of treeze is lower, 350 to 440 g per month","source":"Swissolar PV fact sheet 2024"},{"words":["Switzerland","electricity","consumption mix","January","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"150.8","description":"monthly mean of the five years 2018 to 2022 at low voltage, table 5.1; the twelve values are the base of the PV-weighted consumption mix","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","February","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"146.9","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","March","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"141.4","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","April","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"100","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","May","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"69.1","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","June","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"79.5","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","July","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"87.7","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","August","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"88.8","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","September","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"129.6","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","October","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"134.6","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","November","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"163.7","source":"treeze monthly electricity mixes 2025"},{"words":["Switzerland","electricity","consumption mix","December","2018 to 2022","mean","CO2-eq","gram per kWh"],"number":"152.8","source":"treeze monthly electricity mixes 2025"},{"words":["example PV installation","day share","household consumption","share (ratio)","assumed"],"number":"0.35","description":"the share of the household consumption that falls into the hours with PV production; a household where nobody is at home during the day, higher with home office or a heat pump running at noon"},{"words":["example PV installation","day share","household consumption","assumed","confidence","share (ratio)"],"number":"0.6","description":"a rough split, the hourly profile of a household is well known but varies a lot between households"},{"words":["battery","round-trip efficiency","share (ratio)","assumed"],"number":"0.9","description":"the usual system efficiency of a lithium-ion home storage incl. the inverter losses"},{"words":["battery","round-trip efficiency","assumed","confidence","share (ratio)"],"number":"0.7","description":"manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"},{"words":["battery","battery production emission","kg per kWh","assumed"],"number":"100","description":"the middle of the literature: cells alone 37 to 92 kg per kWh, a complete home storage system in the HTW study 212 kg per kWh"},{"words":["battery","battery production emission","assumed","confidence","percent"],"number":"0.5","description":"the published figures span a factor of five, so the middle is a guess"},{"words":["battery","battery production emission","kg per kWh","lithium-ion cell","2025"],"number":"92","description":"the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg","source":"Lithium-ion cell LCA comparison 2025"},{"words":["battery","battery production emission","kg per kWh","home storage system","2019"],"number":"212","description":"the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature","source":"HTW Berlin solar storage climate 2019"},{"words":["battery","battery lifetime","year (duration unit)","assumed"],"number":"15","description":"a lithium-ion home storage with one cycle a day lasts 10 to 20 years"},{"words":["battery","battery lifetime","assumed","confidence","percent"],"number":"0.6"},{"words":["example PV installation","battery count","assumed"],"number":"2","description":"the lifetime of 30 years divided by the battery lifetime of 15 years, rounded up: the first battery and one replacement"},{"words":["Switzerland","PV production","monthly share","January","percent","assumed"],"number":"0.03","description":"the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"},{"words":["Switzerland","PV production","monthly share","February","percent","assumed"],"number":"0.05"},{"words":["Switzerland","PV production","monthly share","March","percent","assumed"],"number":"0.08"},{"words":["Switzerland","PV production","monthly share","April","percent","assumed"],"number":"0.11"},{"words":["Switzerland","PV production","monthly share","May","percent","assumed"],"number":"0.13"},{"words":["Switzerland","PV production","monthly share","June","percent","assumed"],"number":"0.13"},{"words":["Switzerland","PV production","monthly share","July","percent","assumed"],"number":"0.14"},{"words":["Switzerland","PV production","monthly share","August","percent","assumed"],"number":"0.12"},{"words":["Switzerland","PV production","monthly share","September","percent","assumed"],"number":"0.1"},{"words":["Switzerland","PV production","monthly share","October","percent","assumed"],"number":"0.07"},{"words":["Switzerland","PV production","monthly share","November","percent","assumed"],"number":"0.04"},{"words":["Switzerland","PV production","monthly share","December","percent","assumed"],"number":"0.03"},{"words":["Switzerland","PV production","monthly share","assumed","confidence","percent"],"number":"0.6","description":"the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"},{"words":["Switzerland","household consumption","monthly share","January","percent","assumed"],"number":"0.1","description":"the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"},{"words":["Switzerland","household consumption","monthly share","February","percent","assumed"],"number":"0.09"},{"words":["Switzerland","household consumption","monthly share","March","percent","assumed"],"number":"0.09"},{"words":["Switzerland","household consumption","monthly share","April","percent","assumed"],"number":"0.08"},{"words":["Switzerland","household consumption","monthly share","May","percent","assumed"],"number":"0.08"},{"words":["Switzerland","household consumption","monthly share","June","percent","assumed"],"number":"0.07"},{"words":["Switzerland","household consumption","monthly share","July","percent","assumed"],"number":"0.07"},{"words":["Switzerland","household consumption","monthly share","August","percent","assumed"],"number":"0.07"},{"words":["Switzerland","household consumption","monthly share","September","percent","assumed"],"number":"0.08"},{"words":["Switzerland","household consumption","monthly share","October","percent","assumed"],"number":"0.09"},{"words":["Switzerland","household consumption","monthly share","November","percent","assumed"],"number":"0.1"},{"words":["Switzerland","household consumption","monthly share","December","percent","assumed"],"number":"0.1"},{"words":["Switzerland","household consumption","monthly share","assumed","confidence","percent"],"number":"0.6"},{"words":["example PV installation","direct use","annual","kWh","modelled"],"number":"1575","description":"monthly dispatch of the page: in each month the direct use is the smaller of the PV production and the day share of the consumption, the battery charge is the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; this needs a minimum function that the zukunft.com formulas do not have, so the annual sum is stored as a modelled value"},{"words":["example PV installation","battery charge","annual","kWh","modelled"],"number":"2470.86","description":"the annual sum of the monthly battery charge of the dispatch described at the direct use"},{"words":["example PV installation","PV-weighted consumption mix","2018 to 2022","mean","CO2-eq","gram per kWh","modelled"],"number":"105.83","description":"the sum over the twelve months of the delivered PV electricity times the monthly Swiss consumption mix, divided by the annual delivered electricity; a weighted mean of the twelve monthly values above with the monthly dispatch of the page as the weight"},{"words":["PV capacity","field limit down"],"number":"0.5","description":"the smallest PV installation the page accepts"},{"words":["PV capacity","field step"],"number":"0.5","description":"the PV capacity is entered in half kWp steps"},{"words":["battery capacity","field limit down"],"number":"0","description":"no battery is a valid input"},{"words":["battery capacity","field step"],"number":"1","description":"the battery capacity is entered in kWh steps"},{"words":["household consumption","field limit down"],"number":"0","description":"a household without consumption is a valid input, then every kWh is exported"},{"words":["household consumption","field step"],"number":"100","description":"the household consumption is entered in steps of 100 kWh"},{"words":["PV yield","field step"],"number":"10","description":"the specific yield is entered in steps of 10 kWh per kWp and year"},{"words":["lifetime","field step"],"number":"1","description":"the lifetime is entered in years"},{"words":["PV in Switzerland","field step"],"number":"0.1","description":"the life cycle emission is entered with one decimal like the IEA PVPS fact sheet"},{"words":["consumption mix","field step"],"number":"1","description":"the consumption mix is entered in gram per kWh"},{"words":["day share","field limit down"],"number":"0","description":"a household without consumption during the PV hours"},{"words":["day share","field limit up"],"number":"1","description":"the whole consumption during the PV hours"},{"words":["day share","field step"],"number":"0.05","description":"the day share is entered in steps of five percent"},{"words":["round-trip efficiency","field step"],"number":"0.01","description":"the round-trip efficiency is entered in steps of one percent"},{"words":["battery production emission","field step"],"number":"5","description":"the battery production emission is entered in steps of 5 kg per kWh"},{"words":["battery lifetime","field step"],"number":"1","description":"the battery lifetime is entered in years"},{"words":["example PV installation","PV production","January","kWh","modelled"],"number":"207.4","description":"the monthly dispatch of the page as described at the annual direct use: the PV production of a month is the annual production times the monthly share of the PV production, the household consumption the annual consumption times its monthly share, the direct use the smaller of the PV production and the day share of the consumption, the battery charge the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; stored as modelled values, because the dispatch needs a minimum function; the battery discharge, the export and the grid import of a month are results of the formulas"},{"words":["example PV installation","household consumption","January","kWh","modelled"],"number":"450"},{"words":["example PV installation","direct use","January","kWh","modelled"],"number":"157.5"},{"words":["example PV installation","battery charge","January","kWh","modelled"],"number":"49.9"},{"words":["example PV installation","PV production","February","kWh","modelled"],"number":"373.32"},{"words":["example PV installation","household consumption","February","kWh","modelled"],"number":"405"},{"words":["example PV installation","direct use","February","kWh","modelled"],"number":"141.75"},{"words":["example PV installation","battery charge","February","kWh","modelled"],"number":"231.57"},{"words":["example PV installation","PV production","March","kWh","modelled"],"number":"663.68"},{"words":["example PV installation","household consumption","March","kWh","modelled"],"number":"405"},{"words":["example PV installation","direct use","March","kWh","modelled"],"number":"141.75"},{"words":["example PV installation","battery charge","March","kWh","modelled"],"number":"292.5"},{"words":["example PV installation","PV production","April","kWh","modelled"],"number":"912.56"},{"words":["example PV installation","household consumption","April","kWh","modelled"],"number":"360"},{"words":["example PV installation","direct use","April","kWh","modelled"],"number":"126"},{"words":["example PV installation","battery charge","April","kWh","modelled"],"number":"260"},{"words":["example PV installation","PV production","May","kWh","modelled"],"number":"1037"},{"words":["example PV installation","household consumption","May","kWh","modelled"],"number":"337.5"},{"words":["example PV installation","direct use","May","kWh","modelled"],"number":"118.125"},{"words":["example PV installation","battery charge","May","kWh","modelled"],"number":"243.75"},{"words":["example PV installation","PV production","June","kWh","modelled"],"number":"1078.48"},{"words":["example PV installation","household consumption","June","kWh","modelled"],"number":"315"},{"words":["example PV installation","direct use","June","kWh","modelled"],"number":"110.25"},{"words":["example PV installation","battery charge","June","kWh","modelled"],"number":"227.5"},{"words":["example PV installation","PV production","July","kWh","modelled"],"number":"1119.96"},{"words":["example PV installation","household consumption","July","kWh","modelled"],"number":"315"},{"words":["example PV installation","direct use","July","kWh","modelled"],"number":"110.25"},{"words":["example PV installation","battery charge","July","kWh","modelled"],"number":"227.5"},{"words":["example PV installation","PV production","August","kWh","modelled"],"number":"995.52"},{"words":["example PV installation","household consumption","August","kWh","modelled"],"number":"315"},{"words":["example PV installation","direct use","August","kWh","modelled"],"number":"110.25"},{"words":["example PV installation","battery charge","August","kWh","modelled"],"number":"227.5"},{"words":["example PV installation","PV production","September","kWh","modelled"],"number":"829.6"},{"words":["example PV installation","household consumption","September","kWh","modelled"],"number":"337.5"},{"words":["example PV installation","direct use","September","kWh","modelled"],"number":"118.125"},{"words":["example PV installation","battery charge","September","kWh","modelled"],"number":"243.75"},{"words":["example PV installation","PV production","October","kWh","modelled"],"number":"580.72"},{"words":["example PV installation","household consumption","October","kWh","modelled"],"number":"382.5"},{"words":["example PV installation","direct use","October","kWh","modelled"],"number":"133.875"},{"words":["example PV installation","battery charge","October","kWh","modelled"],"number":"276.25"},{"words":["example PV installation","PV production","November","kWh","modelled"],"number":"290.36"},{"words":["example PV installation","household consumption","November","kWh","modelled"],"number":"427.5"},{"words":["example PV installation","direct use","November","kWh","modelled"],"number":"149.625"},{"words":["example PV installation","battery charge","November","kWh","modelled"],"number":"140.735"},{"words":["example PV installation","PV production","December","kWh","modelled"],"number":"207.4"},{"words":["example PV installation","household consumption","December","kWh","modelled"],"number":"450"},{"words":["example PV installation","direct use","December","kWh","modelled"],"number":"157.5"},{"words":["example PV installation","battery charge","December","kWh","modelled"],"number":"49.9"}],"calc-validation":[{"context":["example PV installation","PV capacity","kWp","assumed","PV yield","annual","kilowatthours per kilowatt peak and year","2023","yield factor","east-west","percent"],"formula":"PV production by orientation","words":["example PV installation","PV production","annual","kWh"],"number":"8296"},{"context":["example PV installation","PV production","annual","kWh","PV installation","lifetime","year (duration unit)"],"formula":"lifetime total formula","words":["example PV installation","PV production","lifetime","kWh"],"number":"248880"},{"context":["example PV installation","battery charge","annual","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","annual","kWh"],"number":"2223.77"},{"context":["example PV installation","PV production","annual","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","annual","kWh"],"number":"4250.14"},{"context":["example PV installation","household consumption","annual","kWh","kilowatthours per year","assumed","direct use","modelled","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","annual","kWh"],"number":"701.23"},{"context":["example PV installation","direct use","annual","kWh","modelled","battery discharge","export"],"formula":"delivered electricity formula","words":["example PV installation","delivered electricity","annual","kWh"],"number":"8048.91"},{"context":["example PV installation","delivered electricity","annual","kWh","PV installation","lifetime","year (duration unit)"],"formula":"lifetime total formula","words":["example PV installation","delivered electricity","lifetime","kWh"],"number":"241467.3"},{"context":["example PV installation","direct use","battery charge","PV production","annual","kWh","modelled"],"formula":"self-consumption share by dispatch","words":["example PV installation","self-consumption share","annual","percent"],"number":"0.49"},{"context":["example PV installation","direct use","battery discharge","household consumption","annual","kWh","kilowatthours per year","assumed","modelled"],"formula":"autarky formula","words":["example PV installation","autarky","annual","percent"],"number":"0.84"},{"context":["PV in Switzerland","life cycle","CO2-eq","gram per kWh","2023","PV yield","annual","kilowatthours per kilowatt peak and year","PV installation","lifetime","year (duration unit)"],"formula":"PV embodied intensity formula","words":["PV embodied intensity","kg per kWp","CO2-eq","2023"],"number":"1048.22"},{"context":["PV embodied intensity","kg per kWp","CO2-eq","2023","example PV installation","PV capacity","kWp","assumed"],"formula":"PV embodied emission formula","words":["example PV installation","PV embodied emission","lifetime","kg","CO2-eq"],"number":"10482.2"},{"context":["example PV installation","battery capacity","kWh","assumed","battery","battery production emission","kg per kWh","battery count"],"formula":"battery embodied emission formula","words":["example PV installation","battery embodied emission","lifetime","kg","CO2-eq"],"number":"2000"},{"context":["example PV installation","delivered electricity","lifetime","kWh","Switzerland","electricity","consumption mix","life cycle","CO2-eq","gram per kWh","2018"],"formula":"gross avoided emission by consumption mix","words":["example PV installation","gross avoided emission","consumption mix","lifetime","kg","CO2-eq"],"number":"30907.81"},{"context":["example PV installation","delivered electricity","lifetime","kWh","PV-weighted consumption mix","2018 to 2022","mean","CO2-eq","gram per kWh","modelled"],"formula":"gross avoided emission by PV-weighted consumption mix","words":["example PV installation","gross avoided emission","PV-weighted consumption mix","lifetime","kg","CO2-eq"],"number":"25554.48"},{"context":["example PV installation","delivered electricity","lifetime","kWh","Europe","electricity","residual mix","life cycle","CO2-eq","gram per kWh"],"formula":"gross avoided emission by residual mix","words":["example PV installation","gross avoided emission","residual mix","lifetime","kg","CO2-eq"],"number":"126287.4"},{"context":["example PV installation","gross avoided emission","consumption mix","PV embodied emission","battery embodied emission","lifetime","kg","CO2-eq"],"formula":"net avoided emission formula","words":["example PV installation","net avoided emission","consumption mix","lifetime","kg","CO2-eq"],"number":"18425.61"},{"context":["example PV installation","gross avoided emission","PV-weighted consumption mix","PV embodied emission","battery embodied emission","lifetime","kg","CO2-eq"],"formula":"net avoided emission formula","words":["example PV installation","net avoided emission","PV-weighted consumption mix","lifetime","kg","CO2-eq"],"number":"13072.28"},{"context":["example PV installation","gross avoided emission","residual mix","PV embodied emission","battery embodied emission","lifetime","kg","CO2-eq"],"formula":"net avoided emission formula","words":["example PV installation","net avoided emission","residual mix","lifetime","kg","CO2-eq"],"number":"113805.2"},{"context":["example PV installation","gross avoided emission","consumption mix","PV embodied emission","battery embodied emission","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"emission payback formula","words":["example PV installation","emission payback","consumption mix","year (duration unit)"],"number":"12.12"},{"context":["example PV installation","gross avoided emission","PV-weighted consumption mix","PV embodied emission","battery embodied emission","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"emission payback formula","words":["example PV installation","emission payback","PV-weighted consumption mix","year (duration unit)"],"number":"14.65"},{"context":["example PV installation","gross avoided emission","residual mix","PV embodied emission","battery embodied emission","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"emission payback formula","words":["example PV installation","emission payback","residual mix","year (duration unit)"],"number":"2.97"},{"context":["example PV installation","direct use","annual","kWh","modelled","PV installation","lifetime","year (duration unit)"],"formula":"lifetime total formula","words":["example PV installation","direct use","lifetime","kWh"],"number":"47250"},{"context":["example PV installation","battery discharge","annual","kWh","PV installation","lifetime","year (duration unit)"],"formula":"lifetime total formula","words":["example PV installation","battery discharge","lifetime","kWh"],"number":"66713.1"},{"context":["example PV installation","export","annual","kWh","PV installation","lifetime","year (duration unit)"],"formula":"lifetime total formula","words":["example PV installation","export","lifetime","kWh"],"number":"127504.2"},{"context":["example PV installation","grid import","annual","kWh","PV installation","lifetime","year (duration unit)"],"formula":"lifetime total formula","words":["example PV installation","grid import","lifetime","kWh"],"number":"21036.9"},{"context":["example PV installation","PV embodied emission","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"annual share formula","words":["example PV installation","PV embodied emission","annual","kg","CO2-eq"],"number":"349.41"},{"context":["example PV installation","battery embodied emission","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"annual share formula","words":["example PV installation","battery embodied emission","annual","kg","CO2-eq"],"number":"66.67"},{"context":["example PV installation","net avoided emission","consumption mix","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"annual share formula","words":["example PV installation","net avoided emission","consumption mix","annual","kg","CO2-eq"],"number":"614.19"},{"context":["example PV installation","net avoided emission","PV-weighted consumption mix","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"annual share formula","words":["example PV installation","net avoided emission","PV-weighted consumption mix","annual","kg","CO2-eq"],"number":"435.74"},{"context":["example PV installation","net avoided emission","residual mix","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"annual share formula","words":["example PV installation","net avoided emission","residual mix","annual","kg","CO2-eq"],"number":"3793.51"},{"context":["example PV installation","battery charge","battery discharge","annual","kWh","modelled"],"formula":"battery losses formula","words":["example PV installation","battery losses","annual","kWh"],"number":"247.09"},{"context":["example PV installation","battery losses","annual","kWh","PV installation","lifetime","year (duration unit)"],"formula":"lifetime total formula","words":["example PV installation","battery losses","lifetime","kWh"],"number":"7412.7"},{"context":["example PV installation","battery losses","lifetime","kWh","Switzerland","electricity","consumption mix","life cycle","CO2-eq","gram per kWh","2018","battery embodied emission","kg"],"formula":"battery effect formula","words":["example PV installation","battery effect","consumption mix","lifetime","kg","CO2-eq"],"number":"-2948.83"},{"context":["example PV installation","battery effect","consumption mix","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"annual share formula","words":["example PV installation","battery effect","consumption mix","annual","kg","CO2-eq"],"number":"-98.29"},{"context":["example PV installation","PV embodied emission","lifetime","kg","CO2-eq","PV production","kWh"],"formula":"PV site intensity formula","words":["example PV installation","PV site intensity","CO2-eq","gram per kWh"],"number":"42.12"},{"context":["example PV installation","delivered electricity","lifetime","kWh","Europe","electricity","production mix","life cycle","CO2-eq","gram per kWh","2022"],"formula":"gross avoided emission by production mix","words":["example PV installation","gross avoided emission","production mix","lifetime","kg","CO2-eq"],"number":"95379.58"},{"context":["example PV installation","gross avoided emission","production mix","PV embodied emission","battery embodied emission","lifetime","kg","CO2-eq"],"formula":"net avoided emission formula","words":["example PV installation","net avoided emission","production mix","lifetime","kg","CO2-eq"],"number":"82897.38"},{"context":["example PV installation","gross avoided emission","production mix","PV embodied emission","battery embodied emission","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"emission payback formula","words":["example PV installation","emission payback","production mix","year (duration unit)"],"number":"3.93"},{"context":["example PV installation","net avoided emission","production mix","kg","CO2-eq","PV installation","lifetime","year (duration unit)"],"formula":"annual share formula","words":["example PV installation","net avoided emission","production mix","annual","kg","CO2-eq"],"number":"2763.25"},{"context":["example PV installation","battery charge","January","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","January","kWh"],"number":"44.91"},{"context":["example PV installation","PV production","January","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","January","kWh"],"number":"0"},{"context":["example PV installation","household consumption","January","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","January","kWh"],"number":"247.59"},{"context":["example PV installation","battery charge","February","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","February","kWh"],"number":"208.413"},{"context":["example PV installation","PV production","February","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","February","kWh"],"number":"0"},{"context":["example PV installation","household consumption","February","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","February","kWh"],"number":"54.84"},{"context":["example PV installation","battery charge","March","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","March","kWh"],"number":"263.25"},{"context":["example PV installation","PV production","March","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","March","kWh"],"number":"229.43"},{"context":["example PV installation","household consumption","March","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","March","kWh"],"number":"0"},{"context":["example PV installation","battery charge","April","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","April","kWh"],"number":"234"},{"context":["example PV installation","PV production","April","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","April","kWh"],"number":"526.56"},{"context":["example PV installation","household consumption","April","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","April","kWh"],"number":"0"},{"context":["example PV installation","battery charge","May","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","May","kWh"],"number":"219.375"},{"context":["example PV installation","PV production","May","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","May","kWh"],"number":"675.13"},{"context":["example PV installation","household consumption","May","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","May","kWh"],"number":"0"},{"context":["example PV installation","battery charge","June","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","June","kWh"],"number":"204.75"},{"context":["example PV installation","PV production","June","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","June","kWh"],"number":"740.73"},{"context":["example PV installation","household consumption","June","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","June","kWh"],"number":"0"},{"context":["example PV installation","battery charge","July","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","July","kWh"],"number":"204.75"},{"context":["example PV installation","PV production","July","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","July","kWh"],"number":"782.21"},{"context":["example PV installation","household consumption","July","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","July","kWh"],"number":"0"},{"context":["example PV installation","battery charge","August","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","August","kWh"],"number":"204.75"},{"context":["example PV installation","PV production","August","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","August","kWh"],"number":"657.77"},{"context":["example PV installation","household consumption","August","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","August","kWh"],"number":"0"},{"context":["example PV installation","battery charge","September","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","September","kWh"],"number":"219.375"},{"context":["example PV installation","PV production","September","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","September","kWh"],"number":"467.73"},{"context":["example PV installation","household consumption","September","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","September","kWh"],"number":"0"},{"context":["example PV installation","battery charge","October","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","October","kWh"],"number":"248.625"},{"context":["example PV installation","PV production","October","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","October","kWh"],"number":"170.6"},{"context":["example PV installation","household consumption","October","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","October","kWh"],"number":"0"},{"context":["example PV installation","battery charge","November","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","November","kWh"],"number":"126.6615"},{"context":["example PV installation","PV production","November","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","November","kWh"],"number":"0"},{"context":["example PV installation","household consumption","November","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","November","kWh"],"number":"151.21"},{"context":["example PV installation","battery charge","December","kWh","modelled","battery","round-trip efficiency","share (ratio)","assumed"],"formula":"battery discharge formula","words":["example PV installation","battery discharge","December","kWh"],"number":"44.91"},{"context":["example PV installation","PV production","December","kWh","direct use","battery charge","modelled"],"formula":"export formula","words":["example PV installation","export","December","kWh"],"number":"0"},{"context":["example PV installation","household consumption","December","kWh","modelled","direct use","battery discharge"],"formula":"grid import formula","words":["example PV installation","grid import","December","kWh"],"number":"247.59"},{"context":["example PV installation","PV-weighted consumption mix","2018 to 2022","mean","CO2-eq","gram per kWh","modelled"],"formula":"annual consumption mix by PV weighting","words":["example PV installation","consumption mix","annual","CO2-eq","gram per kWh"],"number":"105.83"}]}</script>
+
+<script>
+    'use strict';
+
+    (function () {
+
+        /* ------------------------------------------------------------------ */
+        /* constants, the same as in shared/const/chars.php and formula_calc    */
+        /* ------------------------------------------------------------------ */
+
+        const SEED_ID = 'seed';
+        const CHAR_CALC = '=';
+        const TERM_DELIMITER = '"';
+        const SEPARATOR = ',';
+        /* the decimals of a stored result, the same as formula_calc::DECIMALS */
+        const DECIMALS = 2;
+        /* the kinds of the tokens of an expression */
+        const T_PHR = 'phr';
+        const T_NUM = 'num';
+        const T_OP = 'op';
+        const T_BR = 'br';
+        /* the max passes of the calculation chain, more than the longest chain of the page */
+        const MAX_PASSES = 30;
+        const API_UPDATE_PUT = '/api/updatePut/';
+        const API_PHRASE_DATA = '/api/phraseData/';
+
+        /* ------------------------------------------------------------------ */
+        /* helpers                                                              */
+        /* ------------------------------------------------------------------ */
+
+        function esc(s) {
+            const text = String(s === undefined || s === null ? '' : s);
+            const result = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            return result;
+        }
+
+        /* round half away from zero like the php round */
+        function roundTo(num, decimals) {
+            const factor = Math.pow(10, decimals);
+            const result = Math.sign(num) * Math.round(Math.abs(num) * factor) / factor;
+            return result;
+        }
+
+        function fmt(num) {
+            let result = '—';
+            if (num !== null && num !== undefined && !Number.isNaN(num)) {
+                let digits = DECIMALS;
+                const abs = Math.abs(num);
+                if (abs !== 0 && abs < 0.01) {
+                    digits = 4;
+                }
+                result = num.toLocaleString(undefined, {maximumFractionDigits: digits});
+            }
+            return result;
+        }
+
+        function sameNumber(a, b) {
+            let result = false;
+            if (a === null && b === null) {
+                result = true;
+            } else if (a !== null && b !== null) {
+                result = Math.abs(roundTo(a, DECIMALS) - roundTo(b, DECIMALS)) < Math.pow(10, -DECIMALS) / 2;
+            }
+            return result;
+        }
+
+        function isSubset(small, big) {
+            let result = true;
+            small.forEach(function (name) {
+                if (!big.has(name)) {
+                    result = false;
+                }
+            });
+            return result;
+        }
+
+        function clone(o) {
+            const result = JSON.parse(JSON.stringify(o));
+            return result;
+        }
+
+        let toastTimer = null;
+
+        function toast(text) {
+            const el = document.getElementById('toast');
+            el.textContent = text;
+            el.hidden = false;
+            if (toastTimer !== null) {
+                clearTimeout(toastTimer);
+            }
+            toastTimer = setTimeout(function () {
+                el.hidden = true;
+            }, 3500);
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the model: phrases, values, stored results and formulas of the seed  */
+        /* ------------------------------------------------------------------ */
+
+        /* the stored results of the page: the calc-validation of an import file or the results of a phraseData answer */
+        function seedResults(doc) {
+            let result = doc['calc-validation'] || [];
+            if (result.length === 0 && Array.isArray(doc.results)) {
+                result = doc.results;
+            }
+            return result;
+        }
+
+        function buildModel(doc) {
+            const phrases = new Map();
+            const entries = [];
+            const results = [];
+
+            function addPhrase(name, kind, description) {
+                if (name && !phrases.has(name)) {
+                    phrases.set(name, {name: name, kind: kind, description: description || '', values: 0, results: 0});
+                }
+            }
+
+            (doc.words || []).forEach(function (w) {
+                addPhrase(w.name, 'word', w.description);
+            });
+            (doc.triples || []).forEach(function (t) {
+                addPhrase(t.name, 'triple', t.description);
+            });
+            (doc.values || []).forEach(function (v, i) {
+                const num = Number(v.number);
+                if (!Number.isNaN(num)) {
+                    const entry = {kind: 'value', src: i, words: v.words || [], wset: new Set(v.words || []), number: num, description: v.description || ''};
+                    entries.push(entry);
+                    entry.words.forEach(function (name) {
+                        addPhrase(name, 'word', '');
+                        phrases.get(name).values = phrases.get(name).values + 1;
+                    });
+                }
+            });
+            seedResults(doc).forEach(function (r, i) {
+                const num = Number(r.number);
+                const entry = {
+                    kind: 'result', src: i, ri: results.length, words: r.words || [], wset: new Set(r.words || []),
+                    stored: Number.isNaN(num) ? null : num, formula: r.formula, ctx: new Set(r.context || [])
+                };
+                entries.push(entry);
+                results.push(entry);
+                entry.words.forEach(function (name) {
+                    addPhrase(name, 'word', '');
+                    phrases.get(name).results = phrases.get(name).results + 1;
+                });
+            });
+            const formulas = (doc.formulas || []).map(function (f, i) {
+                const result = {
+                    id: f.id === undefined || f.id === null ? null : f.id,
+                    key: f.id === undefined || f.id === null ? 'n:' + i : 'id:' + f.id,
+                    name: f.name,
+                    description: f.description || '',
+                    expression: f.expression || f.user_text || ''
+                };
+                return result;
+            });
+            const sel = (doc.selection || [])[0] || {};
+            const result = {
+                page: sel.name || '',
+                phrases: phrases,
+                entries: entries,
+                results: results,
+                formulas: formulas
+            };
+            return result;
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the expression: text to tokens and back                              */
+        /* ------------------------------------------------------------------ */
+
+        /* the tokens of one side of an expression; a phrase joined to the next by the separator is one operand with several names */
+        function tokenize(text) {
+            const result = {ok: true, error: '', tokens: []};
+            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/])|([()])|(,)|(\S))/y;
+            let joinNext = false;
+            let m = re.exec(text);
+            while (result.ok && m !== null) {
+                const last = result.tokens[result.tokens.length - 1];
+                if (m[1] !== undefined) {
+                    const name = m[1].trim();
+                    if (name === '') {
+                        result.ok = false;
+                        result.error = 'A phrase name between the quotes is missing.';
+                    } else if (joinNext && last !== undefined && last.t === T_PHR) {
+                        last.names.push(name);
+                    } else {
+                        result.tokens.push({t: T_PHR, names: [name]});
+                    }
+                    joinNext = false;
+                } else if (joinNext) {
+                    result.ok = false;
+                    result.error = 'A comma joins two phrases of one operand, e.g. "delivered electricity","lifetime".';
+                } else if (m[2] !== undefined) {
+                    result.tokens.push({t: T_NUM, v: Number(m[2])});
+                } else if (m[3] !== undefined) {
+                    result.tokens.push({t: T_OP, c: m[3]});
+                } else if (m[4] !== undefined) {
+                    result.tokens.push({t: T_BR, c: m[4]});
+                } else if (m[5] !== undefined) {
+                    if (last !== undefined && last.t === T_PHR) {
+                        joinNext = true;
+                    } else {
+                        result.ok = false;
+                        result.error = 'A comma is only allowed between two phrases of one operand.';
+                    }
+                } else {
+                    result.ok = false;
+                    result.error = 'Unexpected character "' + m[6] + '": only phrases in quotes, numbers, + - * / and brackets are allowed.';
+                }
+                if (m[0] === '') {
+                    m = null;
+                } else {
+                    m = re.exec(text);
+                }
+            }
+            if (result.ok && joinNext) {
+                result.ok = false;
+                result.error = 'A phrase is expected after the comma.';
+            }
+            return result;
+        }
+
+        /* the parsed expression: the result phrases left of the = and the calculation right of it */
+        function parseExpression(text) {
+            const result = {ok: true, error: '', left: null, right: []};
+            const pos = String(text).indexOf(CHAR_CALC);
+            if (pos < 0) {
+                result.ok = false;
+                result.error = 'The expression needs a "=": the phrase left of it gets the result.';
+            } else {
+                const left = tokenize(text.slice(0, pos));
+                const right = tokenize(text.slice(pos + 1));
+                if (!left.ok) {
+                    result.ok = false;
+                    result.error = left.error;
+                } else if (left.tokens.length !== 1 || left.tokens[0].t !== T_PHR) {
+                    result.ok = false;
+                    result.error = 'Left of the "=" exactly one phrase (or phrases joined by a comma) is expected.';
+                } else if (!right.ok) {
+                    result.ok = false;
+                    result.error = right.error;
+                } else if (right.tokens.length === 0) {
+                    result.ok = false;
+                    result.error = 'Right of the "=" the calculation is missing.';
+                } else {
+                    result.left = left.tokens[0];
+                    result.right = right.tokens;
+                    const check = evaluate(right.tokens, function () {
+                        return 1;
+                    });
+                    if (check === null) {
+                        result.ok = false;
+                        result.error = 'The arithmetic is not valid: check the operators and the brackets.';
+                    }
+                }
+            }
+            return result;
+        }
+
+        function tokenText(tok) {
+            let result = '';
+            if (tok.t === T_PHR) {
+                result = tok.names.map(function (name) {
+                    return TERM_DELIMITER + name + TERM_DELIMITER;
+                }).join(SEPARATOR);
+            } else if (tok.t === T_NUM) {
+                result = String(tok.v);
+            } else {
+                result = tok.c;
+            }
+            return result;
+        }
+
+        function expressionText(parsed) {
+            const result = tokenText(parsed.left) + ' ' + CHAR_CALC + ' ' + parsed.right.map(tokenText).join(' ');
+            return result;
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the calculation, the same grammar as shared/calc/arithmetic.php      */
+        /* ------------------------------------------------------------------ */
+
+        /**
+         * @param tokens the tokens right of the =
+         * @param numberOf the function that returns the number of a phrase token or null
+         * @returns the number or null if the tokens are no valid calculation, a number is missing or a division is by zero
+         */
+        function evaluate(tokens, numberOf) {
+            let pos = 0;
+            let valid = true;
+
+            function isChar(chars) {
+                let result = false;
+                if (pos < tokens.length) {
+                    const tok = tokens[pos];
+                    if (tok.t === T_OP || tok.t === T_BR) {
+                        result = chars.includes(tok.c);
+                    }
+                }
+                return result;
+            }
+
+            function sum() {
+                let result = product();
+                while (valid && isChar(['+', '-'])) {
+                    const op = tokens[pos].c;
+                    pos = pos + 1;
+                    const right = product();
+                    if (op === '+') {
+                        result = result + right;
+                    } else {
+                        result = result - right;
+                    }
+                }
+                return result;
+            }
+
+            function product() {
+                let result = signed();
+                while (valid && isChar(['*', '/'])) {
+                    const op = tokens[pos].c;
+                    pos = pos + 1;
+                    const right = signed();
+                    if (op === '*') {
+                        result = result * right;
+                    } else if (right === 0) {
+                        valid = false;
+                    } else {
+                        result = result / right;
+                    }
+                }
+                return result;
+            }
+
+            function signed() {
+                let result = 0;
+                if (isChar(['-'])) {
+                    pos = pos + 1;
+                    result = -signed();
+                } else {
+                    if (isChar(['+'])) {
+                        pos = pos + 1;
+                    }
+                    result = atom();
+                }
+                return result;
+            }
+
+            function atom() {
+                let result = 0;
+                if (isChar(['('])) {
+                    pos = pos + 1;
+                    result = sum();
+                    if (isChar([')'])) {
+                        pos = pos + 1;
+                    } else {
+                        valid = false;
+                    }
+                } else if (pos < tokens.length && tokens[pos].t === T_NUM) {
+                    result = tokens[pos].v;
+                    pos = pos + 1;
+                } else if (pos < tokens.length && tokens[pos].t === T_PHR) {
+                    const num = numberOf(tokens[pos]);
+                    pos = pos + 1;
+                    if (num === null) {
+                        valid = false;
+                    } else {
+                        result = num;
+                    }
+                } else {
+                    valid = false;
+                }
+                return result;
+            }
+
+            let result = sum();
+            if (!valid || pos !== tokens.length) {
+                result = null;
+            }
+            return result;
+        }
+
+        /**
+         * the value or result that an operand uses, found like formula_calc::value_of: the first entry
+         * that names all phrases of the operand and only phrases of the context of the result, the
+         * values before the results; if none matches (e.g. after a phrase of the formula is replaced)
+         * the entry that names the operand phrases and shares most phrases with the result
+         */
+        function findEntry(names, res) {
+            let result = null;
+            let i = 0;
+            while (result === null && i < model.entries.length) {
+                const e = model.entries[i];
+                if (e !== res && isSubset(names, e.wset) && isSubset(e.wset, res.ctx)) {
+                    result = {entry: e, strict: true};
+                }
+                i = i + 1;
+            }
+            if (result === null) {
+                const near = new Set(res.ctx);
+                res.wset.forEach(function (name) {
+                    near.add(name);
+                });
+                let best = null;
+                let bestScore = 0;
+                model.entries.forEach(function (e) {
+                    if (e !== res && isSubset(names, e.wset)) {
+                        let score = 0;
+                        e.wset.forEach(function (name) {
+                            if (near.has(name)) {
+                                score = score + 1;
+                            } else {
+                                score = score - 1;
+                            }
+                        });
+                        if (best === null || score > bestScore) {
+                            best = e;
+                            bestScore = score;
+                        }
+                    }
+                });
+                if (best !== null && bestScore > 0) {
+                    result = {entry: best, strict: false};
+                }
+            }
+            return result;
+        }
+
+        /**
+         * calculate every stored result of the page with the given expressions until no number changes
+         *
+         * @param parsedOf the function that returns the parsed expression of a formula name or null
+         * @returns per result index the number (null if it cannot be calculated) and the operands used
+         */
+        function calcAll(parsedOf) {
+            const numbers = model.results.map(function () {
+                return null;
+            });
+            const operands = model.results.map(function () {
+                return [];
+            });
+            let changed = true;
+            let pass = 0;
+            while (changed && pass < MAX_PASSES) {
+                changed = false;
+                pass = pass + 1;
+                model.results.forEach(function (res, i) {
+                    const parsed = parsedOf(res.formula);
+                    const used = [];
+                    let num = null;
+                    if (parsed !== null && parsed.ok) {
+                        num = evaluate(parsed.right, function (tok) {
+                            const hit = findEntry(tok.names, res);
+                            let result = null;
+                            if (hit !== null) {
+                                if (hit.entry.kind === 'value') {
+                                    result = hit.entry.number;
+                                } else {
+                                    result = numbers[hit.entry.ri];
+                                }
+                            }
+                            used.push({names: tok.names, hit: hit, number: result});
+                            return result;
+                        });
+                    }
+                    if (num !== null) {
+                        num = roundTo(num, DECIMALS);
+                    }
+                    operands[i] = used;
+                    if (!sameNumber(num, numbers[i])) {
+                        numbers[i] = num;
+                        changed = true;
+                    }
+                });
+            }
+            const result = {numbers: numbers, operands: operands};
+            return result;
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the state of the editor                                              */
+        /* ------------------------------------------------------------------ */
+
+        let DOC = null;
+        let model = null;
+        const baseParsed = new Map();
+        /* the draft of each changed formula by its key: the parsed expression and the text as typed */
+        let drafts = {};
+        let selectedKey = null;
+        /* the selected token: side 'left' or 'right' and the index, and the name within a phrase token */
+        let selTok = null;
+        let selName = 0;
+        let pickerMode = 'replace';
+        let pickerFilter = '';
+        let formulaFilter = '';
+        let tab = 'compare';
+        const openRows = new Set();
+        let BASE = null;
+        let CUR = null;
+
+        function formulaByKey(key) {
+            const result = model.formulas.find(function (f) {
+                return f.key === key;
+            }) || null;
+            return result;
+        }
+
+        function formulaByName(name) {
+            const result = model.formulas.find(function (f) {
+                return f.name === name;
+            }) || null;
+            return result;
+        }
+
+        function storedParsed(f) {
+            if (!baseParsed.has(f.key)) {
+                baseParsed.set(f.key, parseExpression(f.expression));
+            }
+            const result = baseParsed.get(f.key);
+            return result;
+        }
+
+        /* the parsed expression of the formula with the change of this session */
+        function currentParsed(f) {
+            let result = storedParsed(f);
+            if (drafts[f.key] !== undefined) {
+                result = drafts[f.key].parsed;
+            }
+            return result;
+        }
+
+        function currentText(f) {
+            let result = f.expression;
+            if (drafts[f.key] !== undefined) {
+                result = drafts[f.key].text;
+            }
+            return result;
+        }
+
+        function isChanged(f) {
+            const result = drafts[f.key] !== undefined && drafts[f.key].text !== f.expression;
+            return result;
+        }
+
+        function changedFormulas() {
+            const result = model.formulas.filter(isChanged);
+            return result;
+        }
+
+        function parsedOfName(useDrafts) {
+            const result = function (name) {
+                const f = formulaByName(name);
+                let parsed = null;
+                if (f !== null) {
+                    if (useDrafts) {
+                        parsed = currentParsed(f);
+                    } else {
+                        parsed = storedParsed(f);
+                    }
+                }
+                return parsed;
+            };
+            return result;
+        }
+
+        function recalc() {
+            CUR = calcAll(parsedOfName(true));
+        }
+
+        /* set the draft of a formula from its tokens, which are always valid, and calculate the page again */
+        function setDraftTokens(f, left, right) {
+            const parsed = {ok: true, error: '', left: left, right: right};
+            const text = expressionText(parsed);
+            if (text === f.expression) {
+                delete drafts[f.key];
+            } else {
+                drafts[f.key] = {parsed: parsed, text: text};
+            }
+            recalc();
+            saveDraft();
+        }
+
+        /* set the draft of a formula from the typed text; an invalid text keeps the last valid tokens for the calculation */
+        function setDraftText(f, text) {
+            const parsed = parseExpression(text);
+            let result = parsed;
+            if (text === f.expression) {
+                delete drafts[f.key];
+            } else if (parsed.ok) {
+                drafts[f.key] = {parsed: parsed, text: text};
+            } else {
+                const keep = drafts[f.key] !== undefined ? drafts[f.key].parsed : storedParsed(f);
+                drafts[f.key] = {parsed: keep, text: text, error: parsed.error};
+            }
+            recalc();
+            saveDraft();
+            return result;
+        }
+
+        /* the drafts survive a reload of the page in the browser of the user only */
+        function draftKey() {
+            const result = 'zukunft.formula_editor.' + model.page;
+            return result;
+        }
+
+        function saveDraft() {
+            try {
+                const texts = {};
+                Object.keys(drafts).forEach(function (key) {
+                    texts[key] = drafts[key].text;
+                });
+                localStorage.setItem(draftKey(), JSON.stringify(texts));
+            } catch (e) {
+                /* a browser without storage keeps the drafts for the session only */
+            }
+        }
+
+        function loadDraft() {
+            try {
+                const raw = localStorage.getItem(draftKey());
+                if (raw !== null) {
+                    const texts = JSON.parse(raw);
+                    Object.keys(texts).forEach(function (key) {
+                        const f = formulaByKey(key);
+                        if (f !== null) {
+                            setDraftText(f, texts[key]);
+                        }
+                    });
+                }
+            } catch (e) {
+                drafts = {};
+            }
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the formula list                                                     */
+        /* ------------------------------------------------------------------ */
+
+        function renderFormulaList() {
+            const host = document.getElementById('formulaList');
+            const needle = formulaFilter.trim().toLowerCase();
+            const shown = model.formulas.filter(function (f) {
+                const hay = (f.name + ' ' + currentText(f)).toLowerCase();
+                const result = needle === '' || hay.includes(needle);
+                return result;
+            });
+            document.getElementById('formulaCount').textContent = shown.length + ' of ' + model.formulas.length;
+            host.innerHTML = shown.map(function (f) {
+                const sel = f.key === selectedKey ? ' sel' : '';
+                const n = model.results.filter(function (r) {
+                    return r.formula === f.name;
+                }).length;
+                let chip = '<span class="note">' + n + (n === 1 ? ' result' : ' results') + '</span>';
+                if (isChanged(f)) {
+                    chip = '<span class="chip changed">changed</span>';
+                }
+                const result = '<li class="' + sel.trim() + '" data-key="' + esc(f.key) + '" tabindex="0" role="option" aria-selected="' + (sel ? 'true' : 'false') + '">' +
+                    '<div class="fname"><span>' + esc(f.name) + '</span>' + chip + '</div>' +
+                    '<div class="fexp" title="' + esc(currentText(f)) + '">' + esc(currentText(f)) + '</div></li>';
+                return result;
+            }).join('');
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the editor of the selected formula                                   */
+        /* ------------------------------------------------------------------ */
+
+        function tokenHtml(tok, side, i) {
+            let result = '';
+            const sel = selTok !== null && selTok.side === side && selTok.i === i ? ' sel' : '';
+            const attrs = ' data-side="' + side + '" data-i="' + i + '"';
+            if (tok.t === T_PHR) {
+                const known = tok.names.every(function (name) {
+                    return model.phrases.has(name);
+                });
+                const inner = tok.names.map(esc).join('<span class="sep">,</span>');
+                result = '<button type="button" class="tok phr' + sel + (known ? '' : ' unknown') + '"' + attrs + ' title="' + esc(tokenText(tok)) + '">' + inner + '</button>';
+            } else if (tok.t === T_NUM) {
+                result = '<button type="button" class="tok num' + sel + '"' + attrs + '>' + esc(tok.v) + '</button>';
+            } else {
+                result = '<button type="button" class="tok ' + tok.t + sel + '"' + attrs + '>' + esc(tok.c) + '</button>';
+            }
+            return result;
+        }
+
+        function selectedToken(parsed) {
+            let result = null;
+            if (selTok !== null) {
+                if (selTok.side === 'left') {
+                    result = parsed.left;
+                } else if (selTok.i >= 0 && selTok.i < parsed.right.length) {
+                    result = parsed.right[selTok.i];
+                }
+            }
+            return result;
+        }
+
+        /* the phrases of the picker: the phrases of the contexts of the results of the formula first,
+           then the phrases with values or results, each with the number of values that name it */
+        function pickerPhrases(f) {
+            const inCtx = new Set();
+            model.results.forEach(function (r) {
+                if (r.formula === f.name) {
+                    r.ctx.forEach(function (name) {
+                        inCtx.add(name);
+                    });
+                    r.words.forEach(function (name) {
+                        inCtx.add(name);
+                    });
+                }
+            });
+            const needle = pickerFilter.trim().toLowerCase();
+            const list = [];
+            model.phrases.forEach(function (p) {
+                if (needle === '' || p.name.toLowerCase().includes(needle) || p.description.toLowerCase().includes(needle)) {
+                    list.push({p: p, ctx: inCtx.has(p.name)});
+                }
+            });
+            list.sort(function (a, b) {
+                let result = Number(b.ctx) - Number(a.ctx);
+                if (result === 0) {
+                    result = (b.p.values + b.p.results) - (a.p.values + a.p.results);
+                }
+                if (result === 0) {
+                    result = a.p.name.localeCompare(b.p.name);
+                }
+                return result;
+            });
+            const result = list;
+            return result;
+        }
+
+        function pickerHtml(f, tok) {
+            const names = tok.names.map(function (name, i) {
+                const sel = pickerMode === 'replace' && i === selName ? ' sel' : '';
+                const x = tok.names.length > 1 ? '<button type="button" class="x" data-act="dropName" data-i="' + i + '" title="remove this phrase from the operand">×</button>' : '';
+                const result = '<span class="name' + sel + '" data-act="pickName" data-i="' + i + '">' + esc(name) + x + '</span>';
+                return result;
+            }).join('');
+            const addSel = pickerMode === 'add' ? ' primary' : '';
+            let title = 'Replace "' + esc(tok.names[selName] || tok.names[0]) + '" by';
+            if (pickerMode === 'add') {
+                title = 'Add a phrase to the operand';
+            }
+            const list = pickerPhrases(f);
+            const shown = list.slice(0, pickerFilter.trim() === '' ? 80 : 200);
+            const items = shown.map(function (x) {
+                const cur = tok.names.includes(x.p.name) ? ' cur' : '';
+                let count = '';
+                if (x.p.values > 0 || x.p.results > 0) {
+                    count = '<span class="note n">' + x.p.values + ' val · ' + x.p.results + ' res</span>';
+                }
+                let ctx = '';
+                if (x.ctx) {
+                    ctx = ' <span class="chip ok">in context</span>';
+                }
+                const result = '<li data-act="pick" data-name="' + esc(x.p.name) + '" title="' + esc(x.p.description) + '">' +
+                    '<span>' + esc(x.p.name) + ctx + '</span>' +
+                    '<span class="pdesc">' + esc(x.p.description) + '</span>' + count + '</li>';
+                return result;
+            }).join('');
+            let more = '';
+            if (list.length > shown.length) {
+                more = '<div class="note">' + (list.length - shown.length) + ' more phrases: narrow the filter.</div>';
+            }
+            const result = '<div class="box"><div class="box-head"><h4>Phrases of the operand</h4>' +
+                '<button type="button" class="btn small' + addSel + '" data-act="addMode">+ phrase</button></div>' +
+                '<div class="names">' + names + '</div>' +
+                '<div class="note">' + title + ' (the result is calculated for every value that names all phrases of the operand):</div>' +
+                '<input class="inp" id="pickerIn" type="search" placeholder="search phrase" value="' + esc(pickerFilter) + '" autocomplete="off">' +
+                '<ul class="plist" id="pickerList">' + items + '</ul>' + more + '</div>';
+            return result;
+        }
+
+        function toolsHtml(parsed, tok) {
+            let specific = '';
+            if (tok !== null && tok.t === T_NUM) {
+                specific = '<label class="row">Number <input class="inp" id="numIn" type="number" step="any" value="' + esc(tok.v) + '" style="width: 140px;"></label>';
+            } else if (tok !== null && tok.t === T_OP) {
+                specific = '<div class="row"><span class="note">Operator</span>' + ['+', '-', '*', '/'].map(function (c) {
+                    const on = tok.c === c ? ' primary' : '';
+                    const result = '<button type="button" class="btn small' + on + '" data-act="setOp" data-c="' + c + '">' + c + '</button>';
+                    return result;
+                }).join('') + '</div>';
+            }
+            const onRight = selTok !== null && selTok.side === 'right';
+            const dis = onRight ? '' : ' disabled';
+            const result = '<div class="box"><div class="box-head"><h4>Edit the expression</h4><span class="note">click a token to select it</span></div>' +
+                specific +
+                '<div class="row"><span class="note">Insert after the selection</span>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="phr">phrase</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="num">number</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="+">+</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="-">−</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="*">×</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="/">÷</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="br" data-c="(">(</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="br" data-c=")">)</button></div>' +
+                '<div class="row"><span class="note">Selection</span>' +
+                '<button type="button" class="btn small" data-act="move" data-d="-1"' + dis + '>◀ move</button>' +
+                '<button type="button" class="btn small" data-act="move" data-d="1"' + dis + '>move ▶</button>' +
+                '<button type="button" class="btn small danger" data-act="del"' + dis + '>remove</button></div></div>';
+            return result;
+        }
+
+        function renderEditor() {
+            const host = document.getElementById('editor');
+            const f = formulaByKey(selectedKey);
+            if (f === null) {
+                host.innerHTML = '<h2>Formula</h2><div class="note">Select a formula on the left.</div>';
+            } else {
+                const parsed = currentParsed(f);
+                const draft = drafts[f.key];
+                const text = currentText(f);
+                let chip = '';
+                if (isChanged(f)) {
+                    chip = '<span class="chip changed">changed</span> <button type="button" class="btn small" data-act="resetOne">discard</button>';
+                }
+                let err = '';
+                if (draft !== undefined && draft.error) {
+                    err = '<div class="err">' + esc(draft.error) + ' The compare list shows the last valid expression.</div>';
+                }
+                const tokens = [tokenHtml(parsed.left, 'left', 0), '<span class="tok eq">=</span>']
+                    .concat(parsed.right.map(function (tok, i) {
+                        return tokenHtml(tok, 'right', i);
+                    }));
+                tokens.push('<button type="button" class="tok add" data-act="ins" data-kind="phr" data-end="1" title="add an operand at the end">+ phrase</button>');
+                const tok = selectedToken(parsed);
+                let picker = '';
+                if (tok !== null && tok.t === T_PHR) {
+                    picker = pickerHtml(f, tok);
+                }
+                host.innerHTML = '<div class="col-head"><h2>Formula</h2><span>' + chip + '</span></div>' +
+                    '<h3>' + esc(f.name) + '</h3>' +
+                    (f.description ? '<div class="note">' + esc(f.description) + '</div>' : '') +
+                    '<div class="expr" id="exprRow" role="listbox" aria-label="expression">' + tokens.join('') + '</div>' +
+                    toolsHtml(parsed, tok) +
+                    picker +
+                    '<div class="box"><div class="box-head"><h4>Expression as text</h4><span class="note">the phrase left of the = gets the result; each operand is a phrase in quotes</span></div>' +
+                    '<textarea class="inp" id="expText" rows="2" spellcheck="false">' + esc(text) + '</textarea>' + err + '</div>';
+            }
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the compare list                                                     */
+        /* ------------------------------------------------------------------ */
+
+        /* the status of a result: compared with the number calculated with the stored expressions,
+           so that a rounding difference between the pod and the browser is no change */
+        function statusOf(i) {
+            const before = BASE.numbers[i];
+            const after = CUR.numbers[i];
+            let result = 'same';
+            if (after === null && before !== null) {
+                result = 'missing';
+            } else if (!sameNumber(before, after)) {
+                result = 'changed';
+            }
+            return result;
+        }
+
+        /* true if a changed formula has a text that cannot be parsed */
+        function hasErrors() {
+            const result = Object.keys(drafts).some(function (key) {
+                return Boolean(drafts[key].error);
+            });
+            return result;
+        }
+
+        function wordsHtml(res, f) {
+            const resultNames = f !== null ? currentParsed(f).left.names : [];
+            const result = '<span class="wds">' + res.words.map(function (name) {
+                let cls = 'wd';
+                if (name === model.page) {
+                    cls = 'wd page';
+                } else if (resultNames.includes(name)) {
+                    cls = 'wd res';
+                }
+                const html = '<span class="' + cls + '">' + esc(name) + '</span>';
+                return html;
+            }).join('') + '</span>';
+            return result;
+        }
+
+        function operandsHtml(i) {
+            const used = CUR.operands[i];
+            const base = BASE.operands[i];
+            const rows = used.map(function (u, k) {
+                const before = base[k] !== undefined && base[k].hit !== null && base[k].names.join(',') === u.names.join(',') ? base[k].number : null;
+                let entry = '<span class="chip missing">no value names ' + esc(u.names.join(', ')) + ' in the context</span>';
+                if (u.hit !== null) {
+                    const e = u.hit.entry;
+                    let kind = e.kind === 'value' ? 'value' : 'result of ' + esc(e.formula);
+                    if (!u.hit.strict) {
+                        kind = kind + ' <span class="chip changed" title="no value names the phrases within the context of the result; the nearest value of the page is used">outside the context</span>';
+                    }
+                    entry = wordsHtml(e, null) + ' <span class="note">' + kind + '</span>';
+                }
+                let num = fmt(u.number);
+                if (before !== null && !sameNumber(before, u.number)) {
+                    num = '<span class="old">' + fmt(before) + '</span> → ' + fmt(u.number);
+                }
+                const result = '<tr><td class="mono">' + esc(u.names.map(function (n) {
+                    return '"' + n + '"';
+                }).join(',')) + '</td><td>' + entry + '</td><td class="n">' + num + '</td></tr>';
+                return result;
+            }).join('');
+            let result = '<div class="note">The expression could not be calculated.</div>';
+            if (rows !== '') {
+                result = '<table class="ops"><tbody>' + rows + '</tbody></table>';
+            }
+            return result;
+        }
+
+        function rowHtml(i, f) {
+            const res = model.results[i];
+            const status = statusOf(i);
+            const after = CUR.numbers[i];
+            const open = openRows.has(i);
+            let delta = '';
+            if (status === 'changed' && res.stored !== null && res.stored !== 0) {
+                const pct = (after - res.stored) / Math.abs(res.stored) * 100;
+                delta = '<div class="delta">' + (after - res.stored > 0 ? '+' : '') + fmt(after - res.stored) + ' (' + (pct > 0 ? '+' : '') + fmt(pct) + ' %)</div>';
+            }
+            let chip = '<span class="chip same">same</span>';
+            if (status === 'changed') {
+                chip = '<span class="chip changed">changes</span>';
+            } else if (status === 'missing') {
+                chip = '<span class="chip missing">cannot be calculated</span>';
+            }
+            let result = '<tr class="res' + (open ? ' open' : '') + '" data-i="' + i + '" tabindex="0" aria-expanded="' + (open ? 'true' : 'false') + '">' +
+                '<td>' + wordsHtml(res, f) + '</td>' +
+                '<td class="n">' + fmt(res.stored) + '</td>' +
+                '<td class="n new ' + status + '">' + fmt(after) + delta + '</td>' +
+                '<td>' + chip + '</td></tr>';
+            if (open) {
+                result = result + '<tr class="det"><td colspan="4">' + operandsHtml(i) + '</td></tr>';
+            }
+            return result;
+        }
+
+        function renderCompare() {
+            const host = document.getElementById('compare');
+            const f = formulaByKey(selectedKey);
+            if (f === null) {
+                host.innerHTML = '<div class="note">Select a formula to compare its results.</div>';
+            } else {
+                const own = [];
+                const others = new Map();
+                model.results.forEach(function (res, i) {
+                    if (res.formula === f.name) {
+                        own.push(i);
+                    } else if (statusOf(i) !== 'same') {
+                        if (!others.has(res.formula)) {
+                            others.set(res.formula, []);
+                        }
+                        others.get(res.formula).push(i);
+                    }
+                });
+                const ownChanged = own.filter(function (i) {
+                    return statusOf(i) === 'changed';
+                }).length;
+                const ownMissing = own.filter(function (i) {
+                    return statusOf(i) === 'missing';
+                }).length;
+                let otherCount = 0;
+                others.forEach(function (list) {
+                    otherCount = otherCount + list.length;
+                });
+                let summary = '<span class="chip">' + own.length + ' ' + (own.length === 1 ? 'result' : 'results') + ' of this formula</span>';
+                if (ownChanged > 0) {
+                    summary = summary + '<span class="chip changed">' + ownChanged + ' change' + (ownChanged === 1 ? 's' : '') + '</span>';
+                }
+                if (ownMissing > 0) {
+                    summary = summary + '<span class="chip missing">' + ownMissing + ' cannot be calculated</span>';
+                }
+                if (otherCount > 0) {
+                    summary = summary + '<span class="chip changed">' + otherCount + ' result' + (otherCount === 1 ? '' : 's') + ' of ' + others.size + ' other formula' + (others.size === 1 ? '' : 's') + ' change' + (otherCount === 1 ? 's' : '') + ' too</span>';
+                }
+                if (ownChanged === 0 && ownMissing === 0 && otherCount === 0) {
+                    summary = summary + '<span class="chip ok">no result changes</span>';
+                }
+                let rows = '<tr class="grp"><td colspan="4">' + esc(f.name) + ' <span class="note mono">' + esc(currentText(f)) + '</span></td></tr>';
+                if (own.length === 0) {
+                    rows = rows + '<tr><td colspan="4" class="note">The page has no stored result of this formula.</td></tr>';
+                }
+                rows = rows + own.map(function (i) {
+                    return rowHtml(i, f);
+                }).join('');
+                others.forEach(function (list, name) {
+                    const of = formulaByName(name);
+                    rows = rows + '<tr class="grp"><td colspan="4">' + esc(name) + ' <span class="note">changes because it uses a changed result</span> <span class="note mono">' + esc(of !== null ? currentText(of) : '') + '</span></td></tr>';
+                    rows = rows + list.map(function (i) {
+                        return rowHtml(i, of);
+                    }).join('');
+                });
+                host.innerHTML = '<div class="summary">' + summary + '</div>' +
+                    '<div class="note">Until now: the number stored by the pod. After save: the number calculated with the changed expression, using the same values; click a row to see the values used.</div>' +
+                    '<div class="twrap"><table class="cmp"><thead><tr><th>result</th><th class="n">until now</th><th class="n">after save</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+            }
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the changes and the save                                             */
+        /* ------------------------------------------------------------------ */
+
+        /* the message for the updatePut api: each changed formula by its id with the expression in the user format */
+        function putMessage() {
+            const formulas = changedFormulas().map(function (f) {
+                const result = {id: f.id, user_text: currentText(f)};
+                if (f.id === null) {
+                    delete result.id;
+                    result.name = f.name;
+                }
+                return result;
+            });
+            const result = {
+                pod: DOC.pod || 'zukunft.com',
+                type: 'updatePut',
+                version: DOC.version || '0.0.3',
+                timestamp: new Date().toISOString(),
+                body: {formulas: formulas}
+            };
+            return result;
+        }
+
+        function renderChanges() {
+            const host = document.getElementById('changes');
+            const list = changedFormulas();
+            let changedResults = 0;
+            model.results.forEach(function (res, i) {
+                if (statusOf(i) !== 'same') {
+                    changedResults = changedResults + 1;
+                }
+            });
+            if (list.length === 0) {
+                host.innerHTML = '<div class="note">No formula is changed.</div>';
+            } else {
+                const diffs = list.map(function (f) {
+                    const result = '<div class="box"><div class="box-head"><h4>' + esc(f.name) + '</h4><button type="button" class="btn small" data-act="resetKey" data-key="' + esc(f.key) + '">discard</button></div>' +
+                        '<div class="diff"><span class="k">until now</span><span class="mono old">' + esc(f.expression) + '</span>' +
+                        '<span class="k">after save</span><span class="mono">' + esc(currentText(f)) + '</span></div></div>';
+                    return result;
+                }).join('');
+                let errNote = '';
+                if (hasErrors()) {
+                    errNote = '<div class="err">A changed expression is not valid; fix it before the save.</div>';
+                }
+                host.innerHTML = '<div class="summary"><span class="chip changed">' + list.length + ' formula' + (list.length === 1 ? '' : 's') + '</span>' +
+                    '<span class="chip">' + changedResults + ' result' + (changedResults === 1 ? '' : 's') + ' of the page change</span></div>' + errNote +
+                    diffs +
+                    '<div class="box"><div class="box-head"><h4>Update put message</h4><div class="row">' +
+                    '<button type="button" class="btn small" data-act="copyJson">copy</button>' +
+                    '<button type="button" class="btn small" data-act="applyLocal" title="take the changed expressions as the stored ones without a pod, e.g. to try the editor">apply without pod</button></div></div>' +
+                    '<div class="note">Save posts this message to ' + esc(API_UPDATE_PUT) + '; the pod stores the expression as your own version of the formula and calculates the results again.</div>' +
+                    '<pre class="json" id="jsonOut">' + esc(JSON.stringify(putMessage(), null, 2)) + '</pre></div>';
+            }
+        }
+
+        /* after a save the changed expressions are the stored ones and the calculated numbers the stored numbers */
+        function applySaved() {
+            changedFormulas().forEach(function (f) {
+                f.expression = currentText(f);
+                baseParsed.delete(f.key);
+            });
+            model.results.forEach(function (res, i) {
+                if (CUR.numbers[i] !== null) {
+                    res.stored = CUR.numbers[i];
+                }
+            });
+            drafts = {};
+            saveDraft();
+            BASE = calcAll(parsedOfName(false));
+            recalc();
+            renderAll();
+        }
+
+        function csrfToken() {
+            let result = '';
+            const meta = document.querySelector('meta[name="csrf-token"]');
+            const input = document.querySelector('input[name="token"]');
+            if (meta !== null) {
+                result = meta.getAttribute('content') || '';
+            } else if (input !== null) {
+                result = input.value;
+            }
+            return result;
+        }
+
+        function save() {
+            const btn = document.getElementById('btnSave');
+            const message = putMessage();
+            btn.disabled = true;
+            btn.textContent = 'Saving…';
+            fetch(API_UPDATE_PUT, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken()},
+                body: JSON.stringify(message)
+            }).then(function (response) {
+                let result = null;
+                if (response.ok) {
+                    result = response.json();
+                } else {
+                    throw new Error('the pod answered ' + response.status);
+                }
+                return result;
+            }).then(function () {
+                applySaved();
+                toast('Saved: the changed formulas are stored as your version.');
+            }).catch(function (e) {
+                tab = 'changes';
+                renderAll();
+                toast('Not saved: ' + e.message + '. The message is shown in the Changes tab.');
+            });
+        }
+
+        function updateToolbar() {
+            const n = changedFormulas().length;
+            const chip = document.getElementById('changeCount');
+            chip.textContent = n === 0 ? 'no changes' : n + ' formula' + (n === 1 ? '' : 's') + ' changed';
+            chip.className = n === 0 ? 'chip' : 'chip changed';
+            document.getElementById('btnResetAll').disabled = n === 0;
+            const btn = document.getElementById('btnSave');
+            btn.disabled = n === 0 || hasErrors();
+            btn.textContent = n === 0 ? 'Save' : 'Save (' + n + ')';
+            btn.title = hasErrors() ? 'a changed expression is not valid' : '';
+            document.getElementById('pageName').textContent = model.page || 'page';
+        }
+
+        function renderAll() {
+            renderFormulaList();
+            renderEditor();
+            renderCompare();
+            renderChanges();
+            updateToolbar();
+            document.querySelectorAll('.tab').forEach(function (b) {
+                b.classList.toggle('on', b.dataset.tab === tab);
+            });
+            document.getElementById('compare').hidden = tab !== 'compare';
+            document.getElementById('changes').hidden = tab !== 'changes';
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the actions of the editor                                            */
+        /* ------------------------------------------------------------------ */
+
+        function selectFormula(key) {
+            selectedKey = key;
+            selTok = null;
+            selName = 0;
+            pickerMode = 'replace';
+            pickerFilter = '';
+            openRows.clear();
+            renderAll();
+        }
+
+        function selectToken(side, i) {
+            selTok = {side: side, i: i};
+            selName = 0;
+            pickerMode = 'replace';
+            pickerFilter = '';
+            renderEditor();
+        }
+
+        /* change the tokens of the selected formula with a function and show the new expression and results */
+        function editTokens(change) {
+            const f = formulaByKey(selectedKey);
+            if (f !== null) {
+                const parsed = clone(currentParsed(f));
+                change(parsed);
+                setDraftTokens(f, parsed.left, parsed.right);
+                renderAll();
+            }
+        }
+
+        function insertToken(kind, c, atEnd) {
+            editTokens(function (parsed) {
+                let tok = {t: T_PHR, names: ['phrase']};
+                if (kind === T_NUM) {
+                    tok = {t: T_NUM, v: 1};
+                } else if (kind === T_OP) {
+                    tok = {t: T_OP, c: c};
+                } else if (kind === T_BR) {
+                    tok = {t: T_BR, c: c};
+                }
+                let pos = parsed.right.length;
+                if (!atEnd && selTok !== null && selTok.side === 'right') {
+                    pos = selTok.i + 1;
+                }
+                parsed.right.splice(pos, 0, tok);
+                selTok = {side: 'right', i: pos};
+                selName = 0;
+                pickerMode = 'replace';
+            });
+        }
+
+        function removeToken() {
+            editTokens(function (parsed) {
+                if (selTok !== null && selTok.side === 'right') {
+                    parsed.right.splice(selTok.i, 1);
+                    selTok = null;
+                }
+            });
+        }
+
+        function moveToken(d) {
+            editTokens(function (parsed) {
+                if (selTok !== null && selTok.side === 'right') {
+                    const to = selTok.i + d;
+                    if (to >= 0 && to < parsed.right.length) {
+                        const tok = parsed.right.splice(selTok.i, 1)[0];
+                        parsed.right.splice(to, 0, tok);
+                        selTok = {side: 'right', i: to};
+                    }
+                }
+            });
+        }
+
+        function pickPhrase(name) {
+            editTokens(function (parsed) {
+                const tok = selectedToken(parsed);
+                if (tok !== null && tok.t === T_PHR) {
+                    if (pickerMode === 'add') {
+                        if (!tok.names.includes(name)) {
+                            tok.names.push(name);
+                        }
+                        selName = tok.names.length - 1;
+                        pickerMode = 'replace';
+                    } else {
+                        if (selName >= tok.names.length) {
+                            selName = tok.names.length - 1;
+                        }
+                        tok.names[selName] = name;
+                    }
+                }
+            });
+        }
+
+        function dropName(i) {
+            editTokens(function (parsed) {
+                const tok = selectedToken(parsed);
+                if (tok !== null && tok.t === T_PHR && tok.names.length > 1) {
+                    tok.names.splice(i, 1);
+                    selName = 0;
+                }
+            });
+        }
+
+        function discard(f) {
+            delete drafts[f.key];
+            recalc();
+            saveDraft();
+            renderAll();
+        }
+
+        function discardAll() {
+            drafts = {};
+            recalc();
+            saveDraft();
+            renderAll();
+        }
+
+        function copyJson() {
+            const text = document.getElementById('jsonOut').textContent;
+            navigator.clipboard.writeText(text).then(function () {
+                toast('Message copied.');
+            }).catch(function () {
+                const range = document.createRange();
+                range.selectNodeContents(document.getElementById('jsonOut'));
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                toast('Copy is blocked here: the message is selected, copy it with the keyboard.');
+            });
+        }
+
+        /* read another page phrase from the pod with one phraseData call */
+        function loadPhrase(name) {
+            const url = API_PHRASE_DATA + '?name=' + encodeURIComponent(name) + '&pw=pwf&is=1';
+            fetch(url).then(function (response) {
+                let result = null;
+                if (response.ok) {
+                    result = response.json();
+                } else {
+                    throw new Error('the pod answered ' + response.status);
+                }
+                return result;
+            }).then(function (doc) {
+                boot(doc);
+                toast('Loaded ' + (model.page || name) + '.');
+            }).catch(function (e) {
+                toast('Cannot load "' + name + '": ' + e.message + '.');
+            });
+        }
+
+        /* ------------------------------------------------------------------ */
+        /* the events                                                           */
+        /* ------------------------------------------------------------------ */
+
+        function onClick(e) {
+            const t = e.target.closest('[data-act], .tok, .flist li, tr.res, .tab');
+            if (t !== null) {
+                const act = t.dataset.act || '';
+                const f = formulaByKey(selectedKey);
+                if (t.classList.contains('tab')) {
+                    tab = t.dataset.tab;
+                    renderAll();
+                } else if (t.matches('.flist li')) {
+                    selectFormula(t.dataset.key);
+                } else if (t.matches('tr.res')) {
+                    const i = Number(t.dataset.i);
+                    if (openRows.has(i)) {
+                        openRows.delete(i);
+                    } else {
+                        openRows.add(i);
+                    }
+                    renderCompare();
+                } else if (act === 'ins') {
+                    insertToken(t.dataset.kind, t.dataset.c || '', t.dataset.end === '1');
+                } else if (t.classList.contains('tok') && t.dataset.side !== undefined) {
+                    selectToken(t.dataset.side, Number(t.dataset.i));
+                } else if (act === 'del') {
+                    removeToken();
+                } else if (act === 'move') {
+                    moveToken(Number(t.dataset.d));
+                } else if (act === 'setOp') {
+                    editTokens(function (parsed) {
+                        const tok = selectedToken(parsed);
+                        if (tok !== null && tok.t === T_OP) {
+                            tok.c = t.dataset.c;
+                        }
+                    });
+                } else if (act === 'pick') {
+                    pickPhrase(t.dataset.name);
+                } else if (act === 'pickName') {
+                    selName = Number(t.dataset.i);
+                    pickerMode = 'replace';
+                    renderEditor();
+                } else if (act === 'dropName') {
+                    e.stopPropagation();
+                    dropName(Number(t.dataset.i));
+                } else if (act === 'addMode') {
+                    pickerMode = pickerMode === 'add' ? 'replace' : 'add';
+                    renderEditor();
+                } else if (act === 'resetOne' && f !== null) {
+                    discard(f);
+                } else if (act === 'resetKey') {
+                    const g = formulaByKey(t.dataset.key);
+                    if (g !== null) {
+                        discard(g);
+                    }
+                } else if (act === 'copyJson') {
+                    copyJson();
+                } else if (act === 'applyLocal' && !hasErrors()) {
+                    applySaved();
+                    toast('Applied without a pod: the changed expressions are now the stored ones.');
+                }
+            }
+        }
+
+        function onInput(e) {
+            const f = formulaByKey(selectedKey);
+            if (e.target.id === 'expText' && f !== null) {
+                const parsed = setDraftText(f, e.target.value);
+                if (parsed.ok) {
+                    selTok = null;
+                }
+                /* keep the text area while typing: refresh everything but the text itself */
+                const pos = e.target.selectionStart;
+                renderAll();
+                const area = document.getElementById('expText');
+                area.focus();
+                area.setSelectionRange(pos, pos);
+            } else if (e.target.id === 'pickerIn') {
+                pickerFilter = e.target.value;
+                const list = document.getElementById('pickerList');
+                const tok = selectedToken(currentParsed(f));
+                if (tok !== null) {
+                    const html = pickerHtml(f, tok);
+                    const tmp = document.createElement('div');
+                    tmp.innerHTML = html;
+                    list.innerHTML = tmp.querySelector('#pickerList').innerHTML;
+                }
+            } else if (e.target.id === 'numIn') {
+                const num = Number(e.target.value);
+                if (!Number.isNaN(num) && e.target.value.trim() !== '') {
+                    editTokens(function (parsed) {
+                        const tok = selectedToken(parsed);
+                        if (tok !== null && tok.t === T_NUM) {
+                            tok.v = num;
+                        }
+                    });
+                    const inp = document.getElementById('numIn');
+                    if (inp !== null) {
+                        inp.focus();
+                    }
+                }
+            } else if (e.target.id === 'formulaFilter') {
+                formulaFilter = e.target.value;
+                renderFormulaList();
+            }
+        }
+
+        function onKey(e) {
+            const inRow = e.target.closest('#exprRow') !== null;
+            if (inRow && selTok !== null && selTok.side === 'right') {
+                if (e.key === 'ArrowLeft' && selTok.i > 0) {
+                    selectToken('right', selTok.i - 1);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight' && selTok.i + 1 < currentParsed(formulaByKey(selectedKey)).right.length) {
+                    selectToken('right', selTok.i + 1);
+                    e.preventDefault();
+                } else if (e.key === 'Delete' || e.key === 'Backspace') {
+                    removeToken();
+                    e.preventDefault();
+                }
+            } else if (e.key === 'Enter' && e.target.matches('.flist li')) {
+                selectFormula(e.target.dataset.key);
+            } else if (e.key === 'Enter' && e.target.matches('tr.res')) {
+                e.target.click();
+            }
+        }
+
+        function boot(doc) {
+            DOC = doc;
+            model = buildModel(doc);
+            baseParsed.clear();
+            drafts = {};
+            selectedKey = null;
+            selTok = null;
+            openRows.clear();
+            BASE = calcAll(parsedOfName(false));
+            CUR = BASE;
+            loadDraft();
+            recalc();
+            if (model.formulas.length > 0) {
+                selectedKey = model.formulas[0].key;
+            }
+            renderAll();
+        }
+
+        document.addEventListener('click', onClick);
+        document.addEventListener('input', onInput);
+        document.addEventListener('keydown', onKey);
+        document.getElementById('btnSave').addEventListener('click', save);
+        document.getElementById('btnResetAll').addEventListener('click', discardAll);
+        document.getElementById('pageForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('pageIn').value.trim();
+            if (name !== '') {
+                loadPhrase(name);
+            }
+        });
+
+        const seedElement = document.getElementById(SEED_ID);
+        if (seedElement !== null) {
+            boot(JSON.parse(seedElement.textContent));
+        }
+
+    })();
+</script>
+</main>
+<!--usr_msg-->
+<footer class="site-footer">
+    <p>
+        <a href="http://localhost/http/about.php">
+            About
+        </a>
+        &middot;
+        <a href="http://localhost/http/privacy_policy.html">
+            Privacy Policy
+        </a>
+        &middot;
+All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+            Creative Commons CC0
+        </a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com">
+            program code
+        </a>
+        of this version 0.0.3
+under the
+        <a href="https://www.gnu.org/licenses/agpl.html">
+            AGPL3
+        </a>
+        Licence.
+    </p>
+</footer>
+</body>
+</html>
