@@ -647,9 +647,15 @@ class component_types
     // (docs/llm/new_view_sample_pv_balance.md section 6)
     const string CALCULATOR_EDITOR = "calculator_editor";
     const int CALCULATOR_EDITOR_ID = 290;
-    // the formula editor of the formulas of the page phrase: the script builds the editor from the phrase data
+    // the formula editor of the formulas of the page phrase: the script builds the expression of the
+    // selected formula from the phrase data; the selector and the result compare are own components,
+    // so that the calculator editor can show the editor and the compare without the selector
     const string FORMULA_EDITOR = "formula_editor";
     const int FORMULA_EDITOR_ID = 291;
+    const string FORMULA_SELECTOR = "formula_selector";
+    const int FORMULA_SELECTOR_ID = 292;
+    const string FORMULA_RESULT_COMPARE = "formula_result_compare";
+    const int FORMULA_RESULT_COMPARE_ID = 293;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -1258,6 +1264,8 @@ class component_types
         [self::CALCULATION_RESULT, self::CALCULATION_RESULT_ID],
         [self::CALCULATOR_EDITOR, self::CALCULATOR_EDITOR_ID],
         [self::FORMULA_EDITOR, self::FORMULA_EDITOR_ID],
+        [self::FORMULA_SELECTOR, self::FORMULA_SELECTOR_ID],
+        [self::FORMULA_RESULT_COMPARE, self::FORMULA_RESULT_COMPARE_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

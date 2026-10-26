@@ -387,6 +387,22 @@ class test_components extends test_objects
     }
 
     /**
+     * @return component the formula selector, which the script of the formula editor fills
+     */
+    function component_formula_selector(): component
+    {
+        return $this->component_use_case(components::TEST_FORMULA_SELECTOR_NAME, component_types::FORMULA_SELECTOR);
+    }
+
+    /**
+     * @return component the result compare, which the script of the formula editor fills
+     */
+    function component_formula_result_compare(): component
+    {
+        return $this->component_use_case(components::TEST_FORMULA_RESULT_COMPARE_NAME, component_types::FORMULA_RESULT_COMPARE);
+    }
+
+    /**
      * @param string $name the name of the component, which some use case types show
      * @param string $type the code id of the component type
      * @return component a component of a use case page with the name and the type set

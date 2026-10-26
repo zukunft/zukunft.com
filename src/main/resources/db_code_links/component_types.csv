@@ -289,4 +289,6 @@ component_type_id, type_name, description, code_id
 288, 'calculator input', 'the input fields of the calculator input items of the page phrase, the refresh button and the assumptions in a collapsed block', 'calculator_input'
 289, 'calculation result', 'the main result table by the calculator column and row group items of the page phrase, then the detail tables, the formula notes and the sources in a collapsed block', 'calculation_result'
 290, 'calculator editor', 'the editor of the calculator page of the phrase, built by a script from the phrase data of the phrase', 'calculator_editor'
-291, 'formula editor', 'the editor of the formulas of the page of the phrase, built by a script from the phrase data of the phrase with its results', 'formula_editor'
+291, 'formula editor', 'the expression of the selected formula of the page of the phrase with the save, built by a script from the phrase data of the phrase with its results', 'formula_editor'
+292, 'formula selector', 'the formulas of the page of the phrase to select the formula that the formula editor shows, filled by the script of the formula editor', 'formula_selector'
+293, 'formula result compare', 'the results of the page of the phrase until now against the results after the save of the formula editor and its changes, filled by the script of the formula editor', 'formula_result_compare'

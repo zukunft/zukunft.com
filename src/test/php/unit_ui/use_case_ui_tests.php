@@ -502,6 +502,19 @@ class use_case_ui_tests
         // negative: a component without a page phrase e.g. in a preview has no editor to show
         $test_name = '... but nothing for a component without a phrase';
         $t->assert($test_name, $this->render($t_cmp->component_formula_editor(), new word_ui(), $msk, $dto, $msg), '');
+        // the formula selector and the result compare are only the hosts, which the script of the formula editor fills
+        $test_name = 'the formula selector of a phrase is the host that the formula editor script fills';
+        $frm_selector_html = $this->render($t_cmp->component_formula_selector(), $wrd, $msk, $dto, $msg);
+        $t->assert($test_name, $frm_selector_html, $html->div('', styles::FORMULA_EDITOR, system_page::FORMULA_SELECTOR_HOST_ID));
+        $test_name = '... without a second editor script';
+        $t->assert_text_not_contains($test_name, $frm_selector_html, $html->script_src(files::FORMULA_EDITOR_SCRIPT));
+        $test_name = '... and nothing for a component without a phrase';
+        $t->assert($test_name, $this->render($t_cmp->component_formula_selector(), new word_ui(), $msk, $dto, $msg), '');
+        $test_name = 'the formula result compare of a phrase is the host that the formula editor script fills';
+        $frm_compare_html = $this->render($t_cmp->component_formula_result_compare(), $wrd, $msk, $dto, $msg);
+        $t->assert($test_name, $frm_compare_html, $html->div('', styles::FORMULA_EDITOR, system_page::FORMULA_COMPARE_HOST_ID));
+        $test_name = '... and nothing for a component without a phrase';
+        $t->assert($test_name, $this->render($t_cmp->component_formula_result_compare(), new word_ui(), $msk, $dto, $msg), '');
         // the seed carries the time of the phrase data, which the snapshot replaces by the fixed test time
         $test_name = 'the snapshot replaces the time of the phrase data seed by the test time';
         $later = (new DateTime(test_const::DUMMY_DATETIME_LATER))->format(phrase_data::TIME_FORMAT);

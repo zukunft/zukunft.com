@@ -149,8 +149,10 @@ class system_page extends component
     ];
     // the tab that a process catch page shows if the url selects none
     const int PROCESS_CATCH_TAB_DEFAULT = 1;
-    // the html id of the host that the formula editor script fills (script/formula_editor.js)
+    // the html ids of the hosts that the formula editor script fills (script/formula_editor.js)
     const string FORMULA_EDITOR_HOST_ID = 'formulaEditor';
+    const string FORMULA_SELECTOR_HOST_ID = 'formulaSelector';
+    const string FORMULA_COMPARE_HOST_ID = 'formulaCompare';
     // the html ids that the calculator editor script reads (script/calculator_editor.js)
     const string CALC_EDITOR_HOST_ID = 'calcEditor';
     const string CALC_EDITOR_SEED_ID = 'seed';
@@ -1404,10 +1406,10 @@ class system_page extends component
     }
 
     /**
-     * the formula editor of the page phrase: the script builds the editor from the phrase data of the
-     * phrase with its results, which the page embeds as the seed like the calculator editor, so that
-     * the editor starts without an api call and compares the results until now with the results
-     * after the save
+     * the formula editor of the page phrase: the script builds the expression of the selected formula
+     * from the phrase data of the phrase with its results, which the page embeds as the seed like the
+     * calculator editor, so that the editor starts without an api call; the script also fills the
+     * hosts of the formula selector and the result compare if the view has these components
      *
      * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
      * @param user_message $msg with the requesting user and to report an api answer without the phrase data
@@ -1420,17 +1422,71 @@ class system_page extends component
         ?data_object                                          $cfg
     ): string
     {
-        $result = '';
-        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
-        if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
+        $result = $this->formula_editor_host($dbo, $msg, self::FORMULA_EDITOR_HOST_ID);
+        if ($result != '') {
             $html = new html_base();
             $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
             // the session token, which the save of the editor sends to the api in the csrf header
             $result = $html->link_style(files::FORMULA_EDITOR_STYLE)
-                . $html->div('', styles::FORMULA_EDITOR, self::FORMULA_EDITOR_HOST_ID)
+                . $result
                 . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
                 . $html->script_src(files::FORMULA_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * the formulas of the page phrase to select the formula that the formula editor shows;
+     * the script of the formula editor fills the host, so the view needs the formula editor too;
+     * not formula_selector, which is the formula select field of a component form
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @return string the empty host or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_editor_selector(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg
+    ): string
+    {
+        return $this->formula_editor_host($dbo, $msg, self::FORMULA_SELECTOR_HOST_ID);
+    }
+
+    /**
+     * the results of the page phrase until now against the results after the save of the formula
+     * editor and the changes; the script of the formula editor fills the host
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @return string the empty host or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_result_compare(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg
+    ): string
+    {
+        return $this->formula_editor_host($dbo, $msg, self::FORMULA_COMPARE_HOST_ID);
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @param string $host_id the html id of the host e.g. FORMULA_SELECTOR_HOST_ID
+     * @return string the empty host in which formula_editor.css nests its rules or an empty string
+     *                if the page has no phrase or no javascript is allowed
+     */
+    private function formula_editor_host(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        string                                                $host_id
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $result = $html->div('', styles::FORMULA_EDITOR, $host_id);
         }
         return $result;
     }

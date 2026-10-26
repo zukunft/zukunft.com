@@ -3,11 +3,13 @@
     src/main/resources/script/formula_editor.js - the formula editor of the formulas of a page phrase
     -------------------------------------------
 
-    the view renders the empty host, the phraseData answer of the page phrase with the stored results
-    as the seed and the session token (system_page::formula_editor); this script builds the editor in
-    the host: the formulas of the page, the expression of the selected formula as selectable tokens
-    and the results until now against the results after the save, which it sends as one update put
-    message (cfg/import/update_put.php); the styles are in style/formula_editor.css
+    the formula editor component renders its empty host, the phraseData answer of the page phrase
+    with the stored results as the seed and the session token (system_page::formula_editor); this
+    script builds the expression of the selected formula as selectable tokens in that host and, if
+    the view has these components, the formulas of the page in the host of the formula selector and
+    the results until now against the results after the save in the host of the result compare;
+    the save sends one update put message (cfg/import/update_put.php); the styles are in
+    style/formula_editor.css
 
 
     This file is part of zukunft.com - calc with words
@@ -36,50 +38,62 @@
 
     'use strict';
 
-    (function () {
+    /* started when the page is read, because the host of the result compare follows the script */
+    function startFormulaEditor() {
 
         /* ------------------------------------------------------------------ */
-        /* the toolbar, the three columns and the toast of the editor           */
+        /* the hosts of the three components and the toast                      */
         /* ------------------------------------------------------------------ */
 
-        /* the host of the editor, the same as system_page::FORMULA_EDITOR_HOST_ID */
-        const HOST_ID = 'formulaEditor';
-        const host = document.getElementById(HOST_ID);
-        if (host === null) {
+        /* the hosts of the components, the same as system_page::FORMULA_*_HOST_ID; the view may */
+        /* leave out the selector or the compare e.g. if the calculator editor selects the formula */
+        const editorHost = document.getElementById('formulaEditor');
+        const selectorHost = document.getElementById('formulaSelector');
+        const compareHost = document.getElementById('formulaCompare');
+        const hosts = [selectorHost, editorHost, compareHost].filter(function (h) {
+            return h !== null;
+        });
+        if (editorHost === null) {
             return;
         }
-        host.innerHTML = [
+        if (selectorHost !== null) {
+            selectorHost.innerHTML = [
+                '<section class="col formulas" aria-label="Formulas">',
+                '<div class="col-head"><h2>Formulas of the page</h2><span class="note" id="formulaCount"></span></div>',
+                '<form class="tools" id="pageForm">',
+                '<label for="pageIn" class="note">Phrase</label>',
+                '<input class="inp" id="pageIn" type="text" placeholder="another page phrase">',
+                '<button class="btn" type="submit">Load</button>',
+                '</form>',
+                '<input class="inp" id="formulaFilter" type="search" placeholder="filter by name or phrase">',
+                '<ul class="flist" id="formulaList"></ul>',
+                '</section>'
+            ].join('');
+        }
+        editorHost.innerHTML = [
             '<header class="bar">',
             '<div class="brand"><b>Formula editor</b><span id="pageName">page</span></div>',
-            '<form class="tools" id="pageForm">',
-            '<label for="pageIn" class="note">Phrase</label>',
-            '<input class="inp" id="pageIn" type="text" placeholder="another page phrase" style="width: 200px;">',
-            '<button class="btn" type="submit">Load</button>',
-            '</form>',
             '<div class="tools right">',
             '<span class="chip" id="changeCount">no changes</span>',
             '<button class="btn" id="btnResetAll" type="button" disabled>Discard all</button>',
             '<button class="btn primary" id="btnSave" type="button" disabled>Save</button>',
             '</div>',
             '</header>',
-            '<div class="cols">',
-            '<section class="col formulas" aria-label="Formulas">',
-            '<div class="col-head"><h2>Formulas of the page</h2><span class="note" id="formulaCount"></span></div>',
-            '<input class="inp" id="formulaFilter" type="search" placeholder="filter by name or phrase">',
-            '<ul class="flist" id="formulaList"></ul>',
-            '</section>',
             '<section class="col editor" aria-label="Formula" id="editor"></section>',
-            '<section class="col compare" aria-label="Results">',
-            '<div class="tabs" role="tablist">',
-            '<button class="tab on" type="button" data-tab="compare" role="tab">Results until now vs. after save</button>',
-            '<button class="tab" type="button" data-tab="changes" role="tab">Changes</button>',
-            '</div>',
-            '<div id="compare"></div>',
-            '<div id="changes" hidden></div>',
-            '</section>',
-            '</div>',
             '<div class="toast" id="toast" hidden></div>'
         ].join('');
+        if (compareHost !== null) {
+            compareHost.innerHTML = [
+                '<section class="col compare" aria-label="Results">',
+                '<div class="tabs" role="tablist">',
+                '<button class="tab on" type="button" data-tab="compare" role="tab">Results until now vs. after save</button>',
+                '<button class="tab" type="button" data-tab="changes" role="tab">Changes</button>',
+                '</div>',
+                '<div id="compare"></div>',
+                '<div id="changes" hidden></div>',
+                '</section>'
+            ].join('');
+        }
 
         /* ------------------------------------------------------------------ */
         /* constants, the same as in shared/const/chars.php and formula_calc    */
@@ -719,6 +733,9 @@
 
         function renderFormulaList() {
             const host = document.getElementById('formulaList');
+            if (host === null) {
+                return;
+            }
             const needle = formulaFilter.trim().toLowerCase();
             const shown = model.formulas.filter(function (f) {
                 const hay = (f.name + ' ' + currentText(f)).toLowerCase();
@@ -1023,7 +1040,9 @@
         function renderCompare() {
             const host = document.getElementById('compare');
             const f = formulaByKey(selectedKey);
-            if (f === null) {
+            if (host === null) {
+                /* the view has no result compare */
+            } else if (f === null) {
                 host.innerHTML = '<div class="note">Select a formula to compare its results.</div>';
             } else {
                 const own = [];
@@ -1107,6 +1126,9 @@
 
         function renderChanges() {
             const host = document.getElementById('changes');
+            if (host === null) {
+                return;
+            }
             const list = changedFormulas();
             let changedResults = 0;
             model.results.forEach(function (res, i) {
@@ -1214,11 +1236,13 @@
             renderCompare();
             renderChanges();
             updateToolbar();
-            host.querySelectorAll('.tab').forEach(function (b) {
-                b.classList.toggle('on', b.dataset.tab === tab);
-            });
-            document.getElementById('compare').hidden = tab !== 'compare';
-            document.getElementById('changes').hidden = tab !== 'changes';
+            if (compareHost !== null) {
+                compareHost.querySelectorAll('.tab').forEach(function (b) {
+                    b.classList.toggle('on', b.dataset.tab === tab);
+                });
+                document.getElementById('compare').hidden = tab !== 'compare';
+                document.getElementById('changes').hidden = tab !== 'changes';
+            }
         }
 
         /* ------------------------------------------------------------------ */
@@ -1520,22 +1544,33 @@
             renderAll();
         }
 
-        document.addEventListener('click', onClick);
-        document.addEventListener('input', onInput);
-        document.addEventListener('keydown', onKey);
+        /* only the events of the own hosts, so that the editor can be a part of another page */
+        hosts.forEach(function (h) {
+            h.addEventListener('click', onClick);
+            h.addEventListener('input', onInput);
+            h.addEventListener('keydown', onKey);
+        });
         document.getElementById('btnSave').addEventListener('click', save);
         document.getElementById('btnResetAll').addEventListener('click', discardAll);
-        document.getElementById('pageForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            const name = document.getElementById('pageIn').value.trim();
-            if (name !== '') {
-                loadPhrase(name);
-            }
-        });
+        if (selectorHost !== null) {
+            document.getElementById('pageForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const name = document.getElementById('pageIn').value.trim();
+                if (name !== '') {
+                    loadPhrase(name);
+                }
+            });
+        }
 
         const seedElement = document.getElementById(SEED_ID);
         if (seedElement !== null) {
             boot(JSON.parse(seedElement.textContent));
         }
 
-    })();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startFormulaEditor);
+    } else {
+        startFormulaEditor();
+    }

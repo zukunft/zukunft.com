@@ -11,6 +11,24 @@ http://localhost/http/view.php?m=formula_editor&id=-2780, because the calculator
 (the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
 type, so that the edit menu offers both editors
 
+#### the formula editor inside the calculator editor
+
+the formula editor is split into the components formula selector, formula editor and formula result
+compare (`component_types::FORMULA_*`), which `formula_editor.js` fills if their host is on the page;
+use the formula editor and the result compare without the selector in the calculator editor:
+- if a formula is selected in the "Page structure" column (`calculator_editor.js` `findFormula(selected)`),
+  the "Settings" column (`#insp`, `formulaInspector`) shows the formula editor host and the
+  "Page preview" column (`#pane`) the result compare host instead of the preview; any other selection
+  shows the settings and the preview again
+- `formula_editor.js` gets a small api instead of starting itself: start with the hosts and the seed
+  that the calculator editor already has, select a formula by its id (replaces the selector), and report a
+  changed expression back, so that the calculator editor keeps one change list, one save and one toast
+  (the formula editor toolbar and its own save are hidden there)
+- the calculator editor component adds `formula_editor.css` and `formula_editor.js`; both scripts already
+  listen only to their own hosts for the formula editor, the calculator editor still on `document`
+- tests: the calculator editor page loads the formula editor script and style; negative: the formula
+  editor view without the selector still selects the first formula
+
 #### one code for both editors
 
 `formula_editor.js` and `calculator_editor.js` each have their own `esc`, the read of the seed and the

@@ -10164,8 +10164,20 @@
             {
                 "name": "formula editor",
                 "code_id": "formula_editor",
-                "description": "the editor of the formulas of the page of the phrase, built by a script from the phrase data of the phrase with its results",
+                "description": "the expression of the selected formula of the page of the phrase with the save, built by a script from the phrase data of the phrase with its results",
                 "id": 291
+            },
+            {
+                "name": "formula selector",
+                "code_id": "formula_selector",
+                "description": "the formulas of the page of the phrase to select the formula that the formula editor shows, filled by the script of the formula editor",
+                "id": 292
+            },
+            {
+                "name": "formula result compare",
+                "code_id": "formula_result_compare",
+                "description": "the results of the page of the phrase until now against the results after the save of the formula editor and its changes, filled by the script of the formula editor",
+                "id": 293
             }
         ],
         "component_link_types": [
@@ -28919,13 +28931,33 @@
                 "components": [
                     {
                         "link_id": 1625,
-                        "id": 485,
-                        "name": "formula editor",
-                        "description": "the editor of the formulas of the page of the phrase with the results until now and after the save, built by a script from the phrase data of the phrase",
-                        "type_id": 291,
-                        "code_id": "formula_editor",
+                        "id": 486,
+                        "name": "formula selector",
+                        "description": "the formulas of the page of the phrase to select the formula that the formula editor shows",
+                        "type_id": 292,
+                        "code_id": "formula_selector",
                         "position": 1,
                         "position_type": 1
+                    },
+                    {
+                        "link_id": 1626,
+                        "id": 485,
+                        "name": "formula editor",
+                        "description": "the expression of the selected formula of the page of the phrase with the save, built by a script from the phrase data of the phrase",
+                        "type_id": 291,
+                        "code_id": "formula_editor",
+                        "position": 2,
+                        "position_type": 6
+                    },
+                    {
+                        "link_id": 1627,
+                        "id": 487,
+                        "name": "formula result compare",
+                        "description": "the results of the page of the phrase until now against the results after the save of the formula editor",
+                        "type_id": 293,
+                        "code_id": "formula_result_compare",
+                        "position": 3,
+                        "position_type": 7
                     }
                 ]
             }

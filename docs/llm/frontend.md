@@ -85,13 +85,16 @@ the system formulas (`number_format::unit_conversions`) and the operands of each
 formula notes and the sources of the server page, checks the stored results once like
 `ui_list::check_results` and calculates every result again when an input changes.
 
-The formula editor (`system_page::formula_editor`, view `views::FORMULA_EDITOR` of
-`calculator_views.json`, e.g. http://localhost/http/view.php?m=formula_editor&id=-2780) works like the
-calculator editor below: the empty host `formulaEditor`, the phraseData answer of the page phrase
-with its results as the seed and the session token, and the static
-`src/main/resources/script/formula_editor.js` builds the editor in the host with the styles of
-`style/formula_editor.css`, which nests all its rules in the host, so that the page keeps the
-standard css. The database read test writes `use_cases/formula_editor.html` next to the hand made
+The formula editor view (`views::FORMULA_EDITOR` of `calculator_views.json`, e.g.
+http://localhost/http/view.php?m=formula_editor&id=-2780) has three components side by side: the
+formula selector (`system_page::formula_editor_selector`, host `formulaSelector`), the formula editor
+(`system_page::formula_editor`, host `formulaEditor`) and the result compare
+(`system_page::formula_result_compare`, host `formulaCompare`). Only the formula editor component adds,
+like the calculator editor below, the phraseData answer of the page phrase with its results as the
+seed, the session token and the static `src/main/resources/script/formula_editor.js`, which fills
+every host that is on the page, so that a view can leave out the selector or the compare; the styles
+of `style/formula_editor.css` are nested in the hosts, so that the page keeps the standard css. The
+database read test writes `use_cases/formula_editor.html` next to the hand made
 `use_cases/formula_editor_sample.html`, which loads the same script and style with a fixed seed.
 
 The calculator editor (`system_page::calculator_editor`) has no page without the

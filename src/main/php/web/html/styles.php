@@ -183,7 +183,7 @@ class styles
     const string CALC_SOURCES = 'src';
     // the host of the calculator editor, which calculator_editor.css formats
     const string CALC_EDITOR = 'editor';
-    // the host of the formula editor, in which formula_editor.css nests all its rules
+    // the hosts of the formula editor, the selector and the result compare, in which formula_editor.css nests all its rules
     const string FORMULA_EDITOR = 'formula-editor';
 
     // the not critical entries of an admin dashboard column, which open by a click on the +/- marker

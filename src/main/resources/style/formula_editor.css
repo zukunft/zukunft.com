@@ -1,9 +1,10 @@
         /* the formula editor (script/formula_editor.js, system_page::formula_editor) */
-        /* layout: a sticky toolbar, then three working columns: the formulas of the page, the */
-        /* expression of the selected formula as selectable tokens and the compare list of the */
-        /* results until now against the results after the save; the colors are the tokens of */
-        /* style/calculator_editor.css so that both editors look the same */
-        /* every rule is nested in the host of the editor, so that the page keeps the standard */
+        /* layout: three components, which the view places side by side: the formulas of the */
+        /* page (formula selector), the toolbar with the expression of the selected formula as */
+        /* selectable tokens (formula editor) and the compare list of the results until now */
+        /* against the results after the save (formula result compare); the colors are the tokens */
+        /* of style/calculator_editor.css so that both editors look the same */
+        /* every rule is nested in the hosts of the components, so that the page keeps the standard */
         /* styles of style_html.css e.g. of the site header, its buttons and the footer */
         .formula-editor {
         width: 100%;
@@ -268,37 +269,7 @@
             color: var(--muted);
         }
 
-        /* columns */
-        .cols {
-            display: grid;
-            grid-template-columns: 290px minmax(0, 1fr) minmax(0, 1.15fr);
-            gap: 14px;
-            padding-block: 14px;
-            padding-left: max(16px, env(safe-area-inset-left, 0px));
-            padding-right: max(16px, env(safe-area-inset-right, 0px));
-            align-items: start;
-        }
-
-        @media (max-width: 1150px) {
-            .cols {
-                grid-template-columns: 260px minmax(0, 1fr);
-            }
-
-            .col.compare {
-                grid-column: 1 / -1;
-            }
-        }
-
-        @media (max-width: 760px) {
-            .cols {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            .col.compare {
-                grid-column: auto;
-            }
-        }
-
+        /* columns: each component is one column of the side or below group of the view */
         .col {
             background: var(--surface);
             border: 1px solid var(--line);
@@ -744,4 +715,11 @@
                 transition: opacity .3s;
             }
         }
+        }
+
+        /* the three components share one row of the view: without the min width of a side or below */
+        /* column (inline style of html_base::div_col_min_width) the result compare stays beside the */
+        /* editor like in use_cases/formula_editor_sample.html instead of wrapping below the formulas */
+        .row:has(> .col > .formula-editor) > .col {
+            min-width: 0 !important;
         }
