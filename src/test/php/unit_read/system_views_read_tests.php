@@ -520,9 +520,16 @@ class system_views_read_tests
      */
     function run_pv_lifetime_balance(test_cleanup $t): void
     {
+        // sc=0 asks for the page of the server, which shows the page also without javascript
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
-            test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE);
+            test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE,
+            [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the same page from the json data of the page, because
+        // config.yaml allows javascript for the calculator
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::PV_LIFETIME_BALANCE_JSON);
     }
 
     /**

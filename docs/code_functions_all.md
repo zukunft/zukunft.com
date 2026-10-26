@@ -6807,6 +6807,8 @@
             omponent/execute/system_page.php
     \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
             /component/execute/system_page.php
+    \-- calculator_json - section for function calculator_json not yet defined that it should be process catch in /compo
+            nent/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
              in /component/execute/system_page.php
     \-- process_catch_tab - section for function process_catch_tab not yet defined that it should be process catch in /c
@@ -6891,6 +6893,8 @@
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
     \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
+    \-- calculator_number_format - section for function calculator_number_format missing in /component/execute/ui_list.p
+            hp
     \-- calculator_needed_results - section for function calculator_needed_results missing in /component/execute/ui_list
             .php
     \-- sources_used - section for function sources_used missing in /component/execute/ui_list.php
@@ -7252,6 +7256,7 @@
     \-- group - section for function group missing in /helper/number_format.php
     \-- text - section for function text missing in /helper/number_format.php
     \-- unit_text - section for function unit_text missing in /helper/number_format.php
+    \-- unit_conversions - section for function unit_conversions missing in /helper/number_format.php
 \-- url_mapper
     \-- url_to_standard - section for function url_to_standard missing in /helper/url_mapper.php
     \-- standard_url_to_human - section for function standard_url_to_human missing in /helper/url_mapper.php
@@ -9594,6 +9599,8 @@
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
     \-- calculator_script
         \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
+    \-- calculator_number_format
+        \-- ui_list - @return array the number format of the user for the calculator scripts: the decimal point,
     \-- calculator_needed_results
         \-- ui_list - the results that the calculator script calculates: the result of each cell and the results
     \-- sources_used
@@ -9699,6 +9706,8 @@
         \-- number_format - @param float $num a stored number of the group
     \-- unit_text
         \-- number_format - @param user_message $msg to report a problem of the symbol lookup
+    \-- unit_conversions
+        \-- number_format - every unit conversion of the preloaded formulas in both directions, so that a script can
     \-- url_to_standard
         \-- url_mapper - get the standard url array from all allowed url formats
     \-- standard_url_to_human
@@ -10140,6 +10149,8 @@
         \-- system_page - the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
     \-- calculation_result
         \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+    \-- calculator_json
+        \-- system_page - the calculator page that the browser builds from the phraseData answer of the page
     \-- process_catch_fields
         \-- system_page - the input fields of a process catch page or of one of its tabs; a placeholder with the name of
     \-- process_catch_tab

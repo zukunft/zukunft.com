@@ -242,6 +242,8 @@ class data_object
     // true if one phraseData answer has filled the phrases, values and results of the page
     // (view_exe::add_calculator_data), so that no part of them is loaded again
     public bool $page_data_complete = false;
+    // the phraseData answer of the page, which the calculator page embeds as the seed of its script
+    public array $page_data = [];
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;
@@ -314,6 +316,7 @@ class data_object
         $this->snap_time = null;
         $this->online = true;
         $this->page_data_complete = false;
+        $this->page_data = [];
     }
 
 

@@ -1,5 +1,10 @@
 # pending prio 2
 
+## calculator js
+
+in src/main/resources/script/calculator_json.js are some fixed text warning messages like 'console.warn('the data selects several numbers for ' + what + ': ' + Array.from(numbers).join(', '));'
+make this text translatable so that the frontend language shows the warning in the correct language
+
 ## calculator field value of the page triple
 
 `ui_list::calculator_value` ranks a value that has a part of the page triple directly after a value
@@ -18,6 +23,26 @@ installation and the PV yield shows 976 again; then:
   without a part of the page triple
 - add a negative test to `use_case_ui_tests` that a value with the `to` side of the page triple e.g.
   city does not win over a value with a smaller context
+
+## the verb "is" of the frontend type cache
+
+the chain `$ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS)` is written out in
+`ui_list.php` (twice) and behind the private `phrase_data::is_verb_name` of `web/phrase/phrase_data.php`;
+add one function on the owning class (the verb list of the type cache) and let all three call it
+
+## generated triple name of a phraseData answer without type cache
+
+`web/phrase/phrase_data::generated_name` shows a triple with the verb "is" as `<from> (<to>)` only if the
+type cache knows the name of the verb "is"; without the cache it is named `<from> is <to>`, and a triple
+with an empty verb is named `<from> (<to>)` instead of `<from> <to>` of the backend `triple::generate_name`;
+the name is then not found and reported as `PHRASE_NAME_NOT_FOUND`, so follow the backend for each case
+and add a unit test for the empty verb and for the missing cache
+
+## result group of the phrase data
+
+`cfg/export/phrase_data::result_phrase_ids` reads the source group only if its id is set, but the result
+group without a guard, which is safe, because a group without id gives no phrase id; add a one line
+comment that a result always has its group, so that the asymmetry is explained
 
 ## test of the page object of a phrase view
 

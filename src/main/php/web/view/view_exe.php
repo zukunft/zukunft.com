@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::EXECUTE . 'calculator.php';
+include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
@@ -75,6 +76,7 @@ include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
@@ -156,13 +158,36 @@ class view_exe extends view_base
             $this->add_page_cache($dbo, $msg, $cfg);
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open($msg);
-            // the style of the view is the page class e.g. use-case for the grid of a use case page
-            $entries = $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
-            $result .= new html_base()->add_style($entries, $this->get_style_id());
+            // the page that the browser builds from the json data replaces the components, which
+            // creates nothing for a phrase without calculator triples or if the config allows no
+            // javascript for the calculator, so that the page of the server is shown
+            $js_page = '';
+            if ($this->is_javascript_page($url_array)) {
+                $js_page = new system_page()->calculator_json($dbo, $msg, $cfg, $form_name, $this->id());
+            }
+            if ($js_page != '') {
+                $result .= $js_page;
+            } else {
+                // the style of the view is the page class e.g. use-case for the grid of a use case page
+                $entries = $this->dsp_entries($dbo, $msg, $cfg, $form_name, $pattern, $test_mode, $url_array);
+                $result .= new html_base()->add_style($entries, $this->get_style_id());
+            }
             $result .= $this->dsp_type_close($msg);
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $url_array the url parameters of the page that shows the view
+     * @return bool true if the page that the browser builds from its json data may be shown, which
+     *              only the calculator has at the moment; sc=0 (url_var::JAVASCRIPT) asks for the
+     *              page of the server
+     */
+    private function is_javascript_page(array $url_array): bool
+    {
+        $refused = ($url_array[url_var::JAVASCRIPT] ?? '') == url_var::FALSE;
+        return !$refused and $this->code_id == views::CALCULATOR;
     }
 
     /**
@@ -394,6 +419,7 @@ class view_exe extends view_base
         if (!$dto->page_data_complete) {
             $phd = new phrase_data();
             $json = $phd->load_from_walk($phr, $msg);
+            $dto->page_data = $json;
             if ($json != [] and $phd->fill($json, $dto, $msg)) {
                 $dto->page_data_complete = true;
             }

@@ -653,6 +653,12 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $in_html, $html->form_hidden(url_var::ACTION, url_var::ACTION_SAVE));
         $t->assert_text_contains($test_name, $in_html, 'name="' . url_var::POST_SUBMIT . '">'
             . $mtr->txt(msg_id::CALCULATOR_SAVE) . '</button>');
+        // the button is as wide as its text with about the same space around it on each side
+        $test_name = '... as wide as its text';
+        $t->assert_text_contains($test_name, $in_html, 'class="' . html_base::CLASS_BUTTON . ' ' . styles::CALC_BUTTON_SAVE . '"');
+        // negative: the bootstrap column of html_base::button_bs would cut the button to a twelfth of the form
+        $test_name = '... and not as wide as a bootstrap column';
+        $t->assert_text_not_contains($test_name, $in_html, html_base::BS_BTN);
         $test_name = 'the assumptions follow the inputs in a collapsed block with the default heading';
         $t->assert_text_order($test_name, $in_html, '</button>',
             '<summary>' . $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS) . '</summary>');
@@ -865,6 +871,28 @@ class use_case_ui_tests
         $test_name = '... the value of each number field';
         $t->assert($test_name, $plan[ui_list::CALC_INPUTS][$inh_name],
             $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->html_id());
+        // a page that the script builds saves the same as the page of the server, so the plan names
+        // the save vars of each number field (calculator_save_vars)
+        $test_name = '... the save vars of each number field';
+        $inh_save = $plan[ui_list::CALC_FIELDS][$inh_name][ui_list::CALC_FIELD_SAVE] ?? [];
+        $t->assert($test_name, $inh_save, [
+            url_var::GROUP . $inh_id => $inh_val_id,
+            url_var::PRE . url_var::NUMERIC_VALUE . $inh_id => $inh_shown,
+            url_var::NAME . $inh_id => triple_names::CALC_INHABITANTS_LABEL_COM
+        ]);
+        // a selector sets the number of the option that the page phrase uses, which is Zurich (city)
+        // with "Zurich (city) uses 2020" and not Zurich, so the plan is the one of Zurich (city), whose
+        // calculator of the input test has the same inputs as the calculation result test
+        $test_name = '... and of a phrase selector the number of the option that the page uses';
+        $city_script = new ui_list()->calculator_script($calc_in, $zh_city, $js_lst, $dto_res, $msg);
+        $city_plan = json_decode($lib->str_left_of($lib->str_right_of($city_script, ui_list::CALC_DATA_ID . '">'), '</script>'), true);
+        $canton_fld = $city_plan[ui_list::CALC_FIELDS][url_var::NUMERIC_VALUE . $canton_id] ?? [];
+        $canton_num = $canton_fld[ui_list::CALC_CELL_NUMBER] ?? '';
+        $canton_opt_id = $dto_res->val_lst->get_by_names([word_names::CANTON, word_names::YEAR_2020])->html_id();
+        $t->assert($test_name, $canton_num, $canton_opt_id);
+        // negative: a phrase selector selects a phrase and is never saved as a number
+        $test_name = '... but no save vars of a phrase selector';
+        $t->assert_key_not_exists($test_name, ui_list::CALC_FIELD_SAVE, $canton_fld);
         // negative: the browser reads only the numbers that a result, an input or a cell uses, so a
         // value of the request cache that the page does not use e.g. a value of a related phrase
         // that another test has added is not written into the page and the page does not change
@@ -917,6 +945,15 @@ class use_case_ui_tests
         // gets the script (shared Config::DEFAULT_CALCULATOR_JAVASCRIPT)
         $test_name = 'the calculation result has the calculator script by default';
         $t->assert_text_contains($test_name, $res_html, '<script src="' . files::CALCULATOR_SCRIPT . '"></script>');
+        // the page embeds the phraseData answer of its cache and the verbs and units with the ids of
+        // the editor, so that one page script can build the editor preview and the calculator page
+        $test_name = '... the phrase data of the page as the seed';
+        $dto_seed = clone $dto_res;
+        $dto_seed->page_data = [json_fields::SELECTION => [[json_fields::NAME => word_names::ZH]]];
+        $seed_html = $page->calculation_result($wrd, $msg, $dto_seed);
+        $t->assert_text_contains($test_name, $seed_html, $html->script_data(system_page::CALC_EDITOR_SEED_ID, $dto_seed->page_data));
+        $test_name = '... and the verbs and units of the type cache';
+        $t->assert_text_contains($test_name, $seed_html, '<script type="application/json" id="' . system_page::CALC_EDITOR_TYPES_ID . '">');
         // negative: a pod that switches the javascript of the calculator off gets no script, like every other page
         $cfg_keep = $ui_sys->cfg;
         $ui_sys->cfg = new config_ui($t_val->value_list_calculator_javascript_off()->api_json([api_types::INCL_PHRASES]));

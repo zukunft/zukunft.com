@@ -20,6 +20,17 @@ client-side handler.
 - Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
   for a JS plugin, …) from a `web/` renderer, except the calculator scripts below.
 
+### As few css entries as possible
+
+Every css rule is code that each page carries and that each layout change has to
+check, so the style files keep as few entries as possible. A new page or layout
+first reuses an existing class, also by putting the class on another element,
+before a rule is added; and a fix for one page never changes a rule that other
+pages share. E.g. the calculator page that the browser builds gets the width of
+the server page because its host element carries the existing `use-case` class
+(`system_page::calculator_json`), not by a new rule: a flex child of
+`.main-container` without a width of its own shrinks to its content.
+
 ### Javascript only for the calculator
 
 The one exception is a calculator page and its editor: if `config.yaml` allows it (user > default >
@@ -36,6 +47,12 @@ calculator script, so that the results change as soon as an input changes:
   operand, the same operands that the page calculation of PHP uses), the number that
   each input sets and the number and format of each cell. A formula text is never
   written into the page as script, so a formula cannot inject code.
+- The data also names per input and assumption field the html id of its number, its
+  decimals and, for a number field, its unit and the save vars of
+  `ui_list::calculator_save_vars` (`ui_list::calculator_field_plan`); the page embeds the
+  phraseData answer of its cache (`data_object::$page_data`) and the verbs and units of the type
+  cache with the html ids of the editor (`system_page::calculator_page_data`), so that one
+  script can build the editor preview and the calculator page from the same data.
 - Only the results that a cell shows or that such a result uses are calculated
   (`ui_list::calculator_needed_results`), so that a result of another phrase in the
   request cache never changes the page.
@@ -47,6 +64,26 @@ calculator script, so that the results change as soon as an input changes:
   shows the same page as before.
 - Every cell of a number has a unique html id (a repeated number gets its count
   behind the id), so the script can update each cell and the save can name it.
+
+The calculator page built in the browser (`system_page::calculator_json`) is the calculator page
+if the config allows javascript for the calculator and the phrase has calculator triples
+(`system_page::is_javascript_calculator`); the url asks for the page of the server with `sc=0`
+(`url_var::JAVASCRIPT`, human `javascript=0`, `view_exe::is_javascript_page`), which is never
+cached. The database read test writes both: `use_cases/pv_lifetime_balance_json.html` by default
+and `use_cases/pv_lifetime_balance.html` with `sc=0`. It has, like the
+editor, no html of its own: it renders the empty host, the seed and the types of the editor
+and the settings of the page (`system_page::calculator_page_settings`: the number format, the
+translated texts, the save form of the server and the names of the calculator keywords and
+of the verbs by their code id), and the static `src/main/resources/script/calculator_json.js`
+(`files::CALCULATOR_JSON_SCRIPT`) builds the page with the html and the styles of the server
+page from the seed only: the reader rules of `calculator.php`, a plain phrase match for each
+number (the fewest other phrases; several different numbers leave the number empty and warn in
+the console, because the data must name one number), the unit and the share by the phrase type
+of the seed (the type names by their code id in the settings), the unit conversion of a column by
+the system formulas (`number_format::unit_conversions`) and the operands of each result by
+`formula_calc::value_of` on the context of the result; so the script shows the operand fields, the
+formula notes and the sources of the server page, checks the stored results once like
+`ui_list::check_results` and calculates every result again when an input changes.
 
 The calculator editor (`system_page::calculator_editor`) has no page without the
 script: it renders the empty host, the answer of the phraseData api for the page
@@ -75,7 +112,10 @@ another api call. A result carries its group id like in the result api. The
 calculator page loads one answer for its phrase (`view_exe::add_calculator_data`)
 and, if the answer names nothing that it does not contain, marks the cache as
 complete (`data_object::$page_data_complete`), so that the components load no
-values and no field triples of their own.
+values, results, sources and field triples of their own: the answer is the prime
+source of the page, and `phrase_data_ui_tests` renders the complete page from the
+sample answer alone (`use_cases/pv_lifetime_balance_json.html`, next to the page of
+the database read test `use_cases/pv_lifetime_balance.html`).
 
 The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
 views, and e.g. the undo or the paste table view) have the view type `mask_default`

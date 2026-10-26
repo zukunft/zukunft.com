@@ -72,6 +72,8 @@ class files
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
+    // the calculator page of the example PV installation that the browser builds (url_var::JAVASCRIPT), next to pv_lifetime_balance.html
+    CONST string PV_LIFETIME_BALANCE_JSON = 'pv_lifetime_balance_json';
     // the update put messages of the calculator editor save without the database ids, which the test adds
     CONST string UPDATE_PUT_ADD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_add' . self::JSON;
     CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;

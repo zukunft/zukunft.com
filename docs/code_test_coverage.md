@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1486 of 6226 public functions have at least 2 unit test calls; the 4536 functions below do not; the 204 functions of the last section are called nowhere
+1488 of 6229 public functions have at least 2 unit test calls; the 4537 functions below do not; the 204 functions of the last section are called nowhere
 
 ## 2036 functions of main backend have no test at all
 
@@ -2296,7 +2296,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 886 functions of frontend have no test at all
+## 887 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2659,6 +2659,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- mail_sender
     \-- send - 0 unit test calls
 \-- number_format
+    \-- unit_conversions - 0 unit test calls
     \-- unit_text - 0 unit test calls shared by 2 classes
 \-- phrase
     \-- children - 0 unit test calls shared by 6 classes
@@ -3104,7 +3105,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- assumption_fields - 0 unit test calls
     \-- calculation_detail_tables - 0 unit test calls
     \-- calculator_fields - 0 unit test calls
-    \-- calculator_sources - 0 unit test calls
+    \-- calculator_number_format - 0 unit test calls
     \-- formula_notes - 0 unit test calls
     \-- formulas_of_parents - 0 unit test calls
     \-- input_fields - 0 unit test calls
@@ -4700,7 +4701,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- p - 1 unit test calls
     \-- row_end - 1 unit test calls shared by 2 classes
     \-- row_right - 1 unit test calls shared by 2 classes
-    \-- script_src - 1 unit test calls
     \-- tbl - 3 unit test calls shared by 7 classes
     \-- td - 2 unit test calls shared by 4 classes
     \-- url - 4 unit test calls shared by 7 classes
@@ -4996,6 +4996,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- expression_link - 2 unit test calls shared by 2 classes
     \-- phrase_name - 2 unit test calls shared by 4 classes
 \-- ui_list
+    \-- calculator_sources - 1 unit test calls
     \-- formula_list - 6 unit test calls shared by 4 classes
     \-- result_list - 5 unit test calls shared by 3 classes
 \-- user

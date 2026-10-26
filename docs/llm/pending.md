@@ -101,12 +101,62 @@ create a javascript version of the formula editor view
 
 ### base on json
 
-the calculator e.g. http://localhost/http/view.php?m=16&id=-2780&debug=9 is based on one /api/phraseData
-answer (view_exe::add_calculator_data) like the 'Calculator editor' e.g. http://localhost/http/view.php?m=196&id=-2780&u=11
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2780 is built in the browser by
+`calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
+(`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
+`&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_json.html`
+and `use_cases/pv_lifetime_balance.html`; every "which value, which format" decision lives in the
+data, the code only applies plain rules (phrase match, the arithmetic, the number format)
 
-1. switch to a javascript calculator that builds the page from the
-   same seed and the typeLists subset of the editor (verbs, units) plus the number formats; keep the value ids as
-   strings, because e.g. 500463902488562396 is above the javascript int limit
+open points of the review:
+1. the page of the server (`sc=0`) embeds the seed and the verbs and units of the type cache
+   (`system_page::calculation_result` → `calculator_page_data`, about 100 KB), which its script
+   `calculator.js` never reads; the `fields` plan and the `digits` of the `calc-data`
+   (`ui_list::calculator_script`) are not read either; remove all three and move the test
+   "... the phrase data of the page as the seed" of `use_case_ui_tests` to the json page tests
+2. `number_format::unit_conversions` has no unit test of its own: a conversion formula e.g.
+   "kg" = "tonne" * 1000 gives both directions, and a formula that is no conversion e.g.
+   "t" = ln( 2 ) / "η" is left out; the page settings (`system_page::calculator_page_settings`,
+   `calculator_type_names`) are only checked indirectly
+3. `calculator_json.js` has no test, because the repository has no javascript runtime; one json
+   test fixture per rule (seed and settings in, field values, cell texts, operand fields, notes and
+   sources out), read by the PHP unit test and by a check of the script, so that the PHP and the
+   javascript implementation of the plain rules cannot drift
+4. `calculator_json.js` repeats code: `evaluate` the arithmetic of `calculator.js`, `readJson` the
+   big id handling of `calculator_editor.js`, the reader of the calculator triples and the layout
+   the editor preview (`calculator_editor.js::previewPage`), and `fieldEntry` the ranking of
+   `ui_list::calculator_value`; share the script code in one file, and replace the ranking by a
+   plain match of the data: where two values fit a field equally, the use case gets the missing
+   qualifier phrase or a calculator triple that names the used value, and a tie is reported by the
+   calc validation of the use case
+5. the open differences of the two snapshots: the server numbers the operand sources by the results
+   in the preferred order of numbers (`sandbox_value::sorted`, first by the `impact`), which the
+   phraseData answer does not carry, so the script numbers e.g. "treeze monthly electricity mixes
+   2025" before "Swissolar PV fact sheet 2024"; and the option "production mix" of the replacement
+   mix selector has two equal values (395 g/kWh of Europe 2022 and 32.4 g/kWh of Switzerland 2018),
+   so the script leaves it out, which `pv_lifetime_balance.json` fixes by naming the option value
+6. the page object: the calculator view loads its phrase with the related objects
+   (`frontend::page_api_par`, `views::VIEWS_WITHOUT_RELATED`), which the page does not use; load it
+   without them or take it from the selection of the phraseData answer, and count the api calls of
+   the page in a database read test, so that the page needs only the view, one phraseData answer
+   and the typeLists and config of the session
+7. `system_page::CALC_EDITOR_SEED_ID` and `CALC_EDITOR_TYPES_ID` are also the ids of the calculator
+   page, so a name without "editor" fits better (a rename is the developer's decision)
+
+### load the phrase data once per step
+
+`cfg/export/phrase_data.php` collects the data by the phrase ids and loads it once per step, but two
+places load per object:
+- `value_phrase_ids` calls `load_phrases()` for each value; take the phrase ids from the group key
+  (`$val->grp()->id_lst()`) like `result_phrase_ids`, because `complete_phrases` loads them once with
+  all other phrases
+- `with_ids` calls `export_json($msg)` with the default `$do_load = true`, which reloads each value and
+  result by its id and loads its phrases; set the phrase lists of the value and result groups (incl. the
+  source group of a result, whose names `result::export_json` exports as context) from the completed
+  phrase list and export with `$do_load = false`
+
+`phrase_list::get_by_ids` reads each id from the new empty list instead of `$this`, so it always returns
+an empty list; fix it and add a unit test before it is used to set the group phrase lists
 
 ## calculation editor
 
@@ -224,6 +274,11 @@ write a script that recreates the open API yaml based on the code and create a t
 the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
 
 ## cleanup
+
+### nav bar
+
+reduce the height of the button 'Get numbers' in the navbar by around 10% so that it matches the height of the input field 'word or formula'.
+This css change might reduce the height of many buttons which is fine and should be the case.  
 
 ### id usage
 

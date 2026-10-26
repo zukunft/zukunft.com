@@ -38,24 +38,42 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once html_paths::EXECUTE . 'calculator.php';
+include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::EXECUTE . 'ui_list.php';
+include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::PHRASE . 'phrase_data.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_CONST . 'files.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_TYPES . 'api_types.php';
 include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::CREATE . 'test_values.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\calculator;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -191,6 +209,89 @@ class phrase_data_ui_tests
         $dto = $this->filled([], $msg);
         $t->assert($test_name, $dto->phr_lst->count(), 0);
         $t->assert_msg($test_name, $msg);
+
+        $this->page_tests($t, $ts, $sample);
+    }
+
+    /**
+     * the calculator page of the example PV installation created from the phraseData sample only:
+     * the request cache is filled and marked complete like view_exe::add_calculator_data, so that
+     * every label, number and source of the page comes from the json; the snapshot of the page is
+     * written by the database read test (system_views_read_tests::run_pv_lifetime_balance), so this
+     * test checks only the parts of the page
+     *
+     * @param test_cleanup $t the test environment
+     * @param string $ts the name of the test section
+     * @param array $sample the phraseData sample with the objects that have a database id
+     */
+    private function page_tests(test_cleanup $t, string $ts, array $sample): void
+    {
+        global $ui_sys;
+        $page = new system_page();
+        $list = new ui_list();
+
+        // the browser builds the page from the json data, so the page has only the host, the data and the script
+        $t->subheader($ts . 'calculator page');
+        $test_name = 'the calculator page is created from the phrase data only';
+        $msg = new user_message();
+        $dto = $this->complete_page_cache($sample, $msg);
+        $trp = $dto->phr_lst->get_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg)?->obj();
+        $body = $page->calculator_json($trp, $msg, $dto, views::CALCULATOR, views::CALCULATOR);
+        $html = new html_base();
+        $t->assert_text_contains($test_name, $body, $html->script_data(system_page::CALC_EDITOR_SEED_ID, $sample));
+        // the host is the use case page itself, so that the page has the width of the page of the server
+        $test_name = '... into the empty host with the style of a use case page';
+        $t->assert_text_contains($test_name, $body, $html->div('', view_styles::USE_CASE, system_page::CALC_PAGE_HOST_ID));
+        $test_name = '... without a message';
+        $t->assert_msg($test_name, $msg);
+        $test_name = '... with the script that builds the page';
+        $t->assert_text_contains($test_name, $body, $html->script_src(files::CALCULATOR_JSON_SCRIPT));
+        // negative: without javascript for the calculator the page has no html of its own
+        $test_name = 'a calculator page without javascript is empty';
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = new config_ui(new test_values($t)->value_list_calculator_javascript_off()->api_json([api_types::INCL_PHRASES]));
+        $no_js_body = $page->calculator_json($trp, $msg, $dto, views::CALCULATOR, views::CALCULATOR);
+        $ui_sys->cfg = $cfg_keep;
+        $t->assert($test_name, $no_js_body, '');
+        // negative: a phrase without calculator triples has no calculator page, so the view shows its components
+        $test_name = 'a phrase without calculator triples has no calculator page';
+        $no_calc_json = [
+            json_fields::SELECTION => [[json_fields::ID => self::NO_CALC_ID, json_fields::NAME => self::NO_CALC_NAME]],
+            json_fields::WORDS => [[json_fields::ID => self::NO_CALC_ID, json_fields::NAME => self::NO_CALC_NAME]]
+        ];
+        $no_calc_dto = $this->complete_page_cache($no_calc_json, $msg);
+        $no_calc_wrd = $no_calc_dto->phr_lst->get_by_name(self::NO_CALC_NAME, $msg)?->obj();
+        $no_calc_body = $page->calculator_json($no_calc_wrd, $msg, $no_calc_dto, views::CALCULATOR, views::CALCULATOR);
+        $t->assert($test_name, $no_calc_body, '');
+        // negative: an online but complete page cache calls no api, also not for the results and
+        // the sources of another phrase; every api call adds its wait (rest_call::api_call)
+        $test_name = 'a complete page cache calls no api';
+        $msg = new user_message();
+        $dto = $this->complete_page_cache($sample, $msg);
+        $dto->online = true;
+        $other = $dto->phr_lst->get_by_name(triple_names::PV_INSTALLATION, $msg)?->obj();
+        $wait_before = $ui_sys->api_wait;
+        if ($other != null) {
+            $list->calculator_numbers($other, $dto, $msg);
+            $list->calculator_sources(new calculator($other->phrase(), $dto->phr_lst), $other, $msg, $dto);
+        }
+        $wait_after = $ui_sys->api_wait;
+        $t->assert($test_name, $wait_after, $wait_before);
+    }
+
+    /**
+     * @param array $sample the phraseData answer of the page
+     * @param user_message $msg to collect the names that the answer does not contain
+     * @return data_object an offline request cache filled from the answer and marked complete like view_exe::add_calculator_data
+     */
+    private function complete_page_cache(array $sample, user_message $msg): data_object
+    {
+        global $ui_sys;
+        $dto = $this->filled($sample, $msg);
+        $dto->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $dto->page_data = $sample;
+        $dto->page_data_complete = true;
+        return $dto;
     }
 
     /**

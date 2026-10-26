@@ -110,6 +110,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -282,6 +283,18 @@ class base_ui_tests
         $url_std = $url_map->url_to_standard($url_array, $url_msg);
         $t->assert($test_name, $url_std[url_var::NO_CACHE] ?? '', url_var::NO_CACHE_ON);
         $t->assert($test_name . ' and bypasses the cache', $ui->url_cache_key($url_std), '');
+
+        // the page of the server is asked for by sc=0 (e.g. view.php?m=calculator&id=-2780&sc=0) and is
+        // rendered live, because the cached page of the bare url is the page that the browser builds
+        $test_name = 'sc=0 is not cached';
+        $url_array = [url_var::MASK => views::CALCULATOR_ID, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::JAVASCRIPT => url_var::FALSE];
+        $t->assert($test_name, $ui->url_cache_key($url_array), '');
+        $test_name = 'javascript is mapped to the short sc';
+        $url_array = [url_var::MASK_HUMAN => views::CALCULATOR, url_var::ID => -triple_names::CITY_ZH_ID,
+            url_var::JAVASCRIPT_HUMAN => url_var::FALSE];
+        $url_std = $url_map->url_to_standard($url_array, $url_msg);
+        $t->assert($test_name, $url_std[url_var::JAVASCRIPT] ?? '', url_var::FALSE);
 
         // the login and signup form pages are served from the page cache even though they are process
         // masks, because the plain form is static (the per-session token is restored per request)

@@ -115,6 +115,9 @@ class styles
     // the refresh is a submit button, which gets the btn class from html_base::button, but not the
     // col-1 of html_base::button_bs, so it is as wide as its text like the next and the back button
     const string PROCESS_CATCH_BUTTON_REFRESH = 'btn-outline-primary btn-space';
+    // the save of a calculator page like the refresh, with the 1rem side padding of bootstrap, so that
+    // the space left and right of the text is about the 10px padding and the half leading above and below
+    const string CALC_BUTTON_SAVE = 'btn-outline-primary btn-space px-3';
     const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
     const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
 

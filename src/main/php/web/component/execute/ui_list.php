@@ -145,6 +145,9 @@ class ui_list extends ui_base
     const string CALC_NUMBERS = 'numbers';
     const string CALC_RESULTS = 'results';
     const string CALC_INPUTS = 'inputs';
+    // per field the html id of its number, its unit and decimals with the keys of a cell and the save vars of a number field
+    const string CALC_FIELDS = 'fields';
+    const string CALC_FIELD_SAVE = 'save';
     const string CALC_CELLS = 'cells';
     const string CALC_FORMAT = 'format';
     const string CALC_CELL_NUMBER = 'number';
@@ -157,6 +160,7 @@ class ui_list extends ui_base
     const string CALC_UNIT_SEP = 'unit_sep';
     const string CALC_THOUSAND_SEP = 'thousand_sep';
     const string CALC_PERCENT_DECIMALS = 'percent_decimals';
+    const string CALC_DIGITS = 'digits';
     const string CALC_POSITIVE = 'positive';
     const string CALC_NEGATIVE = 'negative';
 
@@ -1742,7 +1746,7 @@ class ui_list extends ui_base
     private function add_phrase_results(data_object $dto, phrase $phr, user_message $msg): void
     {
         // the cache can hold the results of another phrase e.g. of a table on the same page
-        if ($dto->online and !$dto->has_results_of($phr->id())) {
+        if ($dto->online and !$dto->page_data_complete and !$dto->has_results_of($phr->id())) {
             $phr_lst = new phrase_list();
             $phr_lst->add_phrase($phr);
             $res_lst = new result_list();
@@ -2205,7 +2209,7 @@ class ui_list extends ui_base
                 $ids[$id] = $id;
             }
         }
-        if ($ids != [] and $dto->online) {
+        if ($ids != [] and $dto->online and !$dto->page_data_complete) {
             $src_lst = new source_list();
             if ($src_lst->load_by_ids(array_values($ids), $msg)) {
                 $dto->src_lst->merge($src_lst, $msg);
@@ -2556,14 +2560,31 @@ class ui_list extends ui_base
     ): string
     {
         $html = new html_base();
-        $result = $html->form_hidden(url_var::GROUP . $field, (string)$val->id(), $form_name);
-        if ($val->number() !== null) {
-            $result .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE . $field,
-                $html->number_value($val->number()), $form_name);
+        $result = '';
+        foreach ($this->calculator_save_map($field, $val, $label, $unit) as $var => $var_val) {
+            $result .= $html->form_hidden($var, $var_val, $form_name);
         }
-        $result .= $html->form_hidden(url_var::NAME . $field, $label, $form_name);
+        return $result;
+    }
+
+    /**
+     * @param string $field the url key of the field behind the number var e.g. "-2757" for "n-2757"
+     * @param sandbox_value $val the value that the field shows
+     * @param string $label the label of the field e.g. "System size"
+     * @param string $unit the unit of the field e.g. "kWp" or an empty string for a number without unit
+     * @return array the save vars of the field by their url var (see calculator_save_vars), the
+     *               group id as text, because it can be beyond the safe integer of javascript
+     */
+    private function calculator_save_map(string $field, sandbox_value $val, string $label, string $unit): array
+    {
+        $html = new html_base();
+        $result = [url_var::GROUP . $field => (string)$val->id()];
+        if ($val->number() !== null) {
+            $result[url_var::PRE . url_var::NUMERIC_VALUE . $field] = $html->number_value($val->number());
+        }
+        $result[url_var::NAME . $field] = $label;
         if ($unit != '') {
-            $result .= $html->form_hidden(url_var::PHRASE . $field, $unit, $form_name);
+            $result[url_var::PHRASE . $field] = $unit;
         }
         return $result;
     }
@@ -3253,28 +3274,42 @@ class ui_list extends ui_base
      */
     function calculator_script(calculator $calc, word|triple $dbo, value_list $lst, data_object $dto, user_message $msg): string
     {
-        global $ui_sys;
         $html = new html_base();
         $all_plan = $this->calculator_result_plan($lst, $dto);
         $res_plan = $this->calculator_needed_results($all_plan, $this->cell_plan);
-        $inp_plan = $this->calculator_input_plan($calc, $dbo, $dto, $msg);
+        $fld_plan = $this->calculator_field_plan($calc, $dbo, $dto, $msg);
+        $inp_plan = $this->calculator_input_plan($dbo, $fld_plan, $dto, $msg);
         $used_ids = $this->calculator_used_ids($res_plan, $inp_plan, $this->cell_plan);
         $plan = [
             self::CALC_NUMBERS => $this->calculator_number_plan($lst, $used_ids),
             self::CALC_RESULTS => $res_plan,
             self::CALC_INPUTS => $inp_plan,
+            self::CALC_FIELDS => $fld_plan,
             self::CALC_CELLS => $this->cell_plan,
-            self::CALC_FORMAT => [
-                // without a loaded config the format of the page cells, the shared defaults
-                self::CALC_DEC_POINT => $ui_sys?->cfg?->dec_point() ?? shared_config::DEFAULT_DEC_POINT,
-                self::CALC_THOUSAND_SEP => $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP,
-                self::CALC_UNIT_SEP => sandbox_value::UNIT_SEPARATOR,
-                self::CALC_PERCENT_DECIMALS => $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS,
-                self::CALC_POSITIVE => styles::CALC_POSITIVE,
-                self::CALC_NEGATIVE => styles::CALC_NEGATIVE,
-            ],
+            self::CALC_FORMAT => $this->calculator_number_format(),
         ];
         return $html->script_data(self::CALC_DATA_ID, $plan) . $html->script_src(files::CALCULATOR_SCRIPT);
+    }
+
+    /**
+     * @return array the number format of the user for the calculator scripts: the decimal point,
+     *               the thousand separator, the separator before the unit, the decimals of a share
+     *               and the styles of a positive and a negative number
+     */
+    function calculator_number_format(): array
+    {
+        global $ui_sys;
+        return [
+            // without a loaded config the format of the page cells, the shared defaults
+            self::CALC_DEC_POINT => $ui_sys?->cfg?->dec_point() ?? shared_config::DEFAULT_DEC_POINT,
+            self::CALC_THOUSAND_SEP => $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP,
+            self::CALC_UNIT_SEP => sandbox_value::UNIT_SEPARATOR,
+            self::CALC_PERCENT_DECIMALS => $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS,
+            // the digits that a column of numbers shows, which decide its decimals (number_format)
+            self::CALC_DIGITS => $ui_sys?->cfg?->digits() ?? shared_config::DEFAULT_DIGITS,
+            self::CALC_POSITIVE => styles::CALC_POSITIVE,
+            self::CALC_NEGATIVE => styles::CALC_NEGATIVE,
+        ];
     }
 
     /**
@@ -3403,13 +3438,13 @@ class ui_list extends ui_base
      * phrase selector the value of the option that the calculation of the page uses, and an
      * assumption that a result uses the value itself (see assumption_fields)
      *
-     * @param calculator $calc the calculator reader of the page
      * @param word|triple $dbo the phrase of the page
+     * @param array $fld_plan per name of an input field its number and format (see calculator_field_plan)
      * @param data_object $dto the request cache with the field triples and the values
      * @param user_message $msg to report a problem of the phrase types
      * @return array per name of an input field the html id of its number
      */
-    private function calculator_input_plan(calculator $calc, word|triple $dbo, data_object $dto, user_message $msg): array
+    private function calculator_input_plan(word|triple $dbo, array $fld_plan, data_object $dto, user_message $msg): array
     {
         $result = [];
         foreach ($this->operand_values($dbo, $msg, $dto) as $val) {
@@ -3417,6 +3452,26 @@ class ui_list extends ui_base
                 $result[url_var::NUMERIC_VALUE . $val->id()] = $val->html_id();
             }
         }
+        foreach ($fld_plan as $name => $fld) {
+            $result[$name] = $fld[self::CALC_CELL_NUMBER];
+        }
+        return $result;
+    }
+
+    /**
+     * the number and the format of each input and assumption field, so that a page that the script
+     * builds shows and saves each field like the page of the server (see calculator_number and
+     * calculator_selector)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per name of an input field its number and format (see calculator_field_format)
+     */
+    private function calculator_field_plan(calculator $calc, word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $result = [];
         foreach ([...$calc->items(triples::CALCULATOR_INPUT), ...$calc->items(triples::CALCULATOR_ASSUMPTION)] as $item) {
             $phr = $calc->item_phrase($item);
             $val = null;
@@ -3424,8 +3479,39 @@ class ui_list extends ui_base
                 $val = $this->calculator_field_value($calc, $phr, $dbo, $dto, $msg);
             }
             if ($val != null) {
-                $result[url_var::NUMERIC_VALUE . $phr->id()] = $val->html_id();
+                $result[url_var::NUMERIC_VALUE . $phr->id()] = $this->calculator_field_format($calc, $item, $phr, $val, $dto, $msg);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. PV installation input PV capacity
+     * @param phrase $phr the phrase of the item e.g. PV capacity
+     * @param sandbox_value $val the value that the field sets (see calculator_field_value)
+     * @param data_object $dto the request cache with the field triples
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the html id of the number and its decimals, and of a number field also the unit and the save vars
+     */
+    private function calculator_field_format(
+        calculator    $calc,
+        phrase        $item,
+        phrase        $phr,
+        sandbox_value $val,
+        data_object   $dto,
+        user_message  $msg
+    ): array
+    {
+        $result = [
+            self::CALC_CELL_NUMBER => $val->html_id(),
+            self::CALC_CELL_DECIMALS => $this->field_decimals($val, $msg),
+        ];
+        // a phrase selector shows no unit and is never saved as a number (see calculator_selector)
+        if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
+            $unit = $this->unit_name($val, $msg);
+            $result[self::CALC_CELL_UNIT] = $unit;
+            $result[self::CALC_FIELD_SAVE] = $this->calculator_save_map((string)$phr->id(), $val, $calc->label($item), $unit);
         }
         return $result;
     }

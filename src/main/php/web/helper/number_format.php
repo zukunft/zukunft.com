@@ -196,16 +196,55 @@ class number_format
     private function conversion(formula $frm, user_message $msg): ?array
     {
         $result = null;
+        $parts = $this->conversion_parts($frm);
+        if ($parts != null and $this->is_unit($parts[0])) {
+            $result = $this->unit_factor($parts[1], 1 / $parts[2], $msg);
+        } elseif ($parts != null and $this->is_unit($parts[1])) {
+            $result = $this->unit_factor($parts[0], $parts[2], $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param formula $frm a preloaded formula e.g. "kg" = "tonne" * 1000
+     * @return array|null the name of the result unit, of the source unit and the positive factor k
+     *                    of "res" = "src" * k, which says that one src is k res, e.g. ["kg", "tonne", 1000]
+     */
+    private function conversion_parts(formula $frm): ?array
+    {
+        $result = null;
         if (preg_match(self::CONVERSION_PATTERN, $frm->get_usr_text() ?? '', $part) === 1) {
-            // "res" = "src" * k: one src is k res
             $k = (float)$part[4];
             if ($part[3] == chars::DIV and $k != 0.0) {
                 $k = 1 / $k;
             }
-            if ($k > 0 and $this->is_unit($part[1])) {
-                $result = $this->unit_factor($part[2], 1 / $k, $msg);
-            } elseif ($k > 0 and $this->is_unit($part[2])) {
-                $result = $this->unit_factor($part[1], $k, $msg);
+            if ($k > 0) {
+                $result = [$part[1], $part[2], $k];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * every unit conversion of the preloaded formulas in both directions, so that a script can
+     * convert a group of numbers like group() without the formulas
+     *
+     * @param user_message $msg to report a problem of the phrase lookup
+     * @return array per conversion the name of the unit, the name and the shown text of the other
+     *               unit and the factor to it e.g. [["kg", "tonne", "t", 0.001], ["tonne", "kg", "kg", 1000]]
+     */
+    function unit_conversions(user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->frm_lst?->lst() ?? [] as $frm) {
+            $parts = $this->conversion_parts($frm);
+            if ($parts != null) {
+                $res = $this->phr_lst?->get_by_name($parts[0], $msg);
+                $src = $this->phr_lst?->get_by_name($parts[1], $msg);
+                if ($res instanceof phrase and $src instanceof phrase) {
+                    $result[] = [$parts[0], $parts[1], $src->unit_text($msg), 1 / $parts[2]];
+                    $result[] = [$parts[1], $parts[0], $res->unit_text($msg), $parts[2]];
+                }
             }
         }
         return $result;
