@@ -223,6 +223,11 @@ class word_ui_tests
         $test_page .= $html->text_h2('aliases and symbols of ' . $wrd_eur_rel->name());
         $test_page .= $list->phrase_aliases($wrd_eur_rel, $msg) . '<br>';
         $test_page .= $list->phrase_symbols($wrd_eur_rel, $msg) . '<br>';
+
+        // the views that the edit menu of the navbar suggests for a word
+        $wrd_menu = $t_wrd->menu_views_ui();
+        $test_page .= $html->text_h2('edit menu of ' . $wrd_menu->name());
+        $test_page .= $html->list_unsorted($wrd_menu->menu_view_items_ui($cfg, $msg)) . '<br>';
         $test_page .= 'other related phrases: ' . $list->phrases_related_ex_symbols($wrd_eur_rel, $msg) . '<br>';
         // the "related phrases without subtitles" component groups the related phrases by verb
         $test_page .= 'related phrases without subtitles: ' . $list->phrases_related_ex_subtitle($wrd_eur_rel, $msg) . '<br>';
@@ -346,6 +351,52 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $currency_single, word_names::CURRENCY);
         $test_name = 'without related phrases the section stays empty';
         $t->assert($test_name, $list->parents_of_word($trp_chf, $msg, new phrase_list()), '');
+
+        $msg->reset();
+        $t->subheader($ts . 'edit menu');
+        // first the views directly linked to the word, then the views of the parents sorted by name
+        $test_name = 'the edit menu offers the own view, the assigned view and then the parent views';
+        $menu_ids = $wrd_menu->menu_views_ui($cfg, $msg)->ids();
+        $top_ids = array_slice($menu_ids, 0, 4);
+        $t->assert($test_name, $top_ids, [views::MATH_CONST_ID, views::SCIENCE_ID, views::EDUCATION_ID, views::HISTORIC_ID]);
+        $test_name = '... and then the general word views';
+        $menu_ids = $wrd_menu->menu_views_ui($cfg, $msg)->ids();
+        $t->assert_contains($test_name, $menu_ids, views::WORD_ID);
+        // negative: science is assigned and a parent view, but offered only once
+        $test_name = '... and each view only once';
+        $id_counts = array_count_values($menu_ids);
+        $science_count = $id_counts[views::SCIENCE_ID] ?? 0;
+        $t->assert($test_name, $science_count, 1);
+        // a repeated view is normal in the menu, so it must not leave a message, which would e.g. stop
+        // the confirmed save of an edit form that is shown with this menu
+        $test_name = '... without a message about the repeated views';
+        $msg_txt = $msg->text();
+        $t->assert($test_name, $msg_txt, '');
+        $test_name = 'each view of the edit menu has the switch icon like in the views tab';
+        $menu_items = $wrd_menu->menu_view_items_ui($cfg, $msg);
+        $t->assert_text_contains($test_name, $menu_items, icons::VIEW_SWITCH);
+        $test_name = '... behind the view name in the same row';
+        $t->assert_text_contains($test_name, $menu_items, styles::FLEX_ROW);
+        // negative: the view itself is changed by the "change this view" entry of the menu
+        $test_name = '... but no edit icon';
+        $t->assert_text_not_contains($test_name, $menu_items, icons::EDIT);
+        // negative: a word without own, assigned or parent views in a cache without system views has no entries
+        $test_name = '... but a word without any suggested view has no entries';
+        $t_typ = new test_types($t);
+        $menu_items = $t_wrd->chf_ui()->menu_view_items_ui($t_typ->type_lists_empty_ui(), $msg);
+        $t->assert($test_name, $menu_items, '');
+        // the navbar shows the suggested views instead of the alternative views
+        $test_name = 'the edit menu of the navbar shows the suggested views';
+        $menu_items = $wrd_menu->menu_view_items_ui($cfg, $msg);
+        $nav_html = $html->navbar(views::WORD_ID, [], null, null, false, 0, '', $menu_items);
+        $t->assert_text_contains($test_name, $nav_html, views::SCIENCE);
+        $test_name = '... instead of the alternative views';
+        $t->assert_text_not_contains($test_name, $nav_html, $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW));
+        // negative: a page without suggested views keeps the alternative views
+        $test_name = 'the edit menu of a page without suggested views keeps the alternative views';
+        $nav_html = $html->navbar(views::WORD_ID);
+        $t->assert_text_contains($test_name, $nav_html, $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW));
+        $msg->reset();
 
         $t->subheader($ts . 'aliases and symbols');
         $test_name = 'one alias is shown with the singular text';

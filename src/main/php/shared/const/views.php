@@ -196,6 +196,13 @@ class views
     const int VERB_DEFAULT_RANGE_ID = 38;
     const string WORD_DEFAULT_DETAIL_RANGE = 'word_default_detail_range';
     const int WORD_DEFAULT_DETAIL_RANGE_ID = 39;
+    // the general views of a word that the edit menu of the navbar offers for every word after its own views
+    const array WORD_MENU_CODE_IDS = [
+        self::WORD,
+        self::WORD_DEFAULT_DETAIL,
+        self::WORD_DEFAULT_RANGE,
+        self::WORD_DEFAULT_DETAIL_RANGE,
+    ];
     const string TRIPLE_DEFAULT_DETAIL_RANGE = 'triple_default_detail_range';
     const int TRIPLE_DEFAULT_DETAIL_RANGE_ID = 40;
     const string VALUE_DEFAULT_DETAIL_RANGE = 'value_default_detail_range';

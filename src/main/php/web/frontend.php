@@ -1319,7 +1319,8 @@ class frontend
                             $logged_in ? $usr->navbar_role() : null,
                             ($logged_in and $usr->is_admin()),
                             $msk_edt?->id() ?? 0,
-                            $msk_edt?->name() ?? '');
+                            $msk_edt?->name() ?? '',
+                            $this->menu_view_items($dbo, $msg_ui));
                     }
                     $result .= $html->main($dsp_text);
                     $result .= $this->user_msg_html($msg_ui);
@@ -3216,6 +3217,23 @@ class frontend
             $dbo_ui = $this->dbo_ui_by_view_type($view_id);
         }
         return $dbo_ui;
+    }
+
+    /**
+     * the entries of the edit menu of the navbar for the views suggested for the shown object;
+     * only a word has suggestions yet, so any other object keeps the alternative views entry
+     *
+     * @param object|null $dbo the object shown on the page e.g. the word Pi
+     * @param user_message_ui $msg_ui to report a view that is listed twice
+     * @return string the html list items of the suggested views or an empty string
+     */
+    private function menu_view_items(?object $dbo, user_message_ui $msg_ui): string
+    {
+        $result = '';
+        if ($dbo instanceof word_ui and $this->dto?->typ_lst_cache != null) {
+            $result = $dbo->menu_view_items_ui($this->dto->typ_lst_cache, $msg_ui);
+        }
+        return $result;
     }
 
     /**

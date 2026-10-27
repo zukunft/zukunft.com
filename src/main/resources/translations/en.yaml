@@ -561,7 +561,7 @@ messages:
   navbar_search_placeholder: "word or formula"
   navbar_get_numbers: "Get numbers"
   navbar_alternative_view: "alternative"
-  navbar_change_view: "change view"
+  navbar_change_view: "change this view"
   navbar_add_view: "add view"
   navbar_server_admin: "server admin"
   or: "or"

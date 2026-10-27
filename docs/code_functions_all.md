@@ -554,6 +554,7 @@
             /word.php
     \-- load_references_related - section for function load_references_related is expected to be load in /word/word.php
     \-- load_views_related - section for function load_views_related is expected to be load in /word/word.php
+    \-- load_views_assigned - section for function load_views_assigned is expected to be load in /word/word.php
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /word/word.php
     \-- select_phrases_related - section for function select_phrases_related not yet defined that it should be related i
             n /word/word.php
@@ -990,6 +991,8 @@
         \-- view - add or update a view in the database or create a user view
     \-- save_component_links
         \-- view - add or update the component links of this view in the database or create a user view
+    \-- save_term_links
+        \-- view - save the terms that the import assigns to this view e.g. "Pi" to "Mathematical constant",
     \-- load_sql_user_changes
         \-- view - create an SQL statement to retrieve the user changes of the current view
 \-- message
@@ -3643,6 +3646,8 @@
 \-- sandbox_related
     \-- views_array - section for function views_array not yet defined that it should be api in /sandbox/sandbox_related
             .php
+    \-- views_assigned_array - section for function views_assigned_array not yet defined that it should be api in /sandb
+            ox/sandbox_related.php
     \-- changes_array - section for function changes_array not yet defined that it should be api in /sandbox/sandbox_rel
             ated.php
     \-- load_changes - section for function load_changes is expected to be load in /sandbox/sandbox_related.php
@@ -4176,6 +4181,9 @@
 \-- term_view_list
     \-- load_by_ids - section for function load_by_ids is expected to be load in /view/term_view_list.php
     \-- load_by_view - section for function load_by_view is expected to be load in /view/term_view_list.php
+    \-- load_by_term - section for function load_by_term is expected to be load in /view/term_view_list.php
+    \-- view_list - section for function view_list not yet defined that it should be load sql in /view/term_view_list.ph
+            p
     \-- term_list - section for function term_list not yet defined that it should be load sql in /view/term_view_list.ph
             p
     \-- order error - order of section load sql has difference at load_sql_by_ids should be before load_sql
@@ -5559,6 +5567,8 @@
         \-- change_log_list - TODO Prio 2 instead of using an array for $other_values create a helper class with vars
     \-- views_array
         \-- sandbox_related - the views that can show the object for the views tab of the object page; the list is
+    \-- views_assigned_array
+        \-- sandbox_related - the views assigned to the object by the import for the edit menu of the navbar
     \-- changes_array
         \-- sandbox_related - the changes of the given object for the changes tab of the object page
     \-- load_changes
@@ -8602,6 +8612,7 @@
             .php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /view/view_list.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_list.php
+    \-- sort_by_name - section for function sort_by_name not yet defined that it should be base in /view/view_list.php
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
     \-- only_type - section for function only_type not yet defined that it should be filter in /view/view_list.php
     \-- selector - section for function selector not yet defined that it should be select in /view/view_list.php
@@ -8716,6 +8727,9 @@
     \-- name_link_plural - section for function name_link_plural not yet defined that it should be base in /word/word.ph
             p
     \-- btn_unlink - section for function btn_unlink not yet defined that it should be buttons in /word/word.php
+    \-- menu_views_ui - section for function menu_views_ui not yet defined that it should be select in /word/word.php
+    \-- menu_view_items_ui - section for function menu_view_items_ui not yet defined that it should be select in /word/w
+            ord.php
     \-- dsp_type_selector - section for function dsp_type_selector not yet defined that it should be select in /word/wor
             d.php
     \-- th - section for function th not yet defined that it should be table in /word/word.php

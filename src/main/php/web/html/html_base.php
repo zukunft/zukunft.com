@@ -468,6 +468,8 @@ class html_base
      * @param bool $is_admin true to offer the admin dashboard in the user menu
      * @param int $edt_id the view id of the editor of the current view; 0 offers the alternative views instead
      * @param string $edt_name the name of the editor view shown in the edit menu
+     * @param string $view_items the menu entries of the views suggested for the shown object e.g. of a word,
+     *                           which replace the alternative views; empty if the object has no suggestions
      */
     function navbar(
         int     $msk_id = 0,
@@ -476,7 +478,8 @@ class html_base
         ?string $usr_role = null,
         bool    $is_admin = false,
         int     $edt_id = 0,
-        string  $edt_name = ''
+        string  $edt_name = '',
+        string  $view_items = ''
     ): string
     {
         global $ui_sys;
@@ -502,8 +505,7 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        // TODO Prio 3 switch the view mask to a suggested related view
-        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $edt_id, $edt_name) . "\n";
+        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $edt_id, $edt_name, $view_items) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
@@ -533,8 +535,16 @@ class html_base
      * @param int $msk_id the current view id used to build the view change links
      * @param array $url_array the current request parameters used to build back-navigation links
      * @param bool $is_admin true to offer the server admin page at the end
+     * @param string $view_items the menu entries of the suggested views, which replace the alternative views
      */
-    private function view_change_list(int $msk_id = 0, array $url_array = [], bool $is_admin = false, int $edt_id = 0, string $edt_name = ''): string
+    private function view_change_list(
+        int    $msk_id = 0,
+        array  $url_array = [],
+        bool   $is_admin = false,
+        int    $edt_id = 0,
+        string $edt_name = '',
+        string $view_items = ''
+    ): string
     {
         global $mtr;
         if ($edt_id != 0) {
@@ -545,6 +555,9 @@ class html_base
             // and for a user who can no tooltip, because ref() skips a title that repeats the name
             [$edt_style, $edt_tip] = $this->change_style_and_tip('', $edt_name);
             $result = $this->list_item($this->ref($url_edt, $edt_name, $edt_tip, $edt_style)) . "\n";
+        } elseif ($view_items != '') {
+            // e.g. for a word the views linked to the word, to its parents and the general word views
+            $result = $view_items;
         } else {
             $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
         }

@@ -43,6 +43,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CREATE . 'test_links.php';
+include_once test_paths::CREATE . 'test_terms.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_links;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
 use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -71,6 +73,7 @@ class term_view_tests
         $sc = new sql_creator();
         $t_lnk = new test_links($t);
         $t_msk = new test_views($t);
+        $t_trm = new test_terms($t);
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
@@ -102,6 +105,16 @@ class term_view_tests
         $t->assert_qp($qp, $sc->db_type, $test_name);
         $sc->reset(sql_db::MYSQL);
         $qp = $lnk_lst->load_sql_by_view($sc, $t_msk->view());
+        $t->assert_qp($qp, $sc->db_type, $test_name);
+        // the term views of one term are the views assigned to the term, which the edit menu of
+        // the navbar offers first (see word::load_views_assigned)
+        $test_name = 'load the views assigned to a term';
+        $lnk_lst = new term_view_list($t->usr1);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $lnk_lst->load_sql_by_term($sc, $t_trm->term());
+        $t->assert_qp($qp, $sc->db_type, $test_name);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $lnk_lst->load_sql_by_term($sc, $t_trm->term());
         $t->assert_qp($qp, $sc->db_type, $test_name);
         $t->assert_sql_changing_users_by_ids($sc, $lnk);
         // TODO Prio 2 check if all links have the check

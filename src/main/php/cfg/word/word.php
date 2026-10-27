@@ -109,6 +109,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
@@ -167,6 +168,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -284,6 +286,10 @@ class word extends sandbox_code_id
     // its parent words; populated lazily by load_views_related() and only emitted via
     // api_json_array() when the api_types::INCL_RELATED flag is set
     public ?view_list $views_related = null;
+    // the views assigned to this word by the import e.g. "Mathematical constant" to "Pi", which the
+    // edit menu of the navbar offers first; populated lazily by load_views_assigned() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?view_list $views_assigned = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -616,6 +622,11 @@ class word extends sandbox_code_id
                     }
                     $vars = array_merge($vars,
                         new sandbox_related()->views_array($this->views_related, $msg, $usr));
+                    if ($this->views_assigned == null and !$typ_lst->test_mode()) {
+                        $this->load_views_assigned($msg);
+                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }
@@ -760,6 +771,20 @@ class word extends sandbox_code_id
             }
         }
         $this->views_related = $msk_lst;
+    }
+
+    /**
+     * load the views that the import has assigned to this word into the in-memory views_assigned
+     * list, so that the edit menu of the navbar can offer them first e.g. "Mathematical constant" for "Pi"
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_assigned(user_message $msg): void
+    {
+        $lnk_lst = new term_view_list($this->get_user());
+        $lnk_lst->load_by_term($this->term(), $msg);
+        $this->views_assigned = $lnk_lst->view_list();
     }
 
     /**

@@ -222,6 +222,21 @@ class word_read_tests
         $t->assert_msg($test_name, $msg);
         $msg->reset();
 
+        // the edit menu of the navbar offers first the views directly linked to the word, which are
+        // the own default view and the views that the import assigns e.g. base_views.json to Pi
+        $test_name = 'the view of all mathematical constants is assigned to ' . word_names::PI;
+        $wrd_pi->load_views_assigned($msg);
+        $asg_ids = $wrd_pi->views_assigned->ids();
+        $t->assert_contains($test_name, $asg_ids, views::MATH_CONST_ID);
+        // negative: a word that no view names in its assigned list has no assigned view
+        $test_name = '... but no view is assigned to ' . word_names::CANTON;
+        $wrd_canton = new word($t->usr1);
+        $wrd_canton->load_by_name(word_names::CANTON, $msg);
+        $wrd_canton->load_views_assigned($msg);
+        $asg_ids = $wrd_canton->views_assigned->ids();
+        $t->assert($test_name, $asg_ids, []);
+        $msg->reset();
+
 
         $t->subheader($ts . 'types');
 

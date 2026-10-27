@@ -201,6 +201,17 @@ class view_list extends ListBase
     }
 
     /**
+     * sort the views by name like the named lists (natural and case-insensitive), so that e.g. the
+     * edit menu of the navbar does not depend on the api/db row order
+     */
+    function sort_by_name(): void
+    {
+        $sorted = $this->lst();
+        usort($sorted, fn($msk_a, $msk_b) => strnatcasecmp($msk_a->name() ?? '', $msk_b->name() ?? ''));
+        $this->set_lst($sorted);
+    }
+
+    /**
      * @param array $url_arr the url vars of the calling page for the back link
      * @return array with a list of the view names with html links
      */

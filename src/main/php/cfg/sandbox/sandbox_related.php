@@ -97,6 +97,25 @@ class sandbox_related
     }
 
     /**
+     * the views assigned to the object by the import for the edit menu of the navbar
+     * e.g. "Mathematical constant" for "Pi"; filtered like the related views of views_array
+     *
+     * @param view_list|null $msk_lst the assigned views of the object or null if none is loaded
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the assigned view entries of the api json array
+     */
+    function views_assigned_array(?view_list $msk_lst, user_message $msg, ?user $usr): array
+    {
+        $vars = [];
+        $msk_lst?->filter_readable_by($usr);
+        if ($msk_lst != null and !$msk_lst->is_empty()) {
+            $vars[json_fields::VIEWS_ASSIGNED] = $msk_lst->api_json_array([], $msg, $usr);
+        }
+        return $vars;
+    }
+
+    /**
      * the changes of the given object for the changes tab of the object page
      * @param sandbox|sandbox_multi $sbx the object whose changes should be shown
      * @param api_type_list $typ_lst the test mode keeps the list set by the caller instead of loading

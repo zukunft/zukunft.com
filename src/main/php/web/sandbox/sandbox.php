@@ -96,6 +96,9 @@ class sandbox extends db_object
 
     // the views that can show this object from the api message, rendered by the 'views' tab
     public ?view_list $view_lst = null;
+    // the views assigned to this object by the import e.g. "Mathematical constant" to "Pi",
+    // which the edit menu of the navbar offers first
+    public ?view_list $view_assigned_lst = null;
 
     // the user that has created the standard object
     protected ?user $owner = null;
@@ -167,6 +170,12 @@ class sandbox extends db_object
             $this->view_lst->api_mapper($json_array[json_fields::VIEWS]);
         } else {
             $this->view_lst = null;
+        }
+        if (is_array($json_array[json_fields::VIEWS_ASSIGNED] ?? null)) {
+            $this->view_assigned_lst = new view_list();
+            $this->view_assigned_lst->api_mapper($json_array[json_fields::VIEWS_ASSIGNED]);
+        } else {
+            $this->view_assigned_lst = null;
         }
         return $msg->is_ok();
     }

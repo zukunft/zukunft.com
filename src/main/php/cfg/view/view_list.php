@@ -424,6 +424,10 @@ class view_list extends sandbox_list_named
                 // collect the user message for a consolidated list for the user
                 $msg->merge($cmp_lnk_usr_msg);
             }
+            // the terms of the "assigned" list e.g. "Pi" of "Mathematical constant", like the component links
+            $trm_lnk_usr_msg = $msg->clone_reset();
+            $msk->save_term_links($trm_lnk_usr_msg);
+            $msg->merge($trm_lnk_usr_msg);
         }
         return $msg->is_ok();
     }

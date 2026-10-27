@@ -45,6 +45,8 @@ class styles
     const string CHANGE_PREVIEW = 'change-preview';
     // bootstrap css class to center the elements of a row e.g. the change preview of a confirm view
     const string JUSTIFY_CENTER = 'justify-content-center';
+    // bootstrap css class to show the elements side by side e.g. the view name and its switch icon in the edit menu
+    const string FLEX_ROW = 'd-flex';
     // the change impact line centered below the change preview table
     const string CHANGE_IMPACT = 'change-impact';
     const string STYLE_GLYPH = 'glyphicon glyphicon-pencil';

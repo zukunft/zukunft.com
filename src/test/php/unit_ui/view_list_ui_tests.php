@@ -87,6 +87,21 @@ class view_list_ui_tests
         $msk_lst = new view_list();
         $api_json = [[json_fields::NAME => views::START_NAME]];
         $t->assert_false($test_name, $msk_lst->api_mapper($api_json)->is_ok());
+
+        $t->subheader($ts . 'sort');
+
+        // e.g. the edit menu of the navbar shows the views of a group sorted by name
+        $test_name = 'the views are sorted by name independent of the case';
+        $msk_lst = $t_msk->view_list_ui();
+        $msk_lst->sort_by_name();
+        $first_name = $msk_lst->lst()[0]->name();
+        $t->assert($test_name, $first_name, views::EDUCATION_NAME);
+        // negative: an empty list stays empty
+        $test_name = '... and an empty list stays empty';
+        $msk_lst = new view_list();
+        $msk_lst->sort_by_name();
+        $msk_cnt = $msk_lst->count();
+        $t->assert($test_name, $msk_cnt, 0);
     }
 
 }

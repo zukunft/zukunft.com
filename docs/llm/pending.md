@@ -1,17 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-
-## view selector
-
-in the navbar 'edit icon' menu the top entry is at the moment 'alternative'.
-Replace this with the concrete names of the suggested views related to the object shown
-e.g.
-for a word first show the view names that have a direct link to the word
-and create a sample test case for it if there is none yet
-second list the views linked to the parent with a test case
-and third show the names of the 'for words only' views
-after each name should be a switch and an edit icon like in the views tab
-
 ## start view
 
 in the start view e.g. http://localhost/http/view.php?m=1&dla=table_chart&dlc=3&dlv=1 and all similar views 
