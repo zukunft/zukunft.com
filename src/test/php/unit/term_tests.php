@@ -41,6 +41,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once test_paths::CREATE . 'test_formulas.php';
 include_once test_paths::CREATE . 'test_terms.php';
@@ -55,6 +56,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\web\phrase\term as term_ui;
@@ -222,6 +224,23 @@ class term_tests
         $t->assert_false($t->name . '... and not to a word', $trm->is_word());
         $t->assert($t->name . '... and the name', $trm->name(), $frm->name());
 
+        // the row mapper maps only a row with both ids and else reports an internal error
+        $trm = new term($t->usr1);
+        $db_row = [term::FLD_ID => $frm->term()->id(), formula_fields::FLD_ID => $frm->id()];
+        $t->assert_true($t->name . 'a row with the term id and the formula id can be mapped',
+            $trm->row_has_ids($db_row, formula_fields::FLD_ID));
+        // e.g. a corrupted row of a formula with only the term id
+        $db_row = [term::FLD_ID => $frm->term()->id()];
+        $t->assert_false($t->name . '... but not a row with only the term id',
+            $trm->row_has_ids($db_row, formula_fields::FLD_ID));
+        // the second line of defence: the row mapper tells the user which field the row misses
+        $test_name = 'the message of a corrupted term row names the missing field';
+        $row_msg = new user_message($t->usr1);
+        $row_msg->add(msg_id::TERM_ROW_ID_MISSING, [msg_id::VAR_NAME => formula_fields::FLD_ID]);
+        $t->assert_text_contains($test_name, $row_msg->text(), formula_fields::FLD_ID);
+        $test_name = '... and is an error, so that the term is not used';
+        $t->assert_false($test_name, $row_msg->is_ok());
+
 
         $t->subheader($ts . 'api json array');
 
@@ -307,7 +326,27 @@ class term_tests
         $trm = new term($t->usr1);
         $t->assert_sql_by_id($sc, $trm);
         $t->assert_sql_by_name($sc, $trm);
-
+        // the user of the query selects the user row of the term e.g. with the name that the user has given it
+        $test_name = 'a term is loaded with the rows of the user who loads it';
+        $qp = $trm->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr1->id());
+        $test_name = '... and another user gets his own rows';
+        $trm_other = new term($t->usr2);
+        $qp = $trm_other->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr2->id());
+        // e.g. the import of a verb loads its term by name
+        $test_name = 'a term of a verb is loaded with the user of the verb';
+        $trm_vrb = $t_vrp->verb()->term();
+        $qp = $trm_vrb->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr1->id());
+        $test_name = '... and without a user of the verb with no user rows';
+        $trm_vrb = test_verbs::verb_part()->term();
+        $qp = $trm_vrb->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, 0);
 
         $t->subheader($ts . 'html frontend');
 

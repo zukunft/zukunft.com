@@ -1138,6 +1138,38 @@ function mergeObj(orig, gen, textManaged) {
     return result;
 }
 
+/* a moved item links its order triple to another item, but the link of a triple is the same for all users,
+   so the order triple is removed for the user and added with the new link; the added one gets the name
+   that the pod creates from the link, because the removed one keeps its name for the other users;
+   a link that only follows the rename of the linked item is no move */
+function relinkOrders(changes) {
+    const renamed = new Map();
+    changes.mod.forEach(function (m) {
+        if (m.before.name !== m.after.name) {
+            renamed.set(m.before.name, m.after.name);
+        }
+    });
+
+    function moved(m) {
+        const from = renamed.get(m.before.from) || m.before.from;
+        const to = renamed.get(m.before.to) || m.before.to;
+        return m.after.verb === FOLLOW && (m.after.from !== from || m.after.to !== to);
+    }
+
+    const kept = [];
+    changes.mod.forEach(function (m) {
+        if (moved(m)) {
+            const added = Object.assign({}, m.after);
+            delete added.name;
+            changes.del.push({src: m.src, t: m.before});
+            changes.add.push(added);
+        } else {
+            kept.push(m);
+        }
+    });
+    changes.mod = kept;
+}
+
 /* what has changed against the loaded data: the triples, values and words to add, change or remove */
 function buildOutput() {
     const T = IDX.T;
@@ -1171,6 +1203,7 @@ function buildOutput() {
         finalTriples.push(e.obj);
         changes.add.push(e.obj);
     });
+    relinkOrders(changes);
 
     /* values: the limits of the fields and the edited shown numbers */
     const V = DOC.values || [];

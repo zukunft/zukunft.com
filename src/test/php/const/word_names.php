@@ -166,6 +166,8 @@ class word_names
     // the qualifier of a value that is estimated instead of taken from a source
     const string ASSUMED = 'assumed';
     const int ASSUMED_ID = 324;
+    // the unit of the PV capacity of pv_lifetime_balance.json, a phrase of the value that a calculator editor scenario changes
+    const string KWP = 'kWp';
     // the status of a value that has been withdrawn, whatever its quality was
     const string RETRACTED = 'retracted';
     // a unique key and one of its sample entries of the use case unique_keys.json, which is user

@@ -146,6 +146,8 @@ class component_tests
         $t->assert_sql_delete($sc, $cmp);
         // is covered already by the horizontal tests
         //$t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
+        // the removal of a user overwrite is logged too (sandbox::del_usr_cfg_exe)
+        $t->assert_sql_delete($sc, $cmp, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'component base object handling');
         $cmp = $t_cmp->component_filled();

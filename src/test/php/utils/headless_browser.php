@@ -9,6 +9,8 @@
     driven by their remote control Marionette over a local socket, chromium dumps the page after
     the scripts have run (--dump-dom)
 
+    $brw is the suggested var name
+
 
     This file is part of zukunft.com - calc with words
 
@@ -58,6 +60,9 @@ class headless_browser
     const string MARIONETTE_HOST = '127.0.0.1';
     // the seconds to wait for the start, an answer and the end of the browser
     const int TIMEOUT = 20;
+    // the milliseconds that Marionette waits for a page or a script, below TIMEOUT, so that the browser
+    // answers with an error before the socket ends the wait
+    const int MARIONETTE_TIMEOUT = 10000;
     // the microseconds between two checks if the browser has started or ended
     const int POLL = 100000;
     // the time in milliseconds that chromium gives the page and its scripts before it dumps the page
@@ -103,11 +108,11 @@ class headless_browser
      *
      * @param string $url the url of the page e.g. file:///tmp/calculator_editor.html#autarky_formula
      * @param string $id the id of the element e.g. putMessage
-     * @return string the text of the element or an empty string if the page has no such element
+     * @return string|null the text of the element or null if the page has no such element or the browser has failed
      */
-    function text(string $url, string $id): string
+    function text(string $url, string $id): ?string
     {
-        $result = '';
+        $result = null;
         if ($this->kind == self::MARIONETTE) {
             $this->command('WebDriver:Navigate', ['url' => self::BLANK]);
             $this->command('WebDriver:Navigate', ['url' => $url]);
@@ -116,15 +121,16 @@ class headless_browser
                 . ' const wait = function () { const el = document.getElementById(id);'
                 . ' if (el) { done(el.textContent); } else { setTimeout(wait, 50); } };'
                 . ' wait();';
-            $result = $this->command('WebDriver:ExecuteAsyncScript', ['script' => $script, 'args' => [$id]]) ?? '';
+            $result = $this->command('WebDriver:ExecuteAsyncScript', ['script' => $script, 'args' => [$id]]);
         } elseif ($this->kind == self::DUMP_DOM) {
             $cmd = escapeshellarg($this->cmd) . ' --headless --disable-gpu --allow-file-access-from-files'
                 . ' --virtual-time-budget=' . self::DUMP_TIME_BUDGET
                 . ' --dump-dom ' . escapeshellarg($url) . ' 2>/dev/null';
             $dom = shell_exec($cmd) ?? '';
             $match = [];
-            preg_match('#<[a-z]+ id="' . preg_quote($id, '#') . '">(.*?)</[a-z]+>#s', $dom, $match);
-            $result = html_entity_decode($match[1] ?? '');
+            if (preg_match('#<[a-z]+ id="' . preg_quote($id, '#') . '">(.*?)</[a-z]+>#s', $dom, $match)) {
+                $result = html_entity_decode($match[1]);
+            }
         }
         return $result;
     }
@@ -181,6 +187,8 @@ class headless_browser
                 // the greeting of Marionette
                 $this->read();
                 $this->command('WebDriver:NewSession', ['capabilities' => (object)[]]);
+                $this->command('WebDriver:SetTimeouts',
+                    ['pageLoad' => self::MARIONETTE_TIMEOUT, 'script' => self::MARIONETTE_TIMEOUT]);
             }
         }
         return $this->socket !== null;
@@ -198,8 +206,11 @@ class headless_browser
         $this->cmd_id = $this->cmd_id + 1;
         $msg = json_encode([0, $this->cmd_id, $name, (object)$par]);
         fwrite($this->socket, strlen($msg) . ':' . $msg);
+        // the answer is [1, id, error, result]; a late answer of an earlier command whose wait has ended is skipped
         $answer = $this->read();
-        // the answer is [1, id, error, result]
+        while ($answer != [] and $answer[1] != $this->cmd_id) {
+            $answer = $this->read();
+        }
         return $answer[3]['value'] ?? null;
     }
 

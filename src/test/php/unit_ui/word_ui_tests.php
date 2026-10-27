@@ -65,6 +65,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
@@ -167,6 +168,13 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $long_sel, 'name="' . url_var::VIEW . '"');
 
         $test_page .= $html->text_h2('select');
+        // e.g. a frontend cache that has not got the phrase types from the backend
+        // the selector checks this before it uses the phrase types and else reports an internal error
+        $test_name = 'the frontend cache has the phrase types to select the type of a word';
+        $t->assert_true($test_name, $cfg->has_phrase_types());
+        $test_name = '... but not a cache that has got no phrase types from the backend';
+        $t_typ = new test_types($t);
+        $t->assert_false($test_name, $t_typ->type_lists_empty_ui()->has_phrase_types());
         $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, $msg, '', $cfg) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t_msk->view_list_ui(), $msg) . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);

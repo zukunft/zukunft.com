@@ -95,6 +95,8 @@ class use_case_ui_tests
     const string PUT_MESSAGE_ID = 'putMessage';
     // the time of the save is replaced by this fixed time, so the message can be compared with the expected file
     const string PUT_TIMESTAMP = '2026-10-25T18:00:00.000Z';
+    // the result of a scenario that has not ended in the browser e.g. because a selector no longer matches
+    const string SCENARIO_NOT_ENDED = 'the scenario has not ended in the headless browser';
 
     /**
      * the components of a use case page e.g. the PV lifetime balance: the view title, the section
@@ -1156,8 +1158,8 @@ class use_case_ui_tests
      */
     private function calculator_editor_scenario_tests(test_cleanup $t, string $ts): void
     {
-        $browser = new headless_browser();
-        $browser_name = $browser->start();
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
         $t->subheader($ts . 'calculator editor scenario in ' . $browser_name);
         if ($browser_name == '') {
             $t->dsp_warning('no headless browser found, so the calculator editor scenario tests are skipped');
@@ -1173,10 +1175,13 @@ class use_case_ui_tests
                 test_files::SCENARIO_PV_CAPACITY_MAXIMUM => 'a new limit of a field is sent as a new value',
                 test_files::SCENARIO_PV_CAPACITY_MINIMUM_CLEARED => 'a cleared limit of a field is sent as a deleted value',
                 test_files::SCENARIO_ADD_INPUT => 'a new input field with a new phrase is sent as a new word and new triples',
-                test_files::SCENARIO_REMOVE_INPUT => 'a removed input field is sent as deleted triples and a changed order',
+                test_files::SCENARIO_REMOVE_INPUT => 'a removed input field is sent as deleted triples and a new order triple',
+                test_files::SCENARIO_PV_CAPACITY_DOWN => 'a field moved down is sent as new and deleted order triples',
+                test_files::SCENARIO_AUTARKY_UP => 'a row moved up is sent as two new and two deleted order triples',
+                test_files::SCENARIO_EMBODIED_EMISSION_DOWN => 'a row group moved down is sent as two new and two deleted order triples',
             ];
             foreach ($saved as $scenario => $test_name) {
-                $put = $this->scenario_message($browser, $page, $scenario);
+                $put = $this->scenario_message($brw, $page, $scenario);
                 $t->assert_file($test_name, $put,
                     test_paths::WEB_CALCULATOR_EDITOR_RES . test_files::UI_PUT_PREFIX . $scenario . test_files::JSON,
                     test_files::JSON);
@@ -1186,13 +1191,15 @@ class use_case_ui_tests
                 test_files::SCENARIO_AUTARKY_FORMULA_UNCHANGED => '... but nothing is sent for the loaded expression typed again',
                 test_files::SCENARIO_PV_CAPACITY_LABEL_UNDO_ALL => '... nor for a change that is undone',
                 test_files::SCENARIO_ADD_INPUT_WITHOUT_PHRASE => '... nor for a new input field without a phrase',
+                test_files::SCENARIO_PV_CAPACITY_UP => '... nor for the first field moved up',
+                test_files::SCENARIO_PV_CAPACITY_DOWN_UP => '... nor for a field moved down and up again',
             ];
             foreach ($unchanged as $scenario => $test_name) {
-                $t->assert($test_name, $this->scenario_message($browser, $page, $scenario), '');
+                $t->assert($test_name, $this->scenario_message($brw, $page, $scenario), '');
             }
             unlink($page);
         }
-        $browser->stop();
+        $brw->stop();
     }
 
     /**
@@ -1216,15 +1223,18 @@ class use_case_ui_tests
     /**
      * run the user actions of a scenario in the headless browser and read the message of the save
      *
-     * @param headless_browser $browser the started headless browser
+     * @param headless_browser $brw the started headless browser
      * @param string $page the path of the calculator editor page with the scenarios
      * @param string $scenario the name of the scenario e.g. test_files::SCENARIO_AUTARKY_FORMULA
-     * @return string the update put message as formatted json with a fixed time or an empty string if nothing is saved
+     * @return string the update put message as formatted json with a fixed time, an empty string if nothing is saved
+     *                or SCENARIO_NOT_ENDED if the scenario has failed, so that a failure never passes as nothing saved
      */
-    private function scenario_message(headless_browser $browser, string $page, string $scenario): string
+    private function scenario_message(headless_browser $brw, string $page, string $scenario): string
     {
-        $result = $browser->text('file://' . $page . '#' . $scenario, self::PUT_MESSAGE_ID);
-        if ($result != '') {
+        $result = $brw->text('file://' . $page . '#' . $scenario, self::PUT_MESSAGE_ID);
+        if ($result === null) {
+            $result = self::SCENARIO_NOT_ENDED;
+        } elseif ($result != '') {
             $json = json_decode($result, true);
             $json[json_fields::TIMESTAMP] = self::PUT_TIMESTAMP;
             $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

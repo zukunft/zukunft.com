@@ -6,8 +6,10 @@
    Save, which sends the update put message to a fetch that writes the message into the page instead of
    calling the pod, so the test reads the message from the dumped page */
 
-/* the element with the message of the save, empty if the scenario has not saved */
+/* the element with the message of the save, empty if the scenario has not saved; it gets its id only after
+   the scenario has ended, so a failed scenario leaves no element and is never read as nothing saved */
 const PUT_MESSAGE_ID = "putMessage";
+const messageElement = document.createElement("pre");
 const AUTARKY_FORMULA = "autarky formula";
 /* the autarky without the battery discharge */
 const AUTARKY_EXPRESSION = '"autarky" = "direct use" / "household consumption"';
@@ -19,6 +21,15 @@ const PV_CAPACITY_HINT = "the peak power of all modules";
 const PV_CAPACITY_NAME = "PV installation input installation size";
 const PV_CAPACITY_NUMBER = "12.5";
 const PV_CAPACITY_MAXIMUM = "100";
+/* the last row of its row group and a row group in the middle, which the order scenarios move */
+const AUTARKY = "autarky";
+const EMBODIED_EMISSION = "embodied emission";
+/* the kinds of the items in the page structure, because e.g. "lifetime" is an assumption and a result column */
+const KIND_INPUT = "input";
+const KIND_ROW = "row";
+const KIND_ROW_GROUP = "rowgroup";
+const MOVE_UP = "up";
+const MOVE_DOWN = "down";
 /* a phrase that is not in the database yet, so the save adds it as a word */
 const NEW_WORD = "System Test Word";
 /* the field labels of the inspector */
@@ -45,16 +56,21 @@ function typeExpression(text) {
     area.dispatchEvent(new Event("input", {bubbles: true}));
 }
 
-/* select the item of the page structure that shows the phrase */
+/* select the input field of the page structure that shows the phrase */
 function selectItem(phrase) {
-    itemOf(phrase).click();
+    itemOf(phrase, KIND_INPUT).click();
 }
 
-function itemOf(phrase) {
-    const result = Array.from(document.querySelectorAll("#tree .node[data-kind]")).find(function (n) {
+function itemOf(phrase, kind) {
+    const result = Array.from(document.querySelectorAll('#tree .node[data-kind="' + kind + '"]')).find(function (n) {
         return n.querySelector(".ph").textContent === phrase;
     });
     return result;
+}
+
+/* move the item of the page structure one place up or down with its arrow button */
+function moveItem(phrase, kind, direction) {
+    itemOf(phrase, kind).querySelector('[data-act="' + direction + '"]').click();
 }
 
 /* type the text into the field of the settings with the label, which the editor stores while typing,
@@ -76,10 +92,9 @@ function click(selector) {
 
 /* press Save as on a pod: the fetch of the save writes its message into the page and never answers */
 function pressSave() {
-    const out = document.getElementById(PUT_MESSAGE_ID);
     SOURCE.mode = "api";
     window.fetch = function (url, opts) {
-        out.textContent = opts.body;
+        messageElement.textContent = opts.body;
         return new Promise(function () {
         });
     };
@@ -161,17 +176,40 @@ const SCENARIOS = {
     },
     /* the user removes an input field with its triples and values */
     remove_input: function () {
-        itemOf(BATTERY_CAPACITY).querySelector('[data-act="remove"]').click();
+        itemOf(BATTERY_CAPACITY, KIND_INPUT).querySelector('[data-act="remove"]').click();
+        pressSave();
+    },
+    /* the user moves the first input field down, which adds the order triples of the new order and
+       removes the ones of the old order */
+    pv_capacity_down: function () {
+        moveItem(PV_CAPACITY, KIND_INPUT, MOVE_DOWN);
+        pressSave();
+    },
+    /* the first input field can not move up, so there is nothing to save */
+    pv_capacity_up: function () {
+        moveItem(PV_CAPACITY, KIND_INPUT, MOVE_UP);
+        pressSave();
+    },
+    /* the user moves an input field down and up again, so there is nothing to save */
+    pv_capacity_down_up: function () {
+        moveItem(PV_CAPACITY, KIND_INPUT, MOVE_DOWN);
+        moveItem(PV_CAPACITY, KIND_INPUT, MOVE_UP);
+        pressSave();
+    },
+    /* the user moves the last row of a row group up, which replaces the two order triples of the two rows */
+    autarky_up: function () {
+        moveItem(AUTARKY, KIND_ROW, MOVE_UP);
+        pressSave();
+    },
+    /* the user moves a row group down, which replaces the order triples of the two row groups */
+    embodied_emission_down: function () {
+        moveItem(EMBODIED_EMISSION, KIND_ROW_GROUP, MOVE_DOWN);
         pressSave();
     }
 };
 
 window.addEventListener("load", function () {
-    const out = document.createElement("pre");
-    out.id = PUT_MESSAGE_ID;
-    document.body.appendChild(out);
-    const scenario = SCENARIOS[location.hash.slice(1)];
-    if (scenario) {
-        scenario();
-    }
+    document.body.appendChild(messageElement);
+    SCENARIOS[location.hash.slice(1)]();
+    messageElement.id = PUT_MESSAGE_ID;
 });

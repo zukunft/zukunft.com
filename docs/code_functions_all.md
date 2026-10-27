@@ -518,6 +518,8 @@
     \-- type_id - section for function type_id not yet defined that it should be set and get in /word/triple.php
     \-- cloned_named - section for function cloned_named not yet defined that it should be set and get in /word/triple.p
             hp
+    \-- needs_reverse_check - section for function needs_reverse_check not yet defined that it should be info in /word/t
+            riple.php
     \-- needs_from - section for function needs_from not yet defined that it should be info in /word/triple.php
     \-- has_verb - section for function has_verb not yet defined that it should be info in /word/triple.php
     \-- delta - section for function delta is expected to be del in /word/triple.php
@@ -2915,6 +2917,8 @@
 \-- term
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /phrase/term
             .php
+    \-- row_has_ids - section for function row_has_ids not yet defined that it should be construct and map in /phrase/te
+            rm.php
     \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /phrase/te
             rm.php
     \-- owner_id - section for function owner_id not yet defined that it should be set and get in /phrase/term.php
@@ -3529,6 +3533,12 @@
     \-- add - section for function add not yet defined that it should be add in /sandbox/sandbox_multi.php
     \-- del - section for function del is expected to be del in /sandbox/sandbox_multi.php
     \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox_multi.php
+    \-- has_source - section for function has_source not yet defined that it should be delete in /sandbox/sandbox_multi.
+            php
+    \-- has_placeholder_source - section for function has_placeholder_source not yet defined that it should be delete in
+             /sandbox/sandbox_multi.php
+    \-- sql_delete_user_row - section for function sql_delete_user_row not yet defined that it should be delete in /sand
+            box/sandbox_multi.php
     \-- sql_write - section for function sql_write not yet defined that it should be delete in /sandbox/sandbox_multi.ph
             p
     \-- sql_write_with_log - section for function sql_write_with_log not yet defined that it should be delete in /sandbo
@@ -3609,7 +3619,6 @@
     \-- log_last_msg - section for function log_last_msg is expected to be log in /sandbox/sandbox_named.php
     \-- log_last_field_msg - section for function log_last_field_msg is expected to be log in /sandbox/sandbox_named.php
     \-- log_add - section for function log_add is expected to be log in /sandbox/sandbox_named.php
-    \-- log_del - section for function log_del is expected to be log in /sandbox/sandbox_named.php
     \-- add - section for function add not yet defined that it should be add in /sandbox/sandbox_named.php
     \-- is_key_updated - section for function is_key_updated is expected to be info in /sandbox/sandbox_named.php
     \-- is_id_key_updated - section for function is_id_key_updated is expected to be info in /sandbox/sandbox_named.php
@@ -8307,6 +8316,8 @@
     \-- order error - order of section  has difference at name should be before reset,
             order of section display has difference at name_link should be before name_tip
 \-- type_lists
+    \-- has_phrase_types - section for function has_phrase_types not yet defined that it should be type list by class in
+             /types/type_lists.php
     \-- class_to_type_list - section for function class_to_type_list not yet defined that it should be type list by clas
             s in /types/type_lists.php
     \-- field_to_type_list - section for function field_to_type_list not yet defined that it should be type list by clas

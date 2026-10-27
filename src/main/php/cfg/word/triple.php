@@ -1736,6 +1736,14 @@ class triple extends sandbox_link_named
         return $result;
     }
 
+    /**
+     * @return bool false if this triple may be the reverse of an existing one, e.g. an order triple
+     */
+    function needs_reverse_check(): bool
+    {
+        return !in_array($this->get_verb_code_id(), verbs::WITHOUT_REVERSE_CHECK);
+    }
+
     function needs_from(): bool
     {
         $needs_from = true;
@@ -3048,7 +3056,7 @@ class triple extends sandbox_link_named
         $sim = parent::get_similar($msg);
 
         // check if the opposite triple already exists and if yes, ask for confirmation
-        if ($this->id() == 0) {
+        if ($this->id() == 0 and $this->needs_reverse_check()) {
             log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
             // check if the reverse triple is already in the database
             $db_chk_rev = $this->clone_reset();

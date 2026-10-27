@@ -438,6 +438,10 @@ class view_tests
         $t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
 
         // sql write delete is already tested in the horizontal tests
+        // ... but not the logged removal of a user overwrite (sandbox::del_usr_cfg_exe)
+        $t->subheader($ts . 'sql write delete');
+        $mrl = $t_msk->view_relation_filled();
+        $t->assert_sql_delete($sc, $mrl, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'api mapper');
 

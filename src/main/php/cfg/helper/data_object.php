@@ -777,7 +777,8 @@ class data_object
 
         $this->sys_phr = new phrase_list($this->get_user());
         foreach (verbs::PRELOAD_VERBS as $code_id) {
-            $vrb = $sys->verb($code_id);
+            // without the log of the lookup, because the missing verb is reported below
+            $vrb = $sys->verb($code_id, false);
             if ($vrb->id() == 0) {
                 log_err_msg('the verb ' . $code_id . ' is missing, so the phrases of this verb '
                     . 'cannot be preloaded and a symbol of a number is not shown', $msg);

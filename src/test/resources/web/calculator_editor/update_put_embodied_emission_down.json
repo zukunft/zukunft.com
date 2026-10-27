@@ -1,0 +1,35 @@
+{
+    "pod": "zukunft.com",
+    "type": "updatePut",
+    "user_id": 3,
+    "user": "zukunft.com system test",
+    "version": "0.0.3",
+    "timestamp": "2026-10-25T18:00:00.000Z",
+    "body": {
+        "words": [],
+        "triples": [
+            {
+                "from": "PV installation rows production emissions",
+                "verb": "is follower of",
+                "to": "PV installation rows saving"
+            },
+            {
+                "from": "PV installation rows saving",
+                "verb": "is follower of",
+                "to": "PV installation rows electricity"
+            }
+        ],
+        "formulas": [],
+        "values": [],
+        "delete": [
+            {
+                "class": "triple",
+                "id": 2884
+            },
+            {
+                "class": "triple",
+                "id": 2886
+            }
+        ]
+    }
+}

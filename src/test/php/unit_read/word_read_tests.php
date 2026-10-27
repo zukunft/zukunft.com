@@ -35,6 +35,7 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -42,6 +43,7 @@ include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
@@ -170,14 +172,14 @@ class word_read_tests
         // franc and the page of the Swiss franc the values that carry CHF; the Swiss franc is
         // a triple (franc "kind of" Swiss), so it is loaded as a triple and not as a word
         $test_name = 'the values related to CHF include the values of the Swiss franc';
-        $t->assert_contains($test_name,
-            $wrd_chf->values_related->phr_lst($msg)->names(), [triple_names::SWISS_FRANC]);
+        $val_phr_names = $this->value_phrase_names($wrd_chf->values_related, $msg);
+        $t->assert_contains($test_name, $val_phr_names, [triple_names::SWISS_FRANC]);
         $test_name = 'the values related to the Swiss franc include the values that carry CHF';
         $trp_franc = new triple($t->usr1);
         $trp_franc->load_by_name(triple_names::SWISS_FRANC, $msg);
         $trp_franc->load_values_related($msg);
-        $t->assert_contains($test_name,
-            $trp_franc->values_related->phr_lst($msg)->names(), [words::CHF]);
+        $val_phr_names = $this->value_phrase_names($trp_franc->values_related, $msg);
+        $t->assert_contains($test_name, $val_phr_names, [words::CHF]);
 
         // negative: an unknown id returns 0 and leaves phrases_related null/empty —
         // the asserted reported outcome is the int 0 return AND no spurious related
@@ -316,6 +318,20 @@ class word_read_tests
         $trp_err = new triple($t->usr1);
         $trp_err->load_by_name(triple_names::PI_NAME, $msg_err);
         $t->assert_true($test_name, $trp_err->has_verb());
+    }
+
+    /**
+     * @param value_list|null $val_lst the related values e.g. null if the phrase has not been loaded
+     * @param user_message $msg to report a problem of the phrase load
+     * @return array the names of the phrases of the values, empty if no values are loaded
+     */
+    private function value_phrase_names(?value_list $val_lst, user_message $msg): array
+    {
+        $result = [];
+        if ($val_lst !== null) {
+            $result = $val_lst->phr_lst($msg)->names();
+        }
+        return $result;
     }
 
 }

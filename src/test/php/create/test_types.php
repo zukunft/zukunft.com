@@ -113,6 +113,7 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -193,6 +194,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_lists_ui;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_types
@@ -220,6 +222,14 @@ class test_types
     /*
      * unit
      */
+
+    /**
+     * @return type_lists_ui a frontend cache without any type list e.g. if the backend has sent no types
+     */
+    function type_lists_empty_ui(): type_lists_ui
+    {
+        return new type_lists_ui();
+    }
 
     /**
      * @return change_action "add" as the main change action for unit testing without logging

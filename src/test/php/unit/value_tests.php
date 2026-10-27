@@ -102,7 +102,7 @@ class value_tests
 
     function run(test_cleanup $t): void
     {
-
+        global $sys;
 
         // init
         $msg = new user_message();
@@ -135,6 +135,17 @@ class value_tests
         $test_name = 'create a geolocation value object';
         $val = new value_obj()->get($t->usr1, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
+
+        // e.g. a result of a use case whose phrases are not yet imported
+        $test_name = 'a value whose phrases are not found is not loaded';
+        $val = new value($t->usr1);
+        $val_found = $val->load_by_names([], $msg, $t_phr->list_empty());
+        $t->assert($test_name, $val_found, 0);
+        $test_name = '... and the user is told that the phrases are not found';
+        // the expected text with the names filled in like the message of the load, here without names
+        $exp_msg = new user_message();
+        $exp_msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => '']);
+        $t->assert_msg_false($test_name, $msg, $exp_msg->text());
 
         // the frontend sends the group name that the user has typed in the value form as the name of the value
         $t->subheader($ts . 'group name');
@@ -478,6 +489,60 @@ class value_tests
         $val_no_src->set_source_id(sources::TRUST_ME_BRO_ID);
         $fvt_lst = $val_no_src->db_fields_changed($val_stored, $msg, new sql_type_list([sql_type::USER]));
         $t->assert_true($test_name, $fvt_lst->is_empty_except_internal_fields());
+        $test_name = 'a value with the placeholder source has a source';
+        $t->assert_true($test_name, $val_stored->has_source());
+        $test_name = '... but a value without source has none';
+        $val_none = $t_val->value_16();
+        $val_none->set_source(null);
+        $t->assert_false($test_name, $val_none->has_source());
+        // the undo of a user change puts the standard number again and takes over the placeholder
+        // source of the user row, which must not count as a difference to the standard row
+        $test_name = 'a value with the placeholder source of its user row matches the standard row without source, '
+            . 'so that the undo of a change removes the user row';
+        $val_std = $t_val->value_16();
+        $val_std->set_source(null);
+        $t->assert_true($test_name, $val_stored->no_diff($val_std, $msg));
+        $test_name = '... but a value with a real source differs from the standard row without source';
+        $val_src = $t_val->value_16();
+        $val_src->set_source_id(sources::BFS_ID);
+        $t->assert_false($test_name, $val_src->no_diff($val_std, $msg));
+        // the save loads the standard row with the default share and protection (row_mapper_std),
+        // which the user value without own share and protection must match
+        $test_name = 'a value without share and protection matches the standard row loaded with the defaults';
+        $val_std->row_mapper_std($msg);
+        $t->assert_true($test_name, $val_stored->no_diff($val_std, $msg));
+        $test_name = '... but a value with an own protection differs from the standard row';
+        $val_ptc = $t_val->value_16();
+        $val_ptc->set_source(null);
+        $val_ptc->set_protection_by_code_id(protection_types::NO_CHANGE);
+        $t->assert_false($test_name, $val_ptc->no_diff($val_std, $msg));
+        $test_name = '... and a value with an own share differs from the standard row';
+        $val_shr = $t_val->value_16();
+        $val_shr->set_source(null);
+        $val_shr->set_share_id($sys->typ_lst->shr_typ->id(share_types::PRIVATE));
+        $t->assert_false($test_name, $val_shr->no_diff($val_std, $msg));
+        $test_name = 'the field list of a value without share and protection is empty compared to the standard row';
+        $chg_lst = $val_stored->db_fields_changed_sandbox($val_std);
+        $t->assert($test_name, $chg_lst, []);
+        $test_name = '... but the field list of a value with an own protection names the protection';
+        $chg_lst = $val_ptc->db_fields_changed_sandbox($val_std);
+        $chg_fld = $chg_lst[0][0] ?? '';
+        $t->assert($test_name, $chg_fld, fields::FLD_PROTECT);
+        $test_name = '... and the field list of a value with an own share names the share';
+        $chg_lst = $val_shr->db_fields_changed_sandbox($val_std);
+        $chg_fld = $chg_lst[0][0] ?? '';
+        $t->assert($test_name, $chg_fld, fields::FLD_SHARE);
+        // the source is part of the key of the user row, so the delete must name the source the row is stored with
+        $test_name = 'the user row of a value without source is removed with the placeholder source that it is stored with';
+        $val_no_src = $t_val->value_16();
+        $val_no_src->set_source(null);
+        $par_lst = $val_no_src->sql_delete_user_row($sc, $msg)->par;
+        $src_par = end($par_lst);
+        $t->assert($test_name, $src_par, sources::TRUST_ME_BRO_ID);
+        $test_name = '... but the user row of a value with a source is removed with its source';
+        $par_lst = $val_src->sql_delete_user_row($sc, $msg)->par;
+        $src_par = end($par_lst);
+        $t->assert($test_name, $src_par, sources::BFS_ID);
 
         // step 5: the user row of the exclude is added only if the user has no overlay row yet
         $test_name = 'a value row with a user row reports a user overwrite, so that the exclude '
@@ -770,7 +835,6 @@ class value_tests
         // the value/result branch has its own save path, so it needs the same protection-level
         // gating as the seq-id branch (see word_tests protection); a normal user may neither raise
         // a value to admin protection (self-lock) nor reduce it below the stored level
-        global $sys;
         $val_db = $t_val->value_protected($msg); // a value with admin protection stored in the database
         $protect_denied = 'Only an admin'; // stable start of both protection warning translations
 

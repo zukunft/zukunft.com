@@ -1,0 +1,37 @@
+CREATE OR REPLACE FUNCTION value_update_log_01200_user
+    (_user_id           bigint,
+     _change_action_id  smallint,
+     _field_id_excluded smallint,
+     _excluded_old      smallint,
+     _excluded          smallint,
+     _group_id          text,
+     _source_id         bigint) RETURNS void AS
+$$
+BEGIN
+
+    INSERT INTO change_values_norm ( user_id, change_action_id, change_field_id,   old_value,    group_id)
+         SELECT                     _user_id,_change_action_id,_field_id_excluded,_excluded_old,_group_id ;
+
+    UPDATE user_values
+       SET excluded    = _excluded,
+           last_update = Now()
+     WHERE group_id = _group_id
+       AND user_id = _user_id
+       AND source_id IS NOT DISTINCT FROM _source_id;
+
+END
+$$ LANGUAGE plpgsql;
+
+PREPARE value_update_log_01200_user_call
+        (bigint, smallint, smallint, smallint, smallint, text, bigint) AS
+SELECT value_update_log_01200_user
+        ($1,$2,$3,$4,$5,$6,$7);
+
+SELECT value_update_log_01200_user
+       (3::bigint,
+        1::smallint,
+        298::smallint,
+        1::smallint,
+        null::smallint,
+        '1FajJ2-4LYK3-8jId-I1A-Yz-/.-Z-9-/+A+a+3s+1Ao+/vLC+//ZSB+ZSahL+'::text,
+        null::bigint);

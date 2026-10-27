@@ -152,6 +152,18 @@ class triple_tests
         $t->assert_false($test_name, $trp->set_code_id(
             triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($t->usr_normal)));
 
+        $t->subheader($ts . 'reverse check');
+
+        // e.g. a page part that moves up is the reverse of the order triple that the move removes
+        global $sys;
+        $test_name = 'an order triple can be the reverse of another order triple';
+        $trp = $t_trp->triple();
+        $trp->set_verb_id($sys->typ_lst->vrb->id(verbs::FOLLOW));
+        $t->assert_false($test_name, $trp->needs_reverse_check());
+        $test_name = '... but another triple must not be the reverse of an existing one';
+        $trp = $t_trp->triple();
+        $t->assert_true($test_name, $trp->needs_reverse_check());
+
         $t->subheader($ts . 'debug id');
 
         // the debug id names the verb between the linked phrases

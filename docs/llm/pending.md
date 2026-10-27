@@ -1,49 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## Calculation editor
-
-### formula editor
-
-#### reach the formula editor from the page
-
-the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2780, because the calculator has one editor relation
-(the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
-type, so that the edit menu offers both editors
-
-#### the formula editor inside the calculator editor
-
-the calculator editor shows a formula selected in the "Page structure" column in the formula editor
-(`startFormulaEditor` of `formula_editor.js` with the hosts `calcFormulaEditor` and `calcFormulaCompare`)
-instead of the settings and on the "Page preview" tab the result compare instead of the preview; open:
-- check in the browser: typing, the token tools and the reset of one formula change the "changed" chip
-  of the formula in the structure and the change count; undo, discard changes and the save of the
-  calculator editor update the formula editor; loading another phrase shows its formulas
-- the "Page preview" tab keeps its name while it shows the result compare; name it "Results" while a
-  formula is selected
-- the global rules of `calculator_editor.css` e.g. `.col`, `.btn` and `.chip` also format the formula
-  editor hosts where `formula_editor.css` sets no value; nesting `calculator_editor.css` (see below)
-  removes this
-
-#### one code for both editors
-
-`formula_editor.js` and `calculator_editor.js` each have their own `esc`, the read of the seed and the
-save by the update put message, and `formula_editor.css` and `calculator_editor.css` the same colour
-tokens; share them in one file, and nest `calculator_editor.css` in its host like `formula_editor.css`,
-so that the calculator editor page also keeps the standard css
-
-#### show a list with all results (to review)
-
-list below the formula the results and values sets used in this calculator
-show the results and the values in the formula expression format and make the lines selectable
-if a line is selected show below the formula with the results in the latex format
-
-#### selector for phrases and terms (to review)
-
-if in the formula expression a result phrase (left of the equal sign) 
-or a term used for the values selection (right of the equal sign)
-is selected show an interactive phrase or term selection that reloads the phrases or terms based on the pattern
-
 ## assigned views
 
 change the existing view 'Mathematical constant' (185, code_id math_const in base_views.json)
@@ -119,11 +75,110 @@ limit the use of the prime value table to the javascript int limit of 9,007,199,
 if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
 and the use of the values table instead of values_prime
 
-## pure HTML ans javascript views
+## Calculator editor
 
-add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a javasript version exists use the javascrip version
+### button colours
 
-create a javascript version of the formula editor view
+use for the calculator editor buttons for main active buttons (load and sometimes save in the top row) the same colours
+(grey background -> hover to dark blue / grey) that is used on the other pages.
+if a button is not active (save if there are no changes) reduce the intensity of the colours
+try to reduce the number of colour sets and name the colours set in the css with comments
+
+create a buttons.html test page in src/test/resources/web/html/object_pages that shows all colours sets used for buttones each with its own sample button and the name of the color set
+
+### change top row
+
+in the top row of the calculation editor is written 'Calculator editor  Phrase ... example PV installation  load'
+replace the 'Phrase' with 'for' (translatable if possible)
+
+### move colour sets to the config.yaml
+
+if possible add all named colour sets to the config yaml
+
+### export
+
+add to the Calculator Editor an export button that saves the seed json on the local disc.
+
+### sample 'Calculator Editor' json
+
+create a sample 'Calculator Editor' json that shown all possible cases at least once and create in /docs/json_structure.md
+(not /docs/llm/json_strukture.md, which is written for other LLM KI systems) a short explain for humans of the json structure
+
+### JSON import
+
+add to the 'Calculator Editor' an import button that can be used . The import button to import a calculator json
+(or any other valid json) should be grey with the tooltip 'Save or discard changes before import'
+if there are pending changes.
+
+## use cases
+
+### Portfolio Split Calculator
+
+based on the sample 'Calculator Editor' json detect which elements might be missing to recreated 
+src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html based on existing a 'Calculator Editor' json
+
+add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
+
+create a json that once imported would recreate src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html
+and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/portfolio_split_calculator.html
+and compares it with src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html
+similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
+
+### Swiss NPP
+
+based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
+src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
+
+add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
+
+create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
+and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
+
+add costs of CO2-eq reduction to the npp
+
+## pure HTML ans JavaScript views
+
+add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
+
+create a JavaScript version of the formula editor view
+
+## Calculator editor
+
+### add new words
+
+if with the load not matching word or triple is found, offer the user to add a word with the standard parameters.
+if the search pattern contains spaces suggest to add the single words separated by spaces and triples for the combined words.
+search in wikipedia for all words and triples and suggest to include these as references. 
+
+### power sign
+
+in the formula editor and all other places add the power sign '^' as an operator.
+
+add other usual math operators that are missing
+
+## names that a user has given
+
+a user who renames a word, triple, formula, source, view or component sees the own name, so every load by
+name must find the object by that name: `(u.<x>_name = $2 OR (s.<x>_name = $2 AND u.<x>_name IS NULL))`
+(`sql_par_type::TEXT_USR`, see `sandbox_named::load_sql_by_name` and `phrase::load_sql_by_name`);
+the `*_norm_by_name` loads select the standard row by design and stay as they are
+
+- see /docs/llm/coding.md and let `term::load_sql_by_name` find a term by the name that the user has given it
+  like `phrase::load_sql_by_name` (`sql_par_type::TEXT_USR`); add a positive and a negative test in
+  `term_tests` like the phrase test; `term_by_name.sql` and its mysql twin are regenerated by the developer
+- see /docs/llm/coding.md and let the lists by names (`phrase_list_by_names`, `word_list_by_names`,
+  `formula_list_by_names`, `WHERE s.<x>_name = ANY ($2)`) find the names that the user has given: add a
+  user-specific list parameter type next to `sql_par_type::TEXT_USR` that creates
+  `(u.<x>_name = ANY ($2) OR (s.<x>_name = ANY ($2) AND u.<x>_name IS NULL))` and use it in the lists; e.g. a
+  value of an update put message that names a phrase renamed by the user is not found yet; tests first
+- see /docs/llm/coding.md and let the name searches (`*_names_like` and `*_list_by_name_like` of word, triple,
+  phrase, term, formula, source, view and component, `WHERE s.<x>_name ilike $2`) find the names that the user
+  has given, so that the selector of the calculator editor suggests a renamed phrase by its new name; the order
+  by name uses the shown name; tests first
+- see /docs/llm/coding.md and let `group::load_sql_by_name` find a group by the name that the user has given
+  it in `user_groups`, like the other named objects; tests first
 
 ## calculator
 
@@ -204,11 +259,18 @@ create test cased for all possible change types in the calculation editor.
 For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
 
 `src/test/js/calculator_editor_scenarios.js` acts like a user in a copy of the calculator editor snapshot in a
-headless chromium and `use_case_ui_tests` compares the sent message with `src/test/resources/web/calculator_editor/`
+headless LibreWolf, Firefox or chromium, the first one found, and `use_case_ui_tests` compares the sent message with `src/test/resources/web/calculator_editor/`
 for a formula expression, a description, a renamed, a new and a removed triple, a new word, a new, a changed and a
-removed value and an undo. The write test saves the description and the formula change of these messages. Open:
-- the write test saves the other messages of the scenarios on the use case and undoes them: the renamed triple, the
-  changed and the new value; a cleared limit and a removed input delete rows of the use case, which an undo can not add again with the same id
+removed value, an undo and an input, a row and a row group moved up or down. The write test saves and undoes the
+description, the formula, the renamed triple, the changed number, the new limit, the new input field and the moved
+row and row group. Open:
+- a cleared limit, a removed input and a moved input delete rows of the use case, which the write test does not
+  save yet; a moved row shows the way: the undo adds the removed rows again by their name and link
+- the editor sends a moved item as removed and added order triples, because the link of a triple is the same for
+  all users; an item dragged into another list changes the link of its own triple, which other triples name, so
+  it is still sent as a changed triple, which a user who does not own the triple can not save yet
+- the triples of a new input field are not in `triple_names::TEST_TRIPLES`, so the global cleanup does not remove
+  them if a run stops before the undo
 - scenarios for the sub-items: a row filter, a detail column, a side result, a value phrase and the options of a phrase selector
 
 for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
@@ -254,24 +316,6 @@ if it does not yet exist create a test that checks if an api request is rejected
 
 session can only be created either via a proper session start via gui
 or using a predefined api session login that uses e.g. a public / private key pair and other extra security 
-
-### button colours
-
-use for the calculator editor buttons for main active buttons (load and sometimes save in the top row) the same colours
-(grey background -> hover to dark blue / grey) that is used on the other pages.
-if a button is not active (save if there are no changes) reduce the intensity of the colors
-try to reduce the number of colour sets and name the colours set in the css with comments
-
-create a buttons.html test page in src/test/resources/web/html/object_pages that shows all colors sets used for buttones each with its own sample button and the name of the color set
-
-### change top row
-
-in the top row of the calculation editor is written 'Calculator editor  Phrase ... example PV installation  load'
-replace the 'Phrase' with 'for' (translatable if possible)
-
-### move colour sets to the config.yaml
-
-if possible add all named colour sets to the config yaml
 
 ### relogin
 

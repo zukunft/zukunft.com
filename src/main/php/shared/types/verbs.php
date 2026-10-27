@@ -367,6 +367,12 @@ class verbs
         self::TEST_ADD_RENAMED,
     );
 
+    // list of verbs whose triple may be the reverse of an existing one e.g. the order of two page parts,
+    // because moving a part one place up swaps the order with its neighbour
+    const array WITHOUT_REVERSE_CHECK = array(
+        self::FOLLOW,
+    );
+
     // list of verbs that does not need a from phrase e.g. "per day" oder "m/s is alias of meter per second"
     const array WITHOUT_FROM = array(
         self::ALIAS,

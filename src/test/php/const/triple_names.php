@@ -469,6 +469,23 @@ class triple_names
     const string PV_CAPACITY_LABEL = 'PV capacity label';
     const string PV_CAPACITY_LABEL_COM = 'System size';
     const string PV_CAPACITY_LABEL_COM_CHANGED = 'Installation size';
+    // the calculator triples of pv_lifetime_balance.json that the calculator editor scenarios change
+    // (src/test/resources/web/calculator_editor/), selected by the name only
+    const string PV_CAPACITY = 'PV capacity';
+    const string PV_CAPACITY_INPUT = 'PV installation input PV capacity';
+    const string PV_CAPACITY_INPUT_RENAMED = 'PV installation input installation size';
+    const string YIELD_FACTOR_ORDER = 'PV installation input yield factor order';
+    const string GRID_IMPORT_ROW = 'PV installation row grid import';
+    const string SELF_CONSUMPTION_ROW = 'PV installation row self-consumption share';
+    const string SELF_CONSUMPTION_ORDER = 'PV installation row self-consumption share order';
+    const string AUTARKY_ROW = 'PV installation row autarky';
+    const string AUTARKY_ORDER = 'PV installation row autarky order';
+    const string PRODUCTION_EMISSIONS_ORDER = 'PV installation rows production emissions order';
+    const string SAVING_ORDER = 'PV installation rows saving order';
+    const string HOUSEHOLD_CONSUMPTION_INPUT = 'PV installation input household consumption';
+    // the input field of the test word that the scenario add_input adds and its order triple
+    const string TEST_ADD_INPUT = 'PV installation input System Test Word';
+    const string TEST_ADD_INPUT_ORDER = 'PV installation input System Test Word order';
     // a general triple of electricity, a row phrase of the PV page, from cbam_calculator.json that is no calculator triple
     const string COAL_ELECTRICITY = 'coal electricity';
     // the phrase id of a triple that no test database reaches, to test the answer for a missing phrase

@@ -688,10 +688,18 @@ class word extends sandbox_code_id
         // fall back to the frontend request cache if the caller has no type list,
         // like dsp_type_selector above which reads $ui_sys->typ_lst_cache directly
         if ($typ_lst == null) {
-            log_err('type list cache missing, falling back to the request cache');
+            log_err_msg_ui('type list cache missing, falling back to the request cache', $msg);
             $typ_lst = $ui_sys->typ_lst_cache;
         }
-        return $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
+        // e.g. a cache that has not got the phrase types from the backend, which the user cannot fix
+        if (!$typ_lst->has_phrase_types()) {
+            log_err_msg_ui('the phrase types are missing in the type list cache, so the phrase type of '
+                . $this->name() . ' cannot be selected', $msg);
+            $result = '';
+        } else {
+            $result = $this->type_selector_with_pre($typ_lst->phr_typ, $form, $this->type_id($msg));
+        }
+        return $result;
     }
 
 

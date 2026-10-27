@@ -241,6 +241,17 @@ class verb_tests
         $dsp = $vrb->dsp_id();
         $t->assert_text_not_contains($test_name, $dsp, users::SYSTEM_TEST_NAME);
 
+        $t->subheader($ts . 'preloaded verb');
+
+        global $sys;
+        $test_name = 'a preloaded verb is selected by its code id';
+        $vrb_id = $sys->verb(verbs::IS)->id();
+        $t->assert($test_name, $vrb_id, verbs::IS_ID);
+        // e.g. a pod whose verbs are not yet imported, which the caller reports instead of a php fatal
+        $test_name = '... and a verb that the pod does not have is an empty verb';
+        $vrb_id = $sys->verb(verbs::TEST_ADD_CODE_ID, false)->id();
+        $t->assert($test_name, $vrb_id, 0);
+
 
         // start the test section (ts)
         $ts = 'unit verb list ';

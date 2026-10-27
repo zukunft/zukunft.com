@@ -2260,6 +2260,9 @@ enum messages: string
     // if a non admin user tries to set the admin protection (or higher) on an object
     case PROTECTION_RAISE_DENIED = 'protection_raise_denied';
 
+    // if a database row of a term misses the id that selects the word, triple, formula or verb
+    case TERM_ROW_ID_MISSING = 'term_row_id_missing';
+
     // if an import step has not been checked, because its errors would only be a consequence
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
     // always added with ok = true, because it explains a suppression instead of causing one

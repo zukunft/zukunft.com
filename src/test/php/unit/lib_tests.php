@@ -1339,6 +1339,14 @@ class lib_tests
         }
         $t->assert($test_name, $result, $target);
 
+        // every part of the target is missing, not only the first
+        $test_name = $tb . 'empty result of a longer target';
+        $test_result = '';
+        $test_target = 'ab';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '//-ab//';
+        $t->assert($test_name, $result, $target);
+
         $test_name = $tb . 'null result -> no diff';
         $test_result = null;
         $result = $lib->diff_msg($test_result, $test_target);
@@ -1379,6 +1387,14 @@ class lib_tests
         $test_result = 'more begin Text';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '//+more begin// Text';
+        $t->assert($test_name, $result, $target);
+
+        // the parts after the end of the result are missing and the last matched part is not added again
+        $test_name = $tb . 'string with less at the end';
+        $test_result = 'Text with';
+        $test_target = 'Text with more';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = 'Text with//- more//';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'string with different middle part';
@@ -1422,7 +1438,8 @@ class lib_tests
         $test_result = $t->file('/web/system/result_short.json');
         $test_target = $t->file('/web/system/target_short.json');
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '95//+//';
+        // the result has two description fields that the target has not
+        $target = '140//+//335//+//';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'json in json files';
@@ -1438,7 +1455,7 @@ class lib_tests
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '165//-,s.phrase_type_id,l.verb_id////+,
             s.from_phrase_id,
-            s.verb_id//931//- LEFT// and 147 more';
+            s.verb_id//931//- LEFT// and 146 more';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'long sql files';
@@ -1461,7 +1478,120 @@ class lib_tests
         $test_result = '{"user_id":2,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $test_target = '{"user_id":3,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $result = $lib->str_diff($test_result, $test_target);
-        $target = '//-2zukunft.com system test////+31,zukunft.com system test,2,zukunft.com system test//';
+        // only the user id differs, so the log list of the same key is not compared with the user id
+        $target = '//-2////+3//';
+        $t->assert($test_name, $result, $target);
+
+        // e.g. an update put message with a triple without id and a delete more than the expected message
+        $test_name = $tb . 'json lists with an object field less and an object more';
+        $test_result = '{"triples":[{"from":"a","to":"b"}],"delete":[{"id":1},{"id":2}]}';
+        $test_target = '{"triples":[{"id":2,"from":"a","to":"b"}],"delete":[{"id":1}]}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '//-2//ab1//+2//';
+        $t->assert($test_name, $result, $target);
+
+        // a list part in a short message is shown with its entries, not as "Array"
+        $test_name = $tb . 'short json with a list more';
+        $test_result = '{"a":1,"b":[1,2]}';
+        $test_target = '{"a":1}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1//+1,2//';
+        $t->assert($test_name, $result, $target);
+
+        // the unchanged part before the missing list is not added again
+        $test_name = $tb . 'short json with a list less';
+        $test_result = '{"a":1}';
+        $test_target = '{"a":1,"b":[1,2]}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1//-1,2//';
+        $t->assert($test_name, $result, $target);
+
+        // an unchanged list part and the scalars null and true are shown as text
+        $test_name = $tb . 'short json with null changed to true';
+        $test_result = '{"a":[1],"b":true}';
+        $test_target = '{"a":[1],"b":null}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1//-////+1//';
+        $t->assert($test_name, $result, $target);
+
+        // a list of another key is not compared part by part with the target
+        $test_name = $tb . 'json list with a key the target has not';
+        $test_result = '{"a":[1,2],"b":1}';
+        $test_target = '{"b":1}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '//+1,2//1';
+        $t->assert($test_name, $result, $target);
+
+        // the parts of a list diff do not overwrite the parts before
+        $test_name = $tb . 'json list diff after unchanged parts';
+        $test_result = '{"a":1,"b":2,"c":[1,3]}';
+        $test_target = '{"a":1,"b":2,"c":[1,2]}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '121//-2////+3//';
+        $t->assert($test_name, $result, $target);
+
+        // the second list diff does not overwrite the first
+        $test_name = $tb . 'json with two list diffs';
+        $test_result = '{"a":[1,3],"b":[4,6]}';
+        $test_target = '{"a":[1,2],"b":[4,5]}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1//-2////+3//4//-5////+6//';
+        $t->assert($test_name, $result, $target);
+
+        // the sub diff compares a list in an object part by part again
+        $test_name = $tb . 'json list diff two levels deep';
+        $test_result = '{"a":{"b":[1,3]}}';
+        $test_target = '{"a":{"b":[1,2]}}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1//-2////+3//';
+        $t->assert($test_name, $result, $target);
+
+        // a sub-sub diff keeps the parts before and after the change on every level in their order
+        $test_name = $tb . 'json list diff three levels deep';
+        $test_result = '{"x":1,"a":{"y":2,"b":{"z":3,"c":[1,3],"w":4},"v":5},"u":6}';
+        $test_target = '{"x":1,"a":{"y":2,"b":{"z":3,"c":[1,2],"w":4},"v":5},"u":6}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1231//-2////+3//456';
+        $t->assert($test_name, $result, $target);
+
+        // the same for a sub-sub-sub diff
+        $test_name = $tb . 'json list diff four levels deep';
+        $test_result = '{"x":1,"a":{"y":2,"b":{"z":3,"c":{"t":7,"d":[1,3],"s":8},"w":4},"v":5},"u":6}';
+        $test_target = '{"x":1,"a":{"y":2,"b":{"z":3,"c":{"t":7,"d":[1,2],"s":8},"w":4},"v":5},"u":6}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '12371//-2////+3//8456';
+        $t->assert($test_name, $result, $target);
+
+        // the sub diff reports the entries missing at the end of the list
+        $test_name = $tb . 'json list with an entry less';
+        $test_result = '{"a":[1,2]}';
+        $test_target = '{"a":[1,2,3]}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '12//-3//';
+        $t->assert($test_name, $result, $target);
+
+        // the sub diff reports the entries added at the end of the list
+        $test_name = $tb . 'json list with an entry more';
+        $test_result = '{"a":[1,2,3]}';
+        $test_target = '{"a":[1,2]}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '12//+3//';
+        $t->assert($test_name, $result, $target);
+
+        // the sub diff of an object in a list keeps the unchanged object before
+        $test_name = $tb . 'json object list with a changed field';
+        $test_result = '[{"id":1,"n":"x"},{"id":2,"n":"z"}]';
+        $test_target = '[{"id":1,"n":"x"},{"id":2,"n":"y"}]';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1,x2//-y////+z//';
+        $t->assert($test_name, $result, $target);
+
+        // the compare continues with the next part after the sub diff
+        $test_name = $tb . 'json part after a list diff';
+        $test_result = '{"a":[1,3],"b":5}';
+        $test_target = '{"a":[1,2],"b":5}';
+        $result = $lib->diff_msg($test_result, $test_target);
+        $target = '1//-2////+3//5';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'with position in long json string';

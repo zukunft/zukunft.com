@@ -863,30 +863,6 @@ class sandbox_named extends sandbox
         return $log;
     }
 
-    /**
-     * set the log entry parameter to delete an object
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @returns change_link with the object presets e.g. th object name
-     */
-    function log_del(user_message $msg): change
-    {
-        log_debug($this->dsp_id());
-        $lib = new library();
-        $tbl_name = $lib->class_to_name($this::class);
-
-        $log = new change($this->get_user());
-        $log->set_action(change_actions::DELETE, $msg);
-        $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
-        $log->set_field($tbl_name . '_name', $msg);
-        $log->old_value = $this->name();
-        $log->new_value = null;
-
-        $log->row_id = $this->id();
-        $log->add($msg);
-
-        return $log;
-    }
-
 
     /*
      * add

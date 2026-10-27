@@ -9,8 +9,6 @@
         "words": [],
         "triples": [
             {
-                "id": 2870,
-                "name": "PV installation input household consumption order",
                 "from": "PV installation input household consumption",
                 "verb": "is follower of",
                 "to": "PV installation input yield factor"
@@ -26,6 +24,10 @@
             {
                 "class": "triple",
                 "id": 2848
+            },
+            {
+                "class": "triple",
+                "id": 2870
             }
         ]
     }

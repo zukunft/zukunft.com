@@ -100,10 +100,20 @@ class files
     CONST string SCENARIO_ADD_INPUT = 'add_input';
     CONST string SCENARIO_ADD_INPUT_WITHOUT_PHRASE = 'add_input_without_phrase';
     CONST string SCENARIO_REMOVE_INPUT = 'remove_input';
-    // the messages of the scenarios that the write test saves: the description change of the use case triple
-    // PV capacity label and the expression change of the use case formula of the autarky; the undo puts the loaded text
+    CONST string SCENARIO_PV_CAPACITY_DOWN = 'pv_capacity_down';
+    CONST string SCENARIO_PV_CAPACITY_UP = 'pv_capacity_up';
+    CONST string SCENARIO_PV_CAPACITY_DOWN_UP = 'pv_capacity_down_up';
+    CONST string SCENARIO_AUTARKY_UP = 'autarky_up';
+    CONST string SCENARIO_EMBODIED_EMISSION_DOWN = 'embodied_emission_down';
+    // the messages of the scenarios that the write test saves and undoes
     CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
     CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_RENAME . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_NUMBER = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_NUMBER . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_MAXIMUM = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_MAXIMUM . self::JSON;
+    CONST string UPDATE_PUT_ADD_INPUT = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_ADD_INPUT . self::JSON;
+    CONST string UPDATE_PUT_AUTARKY_UP = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_UP . self::JSON;
+    CONST string UPDATE_PUT_EMBODIED_EMISSION_DOWN = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_EMBODIED_EMISSION_DOWN . self::JSON;
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none
