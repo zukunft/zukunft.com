@@ -94,6 +94,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -153,6 +154,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -293,6 +295,9 @@ class triple extends sandbox_link_named
     // the views suggested for this triple (currently its own default view); populated lazily by
     // load_views_related() and only emitted via api_json_array() when the INCL_RELATED flag is set
     public ?view_list $views_related = null;
+    // the views assigned to this triple by the import, which the edit menu of the navbar offers
+    // first; populated lazily by load_views_assigned() like the views of a word
+    public ?view_list $views_assigned = null;
 
 
     /*
@@ -818,6 +823,18 @@ class triple extends sandbox_link_named
         $this->views_related = $msk_lst;
     }
 
+    /**
+     * load the views that the import has assigned to this triple into the in-memory views_assigned
+     * list, so that the edit menu of the navbar can offer them first like for a word
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_assigned(user_message $msg): void
+    {
+        $this->views_assigned = new sandbox_related()->views_assigned($this->term(), $msg);
+    }
+
     function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
     {
         $vars = [];
@@ -946,6 +963,11 @@ class triple extends sandbox_link_named
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $msg, $usr);
                     }
+                    if ($this->views_assigned == null and !$typ_lst->test_mode()) {
+                        $this->load_views_assigned($msg);
+                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }

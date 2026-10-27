@@ -1024,6 +1024,14 @@ class component_types
         self::FORM_PHRASE_VALUE_LINE
     );
 
+    // the component types that show a value table, whose column and form selection the edit menu
+    // of the navbar offers e.g. "columns and values" and "as table" on the start page
+    const array TABLE_MENU_TYPES = [
+        self::CALC_SHEET,
+        self::TABLE_WITH_RELATED_COLUMNS,
+        self::TABLE_WITH_OWN_COLUMNS,
+    ];
+
     // list of component types that are used to combine lists
     const array LIST_GROUP = array(
         self::SYSTEM_SUB_TITLE,

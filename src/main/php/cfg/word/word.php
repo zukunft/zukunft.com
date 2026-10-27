@@ -109,7 +109,6 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
-include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
@@ -168,7 +167,6 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
-use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
@@ -782,9 +780,7 @@ class word extends sandbox_code_id
      */
     function load_views_assigned(user_message $msg): void
     {
-        $lnk_lst = new term_view_list($this->get_user());
-        $lnk_lst->load_by_term($this->term(), $msg);
-        $this->views_assigned = $lnk_lst->view_list();
+        $this->views_assigned = new sandbox_related()->views_assigned($this->term(), $msg);
     }
 
     /**

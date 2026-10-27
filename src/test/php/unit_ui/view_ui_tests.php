@@ -309,6 +309,18 @@ class view_ui_tests
         $t->assert_text_not_contains($test_name, $cmp_html, '<' . html_base::LABEL);
 
 
+        // the edit menu of the navbar offers the column and form selection for a page with a value table
+        $t->subheader($ts . 'value table');
+        $test_name = 'the table view shows a value table';
+        $msk_tbl = $ui_sys->typ_lst_cache->get_view_by_id(views::TABLE_ID);
+        $shows_tbl = $msk_tbl->shows_value_table($ui_sys->typ_lst_cache, $msg);
+        $t->assert_true($test_name, $shows_tbl);
+        // negative: the default word view lists values, but shows no value table
+        $test_name = '... but not the default word view';
+        $msk_wrd = $ui_sys->typ_lst_cache->get_view_by_id(views::WORD_ID);
+        $shows_tbl = $msk_wrd->shows_value_table($ui_sys->typ_lst_cache, $msg);
+        $t->assert_false($test_name, $shows_tbl);
+
         $t->subheader($ts . 'view terms');
 
         // the view add and edit pages list the terms that use the view; the terms come with the

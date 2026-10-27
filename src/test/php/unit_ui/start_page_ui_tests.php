@@ -5,8 +5,8 @@
     test/php/unit_ui/start_page_ui_tests.php - snapshot the start page ranking for every selection of its sub menus
     ----------------------------------------
 
-    the "... more" tail raises the rows shown, the "..." header selects the column tiers with
-    or without the variance and the form of the ranking (table, chart or both); every combination
+    the "... more" tail raises the rows shown, the edit menu of the navbar selects the column
+    tiers with or without the variance and the form of the ranking (table, chart or both); every combination
     that the sub menus offer is rendered from the unit fixtures and compared with a fixed html
     page in src/test/resources/web/html/start_page/, so a change of the ranking is checked fast
     and without a database (see docs/llm/testing.md)
@@ -203,8 +203,9 @@ class start_page_ui_tests
         user_message $msg
     ): void
     {
-        $test_name = $file_name . ' shows the "..." menu';
-        $t->assert_text_contains($test_name, $page_html, styles::MENU_COLUMN);
+        // the column and form selection is part of the edit menu of the navbar
+        $test_name = $file_name . ' shows no "..." menu in the table';
+        $t->assert_text_not_contains($test_name, $page_html, '<' . html_base::DETAILS);
         // more and all show every problem of the ranking; the names shown and the message of
         // the rendering are compared, so a failure says which rows are missing and why
         if ($size !== null) {

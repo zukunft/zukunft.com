@@ -63,6 +63,7 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
+include_once html_paths::SHARED_TYPES . 'component_types.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -86,6 +87,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
@@ -246,6 +248,23 @@ class view_base extends sandbox_code_id
     function get_component_list(): component_list
     {
         return $this->cmp_lst;
+    }
+
+    /**
+     * @param type_lists $typ_lst the frontend cache with the component types
+     * @param user_message $msg to report a component type that cannot be found
+     * @return bool true if a component of this view shows a value table e.g. the start page, so that
+     *              the edit menu of the navbar offers the column and form selection of the table
+     */
+    function shows_value_table(type_lists $typ_lst, user_message $msg): bool
+    {
+        $result = false;
+        foreach ($this->cmp_lst->lst() as $cmp) {
+            if (in_array($cmp->type_code_id($typ_lst, $msg), component_types::TABLE_MENU_TYPES)) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     function set_style_id(?int $style_id = null): void

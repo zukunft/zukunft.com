@@ -437,7 +437,8 @@ class component_exe extends component
             component_types::FORMULA_EDITOR => $page->formula_editor($dbo, $msg, $cfg),
             component_types::FORMULA_SELECTOR => $page->formula_editor_selector($dbo, $msg),
             component_types::FORMULA_RESULT_COMPARE => $page->formula_result_compare($dbo, $msg),
-            component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
+            // the versions of the view are offered by the edit menu of the navbar (sandbox::menu_views_ui)
+            component_types::RELATED_SYSTEM_VIEW_SELECTOR => '',
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_arr),

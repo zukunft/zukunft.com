@@ -440,18 +440,17 @@ class phrase_ui_tests
         // reason column has a linked reason and is shown empty between the loss and the solution
         // column; the loss of the reason has no column, because no value of this table carries a
         // reason; so the table shows five columns, the value columns each headed by their unit
-        // behind a translatable "in", the reason and the solution column without a unit
-        // the last header cell opens the menu that selects the columns, which without a page
-        // url is the plain "..." text
+        // behind a translatable "in", the reason and the solution column without a unit;
+        // the columns are selected in the edit menu of the navbar, so the header has no menu cell
         $test_name = 'the header shows the columns in the defined order with their unit';
         $unit_sep = ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ';
-        $t->assert($test_name, $lib->html_to_text($tbl_header_row),
-            word_names::PROBLEM
+        $header_txt = $lib->html_to_text($tbl_header_row);
+        $header_expected = word_names::PROBLEM
             . ' ' . word_names::LOSS . $unit_sep . word_names::TRILLION . ' ' . word_names::EUR
             . ' ' . word_names::REASON
             . ' ' . word_names::SOLUTION
-            . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP
-            . ' ' . msg_id::THREE_POINTS->text());
+            . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP;
+        $t->assert($test_name, $header_txt, $header_expected);
 
         // negative: a phrase column exists only where a definition names it, so without the
         // definitions the same values show no solution column and the impact ranking alone

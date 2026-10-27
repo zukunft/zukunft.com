@@ -1602,7 +1602,7 @@ class ui_list extends ui_base
                 // own columns of the table win, so that they never show up in other tables
                 $col_order = $col_names ?: ($dto?->phr_lst?->column_names() ?? []);
                 log_debug('column order of ' . count($col_order) . ' columns', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                // the "as" entry of the "..." menu says whether the rows are shown as a table,
+                // the "as" entry of the edit menu says whether the rows are shown as a table,
                 // as the default charts of the table or as both
                 $form = table_forms::by_url($url_array);
                 if ($form->with_table()) {
@@ -1621,16 +1621,14 @@ class ui_list extends ui_base
                         $value_rows_only);
                     log_debug('table of ' . $tbl_lst->count() . ' numbers created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 } else {
-                    // without the table its header says what the charts are about and its "..."
-                    // menu is the only way back to the table, so the header is centred above the
-                    // charts with the menu in the top right corner
+                    // without the table its header says what the charts are about, centred above
+                    // the charts; the way back to the table is the edit menu of the navbar
                     $html = new html_base();
                     $head = '';
                     if ($with_header) {
                         $head = $tbl_lst->table_header_by_related_columns($msg, $phr_lst, $col_order,
                             $dto?->phr_lst, null, $url_array, $col_values_only, $value_rows_only);
                     }
-                    $head .= $html->div($tbl_lst->columns_menu($url_array), styles::CHART_CORNER);
                     $result = $html->div($head, styles::CHART_HEAD);
                 }
                 if ($form->with_chart()) {
@@ -1640,6 +1638,11 @@ class ui_list extends ui_base
                     log_debug('chart definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                     $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
                         $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
+                }
+                // the column menu of the navbar is created after the views, so the names of the
+                // columns of each selection are kept for its tooltips
+                if ($dto != null) {
+                    $dto->add_tier_names($tbl_lst->tier_names);
                 }
             }
         }
@@ -4418,7 +4421,7 @@ class ui_list extends ui_base
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
         // no column stays on the page of the problem instead of adding a row here; by default
-        // only the mayor columns with the numbers are shown and the "..." header leads to the
+        // only the mayor columns with the numbers are shown and the edit menu leads to the
         // full table with every column and the variance of each number; a row whose numbers are
         // all in a column left out is no part of the ranking either, e.g. the reward ratio row
         // of a problem, so the ranking shows the rows with a number only

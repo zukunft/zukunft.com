@@ -125,18 +125,32 @@ class value_list extends ListBase
     const int LIMIT_ALL = 0;
     // the column tiers of a table to show: the number says how many tiers of
     // triples::SYSTEM_COLUMN_TIERS are left out from the bottom, so a higher number is a
-    // narrower table and zero shows every tier, every unit and the variance; the menu of the
-    // "..." header selects one of them (docs/llm/frontend.md)
+    // narrower table and zero shows every tier, every unit and the variance; the edit menu of
+    // the navbar selects one of them (docs/llm/frontend.md)
     const int COLUMN_TIERS_ALL = 0;
     const int COLUMN_TIERS_EX_MARGINAL = 1;
     const int COLUMN_TIERS_EX_MINOR = 2;
     const int COLUMN_TIERS_EX_MAIN = 3;
-    // the name of each column tier selection for the "..." menu, the narrowest table first
+    // the name of each column tier selection for the edit menu, the narrowest table first
     const array COLUMN_TIER_NAMES = [
         self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR,
         self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN,
         self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR,
         self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL,
+    ];
+    // the tooltip of each column tier selection
+    const array COLUMN_TIER_TIPS = [
+        self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR_TIP,
+        self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN_TIP,
+        self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR_TIP,
+        self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL_TIP,
+    ];
+    // the tooltip of each column tier selection with the variance of each number
+    const array COLUMN_TIER_VARIANCE_TIPS = [
+        self::COLUMN_TIERS_EX_MAIN => msg_id::TABLE_COLUMNS_MAYOR_VARIANCE_TIP,
+        self::COLUMN_TIERS_EX_MINOR => msg_id::TABLE_COLUMNS_MAIN_VARIANCE_TIP,
+        self::COLUMN_TIERS_EX_MARGINAL => msg_id::TABLE_COLUMNS_MINOR_VARIANCE_TIP,
+        self::COLUMN_TIERS_ALL => msg_id::TABLE_COLUMNS_ALL_VARIANCE_TIP,
     ];
     // the variance of a value is shown behind its centre value e.g. "2.2 (0.88 – 5.5)"
     const string VARIANCE_START = ' (';
@@ -153,6 +167,10 @@ class value_list extends ListBase
     // true if the list shows the variance behind each number (see variance_list), so that the
     // "... and n more" link opens the next version of the list with the variance too
     public bool $with_variance = false;
+
+    // the column names per column tier selection of the last table or chart created from this
+    // list (see table_model::tier_names), which the page hands to the column menu of the navbar
+    public array $tier_names = [];
 
     /*
      * set and get
@@ -659,7 +677,7 @@ class value_list extends ListBase
      *                              the start page; false to show them in a last "Values" column
      * @param int $col_tiers the number of column tiers left out by default,
      *                       self::COLUMN_TIERS_ALL for every column; a simple table shows the
-     *                       tiers above with one unit each and the "..." header whose menu
+     *                       tiers above with one unit each and the edit menu of the navbar
      *                       selects the columns
      * @param bool $with_variance true to show the variance behind each number by default,
      *                         false for the numbers only; the url of the page overrides both defaults
@@ -684,13 +702,14 @@ class value_list extends ListBase
     ): string
     {
         $result = '';
-        // the url of the page says whether the variance is shown, e.g. after the "..." click on a
-        // simple table, and wins over the default of the caller
+        // the url of the page says whether the variance is shown, e.g. after a click in the edit
+        // menu, and wins over the default of the caller
         $with_variance = url_var::show_variance($url_array, $with_variance);
         if (!$this->is_empty()) {
             $html = new html_base();
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, $col_tiers, $value_rows_only);
+            $this->tier_names = $model->tier_names;
             $result = $this->table_html($model, $msg, $context_phr_lst, $rel_lst,
                 $url_array, $with_variance, $with_border);
             if ($with_header) {
@@ -721,6 +740,7 @@ class value_list extends ListBase
         if (!$this->is_empty()) {
             $model = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
+            $this->tier_names = $model->tier_names;
             $result = $this->table_header($model, $context_phr_lst);
         }
         return $result;
@@ -823,6 +843,7 @@ class value_list extends ListBase
             unset($url_array[url_var::DISPLAY_LIST_COLUMNS]);
             $result = $this->table_model($msg, $context_phr_lst, $col_order, $rel_lst, $limit,
                 $url_array, $col_values_only, self::COLUMN_TIERS_ALL, $value_rows_only);
+            $this->tier_names = $result->tier_names;
         }
         return $result;
     }
@@ -913,8 +934,8 @@ class value_list extends ListBase
     ): table_model
     {
         $model = new table_model();
-        // the url of the page names the column tiers, e.g. after the "..." click on a simple
-        // table, and wins over the default of the caller
+        // the url of the page names the column tiers, e.g. after a click in the edit menu,
+        // and wins over the default of the caller
         if (array_key_exists(url_var::DISPLAY_LIST_COLUMNS, $url_array)) {
             $col_tiers = (int)$url_array[url_var::DISPLAY_LIST_COLUMNS];
         }
@@ -956,11 +977,16 @@ class value_list extends ListBase
         // order, e.g. the "solution" column between the "loss" and the "gain" column
         $col_ids = $this->column_id_order($col_order, $col_phr, $phr_col);
         // a simple table shows the first tiers only, and the table of the mayor tier alone
-        // one unit per column; the columns left out are still reachable via the menu of
-        // the "..." header
+        // one unit per column; the columns left out are still reachable via the edit menu of
+        // the navbar
         // the unit describes the number of a whole column, so its own header names it and a
         // column can be defined per unit
         $col_unit = $this->column_units($col_phr, $val_col, $msg);
+        // the tooltip of each entry of the column menu names the columns of its selection
+        foreach (array_keys(self::COLUMN_TIER_NAMES) as $tiers) {
+            $tier_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $col_unit, $rel_lst, $tiers, $cells, $msg);
+            $model->tier_names[$tiers] = $this->column_head_names($tier_ids, $col_phr, $phr_col, $tbl_phr);
+        }
         $col_ids = $this->columns_of_tiers($col_ids, $col_phr, $phr_col, $col_unit, $rel_lst, $col_tiers, $cells, $msg);
         // a row whose numbers are all in columns that this table does not show says nothing
         // to the reader, e.g. the reward ratio of a problem in a table of the mayor tiers,
@@ -1332,9 +1358,7 @@ class value_list extends ListBase
         if ($rest_col) {
             $header .= $html->th(msg_id::FORM_SUB_TITLE_VALUES->text());
         }
-        // every table ends with the "..." header that opens the column menu, also the full
-        // table, so that the reader can narrow the columns again from every version
-        $header .= $html->th($this->columns_menu($url_array));
+        // the column menu is part of the edit menu of the navbar (columns_menu_items)
         $rows = $html->tr($header);
         foreach ($model->shown_keys as $row_key) {
             $row = $html->td($model->row_label[$row_key]);
@@ -1350,8 +1374,6 @@ class value_list extends ListBase
             if ($rest_col) {
                 $row .= $this->cell($model->cells[$row_key][''] ?? [], $msg, $url_array, '', $with_variance);
             }
-            // the cell below the "..." header, which the menu of that header covers
-            $row .= $html->td('');
             $rows .= $html->tr($row);
         }
         if ($model->rows_behind > 0) {
@@ -1360,8 +1382,6 @@ class value_list extends ListBase
             if ($rest_col) {
                 $pad_styles[] = '';
             }
-            // the column of the "..." header
-            $pad_styles[] = '';
             $more_url = $this->more_url($url_array, $model->row_limit, $msg);
             $rows .= $this->tr_more($model->rows_behind, $context_phr_lst, $pad_styles, $more_url);
         }
@@ -1664,6 +1684,26 @@ class value_list extends ListBase
     }
 
     /**
+     * the names shown in the headers of the given columns, each name once, because a further
+     * unit column of a phrase has the same header name as its first unit column
+     *
+     * @param array $col_ids the ids of the columns in the order they are shown
+     * @param array $col_phr the value column phrases by column id
+     * @param array $phr_col the phrase column phrases by column id
+     * @param phrase_list $tbl_phr the phrases that the table header names for every value
+     * @return array the header names e.g. "loss" and "gain"
+     */
+    private function column_head_names(array $col_ids, array $col_phr, array $phr_col, phrase_list $tbl_phr): array
+    {
+        $names = [];
+        foreach ($col_ids as $col_id) {
+            $phr = $col_phr[$col_id] ?? $phr_col[$col_id];
+            $names[] = $this->column_head($phr, $tbl_phr)->name();
+        }
+        return array_values(array_unique($names));
+    }
+
+    /**
      * the phrase that heads the column of the given phrase
      *
      * a triple whose part the table header names already is headed by its other part, e.g. the
@@ -1770,7 +1810,7 @@ class value_list extends ListBase
         $html = new html_base();
         [$centre_lst, $bound, $conf_lst, $title_lst] = $this->sort_cell_values($val_lst, $msg);
         // a simple table shows the numbers only, so the variance bounds are left out here
-        // and shown by the full table that the "..." header links to
+        // and shown by the full table that the edit menu of the navbar links to
         if (!$with_variance) {
             $bound = [];
         }
@@ -2751,8 +2791,8 @@ class value_list extends ListBase
 
     /**
      * the columns of the first tiers, at most the configured number of columns: the other
-     * columns are left to the full table, which the "..."
-     * header links to (docs/llm/frontend.md)
+     * columns are left to the full table, which the edit menu
+     * of the navbar links to (docs/llm/frontend.md)
      *
      * @param array $col_ids the ids of every column in the order they are shown
      * @param array $col_phr the value column phrases by column id
@@ -2880,35 +2920,36 @@ class value_list extends ListBase
     }
 
     /**
-     * the "..." header of a table that opens the menu to select the columns shown: one entry
-     * per column tier and each of them once with and once without the variance, so
-     * that the reader reaches every version of the table from every version
-     * (docs/llm/frontend.md "... more is always a link"); plain text if the page is not known
+     * the entries of the edit menu of the navbar to select the columns and the form of the value
+     * tables of the page: one entry per column tier and each of them once with and once without
+     * the variance, so that the reader reaches every version of the table from every version
+     * (docs/llm/frontend.md "... more is always a link"); empty if the page is not known
      *
      * @param array $url_array the url parameters of the page that shows the table
-     * @return string the html code of the header cell
+     * @param array $tier_names per column tier selection the column names of the tables of the
+     *                          page (table_model::tier_names), which the tooltips name
+     * @return string the html list items of the menu entries
      */
-    function columns_menu(array $url_array): string
+    function columns_menu_items(array $url_array, array $tier_names = []): string
     {
         $html = new html_base();
-        $result = msg_id::THREE_POINTS->text();
+        $result = '';
         if ($url_array != []) {
             // the columns and the form of the table are two selections of the same menu, each
             // below its own sub header
-            $items = $html->list_item(msg_id::TABLE_MENU_COLUMNS->text(), styles::MENU_HEADER);
+            $result = $html->list_item(msg_id::TABLE_MENU_COLUMNS->text(), styles::MENU_HEADER);
             foreach (self::COLUMN_TIER_NAMES as $tiers => $tier_msg) {
-                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false);
-                $items .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true);
+                $names = $tier_names[$tiers] ?? [];
+                $result .= $this->columns_menu_item($url_array, $tiers, $tier_msg, false, $names);
+                $result .= $this->columns_menu_item($url_array, $tiers, $tier_msg, true, $names);
             }
             // the form shown is not offered again, so the menu names only the ways to change
-            $items .= $html->list_item(msg_id::TABLE_MENU_AS->text(), styles::MENU_HEADER);
+            $result .= $html->list_item(msg_id::TABLE_MENU_AS->text(), styles::MENU_HEADER);
             foreach (table_forms::cases() as $form) {
                 if ($form != table_forms::by_url($url_array)) {
-                    $items .= $this->form_menu_item($url_array, $form);
+                    $result .= $this->form_menu_item($url_array, $form);
                 }
             }
-            $result = $html->popup_menu(
-                $result, $items, styles::MENU_COLUMN, msg_id::TABLE_COLUMNS_TIP->text());
         }
         return $result;
     }
@@ -2984,7 +3025,7 @@ class value_list extends ListBase
         unset($url_pars[url_var::DISPLAY_LIST_AS]);
         $url_pars[url_var::DISPLAY_LIST_AS] = $form->value;
         $url = api::MAIN_SCRIPT . url_var::PAR . http_build_query($url_pars);
-        return $html->list_item($html->ref($url, $form->msg_id()->text()));
+        return $html->list_item($html->ref($url, $form->msg_id()->text(), $form->tip_msg_id()->text()));
     }
 
     /**
@@ -2994,13 +3035,15 @@ class value_list extends ListBase
      * @param int $tiers the column tiers of this entry e.g. self::COLUMN_TIERS_ALL
      * @param msg_id $tier_msg the name of the column tiers e.g. "all columns"
      * @param bool $with_variance true for the entry that shows the variance behind each number
+     * @param array $names the names of the columns that the entry shows, which the tooltip names
      * @return string the html code of the menu entry
      */
     private function columns_menu_item(
         array  $url_array,
         int    $tiers,
         msg_id $tier_msg,
-        bool   $with_variance
+        bool   $with_variance,
+        array  $names = []
     ): string
     {
         $html = new html_base();
@@ -3015,7 +3058,13 @@ class value_list extends ListBase
         if ($with_variance) {
             $name .= ' ' . msg_id::TABLE_COLUMNS_WITH_VARIANCE->text();
         }
-        return $html->list_item($html->ref($url, $name));
+        $tip_id = self::COLUMN_TIER_TIPS[$tiers];
+        if ($with_variance) {
+            $tip_id = self::COLUMN_TIER_VARIANCE_TIPS[$tiers];
+        }
+        // without a table on the page the tooltip says only what the entry shows
+        $tip = $html->tip_with_names($tip_id, msg_id::TABLE_COLUMNS_NAMES_TIP, implode(', ', $names));
+        return $html->list_item($html->ref($url, $name, $tip));
     }
 
     /**

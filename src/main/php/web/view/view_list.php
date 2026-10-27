@@ -178,6 +178,18 @@ class view_list extends ListBase
     }
 
     /**
+     * @return array the names of the views of this list in the list order
+     */
+    function names(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $msk) {
+            $result[] = $msk->name();
+        }
+        return $result;
+    }
+
+    /**
      * @return string with a list of the view names with html links
      * ex. names_linked
      */

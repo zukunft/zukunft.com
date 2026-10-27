@@ -39,12 +39,17 @@ include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
 //include_once html_paths::LOG . 'change_log_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 //include_once html_paths::USER . 'user.php';
 //include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::USER . 'user_message.php';
+// view.php is not included here, because it includes word.php, which extends this class, so the
+// include would read word.php before this class is defined; the type is only checked at a call
+//include_once html_paths::VIEW . 'view.php';
 //include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_HELPER . 'Message.php';
 include_once html_paths::SHARED_TYPES . 'api_type_list.php';
@@ -56,11 +61,14 @@ include_once html_paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -69,6 +77,9 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class sandbox extends db_object
 {
+
+    // the number of views that the tooltip of "... more" of the edit menu names as examples
+    const int MENU_MORE_NAMES = 3;
 
     // the share_id is used to define the access rights
     // which can be public, personal, group, private or log
@@ -254,6 +265,141 @@ class sandbox extends db_object
     function view_id(): ?int
     {
         return $this->view_id;
+    }
+
+
+    /*
+     * menu
+     */
+
+    /**
+     * the views that the edit menu of the navbar suggests for this object, in the order of the menu:
+     * first the views directly linked to the object (its own default view and the views assigned to
+     * it), second the related views e.g. of the parents of a word and third the default views of its
+     * type e.g. the default, detail, range and detail with range view of a triple; a view is offered
+     * only once in its first group, which is expected and no problem e.g. the own view is also related
+     *
+     * @param type_lists $typ_lst the frontend cache with the system views
+     * @param user_message $msg to report a view that cannot be added
+     * @return view_list the suggested views in the order of the menu
+     */
+    function menu_views_ui(type_lists $typ_lst, user_message $msg): view_list
+    {
+        $msk_lst = new view_list();
+        $this->add_view_once_ui($msk_lst, $this->own_view_ui(), $msg);
+        $this->add_views_by_name_ui($msk_lst, $this->view_assigned_lst, $msg);
+        $this->add_views_by_name_ui($msk_lst, $this->view_lst, $msg);
+        foreach ($this->type_view_ids_ui() as $msk_id) {
+            $this->add_view_once_ui($msk_lst, $typ_lst->get_view_by_id($msk_id), $msg);
+        }
+        return $msk_lst;
+    }
+
+    /**
+     * the entries of the edit menu of the navbar for the suggested views of this object, each with
+     * the view name and behind it the switch icon like in the views tab; the view itself is
+     * changed by the "change this view" entry of the menu, so the entries have no edit icon;
+     * the view that shows the page is grey and the own view of the object has no switch icon,
+     * because the object is already always shown with it
+     *
+     * @param view_list $menu_lst the suggested views of this object (see menu_views_ui)
+     * @param int $used_id the id of the view that shows the page, 0 if not known
+     * @return string the html list items of the suggested views
+     */
+    function menu_view_items_ui(view_list $menu_lst, int $used_id = 0): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($menu_lst->lst() as $msk) {
+            if ($msk->id() == $used_id) {
+                $links = $msk->used_link($this->id(), $this->name());
+            } else {
+                $links = $msk->open_link($this->id(), $this->name());
+            }
+            if ($msk->id() != $this->view_id) {
+                $links .= $msk->switch_link($this->id(), static::VIEW_EDIT_ID, $this->name());
+            }
+            // in one row, because the menu shows each link of a list item as a block
+            $result .= $html->list_item($links, styles::FLEX_ROW) . "\n";
+        }
+        return $result;
+    }
+
+    /**
+     * the names of some cached views that the edit menu does not offer for this object, which the
+     * tooltip of "... more" names as examples of the views that the more page shows
+     *
+     * @param type_lists $typ_lst the frontend cache with the system views
+     * @param view_list $menu_lst the suggested views of this object (see menu_views_ui)
+     * @return array the names of the first views of the cache that are not in the menu
+     */
+    function menu_more_names_ui(type_lists $typ_lst, view_list $menu_lst): array
+    {
+        $menu_ids = $menu_lst->id_lst();
+        $sys_lst = $typ_lst->msk_sys ?? new view_list();
+        $names = [];
+        foreach ($sys_lst->lst() as $msk) {
+            if (!in_array($msk->id(), $menu_ids) and count($names) < self::MENU_MORE_NAMES) {
+                $names[] = $msk->name();
+            }
+        }
+        return $names;
+    }
+
+    /**
+     * @return array the ids of the default views of the type of this object e.g. of a word its
+     *               default, detail, range and detail with range view, empty for a type without them
+     */
+    private function type_view_ids_ui(): array
+    {
+        $msk_lst = new view_list();
+        $views = new views();
+        return $views->default_versions($msk_lst->default_id($this));
+    }
+
+    /**
+     * add the views of one group of the edit menu sorted by name, so that the menu does not
+     * depend on the database order
+     * @param view_list $msk_lst the views of the menu that the group is added to
+     * @param view_list|null $grp_lst the views of the group e.g. the views of the parents
+     * @param user_message $msg to report a view that cannot be added
+     */
+    private function add_views_by_name_ui(view_list $msk_lst, ?view_list $grp_lst, user_message $msg): void
+    {
+        if ($grp_lst != null) {
+            $sorted = clone $grp_lst;
+            $sorted->sort_by_name();
+            foreach ($sorted->lst() as $msk) {
+                $this->add_view_once_ui($msk_lst, $msk, $msg);
+            }
+        }
+    }
+
+    /**
+     * @return view|null the own default view of this object, which is part of the related views from
+     *                   the backend, or null if the object has no own default view
+     */
+    private function own_view_ui(): ?view
+    {
+        $result = null;
+        if ($this->view_id != null and $this->view_lst != null) {
+            $result = $this->view_lst->get($this->view_id);
+        }
+        return $result;
+    }
+
+    /**
+     * add a view to the edit menu only if it is not yet in it, without reporting the repeat,
+     * because in the menu a view of a later group that an earlier group already offers is normal
+     * @param view_list $msk_lst the views of the menu
+     * @param view|null $msk the view to add or null e.g. if the cache has not got the view
+     * @param user_message $msg to report a view that cannot be added
+     */
+    private function add_view_once_ui(view_list $msk_lst, ?view $msk, user_message $msg): void
+    {
+        if ($msk != null and !$msk_lst->has_id($msk->id())) {
+            $msk_lst->add($msk, $msg);
+        }
     }
 
 

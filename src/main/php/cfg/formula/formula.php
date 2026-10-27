@@ -165,6 +165,9 @@ class formula extends formula_map
     // api_json_array() under the INCL_RELATED flag, so the views tab of the default formula
     // view can offer at least one view
     public ?view_list $views_related = null;
+    // the views assigned to this formula by the import, which the edit menu of the navbar offers
+    // first; populated lazily by load_views_assigned() like the views of a word
+    public ?view_list $views_assigned = null;
 
 
     /*
@@ -805,6 +808,18 @@ class formula extends formula_map
     }
 
     /**
+     * load the views that the import has assigned to this formula into the in-memory views_assigned
+     * list, so that the edit menu of the navbar can offer them first like for a word
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_assigned(user_message $msg): void
+    {
+        $this->views_assigned = new sandbox_related()->views_assigned($this->term(), $msg);
+    }
+
+    /**
      * load the formula and, in the same call, the related view-models the default formula view
      * expects: the assigned phrases for the "Formula title" subtitle and the latex terms for the
      * "expression_latex_link" component (like word::load_by_id_with_related)
@@ -873,6 +888,11 @@ class formula extends formula_map
         }
         $vars = array_merge($vars,
             new sandbox_related()->views_array($this->views_related, $msg, $usr));
+        if ($this->views_assigned == null and !$typ_lst->test_mode()) {
+            $this->load_views_assigned($msg);
+        }
+        $vars = array_merge($vars,
+            new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
         return array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
     }
 

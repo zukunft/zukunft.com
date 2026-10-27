@@ -49,6 +49,7 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
@@ -80,6 +81,7 @@ class word_ui_tests
         $msg = new user_message();
 
         // init
+        $lib = new library();
         $html = new html_base();
         $t_wrd = new test_words($t);
         $t_msk = new test_views($t);
@@ -227,7 +229,8 @@ class word_ui_tests
         // the views that the edit menu of the navbar suggests for a word
         $wrd_menu = $t_wrd->menu_views_ui();
         $test_page .= $html->text_h2('edit menu of ' . $wrd_menu->name());
-        $test_page .= $html->list_unsorted($wrd_menu->menu_view_items_ui($cfg, $msg)) . '<br>';
+        $wrd_menu_lst = $wrd_menu->menu_views_ui($cfg, $msg);
+        $test_page .= $html->list_unsorted($wrd_menu->menu_view_items_ui($wrd_menu_lst)) . '<br>';
         $test_page .= 'other related phrases: ' . $list->phrases_related_ex_symbols($wrd_eur_rel, $msg) . '<br>';
         // the "related phrases without subtitles" component groups the related phrases by verb
         $test_page .= 'related phrases without subtitles: ' . $list->phrases_related_ex_subtitle($wrd_eur_rel, $msg) . '<br>';
@@ -373,29 +376,74 @@ class word_ui_tests
         $msg_txt = $msg->text();
         $t->assert($test_name, $msg_txt, '');
         $test_name = 'each view of the edit menu has the switch icon like in the views tab';
-        $menu_items = $wrd_menu->menu_view_items_ui($cfg, $msg);
+        $menu_items = $wrd_menu->menu_view_items_ui($wrd_menu_lst);
         $t->assert_text_contains($test_name, $menu_items, icons::VIEW_SWITCH);
         $test_name = '... behind the view name in the same row';
         $t->assert_text_contains($test_name, $menu_items, styles::FLEX_ROW);
         // negative: the view itself is changed by the "change this view" entry of the menu
         $test_name = '... but no edit icon';
         $t->assert_text_not_contains($test_name, $menu_items, icons::EDIT);
+        // the own view of the word has no switch icon, because the word is always shown with it
+        $test_name = 'the own view of a word in the edit menu has no switch icon';
+        $own_lst = $t_msk->menu_view_list_ui($t_msk->view_math());
+        $own_items = $wrd_menu->menu_view_items_ui($own_lst);
+        $t->assert_text_not_contains($test_name, $own_items, icons::VIEW_SWITCH);
+        // negative: another view e.g. the assigned view science keeps the switch icon
+        $test_name = '... but another view has the switch icon';
+        $sci_lst = $t_msk->menu_view_list_ui($t_msk->view_science());
+        $sci_items = $wrd_menu->menu_view_items_ui($sci_lst);
+        $t->assert_text_contains($test_name, $sci_items, icons::VIEW_SWITCH);
+        // the view that shows the page is grey with a tooltip that names the shown word
+        $test_name = 'the view that shows the page is grey in the edit menu';
+        $used_items = $wrd_menu->menu_view_items_ui($own_lst, views::MATH_CONST_ID);
+        $grey_class = 'class="' . styles::STYLE_GREY . '"';
+        $t->assert_text_contains($test_name, $used_items, $grey_class);
+        $test_name = '... with the tooltip that the view has been used to show the word';
+        $used_tip = $lib->msg_var_replace($mtr->txt(msg_id::BUTTON_VIEW_USED_TIP), msg_id::VAR_NAME, word_names::MATH);
+        $used_title = htmlspecialchars($used_tip, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $used_items, $used_title);
+        // negative: a view that does not show the page is not grey
+        $test_name = '... but a view that does not show the page is not grey';
+        $t->assert_text_not_contains($test_name, $own_items, $grey_class);
         // negative: a word without own, assigned or parent views in a cache without system views has no entries
         $test_name = '... but a word without any suggested view has no entries';
         $t_typ = new test_types($t);
-        $menu_items = $t_wrd->chf_ui()->menu_view_items_ui($t_typ->type_lists_empty_ui(), $msg);
+        $chf_ui = $t_wrd->chf_ui();
+        $empty_typ_lst = $t_typ->type_lists_empty_ui();
+        $chf_menu_lst = $chf_ui->menu_views_ui($empty_typ_lst, $msg);
+        $menu_items = $chf_ui->menu_view_items_ui($chf_menu_lst);
         $t->assert($test_name, $menu_items, '');
-        // the navbar shows the suggested views instead of the alternative views
-        $test_name = 'the edit menu of the navbar shows the suggested views';
-        $menu_items = $wrd_menu->menu_view_items_ui($cfg, $msg);
-        $nav_html = $html->navbar(views::WORD_ID, [], null, null, false, 0, '', $menu_items);
-        $t->assert_text_contains($test_name, $nav_html, views::SCIENCE);
-        $test_name = '... instead of the alternative views';
-        $t->assert_text_not_contains($test_name, $nav_html, $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW));
-        // negative: a page without suggested views keeps the alternative views
-        $test_name = 'the edit menu of a page without suggested views keeps the alternative views';
+        // the tooltip of "... more" names some views that the menu does not offer
+        $test_name = 'the more views of a word are views that the edit menu does not offer';
+        $more_names = $wrd_menu->menu_more_names_ui($cfg, $wrd_menu_lst);
+        $menu_names = $wrd_menu_lst->names();
+        $t->assert_contains_not($test_name, $more_names, $menu_names);
+        // the cache has many more system views, so the tooltip names the configured number
+        $test_name = '... and only a few of them';
+        $more_count = count($more_names);
+        $t->assert($test_name, $more_count, word::MENU_MORE_NAMES);
+        // negative: a cache without system views has no more views
+        $test_name = '... but a cache without system views has none';
+        $no_names = $chf_ui->menu_more_names_ui($empty_typ_lst, $chf_menu_lst);
+        $t->assert($test_name, $no_names, []);
+        // the navbar shows the suggested views below the sub header alternative views
+        $alt_header = 'class="' . styles::MENU_HEADER . '">' . $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW);
+        $test_name = 'the edit menu of the navbar shows the suggested views below the sub header alternative views';
+        $menu_items = $wrd_menu->menu_view_items_ui($wrd_menu_lst);
+        $nav_html = $html->navbar(views::WORD_ID, [], null, null, false, $t_msk->menu_items_ui($menu_items));
+        $t->assert_text_order($test_name, $nav_html, $alt_header, views::SCIENCE);
+        // the entries of the page e.g. the table columns come first, above the sub header alternative views
+        $test_name = 'the entries of the page are above the sub header alternative views';
+        $page_items = $html->list_item(msg_id::TABLE_MENU_COLUMNS->text(), styles::MENU_HEADER);
+        $page_mnu = $t_msk->menu_items_ui($menu_items, $page_items);
+        $nav_html = $html->navbar(views::WORD_ID, [], null, null, false, $page_mnu);
+        $t->assert_text_order($test_name, $nav_html, msg_id::TABLE_MENU_COLUMNS->text(), $alt_header);
+        // negative: a page without suggested views has neither the sub header alternative views nor a link with that name
+        $test_name = 'a page without suggested views has no sub header alternative views';
         $nav_html = $html->navbar(views::WORD_ID);
-        $t->assert_text_contains($test_name, $nav_html, $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW));
+        $t->assert_text_not_contains($test_name, $nav_html, $alt_header);
+        $test_name = '... and no link to a placeholder page';
+        $t->assert_text_not_contains($test_name, $nav_html, url_var::MASK . '=view_change');
         $msg->reset();
 
         $t->subheader($ts . 'aliases and symbols');

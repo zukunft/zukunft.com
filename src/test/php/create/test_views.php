@@ -51,9 +51,11 @@ include_once paths::SHARED_TYPES . 'view_types.php';
 include_once paths::SHARED_TYPES . 'view_link_types.php';
 include_once paths::SHARED_TYPES . 'view_relation_types.php';
 include_once paths::SHARED . 'url_var.php';
+include_once html_paths::HTML . 'view_menu.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user_message.php';
+include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
@@ -72,9 +74,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_link_types;
 use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\html\view_menu;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class test_views extends test_objects
@@ -495,6 +499,52 @@ class test_views extends test_objects
     {
         $t_msk = new test_views($this->env);
         return new view_list_ui($t_msk->view_list_word()->api_json());
+    }
+
+    /**
+     * @param view $msk the only view of the list e.g. "Mathematical constant"
+     * @return view_list_ui the suggested views of the edit menu with only the given view
+     */
+    function menu_view_list_ui(view $msk): view_list_ui
+    {
+        $msk_lst = new view_list($this->env->usr1);
+        $msk_lst->add($msk);
+        return new view_list_ui($msk_lst->api_json());
+    }
+
+    /**
+     * @return view_menu the edit menu of the table view with its table editor
+     */
+    function menu_table_editor_ui(): view_menu
+    {
+        $mnu = new view_menu();
+        $mnu->edt_id = views::TABLE_EDITOR_ID;
+        $mnu->edt_name = views::TABLE_EDITOR_NAME;
+        return $mnu;
+    }
+
+    /**
+     * @return view_menu the edit menu of the word mathematics with the science view as example of the more views
+     */
+    function menu_math_ui(): view_menu
+    {
+        $mnu = new view_menu();
+        $mnu->more_names = [views::SCIENCE];
+        $mnu->obj_name = word_names::MATH;
+        return $mnu;
+    }
+
+    /**
+     * @param string $view_items the menu entries of the suggested views e.g. of the word Pi
+     * @param string $page_items the menu entries of the page e.g. the column selection of its table
+     * @return view_menu the edit menu with the given entries
+     */
+    function menu_items_ui(string $view_items, string $page_items = ''): view_menu
+    {
+        $mnu = new view_menu();
+        $mnu->view_items = $view_items;
+        $mnu->page_items = $page_items;
+        return $mnu;
     }
 
     function view_relation_add(): view_relation

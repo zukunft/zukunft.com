@@ -49,16 +49,22 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+// term and term_view_list are loaded via view.php, because including them here
+// would load triple.php via sandbox.php before sandbox_link_named is declared
+//include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -86,14 +92,7 @@ class sandbox_related
      */
     function views_array(?view_list $msk_lst, user_message $msg, ?user $usr): array
     {
-        $vars = [];
-        // drop the related views the requester may not read (idor); dropped before the empty
-        // check, else a list of only unreadable views is emitted as an empty json list
-        $msk_lst?->filter_readable_by($usr);
-        if ($msk_lst != null and !$msk_lst->is_empty()) {
-            $vars[json_fields::VIEWS] = $msk_lst->api_json_array([], $msg, $usr);
-        }
-        return $vars;
+        return $this->view_list_array(json_fields::VIEWS, $msk_lst, $msg, $usr);
     }
 
     /**
@@ -107,10 +106,39 @@ class sandbox_related
      */
     function views_assigned_array(?view_list $msk_lst, user_message $msg, ?user $usr): array
     {
+        return $this->view_list_array(json_fields::VIEWS_ASSIGNED, $msk_lst, $msg, $usr);
+    }
+
+    /**
+     * the views that the import has assigned to a word, triple or formula, which the edit menu of
+     * the navbar offers first e.g. "Mathematical constant" for "Pi"
+     *
+     * @param term $trm the term of the object e.g. the term of the word Pi
+     * @param user_message $msg to collect the loading problems for the requesting user
+     * @return view_list the assigned views or an empty list
+     */
+    function views_assigned(term $trm, user_message $msg): view_list
+    {
+        $lnk_lst = new term_view_list($trm->get_user());
+        $lnk_lst->load_by_term($trm, $msg);
+        return $lnk_lst->view_list();
+    }
+
+    /**
+     * @param string $fld the json field of the view list e.g. json_fields::VIEWS
+     * @param view_list|null $msk_lst the views of the object or null if none is loaded
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created
+     * @return array the view entries of the api json array or an empty array if no readable view is left
+     */
+    private function view_list_array(string $fld, ?view_list $msk_lst, user_message $msg, ?user $usr): array
+    {
         $vars = [];
+        // drop the views the requester may not read (idor); dropped before the empty
+        // check, else a list of only unreadable views is emitted as an empty json list
         $msk_lst?->filter_readable_by($usr);
         if ($msk_lst != null and !$msk_lst->is_empty()) {
-            $vars[json_fields::VIEWS_ASSIGNED] = $msk_lst->api_json_array([], $msg, $usr);
+            $vars[$fld] = $msk_lst->api_json_array([], $msg, $usr);
         }
         return $vars;
     }

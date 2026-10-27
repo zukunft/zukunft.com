@@ -129,14 +129,6 @@ use DateTimeInterface;
 class system_page extends component
 {
 
-    // the menu name of each view version in the order of views::DEFAULT_VIEW_VERSIONS
-    const array VIEW_VERSION_NAMES = [
-        msg_id::VIEW_VERSION_DEFAULT,
-        msg_id::VIEW_VERSION_DETAIL,
-        msg_id::VIEW_VERSION_RANGE,
-        msg_id::VIEW_VERSION_DETAIL_RANGE,
-    ];
-
     // the labels of the tabs of a process catch page; the position in the list is the tab number - 1
     // (components::PROCESS_CATCH_TAB_NBR), so the label is not a ui message of the tab component,
     // which must be unique for each component
@@ -290,54 +282,6 @@ class system_page extends component
                 $title .= $mtr->txt(msg_id::FOR) . $html->esc($name);
             }
             $result = $html->text_h2($title);
-        }
-        return $result;
-    }
-
-    /**
-     * the "..." in the right corner below the title of a default, detail, range or detail with
-     * range view that opens the menu to show the same object in one of the other three versions
-     *
-     * @param int $msk_id the database id of the view that shows the object e.g. views::WORD_ID
-     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object shown on the page
-     * @return string the html code of the menu or '' if the view is not a version of a default view
-     */
-    function related_view_selector(
-        int                                                   $msk_id,
-        db_object|type_object|combine_named|sandbox_list|null $dbo
-    ): string
-    {
-        $html = new html_base();
-        $result = '';
-        $versions = $this->view_versions($msk_id);
-        // only an object with a db id can be shown in another view
-        if ($versions != [] and $dbo instanceof db_object) {
-            $items = '';
-            foreach ($versions as $pos => $view_id) {
-                if ($view_id != $msk_id) {
-                    $url = html_base::url($view_id, $dbo->id());
-                    $items .= $html->list_item($html->ref($url, self::VIEW_VERSION_NAMES[$pos]->text()));
-                }
-            }
-            $menu = $html->popup_menu(msg_id::THREE_POINTS->text(), $items,
-                styles::MENU_VIEW_VERSION, msg_id::VIEW_VERSION_TIP->text());
-            $result = $html->div($menu, styles::VIEW_VERSION_CORNER);
-        }
-        return $result;
-    }
-
-    /**
-     * @param int $msk_id the database id of a view e.g. views::WORD_DEFAULT_DETAIL_ID
-     * @return array the ids of the four versions of the default view that the given view is one of
-     *               or an empty array if the view is not a version of a default view
-     */
-    private function view_versions(int $msk_id): array
-    {
-        $result = [];
-        foreach (views::DEFAULT_VIEW_VERSIONS as $versions) {
-            if (in_array($msk_id, $versions)) {
-                $result = $versions;
-            }
         }
         return $result;
     }

@@ -1,55 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## start view
-
-in the start view e.g. http://localhost/http/view.php?m=1&dla=table_chart&dlc=3&dlv=1 and all similar views 
-that have a '...' menu in the top right corner, move the menu entries to the navbar edit icon menu
-e.g. for http://localhost/http/view.php?m=1&dla=table_chart&dlc=3&dlv=1
-the '...' menu is now:
-
-columns and values
-mayor
-mayor + variance
-main
-main + variance
-minor
-minor + variance
-all
-all + variance
-as
-table
-chart
-
-and the edit icon menu is 
-
-alternative
-... more
-change view
-add view
-
-new should be the edit icon menu
-
-columns and values
-mayor
-mayor + variance
-main
-main + variance
-minor
-minor + variance
-all
-all + variance
-as
-table
-chart
-alternative
-... more
-change view
-add view
-
-where alternative is the same style as 'columns and values'
-
-if done the '...' menu can be removed
-
 ## prime group id within 2^53
 
 limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)

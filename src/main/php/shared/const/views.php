@@ -196,13 +196,6 @@ class views
     const int VERB_DEFAULT_RANGE_ID = 38;
     const string WORD_DEFAULT_DETAIL_RANGE = 'word_default_detail_range';
     const int WORD_DEFAULT_DETAIL_RANGE_ID = 39;
-    // the general views of a word that the edit menu of the navbar offers for every word after its own views
-    const array WORD_MENU_CODE_IDS = [
-        self::WORD,
-        self::WORD_DEFAULT_DETAIL,
-        self::WORD_DEFAULT_RANGE,
-        self::WORD_DEFAULT_DETAIL_RANGE,
-    ];
     const string TRIPLE_DEFAULT_DETAIL_RANGE = 'triple_default_detail_range';
     const int TRIPLE_DEFAULT_DETAIL_RANGE_ID = 40;
     const string VALUE_DEFAULT_DETAIL_RANGE = 'value_default_detail_range';
@@ -1721,6 +1714,23 @@ class views
         $result = 0;
         if ($base_code_id != '') {
             $result = $this->code_id_to_id($base_code_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $msk_id the database id of a view e.g. views::WORD_ID, the default view of a word
+     * @return array the ids of the four versions of the default view that the given view is one of
+     *               e.g. the default, detail, range and detail with range view of a word, or an empty
+     *               array if the view is not a version of a default view
+     */
+    function default_versions(int $msk_id): array
+    {
+        $result = [];
+        foreach (self::DEFAULT_VIEW_VERSIONS as $versions) {
+            if (in_array($msk_id, $versions)) {
+                $result = $versions;
+            }
         }
         return $result;
     }

@@ -84,6 +84,9 @@ class table_model
     public array $col_unit = [];
     // per value column id the names that select the column e.g. "potential loss" and "loss"
     public array $col_names = [];
+    // per column tier selection e.g. value_list::COLUMN_TIERS_EX_MAIN the header names of the
+    // columns that the table shows with it, which the tooltips of the column menu name
+    public array $tier_names = [];
     // the keys of the rows shown, in the order of the impact or of the orders below
     public array $shown_keys = [];
     // the orders of the rows: per order the phrase id of the column and the condition

@@ -38,6 +38,7 @@
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /formula/formula.php
     \-- load_latex_terms - section for function load_latex_terms is expected to be load in /formula/formula.php
     \-- load_views_related - section for function load_views_related is expected to be load in /formula/formula.php
+    \-- load_views_assigned - section for function load_views_assigned is expected to be load in /formula/formula.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formul
             a.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
@@ -510,6 +511,7 @@
     \-- load_references_related - section for function load_references_related is expected to be load in /word/triple.ph
             p
     \-- load_views_related - section for function load_views_related is expected to be load in /word/triple.php
+    \-- load_views_assigned - section for function load_views_assigned is expected to be load in /word/triple.php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /word/triple.php
     \-- name_given - section for function name_given not yet defined that it should be set and get in /word/triple.php
     \-- link_key - section for function link_key is expected to be link in /word/triple.php
@@ -1027,6 +1029,8 @@
         \-- formula - load the terms shown in the latex format into the in-memory latex_terms list so that
     \-- load_views_related
         \-- formula - load the views related to this formula into the in-memory views_related list so that
+    \-- load_views_assigned
+        \-- formula - load the views that the import has assigned to this formula into the in-memory views_assigned
     \-- load_by_id_with_related
         \-- formula - load the formula and, in the same call, the related view-models the default formula view
     \-- api_json_array
@@ -3648,6 +3652,8 @@
             .php
     \-- views_assigned_array - section for function views_assigned_array not yet defined that it should be api in /sandb
             ox/sandbox_related.php
+    \-- views_assigned - section for function views_assigned not yet defined that it should be api in /sandbox/sandbox_r
+            elated.php
     \-- changes_array - section for function changes_array not yet defined that it should be api in /sandbox/sandbox_rel
             ated.php
     \-- load_changes - section for function load_changes is expected to be load in /sandbox/sandbox_related.php
@@ -5569,6 +5575,9 @@
         \-- sandbox_related - the views that can show the object for the views tab of the object page; the list is
     \-- views_assigned_array
         \-- sandbox_related - the views assigned to the object by the import for the edit menu of the navbar
+    \-- views_assigned
+        \-- sandbox_related - the views that the import has assigned to a word, triple or formula,
+                 which the edit menu of
     \-- changes_array
         \-- sandbox_related - the changes of the given object for the changes tab of the object page
     \-- load_changes
@@ -6773,7 +6782,6 @@
     \-- title_with_object_name - section for function title_with_object_name missing in /component/execute/system_page.p
             hp
     \-- title_for_phrase - section for function title_for_phrase missing in /component/execute/system_page.php
-    \-- related_view_selector - section for function related_view_selector missing in /component/execute/system_page.php
     \-- system_sub_tile - section for function system_sub_tile missing in /component/execute/system_page.php
     \-- system_sub_tile_var - section for function system_sub_tile_var missing in /component/execute/system_page.php
     \-- preview - section for function preview missing in /component/execute/system_page.php
@@ -7255,6 +7263,8 @@
             ect.php
     \-- add_changes - section for function add_changes not yet defined that it should be set and get in /helper/data_obj
             ect.php
+    \-- add_tier_names - section for function add_tier_names not yet defined that it should be set and get in /helper/da
+            ta_object.php
     \-- change_log - section for function change_log not yet defined that it should be set and get in /helper/data_objec
             t.php
     \-- has_sys_log - section for function has_sys_log not yet defined that it should be set and get in /helper/data_obj
@@ -7338,6 +7348,8 @@
             ase.php
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
+    \-- tip_with_names - section for function tip_with_names not yet defined that it should be header & footer in /html/
+            html_base.php
     \-- dsp_notification - section for function dsp_notification not yet defined that it should be header & footer in /h
             tml/html_base.php
     \-- dsp_notification_html - section for function dsp_notification_html not yet defined that it should be header & fo
@@ -7588,7 +7600,6 @@
     \-- button - section for function button not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
-    \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
     \-- details - section for function details not yet defined that it should be internal in /html/html_base.php
     \-- definition - section for function definition not yet defined that it should be internal in /html/html_base.php
     \-- mark - section for function mark not yet defined that it should be internal in /html/html_base.php
@@ -8084,6 +8095,12 @@
     \-- owner_name - section for function owner_name not yet defined that it should be set and get in /sandbox/sandbox.p
             hp
     \-- view_id - section for function view_id not yet defined that it should be set and get in /sandbox/sandbox.php
+    \-- menu_views_ui - section for function menu_views_ui not yet defined that it should be menu in /sandbox/sandbox.ph
+            p
+    \-- menu_view_items_ui - section for function menu_view_items_ui not yet defined that it should be menu in /sandbox/
+            sandbox.php
+    \-- menu_more_names_ui - section for function menu_more_names_ui not yet defined that it should be menu in /sandbox/
+            sandbox.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox.php
     \-- share_id - section for function share_id not yet defined that it should be set and get in /sandbox/sandbox.php
     \-- protection_id - section for function protection_id not yet defined that it should be set and get in /sandbox/san
@@ -8513,8 +8530,8 @@
             php
     \-- chart_model - section for function chart_model not yet defined that it should be display in /value/value_list.ph
             p
-    \-- columns_menu - section for function columns_menu not yet defined that it should be display in /value/value_list.
-            php
+    \-- columns_menu_items - section for function columns_menu_items not yet defined that it should be display in /value
+            /value_list.php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
     \-- table - section for function table not yet defined that it should be display in /value/value_list.php
     \-- common_phrases - section for function common_phrases not yet defined that it should be info in /value/value_list
@@ -8581,6 +8598,7 @@
     \-- selector_page - section for function selector_page not yet defined that it should be to review in /view/view.php
     \-- log_err - section for function log_err is expected to be log in /view/view.php
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
+    \-- used_link - section for function used_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
     \-- edit_link - section for function edit_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
@@ -8589,6 +8607,8 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_b
             ase.php
     \-- api_array - section for function api_array not yet defined that it should be api in /view/view_base.php
+    \-- shows_value_table - section for function shows_value_table not yet defined that it should be set and get in /vie
+            w/view_base.php
     \-- type_code_id - section for function type_code_id is expected to be preloaded in /view/view_base.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_base.php
     \-- title - section for function title not yet defined that it should be base in /view/view_base.php
@@ -8610,13 +8630,14 @@
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
     \-- component_names - section for function component_names not yet defined that it should be base in /view/view_list
             .php
+    \-- names - section for function names is expected to be info in /view/view_list.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /view/view_list.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_list.php
     \-- sort_by_name - section for function sort_by_name not yet defined that it should be base in /view/view_list.php
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
     \-- only_type - section for function only_type not yet defined that it should be filter in /view/view_list.php
     \-- selector - section for function selector not yet defined that it should be select in /view/view_list.php
-    \-- order error - order of section base has difference at name_link should be before name_tip
+    \-- order error - order of section base has difference at name_tip should be before names
 \-- view_relation
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_r
             elation.php
@@ -8727,9 +8748,6 @@
     \-- name_link_plural - section for function name_link_plural not yet defined that it should be base in /word/word.ph
             p
     \-- btn_unlink - section for function btn_unlink not yet defined that it should be buttons in /word/word.php
-    \-- menu_views_ui - section for function menu_views_ui not yet defined that it should be select in /word/word.php
-    \-- menu_view_items_ui - section for function menu_view_items_ui not yet defined that it should be select in /word/w
-            ord.php
     \-- dsp_type_selector - section for function dsp_type_selector not yet defined that it should be select in /word/wor
             d.php
     \-- th - section for function th not yet defined that it should be table in /word/word.php
@@ -9307,6 +9325,8 @@
         \-- data_object - @return bool true if this context object contains at least some phrases
     \-- add_changes
         \-- data_object - @return bool true if this context object contains at least some phrases
+    \-- add_tier_names
+        \-- data_object - add the column names of a value table of the page, so that the column menu of the navbar
     \-- change_log
         \-- data_object - @return change_log_list the cache of the relevant change log entries
     \-- has_sys_log
@@ -9447,8 +9467,6 @@
     \-- title_for_phrase
         \-- system_page - HTML for a page title that names the phrase the page works on e.g. Table editor for populism s
                 olution
-    \-- related_view_selector
-        \-- system_page - the "..." in the right corner below the title of a default, detail, range or detail with
     \-- system_sub_tile
         \-- system_page - HTML for a subtitle
     \-- system_sub_tile_var
@@ -10498,6 +10516,8 @@
         \-- html_base - create the html code for the page header
     \-- navbar
         \-- html_base - @param int $msk_id the current view id used to build back params and view-change links
+    \-- tip_with_names
+        \-- html_base - a tooltip that names examples behind its text, e.g. "show more views e.g. Word, Triple"
     \-- dsp_notification
         \-- html_base - /**
     \-- dsp_notification_html
@@ -10780,8 +10800,6 @@
         \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
     \-- list_item
         \-- html_base - html list item entry
-    \-- popup_menu
-        \-- html_base - a popup menu that opens on a click without any javascript, because the html details
     \-- details
         \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
     \-- definition
@@ -10890,6 +10908,13 @@
 \-- create the pure html (5) code for all formula links related to this value list
     \-- frm_links_html
         \-- result_list - create the pure html (5) code for all formula links related to this value list
+\-- menu
+    \-- menu_views_ui
+        \-- sandbox - the views that the edit menu of the navbar suggests for this object, in the order of the menu:
+    \-- menu_view_items_ui
+        \-- sandbox - the entries of the edit menu of the navbar for the suggested views of this object, each with
+    \-- menu_more_names_ui
+        \-- sandbox - the names of some cached views that the edit menu does not offer for this object, which the
 \-- debug
     \-- name
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)

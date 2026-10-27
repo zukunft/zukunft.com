@@ -390,16 +390,21 @@ class value_list_ui_tests
         $test_name = '... and a value without bounds is shown without brackets';
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_variance),
             '35.2' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE . ' (');
-        // a simple table shows the numbers only and the "..." header links to the same page with
-        // the variance switched on, which wins over the default of the caller
+        // a simple table shows the numbers only and the edit menu of the navbar links to the same
+        // page with the variance switched on, which wins over the default of the caller
         $tbl_plain = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
             [url_var::MASK => views::START_ID], false, value_list_ui::COLUMN_TIERS_ALL, false);
         $test_name = 'without the variance the centre value is shown alone';
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_plain), '2.2');
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_plain), $centre_txt . ' (');
-        $test_name = '... and the "..." header links to the page with the variance';
-        $t->assert_text_contains($test_name, $tbl_plain, url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE);
+        $test_name = '... and the edit menu links to the page with the variance';
+        $variance_par = url_var::DISPLAY_LIST_VARIANCE . '=' . url_var::TRUE;
+        $variance_menu = $t_val->value_list_variance_ui()->columns_menu_items([url_var::MASK => views::START_ID]);
+        $t->assert_text_contains($test_name, $variance_menu, $variance_par);
+        // negative: the table itself has no link to the variance, because its menu is in the navbar
+        $test_name = '... but the table does not';
+        $t->assert_text_not_contains($test_name, $tbl_plain, $variance_par);
         $tbl_url = $t_val->value_list_variance_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), [], false, true, null, null,
             [url_var::DISPLAY_LIST_VARIANCE => url_var::TRUE], false, value_list_ui::COLUMN_TIERS_ALL, false);
@@ -578,13 +583,15 @@ class value_list_ui_tests
 
         // every defined column is shown, because the tiers hide the columns per screen size, so
         // the number of columns that fit on the widest screen limits only the columns that the
-        // data suggests; five defined columns give five column headers plus the row name header
-        // and the "..." header with the column menu
+        // data suggests; the defined columns give one column header each plus the row name header,
+        // because the column menu is in the edit menu of the navbar
         $rel_lst = $t_phr->list_columns_ordered_ui();
         $tbl_def = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst);
         $test_name = 'every defined column is shown even above the number that fit on the widest screen';
-        $t->assert($test_name, substr_count($tbl_def, '<th'), count($rel_lst->column_names()) + 2);
+        $th_count = substr_count($tbl_def, '<th');
+        $th_expected = count($rel_lst->column_names()) + 1;
+        $t->assert($test_name, $th_count, $th_expected);
 
         // the tier of a defined column says on which screens it is shown: a minor column carries
         // the class that hides it below a wide screen, a mayor column has no class and is shown
@@ -598,7 +605,8 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $tbl_html, styles::COL_MINOR);
 
         // a simple table shows the mayor columns only, so the minor column "cost" is left to the
-        // full table and the "..." header says that more columns exist
+        // full table; the columns are selected in the edit menu of the navbar, so no header cell
+        // is the "..." menu
         $tbl_mayor = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
             null, [], false, value_list_ui::COLUMN_TIERS_EX_MAIN);
@@ -608,13 +616,15 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $hdr_mayor, word_names::COST);
         $test_name = '... but keeps the mayor columns';
         $t->assert_text_contains($test_name, $hdr_mayor, word_names::LOSS);
-        $test_name = '... and ends with the "..." header';
-        $t->assert_text_contains($test_name, $hdr_mayor, msg_id::THREE_POINTS->text());
-        // the full table shows every column and still ends with the "..." header, because its
-        // menu is the only way back to the fewer columns
-        $test_name = 'the full table shows the minor column and the "..." header';
+        // negative: the menu to show more columns is in the navbar, not in the header
+        $test_name = '... and has no "..." header';
+        $dots = msg_id::THREE_POINTS->text();
+        $t->assert_text_not_contains($test_name, $hdr_mayor, $dots);
+        $test_name = 'the full table shows the minor column';
         $t->assert_text_contains($test_name, $hdr_def, word_names::COST);
-        $t->assert_text_contains($test_name, $hdr_def, msg_id::THREE_POINTS->text());
+        // negative: the way back to fewer columns is the edit menu of the navbar
+        $test_name = '... and has no "..." header either';
+        $t->assert_text_not_contains($test_name, $hdr_def, $dots);
 
         // the reason of a problem is a phrase column like the solution and the loss that the
         // reason causes a value column of its own: its value carries the problem, the word
@@ -773,15 +783,17 @@ class value_list_ui_tests
         $t->assert_text_not_contains($test_name, $lib->html_to_text($tbl_rsn_sol),
             '50' . sandbox_value_ui::QUALITY_MARK_NO_SOURCE);
 
-        // the "..." header opens the menu that selects the columns, so it offers every column
+        // the edit menu of the navbar selects the columns of the table, so it offers every column
         // tier and each of them once with and once without the variance
         $page_url = [url_var::MASK => views::START_ID];
-        $tbl_menu = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
+        $tbl_page = $t_val->value_list_defined_columns_ui()->table_by_related_columns(
             $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
             null, $page_url, false, value_list_ui::COLUMN_TIERS_EX_MAIN);
-        $test_name = 'the "..." header opens a menu without any javascript';
-        $t->assert_text_contains($test_name, $tbl_menu,
-            '<' . html_base::DETAILS . ' class="' . styles::MENU_COLUMN . '">');
+        // negative: the table itself has no "..." menu any more
+        $test_name = 'the table has no column menu, because the edit menu of the navbar offers it';
+        $t->assert_text_not_contains($test_name, $tbl_page, '<' . html_base::DETAILS);
+        $tbl_menu = $t_val->value_list_defined_columns_ui()->columns_menu_items($page_url);
+        $test_name = 'the column entries of the edit menu need no javascript';
         $t->assert_text_not_contains($test_name, $tbl_menu, '<script');
         foreach (value_list_ui::COLUMN_TIER_NAMES as $tiers => $msg_tier) {
             $test_name = 'the column menu offers ' . $msg_tier->text();
@@ -798,8 +810,6 @@ class value_list_ui_tests
         $t->assert_text_contains($test_name, $lib->html_to_text($tbl_menu),
             msg_id::TABLE_COLUMNS_ALL->text() . ' ' . msg_id::TABLE_COLUMNS_WITH_VARIANCE->text());
         // the menu selects the columns and the form of the table, each below its own sub header
-        $test_name = 'the menu tooltip names the columns and the form';
-        $t->assert_text_contains($test_name, $tbl_menu, 'title="' . msg_id::TABLE_COLUMNS_TIP->text() . '"');
         $test_name = 'the column entries are below the sub header columns and values';
         $t->assert_text_order($test_name, $tbl_menu,
             'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_COLUMNS->text(),
@@ -808,15 +818,43 @@ class value_list_ui_tests
         $t->assert_text_order($test_name, $tbl_menu,
             'class="' . styles::MENU_HEADER . '">' . msg_id::TABLE_MENU_AS->text(),
             msg_id::TABLE_AS_TABLE_CHART->text());
+        // the tooltip of a column entry says what it shows and names the columns of the table
+        $test_name = 'the tooltip of the mayor entry says that it shows only the mayor columns';
+        $t->assert_text_contains($test_name, $tbl_menu, msg_id::TABLE_COLUMNS_MAYOR_TIP->text());
+        $test_name = '... and the one with the variance that it adds the variance';
+        $t->assert_text_contains($test_name, $tbl_menu, msg_id::TABLE_COLUMNS_MAYOR_VARIANCE_TIP->text());
+        // negative: without the column names of a table the tooltip names no columns
+        $names_tip = $lib->msg_var_replace(msg_id::TABLE_COLUMNS_NAMES_TIP->text(), msg_id::VAR_NAME_LIST, '');
+        $test_name = '... but without a table on the page no column names';
+        $t->assert_text_not_contains($test_name, $tbl_menu, $names_tip);
+        $tbl_lst = $t_val->value_list_defined_columns_ui();
+        $tbl_lst->table_by_related_columns(
+            $msg_ui, new phrase_list_ui(), $rel_lst->column_names(), false, true, $rel_lst,
+            null, $page_url, false, value_list_ui::COLUMN_TIERS_EX_MAIN);
+        $mayor_names = $tbl_lst->tier_names[value_list_ui::COLUMN_TIERS_EX_MAIN] ?? [];
+        $all_names = $tbl_lst->tier_names[value_list_ui::COLUMN_TIERS_ALL] ?? [];
+        $test_name = 'the table keeps the names of the mayor columns';
+        $t->assert_contains($test_name, $mayor_names, word_names::LOSS);
+        // negative: the minor column is no mayor column
+        $test_name = '... without the minor column';
+        $t->assert_contains_not($test_name, $mayor_names, word_names::COST);
+        $test_name = '... which all columns include';
+        $t->assert_contains($test_name, $all_names, word_names::COST);
+        $names_menu = $tbl_lst->columns_menu_items($page_url, $tbl_lst->tier_names);
+        $mayor_tip = msg_id::TABLE_COLUMNS_MAYOR_TIP->text() . ' ' . $names_tip;
+        $test_name = 'the tooltip of the mayor entry names the mayor columns of the table';
+        $t->assert_text_order($test_name, $names_menu, $mayor_tip, word_names::LOSS);
         // the form shown is not offered again: the table page offers the chart and the table
         // with the chart, the chart page the table and the table with the chart
-        // negative: without the url of the page no version can be linked, so the header is plain text
-        $test_name = 'the column menu of an unknown page is the plain three points';
-        $t->assert($test_name, $t_val->value_list_defined_columns_ui()->columns_menu([]), msg_id::THREE_POINTS->text());
+        // negative: without the url of the page no version can be linked, so there are no entries
+        $test_name = 'the column menu of an unknown page has no entries';
+        $unknown_menu = $t_val->value_list_defined_columns_ui()->columns_menu_items([]);
+        $t->assert($test_name, $unknown_menu, '');
         $chart_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::CHART->value];
-        $chart_menu = $t_val->value_list_defined_columns_ui()->columns_menu($chart_url);
+        $chart_menu = $t_val->value_list_defined_columns_ui()->columns_menu_items($chart_url);
         foreach (table_forms::cases() as $form) {
-            $form_entry = url_var::DISPLAY_LIST_AS . '=' . $form->value . '">' . $form->msg_id()->text();
+            $form_entry = url_var::DISPLAY_LIST_AS . '=' . $form->value . '" '
+                . html_base::TITLE_HTML . '="' . $form->tip_msg_id()->text() . '">' . $form->msg_id()->text();
             $test_name = 'the table menu offers the table ' . $form->value;
             if ($form == table_forms::TABLE) {
                 $t->assert_text_not_contains($test_name, $tbl_menu, $form_entry);
