@@ -352,6 +352,11 @@ class word_list_tests
         $added = $wrd_lst->add($t_wrd->word(), false, $msg);
         $t->assert_true($test_name, $added);
         $msg->reset();
+        // negative: the same word is not added twice, so add reports that nothing has been added
+        $test_name = '... but not a second time';
+        $added = $wrd_lst->add($t_wrd->word(), false, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
 
         // negative: the named list add refuses a word without id and name
         $test_name = 'add refuses a word without a key';

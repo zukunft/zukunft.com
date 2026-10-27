@@ -129,6 +129,22 @@ class phrase_list_ui_tests
         $t->assert_false($test_name, $added);
         $msg->reset();
 
+        // the related words and triples of a page split a phrase list by the class of the phrase
+        $t->subheader($ts . 'filter');
+        $test_name = 'the words of the currency list include the word Euro';
+        $wrd_names = $t_phr->list_currency_ui()->only_words($msg)->names();
+        $t->assert_contains($test_name, $wrd_names, word_names::EURO);
+        $test_name = '... but not the triple Swiss franc';
+        $wrd_names = $t_phr->list_currency_ui()->only_words($msg)->names();
+        $t->assert_contains_not($test_name, $wrd_names, triple_names::SWISS_FRANC);
+        $test_name = 'the triples of the currency list include the triple Swiss franc';
+        $trp_names = $t_phr->list_currency_ui()->only_triples($msg)->names();
+        $t->assert_contains($test_name, $trp_names, triple_names::SWISS_FRANC);
+        $test_name = '... but not the word Euro';
+        $trp_names = $t_phr->list_currency_ui()->only_triples($msg)->names();
+        $t->assert_contains_not($test_name, $trp_names, word_names::EURO);
+        $msg->reset();
+
         /*
          * TODO Prio 3 add a phrase selector if the phrase list is short and add an test
         // test the phrase selector

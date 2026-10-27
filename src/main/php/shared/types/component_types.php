@@ -468,6 +468,9 @@ class component_types
     const int LIST_PARENTS_OF_WORD_ID = 47;
     const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
     const int LIST_CHILDREN_OF_WORD_ID = 46;
+    // only the children that are triples e.g. Swiss franc and US Dollar for currency; the child words are WORDS_DOWN
+    const string LIST_CHILD_TRIPLES = "list_child_triples";
+    const int LIST_CHILD_TRIPLES_ID = 294;
     const string PHRASE_ALIASES = "phrase_aliases";
     const int PHRASE_ALIASES_ID = 42;
     const string PHRASE_ALIASES_COM = "show the phrases that are an alias of the given phrase e.g. 'has aliases: $, U.S. dollar' for 'US dollar'";
@@ -1202,6 +1205,7 @@ class component_types
         [self::SELECT_VIEW, self::SELECT_VIEW_ID],
         [self::LIST_PARENTS_OF_WORD, self::LIST_PARENTS_OF_WORD_ID],
         [self::LIST_CHILDREN_OF_WORD, self::LIST_CHILDREN_OF_WORD_ID],
+        [self::LIST_CHILD_TRIPLES, self::LIST_CHILD_TRIPLES_ID],
         [self::PHRASE_ALIASES, self::PHRASE_ALIASES_ID],
         [self::PHRASE_SYMBOLS, self::PHRASE_SYMBOLS_ID],
         [self::LIST_PHRASES_RELATED_EX_SYMBOLS, self::LIST_PHRASES_RELATED_EX_SYMBOLS_ID],

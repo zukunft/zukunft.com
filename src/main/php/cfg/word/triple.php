@@ -405,6 +405,12 @@ class triple extends sandbox_link_named
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
             }
+            // the default view e.g. of the triple "mathematical constant", like for a word
+            if (array_key_exists(fields::FLD_VIEW, $db_row)) {
+                if ($db_row[fields::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[fields::FLD_VIEW]);
+                }
+            }
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];
             }
@@ -798,15 +804,8 @@ class triple extends sandbox_link_named
     function load_views_related(user_message $msg): void
     {
         $msk_lst = new view_list($this->get_user());
-        if ($this->view != null and $this->get_view_id() > 0) {
-            $msk = new view($this->get_user());
-            $msk->load_by_id($this->get_view_id(), $msg);
-            // a view that cannot be loaded must not enter the list, because a list holding an
-            // unloaded entry is not empty and would suppress the system default view fallback
-            if ($msk->id() > 0) {
-                $msk_lst->add($msk);
-            }
-        }
+        // the own default view on top
+        $msk_lst->add_by_id($this->get_view_id(), $msg);
         // a triple without an own default view is shown with the system default triple view,
         // so the views tab of the triple page offers at least this view
         if ($msk_lst->is_empty()) {
@@ -2759,6 +2758,12 @@ class triple extends sandbox_link_named
         }
         if ($this->impact != null) {
             if ($this->impact != $db_obj->impact) {
+                $result = true;
+            }
+        }
+        // e.g. the default view that assigned_views.json adds to the triple "mathematical constant"
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
                 $result = true;
             }
         }

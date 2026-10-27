@@ -118,8 +118,8 @@
     },
     {
       "name": "related triples",
-      "description": "triples where this verb is used",
-      "type": "list_children_of_word"
+      "description": "show the triples that are a this phrase e.g. Swiss franc and US Dollar for currency",
+      "type": "list_child_triples"
     },
     {
       "name": "related phrases without symbols",
@@ -129,7 +129,7 @@
     },
     {
       "name": "related words",
-      "description": "show the most relevant and related words or triples",
+      "description": "show the words that are a this phrase e.g. Euro for currency",
       "type": "word_list_down"
     },
     {
@@ -198,6 +198,11 @@
       "description": "show the default view of this word and of its parent words",
       "type": "view_list",
       "code_id": "view_list_word"
+    },
+    {
+      "name": "related phrases",
+      "description": "show all words and triples that are a this phrase e.g. all mathematical constants",
+      "type": "list_children_of_word"
     }
   ],
   "views": [
@@ -289,7 +294,7 @@
     },
     {
       "name": "Mathematical constant",
-      "description": "Show a mathematical constant and the related words and formulas",
+      "description": "Show all mathematical constants with their description and the main formulas",
       "code_id": "math_const",
       "type": "phrase",
       "components": [
@@ -299,10 +304,14 @@
         },
         {
           "position": "2",
-          "name": "related words"
+          "name": "system show field description"
         },
         {
           "position": "3",
+          "name": "related phrases"
+        },
+        {
+          "position": "4",
           "name": "formulas"
         }
       ],

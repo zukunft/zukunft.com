@@ -135,6 +135,8 @@
     <aside class="panel">
       <div class="inputs" style="display:grid;gap:14px">
         <h2>Inputs</h2>
+        <!-- placement test only: the label opens the file selection of the browser, but the selected file is not read yet -->
+        <label class="btn btn-outline-primary" title="Import the portfolio of the Spot rates"><i class="fas fa-file-import"></i> Import<input type="file" hidden></label>
         <!-- one target weight per child, rendered from CHILDREN by renderChildren -->
         <div id="children"></div>
         <button id="addChild" class="btn btn-outline-primary btn-sm" type="button"><i class="fas fa-plus"></i> Add child</button>
@@ -155,8 +157,10 @@
           <span class="hint">Large lots first lets the smaller ones repair the error</span>
         </div>
         <label class="check"><input id="cashBal" type="checkbox" checked><span>Split cash<span class="hint" style="font-size:.76rem;color:var(--muted)">Cash is divisible to 0.01 and balances the remaining drift</span></span></label>
-        <!-- placement test only: the save does nothing yet -->
+        <!-- placement test only: the save, the download and the report do nothing yet -->
         <button class="btn btn-outline-primary" type="button">Save</button>
+        <button class="btn btn-outline-primary" type="button" title="Export the portfolio splitting as a spreadsheet"><i class="fas fa-download"></i> Download</button>
+        <button class="btn btn-outline-primary" type="button" title="Show the Portfolio Split as a printable PDF"><i class="fas fa-file-pdf"></i> Report</button>
       </div>
 
       <details>

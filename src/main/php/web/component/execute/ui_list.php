@@ -188,39 +188,93 @@ class ui_list extends ui_base
      */
     function children_of_word(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        global $ui_sys;
-        $result = '';
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children);
+    }
+
+    /**
+     * HTML for the children of a phrase that are words, e.g. "Euro" of the children of currency
+     * @param word|db_object $wrd the phrase whose children are shown e.g. the triple "mathematical constant"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code of the child words or an empty string if there are none
+     */
+    function child_words(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    {
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children->only_words($msg));
+    }
+
+    /**
+     * HTML for the children of a phrase that are triples, e.g. "Swiss franc" of the children of currency
+     * @param word|db_object $wrd the phrase whose children are shown e.g. the word "currency"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code of the child triples or an empty string if there are none
+     */
+    function child_triples(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    {
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children->only_triples($msg));
+    }
+
+    /**
+     * @param word|db_object $wrd the phrase whose children are selected
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return phrase_list the subclasses of the phrase, i.e. the phrases that "are a" this phrase
+     */
+    private function children(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst): phrase_list
+    {
+        $result = new phrase_list;
         $phr_cac = $this->related_list($wrd, $phr_lst);
-        $is_vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
+        $is_vrb = $this->is_verb();
         if ($phr_cac != null and $is_vrb != null) {
+            $result = $phr_cac->parents($wrd->phrase(), $msg, $is_vrb);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|db_object $wrd the phrase whose children are shown
+     * @param phrase_list $children the selected children e.g. only the words
+     * @return string the html code of the children with the header or an empty string if there are no children
+     */
+    private function children_html(word|db_object $wrd, phrase_list $children): string
+    {
+        $result = '';
+        $is_vrb = $this->is_verb();
+        if (!$children->is_empty() and $is_vrb != null) {
             $phr = $wrd->phrase();
-            // the children of a word are its subclasses, i.e. the phrases that "are a" this word
-            $children = $phr_cac->parents($phr, $msg, $is_vrb);
-            if (!$children->is_empty()) {
-                $html = new html_base();
-                if ($children->count() == 1) {
-                    // a single child reads as the full statement, e.g. "Euro is a currency";
-                    // name_link() is already safe html, the verb and phrase names are user input
-                    // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
-                    $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
-                } else {
-                    // several children get a header of the word plural and the verb plural,
-                    // e.g. "currencies are", followed by the list of the child phrases
-                    $plural = $wrd->get_plural();
-                    if ($plural == null or $plural == '') {
-                        $plural = $phr->name();
-                    }
-                    $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
+            $html = new html_base();
+            if ($children->count() == 1) {
+                // a single child reads as the full statement, e.g. "Euro is a currency";
+                // name_link() is already safe html, the verb and phrase names are user input
+                // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
+                $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
+            } else {
+                // several children get a header of the word plural and the verb plural,
+                // e.g. "currencies are", followed by the list of the child phrases
+                $plural = $wrd->get_plural();
+                if ($plural == null or $plural == '') {
+                    $plural = $phr->name();
                 }
-                // start with a line break and the header as an h4 subtitle, then (for several
-                // children) the linked child phrases
-                $result = $html->br() . $html->dsp_text_h2($header);
-                if ($children->count() > 1) {
-                    $result .= $children->name_link();
-                }
+                $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
+            }
+            // start with a line break and the header as an h4 subtitle, then (for several
+            // children) the linked child phrases
+            $result = $html->br() . $html->dsp_text_h2($header);
+            if ($children->count() > 1) {
+                $result .= $children->name_link();
             }
         }
         return $result;
+    }
+
+    /**
+     * @return verb|null the verb "is a" of the frontend cache, which links a child to its parent
+     */
+    private function is_verb(): ?verb
+    {
+        global $ui_sys;
+        return $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
     }
 
     /**

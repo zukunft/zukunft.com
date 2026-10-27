@@ -728,11 +728,12 @@ class word extends sandbox_code_id
     /**
      * load the views related to this word into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; the list is the word's own
-     * default view plus the default views of its parent words (the phrases it "is a")
+     * default view on top, followed by the default views of its parent words and triples
+     * (the phrases it "is a", e.g. the triple "mathematical constant" of Pi)
      * each view is loaded by id because set_view_id() only stores the id, not the name that
      * the api export and the frontend name_link need
-     * TODO Prio 2 the parent loop loads each parent word and its view one by one; replace with a
-     *      single list load once a view_list->load_by_word_list() exists
+     * TODO Prio 2 the parent loop loads each parent phrase and its view one by one; replace with a
+     *      single list load once a view_list->load_by_phrase_list() exists
      */
     function load_views_related(user_message $msg): void
     {
@@ -743,6 +744,10 @@ class word extends sandbox_code_id
                 $par_wrd = new word($this->get_user());
                 $par_wrd->load_by_id($phr->id(), $msg);
                 $par_wrd->add_default_view_to($msk_lst, $msg);
+            } elseif ($phr->is_triple()) {
+                $par_trp = new triple($this->get_user());
+                $par_trp->load_by_id($phr->triple()->id(), $msg);
+                $msk_lst->add_by_id($par_trp->get_view_id(), $msg);
             }
         }
         // a word without an own default view and without parent views is shown with the system
@@ -766,15 +771,7 @@ class word extends sandbox_code_id
      */
     private function add_default_view_to(view_list $msk_lst, user_message $msg): void
     {
-        if ($this->view != null and $this->view->id() > 0) {
-            $msk = new view($this->get_user());
-            $msk->load_by_id($this->view->id(), $msg);
-            // a view that cannot be loaded must not enter the list, because a list holding an
-            // unloaded entry is not empty and would suppress the system default view fallback
-            if ($msk->id() > 0) {
-                $msk_lst->add($msk);
-            }
-        }
+        $msk_lst->add_by_id($this->get_view_id(), $msg);
     }
 
     /**
@@ -1267,6 +1264,12 @@ class word extends sandbox_code_id
         }
         if ($this->impact != null) {
             if ($this->impact != $db_obj->impact) {
+                $result = true;
+            }
+        }
+        // like for a triple, a default view of the import is written to the database
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
                 $result = true;
             }
         }

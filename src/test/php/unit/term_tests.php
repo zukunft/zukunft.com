@@ -41,6 +41,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::PHRASE . 'term.php';
 include_once test_paths::CREATE . 'test_formulas.php';
@@ -56,6 +57,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
@@ -225,14 +227,16 @@ class term_tests
         $t->assert($t->name . '... and the name', $trm->name(), $frm->name());
 
         // the row mapper maps only a row with both ids and else reports an internal error
+        $test_name = 'a row with the term id and the formula id can be mapped';
         $trm = new term($t->usr1);
         $db_row = [term::FLD_ID => $frm->term()->id(), formula_fields::FLD_ID => $frm->id()];
-        $t->assert_true($t->name . 'a row with the term id and the formula id can be mapped',
-            $trm->row_has_ids($db_row, formula_fields::FLD_ID));
+        $has_ids = $trm->row_has_ids($db_row, formula_fields::FLD_ID);
+        $t->assert_true($test_name, $has_ids);
         // e.g. a corrupted row of a formula with only the term id
+        $test_name = '... but not a row with only the term id';
         $db_row = [term::FLD_ID => $frm->term()->id()];
-        $t->assert_false($t->name . '... but not a row with only the term id',
-            $trm->row_has_ids($db_row, formula_fields::FLD_ID));
+        $has_ids = $trm->row_has_ids($db_row, formula_fields::FLD_ID);
+        $t->assert_false($test_name, $has_ids);
         // the second line of defence: the row mapper tells the user which field the row misses
         $test_name = 'the message of a corrupted term row names the missing field';
         $row_msg = new user_message($t->usr1);
@@ -358,6 +362,17 @@ class term_tests
         $t->assert_api_to_ui($trm, new term_ui());
         $trm = $t_trm->term_verb();
         $t->assert_api_to_ui($trm, new term_ui());
+
+        // the frontend term sends the default view of a triple back like the backend sends it
+        $test_name = 'the frontend term of a triple keeps its default view';
+        $trm = new term_ui($t_trm->term_triple()->api_json());
+        $view_id = $trm->phrase_view_id();
+        $t->assert($test_name, $view_id, views::MATH_CONST_ID);
+        // negative: a formula has no default view in the term api
+        $test_name = '... but a formula term has none';
+        $trm = new term_ui($t_trm->term_formula()->api_json());
+        $view_id = $trm->phrase_view_id();
+        $t->assert_null($test_name, $view_id);
 
     }
 

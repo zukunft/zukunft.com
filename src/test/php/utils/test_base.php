@@ -881,9 +881,9 @@ class test_base
      * @return bool true is the result is fine
      */
     function assert_null(
-        string      $msg,
-        string|null $result,
-        float       $exe_max_time = self::TIMEOUT_LIMIT
+        string          $msg,
+        string|int|null $result,
+        float           $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         if ($result === null) {

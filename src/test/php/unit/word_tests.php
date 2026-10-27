@@ -731,6 +731,17 @@ class word_tests
         $db_wrd = $t_wrd->word_filled();
         $t->assert($t->name . 'needs_db_update ' . $test_name, $in_wrd->needs_db_update($db_wrd, $msg), false);
 
+        $test_name = 'an import that adds a default view to a word updates the database';
+        $in_wrd = $t_wrd->word_name_only();
+        $in_wrd->set_view_id(views::MATH_CONST_ID);
+        $db_wrd = $t_wrd->word();
+        $needs_upd = $in_wrd->needs_db_update($db_wrd, $msg);
+        $t->assert_true($test_name, $needs_upd);
+        $test_name = '... but not if the word has this default view already';
+        $db_wrd->set_view_id(views::MATH_CONST_ID);
+        $needs_upd = $in_wrd->needs_db_update($db_wrd, $msg);
+        $t->assert_false($test_name, $needs_upd);
+
         // TODO Prio 1 review
         /*
         $test_name = 'a word json without the phrase type keeps the type empty';

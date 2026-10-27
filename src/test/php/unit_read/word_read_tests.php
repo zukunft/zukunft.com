@@ -39,6 +39,7 @@ include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -47,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -192,6 +194,33 @@ class word_read_tests
         $t->assert_true($test_name,
             $wrd_missing->phrases_related === null
             or $wrd_missing->phrases_related->is_empty());
+        $msg->reset();
+
+        $t->subheader($ts . 'views tab');
+        // e.g. Pi is a mathematical constant, so the views tab of Pi offers the view of all
+        // mathematical constants right after the own view of Pi, if Pi has one;
+        // each step has its own assert, so that a failure names the step that is missing
+        $test_name = word_names::PI . ' is a ' . triple_names::MATH_CONST;
+        $wrd_pi = new word($t->usr1);
+        $wrd_pi->load_by_name(word_names::PI, $msg);
+        $par_names = $wrd_pi->parents($msg)->names();
+        $t->assert_contains($test_name, $par_names, triple_names::MATH_CONST);
+        $test_name = '... which has the view of all mathematical constants as its default view';
+        $trp_math = new triple($t->usr1);
+        $trp_math->load_by_name(triple_names::MATH_CONST, $msg);
+        $math_view_id = $trp_math->get_view_id();
+        $t->assert($test_name, $math_view_id, views::MATH_CONST_ID);
+        $test_name = 'the view of the parent ' . triple_names::MATH_CONST . ' is almost on top of the views tab of ' . word_names::PI;
+        $wrd_pi->load_views_related($msg);
+        $msk_ids = $wrd_pi->views_related->ids();
+        $top_ids = array_slice($msk_ids, 0, 2);
+        $t->assert_contains($test_name, $top_ids, views::MATH_CONST_ID);
+        // negative: the system default word view is only the fallback for a word without any view
+        $test_name = '... and the system default word view is not offered instead';
+        $t->assert_contains_not($test_name, $msk_ids, views::WORD_ID);
+        $test_name = '... and the loads have reported no problem';
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
 
 
         $t->subheader($ts . 'types');

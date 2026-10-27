@@ -89,6 +89,18 @@ class view_list_read_tests
         $test_name = 'a view of another type is not in the value view list';
         $t->assert_contains_not($test_name, $msk_typ_lst->ids(), views::WORD_ID);
 
+        // the views tab adds the default view of a phrase and of its parents by the view id
+        $test_name = 'a view is added to the views tab by its id';
+        $msk_tab = new view_list($t->usr1);
+        $added = $msk_tab->add_by_id(views::MATH_CONST_ID, $msg);
+        $t->assert_true($test_name, $added);
+        $test_name = '... but only once, e.g. if two parents have the same view';
+        $added = $msk_tab->add_by_id(views::MATH_CONST_ID, $msg);
+        $t->assert_false($test_name, $added);
+        $test_name = '... and nothing is added for a phrase without a default view';
+        $added = $msk_tab->add_by_id(0, $msg);
+        $t->assert_false($test_name, $added);
+
         $test_name = 'loading the api message creation of the api index file for ';
         // TODO Prio 2 add this to all db read tests for all API call functions
         $result = json_decode($msk_lst->api_json(), true);

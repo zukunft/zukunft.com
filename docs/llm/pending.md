@@ -1,14 +1,7 @@
 # pending - list of planned llm prompts with prio 1
 
-## assigned views
 
-change the existing view 'Mathematical constant' (185, code_id math_const in base_views.json)
-so that it mainly shows all math const with the description and some main formulas
-and assign it to the triple 'mathematical constant'
-add a test that the direct assigned view is on top of the views in the view tab
-add a test that the parent view is shown almost on top of the views in the view tab for a math const like pi
-
-### view selector
+## view selector
 
 in the navbar 'edit icon' menu the top entry is at the moment 'alternative'.
 Replace this with the concrete names of the suggested views related to the object shown
@@ -137,6 +130,9 @@ and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.ht
 similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
 
 add costs of CO2-eq reduction to the npp
+
+add to the calculator a 'Share assumptions and vote' button
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
 
 ## pure HTML ans JavaScript views
 

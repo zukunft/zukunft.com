@@ -350,6 +350,29 @@ class view_list extends sandbox_list_named
         return parent::load($qp, $msg);
     }
 
+    /**
+     * add the view of the id e.g. the default view of a phrase to the views tab, but only once
+     * and only if the view can be loaded, because a list holding an unloaded entry is not empty
+     * and would suppress the system default view fallback
+     *
+     * @param int|null $id the id of the view e.g. the default view of a word, null or 0 if none is set
+     * @param user_message $msg to report a problem of the view load
+     * @return bool true if the view has been added
+     */
+    function add_by_id(?int $id, user_message $msg): bool
+    {
+        $result = false;
+        // checked before the load, so that a view already in the list is not read again
+        if ($id > 0 and !$this->has_id($id)) {
+            $msk = new view($this->get_user());
+            $msk->load_by_id($id, $msg);
+            if ($msk->id() > 0) {
+                $result = $this->add($msk);
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * im- and export

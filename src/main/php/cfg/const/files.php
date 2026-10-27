@@ -101,6 +101,9 @@ class files
 
     // initial configuration of some views that the user can change
     const string BASE_VIEWS_FILE = 'base_views' . self::JSON;
+    // the default views of system phrases, imported after the views, because a phrase can only be
+    // linked to a view that is already in the database e.g. "Mathematical constant" for "mathematical constant"
+    const string ASSIGNED_VIEWS_FILE = 'assigned_views' . self::JSON;
 
 
     /*
@@ -316,6 +319,8 @@ class files
         self::CURRENCIES,
         self::COMPANY,
         self::COMPANIES,
+        // last, because it only links phrases and views of the files above, so no id shifts
+        self::ASSIGNED_VIEWS_FILE,
         // TODO Prio 0 activate
         //self::ZURICH_HTP_IMPACT_FILE,
     ];

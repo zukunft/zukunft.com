@@ -209,6 +209,9 @@ class word_ui_tests
         $wrd_currency_rel = $t_wrd->currency_related_ui();
         $test_page .= $html->text_h2('children of ' . $wrd_currency_rel->name());
         $test_page .= 'children: ' . $list->children_of_word($wrd_currency_rel, $msg) . '<br>';
+        // the related words and the related triples split the children by their class
+        $test_page .= 'child words: ' . $list->child_words($wrd_currency_rel, $msg) . '<br>';
+        $test_page .= 'child triples: ' . $list->child_triples($wrd_currency_rel, $msg) . '<br>';
 
         // with a single child the component reads as the full statement "Euro is a currency"
         $wrd_currency_single = $t_wrd->single_currency_related_ui();
@@ -315,6 +318,26 @@ class word_ui_tests
         $t->assert_text_contains($test_name, $currency_children, triple_names::SWISS_FRANC);
         $test_name = 'with several children the header uses the word plural "currencies"';
         $t->assert_text_contains($test_name, $currency_children, word_names::CURRENCIES);
+        // the related words show only the children that are words
+        $child_words = $list->child_words($wrd_currency_rel, $msg);
+        $test_name = 'the child words of currency include the word Euro';
+        $t->assert_text_contains($test_name, $child_words, word_names::EURO);
+        $test_name = '... but not the triple Swiss franc';
+        $t->assert_text_not_contains($test_name, $child_words, triple_names::SWISS_FRANC);
+        // the related triples show only the children that are triples
+        $child_triples = $list->child_triples($wrd_currency_rel, $msg);
+        $test_name = 'the child triples of currency include the triple Swiss franc';
+        $t->assert_text_contains($test_name, $child_triples, triple_names::SWISS_FRANC);
+        $test_name = '... but not the word Euro';
+        $t->assert_text_not_contains($test_name, $child_triples, word_names::EURO);
+        // with Euro as the only child the related words read as the full statement "Euro is a currency"
+        $test_name = 'a single child word is shown as the statement with its parent currency';
+        $single_words = $list->child_words($wrd_currency_single, $msg);
+        $t->assert_text_contains($test_name, $single_words, word_names::CURRENCY);
+        // negative: without a child triple the related triples stay empty
+        $test_name = 'the related triples of a word with only a child word are empty';
+        $single_triples = $list->child_triples($wrd_currency_single, $msg);
+        $t->assert($test_name, $single_triples, '');
         // a single child is shown as the full statement, e.g. "Euro is a currency"
         $currency_single = $list->children_of_word($wrd_currency_single, $msg);
         $test_name = 'a single child statement names the child Euro';

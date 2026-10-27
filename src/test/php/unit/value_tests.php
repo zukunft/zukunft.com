@@ -506,6 +506,12 @@ class value_tests
         $val_src = $t_val->value_16();
         $val_src->set_source_id(sources::BFS_ID);
         $t->assert_false($test_name, $val_src->no_diff($val_std, $msg));
+        $test_name = 'the user row of a value without source carries the placeholder source';
+        $is_placeholder = $val_stored->has_placeholder_source();
+        $t->assert_true($test_name, $is_placeholder);
+        $test_name = '... but a real source is no placeholder';
+        $is_placeholder = $val_src->has_placeholder_source();
+        $t->assert_false($test_name, $is_placeholder);
         // the save loads the standard row with the default share and protection (row_mapper_std),
         // which the user value without own share and protection must match
         $test_name = 'a value without share and protection matches the standard row loaded with the defaults';

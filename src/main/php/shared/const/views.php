@@ -563,7 +563,7 @@ class views
     const string MATH_CONST = 'math_const';
     const int MATH_CONST_ID = 185;
     const string MATH_CONST_NAME = 'Mathematical constant';
-    const string MATH_CONST_COM = 'Show a mathematical constant and the related words and formulas';
+    const string MATH_CONST_COM = 'Show all mathematical constants with their description and the main formulas';
     const string GLOBAL_PROBLEM = 'global_problem';
     const int GLOBAL_PROBLEM_ID = 186;
 

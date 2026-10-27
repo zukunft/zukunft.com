@@ -1419,6 +1419,36 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * @param user_message $msg to report a phrase that is listed twice
+     * @return phrase_list the phrases of this list that are words e.g. "Euro" of the children of currency
+     */
+    function only_words(user_message $msg): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_word()) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a phrase that is listed twice
+     * @return phrase_list the phrases of this list that are triples e.g. "Swiss franc" of the children of currency
+     */
+    function only_triples(user_message $msg): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                $result->add($phr, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * get all triples that are connected to the given phrase
      * selected by the given verb
      * @param phrase $phr the parent phrase

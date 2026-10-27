@@ -4188,6 +4188,7 @@
     \-- load_sql_by_pattern - section for function load_sql_by_pattern is expected to be load sql in /view/view_list.php
     \-- load_sql_by_type - section for function load_sql_by_type is expected to be load sql in /view/view_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /view/view_list.php
+    \-- add_by_id - section for function add_by_id not yet defined that it should be load in /view/view_list.php
     \-- save - section for function save is expected to be save in /view/view_list.php
     \-- order error - order of section load has difference at load_sql should be before load_sql_names
 \-- view_relation_list
@@ -6867,6 +6868,8 @@
 \-- ui_list
     \-- parents_of_word - section for function parents_of_word missing in /component/execute/ui_list.php
     \-- children_of_word - section for function children_of_word missing in /component/execute/ui_list.php
+    \-- child_words - section for function child_words missing in /component/execute/ui_list.php
+    \-- child_triples - section for function child_triples missing in /component/execute/ui_list.php
     \-- phrase_aliases - section for function phrase_aliases missing in /component/execute/ui_list.php
     \-- phrase_symbols - section for function phrase_symbols missing in /component/execute/ui_list.php
     \-- phrases_related_ex_symbols - section for function phrases_related_ex_symbols missing in /component/execute/ui_li
@@ -7751,6 +7754,9 @@
     \-- symbols_of - section for function symbols_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- symbol_of - section for function symbol_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase_list.php
+    \-- only_words - section for function only_words not yet defined that it should be select in /phrase/phrase_list.php
+    \-- only_triples - section for function only_triples not yet defined that it should be select in /phrase/phrase_list
+            .php
     \-- parent_triples - section for function parent_triples not yet defined that it should be select in /phrase/phrase_
             list.php
     \-- parent_triples_ex_verbs - section for function parent_triples_ex_verbs not yet defined that it should be select 
@@ -7813,6 +7819,8 @@
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /phrase/term.php
     \-- set_id_from_obj - section for function set_id_from_obj is expected to be set and get in /phrase/term.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /phrase/term.php
+    \-- phrase_view_id - section for function phrase_view_id not yet defined that it should be interface in /phrase/term
+            .php
     \-- is_word - section for function is_word is expected to be info in /phrase/term.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/term.php
     \-- is_verb - section for function is_verb is expected to be info in /phrase/term.php
@@ -8851,6 +8859,10 @@
         \-- phrase_list - the symbol that stands for the given phrase, e.g. "x" for the factor or "mio" for million
     \-- parents
         \-- phrase_list - get all phrases that are connected to the given phrase
+    \-- only_words
+        \-- phrase_list - @param user_message $msg to report a phrase that is listed twice
+    \-- only_triples
+        \-- phrase_list - @param user_message $msg to report a phrase that is listed twice
     \-- parent_triples
         \-- phrase_list - get all triples that are connected to the given phrase
     \-- parent_triples_ex_verbs
@@ -9519,8 +9531,6 @@
         \-- ui_base - @param db_object|null $dbo the formula whose expression should be displayed
     \-- name
         \-- ui_base - the label points to the field that it validates, so that a click on it opens the field and
-    \-- word_children
-        \-- ui_foaf - TODO Prio 2 move code from component_dsp_old
     \-- word_parents
         \-- ui_foaf - TODO Prio 2 move code from component_dsp_old
     \-- select_file
@@ -9542,6 +9552,10 @@
         \-- ui_list - HTML for a list of words or triples
     \-- children_of_word
         \-- ui_list - HTML for a list of words or triples
+    \-- child_words
+        \-- ui_list - HTML for the children of a phrase that are words, e.g. "Euro" of the children of currency
+    \-- child_triples
+        \-- ui_list - HTML for the children of a phrase that are triples, e.g. "Swiss franc" of the children of currency
     \-- phrase_aliases
         \-- ui_list - HTML for the phrases that are an alias of the given phrase
     \-- phrase_symbols
