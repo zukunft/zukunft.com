@@ -1677,6 +1677,46 @@ class test_values extends test_objects
     }
 
     /**
+     * the config of a pod that sets one text e.g. the font or a colour of the pages
+     * (config.yaml user > default > frontend > layout > font)
+     *
+     * @param array $keys the config.yaml keys below user > default > frontend > layout e.g. [words::FONT]
+     * @param string $text the text of the config value e.g. "Segoe UI", sans-serif
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_config_text(array $keys, string $text): value_list
+    {
+        $t_phr = new test_phrases($this->env);
+        $path = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT, ...$keys];
+        $lst = new value_list($this->env->usr1);
+        // set directly like value_list_config_digits, because add() skips a value without a group name
+        $lst->set_lst([
+            new value_text($this->env->usr1, $text, $t_phr->list_cache_switch($path)->get_grp_id(false)),
+        ]);
+        return $lst;
+    }
+
+    /**
+     * the config of a pod that sets one number e.g. the dark or light mode of the pages
+     * (config.yaml user > default > frontend > layout > mode)
+     *
+     * @param array $keys the config.yaml keys below user > default > frontend > layout e.g. [words::MODE]
+     * @param float $number the number of the config value e.g. def::MODE_DARK
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_config_number(array $keys, float $number): value_list
+    {
+        $t_phr = new test_phrases($this->env);
+        $path = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT, ...$keys];
+        $lst = new value_list($this->env->usr1);
+        // set directly like value_list_config_digits, because add() skips a value without a group name
+        $lst->set_lst([
+            new value($this->env->usr1, $number, $t_phr->list_cache_switch($path)->get_grp_id(false)),
+        ]);
+        return $lst;
+    }
+
+    /**
      * the values of the calculator input test and the inhabitants of a city, which fit the field
      * inhabitants of the page Zurich (city) as well as the inhabitants of Zurich, because city and
      * Zurich are both parts of the page triple, so that the field has to pick one of two values

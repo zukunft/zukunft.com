@@ -174,6 +174,7 @@ class words
     const string FACTOR_COM = 'how many times bigger one number is than the number it is compared with';
     const string FACTORS = 'factors';
     const string FILE = 'file';
+    const string FONT = 'font';
     const string FORMAT = 'format';
     const string FORMULAS = 'formulas';
     const string FREEZE = 'freeze';
@@ -325,6 +326,54 @@ class words
     const string YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const string YEAR_CAP = 'year';
     const int YEAR_CAP_ID = 105;
+
+    // the colour keys of config.yaml user > default > frontend > layout > colours (see def::FALLBACK_PAGE_COLOURS)
+    // the dark or light mode of the user (see def::MODE_BROWSER)
+    const string MODE = 'mode';
+    const string COLOURS = 'colours';
+    const string EDITOR = 'editor';
+    const string DARK = 'dark';
+    // the colours of the pages
+    const string GREY = 'grey';
+    const string LINK = 'link';
+    const string DEEP = 'deep';
+    const string BORDER = 'border';
+    const string WHITE = 'white';
+    const string RULE = 'rule';
+    const string PANEL = 'panel';
+    const string INPUT = 'input';
+    const string CHANGED = 'changed';
+    const string TAB = 'tab';
+    const string HIGHLIGHT = 'highlight';
+    const string SHADOW = 'shadow';
+    const string MENU = 'menu';
+    const string FAINT = 'faint';
+    const string LABEL = 'label';
+    const string NEGATIVE = 'negative';
+    const string HOVER = 'hover';
+    const string BLACK = 'black';
+    // the colours of the calculator and the formula editor
+    const string BACKGROUND = 'background';
+    const string SURFACE = 'surface';
+    const string SHEET = 'sheet';
+    const string INK = 'ink';
+    const string SUBTEXT = 'subtext';
+    const string MUTED = 'muted';
+    const string LINE = 'line';
+    const string ACCENT = 'accent';
+    const string SOFT = 'soft';
+    const string SHARED = 'shared';
+    const string DANGER = 'danger';
+    const string SUCCESS = 'success';
+    // the colours of the table charts
+    const string CHART = 'chart';
+    const string GRID = 'grid';
+    const string RANGE = 'range';
+    // the words of the two word colour keys of the editors e.g. "preview text" (see triples::PREVIEW_TEXT)
+    const string PREVIEW = 'preview';
+    const string TEXT = 'text';
+    const string FIELD = 'field';
+    const string SECTION = 'section';
 
 
     // list of often used words used as a default selection e.g. for the phrase selection

@@ -2181,6 +2181,10 @@ enum messages: string
     case CONFIG_TREE_DEFAULT_SAVED = 'config_tree_default_saved';
     case VALUE_SET_DEFAULT_DENIED = 'value_set_default_denied';
     case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
+    // the configured font of the pages (config.yaml frontend.layout.font) has a char that css could misread
+    case CONFIG_FONT_INVALID = 'config_font_invalid';
+    // a configured colour of the pages or the editors (config.yaml frontend.layout.colours) that css could misread
+    case CONFIG_COLOUR_INVALID = 'config_colour_invalid';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
     // the class word in front of the object name of a page title e.g. view "Word"
@@ -2537,6 +2541,11 @@ enum messages: string
     case NAVBAR_SERVER_ADMIN = 'navbar_server_admin';
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
+    // the switch between the dark and the light mode of the user menu (see html_base::theme_switch)
+    case NAVBAR_DARK_MODE = 'navbar_dark_mode';
+    case NAVBAR_DARK_MODE_TIP = 'navbar_dark_mode_tip';
+    case NAVBAR_LIGHT_MODE = 'navbar_light_mode';
+    case NAVBAR_LIGHT_MODE_TIP = 'navbar_light_mode_tip';
     case NAVBAR_SETTINGS = 'navbar_settings';
     case NAVBAR_DASHBOARD = 'navbar_dashboard';
     case NAVBAR_LOGOUT = 'navbar_logout';

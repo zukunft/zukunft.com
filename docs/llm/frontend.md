@@ -33,6 +33,37 @@ the server page because its host element carries the existing `use-case` class
 (`system_page::calculator_json`), not by a new rule: a flex child of
 `.main-container` without a width of its own shrinks to its content.
 
+The font and every colour are config.yaml entries below user > default > frontend >
+layout: `font` and `colours` with the groups `page` (`--page-*` of `style_html.css`),
+`editor` (`--bg`, `--ink`, `--accent`, … of the calculator and the formula editor) and
+`chart` (the table charts), each with a `dark` group for the dark mode. The entry
+`mode` decides which colours a page gets (`html_base::theme_css`): 1 is always light,
+which is the default (`def::FALLBACK_MODE`), so that a page looks the same for every user
+until the user switches, 2 is always dark, which also switches the bootstrap components by
+`data-bs-theme`, and 0 follows the setting of the browser by a media query. The user menu of a logged-in user offers the
+switch to the other mode with a tooltip (`html_base::theme_switch`); it saves the mode as
+the own overwrite of the config value like the settings page, and if the user follows the
+browser, both entries are in the menu and the css shows only the one to the other mode
+than the browser. The page head sets the colours as css variables
+(`html_base::theme_style`), so the css files hold no font and no colour value; a value
+that css could misread is reported and the fallback of `def::FALLBACK_FONT`,
+`def::FALLBACK_PAGE_COLOURS`, `def::FALLBACK_EDITOR_COLOURS` or
+`def::FALLBACK_CHART_COLOURS` is used, which has the value of config.yaml
+(`coding_rule_tests::config_yaml_theme_fallback_tests`). Every page, its buttons and the
+editors use the one font `--font-page`; the editors set only their font size, and their
+rules for the page body and the form elements are nested in the editor host, so the
+navbar keeps the font of the other pages.
+
+The buttons use as few colour sets as possible, each named by a comment in the css:
+the "main button" of `style_html.css` (grey, a grey blue when the mouse is over it,
+the variables `--btn-main`, `--btn-main-hover` and `--btn-main-ink`) for every button
+of the pages and for the main actions of the calculator and the formula editor e.g.
+load and save, and the "editor", "ghost" and "danger button" of
+`calculator_editor.css` for their other actions; `formula_editor.css` repeats the
+"editor" and the "danger button" inside its hosts. An inactive button keeps the colours of its set with a lower
+intensity. The generated `src/test/resources/web/html/object_pages/buttons.html`
+(`base_ui_tests::buttons_page`) shows a sample button of each set with its name.
+
 ### Javascript only for the calculator
 
 The one exception is a calculator page and its editor: if `config.yaml` allows it (user > default >

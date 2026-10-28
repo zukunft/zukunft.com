@@ -32,6 +32,11 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\const;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+// for the config keys of the colour fallbacks
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 class def
 {
@@ -104,6 +109,87 @@ class def
     // (up to position_types::MAX_SIDE_COLUMNS) is shown side by side;
     // overridden by config.yaml entry frontend.layout.side width.max
     const int FALLBACK_WIDE_SIDE_WIDTH = 2800;
+    // fallback for the css font family of every page, its buttons and the editors, which the page
+    // head sets as --font-page (html_base::theme_style); overridden by config.yaml entry frontend.layout.font
+    const string FALLBACK_FONT = 'sans-serif';
+    // the dark or light mode of a user (config.yaml frontend.layout.mode): the pages follow the
+    // setting of the browser, are always light or always dark (see html_base::theme_css);
+    // light by default, so that a page looks the same for every user until the user switches
+    const int MODE_BROWSER = 0;
+    const int MODE_LIGHT = 1;
+    const int MODE_DARK = 2;
+    const int FALLBACK_MODE = self::MODE_LIGHT;
+    // fallback for the colours of the pages in the light and in the dark mode, which the page head
+    // sets as css variables (html_base::theme_style) for style_html.css; the css variable => the
+    // config.yaml key below frontend.layout.colours.page, the light colour and the dark colour of
+    // the key below frontend.layout.colours.page.dark; each colour has the same value as in config.yaml
+    const array FALLBACK_PAGE_COLOURS = [
+        '--page-grey' => [words::GREY, '#9ea09e', '#8b95a8'], // the zukunft.com grey e.g. of the text and the main button
+        '--page-link' => [words::LINK, '#385eb7', '#9db6f2'], // the blue of the links
+        '--page-deep' => [words::DEEP, '#274b8f', '#c6d5f5'], // the dark blue e.g. of a value or a logged in user
+        '--page-border' => [words::BORDER, '#b9c6d6', '#33456a'], // the grey blue lines e.g. of a panel
+        '--page-white' => [words::WHITE, '#ffffff', '#0f1828'], // the background of the page, a field or a menu
+        '--page-rule' => [words::RULE, '#dee2e6', '#2a3a57'], // the light lines e.g. between the rows of a table
+        '--page-panel' => [words::PANEL, '#f9fafb', '#18233a'], // the light background e.g. of the header or a panel
+        '--page-input' => [words::INPUT, '#ccc', '#33456a'], // the border of an input field and the user menu
+        '--page-changed' => [words::CHANGED, '#6b86c2', '#93a9dc'], // a changed or assumed value
+        '--page-tab' => [words::TAB, '#f8f9fa', '#1a263d'], // the background of a not selected tab
+        '--page-highlight' => [words::HIGHLIGHT, '#dbe4f5', '#233761'], // e.g. a search hit or a section row
+        '--page-shadow' => [words::SHADOW, 'rgba(0, 0, 0, 0.1)', 'rgba(0, 0, 0, 0.5)'], // the shadow of the user menu
+        '--page-menu' => [words::MENU, '#f0f0f0', '#1a263d'], // a menu entry when the mouse is over it
+        '--page-faint' => [words::FAINT, '#aaa', '#5c6a85'], // the sort icon
+        '--page-label' => [words::LABEL, '#777', '#8492ad'], // the sub header of a menu
+        '--page-file' => [words::FILE, '#6e706e', '#b4c1da'], // a setting with the value of config.yaml
+        '--page-negative' => [words::NEGATIVE, '#dc3545', '#f08a80'], // a negative number
+        '--page-hover' => [words::HOVER, '#7a9fbf', '#4f6fa8'], // a button when the mouse is over it
+        '--page-black' => [words::BLACK, 'black', '#e3eaf7'], // the fraction line of a formula
+    ];
+    // fallback for the colours of the calculator and the formula editor in the light and in the
+    // dark mode; the css variable => the config.yaml key below frontend.layout.colours.editor,
+    // the light colour and the dark colour of the key below frontend.layout.colours.editor.dark
+    const array FALLBACK_EDITOR_COLOURS = [
+        '--bg' => [words::BACKGROUND, '#eef2f8', '#0e1524'],
+        '--surface' => [words::SURFACE, '#ffffff', '#151f33'],
+        '--surface-2' => [words::SHEET, '#f6f8fc', '#1a263d'],
+        '--ink' => [words::INK, '#1b2f5c', '#e3eaf7'],
+        '--ink-2' => [words::SUBTEXT, '#4b5d83', '#b4c1da'],
+        '--muted' => [words::MUTED, '#7b88a3', '#8492ad'],
+        '--line' => [words::LINE, '#d2dbe9', '#2a3a57'],
+        '--accent' => [words::ACCENT, '#385eb7', '#7d9ef0'],
+        '--accent-deep' => [words::DEEP, '#274b8f', '#a9c0f7'],
+        '--accent-soft' => [words::SOFT, '#dbe4f5', '#233761'],
+        '--shared' => [words::SHARED, '#8a5a07', '#e9b45a'],
+        '--shared-soft' => [triples::SHARED_SOFT, '#fbf0db', '#3a2e17'],
+        '--danger' => [words::DANGER, '#c23b30', '#f08a80'],
+        '--danger-soft' => [triples::DANGER_SOFT, '#fbe4e1', '#42221f'],
+        '--ok' => [words::SUCCESS, '#2f7d55', '#7fd1a3'],
+        '--ok-soft' => [triples::SUCCESS_SOFT, '#dff1e7', '#1d3a2b'],
+        // the live page of the calculator editor, which looks like the page in the light mode
+        '--pv-text' => [triples::PREVIEW_TEXT, '#274b8f', '#c6d5f5'],
+        '--pv-label' => [triples::PREVIEW_LABEL, '#385eb7', '#9db6f2'],
+        '--pv-muted' => [triples::PREVIEW_MUTED, '#9ea09e', '#8b95a8'],
+        '--pv-panel' => [triples::PREVIEW_PANEL, '#f9fafb', '#18233a'],
+        '--pv-border' => [triples::PREVIEW_BORDER, '#b9c6d6', '#33456a'],
+        '--pv-field' => [triples::PREVIEW_FIELD, '#ffffff', '#0f1828'],
+        '--pv-rule' => [triples::PREVIEW_RULE, '#dee2e6', '#2a3a57'],
+        '--pv-sec' => [triples::PREVIEW_SECTION, '#dbe4f5', '#233761'],
+        '--pv-assumed' => [triples::PREVIEW_ASSUMED, '#6b86c2', '#93a9dc'],
+        '--pv-neg' => [triples::PREVIEW_NEGATIVE, '#dc3545', '#f08a80'],
+    ];
+    // fallback for the colours of the table charts (web\value\table_chart) in the light and in the
+    // dark mode; the css variable => the config.yaml key below frontend.layout.colours.chart, the
+    // light colour and the dark colour of the key below frontend.layout.colours.chart.dark
+    const array FALLBACK_CHART_COLOURS = [
+        '--bg' => [words::BACKGROUND, '#fbfaf7', '#1b1b1a'],
+        '--fg' => [words::TEXT, '#1d1d1b', '#ecebe6'],
+        '--muted' => [words::MUTED, '#77756f', '#9a978f'],
+        '--grid' => [words::GRID, '#e3e0d8', '#353431'],
+        '--range' => [words::RANGE, '#f0c9a8', '#6b3d22'], // the range bar
+        '--accent' => [words::ACCENT, '#c4561c', '#f08a4b'], // the number of a range and a hovered point
+        '--accent2' => [words::POINT, '#2d6a8a', '#4f93b8'],
+        '--hover' => [words::HOVER, '#f4efe6', '#262523'], // the hovered row
+        '--point-text' => [words::LABEL, '#fff', '#fff'], // the number inside a point
+    ];
     // fallback for the number of the most relevant values read for one phrase and used by the
     // phrase values view to pick the column phrases;
     // overridden by config.yaml entry frontend.lists.limit.values.read

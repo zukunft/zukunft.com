@@ -42,6 +42,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'def.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -64,6 +65,7 @@ include_once test_paths::CONST . 'files.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -226,6 +228,7 @@ class coding_rule_tests
 
         $t->subheader($ts . 'config.yaml consistency');
         $this->config_yaml_word_triple_tests($t);
+        $this->config_yaml_theme_fallback_tests($t);
 
         $t->subheader($ts . 'import json consistency');
         // TODO Prio 3 maybe switch it on as a warning
@@ -462,6 +465,55 @@ class coding_rule_tests
 
         $test_name = 'every config.yaml key has a const in words.php or triples.php';
         $t->assert($test_name, implode(', ', $missing), '');
+    }
+
+    /**
+     * verify that the fallback font and colours of def.php, which the page head uses without a loaded
+     * config (html_base::theme_style), are the values of config.yaml frontend.layout, so that a page
+     * looks the same with and without the config; each difference is listed as "key: fallback != yaml"
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function config_yaml_theme_fallback_tests(test_cleanup $t): void
+    {
+        $yaml_tree = yaml_parse_file(files::CONFIG_YAML);
+        $layout = $yaml_tree[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::USER][words::DEFAULT]
+            [words::FRONTEND][words::LAYOUT] ?? [];
+        $colours = $layout[words::COLOURS] ?? [];
+        $diff = [];
+        $this->theme_fallback_diff(words::FONT, def_shared::FALLBACK_FONT, $layout[words::FONT] ?? [], $diff);
+        $this->theme_fallback_diff(words::MODE, (string)def_shared::FALLBACK_MODE,
+            [words::SYS_CONF_VALUE => (string)($layout[words::MODE][words::SYS_CONF_VALUE] ?? '')], $diff);
+        $groups = [
+            words::PAGE => def_shared::FALLBACK_PAGE_COLOURS,
+            words::EDITOR => def_shared::FALLBACK_EDITOR_COLOURS,
+            words::CHART => def_shared::FALLBACK_CHART_COLOURS,
+        ];
+        foreach ($groups as $group => $lst) {
+            foreach ($lst as [$key, $colour, $dark_colour]) {
+                $this->theme_fallback_diff($group . ' ' . $key, $colour, $colours[$group][$key] ?? [], $diff);
+                $this->theme_fallback_diff($group . ' dark ' . $key, $dark_colour,
+                    $colours[$group][words::DARK][$key] ?? [], $diff);
+            }
+        }
+        $test_name = 'the fallback font and colours of def.php are the values of config.yaml';
+        $t->assert($test_name, implode(', ', $diff), '');
+    }
+
+    /**
+     * @param string $name the config.yaml path of the setting for the difference list
+     * @param string $fallback the fallback of def.php
+     * @param array $entry the config.yaml entry with the sys-conf-value
+     * @param array $diff (in/out) the list of the differences
+     * @return void
+     */
+    private function theme_fallback_diff(string $name, string $fallback, array $entry, array &$diff): void
+    {
+        $yaml_value = $entry[words::SYS_CONF_VALUE] ?? '';
+        if ($yaml_value !== $fallback) {
+            $diff[] = $name . ': ' . $fallback . ' != ' . $yaml_value;
+        }
     }
 
     /**

@@ -118,6 +118,10 @@ class styles
     // css class for a submit button that is shown like the plain text around it, e.g. the 'add'
     // of the component list of a view, which must be a submit to send the selected component
     const string TEXT_BUTTON = 'text-button';
+    // the entries of the user menu that switch to the dark or the light mode, which the css hides if the
+    // browser has already this mode and the user follows the browser (see html_base::theme_switch)
+    const string THEME_TO_DARK = 'theme-to-dark';
+    const string THEME_TO_LIGHT = 'theme-to-light';
 
     // css class of a block that is hidden until the url fragment names it, e.g. the formula link
     // form that the link icon of the formula list reveals; the css-only twin of the tabs above

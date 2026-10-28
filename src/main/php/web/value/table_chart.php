@@ -46,6 +46,7 @@ include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'table_model.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_ENUM . 'chart_types.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
@@ -54,6 +55,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\chart_types;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -134,21 +136,8 @@ class table_chart
     const string LEGEND_SEP = ' · ';
     const string NEWLINE = "\n";
 
-    // the colours of the charts as css variables, once for the light and once for the dark
-    // mode: the background, the text, the muted text, the grid, the range bar, the highlight of
-    // the number, the points and the hovered row
-    const array COLORS_LIGHT = [
-        'bg' => '#fbfaf7', 'fg' => '#1d1d1b', 'muted' => '#77756f', 'grid' => '#e3e0d8',
-        'range' => '#f0c9a8', 'accent' => '#c4561c', 'accent2' => '#2d6a8a', 'hover' => '#f4efe6',
-    ];
-    const array COLORS_DARK = [
-        'bg' => '#1b1b1a', 'fg' => '#ecebe6', 'muted' => '#9a978f', 'grid' => '#353431',
-        'range' => '#6b3d22', 'accent' => '#f08a4b', 'accent2' => '#4f93b8', 'hover' => '#262523',
-    ];
-    // the number inside a point is white on the point colour in both modes
-    const string COLOR_POINT_TEXT = '#fff';
-
-    // the css of the charts; the colours are added by style()
+    // the css of the charts; the colours are the css variables of config.yaml frontend.layout.colours.chart,
+    // which style() adds for the light and the dark mode (see def::FALLBACK_CHART_COLOURS)
     const string STYLE_SHARED = '
         svg { font-family: system-ui, sans-serif; }
         .bg { fill: var(--bg); }
@@ -165,7 +154,7 @@ class table_chart
         .bar:hover .hit { fill: var(--hover); }';
     const string STYLE_SCATTER = '
         .pt circle { fill: var(--accent2); }
-        .pt text { fill: ' . self::COLOR_POINT_TEXT . '; font-size: ' . self::POINT_TEXT_SIZE . 'px; font-weight: 600; text-anchor: middle; }
+        .pt text { fill: var(--point-text); font-size: ' . self::POINT_TEXT_SIZE . 'px; font-weight: 600; text-anchor: middle; }
         .pt:hover circle { fill: var(--accent); }
         .lg { fill: var(--fg); font-size: ' . self::TEXT_SIZE . 'px; }
         .lg tspan.p { fill: var(--muted); }
@@ -281,7 +270,7 @@ class table_chart
         if ($scale[self::SCALE_LOG]) {
             $subtitle .= self::LEGEND_SEP . msg_id::CHART_LOG_SCALE->text();
         }
-        $result = $this->svg_start(self::BAR_WIDTH, $height, self::STYLE_RANGE_BARS, $title);
+        $result = $this->svg_start(self::BAR_WIDTH, $height, self::STYLE_RANGE_BARS, $title, $msg);
         $result .= $this->heading($html->esc($title), $html->esc($subtitle));
         // the grid lines of the ticks, from above the first row to below the last one
         $result .= '<g class="grid">' . self::NEWLINE;
@@ -429,7 +418,7 @@ class table_chart
         $point_col_id = $this->point_column($model, $y_col_id);
         $title = $this->chart_title($this->legend_phrases($model, $context_phr_lst, $point_col_id),
             $y_text . ' ' . msg_id::CHART_VERSUS->text() . ' ' . $x_text);
-        $result = $this->svg_start(self::SCATTER_WIDTH, $height, self::STYLE_SCATTER, $title);
+        $result = $this->svg_start(self::SCATTER_WIDTH, $height, self::STYLE_SCATTER, $title, $msg);
         $result .= $this->heading($html->esc($title), $html->esc(msg_id::CHART_SCATTER_TIP->text()));
         $result .= $this->scatter_axes($x_scale, $y_scale, $html->esc($x_text), $html->esc($y_text));
         $nbr = 1;
@@ -586,7 +575,7 @@ class table_chart
         $x_text = $this->column_text($model, $x_col_id);
         // each point is named by its row, e.g. the problem, so the phrases of the page name the chart
         $title = $this->chart_title($context_phr_lst, $y_text . ' ' . msg_id::CHART_VERSUS->text() . ' ' . $x_text);
-        $result = $this->svg_start(self::SCATTER_WIDTH, self::LEVERAGE_HEIGHT, self::STYLE_LEVERAGE, $title);
+        $result = $this->svg_start(self::SCATTER_WIDTH, self::LEVERAGE_HEIGHT, self::STYLE_LEVERAGE, $title, $msg);
         $result .= $this->heading($html->esc($title), $html->esc(msg_id::CHART_LEVERAGE_TIP->text()));
         $result .= $this->scatter_axes($x_scale, $y_scale, $html->esc($x_text), $html->esc($y_text));
         $result .= $this->quadrants($html->esc($x_text), $html->esc($y_text));
@@ -1022,40 +1011,29 @@ class table_chart
      * @param int $height the height of the chart in pixel
      * @param string $style the css of the chart type
      * @param string $label the chart title for a screen reader
+     * @param user_message $msg to report a configured chart colour that css could misread
      * @return string the opening svg tag with the style and the background
      */
-    private function svg_start(float $width, float $height, string $style, string $label): string
+    private function svg_start(float $width, float $height, string $style, string $label, user_message $msg): string
     {
         $result = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' . $width . ' ' . $height
             . '" width="' . $width . '" height="' . $height . '" role="img" aria-label="'
             . htmlspecialchars($label, ENT_QUOTES) . '">' . self::NEWLINE;
-        $result .= '<style>' . $this->style($style) . self::NEWLINE . '</style>' . self::NEWLINE;
+        $result .= '<style>' . $this->style($style, $msg) . self::NEWLINE . '</style>' . self::NEWLINE;
         return $result . '<rect class="bg" width="' . $width . '" height="' . $height . '"/>' . self::NEWLINE;
     }
 
     /**
      * @param string $style the css of the chart type
+     * @param user_message $msg to report a configured chart colour that css could misread
      * @return string the css of the chart: the colours of both modes, the shared css and the css of the type
      */
-    private function style(string $style): string
+    private function style(string $style, user_message $msg): string
     {
-        return self::NEWLINE . '        :root { ' . $this->color_css(self::COLORS_LIGHT) . ' }'
-            . self::NEWLINE . '        @media (prefers-color-scheme: dark) {'
-            . self::NEWLINE . '        :root { ' . $this->color_css(self::COLORS_DARK) . ' }'
-            . self::NEWLINE . '        }' . self::STYLE_SHARED . $style;
-    }
-
-    /**
-     * @param array $colors the colours keyed by the css variable name
-     * @return string the css variable definitions e.g. "--bg: #fbfaf7; --fg: #1d1d1b;"
-     */
-    private function color_css(array $colors): string
-    {
-        $result = [];
-        foreach ($colors as $name => $color) {
-            $result[] = '--' . $name . ': ' . $color . ';';
-        }
-        return implode(' ', $result);
+        $html = new html_base();
+        [$light, $dark] = $html->theme_colours(def::FALLBACK_CHART_COLOURS, [words::CHART, ...html_base::COLOUR_PATH], $msg);
+        // the light or dark colours like the page, so that a chart follows the mode of the user too
+        return self::NEWLINE . $html->theme_css($light, $dark) . self::STYLE_SHARED . $style;
     }
 
     /**
