@@ -7208,6 +7208,8 @@
             config.php
     \-- load - section for function load not yet defined that it should be load in /helper/config.php
     \-- get_by - section for function get_by is expected to be set and get in /helper/config.php
+    \-- text_by - section for function text_by not yet defined that it should be load in /helper/config.php
+    \-- value_by - section for function value_by not yet defined that it should be load in /helper/config.php
 \-- config_node
     \-- matches - section for function matches not yet defined that it should be info in /helper/config_node.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
@@ -7362,6 +7364,14 @@
     \-- footer_html - section for function footer_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
+    \-- theme_style - section for function theme_style not yet defined that it should be header & footer in /html/html_b
+            ase.php
+    \-- theme_css - section for function theme_css not yet defined that it should be header & footer in /html/html_base.
+            php
+    \-- theme_mode - section for function theme_mode not yet defined that it should be header & footer in /html/html_bas
+            e.php
+    \-- theme_colours - section for function theme_colours not yet defined that it should be header & footer in /html/ht
+            ml_base.php
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
     \-- tip_with_names - section for function tip_with_names not yet defined that it should be header & footer in /html/
             html_base.php
@@ -9077,6 +9087,10 @@
                  which sends them only to an admin
     \-- get_by
         \-- config - get a frontend config value selected by the phrase names
+    \-- text_by
+        \-- config - the raw text of a frontend config value e.g. a font or a colour of the page head, because
+    \-- value_by
+        \-- config - the most specific frontend config value e.g. to save the dark mode of the user as an overwrite
     \-- load_by_object
         \-- change_log_link_list - load the link change history of one object from the backend via the api
     \-- load_api_by_object
@@ -10529,6 +10543,16 @@
         \-- html_base - the page footer for simple html pages like the login page
     \-- header
         \-- html_base - create the html code for the page header
+    \-- theme_style
+        \-- html_base - the font and the colours of config.yaml (frontend.layout) as the css variables of style_html.css
+    \-- theme_css
+        \-- html_base - the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.mode)
+                :
+    \-- theme_mode
+        \-- html_base - @return int the dark or light mode of the user e.g. def::MODE_DARK (config.yaml frontend.layout.
+                mode)
+    \-- theme_colours
+        \-- html_base - the css variables of a colour group of config.yaml with a light and a dark colour per variable
     \-- navbar
         \-- html_base - @param int $msk_id the current view id used to build back params and view-change links
     \-- tip_with_names

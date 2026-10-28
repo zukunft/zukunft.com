@@ -70,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\html\button;
@@ -97,6 +98,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -640,6 +642,128 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $created_html, '</' . html_base::BODY . '>');
 
 
+        $t->subheader($ts . 'page font and colours');
+
+        // the page head sets the font and the colours of config.yaml frontend.layout as the css
+        // variables of the style files (see html_base::theme_style), the fallback without a config
+        $t_val = new test_values($t);
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = new config_ui();
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = 'a page without a configured font has the fallback font';
+        $t->assert_text_contains($test_name, $head, '--font-page: ' . def::FALLBACK_FONT . ';');
+        $test_name = '... and the fallback colours of the page';
+        $t->assert_text_contains($test_name, $head, '--page-link: ' . def::FALLBACK_PAGE_COLOURS['--page-link'][1] . ';');
+        $test_name = '... and of the editors in the light mode';
+        $t->assert_text_contains($test_name, $head, '--bg: ' . def::FALLBACK_EDITOR_COLOURS['--bg'][1] . ';');
+        // a user without a mode gets the light mode, so a page looks the same for every user
+        $dark_query = '@media (prefers-color-scheme: dark)';
+        $test_name = '... only in the light mode';
+        $t->assert_text_not_contains($test_name, $head, $dark_query);
+        $t->assert_text_not_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][2] . ';');
+        $test_name = 'the configured font is the font of the page';
+        $font = '"Segoe UI", system-ui, sans-serif';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text([words::FONT], $font)->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $t->assert_text_contains($test_name, $head, '--font-page: ' . $font . ';');
+        // negative: a font that could end the css rule or the style element is not used
+        $test_name = 'a configured font that could end the style element is not used';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text([words::FONT], 'x;}</style><b>')->api_json([api_types::INCL_PHRASES]));
+        $font_msg = new user_message_ui();
+        $head = $html->header_html(views::START_NAME, POD_NAME, $font_msg);
+        $t->assert_text_not_contains($test_name, $head, '</style><b>');
+        $test_name = '... but the fallback font';
+        $t->assert_text_contains($test_name, $head, '--font-page: ' . def::FALLBACK_FONT . ';');
+        $test_name = '... and is reported';
+        $t->assert_false($test_name, $font_msg->is_ok());
+        $test_name = 'the configured page colour is the colour of the page';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::PAGE, words::LINK], '#123456')->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $t->assert_text_contains($test_name, $head, '--page-link: #123456;');
+        // a dark colour has the names of its light colour too, so the light mode must not take it
+        $test_name = 'a configured dark editor colour is the colour of the dark mode';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::EDITOR, words::DARK, words::BACKGROUND], '#222222')->api_json([api_types::INCL_PHRASES]));
+        [$edit_light, $edit_dark] = $html->theme_colours(def::FALLBACK_EDITOR_COLOURS, [words::EDITOR, ...html_base::COLOUR_PATH], new user_message_ui());
+        $t->assert_text_contains($test_name, $edit_dark, '--bg: #222222;');
+        $test_name = '... but not of the light mode';
+        $t->assert_text_contains($test_name, $edit_light, '--bg: ' . def::FALLBACK_EDITOR_COLOURS['--bg'][1] . ';');
+        $test_name = 'the configured chart colour is the colour of the chart';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::CHART, words::GRID], '#345678')->api_json([api_types::INCL_PHRASES]));
+        [$chart_light] = $html->theme_colours(def::FALLBACK_CHART_COLOURS, [words::CHART, ...html_base::COLOUR_PATH], new user_message_ui());
+        $t->assert_text_contains($test_name, $chart_light, '--grid: #345678;');
+        // negative: a colour that could end the css rule or the style element is not used
+        $test_name = 'a configured colour that could end the style element is not used';
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
+            [words::COLOURS, words::PAGE, words::LINK], 'red;}</style><b>')->api_json([api_types::INCL_PHRASES]));
+        $colour_msg = new user_message_ui();
+        $head = $html->header_html(views::START_NAME, POD_NAME, $colour_msg);
+        $t->assert_text_not_contains($test_name, $head, '</style><b>');
+        $test_name = '... but the fallback colour';
+        $t->assert_text_contains($test_name, $head, '--page-link: ' . def::FALLBACK_PAGE_COLOURS['--page-link'][1] . ';');
+        $test_name = '... and is reported';
+        $t->assert_false($test_name, $colour_msg->is_ok());
+
+
+        $t->subheader($ts . 'dark and light mode');
+
+        // a user who has chosen the dark mode gets the dark colours without asking the browser
+        $nav_url = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([words::MODE], def::MODE_DARK)->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = 'a user in the dark mode gets the dark colours';
+        $t->assert_text_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][2] . ';');
+        $test_name = '... without asking the browser';
+        $t->assert_text_not_contains($test_name, $head, $dark_query);
+        $test_name = '... and without the light colours';
+        $t->assert_text_not_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][1] . ';');
+        $test_name = '... and the dark bootstrap components';
+        $t->assert_text_contains($test_name, $html->header('test', new user_message_ui()), 'data-bs-theme="dark"');
+        $nav = $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME);
+        $test_name = '... and the switch to the light mode in the user menu';
+        $t->assert_text_contains($test_name, $nav, $html->esc(msg_id::NAVBAR_LIGHT_MODE->text()));
+        $test_name = '... with a tooltip';
+        $t->assert_text_contains($test_name, $nav, $html->esc(msg_id::NAVBAR_LIGHT_MODE_TIP->text()));
+        $test_name = '... but not to the dark mode';
+        $t->assert_text_not_contains($test_name, $nav, $html->esc(msg_id::NAVBAR_DARK_MODE->text()));
+        $test_name = '... and not hidden by the setting of the browser';
+        $t->assert_text_not_contains($test_name, $nav, styles::THEME_TO_LIGHT);
+        // a user who has chosen the light mode gets the light colours only
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([words::MODE], def::MODE_LIGHT)->api_json([api_types::INCL_PHRASES]));
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = 'a user in the light mode gets the light colours';
+        $t->assert_text_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][1] . ';');
+        $test_name = '... without asking the browser';
+        $t->assert_text_not_contains($test_name, $head, $dark_query);
+        $test_name = '... and the light bootstrap components';
+        $t->assert_text_not_contains($test_name, $html->header('test', new user_message_ui()), 'data-bs-theme');
+        $test_name = '... and the switch to the dark mode in the user menu';
+        $t->assert_text_contains($test_name, $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME),
+            $html->esc(msg_id::NAVBAR_DARK_MODE->text()));
+        // a user who follows the browser gets both switches, of which the css shows the one to the other mode
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([words::MODE], def::MODE_BROWSER)->api_json([api_types::INCL_PHRASES]));
+        $nav = $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME);
+        $test_name = 'a user who follows the browser gets the switch to the dark mode';
+        $t->assert_text_contains($test_name, $nav, styles::THEME_TO_DARK);
+        $test_name = '... and to the light mode';
+        $t->assert_text_contains($test_name, $nav, styles::THEME_TO_LIGHT);
+        // the dark colours of a user who follows the browser are only in the media query
+        $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
+        $test_name = '... and the dark colours of the editors if the browser asks for them';
+        $t->assert_text_contains($test_name, strstr($head, $dark_query) ?: '', '--bg: ' . def::FALLBACK_EDITOR_COLOURS['--bg'][2] . ';');
+        $test_name = '... and of the page';
+        $t->assert_text_contains($test_name, strstr($head, $dark_query) ?: '', '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][2] . ';');
+        $test_name = '... but the light colours without the media query';
+        $t->assert_text_contains($test_name, strstr($head, $dark_query, true) ?: '', '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][1] . ';');
+        // negative: an ip user cannot keep the mode, so the user menu has no switch
+        $test_name = 'an ip user gets no switch between the dark and the light mode';
+        $t->assert_text_not_contains($test_name, $html->navbar(views::WORD_ID, $nav_url),
+            $html->esc(msg_id::NAVBAR_DARK_MODE->text()));
+        $ui_sys->cfg = $cfg_keep;
+
+
         $t->subheader($ts . 'selector');
 
         // TODO Prio 2 test the creation of a phrase list API JSON
@@ -970,6 +1094,8 @@ class base_ui_tests
 
 
         $t->subheader($ts . 'button tests');
+        // every colour set of the buttons with a sample button each and the name of the set
+        $t->html_page_test($this->buttons_page($html, $msg_ui), 'buttons', 'buttons', $msg_ui);
         $url_arr = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
 
         $test_name = 'a sandbox object e.g. word add button html code';
@@ -1753,6 +1879,56 @@ class base_ui_tests
         $url_map->standard_url_to_pod($no_map_url, $pod_msg);
         $t->assert_true($test_name, $pod_msg->has_msg_id(msg_id::URL_MAP_MISSING));
 
+    }
+
+    /**
+     * the body of the page object_pages/buttons.html: a sample button of each colour set with the name
+     * of the set (see docs/llm/frontend.md); the samples use the real classes and the colours of the
+     * page head, so a change of the css or of config.yaml shows on the page; the mouse over sample is
+     * painted with the hover colour, because a static page cannot show the hover
+     *
+     * @param html_base $html to build the theme style and the style links of the editor frame
+     * @param user_message_ui $msg to report a configured colour that css could misread
+     * @return string the html body with the samples
+     */
+    private function buttons_page(html_base $html, user_message_ui $msg): string
+    {
+        $page = '<h2>button colour sets</h2>' . "\n"
+            . '<h4>main button (style_html.css)</h4>' . "\n"
+            . '<p>every button of the pages, also with a bootstrap outline class, and the main buttons of the editors</p>' . "\n"
+            . '<p>' . "\n"
+            . '<button class="btn" type="button">active</button>' . "\n"
+            . '<button class="btn" type="button" style="background: var(--btn-main-hover);">mouse over</button>' . "\n"
+            . '<button class="btn" type="button" disabled>inactive</button>' . "\n"
+            . '<button class="btn btn-outline-secondary" type="button">outline secondary</button>' . "\n"
+            . '<button class="btn btn-outline-success" type="button">outline success</button>' . "\n"
+            . '<button class="btn btn-outline-primary" type="button">outline primary</button>' . "\n"
+            . '</p>' . "\n";
+        // the editor css also sets its page e.g. the background and the fonts, so the editor sets are in a frame
+        $editor = $html->theme_style($msg)
+            . $html->link_style(files_shared::STYLE_HTML)
+            . $html->link_style(files_shared::CALCULATOR_EDITOR_STYLE)
+            . '<div class="editor" style="padding: 8px;">'
+            . '<p>main button: load and save</p><p>'
+            . '<button class="btn primary">Load</button> '
+            . '<button class="btn primary" style="background: var(--btn-main-hover); border-color: var(--btn-main-hover);">mouse over</button> '
+            . '<button class="btn primary" disabled>Save without changes</button></p>'
+            . '<p>editor button: the other actions e.g. undo</p><p>'
+            . '<button class="btn">Undo</button> '
+            . '<button class="btn" style="border-color: var(--accent);">mouse over</button> '
+            . '<button class="btn" disabled>Redo without history</button> '
+            . '<button class="btn small">small</button></p>'
+            . '<p>ghost button: a cancel next to a main action</p><p>'
+            . '<button class="btn ghost">Cancel</button> '
+            . '<button class="btn ghost" style="background: var(--accent-soft);">mouse over</button></p>'
+            . '<p>danger button: a remove</p><p>'
+            . '<button class="btn danger">Remove field</button></p>'
+            . '</div>';
+        $page .= '<h4>editor buttons (calculator_editor.css)</h4>' . "\n"
+            . '<p>in a frame, because the editor css also sets its page e.g. the background and the fonts</p>' . "\n"
+            . '<iframe title="editor buttons" style="width: 100%; height: 340px; border: none;" srcdoc="'
+            . htmlspecialchars($editor, ENT_QUOTES) . '"></iframe>' . "\n";
+        return $html->div($page, 'container mt-4');
     }
 
 }

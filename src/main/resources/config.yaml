@@ -612,6 +612,350 @@ zukunft.com:
               max:
                 sys-conf-value: 2800
                 tooltip-comment: "the screen width in pixel from which the full set of 'side or below' columns (up to four) is shown side by side; on smaller screens the columns wrap onto fewer rows and finally stack"
+            font:
+              sys-conf-value: "sans-serif"
+              tooltip-comment: "the css font family of every page, its buttons and the editors e.g. sans-serif or \"Segoe UI\", system-ui, sans-serif; only letters, digits, spaces, commas, quotes and hyphens"
+            mode:
+              sys-conf-value: 1
+              tooltip-comment: "1 to show the pages always light, which is the default, 2 always dark and 0 light or dark like the setting of the browser; the user menu switches between light and dark"
+            colours:
+              tooltip-comment: "the css colours of the pages and the editors e.g. #385eb7, rgba(0, 0, 0, 0.1) or white"
+              page:
+                tooltip-comment: "the colours of every page"
+                grey:
+                  sys-conf-value: "#9ea09e"
+                  tooltip-comment: "the zukunft.com grey e.g. of the text and the main button"
+                link:
+                  sys-conf-value: "#385eb7"
+                  tooltip-comment: "the blue of the links"
+                deep:
+                  sys-conf-value: "#274b8f"
+                  tooltip-comment: "the dark blue e.g. of a value or a logged in user"
+                border:
+                  sys-conf-value: "#b9c6d6"
+                  tooltip-comment: "the grey blue lines e.g. of a panel"
+                white:
+                  sys-conf-value: "#ffffff"
+                  tooltip-comment: "the background e.g. of a field or a menu"
+                rule:
+                  sys-conf-value: "#dee2e6"
+                  tooltip-comment: "the light lines e.g. between the rows of a table"
+                panel:
+                  sys-conf-value: "#f9fafb"
+                  tooltip-comment: "the light background e.g. of the header or a panel"
+                input:
+                  sys-conf-value: "#ccc"
+                  tooltip-comment: "the border of an input field and the user menu"
+                changed:
+                  sys-conf-value: "#6b86c2"
+                  tooltip-comment: "a changed or assumed value"
+                tab:
+                  sys-conf-value: "#f8f9fa"
+                  tooltip-comment: "the background of a not selected tab"
+                highlight:
+                  sys-conf-value: "#dbe4f5"
+                  tooltip-comment: "e.g. a search hit or a section row"
+                shadow:
+                  sys-conf-value: "rgba(0, 0, 0, 0.1)"
+                  tooltip-comment: "the shadow of the user menu"
+                menu:
+                  sys-conf-value: "#f0f0f0"
+                  tooltip-comment: "a menu entry when the mouse is over it"
+                faint:
+                  sys-conf-value: "#aaa"
+                  tooltip-comment: "the sort icon"
+                label:
+                  sys-conf-value: "#777"
+                  tooltip-comment: "the sub header of a menu"
+                file:
+                  sys-conf-value: "#6e706e"
+                  tooltip-comment: "a setting with the value of config.yaml"
+                negative:
+                  sys-conf-value: "#dc3545"
+                  tooltip-comment: "a negative number"
+                hover:
+                  sys-conf-value: "#7a9fbf"
+                  tooltip-comment: "a button when the mouse is over it"
+                black:
+                  sys-conf-value: "black"
+                  tooltip-comment: "the fraction line of a formula"
+                dark:
+                  tooltip-comment: "the colours of every page in the dark mode"
+                  grey:
+                    sys-conf-value: "#8b95a8"
+                    tooltip-comment: "the grey e.g. of the text and the main button in the dark mode"
+                  link:
+                    sys-conf-value: "#9db6f2"
+                    tooltip-comment: "the blue of the links in the dark mode"
+                  deep:
+                    sys-conf-value: "#c6d5f5"
+                    tooltip-comment: "the strong blue e.g. of a value or a logged in user in the dark mode"
+                  border:
+                    sys-conf-value: "#33456a"
+                    tooltip-comment: "the lines e.g. of a panel in the dark mode"
+                  white:
+                    sys-conf-value: "#0f1828"
+                    tooltip-comment: "the dark background of the page, a field or a menu"
+                  rule:
+                    sys-conf-value: "#2a3a57"
+                    tooltip-comment: "the lines e.g. between the rows of a table in the dark mode"
+                  panel:
+                    sys-conf-value: "#18233a"
+                    tooltip-comment: "the background e.g. of the header or a panel in the dark mode"
+                  input:
+                    sys-conf-value: "#33456a"
+                    tooltip-comment: "the border of an input field and the user menu in the dark mode"
+                  changed:
+                    sys-conf-value: "#93a9dc"
+                    tooltip-comment: "a changed or assumed value in the dark mode"
+                  tab:
+                    sys-conf-value: "#1a263d"
+                    tooltip-comment: "the background of a not selected tab in the dark mode"
+                  highlight:
+                    sys-conf-value: "#233761"
+                    tooltip-comment: "e.g. a search hit or a section row in the dark mode"
+                  shadow:
+                    sys-conf-value: "rgba(0, 0, 0, 0.5)"
+                    tooltip-comment: "the shadow of the user menu in the dark mode"
+                  menu:
+                    sys-conf-value: "#1a263d"
+                    tooltip-comment: "a menu entry when the mouse is over it in the dark mode"
+                  faint:
+                    sys-conf-value: "#5c6a85"
+                    tooltip-comment: "the sort icon in the dark mode"
+                  label:
+                    sys-conf-value: "#8492ad"
+                    tooltip-comment: "the sub header of a menu in the dark mode"
+                  file:
+                    sys-conf-value: "#b4c1da"
+                    tooltip-comment: "a setting with the value of config.yaml in the dark mode"
+                  negative:
+                    sys-conf-value: "#f08a80"
+                    tooltip-comment: "a negative number in the dark mode"
+                  hover:
+                    sys-conf-value: "#4f6fa8"
+                    tooltip-comment: "a button when the mouse is over it in the dark mode"
+                  black:
+                    sys-conf-value: "#e3eaf7"
+                    tooltip-comment: "the light fraction line of a formula on the dark background"
+              editor:
+                tooltip-comment: "the colours of the calculator and the formula editor"
+                background:
+                  sys-conf-value: "#eef2f8"
+                  tooltip-comment: "the background of the editor"
+                surface:
+                  sys-conf-value: "#ffffff"
+                  tooltip-comment: "the background e.g. of a column, a box or a button"
+                sheet:
+                  sys-conf-value: "#f6f8fc"
+                  tooltip-comment: "the second surface e.g. of an input or a part when the mouse is over it"
+                ink:
+                  sys-conf-value: "#1b2f5c"
+                  tooltip-comment: "the text"
+                subtext:
+                  sys-conf-value: "#4b5d83"
+                  tooltip-comment: "the second text e.g. of a hint"
+                muted:
+                  sys-conf-value: "#7b88a3"
+                  tooltip-comment: "the light text e.g. of a column head or a keyword"
+                line:
+                  sys-conf-value: "#d2dbe9"
+                  tooltip-comment: "the lines e.g. of the toolbar, a box or a button"
+                accent:
+                  sys-conf-value: "#385eb7"
+                  tooltip-comment: "the blue e.g. of the focus or a button when the mouse is over it"
+                deep:
+                  sys-conf-value: "#274b8f"
+                  tooltip-comment: "the dark accent"
+                soft:
+                  sys-conf-value: "#dbe4f5"
+                  tooltip-comment: "the light accent e.g. of a selected part"
+                shared:
+                  sys-conf-value: "#8a5a07"
+                  tooltip-comment: "a part that other pages share"
+                shared soft:
+                  sys-conf-value: "#fbf0db"
+                  tooltip-comment: "the background of a part that other pages share"
+                danger:
+                  sys-conf-value: "#c23b30"
+                  tooltip-comment: "a remove or an error"
+                danger soft:
+                  sys-conf-value: "#fbe4e1"
+                  tooltip-comment: "the background of a remove or an error"
+                success:
+                  sys-conf-value: "#2f7d55"
+                  tooltip-comment: "a live or a saved part"
+                success soft:
+                  sys-conf-value: "#dff1e7"
+                  tooltip-comment: "the background of a live or a saved part"
+                preview text:
+                  sys-conf-value: "#274b8f"
+                  tooltip-comment: "the text of the live page of the calculator editor, which looks like the page in the light mode"
+                preview label:
+                  sys-conf-value: "#385eb7"
+                  tooltip-comment: "the label e.g. of a field or a link of the live page"
+                preview muted:
+                  sys-conf-value: "#9ea09e"
+                  tooltip-comment: "the grey text e.g. of a header or a hint of the live page"
+                preview panel:
+                  sys-conf-value: "#f9fafb"
+                  tooltip-comment: "the background of a panel of the live page"
+                preview border:
+                  sys-conf-value: "#b9c6d6"
+                  tooltip-comment: "the lines e.g. of a panel of the live page"
+                preview field:
+                  sys-conf-value: "#ffffff"
+                  tooltip-comment: "the background of an input of the live page"
+                preview rule:
+                  sys-conf-value: "#dee2e6"
+                  tooltip-comment: "the lines between the rows of a table of the live page"
+                preview section:
+                  sys-conf-value: "#dbe4f5"
+                  tooltip-comment: "the background of a section row of the live page"
+                preview assumed:
+                  sys-conf-value: "#6b86c2"
+                  tooltip-comment: "an assumed value of the live page"
+                preview negative:
+                  sys-conf-value: "#dc3545"
+                  tooltip-comment: "a negative number of the live page"
+                dark:
+                  tooltip-comment: "the colours of the editors in the dark mode"
+                  background:
+                    sys-conf-value: "#0e1524"
+                    tooltip-comment: "the background of the editor in the dark mode"
+                  surface:
+                    sys-conf-value: "#151f33"
+                    tooltip-comment: "the background e.g. of a column, a box or a button in the dark mode"
+                  sheet:
+                    sys-conf-value: "#1a263d"
+                    tooltip-comment: "the second surface e.g. of an input in the dark mode"
+                  ink:
+                    sys-conf-value: "#e3eaf7"
+                    tooltip-comment: "the text in the dark mode"
+                  subtext:
+                    sys-conf-value: "#b4c1da"
+                    tooltip-comment: "the second text e.g. of a hint in the dark mode"
+                  muted:
+                    sys-conf-value: "#8492ad"
+                    tooltip-comment: "the light text e.g. of a column head in the dark mode"
+                  line:
+                    sys-conf-value: "#2a3a57"
+                    tooltip-comment: "the lines e.g. of the toolbar or a box in the dark mode"
+                  accent:
+                    sys-conf-value: "#7d9ef0"
+                    tooltip-comment: "the blue e.g. of the focus in the dark mode"
+                  deep:
+                    sys-conf-value: "#a9c0f7"
+                    tooltip-comment: "the strong accent in the dark mode"
+                  soft:
+                    sys-conf-value: "#233761"
+                    tooltip-comment: "the accent background e.g. of a selected part in the dark mode"
+                  shared:
+                    sys-conf-value: "#e9b45a"
+                    tooltip-comment: "a part that other pages share in the dark mode"
+                  shared soft:
+                    sys-conf-value: "#3a2e17"
+                    tooltip-comment: "the background of a part that other pages share in the dark mode"
+                  danger:
+                    sys-conf-value: "#f08a80"
+                    tooltip-comment: "a remove or an error in the dark mode"
+                  danger soft:
+                    sys-conf-value: "#42221f"
+                    tooltip-comment: "the background of a remove or an error in the dark mode"
+                  success:
+                    sys-conf-value: "#7fd1a3"
+                    tooltip-comment: "a live or a saved part in the dark mode"
+                  success soft:
+                    sys-conf-value: "#1d3a2b"
+                    tooltip-comment: "the background of a live or a saved part in the dark mode"
+                  preview text:
+                    sys-conf-value: "#c6d5f5"
+                    tooltip-comment: "the text of the live page in the dark mode"
+                  preview label:
+                    sys-conf-value: "#9db6f2"
+                    tooltip-comment: "the label e.g. of a field of the live page in the dark mode"
+                  preview muted:
+                    sys-conf-value: "#8b95a8"
+                    tooltip-comment: "the grey text of the live page in the dark mode"
+                  preview panel:
+                    sys-conf-value: "#18233a"
+                    tooltip-comment: "the background of a panel of the live page in the dark mode"
+                  preview border:
+                    sys-conf-value: "#33456a"
+                    tooltip-comment: "the lines of a panel of the live page in the dark mode"
+                  preview field:
+                    sys-conf-value: "#0f1828"
+                    tooltip-comment: "the background of an input of the live page in the dark mode"
+                  preview rule:
+                    sys-conf-value: "#2a3a57"
+                    tooltip-comment: "the lines between the rows of a table of the live page in the dark mode"
+                  preview section:
+                    sys-conf-value: "#233761"
+                    tooltip-comment: "the background of a section row of the live page in the dark mode"
+                  preview assumed:
+                    sys-conf-value: "#93a9dc"
+                    tooltip-comment: "an assumed value of the live page in the dark mode"
+                  preview negative:
+                    sys-conf-value: "#f08a80"
+                    tooltip-comment: "a negative number of the live page in the dark mode"
+              chart:
+                tooltip-comment: "the colours of the table charts"
+                background:
+                  sys-conf-value: "#fbfaf7"
+                  tooltip-comment: "the background of a chart"
+                text:
+                  sys-conf-value: "#1d1d1b"
+                  tooltip-comment: "the title and the labels of a chart"
+                muted:
+                  sys-conf-value: "#77756f"
+                  tooltip-comment: "the light text e.g. of the subtitle, the axes or a number"
+                grid:
+                  sys-conf-value: "#e3e0d8"
+                  tooltip-comment: "the grid lines of a chart"
+                range:
+                  sys-conf-value: "#f0c9a8"
+                  tooltip-comment: "the range bar"
+                accent:
+                  sys-conf-value: "#c4561c"
+                  tooltip-comment: "the number of a range and a point when the mouse is over it"
+                point:
+                  sys-conf-value: "#2d6a8a"
+                  tooltip-comment: "a point of a scatter chart and its number in the legend"
+                hover:
+                  sys-conf-value: "#f4efe6"
+                  tooltip-comment: "a row when the mouse is over it"
+                label:
+                  sys-conf-value: "#fff"
+                  tooltip-comment: "the number inside a point"
+                dark:
+                  tooltip-comment: "the colours of the table charts in the dark mode"
+                  background:
+                    sys-conf-value: "#1b1b1a"
+                    tooltip-comment: "the background of a chart in the dark mode"
+                  text:
+                    sys-conf-value: "#ecebe6"
+                    tooltip-comment: "the title and the labels of a chart in the dark mode"
+                  muted:
+                    sys-conf-value: "#9a978f"
+                    tooltip-comment: "the light text e.g. of the subtitle or the axes in the dark mode"
+                  grid:
+                    sys-conf-value: "#353431"
+                    tooltip-comment: "the grid lines of a chart in the dark mode"
+                  range:
+                    sys-conf-value: "#6b3d22"
+                    tooltip-comment: "the range bar in the dark mode"
+                  accent:
+                    sys-conf-value: "#f08a4b"
+                    tooltip-comment: "the number of a range and a point when the mouse is over it in the dark mode"
+                  point:
+                    sys-conf-value: "#4f93b8"
+                    tooltip-comment: "a point of a scatter chart in the dark mode"
+                  hover:
+                    sys-conf-value: "#262523"
+                    tooltip-comment: "a row when the mouse is over it in the dark mode"
+                  label:
+                    sys-conf-value: "#fff"
+                    tooltip-comment: "the number inside a point in the dark mode"
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes:

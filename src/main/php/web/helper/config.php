@@ -211,18 +211,47 @@ class config extends value_list
     }
 
     /**
+     * the raw text of a frontend config value e.g. a font or a colour of the page head, because
+     * get_by returns the html escaped text e.g. &quot; for the quotes of "Segoe UI"; the most specific
+     * value, because e.g. the names of a light editor colour are also the names of its dark colour
+     *
+     * @param array $names with the phrase names to select the config value
+     * @return string|null the text of the config value or null if the config has no text value with these names
+     */
+    function text_by(array $names, array $without = []): ?string
+    {
+        return $this->value_by($names, $without)?->text_value();
+    }
+
+    /**
+     * the most specific frontend config value e.g. to save the dark mode of the user as an overwrite
+     * of the config value (see html_base::theme_switch)
+     *
+     * @param array $names with the phrase names to select the config value
+     * @param array $without the phrase names that the config value must not have e.g. "dark" for a light colour
+     * @return value|null the config value with all the names and the fewest other phrases
+     */
+    function value_by(array $names, array $without = []): ?value
+    {
+        return $this->get_by_names_specific($names, $without);
+    }
+
+    /**
      * the config value with all the names and the fewest other phrases, because the path of a
      * value may contain a name of a sibling key too e.g. "default" in "user > default > frontend"
      * of every precision tier, so the first match would depend on the order of the list
      *
      * @param array $names the phrase names that the config value must have
+     * @param array $without the phrase names that the config value must not have
      * @return value|null the most specific config value or null if no value has all the names
      */
-    private function get_by_names_specific(array $names): ?value
+    private function get_by_names_specific(array $names, array $without = []): ?value
     {
         $result = null;
         foreach ($this->lst() as $val) {
-            if ($val->match_all($names) and ($result == null
+            if ($val->match_all($names)
+                and array_intersect($without, $val->phr_lst()->names()) == []
+                and ($result == null
                     or count($val->phr_lst()->names()) < count($result->phr_lst()->names()))) {
                 $result = $val;
             }

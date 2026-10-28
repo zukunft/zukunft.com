@@ -1,12 +1,31 @@
 /* base design */
+/* the font --font-page and the colours --page-* of every page are the css variables that the page */
+/* head sets from config.yaml frontend.layout (html_base::theme_style), so this file has no font */
+/* and no colour value */
 body {
-    font-family: sans-serif; /* Sets the font to a clean, no-serif style */
+    font-family: var(--font-page); /* Sets the font of every page */
     margin: 0; /* Removes the default browser margin from the edges */
     display: flex; /* Enables flexbox layout for the entire page body */
     flex-direction: column; /* Stacks the body content (main and footer) vertically */
     min-height: 100vh; /* Ensures the page is at least as tall as the full screen */
-    color: #9ea09e; /* Sets the default text color to the zukunft.com specific grey */
+    color: var(--page-grey); /* Sets the default text color to the zukunft.com specific grey */
+    background: var(--page-white); /* the light or in the dark mode the dark background of the page */
     text-align: center; /* Centers all inline text content globally */
+}
+
+/* the switch of the user menu to the other mode than the one the page is shown with: if the user */
+/* follows the browser, both entries are in the menu and only the one to the other mode is shown */
+/* (html_base::theme_switch) */
+@media (prefers-color-scheme: dark) {
+    .theme-to-dark {
+        display: none;
+    }
+}
+
+@media (prefers-color-scheme: light) {
+    .theme-to-light {
+        display: none;
+    }
 }
 
 /* opt-in left alignment for a column or component that should not inherit the body's */
@@ -32,8 +51,8 @@ body {
 
 /* header / navbar */
 .site-header {
-    background: #f9fafb; /* Light grey-blue background for the top header */
-    border-bottom: 1px solid #b9c6d6; /* Subtle darker grey-blue line under the header */
+    background: var(--page-panel); /* Light grey-blue background for the top header */
+    border-bottom: 1px solid var(--page-border); /* Subtle darker grey-blue line under the header */
     padding: 0.5rem 1rem; /* Comfortable inner spacing on all sides */
     display: flex; /* Lay out logo, search and nav in a row */
     flex-wrap: wrap; /* Allow wrapping on narrow screens */
@@ -83,14 +102,14 @@ body {
     position: absolute; /* float over the page */
     top: 100%; /* directly below the icon */
     right: 0; /* align to right edge of icon */
-    background: white;
-    border: 1px solid #ccc;
+    background: var(--page-white);
+    border: 1px solid var(--page-input);
     border-radius: 4px;
     padding: 0.5rem 0;
     margin: 0;
     list-style: none; /* no bullets */
     min-width: 8rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px var(--page-shadow);
     z-index: 1040; /* above the navbar */
 }
 
@@ -105,14 +124,14 @@ body {
 .view-menu ul a:hover,
 .lang-menu ul a:hover,
 .user-menu ul a:hover {
-    background: #f0f0f0;
+    background: var(--page-menu);
 }
 
 /* the up / down icons behind a column header that sort the rows by the column: grey and
    never bold, and the icon of the order that the page shows in the text colour */
 .sort-icon {
     font-weight: normal;
-    color: #aaa;
+    color: var(--page-faint);
     margin-left: 0.15em;
 }
 
@@ -123,7 +142,7 @@ body {
 /* a sub header inside the edit menu e.g. "columns and values", "alternative views" and "customize" */
 .view-menu ul .menu-header {
     padding: 0.4rem 1rem 0.1rem;
-    color: #777;
+    color: var(--page-label);
     font-size: 0.85em;
     white-space: nowrap;
 }
@@ -275,7 +294,7 @@ body {
 /* search input field */
 .standard-input {
     padding: 10px; /* Adds space inside the text box for better readability */
-    border: 1px solid #ccc; /* Adds a light grey border around the input */
+    border: 1px solid var(--page-input); /* Adds a light grey border around the input */
     border-radius: 4px; /* Rounds the corners of the input field slightly */
     width: 70%; /* Sets a width to half of the flew container for the search and login inputs */
 }
@@ -283,7 +302,7 @@ body {
 /* submit button: same height as standard-input, horizontal padding creates a proportional width */
 .submit-input {
     padding: 10px 40px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--page-input);
     border-radius: 4px;
 }
 
@@ -370,9 +389,18 @@ body {
 }
 
 /* buttons */
+/* the colour set "main button": every button of the pages and the main buttons of the editors */
+/* e.g. load and save of the calculator editor (calculator_editor.css); an inactive button keeps */
+/* the colours with a lower intensity (see src/test/resources/web/html/object_pages/buttons.html) */
+:root {
+    --btn-main: var(--page-grey); /* zukunft.com specific grey */
+    --btn-main-hover: var(--page-hover); /* subtle grey blue when the mouse is over the button */
+    --btn-main-ink: var(--page-white); /* the text on the grey and on the grey blue */
+}
+
 .btn {
-    background: #9ea09e; /* Sets the button background to zukunft.com specific grey */
-    color: white !important; /* Forces the text color to white, overriding link defaults */
+    background: var(--btn-main); /* Sets the button background to zukunft.com specific grey */
+    color: var(--btn-main-ink) !important; /* Forces the text color to white, overriding link defaults */
     padding: 10px 20px; /* Adds space inside the button (top/bottom and left/right) */
     border-radius: 4px; /* Matches the rounded corners of the input fields */
     text-decoration: none; /* Removes the underline typically found on links */
@@ -395,12 +423,12 @@ body {
 }
 
 .btn:hover {
-    background: #7a9fbf; /* Changes background to a subtle blue when the mouse is over it */
+    background: var(--btn-main-hover); /* Changes background to a subtle blue when the mouse is over it */
 }
 
 /* links & footer */
 a {
-    color: #385eb7; /* Sets all links to a specific blue color */
+    color: var(--page-link); /* Sets all links to a specific blue color */
     text-decoration: none; /* Removes underlines from all links */
     transition: 0.3s; /* Smoothly fades link color changes */
 }
@@ -410,22 +438,22 @@ a:hover {
 }
 
 .grey {
-    color: #9ea09e; /* the zukunft.com grey used for the old value of a change */
+    color: var(--page-grey); /* the zukunft.com grey used for the old value of a change */
 }
 
 /* the invisible change log table (class "table table-borderless grey") shows its cells in the
    standard zukunft.com grey; the extra .grey class raises the specificity above the bootstrap
    ".table > :not(caption) > * > *" cell color rule, which a plain .grey on the table would lose to */
 .table.grey > :not(caption) > * > * {
-    color: #9ea09e;
+    color: var(--page-grey);
 }
 
 .changed {
-    color: #6b86c2; /* a light blue between the grey old value and the #385eb7 link blue to mark a changed value */
+    color: var(--page-changed); /* a light blue between the grey old value and the var(--page-link) link blue to mark a changed value */
 }
 
 .user-logged {
-    color: #274b8f; /* a dark blue variant of the #385eb7 link blue to show that a non-ip user is logged in */
+    color: var(--page-deep); /* a dark blue variant of the var(--page-link) link blue to show that a non-ip user is logged in */
 }
 
 /* TODO Prio 3 review and combine with the other width
@@ -479,7 +507,7 @@ a:hover {
 }
 .frac > .num {
     display: block;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid var(--page-black);
     padding: 0 0.3em;
 }
 .frac > .den {
@@ -505,11 +533,11 @@ a:hover {
     order: 0;
     padding: 0.5rem 1rem;
     margin-right: 2px;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--page-rule);
     border-bottom: none;
     border-radius: 0.25rem 0.25rem 0 0;
-    background: #f8f9fa;
-    color: #385eb7;
+    background: var(--page-tab);
+    color: var(--page-link);
     cursor: pointer;
 }
 .css-tab-pane {
@@ -517,12 +545,12 @@ a:hover {
     width: 100%;
     display: none;
     padding: 1rem;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--page-rule);
     border-top: none;
 }
 /* the tab selected by the url fragment: show its content and highlight its label */
 .css-tab:target > .css-tab-label {
-    background: #fff;
+    background: var(--page-white);
     font-weight: bold;
 }
 .css-tab:target > .css-tab-pane {
@@ -530,7 +558,7 @@ a:hover {
 }
 /* default to the first tab when the url carries no fragment */
 .css-tabs:not(:has(> .css-tab:target)) > .css-tab:first-child > .css-tab-label {
-    background: #fff;
+    background: var(--page-white);
     font-weight: bold;
 }
 .css-tabs:not(:has(> .css-tab:target)) > .css-tab:first-child > .css-tab-pane {
@@ -610,12 +638,12 @@ a:hover {
 /* the read only tree of the system configuration (web/helper/config_tree): a toolbar with the
    search and the scope chips above the top level keys as cards in up to three columns; a node
    opens and closes without javascript, so the marker shows + if closed and - if open; the
-   colors are the zukunft.com grey (#9ea09e) and blues (#385eb7 links, #274b8f dark, #b9c6d6 lines) */
+   colors are the zukunft.com grey (var(--page-grey)) and blues (var(--page-link) links, var(--page-deep) dark, var(--page-border) lines) */
 .config-toolbar {
     display: grid;
     gap: 0.75rem;
-    background: #f9fafb;
-    border: 1px solid #b9c6d6;
+    background: var(--page-panel);
+    border: 1px solid var(--page-border);
     border-radius: 8px;
     padding: 0.875rem;
     margin-bottom: 1.25rem;
@@ -638,14 +666,14 @@ a:hover {
     min-width: 0;
     font: inherit;
     padding: 0.4rem 0.6rem;
-    border: 1px solid #b9c6d6;
+    border: 1px solid var(--page-border);
     border-radius: 6px;
-    background: #fff;
-    color: #274b8f;
+    background: var(--page-white);
+    color: var(--page-deep);
 }
 .config-search input:focus-visible,
 .config-node > summary:focus-visible {
-    outline: 2px solid #385eb7;
+    outline: 2px solid var(--page-link);
     outline-offset: 2px;
 }
 .config-scope {
@@ -658,18 +686,18 @@ a:hover {
 }
 .config-scope li {
     padding: 0.15rem 0.75rem;
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--page-rule);
     border-radius: 999px;
-    background: #fff;
+    background: var(--page-white);
     font-size: 0.85rem;
 }
 .config-scope li a {
     text-decoration: none;
 }
 .config-scope li.config-scope-shown {
-    border-color: #385eb7;
-    background: #f8f9fa;
-    color: #274b8f;
+    border-color: var(--page-link);
+    background: var(--page-tab);
+    color: var(--page-deep);
     font-weight: 500;
 }
 .config-columns {
@@ -689,8 +717,8 @@ a:hover {
 }
 .config-column > .config-tree > li > .config-node,
 .config-column > .config-tree > li > dl {
-    background: #fff;
-    border: 1px solid #b9c6d6;
+    background: var(--page-white);
+    border: 1px solid var(--page-border);
     border-radius: 6px;
     padding: 0.5rem 0.875rem;
 }
@@ -702,7 +730,7 @@ a:hover {
 }
 .config-column > .config-tree > li > dl > dt {
     font-weight: 500;
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .config-column > .config-tree > li > dl > dt,
 .config-column > .config-tree > li > dl > dd {
@@ -714,7 +742,7 @@ a:hover {
 .config-node > .config-tree {
     padding-left: 1rem;
     margin-left: 0.3rem;
-    border-left: 1px solid #dee2e6;
+    border-left: 1px solid var(--page-rule);
 }
 /* a setting row starts behind the +/- marker of the keys of the same level,
    so a value is always indented compared to the next key with entries below it */
@@ -725,7 +753,7 @@ a:hover {
     list-style: none;
     cursor: pointer;
     font-weight: 500;
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .config-node > summary::-webkit-details-marker {
     display: none;
@@ -735,7 +763,7 @@ a:hover {
     content: "+";
     display: inline-block;
     width: 1.1em;
-    color: #9ea09e;
+    color: var(--page-grey);
 }
 .config-node[open] > summary::before {
     content: "\2212";
@@ -744,7 +772,7 @@ a:hover {
 .admin-more > summary {
     list-style: none;
     cursor: pointer;
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .admin-more > summary::-webkit-details-marker {
     display: none;
@@ -753,13 +781,13 @@ a:hover {
     content: "+";
     display: inline-block;
     width: 1.1em;
-    color: #9ea09e;
+    color: var(--page-grey);
 }
 .admin-more[open] > summary::before {
     content: "\2212";
 }
 .admin-more > summary:focus-visible {
-    outline: 2px solid #385eb7;
+    outline: 2px solid var(--page-link);
     outline-offset: 2px;
 }
 /* an admin dashboard column limits its tables to the column width, so a long text wraps instead of widening it;
@@ -786,7 +814,7 @@ a:hover {
 .config-hit dt,
 .config-hit dd {
     padding: 0.25rem 0;
-    border-bottom: 1px dashed #dee2e6;
+    border-bottom: 1px dashed var(--page-rule);
     margin: 0;
 }
 /* no underline, so that the names of the settings read like the names of the keys; the cursor hints the tooltip */
@@ -799,17 +827,17 @@ a:hover {
     font-variant-numeric: tabular-nums;
     text-align: right;
     padding-left: 1rem;
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .config-unit {
-    color: #9ea09e;
+    color: var(--page-grey);
     font-size: 0.8rem;
     margin-left: 0.25rem;
 }
 /* the config.yaml value behind a database value that differs from it; a darker shade of the
    zukunft.com grey, because unlike the unit this small text is the only hint that the value differs */
 .config-file-value {
-    color: #6e706e;
+    color: var(--page-file);
     font-size: 0.8rem;
     margin-left: 0.5rem;
 }
@@ -840,8 +868,8 @@ a:hover {
     margin-bottom: 0.625rem;
 }
 .config-hit {
-    background: #fff;
-    border: 1px solid #b9c6d6;
+    background: var(--page-white);
+    border: 1px solid var(--page-border);
     border-radius: 6px;
     padding: 0.5rem 0.875rem;
     margin-bottom: 0.625rem;
@@ -857,10 +885,10 @@ a:hover {
 .config-path {
     font-family: ui-monospace, monospace;
     font-size: 0.78rem;
-    color: #9ea09e;
+    color: var(--page-grey);
 }
 .config-hit mark {
-    background: #dbe4f5;
+    background: var(--page-highlight);
     color: inherit;
     border-radius: 2px;
     padding: 0 1px;
@@ -876,7 +904,7 @@ a:hover {
     display: grid;
     gap: 24px;
     text-align: left;
-    color: #274b8f;
+    color: var(--page-deep);
     line-height: 1.5;
 }
 .use-case .grid {
@@ -891,8 +919,8 @@ a:hover {
     }
 }
 .use-case .panel {
-    background: #f9fafb;
-    border: 1px solid #b9c6d6;
+    background: var(--page-panel);
+    border: 1px solid var(--page-border);
     border-radius: 8px;
     padding: 18px;
     display: grid;
@@ -905,11 +933,11 @@ a:hover {
 }
 .use-case header h4 {
     margin: 0;
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .use-case header p {
     margin: 6px 0 0;
-    color: #9ea09e;
+    color: var(--page-grey);
     max-width: 70ch;
 }
 /* the section headings of a panel e.g. inputs, main results and sources */
@@ -917,7 +945,7 @@ a:hover {
     font-size: .78rem;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: #9ea09e;
+    color: var(--page-grey);
     margin: 0;
     font-weight: 600;
 }
@@ -934,11 +962,11 @@ a:hover {
     font-weight: 500;
 }
 .use-case .inputs .field label {
-    color: #385eb7;
+    color: var(--page-link);
 }
 .use-case .field .hint {
     font-size: .76rem;
-    color: #9ea09e;
+    color: var(--page-grey);
 }
 /* the input and its unit in one line; only inside a field, because the layout of the page */
 /* uses the bootstrap row, whose rule would make every child of the field full width */
@@ -962,9 +990,9 @@ a:hover {
 .use-case select {
     font: inherit;
     font-size: .95rem;
-    background: #ffffff;
-    color: #274b8f;
-    border: 1px solid #b9c6d6;
+    background: var(--page-white);
+    color: var(--page-deep);
+    border: 1px solid var(--page-border);
     border-radius: 6px;
     padding: 7px 9px;
     width: 100%;
@@ -973,12 +1001,12 @@ a:hover {
 .use-case input:focus-visible,
 .use-case select:focus-visible,
 .use-case summary:focus-visible {
-    outline: 2px solid #385eb7;
+    outline: 2px solid var(--page-link);
     outline-offset: 1px;
 }
 .use-case .unit {
     font-size: .8rem;
-    color: #9ea09e;
+    color: var(--page-grey);
     white-space: nowrap;
     min-width: 3.5em;
 }
@@ -987,18 +1015,18 @@ a:hover {
     font-size: .68rem;
     padding: 1px 6px;
     border-radius: 4px;
-    border: 1px solid #b9c6d6;
-    color: #9ea09e;
+    border: 1px solid var(--page-border);
+    color: var(--page-grey);
     margin-left: 6px;
     font-weight: 400;
 }
 .use-case .tag.m {
-    color: #385eb7;
-    border-color: #385eb7;
+    color: var(--page-link);
+    border-color: var(--page-link);
 }
 .use-case .tag.a {
-    color: #6b86c2;
-    border-color: #6b86c2;
+    color: var(--page-changed);
+    border-color: var(--page-changed);
 }
 /* the collapsed blocks e.g. the assumptions and the monthly details */
 .use-case details summary {
@@ -1006,7 +1034,7 @@ a:hover {
     font-size: .78rem;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: #9ea09e;
+    color: var(--page-grey);
     font-weight: 600;
 }
 .use-case details[open] summary {
@@ -1030,7 +1058,7 @@ a:hover {
 .use-case th,
 .use-case td {
     padding: 8px 10px;
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid var(--page-rule);
     text-align: left;
     vertical-align: baseline;
 }
@@ -1038,7 +1066,7 @@ a:hover {
     font-size: .74rem;
     letter-spacing: .06em;
     text-transform: uppercase;
-    color: #9ea09e;
+    color: var(--page-grey);
     font-weight: 600;
 }
 .use-case td.n,
@@ -1049,12 +1077,12 @@ a:hover {
 }
 /* the section row of a row group and the key row of a highlighted item */
 .use-case tr.sec td {
-    background: #dbe4f5;
+    background: var(--page-highlight);
     font-weight: 600;
     font-size: .8rem;
     letter-spacing: .04em;
     text-transform: uppercase;
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .use-case tr.key td {
     font-weight: 600;
@@ -1062,19 +1090,19 @@ a:hover {
 .use-case td .sub {
     display: block;
     font-size: .76rem;
-    color: #9ea09e;
+    color: var(--page-grey);
     font-weight: 400;
 }
 /* the sign of a number of a signed row group; red is the bootstrap danger colour */
 .use-case .pos {
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .use-case .neg {
-    color: #dc3545;
+    color: var(--page-negative);
 }
 .use-case .notes {
     font-size: .82rem;
-    color: #9ea09e;
+    color: var(--page-grey);
     display: grid;
     gap: 6px;
     max-width: 80ch;
@@ -1083,7 +1111,7 @@ a:hover {
     margin: 0;
 }
 .use-case .notes strong {
-    color: #274b8f;
+    color: var(--page-deep);
 }
 .use-case .src h2 {
     margin-bottom: 8px;

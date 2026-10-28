@@ -1893,6 +1893,8 @@ class test_base
 
     // the html attributes of a snapshot page that carry a root relative url to the pod
     const array POD_URL_ATTRIBUTES = [html_base::HREF, html_base::SRC, html_base::ACTION];
+    // the seconds of the loading text when a html page is compared with its snapshot
+    const int LOADING_SECONDS_FIXED = 4;
 
     /**
      * point every root relative url of a snapshot page to the pod, so that the saved page opened
@@ -1921,6 +1923,25 @@ class test_base
             $absolute[] = $attribute . '="' . $url . '/';
         }
         return str_replace($relative, $absolute, $html);
+    }
+
+    /**
+     * set the seconds of the loading text (see html_base::loading_start) to a fixed number,
+     * because the pod counts them from the request start, so they differ from run to run;
+     * used for both the actual page and the snapshot, so the saved count does not matter
+     *
+     * @param string $html the html page e.g. fetched from the pod
+     * @return string the html page with the loading count of LOADING_SECONDS_FIXED
+     */
+    private function fix_loading_seconds(string $html): string
+    {
+        $steps = html_base::LOADING_COUNT_LIMIT - self::LOADING_SECONDS_FIXED;
+        $html = preg_replace(
+            '/(@property --' . html_base::LOADING_COUNTER . ' \{[^}]*initial-value: )\d+;/',
+            '${1}' . self::LOADING_SECONDS_FIXED . ';', $html);
+        return preg_replace(
+            '/(' . html_base::LOADING_COUNT_ANIMATION . ' )\d+s steps\(\d+\)/',
+            '${1}' . $steps . 's steps(' . $steps . ')', $html);
     }
 
     /**
@@ -1990,8 +2011,8 @@ class test_base
     {
         $lib = new library();
         if ($file_type == test_files::HTML) {
-            $actual = $lib->trim_html($actual);
-            $expected = $lib->trim_html($expected);
+            $actual = $lib->trim_html($this->fix_loading_seconds($actual));
+            $expected = $lib->trim_html($this->fix_loading_seconds($expected));
         } elseif ($file_type == test_files::SQL) {
             $actual = $lib->trim_sql($actual);
             $expected = $lib->trim_sql($expected);

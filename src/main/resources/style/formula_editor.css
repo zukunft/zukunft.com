@@ -2,84 +2,26 @@
         /* layout: three components, which the view places side by side: the formulas of the */
         /* page (formula selector), the toolbar with the expression of the selected formula as */
         /* selectable tokens (formula editor) and the compare list of the results until now */
-        /* against the results after the save (formula result compare); the colors are the tokens */
-        /* of style/calculator_editor.css so that both editors look the same */
+        /* against the results after the save (formula result compare); the colors are the editor */
+        /* colours of the page head like in style/calculator_editor.css so that both editors look the same */
         /* every rule is nested in the hosts of the components, so that the page keeps the standard */
         /* styles of style_html.css e.g. of the site header, its buttons and the footer */
         .formula-editor {
         width: 100%;
         background: var(--bg);
         color: var(--ink);
-        font-family: var(--font-ui);
+        font-family: var(--font-page);
         font-size: 14px;
         line-height: 1.45;
         text-align: left;
 
+        /* the colours e.g. --bg, --ink or --accent in the light and in the dark mode are the css */
+        /* variables that the page head sets from config.yaml frontend.layout.colours.editor */
+        /* (html_base::theme_style), so this file has no colour value; the text font is --font-page */
+        /* the colour scheme of the form elements follows the mode of the user (html_base::theme_css) */
         & {
-            --bg: #eef2f8;
-            --surface: #ffffff;
-            --surface-2: #f6f8fc;
-            --ink: #1b2f5c;
-            --ink-2: #4b5d83;
-            --muted: #7b88a3;
-            --line: #d2dbe9;
-            --accent: #385eb7;
-            --accent-deep: #274b8f;
-            --accent-soft: #dbe4f5;
-            --accent-ink: #ffffff;
-            --shared: #8a5a07;
-            --shared-soft: #fbf0db;
-            --danger: #c23b30;
-            --danger-soft: #fbe4e1;
-            --ok: #2f7d55;
-            --ok-soft: #dff1e7;
-            --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
             --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
             --r: 6px;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root:not([data-theme="light"]) & {
-                --bg: #0e1524;
-                --surface: #151f33;
-                --surface-2: #1a263d;
-                --ink: #e3eaf7;
-                --ink-2: #b4c1da;
-                --muted: #8492ad;
-                --line: #2a3a57;
-                --accent: #7d9ef0;
-                --accent-deep: #a9c0f7;
-                --accent-soft: #233761;
-                --accent-ink: #0e1524;
-                --shared: #e9b45a;
-                --shared-soft: #3a2e17;
-                --danger: #f08a80;
-                --danger-soft: #42221f;
-                --ok: #7fd1a3;
-                --ok-soft: #1d3a2b;
-                color-scheme: dark;
-            }
-        }
-
-        :root[data-theme="dark"] & {
-            --bg: #0e1524;
-            --surface: #151f33;
-            --surface-2: #1a263d;
-            --ink: #e3eaf7;
-            --ink-2: #b4c1da;
-            --muted: #8492ad;
-            --line: #2a3a57;
-            --accent: #7d9ef0;
-            --accent-deep: #a9c0f7;
-            --accent-soft: #233761;
-            --accent-ink: #0e1524;
-            --shared: #e9b45a;
-            --shared-soft: #3a2e17;
-            --danger: #f08a80;
-            --danger-soft: #42221f;
-            --ok: #7fd1a3;
-            --ok-soft: #1d3a2b;
-            color-scheme: dark;
         }
 
         * {
@@ -191,7 +133,9 @@
         }
 
         /* the pod forces white text and 1rem on every .btn with style_html.css, which is invisible */
-        /* on the light editor buttons, so the editor sets its own color like the calculator editor */
+        /* on the light editor buttons, so the editor sets its own color like the calculator editor; */
+        /* the colour sets are the ones of the calculator editor: "editor button", "main button" for */
+        /* the main actions (.primary) and "danger button" */
         .btn {
             border: 1px solid var(--line);
             background: var(--surface);
@@ -213,10 +157,17 @@
             border-color: var(--line);
         }
 
+        /* colour set "main button" of style_html.css, so that the main actions look like the buttons */
+        /* of the other pages (see src/test/resources/web/html/object_pages/buttons.html) */
         .btn.primary {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: var(--accent-ink) !important;
+            background: var(--btn-main);
+            border-color: var(--btn-main);
+            color: var(--btn-main-ink) !important;
+        }
+
+        .btn.primary:hover:not(:disabled) {
+            background: var(--btn-main-hover);
+            border-color: var(--btn-main-hover);
         }
 
         .btn.small {
@@ -363,7 +314,7 @@
             background: var(--accent-soft);
             border-color: transparent;
             color: var(--accent-deep);
-            font-family: var(--font-ui);
+            font-family: var(--font-page);
             font-size: 13.5px;
         }
 
