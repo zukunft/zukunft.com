@@ -73,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
@@ -140,6 +141,16 @@ class import_tests
         $test_name = 'an empty word list creates no sql function';
         $sql_lst = $dto->word_list()->sql_insert_call_with_par($sc, $msg);
         $t->assert($test_name, $sql_lst->count(), 0);
+        $msg->reset();
+
+        // e.g. the url of a pinned view that is created from its view name and phrase name
+        $test_name = 'a YAML text imports a value';
+        $dto = $imp->get_data_object_yaml([words::SYSTEM => [words::URL => api::MAIN_SCRIPT]], $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 1);
+        // negative: an empty text would be sent without a text field, so the config could not be read
+        $test_name = '... but an empty YAML text imports no value';
+        $dto = $imp->get_data_object_yaml([words::SYSTEM => [words::URL => '']], $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 0);
         $msg->reset();
 
         $test_name = 'JSON import word count';

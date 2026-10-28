@@ -29500,7 +29500,7 @@
                 "class": "triple"
             },
             {
-                "id": 2001,
+                "id": 2003,
                 "name": "9 780674 000780 is symbol for A Theory of Justice, revised edition",
                 "from_id": 1800,
                 "from_phrase": {
@@ -29537,7 +29537,7 @@
                 "class": "triple"
             },
             {
-                "id": 1999,
+                "id": 2001,
                 "name": "978-0-674-00078-0 is symbol for A Theory of Justice, revised edition",
                 "from_id": 1799,
                 "from_phrase": {
@@ -29574,7 +29574,7 @@
                 "class": "triple"
             },
             {
-                "id": 1995,
+                "id": 1997,
                 "name": "978-0-679-73373-7 is symbol for The Myth of Sisyphus",
                 "from_id": 1797,
                 "from_phrase": {
@@ -29611,7 +29611,7 @@
                 "class": "triple"
             },
             {
-                "id": 1997,
+                "id": 1999,
                 "name": "978-0-8021-3098-3 is symbol for Rhinoceros and Other Plays",
                 "from_id": 1798,
                 "from_phrase": {
@@ -29999,7 +29999,7 @@
                 "class": "triple"
             },
             {
-                "id": 2838,
+                "id": 2840,
                 "name": "a is symbol for year (duration unit)",
                 "from_id": 1166,
                 "from_phrase": {
@@ -30023,9 +30023,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2788,
+                "to_id": -2790,
                 "to_phrase": {
-                    "id": 2788,
+                    "id": 2790,
                     "name": "year (duration unit)",
                     "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                     "type_id": 2,
@@ -30486,7 +30486,7 @@
                 "class": "triple"
             },
             {
-                "id": 2005,
+                "id": 2007,
                 "name": "CH0038863350 is symbol for Nestl\u00e9 registered share",
                 "from_id": 1802,
                 "from_phrase": {
@@ -30727,7 +30727,7 @@
                 "class": "word"
             },
             {
-                "id": 2788,
+                "id": 2790,
                 "name": "year (duration unit)",
                 "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                 "type_id": 2,
@@ -31014,7 +31014,7 @@
                 "class": "triple"
             },
             {
-                "id": 2003,
+                "id": 2005,
                 "name": "DE0007100000 is symbol for Mercedes-Benz Group share",
                 "from_id": 1801,
                 "from_phrase": {
@@ -31240,7 +31240,7 @@
                 "class": "triple"
             },
             {
-                "id": 924,
+                "id": 926,
                 "name": "GDP is symbol for gross domestic product",
                 "from_id": 290,
                 "from_phrase": {
@@ -31264,9 +31264,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -909,
+                "to_id": -911,
                 "to_phrase": {
-                    "id": 909,
+                    "id": 911,
                     "name": "gross domestic product",
                     "description": "total market value of goods and services produced",
                     "type_id": null,
@@ -31277,7 +31277,7 @@
                 "class": "triple"
             },
             {
-                "id": 2790,
+                "id": 2792,
                 "name": "g\/kWh is symbol for gram per kWh",
                 "from_id": 2170,
                 "from_phrase": {
@@ -31301,9 +31301,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -1990,
+                "to_id": -1992,
                 "to_phrase": {
-                    "id": 1990,
+                    "id": 1992,
                     "name": "gram per kWh",
                     "description": "the unit of the emission intensity of electricity",
                     "type_id": 2,
@@ -31782,7 +31782,7 @@
                 "class": "word"
             },
             {
-                "id": 909,
+                "id": 911,
                 "name": "gross domestic product",
                 "description": "total market value of goods and services produced",
                 "class": "triple"
@@ -31794,7 +31794,7 @@
                 "class": "word"
             },
             {
-                "id": 1990,
+                "id": 1992,
                 "name": "gram per kWh",
                 "description": "the unit of the emission intensity of electricity",
                 "type_id": 2,
@@ -31940,7 +31940,7 @@
                 "class": "triple"
             },
             {
-                "id": 2840,
+                "id": 2842,
                 "name": "kg\/kWh is symbol for kg per kWh",
                 "from_id": 2171,
                 "from_phrase": {
@@ -31964,9 +31964,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2757,
+                "to_id": -2759,
                 "to_phrase": {
-                    "id": 2757,
+                    "id": 2759,
                     "name": "kg per kWh",
                     "description": "the unit of the production emission of a battery per kWh of storage capacity",
                     "type_id": 2,
@@ -32242,7 +32242,7 @@
                 "class": "triple"
             },
             {
-                "id": 2836,
+                "id": 2838,
                 "name": "kWh\/a is symbol for kilowatthours per year",
                 "from_id": 2167,
                 "from_phrase": {
@@ -32266,9 +32266,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2786,
+                "to_id": -2788,
                 "to_phrase": {
-                    "id": 2786,
+                    "id": 2788,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
                     "type_id": 2,
@@ -32279,7 +32279,7 @@
                 "class": "triple"
             },
             {
-                "id": 2837,
+                "id": 2839,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
                 "from_id": 2168,
                 "from_phrase": {
@@ -32303,9 +32303,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2787,
+                "to_id": -2789,
                 "to_phrase": {
-                    "id": 2787,
+                    "id": 2789,
                     "name": "kilowatthours per kilowatt peak and year",
                     "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
@@ -32664,7 +32664,7 @@
                 "class": "word"
             },
             {
-                "id": 2757,
+                "id": 2759,
                 "name": "kg per kWh",
                 "description": "the unit of the production emission of a battery per kWh of storage capacity",
                 "type_id": 2,
@@ -32749,7 +32749,7 @@
                 "class": "word"
             },
             {
-                "id": 2786,
+                "id": 2788,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
                 "type_id": 2,
@@ -32762,7 +32762,7 @@
                 "class": "word"
             },
             {
-                "id": 2787,
+                "id": 2789,
                 "name": "kilowatthours per kilowatt peak and year",
                 "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
@@ -33810,7 +33810,7 @@
                 "class": "word"
             },
             {
-                "id": 2839,
+                "id": 2841,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 316,
                 "from_phrase": {
@@ -33834,9 +33834,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2789,
+                "to_id": -2791,
                 "to_phrase": {
-                    "id": 2789,
+                    "id": 2791,
                     "name": "share (ratio)",
                     "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                     "type_id": 9,
@@ -34529,7 +34529,7 @@
                 "class": "word"
             },
             {
-                "id": 2789,
+                "id": 2791,
                 "name": "share (ratio)",
                 "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                 "type_id": 9,
@@ -34771,7 +34771,7 @@
                 "class": "triple"
             },
             {
-                "id": 1008,
+                "id": 1010,
                 "name": "global warming is alias of climate change",
                 "from_id": -127,
                 "from_phrase": {
@@ -34795,9 +34795,9 @@
                     "impact": null,
                     "id": 19
                 },
-                "to_id": -1002,
+                "to_id": -1004,
                 "to_phrase": {
-                    "id": 1002,
+                    "id": 1004,
                     "name": "climate change",
                     "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                     "type_id": null,
@@ -35257,7 +35257,7 @@
                 "class": "triple"
             },
             {
-                "id": 1002,
+                "id": 1004,
                 "name": "climate change",
                 "description": "the long-term shifts in temperatures and weather patterns, caused since the 1800s mainly by the burning of fossil fuels.",
                 "class": "triple"
@@ -36093,7 +36093,7 @@
                 "description": "the conversion of an initial effort in billion USD into person years, calibrated on the carbon border tariff, whose effort in person years is the initial effort of the solution public CBAM calculation in problem_global_warming.json and whose effort in billion USD is the middle of its range in this file",
                 "type_id": 1,
                 "user_text": "\"person year per billion USD\",\"factor\" = \"initial effort\",\"person year\" \/ ( ( \"initial effort\",\"minimum\" + \"initial effort\",\"maximum\" ) \/ 2 )",
-                "ref_text": "{t1203},{w163}={t166},{t168}\/(({t166},{w1229}+{t166},{w1226})\/2)",
+                "ref_text": "{t1205},{w163}={t166},{t168}\/(({t166},{w1229}+{t166},{w1226})\/2)",
                 "latex": "\\text{person year per billion USD},\\text{factor} = \\text{initial effort},\\text{person year} \/ ( ( \\text{initial effort},\\text{minimum} + \\text{initial effort},\\text{maximum} ) \/ 2 )"
             }
         ]

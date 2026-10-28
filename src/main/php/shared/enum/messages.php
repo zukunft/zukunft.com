@@ -2191,6 +2191,8 @@ enum messages: string
     case CONFIG_TREE_DEFAULT_SAVED = 'config_tree_default_saved';
     case VALUE_SET_DEFAULT_DENIED = 'value_set_default_denied';
     case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
+    // an empty text has nothing to store and its api message would have no text, so e.g. the config could not be read
+    case VALUE_TEXT_EMPTY = 'value_text_empty';
     // the configured font of the pages (config.yaml frontend.layout.font) has a char that css could misread
     case CONFIG_FONT_INVALID = 'config_font_invalid';
     // a configured colour of the pages or the editors (config.yaml frontend.layout.colours) that css could misread

@@ -147,6 +147,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -1928,7 +1929,7 @@ class test_base
     /**
      * set the seconds of the loading text (see html_base::loading_start) to a fixed number,
      * because the pod counts them from the request start, so they differ from run to run;
-     * used for both the actual page and the snapshot, so the saved count does not matter
+     * used for both the actual page and the snapshot and when a snapshot is written
      *
      * @param string $html the html page e.g. fetched from the pod
      * @return string the html page with the loading count of LOADING_SECONDS_FIXED
@@ -1942,6 +1943,19 @@ class test_base
         return preg_replace(
             '/(' . html_base::LOADING_COUNT_ANIMATION . ' )\d+s steps\(\d+\)/',
             '${1}' . $steps . 's steps(' . $steps . ')', $html);
+    }
+
+    /**
+     * @return array the pinned views of config.yaml by url name, each with the url or the view name
+     *               and the phrase name and with the name and the tooltip (see html_base::start_page)
+     */
+    function pinned_views(): array
+    {
+        $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
+        $pin_lst = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::SYSTEM][words::VIEW]
+            [words::STARTUP][triples::PINNED_VIEWS] ?? [];
+        unset($pin_lst[words::TOOLTIP_COMMENT]);
+        return $pin_lst;
     }
 
     /**
@@ -2035,7 +2049,8 @@ class test_base
         $content = $actual;
         if ($file_type == test_files::HTML) {
             $lib = new library();
-            $content = $lib->format_html($actual);
+            // with the fixed loading seconds, so that a new run does not change the snapshot
+            $content = $lib->format_html($this->fix_loading_seconds($actual));
         }
         return $content;
     }

@@ -349,6 +349,45 @@ class config_numbers extends value_list
     }
 
     /**
+     * the phrase ids of the config values by name, e.g. for the config tree that offers to add a
+     * text setting without a database value; built once from the values, so no phrase is loaded
+     *
+     * @return array the phrase id by phrase name, negative for a triple
+     */
+    function phrase_ids(): array
+    {
+        $result = [];
+        if ($this->cache_json === null) {
+            foreach ($this->lst() as $val) {
+                foreach ($val->grp()->phrase_list()->lst() as $phr) {
+                    $result[$phr->name()] = $phr->id();
+                }
+            }
+        } else {
+            foreach ($this->cache_json as $api_row) {
+                foreach ($api_row[json_fields::PHRASES] ?? [] as $phr_row) {
+                    $result[$phr_row[json_fields::NAME] ?? ''] = $this->phrase_id_of_row($phr_row);
+                }
+            }
+        }
+        unset($result['']);
+        return $result;
+    }
+
+    /**
+     * @param array $phr_row a phrase of a cached config value e.g. {"id":754,"name":"pinned views","class":"triple"}
+     * @return int the phrase id, which is negative for a triple
+     */
+    private function phrase_id_of_row(array $phr_row): int
+    {
+        $id = (int)($phr_row[json_fields::ID] ?? 0);
+        if (($phr_row[json_fields::OBJECT_CLASS] ?? '') == json_fields::CLASS_TRIPLE) {
+            $id = -$id;
+        }
+        return $id;
+    }
+
+    /**
      * @param array $names the phrase names of a config value in any order
      * @return string the key of the complete phrase set, the same for each order and never cut
      */

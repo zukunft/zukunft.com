@@ -115,6 +115,16 @@ class test_config_trees
     const int SCRIPT_KEY_VALUE = 5;
     // the start of the escaped script key, which a browser shows as text
     const string SCRIPT_KEY_ESCAPED = '&lt;script&gt;';
+    // two pinned views of the start page like in config.yaml: the url of pv and the view name of cbam
+    // have a database value, the empty view name of pv has none, because the import does not save an
+    // empty text, so its first save adds the value with the phrases of its yaml path
+    const string STARTUP = 'startup';
+    const string PV = 'pv';
+    const string CBAM = 'cbam';
+    const string URL = 'url';
+    const string URL_VALUE = '/http/view.php?m=4&id=1954';
+    const string VIEW_NAME = 'view name';
+    const string VIEW_NAME_VALUE = 'Calculator';
 
 
     /*
@@ -123,6 +133,8 @@ class test_config_trees
 
     // use the global test environment
     private test_cleanup $env;
+    // the id of each phrase by name (see phrase_id)
+    private array $phr_ids = [];
 
     function __construct(test_cleanup $env)
     {
@@ -171,6 +183,10 @@ class test_config_trees
                 self::POD => [
                     self::POD_NAME => self::POD_NAME_VALUE,
                 ],
+                self::STARTUP => [
+                    self::PV => [self::URL => self::URL_VALUE, self::VIEW_NAME => ''],
+                    self::CBAM => [self::VIEW_NAME => self::VIEW_NAME_VALUE],
+                ],
             ],
             self::USER => [
                 self::LANGUAGE => [
@@ -203,6 +219,10 @@ class test_config_trees
             $this->cfg_row([self::SYSTEM, self::TEST, self::TIMEOUT, self::SEC], self::TIMEOUT_VALUE),
             [json_fields::PHRASES => $this->phrase_rows([self::SYSTEM, self::POD, self::POD_NAME]),
                 json_fields::TEXT_VALUE => self::POD_NAME_VALUE],
+            [json_fields::PHRASES => $this->phrase_rows([self::SYSTEM, self::STARTUP, self::PV, self::URL]),
+                json_fields::TEXT_VALUE => self::URL_VALUE],
+            [json_fields::PHRASES => $this->phrase_rows([self::SYSTEM, self::STARTUP, self::CBAM, self::VIEW_NAME]),
+                json_fields::TEXT_VALUE => self::VIEW_NAME_VALUE],
         ];
         foreach (self::SELECT_ENTRIES as $key => $number) {
             $id = ($key == self::SELECT_INITIAL) ? self::SELECT_INITIAL_ID : 0;
@@ -239,12 +259,26 @@ class test_config_trees
 
     /**
      * @param array $keys the yaml keys of a setting below "system configuration"
-     * @return array the json phrases of the value, which are the keys of the whole yaml path
+     * @return array the json phrases of the value, which are the keys of the whole yaml path, each with
+     *               the same id in every row like in the database
      */
     private function phrase_rows(array $keys): array
     {
         $names = array_merge(config_tree::ROOT_KEYS, $keys);
-        return array_map(fn(string $name) => [json_fields::NAME => $name], $names);
+        return array_map(fn(string $name) => [
+            json_fields::ID => $this->phrase_id($name),
+            json_fields::NAME => $name,
+        ], $names);
+    }
+
+    /**
+     * @param string $name a yaml key of the test part of config.yaml
+     * @return int the id of the word with that name, numbered in the order of first use
+     */
+    function phrase_id(string $name): int
+    {
+        $this->phr_ids[$name] ??= count($this->phr_ids) + 1;
+        return $this->phr_ids[$name];
     }
 
     /**

@@ -386,11 +386,15 @@ class config_tree
         global $mtr;
         $html = new html_base();
         $result = '';
+        $is_editable = $this->is_editable($cfn, $names);
         if ($cfn->value != '') {
             $result = $this->with_unit($cfn->value, $cfn->unit);
+        } elseif ($is_editable) {
+            // a setting without a value needs something to click on to open the input
+            $result = $html->icon(icons::EDIT);
         }
         // a click and not a double click opens the input, because only a click works without javascript
-        if ($this->is_editable($cfn, $names)) {
+        if ($is_editable) {
             $result = $html->details($result, $this->edit_form($cfn, $names), styles::CONFIG_EDIT);
         }
         if ($cfn->file_value != '') {
@@ -419,21 +423,23 @@ class config_tree
     /**
      * @param config_node $cfn the setting to show
      * @param array $names the yaml keys of the setting, whose first key decides if only an admin can change it
-     * @return bool true if the user can change the setting, which needs a database value to overwrite;
-     *              only a number, because a boolean is shown as true or false and a text has no number input
+     * @return bool true if the user can change the setting: a number or a text with a database value to
+     *              overwrite or a text without one, which the save adds; not a boolean, which is shown as true or false
      */
     private function is_editable(config_node $cfn, array $names): bool
     {
         $is_allowed = (($names[0] ?? '') != self::ADMIN_KEY or $this->is_admin);
-        return ($this->can_edit and $is_allowed and $cfn->id != 0 and is_numeric($cfn->value));
+        $has_value = ($cfn->id != 0 and (is_numeric($cfn->value) or $cfn->is_text));
+        return ($this->can_edit and $is_allowed and ($has_value or $cfn->is_new()));
     }
 
     /**
-     * the input of the number with a small save button, which saves the number as the overwrite of the user
+     * the input of the number or the text with a small save button, which saves it as the overwrite of the user
      * or of an admin as the default of all users (see is_admin)
-     * through the value edit mask without the confirm view and then shows the settings page again
+     * through the value edit mask, or for a text without a database value through the value add mask
+     * with the phrases of the setting, without the confirm view and then shows the settings page again
      *
-     * @param config_node $cfn the setting with a database value
+     * @param config_node $cfn the setting with a database value or a text setting with its phrase ids
      * @param array $names the yaml keys of the setting, which name it in the confirmation of the change
      * @return string the html code of the post form
      */
@@ -441,16 +447,23 @@ class config_tree
     {
         global $mtr;
         $html = new html_base();
+        $val_var = $cfn->is_text ? url_var::VALUE_TEXT : url_var::NUMERIC_VALUE;
+        $input_type = $cfn->is_text ? html_base::INPUT_TEXT : html_base::INPUT_NUMBER;
         $txt = $html->form_session_token();
-        $txt .= $html->form_input(html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE, $cfn->value);
+        $txt .= $html->form_input($input_type, $val_var, $cfn->value);
         // the shown value and the name, so that the confirmation can say what has changed from what
-        $txt .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, $cfn->value);
+        $txt .= $html->form_hidden(url_var::PRE . $val_var, $cfn->value);
         $txt .= $html->form_hidden(url_var::CONFIG_KEY, implode(self::NAME_SEPARATOR, $names));
         if ($this->is_admin) {
             $txt .= $html->form_hidden(url_var::SET_DEFAULT, url_var::TRUE);
         }
-        $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
-        $txt .= $html->form_hidden(url_var::ID, group_id_url::to_url($cfn->id));
+        if ($cfn->is_new()) {
+            $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_ID);
+            $txt .= $html->form_hidden(url_var::PHRASE_LIST, implode(',', $cfn->phr_ids));
+        } else {
+            $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
+            $txt .= $html->form_hidden(url_var::ID, group_id_url::to_url($cfn->id));
+        }
         $txt .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $txt .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::SYSTEM_CONFIG_ID);
         $save_txt = $mtr->txt(msg_id::FORM_BUTTON_SAVE);

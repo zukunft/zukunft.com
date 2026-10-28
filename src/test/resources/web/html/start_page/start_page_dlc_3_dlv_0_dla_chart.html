@@ -149,21 +149,21 @@
             <div class="chart-row">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" width="640" height="420" role="img" aria-label="global problems: potential gain vs. potential loss">
                     <style>
-                        :root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #77756f; --grid: #e3e0d8; --range: #f0c9a8; --accent: #c4561c; --accent2: #2d6a8a; --hover: #f4efe6; --point-text: #fff; color-scheme: light; }
+                        :root { --chart-bg: #fbfaf7; --chart-fg: #1d1d1b; --chart-muted: #77756f; --chart-grid: #e3e0d8; --chart-range: #f0c9a8; --chart-accent: #c4561c; --chart-point: #2d6a8a; --chart-hover: #f4efe6; --chart-point-text: #fff; color-scheme: light; }
 
         svg { font-family: system-ui, sans-serif; }
-        .bg { fill: var(--bg); }
-        .h { fill: var(--fg); font-size: 18px; font-weight: 600; }
-        .sub { fill: var(--muted); font-size: 12px; }
-        .grid { stroke: var(--grid); stroke-width: 1; }
-        .ax { fill: var(--muted); font-size: 12px; }
-        .pt circle { fill: var(--accent2); }
-        .pt:hover circle { fill: var(--accent); }
-        .pt .lbl { fill: var(--fg); font-size: 13.2px; dominant-baseline: central; }
-        .q-high { fill: var(--accent2); opacity: 0.07; }
-        .q-low { fill: var(--accent); opacity: 0.07; }
-        .ratio { stroke: var(--muted); stroke-dasharray: 4 4; opacity: 0.6; }
-        .ratio-txt { fill: var(--muted); font-size: 10.8px; }
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: 18px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: 12px; }
+        .grid { stroke: var(--chart-grid); stroke-width: 1; }
+        .ax { fill: var(--chart-muted); font-size: 12px; }
+        .pt circle { fill: var(--chart-point); }
+        .pt:hover circle { fill: var(--chart-accent); }
+        .pt .lbl { fill: var(--chart-fg); font-size: 13.2px; dominant-baseline: central; }
+        .q-high { fill: var(--chart-point); opacity: 0.07; }
+        .q-low { fill: var(--chart-accent); opacity: 0.07; }
+        .ratio { stroke: var(--chart-muted); stroke-dasharray: 4 4; opacity: 0.6; }
+        .ratio-txt { fill: var(--chart-muted); font-size: 10.8px; }
                     </style>
                     <rect class="bg" width="640" height="420"/>
                     <text class="h" x="20" y="24">

@@ -458,20 +458,20 @@
             <div class="chart-row">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 246" width="740" height="246" role="img" aria-label="global problems: potential loss">
                     <style>
-                        :root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #77756f; --grid: #e3e0d8; --range: #f0c9a8; --accent: #c4561c; --accent2: #2d6a8a; --hover: #f4efe6; --point-text: #fff; color-scheme: light; }
+                        :root { --chart-bg: #fbfaf7; --chart-fg: #1d1d1b; --chart-muted: #77756f; --chart-grid: #e3e0d8; --chart-range: #f0c9a8; --chart-accent: #c4561c; --chart-point: #2d6a8a; --chart-hover: #f4efe6; --chart-point-text: #fff; color-scheme: light; }
 
         svg { font-family: system-ui, sans-serif; }
-        .bg { fill: var(--bg); }
-        .h { fill: var(--fg); font-size: 18px; font-weight: 600; }
-        .sub { fill: var(--muted); font-size: 12px; }
-        .grid { stroke: var(--grid); stroke-width: 1; }
-        .ax { fill: var(--muted); font-size: 12px; }
-        .lbl { fill: var(--fg); font-size: 13.2px; text-anchor: end; dominant-baseline: central; }
-        .val { fill: var(--muted); font-size: 12px; dominant-baseline: central; }
-        .rng { fill: var(--range); }
-        .mid { fill: var(--accent); }
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: 18px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: 12px; }
+        .grid { stroke: var(--chart-grid); stroke-width: 1; }
+        .ax { fill: var(--chart-muted); font-size: 12px; }
+        .lbl { fill: var(--chart-fg); font-size: 13.2px; text-anchor: end; dominant-baseline: central; }
+        .val { fill: var(--chart-muted); font-size: 12px; dominant-baseline: central; }
+        .rng { fill: var(--chart-range); }
+        .mid { fill: var(--chart-accent); }
         .hit { fill: transparent; }
-        .bar:hover .hit { fill: var(--hover); }
+        .bar:hover .hit { fill: var(--chart-hover); }
                     </style>
                     <rect class="bg" width="740" height="246"/>
                     <text class="h" x="20" y="24">
@@ -620,20 +620,20 @@ reward ratio: 0.01a trillion EUR
                 </svg>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 510" width="640" height="510" role="img" aria-label="solutions: potential gain vs. initial effort">
                     <style>
-                        :root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #77756f; --grid: #e3e0d8; --range: #f0c9a8; --accent: #c4561c; --accent2: #2d6a8a; --hover: #f4efe6; --point-text: #fff; color-scheme: light; }
+                        :root { --chart-bg: #fbfaf7; --chart-fg: #1d1d1b; --chart-muted: #77756f; --chart-grid: #e3e0d8; --chart-range: #f0c9a8; --chart-accent: #c4561c; --chart-point: #2d6a8a; --chart-hover: #f4efe6; --chart-point-text: #fff; color-scheme: light; }
 
         svg { font-family: system-ui, sans-serif; }
-        .bg { fill: var(--bg); }
-        .h { fill: var(--fg); font-size: 18px; font-weight: 600; }
-        .sub { fill: var(--muted); font-size: 12px; }
-        .grid { stroke: var(--grid); stroke-width: 1; }
-        .ax { fill: var(--muted); font-size: 12px; }
-        .pt circle { fill: var(--accent2); }
-        .pt text { fill: var(--point-text); font-size: 10.8px; font-weight: 600; text-anchor: middle; }
-        .pt:hover circle { fill: var(--accent); }
-        .lg { fill: var(--fg); font-size: 12px; }
-        .lg tspan.p { fill: var(--muted); }
-        .lg tspan.n { font-weight: 600; fill: var(--accent2); }
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: 18px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: 12px; }
+        .grid { stroke: var(--chart-grid); stroke-width: 1; }
+        .ax { fill: var(--chart-muted); font-size: 12px; }
+        .pt circle { fill: var(--chart-point); }
+        .pt text { fill: var(--chart-point-text); font-size: 10.8px; font-weight: 600; text-anchor: middle; }
+        .pt:hover circle { fill: var(--chart-accent); }
+        .lg { fill: var(--chart-fg); font-size: 12px; }
+        .lg tspan.p { fill: var(--chart-muted); }
+        .lg tspan.n { font-weight: 600; fill: var(--chart-point); }
                     </style>
                     <rect class="bg" width="640" height="510"/>
                     <text class="h" x="20" y="24">

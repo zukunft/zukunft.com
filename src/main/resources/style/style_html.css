@@ -62,8 +62,9 @@ body {
     position: relative; /* anchor for the centered form inside */
 }
 
+/* only the search form of the header, not e.g. the form of the mode switch inside the user menu */
 .site-header .form-inline,
-.site-header form {
+.site-header > form {
     position: absolute; /* take the form out of the normal flex flow */
     left: 50%; /* move its left edge to the screen middle */
     transform: translateX(-50%); /* shift back by half its own width to truly center it */
@@ -113,17 +114,23 @@ body {
     z-index: 1040; /* above the navbar */
 }
 
+/* the submit of the mode switch in the user menu (html_base::theme_switch) is a row like a link */
 .view-menu ul a,
 .lang-menu ul a,
-.user-menu ul a {
+.user-menu ul a,
+.user-menu ul .text-button {
     display: block; /* make the whole row clickable */
+    width: 100%; /* a button fills the row like a link */
+    text-align: start; /* a button is left aligned like a link */
     padding: 0.4rem 1rem;
     white-space: nowrap; /* keep menu items on one line */
+    color: var(--page-link);
 }
 
 .view-menu ul a:hover,
 .lang-menu ul a:hover,
-.user-menu ul a:hover {
+.user-menu ul a:hover,
+.user-menu ul .text-button:hover {
     background: var(--page-menu);
 }
 
