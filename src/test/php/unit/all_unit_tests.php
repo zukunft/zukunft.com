@@ -74,6 +74,8 @@ use Zukunft\ZukunftCom\test\php\create\unit_env;
 use Zukunft\ZukunftCom\test\php\unit_api\api_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\base_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_ui\system_view_ui_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\wikidata_write_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
@@ -178,6 +180,7 @@ class all_unit_tests extends test_cleanup
 
         // do the im- and export unit tests
         new import_tests()->run($this);
+        new wikidata_tests()->run($this);
 
         // db setup
         new db_setup_tests()->run($this);
