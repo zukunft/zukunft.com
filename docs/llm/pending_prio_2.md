@@ -2129,3 +2129,20 @@ it only holds the predicate consts `WORD_TYPE` and `PLURAL`, which no code uses,
 `cfg/db/sql.php` without needing it; either implement the RDF mapping of a word (e.g. for the qlever
 import above) with a positive and a negative unit test or remove the class; its header still says
 `model/word/word_rdf.php` instead of `cfg/word/word_rdf.php`
+
+## theme: font, dark or light mode and colours
+
+- split the long lines into named steps (coding.md rule 2 and 110): the cast, `?->` and `??` of the
+  mode read in `html_base::theme_mode`, the inline `array_intersect($without, …) == []` of
+  `config::get_by_names_specific` (e.g. a named `value::has_none($names)`) and the ternary in the
+  `list_item` call of `html_base::theme_switch_item`
+- `html_base::theme_switch_item` builds its `<button>` inline, because neither `button()` nor
+  `button_submit_text()` takes a tooltip; add the tooltip to one of them and use it (coding.md 187)
+- `coding_rule_tests::config_yaml_theme_fallback_tests` names the dark group by the literal
+  `' dark '` instead of `words::DARK`
+- `html_base::theme_mode` scans the whole frontend config up to three times per page (`theme_css`,
+  `theme_switch`, `lang`) and once more per chart, and every chart repeats its 18 colour lookups;
+  read the mode and the chart colours once per request, which also reports an invalid chart colour
+  once and not once per chart
+- check by a write or workflow test that a mode saved by the switch of the user menu reaches the
+  `$ui_sys->cfg` of that user on the next request, so the page is then shown in the chosen mode
