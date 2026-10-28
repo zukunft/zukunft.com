@@ -388,9 +388,15 @@ class import_wikidata
             $criteria = $this->claim_criteria($claim);
             $unnamed_criterion_id = array_search('', $criteria, true);
             if ($unit_phr_name == '') {
-                $msg->add(msg_id::WIKIDATA_UNIT_LABEL_MISSING, [msg_id::VAR_NAME => $entity_name, msg_id::VAR_ID => $unit_id]);
+                $msg->add(msg_id::WIKIDATA_UNIT_LABEL_MISSING, [
+                    msg_id::VAR_NAME => $entity_name,
+                    msg_id::VAR_ID => $unit_id
+                ]);
             } elseif ($unnamed_criterion_id !== false) {
-                $msg->add(msg_id::WIKIDATA_CRITERION_LABEL_MISSING, [msg_id::VAR_NAME => $entity_name, msg_id::VAR_ID => $unnamed_criterion_id]);
+                $msg->add(msg_id::WIKIDATA_CRITERION_LABEL_MISSING, [
+                    msg_id::VAR_NAME => $entity_name,
+                    msg_id::VAR_ID => $unnamed_criterion_id
+                ]);
             } else {
                 $word_types = [];
                 $word_refs = [];

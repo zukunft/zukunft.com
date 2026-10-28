@@ -456,6 +456,7 @@ class test_base
     const int TIMEOUT_LIMIT_REST = 5;  // max seconds for a REST api call over http including the connection warmup of the first call and the config loading
 
     const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
+    const int TEST_LOADING_SECONDS = 3; // fixed seconds since the request start of a loading page snapshot
 
     // prefix of the temp file that keeps the session cookie of a web test with a login
     const string COOKIE_FILE_PREFIX = 'zukunft_test_session_';
@@ -1861,6 +1862,24 @@ class test_base
     {
         $pattern = '/(id="' . system_page::CALC_EDITOR_SEED_ID . '">\{[^<]*?"' . json_fields::TIME . '":")[^"]*(")/';
         return preg_replace($pattern, '${1}' . $this->phrase_data_test_time() . '${2}', $html, 1);
+    }
+
+    /**
+     * a page that takes longer than the expected response time starts with the loading text
+     * (html_base::loading_start), whose count starts at the seconds since the request start,
+     * so the count is replaced by the fixed test seconds before the page is compared;
+     * only for the snapshot, the real page keeps the seconds of the request
+     *
+     * @param string $html the html page as received from the pod
+     * @return string the html page with the loading count of self::TEST_LOADING_SECONDS
+     */
+    function fix_volatile_loading_seconds(string $html): string
+    {
+        $steps = html_base::LOADING_COUNT_LIMIT - self::TEST_LOADING_SECONDS;
+        $start_pattern = '/(' . preg_quote('@property --' . html_base::LOADING_COUNTER, '/') . ' \{[^}]*initial-value: )\d+/';
+        $html = preg_replace($start_pattern, '${1}' . self::TEST_LOADING_SECONDS, $html, 1);
+        $steps_pattern = '/(' . preg_quote(html_base::LOADING_COUNT_ANIMATION, '/') . ' )\d+s steps\(\d+\)/';
+        return preg_replace($steps_pattern, '${1}' . $steps . 's steps(' . $steps . ')', $html, 1);
     }
 
     /**

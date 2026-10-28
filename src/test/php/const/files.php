@@ -353,8 +353,8 @@ class files
     CONST string IMPORT_WIKIDATA_UNIT_P1082 = test_paths::IMPORT_WIKIDATA_UNIT . 'P1082' . self::JSON;
     CONST string IMPORT_WIKIDATA_UNIT_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q72' . self::JSON;
     CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72' . self::JSON;
-    // a hand made unit without a name in the cache folder, where the converter reads the units from;
-    // Q0 is no wikidata id, so no live capture overwrites it
+    // a hand made item without a name used as unit and as criterion in the cache folder, where the
+    // converter reads the units and criteria from; Q0 is no wikidata id, so no live capture overwrites it
     CONST string IMPORT_WIKIDATA_Q0 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q0' . self::JSON;
 
     // XBRL filesets (zipped instance + taxonomy delivered by an issuer)

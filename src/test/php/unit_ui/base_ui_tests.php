@@ -809,6 +809,14 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $at_limit, html_base::CLASS_LOADING_SECONDS);
         $test_name = 'the loading end hides the loading start';
         $t->assert_text_contains($test_name, $html->loading_end(), html_base::CLASS_LOADING . ' {display: none;}');
+        // the snapshot of a slow page replaces the volatile seconds since the request start
+        $test_name = 'the loading seconds of a page are replaced by the fixed test seconds';
+        $slow = $html->loading_start(1.5, 7);
+        $fixed = $html->loading_start(1.5, $t::TEST_LOADING_SECONDS);
+        $t->assert($test_name, $t->fix_volatile_loading_seconds($slow), $fixed);
+        // negative: a page without the count stays as it is
+        $test_name = '... and a loading start without the count stays unchanged';
+        $t->assert($test_name, $t->fix_volatile_loading_seconds($at_limit), $at_limit);
 
 
         $t->subheader($ts . 'unit html table tests');
