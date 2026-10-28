@@ -447,8 +447,12 @@ class config_tree
     {
         global $mtr;
         $html = new html_base();
-        $val_var = $cfn->is_text ? url_var::VALUE_TEXT : url_var::NUMERIC_VALUE;
-        $input_type = $cfn->is_text ? html_base::INPUT_TEXT : html_base::INPUT_NUMBER;
+        $val_var = url_var::NUMERIC_VALUE;
+        $input_type = html_base::INPUT_NUMBER;
+        if ($cfn->is_text) {
+            $val_var = url_var::VALUE_TEXT;
+            $input_type = html_base::INPUT_TEXT;
+        }
         $txt = $html->form_session_token();
         $txt .= $html->form_input($input_type, $val_var, $cfn->value);
         // the shown value and the name, so that the confirmation can say what has changed from what

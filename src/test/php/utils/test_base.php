@@ -1868,8 +1868,9 @@ class test_base
     /**
      * a page that takes longer than the expected response time starts with the loading text
      * (html_base::loading_start), whose count starts at the seconds since the request start,
-     * so the count is replaced by the fixed test seconds before the page is compared;
-     * only for the snapshot, the real page keeps the seconds of the request
+     * so the count is replaced by the fixed test seconds for both the actual page and the snapshot
+     * before an html page is compared and when a snapshot is written (see assert_typed and
+     * file_content); only for the snapshot, the real page keeps the seconds of the request
      *
      * @param string $html the html page as received from the pod
      * @return string the html page with the loading count of self::TEST_LOADING_SECONDS
@@ -1894,8 +1895,6 @@ class test_base
 
     // the html attributes of a snapshot page that carry a root relative url to the pod
     const array POD_URL_ATTRIBUTES = [html_base::HREF, html_base::SRC, html_base::ACTION];
-    // the seconds of the loading text when a html page is compared with its snapshot
-    const int LOADING_SECONDS_FIXED = 4;
 
     /**
      * point every root relative url of a snapshot page to the pod, so that the saved page opened
@@ -1924,25 +1923,6 @@ class test_base
             $absolute[] = $attribute . '="' . $url . '/';
         }
         return str_replace($relative, $absolute, $html);
-    }
-
-    /**
-     * set the seconds of the loading text (see html_base::loading_start) to a fixed number,
-     * because the pod counts them from the request start, so they differ from run to run;
-     * used for both the actual page and the snapshot and when a snapshot is written
-     *
-     * @param string $html the html page e.g. fetched from the pod
-     * @return string the html page with the loading count of LOADING_SECONDS_FIXED
-     */
-    private function fix_loading_seconds(string $html): string
-    {
-        $steps = html_base::LOADING_COUNT_LIMIT - self::LOADING_SECONDS_FIXED;
-        $html = preg_replace(
-            '/(@property --' . html_base::LOADING_COUNTER . ' \{[^}]*initial-value: )\d+;/',
-            '${1}' . self::LOADING_SECONDS_FIXED . ';', $html);
-        return preg_replace(
-            '/(' . html_base::LOADING_COUNT_ANIMATION . ' )\d+s steps\(\d+\)/',
-            '${1}' . $steps . 's steps(' . $steps . ')', $html);
     }
 
     /**
@@ -2025,8 +2005,8 @@ class test_base
     {
         $lib = new library();
         if ($file_type == test_files::HTML) {
-            $actual = $lib->trim_html($this->fix_loading_seconds($actual));
-            $expected = $lib->trim_html($this->fix_loading_seconds($expected));
+            $actual = $lib->trim_html($this->fix_volatile_loading_seconds($actual));
+            $expected = $lib->trim_html($this->fix_volatile_loading_seconds($expected));
         } elseif ($file_type == test_files::SQL) {
             $actual = $lib->trim_sql($actual);
             $expected = $lib->trim_sql($expected);
@@ -2050,7 +2030,7 @@ class test_base
         if ($file_type == test_files::HTML) {
             $lib = new library();
             // with the fixed loading seconds, so that a new run does not change the snapshot
-            $content = $lib->format_html($this->fix_loading_seconds($actual));
+            $content = $lib->format_html($this->fix_volatile_loading_seconds($actual));
         }
         return $content;
     }

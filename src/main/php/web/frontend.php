@@ -1776,12 +1776,26 @@ class frontend
             msg_id::VAR_NAME => (string)($url_array[url_var::CONFIG_KEY] ?? ''),
         ];
         $result = '';
-        // a text is not saved as a number (see sandbox_value::url_mapper), so it is not confirmed either;
-        // an empty text is not saved at all (see value_base::save)
-        $is_saved = $is_text ? $new_val !== '' : (is_numeric($new_val) and is_numeric($old_val));
         // the shown value of an admin can be the own overwrite, so the same value can still be a new default
-        if ($is_saved and ($new_val != $old_val or $is_default)) {
+        if ($this->is_setting_saved($is_text, $new_val, $old_val) and ($new_val != $old_val or $is_default)) {
             $result = $lib->msg_var_text([[$msg_id, $vars]], $mtr);
+        }
+        return $result;
+    }
+
+    /**
+     * @param bool $is_text true if the setting is a text and not a number
+     * @param string $new_val the value of the setting that the user has entered
+     * @param string $old_val the value of the setting that the page has shown
+     * @return bool true if the backend has saved the value: a text that is not empty (see value_base::save)
+     *              or a number, because a text is not saved as a number (see sandbox_value::url_mapper)
+     */
+    private function is_setting_saved(bool $is_text, string $new_val, string $old_val): bool
+    {
+        if ($is_text) {
+            $result = ($new_val !== '');
+        } else {
+            $result = (is_numeric($new_val) and is_numeric($old_val));
         }
         return $result;
     }

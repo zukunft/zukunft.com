@@ -6,18 +6,6 @@ limit the use of the prime value table to the javascript int limit of 9,007,199,
 if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
 and the use of the values table instead of values_prime
 
-## cache
-
-add a 'clear cache' button to the settings page that removes all cache data
-
-## fonts 
-
-note that only fonts of the include fontawesome version can be used 
-
-## external links
-
-create a script that collects or potential external links and dependencies and list the in '/docs/dependencies.md'
-
 ## Calculator editor
 
 ### change top row
@@ -90,6 +78,18 @@ search in wikipedia for all words and triples and suggest to include these as re
 in the formula editor and all other places add the power sign '^' as an operator.
 
 add other usual math operators that are missing
+
+## cache
+
+add a 'clear cache' button to the settings page that removes all cache data
+
+## fonts
+
+note that only fonts of the include fontawesome version can be used
+
+## external links
+
+create a script that collects or potential external links and dependencies and list the in '/docs/dependencies.md'
 
 ## names that a user has given
 

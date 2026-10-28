@@ -271,7 +271,7 @@ user_type: $usr_typ
 value_geo: $obj_to_add, $result, $val
 value_list: $add_lst, $db_lst, $desc_lst, $empty_keep_lst, $empty_lst, $fld_val_lst, $lst, $num_lst, $plain_lst, $result, $target_lst, $tie_lst, $val, $val_lst, $val_lst_read, $val_lst_ui
 value_list_dsp: $val_lst
-value_text: $obj_to_add, $result, $val, $val_txt
+value_text: $obj_to_add, $result, $val
 value_time: $obj_to_add, $result, $val
 value_time_series: $db_chk, $db_rec, $db_vts, $std_rec, $vts
 value_ts_data: $ts

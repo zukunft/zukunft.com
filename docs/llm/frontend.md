@@ -290,8 +290,8 @@ files, so no request reads the config for them. The pinned views of
 their url name, and each has a `url`, a `name` and a `tooltip`. A pinned view
 with an empty `url`, which the import does not save as a value, and with a
 `view name` and a `phrase name` opens that view with
-that phrase e.g. `/http/view.php?m=16&id=-2793` for the view `Calculator` and the
-triple `example PV installation`, because the ids differ by pod.
+that phrase e.g. the view `Calculator` with the triple `example PV installation`,
+whose negative phrase id names the triple, because the ids differ by pod.
 `system_views_read_tests::run_pinned_views` loads these ids from the database
 and writes the pages with `AUTO_UPDATE_TEST_FILES`; `base_ui_tests` writes the
 other static pages like the forward pages of `api::FORWARD_VIEWS`:

@@ -96,8 +96,10 @@ class config_node
         $this->file_value = (string)($json[json_fields::CONFIG_FILE_VALUE] ?? '');
         $this->unit = (string)($json[json_fields::CONFIG_UNIT] ?? '');
         $this->is_text = (($json[json_fields::CONFIG_IS_TEXT] ?? false) === true);
+        $phr_ids = (array)($json[json_fields::CONFIG_PHRASE_IDS] ?? []);
         // only the ids, so that a malformed entry never ends in the url of the save
-        $this->phr_ids = array_values(array_filter((array)($json[json_fields::CONFIG_PHRASE_IDS] ?? []), 'is_int'));
+        $int_ids = array_filter($phr_ids, 'is_int');
+        $this->phr_ids = array_values($int_ids);
         $this->tooltip = (string)($json[json_fields::DESCRIPTION] ?? '');
         $this->children = [];
         foreach ($json[json_fields::CONFIG_CHILDREN] ?? [] as $child_json) {
