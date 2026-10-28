@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1523 of 6266 public functions have at least 2 unit test calls; the 4539 functions below do not; the 204 functions of the last section are called nowhere
+1523 of 6267 public functions have at least 2 unit test calls; the 4539 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 2020 functions of main backend have no test at all
 
@@ -3354,7 +3354,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- default_id - 1 unit test calls shared by 46 classes
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- convert_wikipedia_table
-    \-- convert - 1 unit test calls shared by 4 classes
+    \-- convert - 6 unit test calls shared by 4 classes
 \-- data_object
     \-- add_component - 1 unit test calls shared by 2 classes
     \-- add_message - 3 unit test calls shared by 2 classes
@@ -3582,12 +3582,12 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_by_phr - 4 unit test calls shared by 5 classes
     \-- load_sql_by_ids - 5 unit test calls shared by 18 classes
 \-- import_convert_xbrl
-    \-- convert - 1 unit test calls shared by 4 classes
+    \-- convert - 6 unit test calls shared by 4 classes
     \-- convert_folder_to_file - 1 unit test calls
     \-- convert_to_file - 1 unit test calls shared by 2 classes
     \-- instance_file_name - 1 unit test calls
 \-- import_wikidata
-    \-- convert - 1 unit test calls shared by 4 classes
+    \-- convert - 6 unit test calls shared by 4 classes
     \-- convert_to_file - 1 unit test calls shared by 2 classes
 \-- ip_range
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
@@ -4292,7 +4292,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- get_value - 8 unit test calls shared by 7 classes
     \-- load_views_related - 4 unit test calls shared by 5 classes
 \-- value_base
-    \-- convert - 1 unit test calls shared by 4 classes
+    \-- convert - 6 unit test calls shared by 4 classes
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
     \-- del - 17 unit test calls shared by 21 classes
     \-- diff_msg - 48 unit test calls shared by 28 classes
@@ -5185,6 +5185,8 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_url
     \-- load_by_phr_vrb_and_type
     \-- time_lst_old
+\-- qlever
+    \-- import - maybe called by name
 \-- ref
     \-- log_link_del
     \-- log_link_upd

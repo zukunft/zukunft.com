@@ -99,6 +99,8 @@ class paths
     const string IMPORT_WIKIDATA = self::IMPORT . 'wikidata' . DIRECTORY_SEPARATOR;
     // the json as received from wikidata
     const string IMPORT_WIKIDATA_CACHE = self::IMPORT_WIKIDATA . 'cache' . DIRECTORY_SEPARATOR;
+    // hand made wikidata json for the offline converter unit tests, which no live capture overwrites
+    const string IMPORT_WIKIDATA_UNIT = self::IMPORT_WIKIDATA_CACHE . 'unit' . DIRECTORY_SEPARATOR;
     // the json converted from the wikidata cache that can be imported into the database
     const string IMPORT_WIKIDATA_TO_IMPORT = self::IMPORT_WIKIDATA . 'to_import' . DIRECTORY_SEPARATOR;
     const string IMPORT_XBRL = self::IMPORT . 'xbrl' . DIRECTORY_SEPARATOR;

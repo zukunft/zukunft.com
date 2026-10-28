@@ -2095,3 +2095,20 @@ it now includes `web/frontend.php` first; no include_once is removed until the i
 changed to a proper dynamic loading (docs/llm/file-layout.md), which also removes this order
 dependency; until then a coded check could load each web class file alone in a fresh php process
 and report the files that fail
+
+## qlever import
+
+`src/main/php/cfg/rdf/qlever.php` came with the merge of the wikidata branch (#220) as a stub:
+`qlever::import()` only returns a new `user_message` and nothing calls it, so the unit test coverage
+report lists it as called nowhere; either implement the import of the qlever nt and tsv files with a
+positive and a negative unit test or remove the class; when implemented, `import()` gets the
+`user_message $msg` of the caller instead of creating its own, and the predicate const `VIEW = 'is-a'`
+gets a name that says what it is
+
+## word rdf mapping
+
+`src/main/php/cfg/word/word_rdf.php` came with the same merge as a stub of the word mapping to RDF:
+it only holds the predicate consts `WORD_TYPE` and `PLURAL`, which no code uses, and includes and uses
+`cfg/db/sql.php` without needing it; either implement the RDF mapping of a word (e.g. for the qlever
+import above) with a positive and a negative unit test or remove the class; its header still says
+`model/word/word_rdf.php` instead of `cfg/word/word_rdf.php`

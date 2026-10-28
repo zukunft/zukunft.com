@@ -4,8 +4,8 @@
             "pageid": 5867,
             "ns": 0,
             "title": "Q4916",
-            "lastrevid": 2527806138,
-            "modified": "2026-08-05T21:14:16Z",
+            "lastrevid": 2561088104,
+            "modified": "2026-10-26T14:20:24Z",
             "type": "item",
             "id": "Q4916",
             "labels": {
@@ -107,7 +107,7 @@
                 },
                 "et": {
                     "language": "et",
-                    "value": "Euro"
+                    "value": "euro"
                 },
                 "eu": {
                     "language": "eu",
@@ -836,6 +836,18 @@
                 "ro": {
                     "language": "ro",
                     "value": "euro"
+                },
+                "isv": {
+                    "language": "isv",
+                    "value": "Evro"
+                },
+                "si": {
+                    "language": "si",
+                    "value": "යූරෝ"
+                },
+                "en": {
+                    "language": "en",
+                    "value": "euro"
                 }
             },
             "descriptions": {
@@ -849,7 +861,7 @@
                 },
                 "fr": {
                     "language": "fr",
-                    "value": "Monnaie de l’Union européenne"
+                    "value": "monnaie de l’Union européenne"
                 },
                 "ilo": {
                     "language": "ilo",
@@ -9826,12 +9838,29 @@
                                     },
                                     "datatype": "time"
                                 }
+                            ],
+                            "P2241": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2241",
+                                    "hash": "042ec668133cc8f75c883546d81358bbd0d5d11d",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 110770329,
+                                            "id": "Q110770329"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
                             ]
                         },
                         "qualifiers-order": [
                             "P5102",
                             "P580",
-                            "P582"
+                            "P582",
+                            "P2241"
                         ],
                         "id": "Q4916$16fe87b1-4ce1-9872-a57a-87b09e713bca",
                         "rank": "deprecated"
@@ -10229,1212 +10258,1524 @@
                         "id": "Q4916$321CA367-3A7C-4148-8DFE-DD8D2AA3C183",
                         "rank": "normal"
                     }
+                ],
+                "P14692": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P14692",
+                            "hash": "b334928fb1fcae60515bda86ce3e12d023a77ea5",
+                            "datavalue": {
+                                "value": "Q1192",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4916$5aaf78e0-4df3-f54e-c9d5-c3daa9c8b8b8",
+                        "rank": "normal"
+                    }
+                ],
+                "P3509": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P3509",
+                            "hash": "befcc966a2fd7331369601937bb25b1dea754491",
+                            "datavalue": {
+                                "value": "euron",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4916$BA43D6EF-47D5-4EC8-B9C1-8FF40739B8EB",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "7e27775afedd0e48d2a0bbb055ddde8e2288fe75",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "51110f5c5dbd87faae7c80396ae978b43577f413",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 1126918,
+                                                    "id": "Q1126918"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
+                    }
                 ]
             },
             "sitelinks": {
                 "commonswiki": {
                     "site": "commonswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://commons.wikimedia.org/wiki/Euro"
                 },
                 "dewikiquote": {
                     "site": "dewikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://de.wikiquote.org/wiki/Euro"
                 },
                 "enwikiquote": {
                     "site": "enwikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://en.wikiquote.org/wiki/Euro"
                 },
                 "itwikiquote": {
                     "site": "itwikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://it.wikiquote.org/wiki/Euro"
                 },
                 "frwikiquote": {
                     "site": "frwikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fr.wikiquote.org/wiki/Euro"
                 },
                 "plwikiquote": {
                     "site": "plwikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pl.wikiquote.org/wiki/Euro"
                 },
                 "ruwikinews": {
                     "site": "ruwikinews",
                     "title": "Категория:Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ru.wikinews.org/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "cswikiquote": {
                     "site": "cswikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://cs.wikiquote.org/wiki/Euro"
                 },
                 "enwikinews": {
                     "site": "enwikinews",
                     "title": "Category:Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://en.wikinews.org/wiki/Category:Euro"
                 },
                 "dewikinews": {
                     "site": "dewikinews",
                     "title": "Kategorie:Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://de.wikinews.org/wiki/Kategorie:Euro"
                 },
                 "eswikinews": {
                     "site": "eswikinews",
                     "title": "Categoría:Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://es.wikinews.org/wiki/Categor%C3%ADa:Euro"
                 },
                 "frwikinews": {
                     "site": "frwikinews",
                     "title": "Catégorie:Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fr.wikinews.org/wiki/Cat%C3%A9gorie:Euro"
                 },
                 "plwikinews": {
                     "site": "plwikinews",
                     "title": "Kategoria:Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pl.wikinews.org/wiki/Kategoria:Euro"
                 },
                 "srwikinews": {
                     "site": "srwikinews",
                     "title": "Категорија:Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sr.wikinews.org/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%98%D0%B0:%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "svwikinews": {
                     "site": "svwikinews",
                     "title": "Kategori:Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sv.wikinews.org/wiki/Kategori:Euro"
                 },
                 "ukwikiquote": {
                     "site": "ukwikiquote",
                     "title": "Євро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://uk.wikiquote.org/wiki/%D0%84%D0%B2%D1%80%D0%BE"
                 },
                 "fawikiquote": {
                     "site": "fawikiquote",
                     "title": "یورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fa.wikiquote.org/wiki/%DB%8C%D9%88%D8%B1%D9%88"
                 },
                 "nlwikinews": {
                     "site": "nlwikinews",
                     "title": "Categorie:Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nl.wikinews.org/wiki/Categorie:Euro"
                 },
                 "enwiki": {
                     "site": "enwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://en.wikipedia.org/wiki/Euro"
                 },
                 "dewiki": {
                     "site": "dewiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://de.wikipedia.org/wiki/Euro"
                 },
                 "frwiki": {
                     "site": "frwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fr.wikipedia.org/wiki/Euro"
                 },
                 "eswiki": {
                     "site": "eswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://es.wikipedia.org/wiki/Euro"
                 },
                 "ruwiki": {
                     "site": "ruwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ru.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "itwiki": {
                     "site": "itwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://it.wikipedia.org/wiki/Euro"
                 },
                 "jawiki": {
                     "site": "jawiki",
                     "title": "ユーロ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ja.wikipedia.org/wiki/%E3%83%A6%E3%83%BC%E3%83%AD"
                 },
                 "nlwiki": {
                     "site": "nlwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nl.wikipedia.org/wiki/Euro"
                 },
                 "plwiki": {
                     "site": "plwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pl.wikipedia.org/wiki/Euro"
                 },
                 "ptwiki": {
                     "site": "ptwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pt.wikipedia.org/wiki/Euro"
                 },
                 "zhwiki": {
                     "site": "zhwiki",
                     "title": "欧元",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://zh.wikipedia.org/wiki/%E6%AC%A7%E5%85%83"
                 },
                 "fawiki": {
                     "site": "fawiki",
                     "title": "یورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fa.wikipedia.org/wiki/%DB%8C%D9%88%D8%B1%D9%88"
                 },
                 "hewiki": {
                     "site": "hewiki",
                     "title": "אירו",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://he.wikipedia.org/wiki/%D7%90%D7%99%D7%A8%D7%95"
                 },
                 "trwiki": {
                     "site": "trwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://tr.wikipedia.org/wiki/Euro"
                 },
                 "huwiki": {
                     "site": "huwiki",
                     "title": "Euró",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://hu.wikipedia.org/wiki/Eur%C3%B3"
                 },
                 "fiwiki": {
                     "site": "fiwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fi.wikipedia.org/wiki/Euro"
                 },
                 "arwiki": {
                     "site": "arwiki",
                     "title": "يورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ar.wikipedia.org/wiki/%D9%8A%D9%88%D8%B1%D9%88"
                 },
                 "viwiki": {
                     "site": "viwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://vi.wikipedia.org/wiki/Euro"
                 },
                 "nowiki": {
                     "site": "nowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://no.wikipedia.org/wiki/Euro"
                 },
                 "ukwiki": {
                     "site": "ukwiki",
                     "title": "Євро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://uk.wikipedia.org/wiki/%D0%84%D0%B2%D1%80%D0%BE"
                 },
                 "kowiki": {
                     "site": "kowiki",
                     "title": "유로",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ko.wikipedia.org/wiki/%EC%9C%A0%EB%A1%9C"
                 },
                 "cawiki": {
                     "site": "cawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ca.wikipedia.org/wiki/Euro"
                 },
                 "cswiki": {
                     "site": "cswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://cs.wikipedia.org/wiki/Euro"
                 },
                 "srwiki": {
                     "site": "srwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sr.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "rowiki": {
                     "site": "rowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ro.wikipedia.org/wiki/Euro"
                 },
                 "idwiki": {
                     "site": "idwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://id.wikipedia.org/wiki/Euro"
                 },
                 "dawiki": {
                     "site": "dawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://da.wikipedia.org/wiki/Euro"
                 },
                 "simplewiki": {
                     "site": "simplewiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://simple.wikipedia.org/wiki/Euro"
                 },
                 "bgwiki": {
                     "site": "bgwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bg.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "afwiki": {
                     "site": "afwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://af.wikipedia.org/wiki/Euro"
                 },
                 "alswiki": {
                     "site": "alswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://als.wikipedia.org/wiki/Euro"
                 },
                 "amwiki": {
                     "site": "amwiki",
                     "title": "ዩሮ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://am.wikipedia.org/wiki/%E1%8B%A9%E1%88%AE"
                 },
                 "anwiki": {
                     "site": "anwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://an.wikipedia.org/wiki/Euro"
                 },
                 "arcwiki": {
                     "site": "arcwiki",
                     "title": "ܐܘܪܘ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://arc.wikipedia.org/wiki/%DC%90%DC%98%DC%AA%DC%98"
                 },
                 "arzwiki": {
                     "site": "arzwiki",
                     "title": "يورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://arz.wikipedia.org/wiki/%D9%8A%D9%88%D8%B1%D9%88"
                 },
                 "aswiki": {
                     "site": "aswiki",
                     "title": "ইউৰো",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://as.wikipedia.org/wiki/%E0%A6%87%E0%A6%89%E0%A7%B0%E0%A7%8B"
                 },
                 "astwiki": {
                     "site": "astwiki",
                     "title": "Euru",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ast.wikipedia.org/wiki/Euru"
                 },
                 "azwiki": {
                     "site": "azwiki",
                     "title": "Avro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://az.wikipedia.org/wiki/Avro"
                 },
                 "azbwiki": {
                     "site": "azbwiki",
                     "title": "یورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://azb.wikipedia.org/wiki/%DB%8C%D9%88%D8%B1%D9%88"
                 },
                 "bawiki": {
                     "site": "bawiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ba.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "barwiki": {
                     "site": "barwiki",
                     "title": "Eiro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bar.wikipedia.org/wiki/Eiro"
                 },
                 "bat_smgwiki": {
                     "site": "bat_smgwiki",
                     "title": "Eurs",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bat-smg.wikipedia.org/wiki/Eurs"
                 },
                 "bewiki": {
                     "site": "bewiki",
                     "title": "Еўра",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://be.wikipedia.org/wiki/%D0%95%D1%9E%D1%80%D0%B0"
                 },
                 "be_x_oldwiki": {
                     "site": "be_x_oldwiki",
                     "title": "Эўра",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://be-tarask.wikipedia.org/wiki/%D0%AD%D1%9E%D1%80%D0%B0"
                 },
                 "bnwiki": {
                     "site": "bnwiki",
                     "title": "ইউরো",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bn.wikipedia.org/wiki/%E0%A6%87%E0%A6%89%E0%A6%B0%E0%A7%8B"
                 },
                 "bpywiki": {
                     "site": "bpywiki",
                     "title": "ইউরো",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bpy.wikipedia.org/wiki/%E0%A6%87%E0%A6%89%E0%A6%B0%E0%A7%8B"
                 },
                 "brwiki": {
                     "site": "brwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://br.wikipedia.org/wiki/Euro"
                 },
                 "bswiki": {
                     "site": "bswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bs.wikipedia.org/wiki/Euro"
                 },
                 "bxrwiki": {
                     "site": "bxrwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bxr.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "cdowiki": {
                     "site": "cdowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://cdo.wikipedia.org/wiki/Euro"
                 },
                 "chrwiki": {
                     "site": "chrwiki",
                     "title": "ᏳᎳᏛ ᎠᏕᎳ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://chr.wikipedia.org/wiki/%E1%8F%B3%E1%8E%B3%E1%8F%9B_%E1%8E%A0%E1%8F%95%E1%8E%B3"
                 },
                 "ckbwiki": {
                     "site": "ckbwiki",
                     "title": "یۆرۆ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ckb.wikipedia.org/wiki/%DB%8C%DB%86%D8%B1%DB%86"
                 },
                 "cowiki": {
                     "site": "cowiki",
                     "title": "Euru",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://co.wikipedia.org/wiki/Euru"
                 },
                 "crhwiki": {
                     "site": "crhwiki",
                     "title": "Avro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://crh.wikipedia.org/wiki/Avro"
                 },
                 "csbwiki": {
                     "site": "csbwiki",
                     "title": "Eùro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://csb.wikipedia.org/wiki/E%C3%B9ro"
                 },
                 "cuwiki": {
                     "site": "cuwiki",
                     "title": "Єѵрѡ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://cu.wikipedia.org/wiki/%D0%84%D1%B5%D1%80%D1%A1"
                 },
                 "cvwiki": {
                     "site": "cvwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://cv.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "cywiki": {
                     "site": "cywiki",
                     "title": "Ewro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://cy.wikipedia.org/wiki/Ewro"
                 },
                 "diqwiki": {
                     "site": "diqwiki",
                     "title": "Ewro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://diq.wikipedia.org/wiki/Ewro"
                 },
                 "dsbwiki": {
                     "site": "dsbwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://dsb.wikipedia.org/wiki/Euro"
                 },
                 "elwiki": {
                     "site": "elwiki",
                     "title": "Ευρώ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://el.wikipedia.org/wiki/%CE%95%CF%85%CF%81%CF%8E"
                 },
                 "eowiki": {
                     "site": "eowiki",
                     "title": "Eŭro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://eo.wikipedia.org/wiki/E%C5%ADro"
                 },
                 "etwiki": {
                     "site": "etwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://et.wikipedia.org/wiki/Euro"
                 },
                 "euwiki": {
                     "site": "euwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://eu.wikipedia.org/wiki/Euro"
                 },
                 "extwiki": {
                     "site": "extwiki",
                     "title": "Euru",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ext.wikipedia.org/wiki/Euru"
                 },
                 "fiu_vrowiki": {
                     "site": "fiu_vrowiki",
                     "title": "Õuro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fiu-vro.wikipedia.org/wiki/%C3%95uro"
                 },
                 "fowiki": {
                     "site": "fowiki",
                     "title": "Evra",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fo.wikipedia.org/wiki/Evra"
                 },
                 "frpwiki": {
                     "site": "frpwiki",
                     "title": "Erô",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://frp.wikipedia.org/wiki/Er%C3%B4"
                 },
                 "frrwiki": {
                     "site": "frrwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://frr.wikipedia.org/wiki/Euro"
                 },
                 "furwiki": {
                     "site": "furwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fur.wikipedia.org/wiki/Euro"
                 },
                 "fywiki": {
                     "site": "fywiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://fy.wikipedia.org/wiki/Euro"
                 },
                 "gawiki": {
                     "site": "gawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ga.wikipedia.org/wiki/Euro"
                 },
                 "gagwiki": {
                     "site": "gagwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://gag.wikipedia.org/wiki/Euro"
                 },
                 "ganwiki": {
                     "site": "ganwiki",
                     "title": "歐元",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://gan.wikipedia.org/wiki/%E6%AD%90%E5%85%83"
                 },
                 "gcrwiki": {
                     "site": "gcrwiki",
                     "title": "Léro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://gcr.wikipedia.org/wiki/L%C3%A9ro"
                 },
                 "gdwiki": {
                     "site": "gdwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://gd.wikipedia.org/wiki/Euro"
                 },
                 "glwiki": {
                     "site": "glwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://gl.wikipedia.org/wiki/Euro"
                 },
                 "gnwiki": {
                     "site": "gnwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://gn.wikipedia.org/wiki/Euro"
                 },
                 "gotwiki": {
                     "site": "gotwiki",
                     "title": "𐌰𐌹𐍅𐍂𐍉",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://got.wikipedia.org/wiki/%F0%90%8C%B0%F0%90%8C%B9%F0%90%8D%85%F0%90%8D%82%F0%90%8D%89"
                 },
                 "gvwiki": {
                     "site": "gvwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://gv.wikipedia.org/wiki/Euro"
                 },
                 "hakwiki": {
                     "site": "hakwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://hak.wikipedia.org/wiki/Euro"
                 },
                 "hiwiki": {
                     "site": "hiwiki",
                     "title": "यूरो",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://hi.wikipedia.org/wiki/%E0%A4%AF%E0%A5%82%E0%A4%B0%E0%A5%8B"
                 },
                 "hifwiki": {
                     "site": "hifwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://hif.wikipedia.org/wiki/Euro"
                 },
                 "hrwiki": {
                     "site": "hrwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://hr.wikipedia.org/wiki/Euro"
                 },
                 "hsbwiki": {
                     "site": "hsbwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://hsb.wikipedia.org/wiki/Euro"
                 },
                 "hywiki": {
                     "site": "hywiki",
                     "title": "Եվրո",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://hy.wikipedia.org/wiki/%D4%B5%D5%BE%D6%80%D5%B8"
                 },
                 "iawiki": {
                     "site": "iawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ia.wikipedia.org/wiki/Euro"
                 },
                 "iewiki": {
                     "site": "iewiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ie.wikipedia.org/wiki/Euro"
                 },
                 "ilowiki": {
                     "site": "ilowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ilo.wikipedia.org/wiki/Euro"
                 },
                 "iowiki": {
                     "site": "iowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://io.wikipedia.org/wiki/Euro"
                 },
                 "iswiki": {
                     "site": "iswiki",
                     "title": "Evra",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://is.wikipedia.org/wiki/Evra"
                 },
                 "jamwiki": {
                     "site": "jamwiki",
                     "title": "Yuuro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://jam.wikipedia.org/wiki/Yuuro"
                 },
                 "jbowiki": {
                     "site": "jbowiki",
                     "title": "ronru'u",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://jbo.wikipedia.org/wiki/ronru%27u"
                 },
                 "jvwiki": {
                     "site": "jvwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://jv.wikipedia.org/wiki/Euro"
                 },
                 "kawiki": {
                     "site": "kawiki",
                     "title": "ევრო",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ka.wikipedia.org/wiki/%E1%83%94%E1%83%95%E1%83%A0%E1%83%9D"
                 },
                 "kaawiki": {
                     "site": "kaawiki",
                     "title": "Evro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kaa.wikipedia.org/wiki/Evro"
                 },
                 "kbdwiki": {
                     "site": "kbdwiki",
                     "title": "Еуро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kbd.wikipedia.org/wiki/%D0%95%D1%83%D1%80%D0%BE"
                 },
                 "kkwiki": {
                     "site": "kkwiki",
                     "title": "Еуро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kk.wikipedia.org/wiki/%D0%95%D1%83%D1%80%D0%BE"
                 },
                 "knwiki": {
                     "site": "knwiki",
                     "title": "ಯುರೋ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kn.wikipedia.org/wiki/%E0%B2%AF%E0%B3%81%E0%B2%B0%E0%B3%8B"
                 },
                 "krcwiki": {
                     "site": "krcwiki",
                     "title": "Евро",
                     "badges": [
                         "Q17437798"
-                    ]
+                    ],
+                    "url": "https://krc.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "kshwiki": {
                     "site": "kshwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ksh.wikipedia.org/wiki/Euro"
                 },
                 "kuwiki": {
                     "site": "kuwiki",
                     "title": "Ewro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ku.wikipedia.org/wiki/Ewro"
                 },
                 "kvwiki": {
                     "site": "kvwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kv.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "kwwiki": {
                     "site": "kwwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kw.wikipedia.org/wiki/Euro"
                 },
                 "kywiki": {
                     "site": "kywiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ky.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "lawiki": {
                     "site": "lawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://la.wikipedia.org/wiki/Euro"
                 },
                 "ladwiki": {
                     "site": "ladwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lad.wikipedia.org/wiki/Euro"
                 },
                 "lbwiki": {
                     "site": "lbwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lb.wikipedia.org/wiki/Euro"
                 },
                 "lezwiki": {
                     "site": "lezwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lez.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "liwiki": {
                     "site": "liwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://li.wikipedia.org/wiki/Euro"
                 },
                 "lmowiki": {
                     "site": "lmowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lmo.wikipedia.org/wiki/Euro"
                 },
                 "lnwiki": {
                     "site": "lnwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ln.wikipedia.org/wiki/Euro"
                 },
                 "lowiki": {
                     "site": "lowiki",
                     "title": "ຢູໂຣ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lo.wikipedia.org/wiki/%E0%BA%A2%E0%BA%B9%E0%BB%82%E0%BA%A3"
                 },
                 "ltwiki": {
                     "site": "ltwiki",
                     "title": "Euras",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lt.wikipedia.org/wiki/Euras"
                 },
                 "ltgwiki": {
                     "site": "ltgwiki",
                     "title": "Eura",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ltg.wikipedia.org/wiki/Eura"
                 },
                 "lvwiki": {
                     "site": "lvwiki",
                     "title": "Eiro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lv.wikipedia.org/wiki/Eiro"
                 },
                 "mgwiki": {
                     "site": "mgwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mg.wikipedia.org/wiki/Euro"
                 },
                 "miwiki": {
                     "site": "miwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mi.wikipedia.org/wiki/Euro"
                 },
                 "mkwiki": {
                     "site": "mkwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mk.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "mlwiki": {
                     "site": "mlwiki",
                     "title": "യൂറോ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ml.wikipedia.org/wiki/%E0%B4%AF%E0%B5%82%E0%B4%B1%E0%B5%8B"
                 },
                 "mnwiki": {
                     "site": "mnwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mn.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "mrwiki": {
                     "site": "mrwiki",
                     "title": "युरो",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mr.wikipedia.org/wiki/%E0%A4%AF%E0%A5%81%E0%A4%B0%E0%A5%8B"
                 },
                 "mswiki": {
                     "site": "mswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ms.wikipedia.org/wiki/Euro"
                 },
                 "mtwiki": {
                     "site": "mtwiki",
                     "title": "Ewro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mt.wikipedia.org/wiki/Ewro"
                 },
                 "mwlwiki": {
                     "site": "mwlwiki",
                     "title": "Ouro (moneda)",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mwl.wikipedia.org/wiki/Ouro_(moneda)"
                 },
                 "mywiki": {
                     "site": "mywiki",
                     "title": "ယူရို",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://my.wikipedia.org/wiki/%E1%80%9A%E1%80%B0%E1%80%9B%E1%80%AD%E1%80%AF"
                 },
                 "myvwiki": {
                     "site": "myvwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://myv.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "mznwiki": {
                     "site": "mznwiki",
                     "title": "یورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mzn.wikipedia.org/wiki/%DB%8C%D9%88%D8%B1%D9%88"
                 },
                 "napwiki": {
                     "site": "napwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nap.wikipedia.org/wiki/Euro"
                 },
                 "ndswiki": {
                     "site": "ndswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nds.wikipedia.org/wiki/Euro"
                 },
                 "nds_nlwiki": {
                     "site": "nds_nlwiki",
                     "title": "Uro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nds-nl.wikipedia.org/wiki/Uro"
                 },
                 "newiki": {
                     "site": "newiki",
                     "title": "युरो",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ne.wikipedia.org/wiki/%E0%A4%AF%E0%A5%81%E0%A4%B0%E0%A5%8B"
                 },
                 "newwiki": {
                     "site": "newwiki",
                     "title": "युरो",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://new.wikipedia.org/wiki/%E0%A4%AF%E0%A5%81%E0%A4%B0%E0%A5%8B"
                 },
                 "nnwiki": {
                     "site": "nnwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nn.wikipedia.org/wiki/Euro"
                 },
                 "novwiki": {
                     "site": "novwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nov.wikipedia.org/wiki/Euro"
                 },
                 "nrmwiki": {
                     "site": "nrmwiki",
                     "title": "Étchu",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nrm.wikipedia.org/wiki/%C3%89tchu"
                 },
                 "nsowiki": {
                     "site": "nsowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nso.wikipedia.org/wiki/Euro"
                 },
                 "ocwiki": {
                     "site": "ocwiki",
                     "title": "Èuro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://oc.wikipedia.org/wiki/%C3%88uro"
                 },
                 "oswiki": {
                     "site": "oswiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://os.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "pawiki": {
                     "site": "pawiki",
                     "title": "ਯੂਰੋ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pa.wikipedia.org/wiki/%E0%A8%AF%E0%A9%82%E0%A8%B0%E0%A9%8B"
                 },
                 "papwiki": {
                     "site": "papwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pap.wikipedia.org/wiki/Euro"
                 },
                 "pcdwiki": {
                     "site": "pcdwiki",
                     "title": "Uro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pcd.wikipedia.org/wiki/Uro"
                 },
                 "pdcwiki": {
                     "site": "pdcwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pdc.wikipedia.org/wiki/Euro"
                 },
                 "pmswiki": {
                     "site": "pmswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pms.wikipedia.org/wiki/Euro"
                 },
                 "pnbwiki": {
                     "site": "pnbwiki",
                     "title": "یورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://pnb.wikipedia.org/wiki/%DB%8C%D9%88%D8%B1%D9%88"
                 },
                 "pswiki": {
                     "site": "pswiki",
                     "title": "ېورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ps.wikipedia.org/wiki/%DB%90%D9%88%D8%B1%D9%88"
                 },
                 "quwiki": {
                     "site": "quwiki",
                     "title": "Iwru",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://qu.wikipedia.org/wiki/Iwru"
                 },
                 "rmwiki": {
                     "site": "rmwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://rm.wikipedia.org/wiki/Euro"
                 },
                 "roa_tarawiki": {
                     "site": "roa_tarawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://roa-tara.wikipedia.org/wiki/Euro"
                 },
                 "ruewiki": {
                     "site": "ruewiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://rue.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "sahwiki": {
                     "site": "sahwiki",
                     "title": "Эуро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sah.wikipedia.org/wiki/%D0%AD%D1%83%D1%80%D0%BE"
                 },
                 "satwiki": {
                     "site": "satwiki",
                     "title": "ᱤᱣᱩᱨᱳ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sat.wikipedia.org/wiki/%E1%B1%A4%E1%B1%A3%E1%B1%A9%E1%B1%A8%E1%B1%B3"
                 },
                 "scwiki": {
                     "site": "scwiki",
                     "title": "Èuru",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sc.wikipedia.org/wiki/%C3%88uru"
                 },
                 "scnwiki": {
                     "site": "scnwiki",
                     "title": "Euru",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://scn.wikipedia.org/wiki/Euru"
                 },
                 "scowiki": {
                     "site": "scowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sco.wikipedia.org/wiki/Euro"
                 },
                 "sewiki": {
                     "site": "sewiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://se.wikipedia.org/wiki/Euro"
                 },
                 "shwiki": {
                     "site": "shwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sh.wikipedia.org/wiki/Euro"
                 },
                 "skwiki": {
                     "site": "skwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sk.wikipedia.org/wiki/Euro"
                 },
                 "slwiki": {
                     "site": "slwiki",
                     "title": "Evro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sl.wikipedia.org/wiki/Evro"
                 },
                 "smwiki": {
                     "site": "smwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sm.wikipedia.org/wiki/Euro"
                 },
                 "sowiki": {
                     "site": "sowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://so.wikipedia.org/wiki/Euro"
                 },
                 "sqwiki": {
                     "site": "sqwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sq.wikipedia.org/wiki/Euro"
                 },
                 "stqwiki": {
                     "site": "stqwiki",
                     "title": "Euro (Jäild)",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://stq.wikipedia.org/wiki/Euro_(J%C3%A4ild)"
                 },
                 "swwiki": {
                     "site": "swwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sw.wikipedia.org/wiki/Euro"
                 },
                 "szlwiki": {
                     "site": "szlwiki",
                     "title": "Ojro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://szl.wikipedia.org/wiki/Ojro"
                 },
                 "tawiki": {
                     "site": "tawiki",
                     "title": "ஐரோ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ta.wikipedia.org/wiki/%E0%AE%90%E0%AE%B0%E0%AF%8B"
                 },
                 "tewiki": {
                     "site": "tewiki",
                     "title": "యూరో",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://te.wikipedia.org/wiki/%E0%B0%AF%E0%B1%82%E0%B0%B0%E0%B1%8B"
                 },
                 "tgwiki": {
                     "site": "tgwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://tg.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "thwiki": {
                     "site": "thwiki",
                     "title": "ยูโร",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://th.wikipedia.org/wiki/%E0%B8%A2%E0%B8%B9%E0%B9%82%E0%B8%A3"
                 },
                 "tlwiki": {
                     "site": "tlwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://tl.wikipedia.org/wiki/Euro"
                 },
                 "tpiwiki": {
                     "site": "tpiwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://tpi.wikipedia.org/wiki/Euro"
                 },
                 "ttwiki": {
                     "site": "ttwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://tt.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "udmwiki": {
                     "site": "udmwiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://udm.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "ugwiki": {
                     "site": "ugwiki",
                     "title": "ياۋرۇ",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ug.wikipedia.org/wiki/%D9%8A%D8%A7%DB%8B%D8%B1%DB%87"
                 },
                 "urwiki": {
                     "site": "urwiki",
                     "title": "یورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ur.wikipedia.org/wiki/%DB%8C%D9%88%D8%B1%D9%88"
                 },
                 "uzwiki": {
                     "site": "uzwiki",
                     "title": "Yevro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://uz.wikipedia.org/wiki/Yevro"
                 },
                 "vecwiki": {
                     "site": "vecwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://vec.wikipedia.org/wiki/Euro"
                 },
                 "vepwiki": {
                     "site": "vepwiki",
                     "title": "Evro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://vep.wikipedia.org/wiki/Evro"
                 },
                 "vlswiki": {
                     "site": "vlswiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://vls.wikipedia.org/wiki/Euro"
                 },
                 "vowiki": {
                     "site": "vowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://vo.wikipedia.org/wiki/Euro"
                 },
                 "wawiki": {
                     "site": "wawiki",
                     "title": "Uro (manoye)",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://wa.wikipedia.org/wiki/Uro_(manoye)"
                 },
                 "warwiki": {
                     "site": "warwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://war.wikipedia.org/wiki/Euro"
                 },
                 "wuuwiki": {
                     "site": "wuuwiki",
                     "title": "欧元",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://wuu.wikipedia.org/wiki/%E6%AC%A7%E5%85%83"
                 },
                 "xmfwiki": {
                     "site": "xmfwiki",
                     "title": "ევრო",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://xmf.wikipedia.org/wiki/%E1%83%94%E1%83%95%E1%83%A0%E1%83%9D"
                 },
                 "yiwiki": {
                     "site": "yiwiki",
                     "title": "איירא",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://yi.wikipedia.org/wiki/%D7%90%D7%99%D7%99%D7%A8%D7%90"
                 },
                 "yowiki": {
                     "site": "yowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://yo.wikipedia.org/wiki/Euro"
                 },
                 "zh_classicalwiki": {
                     "site": "zh_classicalwiki",
                     "title": "歐元",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://zh-classical.wikipedia.org/wiki/%E6%AD%90%E5%85%83"
                 },
                 "zh_min_nanwiki": {
                     "site": "zh_min_nanwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://zh-min-nan.wikipedia.org/wiki/Euro"
                 },
                 "zh_yuewiki": {
                     "site": "zh_yuewiki",
                     "title": "歐羅",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://zh-yue.wikipedia.org/wiki/%E6%AD%90%E7%BE%85"
                 },
                 "zuwiki": {
                     "site": "zuwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://zu.wikipedia.org/wiki/Euro"
                 },
                 "eowikiquote": {
                     "site": "eowikiquote",
                     "title": "Eŭro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://eo.wikiquote.org/wiki/E%C5%ADro"
                 },
                 "arywiki": {
                     "site": "arywiki",
                     "title": "أورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ary.wikipedia.org/wiki/%D8%A3%D9%88%D8%B1%D9%88"
                 },
                 "svwiki": {
                     "site": "svwiki",
                     "title": "Euro",
                     "badges": [
                         "Q17437796"
-                    ]
+                    ],
+                    "url": "https://sv.wikipedia.org/wiki/Euro"
                 },
                 "lldwiki": {
                     "site": "lldwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lld.wikipedia.org/wiki/Euro"
                 },
                 "cewiki": {
                     "site": "cewiki",
                     "title": "Евро",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ce.wikipedia.org/wiki/%D0%95%D0%B2%D1%80%D0%BE"
                 },
                 "smnwiki": {
                     "site": "smnwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://smn.wikipedia.org/wiki/Euro"
                 },
                 "lijwiki": {
                     "site": "lijwiki",
                     "title": "Euro (Œüro)",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://lij.wikipedia.org/wiki/Euro_(%C5%92%C3%BCro)"
                 },
                 "eowikinews": {
                     "site": "eowikinews",
                     "title": "Kategorio:Eŭro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://eo.wikinews.org/wiki/Kategorio:E%C5%ADro"
                 },
                 "etwikiquote": {
                     "site": "etwikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://et.wikiquote.org/wiki/Euro"
                 },
                 "kabwiki": {
                     "site": "kabwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kab.wikipedia.org/wiki/Euro"
                 },
                 "gucwiki": {
                     "site": "gucwiki",
                     "title": "Eeuro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://guc.wikipedia.org/wiki/Eeuro"
                 },
                 "hewikiquote": {
                     "site": "hewikiquote",
                     "title": "אירו",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://he.wikiquote.org/wiki/%D7%90%D7%99%D7%A8%D7%95"
                 },
                 "htwiki": {
                     "site": "htwiki",
                     "title": "Ewo (lajan)",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ht.wikipedia.org/wiki/Ewo_(lajan)"
                 },
                 "bclwiki": {
                     "site": "bclwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://bcl.wikipedia.org/wiki/Euro"
                 },
                 "xhwiki": {
                     "site": "xhwiki",
                     "title": "I-eur",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://xh.wikipedia.org/wiki/I-eur"
                 },
                 "blkwiki": {
                     "site": "blkwiki",
                     "title": "ယူရို",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://blk.wikipedia.org/wiki/%E1%80%9A%E1%80%B0%E1%80%9B%E1%80%AD%E1%80%AF"
                 },
                 "hawwiki": {
                     "site": "hawwiki",
                     "title": "ʻEulo",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://haw.wikipedia.org/wiki/%CA%BBEulo"
                 },
                 "btmwiki": {
                     "site": "btmwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://btm.wikipedia.org/wiki/Euro"
                 },
                 "kgewiki": {
                     "site": "kgewiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://kge.wikipedia.org/wiki/Euro"
                 },
                 "viwikiquote": {
                     "site": "viwikiquote",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://vi.wikiquote.org/wiki/Euro"
                 },
                 "zeawiki": {
                     "site": "zeawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://zea.wikipedia.org/wiki/Euro"
                 },
                 "stwiki": {
                     "site": "stwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://st.wikipedia.org/wiki/Euro"
                 },
                 "madwiki": {
                     "site": "madwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://mad.wikipedia.org/wiki/Euro"
                 },
                 "rwwiki": {
                     "site": "rwwiki",
                     "title": "Amafaranga y'amayero",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://rw.wikipedia.org/wiki/Amafaranga_y%27amayero"
                 },
                 "sdwiki": {
                     "site": "sdwiki",
                     "title": "يورو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://sd.wikipedia.org/wiki/%D9%8A%D9%88%D8%B1%D9%88"
                 },
                 "kswiki": {
                     "site": "kswiki",
                     "title": "یوٗرو",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://ks.wikipedia.org/wiki/%DB%8C%D9%88%D9%97%D8%B1%D9%88"
                 },
                 "tokwiki": {
                     "site": "tokwiki",
                     "title": "mani Elopa",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://tok.wikipedia.org/wiki/mani_Elopa"
                 },
                 "nlwikibooks": {
                     "site": "nlwikibooks",
                     "title": "Atlas van Europa/Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://nl.wikibooks.org/wiki/Atlas_van_Europa/Euro"
                 },
                 "ibawiki": {
                     "site": "ibawiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://iba.wikipedia.org/wiki/Euro"
                 },
                 "kncwiki": {
                     "site": "kncwiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://knc.wikipedia.org/wiki/Euro"
                 },
                 "olowiki": {
                     "site": "olowiki",
                     "title": "Euro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://olo.wikipedia.org/wiki/Euro"
                 },
                 "isvwiki": {
                     "site": "isvwiki",
                     "title": "Evro",
-                    "badges": []
+                    "badges": [],
+                    "url": "https://isv.wikipedia.org/wiki/Evro"
+                },
+                "fiwikiquote": {
+                    "site": "fiwikiquote",
+                    "title": "Euro",
+                    "badges": [],
+                    "url": "https://fi.wikiquote.org/wiki/Euro"
+                },
+                "siwiki": {
+                    "site": "siwiki",
+                    "title": "යූරෝ",
+                    "badges": [],
+                    "url": "https://si.wikipedia.org/wiki/%E0%B6%BA%E0%B7%96%E0%B6%BB%E0%B7%9D"
                 }
             }
         }

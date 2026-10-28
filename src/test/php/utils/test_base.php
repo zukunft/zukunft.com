@@ -290,6 +290,7 @@ include_once test_paths::UNIT . 'job_tests.php';
 include_once test_paths::UNIT . 'change_log_tests.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UNIT . 'import_tests.php';
+include_once test_paths::UNIT . 'wikidata_tests.php';
 include_once test_paths::UNIT . 'db_setup_tests.php';
 
 // load the testing functions for creating HTML code

@@ -1,0 +1,166 @@
+{
+    "entities": {
+        "Q72": {
+            "id": "Q72",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "Zurich"
+                }
+            },
+            "claims": {
+                "P1082": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+150703",
+                                    "unit": "1"
+                                },
+                                "type": "quantity"
+                            }
+                        },
+                        "qualifiers": {
+                            "P585": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P585",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+1900-12-01T00:00:00Z",
+                                            "precision": 11
+                                        },
+                                        "type": "time"
+                                    }
+                                }
+                            ],
+                            "P459": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P459",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "id": "Q39825"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+423193",
+                                    "unit": "1"
+                                },
+                                "type": "quantity"
+                            }
+                        },
+                        "qualifiers": {
+                            "P585": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P585",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+2021-12-31T00:00:00Z",
+                                            "precision": 11
+                                        },
+                                        "type": "time"
+                                    }
+                                }
+                            ],
+                            "P459": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P459",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "id": "Q56229488"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    }
+                                }
+                            ],
+                            "P1013": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P1013",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "id": "Q56229488"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1082",
+                            "datavalue": {
+                                "value": {
+                                    "amount": "+436332",
+                                    "unit": "1"
+                                },
+                                "type": "quantity"
+                            }
+                        },
+                        "qualifiers": {
+                            "P585": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P585",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+2021-12-31T00:00:00Z",
+                                            "precision": 11
+                                        },
+                                        "type": "time"
+                                    }
+                                }
+                            ],
+                            "P459": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P459",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "id": "Q56229478"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    }
+                                }
+                            ],
+                            "P1013": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P1013",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "id": "Q56229478"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

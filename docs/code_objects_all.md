@@ -60,6 +60,7 @@ the object structure is:
 ├── text_log - object to handle standard io logging
 ├── phr_ids - helper class for phrase id lists
 ├── trm_ids - helper class for term id lists
+├── qlever - import of qlever nt and tsv files
 ├── ref_db - the database const for reference tables
 ├── ref_link_wikidata - link for the reference type wikidata
 ├── source_db - the database const for source tables
@@ -85,6 +86,7 @@ the object structure is:
 ├── view_relation_db - the database const for view relation tables
 ├── triple_db - the database const for triple tables
 ├── word_db - the database const for word tables
+├── word_rdf - the mapping to the RDF format
 ├── apiShared - constants used for the backend to frontend api of zukunft.com
 ├── arithmeticShared - calculate a text with numbers, the four basic operations and brackets
 ├── expressionShared - common parts of the formula expressing handling used in front- and backend

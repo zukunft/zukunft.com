@@ -956,6 +956,16 @@ enum messages: string
     case IMPORT_FAILED = 'failed because '
         . self::VAR_START . self::VAR_SUMMARY . self::VAR_END
         . '.';
+    case WIKIDATA_UNIT_LABEL_MISSING = 'a value of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not imported, because the name of its wikidata unit "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" cannot be read';
+    case WIKIDATA_CRITERION_LABEL_MISSING = 'a value of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not imported, because the name of its wikidata criterion "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" cannot be read';
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';

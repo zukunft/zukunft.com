@@ -39,11 +39,19 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_IMPORT . 'import_wikidata.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once test_paths::CONST . 'files.php';
 include_once test_paths::UTILS . 'test_base.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\import\import_wikidata;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class wikidata_write_tests
@@ -60,6 +68,14 @@ class wikidata_write_tests
     const string PRICE_NAME = 'price';
     const string USD_NAME = 'United States dollar';
     const string EURO_NAME = 'euro';
+    // the wikidata id of the city of Zurich and its population property, whose values have no unit
+    const string ZH_KEY = 'Q72';
+    const string POPULATION_PROPERTY = 'P1082';
+    const string ZH_NAME = 'Zurich';
+    const string POPULATION_NAME = 'population';
+    // the labels of the two "criterion used" items that separate the Zurich population values of the same year
+    const string POPULATION_PRESENT_NAME = 'population present';
+    const string RESIDENT_POPULATION_NAME = 'resident population';
 
     function run(test_cleanup $t): void
     {
@@ -81,10 +97,78 @@ class wikidata_write_tests
         // zukunft.com import json in src/test/resources/import/wikidata/to_import
         $this->assert_convert($t, $imp);
 
+        // convert the captured population of Zurich (Q72 + P1082), whose values have no unit
+        $this->assert_capture($t, $imp, self::ZH_KEY);
+        $this->assert_convert_population($t, $imp);
+
         // negative: an unknown wikidata id returns a failure message and stores nothing
         $test_name = 'store of an unknown wikidata id (' . refs::CHANGE_NEW_KEY . ') fails';
         $bad_msg = $imp->store_json(refs::CHANGE_NEW_KEY);
         $t->assert_true($test_name, !$bad_msg->is_ok());
+    }
+
+    /**
+     * convert the captured population of Zurich (Q72) and the population property (P1082): the values have
+     * no unit, so each value is assigned to the city word itself and no entity-in-unit triple is created
+     * @param test_cleanup $t the test environment with the assert functions
+     * @param import_wikidata $imp the importer with the convert function
+     * @return void
+     */
+    private function assert_convert_population(test_cleanup $t, import_wikidata $imp): void
+    {
+        $test_name = 'every population value of ' . self::ZH_NAME . ' is converted';
+        $imp->store_json(self::POPULATION_PROPERTY);
+        $entity_json = file_get_contents(test_files::IMPORT_WIKIDATA_Q72);
+        $property_json = file_get_contents(test_files::IMPORT_WIKIDATA_P1082);
+        $msg = new user_message();
+        $result = $imp->convert($entity_json, $property_json, $msg);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        // the values up to 1900 have no criterion, many later years have a value for each criterion
+        $test_name = 'each population value of ' . self::ZH_NAME . ' has only the population, the city, the year and its criterion';
+        $target = [
+            [self::POPULATION_NAME, self::ZH_NAME],
+            [self::POPULATION_NAME, self::ZH_NAME, self::POPULATION_PRESENT_NAME],
+            [self::POPULATION_NAME, self::ZH_NAME, self::RESIDENT_POPULATION_NAME]
+        ];
+        $t->assert($test_name, $this->value_words_without_time($result), $target);
+
+        $test_name = 'no two population values of ' . self::ZH_NAME . ' have the same words';
+        $t->assert($test_name, $this->value_words_used_twice($result), []);
+    }
+
+    /**
+     * @param array $import a zukunft.com import json as an array e.g. as created by import_wikidata::convert
+     * @return array the sorted distinct word lists of the values without the time words e.g. [["population", "Zurich"]]
+     */
+    private function value_words_without_time(array $import): array
+    {
+        $time_words = [];
+        foreach ($import[json_fields::WORDS] ?? [] as $word) {
+            if (($word[json_fields::TYPE_NAME] ?? '') == phrase_types::TIME) {
+                $time_words[] = $word[json_fields::NAME];
+            }
+        }
+        $word_lists = [];
+        foreach ($import[json_fields::VALUES] ?? [] as $value) {
+            $word_lists[] = array_values(array_diff($value[json_fields::WORDS], $time_words));
+        }
+        // sorted, so that the result does not depend on the order of the live wikidata claims
+        $result = array_values(array_unique($word_lists, SORT_REGULAR));
+        sort($result);
+        return $result;
+    }
+
+    /**
+     * @param array $import a zukunft.com import json as an array e.g. as created by import_wikidata::convert
+     * @return array the word lists that more than one value uses, which would be conflicting values in the import
+     */
+    private function value_words_used_twice(array $import): array
+    {
+        $word_lists = array_column($import[json_fields::VALUES] ?? [], json_fields::WORDS);
+        $doubles = array_diff_key($word_lists, array_unique($word_lists, SORT_REGULAR));
+        return array_values($doubles);
     }
 
     /**
@@ -135,8 +219,13 @@ class wikidata_write_tests
 
         // convert and write the zukunft.com import json to the wikidata to import folder
         $test_name = 'the converted import json is written to the wikidata to import folder';
-        $file = $imp->convert_to_file(self::USD_KEY, $entity_json, $property_json);
+        $msg = new user_message();
+        $file = $imp->convert_to_file(self::USD_KEY, $entity_json, $property_json, $msg);
         $t->assert_text_contains($test_name, $file, test_paths::IMPORT_WIKIDATA_TO_IMPORT . import_wikidata::IMPORT_PREFIX . self::USD_KEY);
+
+        $test_name = 'the name of the unit of every US dollar price can be read from wikidata';
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
 
         // the written import file contains the price word and the United States dollar in euro triple
         if ($file != '') {

@@ -57,8 +57,8 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 class import_wikidata
 {
 
-    // cache of the already read unit labels by wikidata id so that each unit is read only once per convert
-    private array $unit_labels = [];
+    // cache of the already read labels of units and criteria by wikidata id so that each is read only once per convert
+    private array $item_labels = [];
 
     // the base url of the wikidata entity data json api; the wikidata id and the json extension are added
     const string ENTITY_DATA_URL = 'https://www.wikidata.org/wiki/Special:EntityData/';
@@ -84,6 +84,14 @@ class import_wikidata
     const string WD_TIME = 'time';
     // the wikidata property id of the "point in time" qualifier that gives the date of a value
     const string WD_POINT_IN_TIME = 'P585';
+    // the wikidata property id of the "criterion used" qualifier that separates values of the same date
+    // e.g. the "resident population" and the "population present" of Zurich
+    const string WD_CRITERION_USED = 'P1013';
+    // the keys of the words, triples and value that one wikidata claim adds to the import json
+    const string PART_WORD_TYPES = 'word_types';
+    const string PART_WORD_REFS = 'word_refs';
+    const string PART_TRIPLE_UNITS = 'triple_units';
+    const string PART_VALUE = 'value';
     // the verb that links the entity and the unit in the created triple e.g. "United States dollar" in "euro"
     const string IN_VERB = 'in';
 
@@ -191,12 +199,14 @@ class import_wikidata
      * for each value of the property in the entity (e.g. each price of the US dollar) a value is created
      * that is assigned to the property word (e.g. 'price'), the entity-in-unit triple (e.g. 'United States
      * dollar in euro') and the year of the value; the unit name (e.g. 'euro') is read from wikidata via the
-     * unit id given in the value (e.g. 'Q4916')
+     * unit id given in the value (e.g. 'Q4916'); a value without a unit is assigned to the entity word itself
+     * and the criteria of a value (e.g. 'resident population') are added as words (see claim_import)
      * @param string $entity_json the wikidata json of the entity e.g. the content of Q4917.json
      * @param string $property_json the wikidata json of the property e.g. the content of P2284.json
-     * @return array the zukunft.com import json as an array ready to be json encoded
+     * @param user_message $msg to report each value that is skipped, because the name of its unit or of a criterion cannot be read
+     * @return array the zukunft.com import json as an array ready to be json encoded or an empty array if the entity or the property has no label
      */
-    function convert(string $entity_json, string $property_json): array
+    function convert(string $entity_json, string $property_json, user_message $msg): array
     {
         $result = [];
         $entity = json_decode($entity_json, true);
@@ -209,30 +219,25 @@ class import_wikidata
             $property_name = $this->label($prp);
             $property_id = $prp[self::WD_ID] ?? '';
 
-            // collect the word names with their phrase type, the wikidata reference id, the triple units and the values
-            $word_types = [$property_name => '', $entity_name => ''];
-            $word_refs = [$property_name => $property_id, $entity_name => $entity_id];
-            $triple_units = [];
-            $values = [];
-            foreach ($ent[self::WD_CLAIMS][$property_id] ?? [] as $claim) {
-                $value = $claim[self::WD_MAINSNAK][self::WD_DATAVALUE][self::WD_VALUE] ?? null;
-                if ($value != null) {
-                    $unit_id = $this->id_from_url($value[self::WD_UNIT] ?? '');
-                    $unit_name = $this->unit_label($unit_id);
-                    $year = $this->claim_year($claim);
-                    $triple_name = $entity_name . ' ' . self::IN_VERB . ' ' . $unit_name;
-                    $word_types[$unit_name] = '';
-                    $word_refs[$unit_name] = $unit_id;
-                    $triple_units[$triple_name] = $unit_name;
-                    $val_words = [$property_name, $triple_name];
-                    if ($year != '') {
-                        $word_types[$year] = phrase_types::TIME;
-                        $val_words[] = $year;
+            // without a label the entity or the property cannot be named as a word, so nothing is converted
+            if ($entity_name != '' and $property_name != '') {
+                // collect the word names with their phrase type, the wikidata reference id, the triple units and the values
+                $word_types = [$property_name => '', $entity_name => ''];
+                $word_refs = [$property_name => $property_id, $entity_name => $entity_id];
+                $triple_units = [];
+                $values = [];
+                foreach ($ent[self::WD_CLAIMS][$property_id] ?? [] as $claim) {
+                    $part = $this->claim_import($claim, $entity_name, $property_name, $msg);
+                    if ($part != []) {
+                        // the union keeps the numeric keys of the years, which array_merge would renumber
+                        $word_types += $part[self::PART_WORD_TYPES];
+                        $word_refs += $part[self::PART_WORD_REFS];
+                        $triple_units += $part[self::PART_TRIPLE_UNITS];
+                        $values[] = $part[self::PART_VALUE];
                     }
-                    $values[] = [json_fields::WORDS => $val_words, json_fields::NUMBER => ltrim($value[self::WD_AMOUNT] ?? '', '+')];
                 }
+                $result = $this->import_json($entity_name, $word_types, $word_refs, $triple_units, $values);
             }
-            $result = $this->import_json($entity_name, $word_types, $word_refs, $triple_units, $values);
         }
         return $result;
     }
@@ -243,16 +248,17 @@ class import_wikidata
      * @param string $entity_id the wikidata id of the entity used for the cache file name e.g. "Q4917"
      * @param string $entity_json the wikidata json of the entity e.g. the content of Q4917.json
      * @param string $property_json the wikidata json of the property e.g. the content of P2284.json
+     * @param user_message $msg to report each value that is skipped, because the name of its unit or of a criterion cannot be read
      * @param string|null $path the target directory; null uses the wikidata to import folder
      * @return string the path of the written import file or an empty string if nothing has been written
      */
-    function convert_to_file(string $entity_id, string $entity_json, string $property_json, ?string $path = null): string
+    function convert_to_file(string $entity_id, string $entity_json, string $property_json, user_message $msg, ?string $path = null): string
     {
         $result = '';
         if ($path === null) {
             $path = test_paths::IMPORT_WIKIDATA_TO_IMPORT;
         }
-        $import = $this->convert($entity_json, $property_json);
+        $import = $this->convert($entity_json, $property_json, $msg);
         if ($import != []) {
             if (!is_dir($path)) {
                 mkdir($path, 0777, true);
@@ -290,7 +296,8 @@ class import_wikidata
     {
         $words = [];
         foreach ($word_types as $name => $type) {
-            $word = [json_fields::NAME => $name];
+            // php turns a numeric key such as the year "2016" into an int, but a word name is a text
+            $word = [json_fields::NAME => (string)$name];
             if ($type != '') {
                 $word[json_fields::TYPE_NAME] = $type;
             }
@@ -360,26 +367,117 @@ class import_wikidata
     }
 
     /**
-     * read the english label of the given wikidata unit e.g. "euro" for "Q4916"
-     * the unit json is read from the captured fixture if present, otherwise it is requested from wikidata
-     * @param string $unit_id the wikidata id of the unit e.g. "Q4916"
-     * @return string the english label of the unit or an empty string if it cannot be read
+     * create the words, the triple and the value that one wikidata claim adds to the import json
+     * a value is assigned to the property word, the entity-in-unit triple (or the entity word if it has no unit),
+     * its year and the words of its criteria, so that e.g. two populations of the same year stay apart
+     * @param array $claim a wikidata statement of the property e.g. one price of the US dollar
+     * @param string $entity_name the name of the entity e.g. "United States dollar"
+     * @param string $property_name the name of the property e.g. "price"
+     * @param user_message $msg to report the value if the name of its unit or of a criterion cannot be read
+     * @return array the word types, word refs, triple units and the value of the claim (see the PART_* keys)
+     *               or an empty array if the claim has no value or the value is skipped
      */
-    private function unit_label(string $unit_id): string
+    private function claim_import(array $claim, string $entity_name, string $property_name, user_message $msg): array
+    {
+        $result = [];
+        $value = $claim[self::WD_MAINSNAK][self::WD_DATAVALUE][self::WD_VALUE] ?? null;
+        if ($value != null) {
+            $unit_id = $this->id_from_url($value[self::WD_UNIT] ?? '');
+            $unit_name = $this->item_label($unit_id);
+            $unit_phr_name = $this->unit_phrase_name($entity_name, $unit_id, $unit_name);
+            $criteria = $this->claim_criteria($claim);
+            $unnamed_criterion_id = array_search('', $criteria, true);
+            if ($unit_phr_name == '') {
+                $msg->add(msg_id::WIKIDATA_UNIT_LABEL_MISSING, [msg_id::VAR_NAME => $entity_name, msg_id::VAR_ID => $unit_id]);
+            } elseif ($unnamed_criterion_id !== false) {
+                $msg->add(msg_id::WIKIDATA_CRITERION_LABEL_MISSING, [msg_id::VAR_NAME => $entity_name, msg_id::VAR_ID => $unnamed_criterion_id]);
+            } else {
+                $word_types = [];
+                $word_refs = [];
+                $triple_units = [];
+                $val_words = [$property_name, $unit_phr_name];
+                if ($unit_name != '') {
+                    $word_types[$unit_name] = '';
+                    $word_refs[$unit_name] = $unit_id;
+                    $triple_units[$unit_phr_name] = $unit_name;
+                }
+                $year = $this->claim_year($claim);
+                if ($year != '') {
+                    $word_types[$year] = phrase_types::TIME;
+                    $val_words[] = $year;
+                }
+                foreach ($criteria as $criterion_id => $criterion_name) {
+                    $word_types[$criterion_name] = '';
+                    $word_refs[$criterion_name] = $criterion_id;
+                    $val_words[] = $criterion_name;
+                }
+                $result = [
+                    self::PART_WORD_TYPES => $word_types,
+                    self::PART_WORD_REFS => $word_refs,
+                    self::PART_TRIPLE_UNITS => $triple_units,
+                    self::PART_VALUE => [json_fields::WORDS => $val_words, json_fields::NUMBER => ltrim($value[self::WD_AMOUNT] ?? '', '+')]
+                ];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * read the english label of the given wikidata item e.g. "euro" for the unit "Q4916"
+     * the item json is read from the captured fixture if present, otherwise it is requested from wikidata
+     * @param string $item_id the wikidata id of a unit or a criterion e.g. "Q4916"
+     * @return string the english label of the item or an empty string if it cannot be read
+     */
+    private function item_label(string $item_id): string
     {
         $result = '';
-        if ($unit_id != '') {
-            if (array_key_exists($unit_id, $this->unit_labels)) {
-                $result = $this->unit_labels[$unit_id];
+        if ($item_id != '') {
+            if (array_key_exists($item_id, $this->item_labels)) {
+                $result = $this->item_labels[$item_id];
             } else {
-                $file = test_paths::IMPORT_WIKIDATA_CACHE . $unit_id . self::JSON_EXTENSION;
-                $json = file_exists($file) ? file_get_contents($file) : $this->get_entity_json($unit_id);
+                $file = test_paths::IMPORT_WIKIDATA_CACHE . $item_id . self::JSON_EXTENSION;
+                $json = file_exists($file) ? file_get_contents($file) : $this->get_entity_json($item_id);
                 $decoded = json_decode($json, true);
                 if (is_array($decoded)) {
                     $result = $this->label($this->first_entity($decoded));
                 }
-                $this->unit_labels[$unit_id] = $result;
+                $this->item_labels[$item_id] = $result;
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $claim a wikidata statement that may have "criterion used" (P1013) qualifiers
+     * @return array the label of each criterion by its wikidata id e.g. ["Q56229488" => "resident population"],
+     *               with an empty label if it cannot be read
+     */
+    private function claim_criteria(array $claim): array
+    {
+        $result = [];
+        foreach ($claim[self::WD_QUALIFIERS][self::WD_CRITERION_USED] ?? [] as $qualifier) {
+            $criterion_id = $qualifier[self::WD_DATAVALUE][self::WD_VALUE][self::WD_ID] ?? '';
+            if ($criterion_id != '') {
+                $result[$criterion_id] = $this->item_label($criterion_id);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $entity_name the name of the entity e.g. "United States dollar"
+     * @param string $unit_id the wikidata id of the unit of a value e.g. "Q4916" or an empty string for a value without unit
+     * @param string $unit_name the name of the unit e.g. "euro" or an empty string if it cannot be read
+     * @return string the phrase name that the value gets for its unit e.g. "United States dollar in euro",
+     *                the entity name for a value without unit or an empty string if the unit name cannot be read
+     */
+    private function unit_phrase_name(string $entity_name, string $unit_id, string $unit_name): string
+    {
+        $result = '';
+        if ($unit_id == '') {
+            $result = $entity_name;
+        } elseif ($unit_name != '') {
+            $result = $entity_name . ' ' . self::IN_VERB . ' ' . $unit_name;
         }
         return $result;
     }

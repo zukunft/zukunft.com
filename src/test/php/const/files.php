@@ -193,12 +193,6 @@ class files
 
 
     /*
-     * curl test files
-     */
-
-    CONST string WIKIDATA_ZURICH = test_paths::IMPORT_WIKIDATA . 'Q72' . self::JSON;
-
-    /*
      * sql
      */
 
@@ -342,10 +336,26 @@ class files
     CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
 
     // the raw wikidata api responses used by the wikidata converter tests, so not import json
+    CONST string IMPORT_WIKIDATA_P1082 = test_paths::IMPORT_WIKIDATA_CACHE . 'P1082' . self::JSON;
     CONST string IMPORT_WIKIDATA_P2284 = test_paths::IMPORT_WIKIDATA_CACHE . 'P2284' . self::JSON;
+    CONST string IMPORT_WIKIDATA_Q72 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q72' . self::JSON;
     CONST string IMPORT_WIKIDATA_Q167 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q167' . self::JSON;
     CONST string IMPORT_WIKIDATA_Q4916 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q4916' . self::JSON;
     CONST string IMPORT_WIKIDATA_Q4917 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q4917' . self::JSON;
+    // the criteria "population present" and "resident population" of the Zurich population values
+    CONST string IMPORT_WIKIDATA_Q56229478 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q56229478' . self::JSON;
+    CONST string IMPORT_WIKIDATA_Q56229488 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q56229488' . self::JSON;
+    // the hand made wikidata answers of the converter unit tests and their expected import json
+    CONST string IMPORT_WIKIDATA_UNIT_P2284 = test_paths::IMPORT_WIKIDATA_UNIT . 'P2284' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q4917 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q4917' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917 = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917' . self::JSON;
+    // three real population values of Zurich without a unit: one without a criterion and two of the same year with a criterion each
+    CONST string IMPORT_WIKIDATA_UNIT_P1082 = test_paths::IMPORT_WIKIDATA_UNIT . 'P1082' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q72' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72' . self::JSON;
+    // a hand made unit without a name in the cache folder, where the converter reads the units from;
+    // Q0 is no wikidata id, so no live capture overwrites it
+    CONST string IMPORT_WIKIDATA_Q0 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q0' . self::JSON;
 
     // XBRL filesets (zipped instance + taxonomy delivered by an issuer)
     CONST string IMPORT_XBRL_ABB_2013_ZIP = test_paths::IMPORT_XBRL_ZIP . 'abb-2013-xbrl_fileset-20131231' . self::ZIP;

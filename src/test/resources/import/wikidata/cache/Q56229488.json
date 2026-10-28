@@ -1,0 +1,299 @@
+{
+    "entities": {
+        "Q56229488": {
+            "pageid": 56170591,
+            "ns": 0,
+            "title": "Q56229488",
+            "lastrevid": 2474626972,
+            "modified": "2026-03-22T16:04:12Z",
+            "type": "item",
+            "id": "Q56229488",
+            "labels": {
+                "cs": {
+                    "language": "cs",
+                    "value": "obyvatelstvo bydlící (tj. hlášené v obci k trvalému pobytu)"
+                },
+                "de": {
+                    "language": "de",
+                    "value": "Ständige Wohnbevölkerung"
+                },
+                "en": {
+                    "language": "en",
+                    "value": "resident population"
+                },
+                "nl": {
+                    "language": "nl",
+                    "value": "ingezeten bevolking (dat wil zeggen gemeld in de gemeente voor permanent verblijf)"
+                },
+                "tr": {
+                    "language": "tr",
+                    "value": "yerleşik nüfus (örn. daimi ikamet olarak belediye bildirilen)"
+                },
+                "ca": {
+                    "language": "ca",
+                    "value": "població resident (per exemple, que hi té residència permanent)"
+                },
+                "be-tarask": {
+                    "language": "be-tarask",
+                    "value": "пражываючае насельніцтва (т. б. стала пражывае ў мясцовасьці)"
+                },
+                "eo": {
+                    "language": "eo",
+                    "value": "loĝanta populacio (t.e. raportita al la municipo por daŭra loĝado)"
+                },
+                "ja": {
+                    "language": "ja",
+                    "value": "居住人口"
+                },
+                "gsw": {
+                    "language": "gsw",
+                    "value": "Ständige Wohnbevölkerung"
+                },
+                "sl": {
+                    "language": "sl",
+                    "value": "prebivalstvo s stalnim prebivališčem"
+                },
+                "be": {
+                    "language": "be",
+                    "value": "колькасць насельнікаў-рэзідэнтаў"
+                },
+                "ru": {
+                    "language": "ru",
+                    "value": "постоянное население"
+                },
+                "pt": {
+                    "language": "pt",
+                    "value": "População residente"
+                },
+                "nb": {
+                    "language": "nb",
+                    "value": "fastboende befolkning"
+                },
+                "gl": {
+                    "language": "gl",
+                    "value": "poboación residente"
+                },
+                "es": {
+                    "language": "es",
+                    "value": "población residente"
+                }
+            },
+            "descriptions": {
+                "cs": {
+                    "language": "cs",
+                    "value": "způsob stanovení počtu obyvatel"
+                },
+                "de": {
+                    "language": "de",
+                    "value": "Methode zur Bestimmung der Wohnbevölkerung"
+                },
+                "en": {
+                    "language": "en",
+                    "value": "method of determining the population based on reported permanent residence"
+                },
+                "tr": {
+                    "language": "tr",
+                    "value": "nüfus belirleme yöntemi"
+                },
+                "be-tarask": {
+                    "language": "be-tarask",
+                    "value": "спосаб падліку колькасьці насельніцтва"
+                },
+                "gsw": {
+                    "language": "gsw",
+                    "value": "Definition der Wohnbevölkerung gemäss Q285453"
+                },
+                "ru": {
+                    "language": "ru",
+                    "value": "метод определения численности населения на основе постоянных или длительно проживающих жителей"
+                },
+                "es": {
+                    "language": "es",
+                    "value": "método para determinar la población a partir de los datos sobre la residencia permanente"
+                }
+            },
+            "aliases": {
+                "cs": [
+                    {
+                        "language": "cs",
+                        "value": "obyvatelstvo bydlící (osoby s trvalým nebo dlouhodobým pobytem)"
+                    }
+                ],
+                "de": [
+                    {
+                        "language": "de",
+                        "value": "Wohnbevölkerung (dauerhaft oder langfristig ansässig)"
+                    }
+                ],
+                "nl": [
+                    {
+                        "language": "nl",
+                        "value": "inwonende bevolking (langdurig of permanent)"
+                    }
+                ],
+                "tr": [
+                    {
+                        "language": "tr",
+                        "value": "yerleşik nüfus (daimi veya uzun süreli ikamet edenler)"
+                    }
+                ],
+                "ca": [
+                    {
+                        "language": "ca",
+                        "value": "població resident (permanent o de llarga estada)"
+                    }
+                ],
+                "be-tarask": [
+                    {
+                        "language": "be-tarask",
+                        "value": "колькасьць жыхароў (сталыя ці доўгатэрміновыя рэзыдэнты)"
+                    },
+                    {
+                        "language": "be-tarask",
+                        "value": "колькасьць жыхароў"
+                    }
+                ],
+                "ja": [
+                    {
+                        "language": "ja",
+                        "value": "居住人口 (永住者または長期居住者)"
+                    }
+                ],
+                "sl": [
+                    {
+                        "language": "sl",
+                        "value": "rezidentno prebivalstvo"
+                    }
+                ]
+            },
+            "claims": {
+                "P31": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P31",
+                            "hash": "34279438acea536f81cf212db8e7bc04bd46a4bd",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 111243531,
+                                    "id": "Q111243531"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "Q56229488$f851bc2d-465c-5b78-4c55-a5d1ff8e20d1",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "5f022da66446de630d35c467b14f7cd1666755d4",
+                                "snaks": {
+                                    "P854": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P854",
+                                            "hash": "8fb0afdda8a5645327e14ddbd27184b5c72f3f4c",
+                                            "datavalue": {
+                                                "value": "https://www.bfs.admin.ch/bfs/de/home/statistiken/kataloge-datenbanken/definitionen.assetdetail.5935888.html",
+                                                "type": "string"
+                                            },
+                                            "datatype": "url"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P854"
+                                ]
+                            },
+                            {
+                                "hash": "6457c20f60e8d16c3f6fcbcb4512babed4f9f169",
+                                "snaks": {
+                                    "P854": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P854",
+                                            "hash": "6fbb33a3f1b63fd719b91f7c3555f9c39b1b34d9",
+                                            "datavalue": {
+                                                "value": "https://www.stadt-zuerich.ch/prd/de/index/statistik/themen/bevoelkerung/bevoelkerungsentwicklung/bevoelkerungsdefinition.html",
+                                                "type": "string"
+                                            },
+                                            "datatype": "url"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P854"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "P973": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P973",
+                            "hash": "fc5a3a2df1a9175fb0a388c0ba7a7facf6759c97",
+                            "datavalue": {
+                                "value": "https://www.czso.cz/documents/10180/25385875/19524039+2400013a04.pdf/a5c7fb45-3ad3-49ac-bab7-2a10d624043f?version=1.0",
+                                "type": "string"
+                            },
+                            "datatype": "url"
+                        },
+                        "type": "statement",
+                        "id": "Q56229488$022226D2-4BEE-4CAE-87F4-B116EB3FB2BF",
+                        "rank": "normal"
+                    }
+                ],
+                "P279": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P279",
+                            "hash": "008fe22594b7f53fb7b372dc54bb0eea3dfdea5e",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 33829,
+                                    "id": "Q33829"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "Q56229488$D710B4CF-5B75-4092-AAD7-CC3761BC2C25",
+                        "rank": "normal"
+                    }
+                ],
+                "P2671": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2671",
+                            "hash": "74e540641df14c254206061434df4dd1c9ea06a2",
+                            "datavalue": {
+                                "value": "/g/121f8yqn",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q56229488$C787EEF0-734D-4A17-813A-F92BA4163F87",
+                        "rank": "normal"
+                    }
+                ]
+            },
+            "sitelinks": {
+                "ptwiki": {
+                    "site": "ptwiki",
+                    "title": "População residente",
+                    "badges": [],
+                    "url": "https://pt.wikipedia.org/wiki/Popula%C3%A7%C3%A3o_residente"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "entities": {
+        "P2284": {
+            "id": "P2284",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "price"
+                }
+            }
+        }
+    }
+}

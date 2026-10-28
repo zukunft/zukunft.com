@@ -1,0 +1,13 @@
+{
+    "entities": {
+        "P1082": {
+            "id": "P1082",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "population"
+                }
+            }
+        }
+    }
+}

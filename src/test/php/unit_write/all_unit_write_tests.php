@@ -58,6 +58,7 @@ use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
 use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
+use const Zukunft\ZukunftCom\test\php\utils\INTEGRATION_TEST;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
@@ -193,6 +194,10 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
+                // reads the live wikidata and refreshes the captured json of the wikidata cache folder
+                if (INTEGRATION_TEST) {
+                    new wikidata_write_tests()->run($t);
+                }
                 new update_put_write_tests()->run($t);
 
                 // url tests

@@ -6265,6 +6265,9 @@
         \-- term_list - @return string with all names of the list
     \-- names
         \-- term_list - @return array a sorted list of the term names
+\-- predicates
+    \-- import
+        \-- qlever - 
 \-- extract
     \-- 1
         \-- verb_list - @returns array with the names on the db keys
