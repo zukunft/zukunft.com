@@ -147,6 +147,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\def as def_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -1867,8 +1868,9 @@ class test_base
     /**
      * a page that takes longer than the expected response time starts with the loading text
      * (html_base::loading_start), whose count starts at the seconds since the request start,
-     * so the count is replaced by the fixed test seconds before the page is compared;
-     * only for the snapshot, the real page keeps the seconds of the request
+     * so the count is replaced by the fixed test seconds for both the actual page and the snapshot
+     * before an html page is compared and when a snapshot is written (see assert_typed and
+     * file_content); only for the test compare, the real page keeps the seconds of the request
      *
      * @param string $html the html page as received from the pod
      * @return string the html page with the loading count of self::TEST_LOADING_SECONDS
@@ -1921,6 +1923,19 @@ class test_base
             $absolute[] = $attribute . '="' . $url . '/';
         }
         return str_replace($relative, $absolute, $html);
+    }
+
+    /**
+     * @return array the pinned views of config.yaml by url name, each with the url or the view name
+     *               and the phrase name and with the name and the tooltip (see html_base::start_page)
+     */
+    function pinned_views(): array
+    {
+        $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
+        $pin_lst = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::SYSTEM][words::VIEW]
+            [words::STARTUP][triples::PINNED_VIEWS] ?? [];
+        unset($pin_lst[words::TOOLTIP_COMMENT]);
+        return $pin_lst;
     }
 
     /**
@@ -1990,8 +2005,8 @@ class test_base
     {
         $lib = new library();
         if ($file_type == test_files::HTML) {
-            $actual = $lib->trim_html($actual);
-            $expected = $lib->trim_html($expected);
+            $actual = $lib->trim_html($this->fix_volatile_loading_seconds($actual));
+            $expected = $lib->trim_html($this->fix_volatile_loading_seconds($expected));
         } elseif ($file_type == test_files::SQL) {
             $actual = $lib->trim_sql($actual);
             $expected = $lib->trim_sql($expected);
@@ -2014,7 +2029,8 @@ class test_base
         $content = $actual;
         if ($file_type == test_files::HTML) {
             $lib = new library();
-            $content = $lib->format_html($actual);
+            // with the fixed loading seconds, so that a new run does not change the snapshot
+            $content = $lib->format_html($this->fix_volatile_loading_seconds($actual));
         }
         return $content;
     }

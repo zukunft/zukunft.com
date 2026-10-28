@@ -109,11 +109,28 @@ class triples
     const string RESPONSE_TIME = 'response time';
     const string ROW_LIMIT = 'row limit';
     const string SIDE_WIDTH = 'side width';
+    // the two word colour keys of the editors in config.yaml (see def::FALLBACK_EDITOR_COLOURS)
+    const string SHARED_SOFT = 'shared soft';
+    const string DANGER_SOFT = 'danger soft';
+    const string SUCCESS_SOFT = 'success soft';
+    const string PREVIEW_TEXT = 'preview text';
+    const string PREVIEW_LABEL = 'preview label';
+    const string PREVIEW_MUTED = 'preview muted';
+    const string PREVIEW_PANEL = 'preview panel';
+    const string PREVIEW_BORDER = 'preview border';
+    const string PREVIEW_FIELD = 'preview field';
+    const string PREVIEW_RULE = 'preview rule';
+    const string PREVIEW_SECTION = 'preview section';
+    const string PREVIEW_ASSUMED = 'preview assumed';
+    const string PREVIEW_NEGATIVE = 'preview negative';
     // the views linked on the start page (config.yaml system view startup)
     const string PINNED_VIEWS = 'pinned views';
     // the config.yaml keys whose sub keys are names of the data e.g. the url name of a pinned view,
     // which therefore need no word const (see coding_rule_tests::config_yaml_word_triple_tests)
     const array CONFIG_DATA_KEYS = [self::PINNED_VIEWS];
+    // the view and the phrase of a pinned view without url, from which the test run creates the url
+    const string VIEW_NAME = 'view name';
+    const string PHRASE_NAME = 'phrase name';
     const string SOURCE_TABLE = 'source table';
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';

@@ -125,7 +125,7 @@ class localhost_ui_tests
         $sys->times->switch(system_time_type::LOCALHOST_VIEWS);
         $page = (string)file_get_contents($url);
         $sys->times->switch();
-        $page = $t->fix_volatile_loading_seconds($page);
+        // the loading seconds of the slow page are fixed by the html compare (see test_base::fix_volatile_loading_seconds)
         // the pod links root relative, so link to the pod like the other views_by_id snapshots
         $t->assert_html_page($test_name, $t->link_to_pod($page, THIS_URL),
             system_view_ui_tests::START_PAGE_DETAILS_FILE, test_base::TIMEOUT_LIMIT_IMPORT);

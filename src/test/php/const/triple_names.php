@@ -250,14 +250,14 @@ class triple_names
     const string PLACE_OF_USER = 'place of user';
     // the base phrase of the table editor example (problem_main_reasons.json)
     const string POPULISM_SOLUTION = 'populism solution';
-    const int POPULISM_SOLUTION_ID = 1206;
+    const int POPULISM_SOLUTION_ID = 1221;
     const string SYSTEM_COLUMN_MAIN = 'main column (system)';
     const int SYSTEM_COLUMN_MAIN_ID = 202;
     // the config.yaml switch of the javascript of the calculator pages
     const string USE_JAVASCRIPT = shared_triples::USE_JAVASCRIPT;
-    const int USE_JAVASCRIPT_ID = 771;
+    const int USE_JAVASCRIPT_ID = 773;
     const string FOR_CALCULATOR = shared_triples::FOR_CALCULATOR;
-    const int FOR_CALCULATOR_ID = 772;
+    const int FOR_CALCULATOR_ID = 774;
     // the chart type tiers of solution_prio.json and the two charts of the start page ranking
     // (see triples::SYSTEM_CHART_TYPE and docs/llm/frontend.md "A table as a chart")
     const string SYSTEM_CHART_TYPE = shared_triples::SYSTEM_CHART_TYPE;
@@ -270,23 +270,23 @@ class triple_names
     // db setup imports last, so the ids follow the highest triple id of the seed data in the
     // order of the import levels; check them in the triple list.csv
     const string SYSTEM_CHART_TYPE_MAYOR = shared_triples::SYSTEM_CHART_TYPE_MAYOR;
-    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2679;
+    const int SYSTEM_CHART_TYPE_MAYOR_ID = 2694;
     const string GAIN_AND_LOSS = 'potential gain and potential loss';
-    const int GAIN_AND_LOSS_ID = 2680;
+    const int GAIN_AND_LOSS_ID = 2695;
     const string LEVERAGE_OF_GAIN_AND_LOSS = 'leverage plot of potential gain and potential loss';
-    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2681;
+    const int LEVERAGE_OF_GAIN_AND_LOSS_ID = 2696;
     const string CHART_LEVERAGE_OF_GAIN_AND_LOSS = 'chart leverage plot of potential gain and potential loss';
-    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2682;
+    const int CHART_LEVERAGE_OF_GAIN_AND_LOSS_ID = 2697;
     // the field types and properties of process_catch_fields.json, appended like the chart
     // triples above, so they move with them; check them in the triple list.csv
     const string FIELD_NUMBER_WITH_LIMITS = shared_triples::FIELD_NUMBER_WITH_LIMITS;
-    const int FIELD_NUMBER_WITH_LIMITS_ID = 2710;
+    const int FIELD_NUMBER_WITH_LIMITS_ID = 2725;
     const string FIELD_PHRASE_SELECTOR_TYPE = shared_triples::FIELD_PHRASE_SELECTOR_TYPE;
-    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2712;
+    const int FIELD_PHRASE_SELECTOR_TYPE_ID = 2727;
     const string FIELD_LIMIT_DOWN = shared_triples::FIELD_LIMIT_DOWN;
-    const int FIELD_LIMIT_DOWN_ID = 2696;
+    const int FIELD_LIMIT_DOWN_ID = 2711;
     const string FIELD_STEP = shared_triples::FIELD_STEP;
-    const int FIELD_STEP_ID = 2697;
+    const int FIELD_STEP_ID = 2712;
     // the fields of the input field test (unit_ui/use_case_ui_tests.php), which exist in no
     // database, so their ids are fixed like SYSTEM_TEST_ADD_ID
     const string FIELD_INHABITANTS = 'field inhabitants';
@@ -428,26 +428,26 @@ class triple_names
     const int COLUMN_LOSS_OF_REASON_EXPLAINS_REASON_ID = 295;
     // the reasons of global warming of problem_global_warming_reasons.json, whose table page lists them
     const string GLOBAL_WARMING_REASON = 'global warming reason';
-    const int GLOBAL_WARMING_REASON_ID = 1652;
+    const int GLOBAL_WARMING_REASON_ID = 1667;
     const string HEAT_MORTALITY = 'heat mortality';
-    const int HEAT_MORTALITY_ID = 1131;
+    const int HEAT_MORTALITY_ID = 1146;
     const string HEAT_MORTALITY_REASON = 'heat mortality (reason)';
-    const int HEAT_MORTALITY_REASON_ID = 1654;
+    const int HEAT_MORTALITY_REASON_ID = 1669;
     const string CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON = 'climate gas emissions (global warming reason)';
-    const int CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID = 1673;
+    const int CLIMATE_GAS_EMISSIONS_GLOBAL_WARMING_REASON_ID = 1688;
     const string HEAT_MORTALITY_GLOBAL_WARMING_REASON = 'heat mortality (global warming reason)';
-    const int HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID = 1675;
+    const int HEAT_MORTALITY_GLOBAL_WARMING_REASON_ID = 1690;
     // the solutions of global warming of problem_global_warming_reasons.json, whose table page lists them
     const string CLIMATE_ADAPTATION = 'climate adaptation';
-    const int CLIMATE_ADAPTATION_ID = 1656;
+    const int CLIMATE_ADAPTATION_ID = 1671;
     const string CLIMATE_ADAPTATION_SOLUTION = 'climate adaptation (solution)';
-    const int CLIMATE_ADAPTATION_SOLUTION_ID = 1677;
+    const int CLIMATE_ADAPTATION_SOLUTION_ID = 1692;
     const string GLOBAL_WARMING_SOLUTION = 'global warming solution';
-    const int GLOBAL_WARMING_SOLUTION_ID = 1657;
+    const int GLOBAL_WARMING_SOLUTION_ID = 1672;
     const string REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION = 'reduce climate gas emissions (global warming solution)';
-    const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1678;
+    const int REDUCE_EMISSIONS_GLOBAL_WARMING_SOLUTION_ID = 1693;
     const string CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION = 'climate adaptation (global warming solution)';
-    const int CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID = 1680;
+    const int CLIMATE_ADAPTATION_GLOBAL_WARMING_SOLUTION_ID = 1695;
     const string COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM = 'column potential loss is explaining column for column problem (high prio)';
     const int COLUMN_POTENTIAL_LOSS_EXPLAINS_PROBLEM_ID = 286;
     const string COLUMN_POTENTIAL_GAIN_EXPLAINS_SOLUTION = 'column potential gain is explaining column for column solution (high prio)';
@@ -457,7 +457,7 @@ class triple_names
     // a unit triple typed "measure unit", so that a table header puts it behind the "in" like a
     // unit word (see pv_switzerland_co2.json)
     const string GRAM_PER_KWH = 'gram per kWh';
-    const int GRAM_PER_KWH_ID = 1977;
+    const int GRAM_PER_KWH_ID = 1992;
     // TODO Prio 2 use the name and not the id for the use cases
     // the subject of the use case pv_switzerland_co2.json; a use case is user data, so its
     // objects are selected by the name only and never by a database id or a code id
@@ -575,9 +575,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 411;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2776;
+    const int SHARE_RATIO_ID = 2791;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2826;
+    const int SHARE_SYMBOL_ID = 2841;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 421;
     const string IN_EUR = "in EUR";

@@ -2246,6 +2246,8 @@ class value_base extends sandbox_value
         }
         if ($this->is_pod_setting_denied($msg)) {
             $msg->add_id(msg_id::CONFIG_SYSTEM_ADMIN_ONLY);
+        } elseif ($this->is_empty_text()) {
+            $msg->add_id(msg_id::VALUE_TEXT_EMPTY);
         } elseif ($this->set_default) {
             // an admin changes the value for all users without an own overwrite and not the own overwrite
             $this->save_as_default($msg);
@@ -2253,6 +2255,14 @@ class value_base extends sandbox_value
             $this->save_for_user($msg);
         }
         return $msg->is_ok();
+    }
+
+    /**
+     * @return bool true for a text value without text (see value_text), false for every other value
+     */
+    function is_empty_text(): bool
+    {
+        return false;
     }
 
     /**

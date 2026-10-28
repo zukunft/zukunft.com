@@ -33,6 +33,38 @@ the server page because its host element carries the existing `use-case` class
 (`system_page::calculator_json`), not by a new rule: a flex child of
 `.main-container` without a width of its own shrinks to its content.
 
+The font and every colour are config.yaml entries below user > default > frontend >
+layout: `font` and `colours` with the groups `page` (`--page-*` of `style_html.css`),
+`editor` (`--bg`, `--ink`, `--accent`, … of the calculator and the formula editor) and
+`chart` (`--chart-*` of the table charts, prefixed because the `:root` of a chart svg sets
+them for the whole page), each with a `dark` group for the dark mode. The entry
+`mode` decides which colours a page gets (`html_base::theme_css`): 1 is always light,
+which is the default (`def::FALLBACK_MODE`), so that a page looks the same for every user
+until the user switches, 2 is always dark, which also switches the bootstrap components by
+`data-bs-theme`, and 0 follows the setting of the browser by a media query. The user menu of a logged-in user offers the
+switch to the other mode with a tooltip (`html_base::theme_switch`); it saves the mode as
+the own overwrite of the config value like the settings page, and if the user follows the
+browser, both entries are in the menu and the css shows only the one to the other mode
+than the browser. The page head sets the colours as css variables
+(`html_base::theme_style`), so the css files hold no font and no colour value; a value
+that css could misread is reported and the fallback of `def::FALLBACK_FONT`,
+`def::FALLBACK_PAGE_COLOURS`, `def::FALLBACK_EDITOR_COLOURS` or
+`def::FALLBACK_CHART_COLOURS` is used, which has the value of config.yaml
+(`coding_rule_tests::config_yaml_theme_fallback_tests`). Every page, its buttons and the
+editors use the one font `--font-page`; the editors set only their font size, and their
+rules for the page body and the form elements are nested in the editor host, so the
+navbar keeps the font of the other pages.
+
+The buttons use as few colour sets as possible, each named by a comment in the css:
+the "main button" of `style_html.css` (grey, a grey blue when the mouse is over it,
+the variables `--btn-main`, `--btn-main-hover` and `--btn-main-ink`) for every button
+of the pages and for the main actions of the calculator and the formula editor e.g.
+load and save, and the "editor", "ghost" and "danger button" of
+`calculator_editor.css` for their other actions; `formula_editor.css` repeats the
+"editor" and the "danger button" inside its hosts. An inactive button keeps the colours of its set with a lower
+intensity. The generated `src/test/resources/web/html/object_pages/buttons.html`
+(`base_ui_tests::buttons_page`) shows a sample button of each set with its name.
+
 ### Javascript only for the calculator
 
 The one exception is a calculator page and its editor: if `config.yaml` allows it (user > default >
@@ -255,13 +287,22 @@ in *Using a config.yaml setting in a script* in `docs/llm/architecture.md`.
 `/index.html` and the short urls in the docroot (`/pv`, `/cbam`, …) are static
 files, so no request reads the config for them. The pinned views of
 `config.yaml` (`system` → `view` → `startup` → `pinned views`) are keyed by
-their url name, and each has a `url`, a `name` and a `tooltip`.
-`base_ui_tests` writes them with `AUTO_UPDATE_TEST_FILES`, like the forward
-pages of `api::FORWARD_VIEWS`:
+their url name, and each has a `url`, a `name` and a `tooltip`. A pinned view
+with an empty `url`, which the import does not save as a value, and with a
+`view name` and a `phrase name` opens that view with
+that phrase e.g. the view `Calculator` with the triple `example PV installation`,
+whose negative phrase id names the triple, because the ids differ by pod.
+`system_views_read_tests::run_pinned_views` loads these ids from the database
+and writes the pages with `AUTO_UPDATE_TEST_FILES`; `base_ui_tests` writes the
+other static pages like the forward pages of `api::FORWARD_VIEWS`:
 
 - `html_base::start_page` writes the links between the
-  `PINNED_VIEWS_BEGIN` / `_END` comments of `index.html`; the rest of the page
-  stays hand-written.
+  `PINNED_VIEWS_BEGIN` / `_END` comments of `index.html` and the font and the
+  colours of `html_base::theme_style` between its `THEME_BEGIN` / `_END`
+  comments; the rest of the page stays hand-written.
+- `html_base::static_page` writes the font and the colours between the same
+  comments of the other static pages of `test_files::STATIC_PAGES` e.g.
+  `optional/ip_reject.html`.
 - `html_base::forward_url_page` writes one forward page per url name of
   `config.yaml` into `test_files::PINNED_PAGE_PATH`, a meta refresh without
   javascript.
@@ -623,11 +664,16 @@ the pod below `system` can only be changed by an admin
 shows the layout. Its search (`url_var::PATTERN`) and scope
 (`url_var::CONFIG_PART`) are no part of the page cache key, so a page with
 either is rendered for each request. For a logged-in user a click on a number
-with a database value opens an input with a small save icon (a `<details>`,
+or a text with a database value opens an input with a small save icon (a `<details>`,
 because a double click needs javascript); the post form uses the value edit
-mask with the confirmed step, so the number is saved as the user's own overwrite
+mask with the confirmed step, so the value is saved as the user's own overwrite
 without the confirm view, and the user's cached pages and config values are
-dropped (`frontend::drop_cached_pages`). The page after the save confirms in
+dropped (`frontend::drop_cached_pages`). A text without a database value, e.g.
+the empty `view name` of a pinned view, which the import does not save, shows
+the edit icon; the backend sends the phrase ids of its yaml path
+(`json_fields::CONFIG_PHRASE_IDS`), so its form uses the value add mask with
+these phrases. An empty text is never saved (`value_base::save`), because its
+api message would have no text and the config could not be read. The page after the save confirms in
 green which setting has changed from what to what
 (`frontend::setting_saved_text`, from `url_var::CONFIG_KEY` and the `'8'`
 value of the form). An admin's form also sends `url_var::SET_DEFAULT`, so the

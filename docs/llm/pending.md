@@ -6,26 +6,24 @@ limit the use of the prime value table to the javascript int limit of 9,007,199,
 if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
 and the use of the values table instead of values_prime
 
+## cache
+
+add a 'clear cache' button to the settings page that removes all cache data
+
+## fonts 
+
+note that only fonts of the include fontawesome version can be used 
+
+## external links
+
+create a script that collects or potential external links and dependencies and list the in '/docs/dependencies.md'
+
 ## Calculator editor
-
-### button colours
-
-use for the calculator editor buttons for main active buttons (load and sometimes save in the top row) the same colours
-(grey background -> hover to dark blue / grey) that is used on the other pages.
-if a button is not active (save if there are no changes) reduce the intensity of the colours
-try to reduce the number of colour sets and name the colours set in the css with comments
-
-create a buttons.html test page in src/test/resources/web/html/object_pages that shows all colours sets used 
-for buttons each with its own sample button and the name of the color set
 
 ### change top row
 
 in the top row of the calculation editor is written 'Calculator editor  Phrase ... example PV installation  load'
 replace the 'Phrase' with 'for' (translatable if possible)
-
-### move colour sets to the config.yaml
-
-if possible add all named colour sets to the config yaml
 
 ### export
 
@@ -92,6 +90,18 @@ search in wikipedia for all words and triples and suggest to include these as re
 in the formula editor and all other places add the power sign '^' as an operator.
 
 add other usual math operators that are missing
+
+## cache
+
+add a 'clear cache' button to the settings page that removes all cache data
+
+## fonts
+
+note that only fonts of the include fontawesome version can be used
+
+## external links
+
+create a script that collects or potential external links and dependencies and list the in '/docs/dependencies.md'
 
 ## names that a user has given
 

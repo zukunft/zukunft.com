@@ -324,6 +324,23 @@ class config_tests
         // negative: without a database value there is nothing to overwrite
         $test_name = '... but a setting without a database value has no id';
         $t->assert_key_not_exists($test_name, json_fields::ID, $default_node);
+        // e.g. the empty view name of a pinned view, which the import does not save
+        $test_name = 'a text setting without a database value names the phrase ids of its yaml path for the first save';
+        $view_node = $t_cft->node_by_name($nodes, test_config_trees::VIEW_NAME);
+        $view_names = array_merge(config_tree::ROOT_KEYS,
+            [test_config_trees::SYSTEM, test_config_trees::STARTUP, test_config_trees::PV, test_config_trees::VIEW_NAME]);
+        $t->assert($test_name, $view_node[json_fields::CONFIG_PHRASE_IDS] ?? [], array_map([$t_cft, 'phrase_id'], $view_names));
+        $test_name = '... as a text setting';
+        $t->assert($test_name, $view_node[json_fields::CONFIG_IS_TEXT] ?? false, true);
+        // negative: a text with a database value is changed by the id of the value
+        $test_name = '... but a text setting with a database value has no phrase ids';
+        $url_node = $t_cft->node_by_name($nodes, test_config_trees::URL);
+        $t->assert_key_not_exists($test_name, json_fields::CONFIG_PHRASE_IDS, $url_node);
+        // negative: a number without a database value is still not added by the settings page
+        $test_name = '... and neither a number setting';
+        $t->assert_key_not_exists($test_name, json_fields::CONFIG_PHRASE_IDS, $default_node);
+        $test_name = '... and a number is no text setting';
+        $t->assert_key_not_exists($test_name, json_fields::CONFIG_IS_TEXT, $default_node);
         // negative: a config.yaml without a key has no node, even if the database has values
         $test_name = 'an empty config.yaml has no node';
         $empty_nodes = $cft->nodes([], $t_cft->cfg());

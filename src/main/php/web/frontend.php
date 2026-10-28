@@ -1362,7 +1362,7 @@ class frontend
         $names = [triples::RESPONSE_TIME, words::TARGET, words::FRONTEND, words::BEHAVIOUR];
         $delay = (float)$ui_sys->cfg->get_by($names, $msg_ui, def::FALLBACK_RESPONSE_TIME_TARGET);
         $since = (int)round(microtime(true) - $start_time + $delay);
-        return new html_base()->loading_start($delay, $since);
+        return new html_base()->loading_start($delay, $since, $msg_ui);
     }
 
 
@@ -1755,16 +1755,18 @@ class frontend
     }
 
     /**
-     * @param array $url_array the url of the save with the new number, the shown number and the yaml keys of the setting
+     * @param array $url_array the url of the save with the new number or text, the shown one and the yaml keys of the setting
      * @return string the translated confirmation e.g. "the setting for select initial entries has been updated to 4 (from 5)",
-     *                '' if a number is missing or unchanged, because then nothing has been updated
+     *                '' if the number or the text is missing or unchanged, because then nothing has been updated
      */
     function setting_saved_text(array $url_array): string
     {
         global $mtr;
         $lib = new library();
-        $new_val = (string)($url_array[url_var::NUMERIC_VALUE] ?? '');
-        $old_val = (string)($url_array[url_var::PRE . url_var::NUMERIC_VALUE] ?? '');
+        $is_text = array_key_exists(url_var::VALUE_TEXT, $url_array);
+        $val_var = $is_text ? url_var::VALUE_TEXT : url_var::NUMERIC_VALUE;
+        $new_val = (string)($url_array[$val_var] ?? '');
+        $old_val = (string)($url_array[url_var::PRE . $val_var] ?? '');
         $is_default = (($url_array[url_var::SET_DEFAULT] ?? '') == url_var::TRUE);
         $msg_id = $is_default ? msg_id::CONFIG_TREE_DEFAULT_SAVED : msg_id::CONFIG_TREE_VALUE_SAVED;
         // the name is the only free text and therefore filled in last, so it never fills a placeholder itself
@@ -1774,11 +1776,26 @@ class frontend
             msg_id::VAR_NAME => (string)($url_array[url_var::CONFIG_KEY] ?? ''),
         ];
         $result = '';
-        // a text is not saved as a number (see sandbox_value::url_mapper), so it is not confirmed either
-        $is_number = (is_numeric($new_val) and is_numeric($old_val));
-        // the shown number of an admin can be the own overwrite, so the same number can still be a new default
-        if ($is_number and ($new_val != $old_val or $is_default)) {
+        // the shown value of an admin can be the own overwrite, so the same value can still be a new default
+        if ($this->is_setting_saved($is_text, $new_val, $old_val) and ($new_val != $old_val or $is_default)) {
             $result = $lib->msg_var_text([[$msg_id, $vars]], $mtr);
+        }
+        return $result;
+    }
+
+    /**
+     * @param bool $is_text true if the setting is a text and not a number
+     * @param string $new_val the value of the setting that the user has entered
+     * @param string $old_val the value of the setting that the page has shown
+     * @return bool true if the backend has saved the value: a text that is not empty (see value_base::save)
+     *              or a number, because a text is not saved as a number (see sandbox_value::url_mapper)
+     */
+    private function is_setting_saved(bool $is_text, string $new_val, string $old_val): bool
+    {
+        if ($is_text) {
+            $result = ($new_val !== '');
+        } else {
+            $result = (is_numeric($new_val) and is_numeric($old_val));
         }
         return $result;
     }
@@ -2815,12 +2832,14 @@ class frontend
     /**
      * @param array $url_array the url of the write
      * @param string $crud the write e.g. url_var::CRUD_UPDATE
-     * @return bool true if a number of the settings page is saved, which is changed in place on that page
+     * @return bool true if a setting of the settings page is saved, which is changed in place on that page,
+     *              or added if it is a text without a database value
      */
     private function is_setting_save(array $url_array, string $crud): bool
     {
         $back_mask = (int)($url_array[url_var::BACK . url_var::MASK] ?? 0);
-        return ($crud == url_var::CRUD_UPDATE and $back_mask == views::SYSTEM_CONFIG_ID);
+        $is_write = in_array($crud, [url_var::CRUD_UPDATE, url_var::CRUD_CREATE]);
+        return ($is_write and $back_mask == views::SYSTEM_CONFIG_ID);
     }
 
     /**
@@ -3251,8 +3270,7 @@ class frontend
                 $menu_lst = $dbo->menu_views_ui($typ_lst, $msg_ui);
                 $mnu->view_items = $dbo->menu_view_items_ui($menu_lst, $msk_ui->id());
                 $mnu->more_names = $dbo->menu_more_names_ui($typ_lst, $menu_lst);
-                // e.g. a new word has no name yet replace with space at the last possible place
-                // before showing to the user
+                // e.g. a new word has no name yet
                 $mnu->obj_name = $dbo->name() ?? '';
             }
         }

@@ -2041,6 +2041,8 @@
 \-- config_numbers
     \-- exact_lookup - section for function exact_lookup not yet defined that it should be set and get in /helper/config
             _numbers.php
+    \-- phrase_ids - section for function phrase_ids not yet defined that it should be set and get in /helper/config_num
+            bers.php
     \-- fill_from_cache_json - section for function fill_from_cache_json not yet defined that it should be load in /help
             er/config_numbers.php
     \-- default_json - section for function default_json not yet defined that it should be default in /helper/config_num
@@ -4083,6 +4085,7 @@
     \-- add - section for function add not yet defined that it should be @param user_message $msg to enrich with problem
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
+    \-- is_empty_text - section for function is_empty_text is expected to be info in /value/value_base.php
     \-- is_pod_setting_denied - section for function is_pod_setting_denied is expected to be info in /value/value_base.p
             hp
     \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
@@ -4147,6 +4150,7 @@
     \-- del - section for function del is expected to be del in /value/value_list.php
     \-- order error - order of section load has difference at load_sql_by_ids should be before load_by_id
 \-- value_text
+    \-- is_empty_text - section for function is_empty_text is expected to be info in /value/value_text.php
     \-- delta - section for function delta is expected to be del in /value/value_text.php
 \-- value_time
     \-- delta - section for function delta is expected to be del in /value/value_time.php
@@ -5228,6 +5232,8 @@
     \-- exact_lookup
         \-- config_numbers - the config values by their complete phrase set,
                  e.g. for the config tree that finds the value
+    \-- phrase_ids
+        \-- config_numbers - the phrase ids of the config values by name, e.g. for the config tree that offers to add a
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value
@@ -5326,6 +5332,8 @@
         \-- value_geo - overwrite the sandbox_value value() function to return the geolocation value
         \-- value_text - overwrite the sandbox_value value() function to return the text string
         \-- value_time - overwrite the sandbox_value value() function to return the DateTime value
+    \-- is_empty_text
+        \-- value_text - @return bool true if the text is missing or empty, which is not saved (see value_base::save)
     \-- set_text_value
         \-- value_text - accept only strings as value
 \-- basic interface function for the private class parameter
@@ -7208,6 +7216,8 @@
             config.php
     \-- load - section for function load not yet defined that it should be load in /helper/config.php
     \-- get_by - section for function get_by is expected to be set and get in /helper/config.php
+    \-- text_by - section for function text_by not yet defined that it should be load in /helper/config.php
+    \-- value_by - section for function value_by not yet defined that it should be load in /helper/config.php
 \-- config_node
     \-- matches - section for function matches not yet defined that it should be info in /helper/config_node.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
@@ -7355,6 +7365,7 @@
     \-- forward_url_page - section for function forward_url_page not yet defined that it should be page in /html/html_ba
             se.php
     \-- start_page - section for function start_page not yet defined that it should be page in /html/html_base.php
+    \-- static_page - section for function static_page not yet defined that it should be page in /html/html_base.php
     \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.
@@ -7362,6 +7373,14 @@
     \-- footer_html - section for function footer_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
+    \-- theme_style - section for function theme_style not yet defined that it should be header & footer in /html/html_b
+            ase.php
+    \-- theme_css - section for function theme_css not yet defined that it should be header & footer in /html/html_base.
+            php
+    \-- theme_mode - section for function theme_mode not yet defined that it should be header & footer in /html/html_bas
+            e.php
+    \-- theme_colours - section for function theme_colours not yet defined that it should be header & footer in /html/ht
+            ml_base.php
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
     \-- tip_with_names - section for function tip_with_names not yet defined that it should be header & footer in /html/
             html_base.php
@@ -9077,6 +9096,10 @@
                  which sends them only to an admin
     \-- get_by
         \-- config - get a frontend config value selected by the phrase names
+    \-- text_by
+        \-- config - the raw text of a frontend config value e.g. a font or a colour of the page head, because
+    \-- value_by
+        \-- config - the most specific frontend config value e.g. to save the dark mode of the user as an overwrite
     \-- load_by_object
         \-- change_log_link_list - load the link change history of one object from the backend via the api
     \-- load_api_by_object
@@ -9901,7 +9924,9 @@
     \-- forward_url_page
         \-- html_base - @param string $url the complete url that the forward page opens e.g. the url of a pinned view
     \-- start_page
-        \-- html_base - write the links to the pinned views between the markers of the static start page, so that
+        \-- html_base - write the font and the colours and the links to the pinned views between the markers of the
+    \-- static_page
+        \-- html_base - write the font and the colours of config.yaml between the markers in the head of a static
 \-- lists
     \-- group
         \-- calculator - the group triple of a list: the triple from the page phrase to the list keyword, else the
@@ -10446,8 +10471,8 @@
     \-- user_msg_html
         \-- frontend - create the html notification for the user messages of the current request
     \-- setting_saved_text
-        \-- frontend - @param array $url_array the url of the save with the new number,
-                 the shown number and the yaml keys of the setting
+        \-- frontend - @param array $url_array the url of the save with the new number or text,
+                 the shown one and the yaml keys of the setting
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next
@@ -10529,6 +10554,16 @@
         \-- html_base - the page footer for simple html pages like the login page
     \-- header
         \-- html_base - create the html code for the page header
+    \-- theme_style
+        \-- html_base - the font and the colours of config.yaml (frontend.layout) as the css variables of style_html.css
+    \-- theme_css
+        \-- html_base - the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.mode)
+                :
+    \-- theme_mode
+        \-- html_base - @return int the dark or light mode of the user e.g. def::MODE_DARK (config.yaml frontend.layout.
+                mode)
+    \-- theme_colours
+        \-- html_base - the css variables of a colour group of config.yaml with a light and a dark colour per variable
     \-- navbar
         \-- html_base - @param int $msk_id the current view id used to build back params and view-change links
     \-- tip_with_names

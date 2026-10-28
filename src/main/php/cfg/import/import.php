@@ -1846,6 +1846,16 @@ class import
         return $dto;
     }
 
+    /**
+     * @param mixed $value a yaml setting that is not a sub array e.g. "Calculator" or 20
+     * @return bool false for an empty text, which has nothing to store and is sent without a text
+     *              field in the api message, so the frontend could not read the config at all
+     */
+    private function is_yaml_value(mixed $value): bool
+    {
+        return $value !== '';
+    }
+
     private function get_data_object_yaml_loop(
         data_object  $dto,
         phrase_list  $phr_lst,
@@ -1939,7 +1949,7 @@ class import
                 // add the sub array
                 if (is_array($value)) {
                     $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $msg, $wrd, $trp, $val, $src);
-                } else {
+                } elseif ($this->is_yaml_value($value)) {
                     // remember the value
                     // TODO Prio 2 add percent, geo and time
                     if (is_string($value)) {

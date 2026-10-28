@@ -59,6 +59,10 @@ class config_node
     public string $file_value = '';
     // the unit of the value e.g. "sec", '' if the value has none
     public string $unit = '';
+    // true for a text setting, which is changed with a text input
+    public bool $is_text = false;
+    // the phrase ids of a text setting without a database value, with which its first save adds the value
+    public array $phr_ids = [];
     // the tooltip-comment of the key in config.yaml
     public string $tooltip = '';
     // the keys below this key in the order of config.yaml
@@ -78,7 +82,8 @@ class config_node
     }
 
     /**
-     * @param array $json the node of the api message with name, value, value id, config.yaml value, unit, tooltip and children
+     * @param array $json the node of the api message with name, value, value id, config.yaml value, unit,
+     *                    the text flag, the phrase ids of a new text, tooltip and children
      * @return void
      */
     function api_mapper(array $json): void
@@ -90,6 +95,11 @@ class config_node
         $this->id = (is_int($id) or is_string($id)) ? $id : 0;
         $this->file_value = (string)($json[json_fields::CONFIG_FILE_VALUE] ?? '');
         $this->unit = (string)($json[json_fields::CONFIG_UNIT] ?? '');
+        $this->is_text = (($json[json_fields::CONFIG_IS_TEXT] ?? false) === true);
+        $phr_ids = (array)($json[json_fields::CONFIG_PHRASE_IDS] ?? []);
+        // only the ids, so that a malformed entry never ends in the url of the save
+        $int_ids = array_filter($phr_ids, 'is_int');
+        $this->phr_ids = array_values($int_ids);
         $this->tooltip = (string)($json[json_fields::DESCRIPTION] ?? '');
         $this->children = [];
         foreach ($json[json_fields::CONFIG_CHILDREN] ?? [] as $child_json) {
@@ -104,6 +114,14 @@ class config_node
     /*
      * info
      */
+
+    /**
+     * @return bool true for a text setting without a database value, whose first save adds the value
+     */
+    function is_new(): bool
+    {
+        return $this->phr_ids != [];
+    }
 
     /**
      * @return bool true if no key is below this key, so it is shown as a row with its value

@@ -67,6 +67,9 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as user_message_cfg;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -111,6 +114,7 @@ class system_views_read_tests
         $this->run_components($t, $cfg);
         $this->run_users($t, $cfg);
         $this->run_system_pages($t);
+        $this->run_pinned_views($t);
         $this->run_use_cases($t, $cfg);
         // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t);
@@ -430,6 +434,67 @@ class system_views_read_tests
         $t->assert_view(views::ALL_QUARANTINE, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::USER_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
         $t->assert_view(views::ALL_JOBS, $t->usr1, new user(), users::SYSTEM_TEST_ID);
+    }
+
+    /**
+     * write the static start page and the short url page of each pinned view of config.yaml, which
+     * the next run with AUTO_UPDATE_TEST_FILES writes; here, because the url of a pinned view
+     * without url is created from the ids of its view name and phrase name, which differ by pod
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_pinned_views(test_cleanup $t): void
+    {
+        $html = new html_base();
+        $msg = new user_message_cfg();
+        $pin_lst = [];
+        foreach ($t->pinned_views() as $url_name => $pin) {
+            $pin[words::URL] = $this->pinned_url($t, $pin, $msg);
+            $pin_lst[$url_name] = $pin;
+            $test_name = 'the short url ' . $url_name . ' opens ' . $pin[words::URL];
+            $t->assert_file($test_name, $html->forward_url_page($pin[words::URL]), test_files::PINNED_PAGE_PATH . $url_name);
+        }
+        $test_name = 'the start page links the pinned views of config.yaml';
+        $start_page = file_get_contents(test_files::START_PAGE);
+        $t->assert_file($test_name, $html->start_page($start_page, $pin_lst, new user_message()), test_files::START_PAGE);
+        $test_name = 'a pinned view without url opens the view of its view name with its phrase';
+        $pin_by_names = [triples::VIEW_NAME => views::CALCULATOR_NAME, triples::PHRASE_NAME => triple_names::EXAMPLE_PV_INSTALLATION];
+        $phr = new phrase($t->usr1);
+        $phr->load_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
+        $expected = $html->page_url([url_var::MASK => views::CALCULATOR_ID, url_var::ID => $phr->id()]);
+        $t->assert($test_name, $this->pinned_url($t, $pin_by_names, $msg), $expected);
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param array $pin the url or the view name and the phrase name of a pinned view of config.yaml
+     * @param user_message_cfg $msg to report a view or phrase that cannot be loaded
+     * @return string the url of the pinned view or the url of its view name with its phrase if the url is empty
+     */
+    private function pinned_url(test_cleanup $t, array $pin, user_message_cfg $msg): string
+    {
+        $url = $pin[words::URL] ?? '';
+        if ($this->is_by_names($pin)) {
+            $msk = new view($t->usr1);
+            $msk->load_by_name($pin[triples::VIEW_NAME], $msg);
+            $phr = new phrase($t->usr1);
+            $phr->load_by_name($pin[triples::PHRASE_NAME], $msg);
+            // the phrase id of a triple is negative, so the view shows the triple
+            $url = new html_base()->page_url([url_var::MASK => $msk->id(), url_var::ID => $phr->id()]);
+        }
+        return $url;
+    }
+
+    /**
+     * @param array $pin the url or the view name and the phrase name of a pinned view of config.yaml
+     * @return bool true if the pinned view has no url but a view name and a phrase name
+     */
+    private function is_by_names(array $pin): bool
+    {
+        return ($pin[words::URL] ?? '') == ''
+            and ($pin[triples::VIEW_NAME] ?? '') != ''
+            and ($pin[triples::PHRASE_NAME] ?? '') != '';
     }
 
     /**

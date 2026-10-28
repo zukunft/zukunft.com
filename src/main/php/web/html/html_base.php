@@ -158,6 +158,13 @@ class html_base
     const string SRC = 'src';
     const string ALT = 'alt';
     const string STYLE = 'style';
+    // the config.yaml keys of the layout settings font, mode and colours (see theme_style), top down
+    // as the confirmation of the mode switch names them
+    const array LAYOUT_PATH = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT];
+    // the config.yaml keys of the dark or light mode of the user (see theme_mode and theme_switch)
+    const array MODE_PATH = [...html_base::LAYOUT_PATH, words::MODE];
+    // the config.yaml keys above the colour groups page, editor and chart (see theme_style)
+    const array COLOUR_PATH = [...html_base::LAYOUT_PATH, words::COLOURS];
     const string CLASS_HTML = 'class';
     const string TITLE_HTML = 'title'; // title attribute e.g. for tooltips
     const string TITLE = 'title';      // <title> element in <head>
@@ -278,6 +285,10 @@ class html_base
     // between which the test run writes the links of config.yaml (see start_page)
     const string PINNED_VIEWS_BEGIN = '<!-- pinned views: written by the test run from config.yaml -->';
     const string PINNED_VIEWS_END = '<!-- pinned views end -->';
+    // the html comments in the head of index.html and the optional pages, between which the test run
+    // writes the font and the colours of config.yaml, because a static page has no php head (see static_page)
+    const string THEME_BEGIN = '<!-- font and colours: written by the test run from config.yaml -->';
+    const string THEME_END = '<!-- font and colours end -->';
 
 
     /*
@@ -316,28 +327,58 @@ class html_base
     }
 
     /**
-     * write the links to the pinned views between the markers of the static start page, so that
-     * a changed config.yaml is shown after the next test run (see docs/llm/frontend.md)
+     * write the font and the colours and the links to the pinned views between the markers of the
+     * static start page, so that a changed config.yaml is shown after the next test run
+     * (see docs/llm/frontend.md)
      *
      * @param string $page the html code of the start page e.g. of index.html
      * @param array $pin_lst the pinned views by url name, each with the url, name and tooltip of config.yaml
-     * @return string the start page with the links or the unchanged page if the markers are missing
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the start page with the style and the links or the unchanged part if its markers are missing
      */
-    function start_page(string $page, array $pin_lst): string
+    function start_page(string $page, array $pin_lst, user_message|Message $msg): string
     {
-        $begin = strpos($page, self::PINNED_VIEWS_BEGIN);
-        $end = strpos($page, self::PINNED_VIEWS_END);
+        $links = '';
+        foreach ($pin_lst as $pin) {
+            $links .= $this->ref($pin[words::URL] ?? '', $pin[words::NAME] ?? '',
+                $pin[words::TOOLTIP] ?? '', with_user: false);
+        }
+        $pinned = $this->div($links, self::CLASS_PINNED_SECTION);
+        $result = $this->static_page($page, $msg);
+        return $this->static_block($result, self::PINNED_VIEWS_BEGIN, self::PINNED_VIEWS_END, $pinned);
+    }
+
+    /**
+     * write the font and the colours of config.yaml between the markers in the head of a static
+     * page e.g. of optional/ip_reject.html, because a static page has no php head
+     *
+     * @param string $page the html code of the static page
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the page with the style or the unchanged page if the markers are missing
+     */
+    function static_page(string $page, user_message|Message $msg): string
+    {
+        return $this->static_block($page, self::THEME_BEGIN, self::THEME_END, $this->theme_style($msg));
+    }
+
+    /**
+     * replace the html code between two markers of a static page e.g. of index.html
+     *
+     * @param string $page the html code of the static page
+     * @param string $begin_marker the html comment before the replaced code e.g. self::THEME_BEGIN
+     * @param string $end_marker the html comment after the replaced code e.g. self::THEME_END
+     * @param string $block the new html code between the markers
+     * @return string the page with the new code or the unchanged page if the markers are missing
+     */
+    private function static_block(string $page, string $begin_marker, string $end_marker, string $block): string
+    {
+        $begin = strpos($page, $begin_marker);
+        $end = strpos($page, $end_marker);
         $result = $page;
         if ($begin === false or $end === false or $end < $begin) {
-            log_err('the start page has no markers for the pinned views');
+            log_err('the static page has no markers ' . $begin_marker . ' and ' . $end_marker);
         } else {
-            $links = '';
-            foreach ($pin_lst as $pin) {
-                $links .= $this->ref($pin[words::URL] ?? '', $pin[words::NAME] ?? '',
-                    $pin[words::TOOLTIP] ?? '', with_user: false);
-            }
-            $block = self::PINNED_VIEWS_BEGIN . $this->div($links, self::CLASS_PINNED_SECTION);
-            $result = substr($page, 0, $begin) . $block . substr($page, $end);
+            $result = substr($page, 0, $begin) . $begin_marker . $block . substr($page, $end);
         }
         return $result;
     }
@@ -360,6 +401,7 @@ class html_base
         $txt .= $this->viewport();
         $txt .= $this->title($title, $pod_name, $msg);
         $txt .= $this->stylesheet();
+        $txt .= $this->theme_style($msg);
         return $this->head($txt);
     }
 
@@ -428,7 +470,128 @@ class html_base
         $txt .= $this->make_flood() . "\n";
         $txt .= $this->title($title, POD_NAME, $msg) . "\n";
         $txt .= $this->head_style($base_url) . "\n";
+        $txt .= $this->theme_style($msg);
         return $txt;
+    }
+
+    /**
+     * the font and the colours of config.yaml (frontend.layout) as the css variables of style_html.css
+     * and the editor styles, so that config.yaml is the only place of the font and the colours: the
+     * page colours and the light editor colours for every page, the dark editor colours if the browser
+     * asks for the dark mode; a setting that css could misread is reported and the fallback is used
+     *
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the html style element with the css variables
+     */
+    function theme_style(user_message|Message $msg): string
+    {
+        // only the chars of a font family list, so that a setting can end neither the css rule nor the style element
+        $font = $this->theme_value([...html_base::LAYOUT_PATH, words::FONT], def::FALLBACK_FONT,
+            '/^[A-Za-z0-9 ,"\'_-]+$/', msg_id::CONFIG_FONT_INVALID, $msg);
+        [$page_light, $page_dark] = $this->theme_colours(def::FALLBACK_PAGE_COLOURS, [words::PAGE, ...html_base::COLOUR_PATH], $msg);
+        [$edit_light, $edit_dark] = $this->theme_colours(def::FALLBACK_EDITOR_COLOURS, [words::EDITOR, ...html_base::COLOUR_PATH], $msg);
+        return '<' . self::STYLE . '>' . "\n"
+            . ':root { --font-page: ' . $font . '; }' . "\n"
+            . $this->theme_css($page_light . ' ' . $edit_light, $page_dark . ' ' . $edit_dark)
+            . '</' . self::STYLE . '>' . "\n";
+    }
+
+    /**
+     * the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.mode):
+     * the light colours and if the browser asks for it the dark colours, always the light colours or
+     * always the dark colours; with the colour scheme, so that the browser shows its form elements
+     * and scroll bars in the same mode
+     *
+     * @param string $light the css variable definitions of the light mode e.g. "--bg: #eef2f8; ..."
+     * @param string $dark the css variable definitions of the dark mode e.g. "--bg: #0e1524; ..."
+     * @return string the css rules with the colours of the mode of the user
+     */
+    function theme_css(string $light, string $dark): string
+    {
+        $light_css = ':root { ' . $light . ' color-scheme: light; }' . "\n";
+        $dark_css = ':root { ' . $dark . ' color-scheme: dark; }' . "\n";
+        return match ($this->theme_mode()) {
+            def::MODE_LIGHT => $light_css,
+            def::MODE_DARK => $dark_css,
+            default => $light_css . '@media (prefers-color-scheme: dark) { ' . $dark_css . '}' . "\n",
+        };
+    }
+
+    /**
+     * @return int the dark or light mode of the user e.g. def::MODE_DARK (config.yaml frontend.layout.mode)
+     */
+    function theme_mode(): int
+    {
+        global $ui_sys;
+
+        $mode = (int)($ui_sys?->cfg?->value_by(html_base::MODE_PATH)?->number()
+            ?? def::FALLBACK_MODE);
+        if (!in_array($mode, [def::MODE_BROWSER, def::MODE_LIGHT, def::MODE_DARK])) {
+            $mode = def::FALLBACK_MODE;
+        }
+        return $mode;
+    }
+
+    /**
+     * the css variables of a colour group of config.yaml with a light and a dark colour per variable
+     *
+     * @param array $colours the css variable => the config key, the light and the dark fallback e.g. def::FALLBACK_EDITOR_COLOURS
+     * @param array $names the config.yaml keys of the colour group e.g. [words::EDITOR, ...html_base::COLOUR_PATH]
+     * @param user_message|Message $msg to report a configured colour that css could misread
+     * @return array the css variable definitions of the light and of the dark mode e.g. ['--bg: #eef2f8; ...', '--bg: #0e1524; ...']
+     */
+    function theme_colours(array $colours, array $names, user_message|Message $msg): array
+    {
+        $light = [];
+        $dark = [];
+        foreach ($colours as $css_var => [$key, $colour, $dark_colour]) {
+            // the dark colour has all names of the light colour, so it must not be taken for the light mode
+            $light[] = $css_var . ': ' . $this->theme_colour([$key, ...$names], $colour, $msg, [words::DARK]) . ';';
+            $dark[] = $css_var . ': ' . $this->theme_colour([$key, words::DARK, ...$names], $dark_colour, $msg) . ';';
+        }
+        return [implode(' ', $light), implode(' ', $dark)];
+    }
+
+    /**
+     * @param array $names the config.yaml keys of the colour e.g. [words::LINK, words::PAGE, words::COLOURS, ...]
+     * @param string $fallback the colour if the config has none or one that css could misread
+     * @param user_message|Message $msg to report a configured colour that css could misread
+     * @param array $without the config.yaml keys that the colour must not have e.g. [words::DARK] for a light colour
+     * @return string the css colour e.g. #385eb7, rgba(0, 0, 0, 0.1) or white
+     */
+    private function theme_colour(array $names, string $fallback, user_message|Message $msg, array $without = []): string
+    {
+        // a hex colour, a rgb or rgba function or a colour name, so that a setting can end neither the css rule nor the style element
+        return $this->theme_value($names, $fallback,
+            '/^(#[0-9A-Fa-f]{3,8}|rgba?\([0-9., ]+\)|[A-Za-z]+)$/', msg_id::CONFIG_COLOUR_INVALID, $msg, $without);
+    }
+
+    /**
+     * @param array $names the config.yaml keys of the setting
+     * @param string $fallback the value if the config has none or one that does not match the pattern
+     * @param string $pattern the regular expression of a value that css reads as intended
+     * @param msg_id $msg_id the message that names a value that does not match the pattern
+     * @param user_message|Message $msg to report a value that does not match the pattern
+     * @param array $without the config.yaml keys that the setting must not have
+     * @return string the configured value or the fallback
+     */
+    private function theme_value(
+        array                $names,
+        string               $fallback,
+        string               $pattern,
+        msg_id               $msg_id,
+        user_message|Message $msg,
+        array                $without = []
+    ): string
+    {
+        global $ui_sys;
+
+        $result = $ui_sys?->cfg?->text_by($names, $without) ?? $fallback;
+        if (preg_match($pattern, $result) !== 1) {
+            $msg->add($msg_id, [msg_id::VAR_VALUE => $result]);
+            $result = $fallback;
+        }
+        return $result;
     }
 
     /**
@@ -632,6 +795,10 @@ class html_base
             $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
             $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
         }
+        // only a logged-in user can keep the mode as an own setting, an ip user follows the browser
+        if ($usr_name !== null) {
+            $result .= $this->theme_switch($url_array);
+        }
         // also an ip user without login sees the settings, so the link opens the read only system configuration
         // by its forward page, which keeps the back target (see api::FORWARD_VIEWS)
         $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
@@ -642,6 +809,75 @@ class html_base
             $result .= $this->list_item($this->ref($url_dashboard, $mtr->txt(msg_id::NAVBAR_DASHBOARD))) . "\n";
         }
         return $this->list_unsorted($result);
+    }
+
+    /**
+     * the entry of the user menu that switches to the other mode, saved as the overwrite of the user of the
+     * config value frontend.layout.mode through the value edit mask like a setting (see config_tree::edit_form),
+     * so that the next visits keep it; if the user follows the browser, both entries are in the menu and
+     * the css shows only the one to the other mode than the browser (theme-to-dark and theme-to-light)
+     *
+     * @param array $url_array the calling url, which is shown again after the switch
+     * @return string the html list items of the switch or '' if the config has no mode value to overwrite
+     */
+    private function theme_switch(array $url_array): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        $val = $ui_sys?->cfg?->value_by(html_base::MODE_PATH);
+        if ($val !== null and $val->id() != 0) {
+            $mode = $this->theme_mode();
+            if ($mode != def::MODE_DARK) {
+                $result .= $this->theme_switch_item($val->id(), $mode, def::MODE_DARK,
+                    msg_id::NAVBAR_DARK_MODE, msg_id::NAVBAR_DARK_MODE_TIP, styles::THEME_TO_DARK, $url_array);
+            }
+            if ($mode != def::MODE_LIGHT) {
+                $result .= $this->theme_switch_item($val->id(), $mode, def::MODE_LIGHT,
+                    msg_id::NAVBAR_LIGHT_MODE, msg_id::NAVBAR_LIGHT_MODE_TIP, styles::THEME_TO_LIGHT, $url_array);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param int|string $val_id the id of the config value of the mode
+     * @param int $mode the mode of the shown page e.g. def::MODE_BROWSER
+     * @param int $to_mode the mode that the entry switches to e.g. def::MODE_DARK
+     * @param msg_id $name the text of the entry e.g. msg_id::NAVBAR_DARK_MODE
+     * @param msg_id $tip the tooltip of the entry
+     * @param string $style the class that hides the entry if the browser has already this mode
+     * @param array $url_array the calling url, which is shown again after the switch
+     * @return string the html list item with the post form that saves the mode
+     */
+    private function theme_switch_item(
+        int|string $val_id,
+        int        $mode,
+        int        $to_mode,
+        msg_id     $name,
+        msg_id     $tip,
+        string     $style,
+        array      $url_array
+    ): string
+    {
+        $txt = $this->form_session_token();
+        $txt .= $this->form_hidden(url_var::NUMERIC_VALUE, (string)$to_mode);
+        // the shown mode and the yaml keys of the mode, so that the confirmation can say what has changed from what
+        $txt .= $this->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, (string)$mode);
+        $txt .= $this->form_hidden(url_var::CONFIG_KEY, implode(' ', html_base::MODE_PATH));
+        $txt .= $this->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
+        $txt .= $this->form_hidden(url_var::ID, group_id_url::to_url($val_id));
+        $txt .= $this->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        // a submit that reads like the links of the menu, named so that the entry point runs the save
+        $txt .= '<' . self::BUTTON . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '" '
+            . self::CLASS_HTML . '="' . styles::TEXT_BUTTON . '" ' . self::NAME . '="' . url_var::POST_SUBMIT . '" '
+            . self::TITLE_HTML . '="' . $this->esc($tip->text()) . '">' . $this->esc($name->text())
+            . '</' . self::BUTTON . '>';
+        // the page is shown again after the save, so the post carries it as the back target
+        $url = $this->url_with_back(api::MAIN_SCRIPT, self::normal_page_array($url_array));
+        $form = $this->form_simple($url, self::METHOD_POST, $txt);
+        // a fixed mode shows only the entry to the other mode, so it is never hidden by the browser setting
+        return $this->list_item($form, $mode == def::MODE_BROWSER ? $style : '') . "\n";
     }
 
     /**
@@ -699,9 +935,10 @@ class html_base
      *
      * @param float $delay the seconds after which the loading text is shown
      * @param int $since the seconds since the request start shown when the text appears; counted up each second
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
      * @return string the html code from the doctype to the loading text and the footer
      */
-    function loading_start(float $delay, int $since): string
+    function loading_start(float $delay, int $since, user_message|Message $msg): string
     {
         global $mtr;
         $show = self::LOADING_ANIMATION . ' 0s ' . $delay . 's forwards';
@@ -714,7 +951,8 @@ class html_base
             $loading .= ' ' . $this->span('', self::CLASS_LOADING_SECONDS);
             $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS);
         }
-        $head = $this->charset() . $this->head_style() . $this->style($css);
+        // with the font and the colours like every page
+        $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
         $txt = $this->nav($this->logo(), self::CLASS_NAV);
         $txt .= $this->main($this->p($loading));
         $txt .= $this->site_footer();
@@ -3804,7 +4042,13 @@ class html_base
      */
     private function lang(string $lan): string
     {
-        return '<' . self::HTML . ' ' . self::LANG . '="' . $lan . '">';
+        // the bootstrap components e.g. a table or an input follow the dark mode only if the user has
+        // chosen it, because without javascript the setting of the browser is known only to the css
+        $theme = '';
+        if ($this->theme_mode() == def::MODE_DARK) {
+            $theme = ' data-bs-theme="dark"';
+        }
+        return '<' . self::HTML . ' ' . self::LANG . '="' . $lan . '"' . $theme . '>';
     }
 
     /**

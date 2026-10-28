@@ -1,102 +1,13 @@
 /* the calculator editor (script/calculator_editor.js, system_page::calculator_editor) */
 /* layout: a sticky toolbar, then three working columns: the page structure (tree), the settings */
 /* of the selected part (inspector) and the live page with texts, changes and json as tabs */
+/* the colours e.g. --bg, --ink or --accent in the light and in the dark mode are the css variables */
+/* that the page head sets from config.yaml frontend.layout.colours.editor (html_base::theme_style), */
+/* so this file has no colour value; the text font is --font-page of the page head too, and the */
+/* colour scheme of the form elements follows the mode of the user (html_base::theme_css) */
 :root {
-    --bg: #eef2f8;
-    --surface: #ffffff;
-    --surface-2: #f6f8fc;
-    --ink: #1b2f5c;
-    --ink-2: #4b5d83;
-    --muted: #7b88a3;
-    --line: #d2dbe9;
-    --accent: #385eb7;
-    --accent-deep: #274b8f;
-    --accent-soft: #dbe4f5;
-    --accent-ink: #ffffff;
-    --shared: #8a5a07;
-    --shared-soft: #fbf0db;
-    --danger: #c23b30;
-    --danger-soft: #fbe4e1;
-    --ok: #2f7d55;
-    --ok-soft: #dff1e7;
-    --pv-text: #274b8f;
-    --pv-label: #385eb7;
-    --pv-muted: #9ea09e;
-    --pv-panel: #f9fafb;
-    --pv-border: #b9c6d6;
-    --pv-field: #ffffff;
-    --pv-rule: #dee2e6;
-    --pv-sec: #dbe4f5;
-    --pv-assumed: #6b86c2;
-    --pv-neg: #dc3545;
-    --font-ui: "Segoe UI", system-ui, -apple-system, sans-serif;
     --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-    --font-page: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --r: 6px;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --bg: #0e1524;
-        --surface: #151f33;
-        --surface-2: #1a263d;
-        --ink: #e3eaf7;
-        --ink-2: #b4c1da;
-        --muted: #8492ad;
-        --line: #2a3a57;
-        --accent: #7d9ef0;
-        --accent-deep: #a9c0f7;
-        --accent-soft: #233761;
-        --accent-ink: #0e1524;
-        --shared: #e9b45a;
-        --shared-soft: #3a2e17;
-        --danger: #f08a80;
-        --danger-soft: #42221f;
-        --ok: #7fd1a3;
-        --ok-soft: #1d3a2b;
-        --pv-text: #c6d5f5;
-        --pv-label: #9db6f2;
-        --pv-muted: #8b95a8;
-        --pv-panel: #18233a;
-        --pv-border: #33456a;
-        --pv-field: #0f1828;
-        --pv-rule: #2a3a57;
-        --pv-sec: #233761;
-        --pv-assumed: #93a9dc;
-        --pv-neg: #f08a80;
-        color-scheme: dark;
-    }
-}
-
-:root[data-theme="dark"] {
-    --bg: #0e1524;
-    --surface: #151f33;
-    --surface-2: #1a263d;
-    --ink: #e3eaf7;
-    --ink-2: #b4c1da;
-    --muted: #8492ad;
-    --line: #2a3a57;
-    --accent: #7d9ef0;
-    --accent-deep: #a9c0f7;
-    --accent-soft: #233761;
-    --accent-ink: #0e1524;
-    --shared: #e9b45a;
-    --shared-soft: #3a2e17;
-    --danger: #f08a80;
-    --danger-soft: #42221f;
-    --ok: #7fd1a3;
-    --ok-soft: #1d3a2b;
-    --pv-text: #c6d5f5;
-    --pv-label: #9db6f2;
-    --pv-muted: #8b95a8;
-    --pv-panel: #18233a;
-    --pv-border: #33456a;
-    --pv-field: #0f1828;
-    --pv-rule: #2a3a57;
-    --pv-sec: #233761;
-    --pv-assumed: #93a9dc;
-    --pv-neg: #f08a80;
-    color-scheme: dark;
 }
 
 * {
@@ -107,10 +18,14 @@
     display: none !important;
 }
 
-body {
+/* only the editor, so that the rest of the page e.g. the navbar keeps the font and colours of the */
+/* other pages; the font family is the one of the page (--font-page of style_html.css); full width */
+/* and left aligned inside the main container instead of the centred text of the pod body */
+.editor {
+    width: 100%;
+    text-align: left;
     background: var(--bg);
     color: var(--ink);
-    font-family: var(--font-ui);
     font-size: 14px;
     line-height: 1.45;
 }
@@ -124,7 +39,7 @@ body::before {
     background: var(--surface);
 }
 
-button, input, select, textarea {
+.editor button, .editor input, .editor select, .editor textarea {
     font: inherit;
     color: inherit;
 }
@@ -174,20 +89,28 @@ button, input, select, textarea {
     align-items: center;
 }
 
-.btn {
+/* the colour sets of the editor buttons (see src/test/resources/web/html/object_pages/buttons.html): */
+/* "main button" of style_html.css for the main actions load and save (.primary), "editor button" */
+/* for the other actions, "ghost button" for a cancel next to a main action and "danger button" for */
+/* a remove; an inactive button keeps its colours with a lower intensity; all inside the editor host, */
+/* so that e.g. the "Get numbers" button of the navbar keeps the main button of the other pages */
+/* colour set "editor button": white with a line border that turns blue when the mouse is over it */
+.editor .btn {
     border: 1px solid var(--line);
     background: var(--surface);
     border-radius: var(--r);
     padding: 6px 11px;
     cursor: pointer;
     white-space: nowrap;
+    /* the pod forces white button text with !important, which is invisible on the light editor buttons */
+    color: var(--ink) !important;
 }
 
-.btn:hover {
+.editor .btn:hover {
     border-color: var(--accent);
 }
 
-a.btn {
+.editor a.btn {
     text-decoration: none;
     color: inherit;
     display: inline-block;
@@ -199,36 +122,44 @@ a.btn {
     color: var(--ok);
 }
 
-.btn:disabled {
+.editor .btn:disabled {
     opacity: .45;
     cursor: default;
     border-color: var(--line);
 }
 
-.btn.primary {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: var(--accent-ink);
+/* colour set "main button" of style_html.css, so that load and save look like the buttons of the other pages */
+.editor .btn.primary {
+    background: var(--btn-main);
+    border-color: var(--btn-main);
+    color: var(--btn-main-ink) !important;
     font-weight: 500;
 }
 
-.btn.small {
+.editor .btn.primary:hover:not(:disabled) {
+    background: var(--btn-main-hover);
+    border-color: var(--btn-main-hover);
+}
+
+.editor .btn.small {
     padding: 2px 8px;
     font-size: 12px;
 }
 
-.btn.ghost {
+/* colour set "ghost button": only the text, a light blue background when the mouse is over it */
+.editor .btn.ghost {
     border-color: transparent;
     background: transparent;
 }
 
-.btn.ghost:hover {
+.editor .btn.ghost:hover {
     background: var(--accent-soft);
     border-color: transparent;
 }
 
-.btn.danger {
-    color: var(--danger);
+/* colour set "danger button": the editor button with a red text */
+.editor .btn.danger {
+    color: var(--danger) !important;
 }
 
 .chip {
@@ -918,7 +849,7 @@ textarea.inp {
 .chg li.wrn {
     background: var(--shared-soft);
     color: var(--shared);
-    font-family: var(--font-ui);
+    font-family: var(--font-page);
 }
 
 .jsonout {
@@ -1259,26 +1190,7 @@ textarea.inp {
     font-size: .82rem;
 }
 
-/* the editor inside the main container of the pod: full width and left aligned instead of the centred */
-/* text of the pod body, and the phrase label in its row instead of above the input like a form label */
-.editor {
-    width: 100%;
-    text-align: left;
-}
-
+/* the phrase label in its row instead of above the input like a form label */
 .main-container .phrasebar label {
     display: inline;
-}
-
-/* the pod forces white button text with !important, which is invisible on the light editor buttons */
-.editor .btn {
-    color: var(--ink) !important;
-}
-
-.editor .btn.primary {
-    color: var(--accent-ink) !important;
-}
-
-.editor .btn.danger {
-    color: var(--danger) !important;
 }

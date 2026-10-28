@@ -931,6 +931,19 @@ class value_tests
         $val_usr = $t_val->config_switch_value($usr_names, false);
         $val_usr->set_user($t->usr_normal);
         $t->assert_false($test_name, $val_usr->is_pod_setting_denied($msg));
+        // an empty text would be sent without a text field, so e.g. the config could not be read at all
+        $test_name = 'an empty text value is not saved';
+        // an own var, because $val_txt is the text value of the sql delete tests below
+        $val_empty = $t_val->text_value();
+        $val_empty->set_value('');
+        $t->assert_true($test_name, $val_empty->is_empty_text());
+        // negative: a text is saved
+        $test_name = '... but a text is saved';
+        $val_empty->set_value(views::CALCULATOR_NAME);
+        $t->assert_false($test_name, $val_empty->is_empty_text());
+        // negative: a number is never an empty text
+        $test_name = '... and a number too';
+        $t->assert_false($test_name, $val_usr->is_empty_text());
 
         $t->subheader($ts . 'read access (share)');
         // a non-public value must not be disclosed to another user loaded by id (idor);

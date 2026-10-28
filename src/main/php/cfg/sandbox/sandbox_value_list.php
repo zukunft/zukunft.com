@@ -143,8 +143,9 @@ class sandbox_value_list extends sandbox_list
                 $val = new value_geo($this->get_user());
             } else {
                 $val = new value($this->get_user());
+                // as text, because a message var is a string
                 $msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
-                    msg_id::VAR_JSON_TEXT => $json_val
+                    msg_id::VAR_JSON_TEXT => json_encode($json_val)
                 ]);
             }
             if ($val->api_mapper($json_val, $msg)) {

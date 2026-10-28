@@ -9,14 +9,14 @@
         "words": [],
         "triples": [
             {
-                "id": 2846,
+                "id": 2861,
                 "name": "PV installation input installation size",
                 "from": "PV installation inputs",
                 "verb": "has a",
                 "to": "PV capacity"
             },
             {
-                "id": 2868,
+                "id": 2883,
                 "name": "PV installation input yield factor order",
                 "from": "PV installation input yield factor",
                 "verb": "is follower of",

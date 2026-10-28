@@ -44,6 +44,7 @@ include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once test_paths::CREATE . 'test_config_trees.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_names;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -283,6 +285,41 @@ class config_tree_ui_tests
         $test_name = '... unless an admin has set it as the default';
         $default_url[url_var::NUMERIC_VALUE] = (string)$old_val;
         $t->assert_text_contains($test_name, $ui->setting_saved_text($default_url), $setting_key);
+
+        // a text e.g. the view name of a pinned view, which an admin changes, because it is a setting of the pod
+        $text_field = html_base::NAME . '="' . url_var::VALUE_TEXT . '"';
+        $test_name = 'an admin can change a text setting with a text input';
+        $cft->can_edit = true;
+        $cft->is_admin = true;
+        $page_text = $cft->html('', '');
+        $t->assert_text_contains($test_name, $page_text, $text_field);
+        $test_name = '... and add a text setting without a database value with the phrases of its yaml path';
+        // the keys above the tree, which the backend tree also puts first (cfg/helper/config_tree::ROOT_KEYS)
+        $view_names = array_merge(triples::CONFIG_ROOT,
+            [test_config_trees::SYSTEM, test_config_trees::STARTUP, test_config_trees::PV, test_config_trees::VIEW_NAME]);
+        $phr_ids = implode(',', array_map([$t_cft, 'phrase_id'], $view_names));
+        $t->assert_text_contains($test_name, $page_text, html_base::NAME . '="' . url_var::PHRASE_LIST . '" ' . html_base::VALUE . '="' . $phr_ids . '"');
+        $t->assert_text_contains($test_name, $page_text, html_base::NAME . '="' . url_var::MASK . '" ' . html_base::VALUE . '="' . views::VALUE_ADD_ID . '"');
+        $cft->is_admin = false;
+        // negative: the pinned views are a setting of the pod, so a normal user gets no text input
+        $test_name = '... but a normal user cannot change a text setting of the pod';
+        $t->assert_text_not_contains($test_name, $cft->html('', ''), $text_field);
+        // negative: the edit icon of an empty text only opens the input, so a read only page never shows it
+        $test_name = '... and sees no edit icon of an empty text';
+        $t->assert_text_not_contains($test_name, $cft->html('', ''), icons::EDIT);
+        $cft->can_edit = false;
+        $test_name = 'the confirmation names the setting and the new text';
+        $text_key = implode(config_tree::NAME_SEPARATOR, [test_config_trees::PV, test_config_trees::VIEW_NAME]);
+        $text_url = [
+            url_var::VALUE_TEXT => test_config_trees::VIEW_NAME_VALUE,
+            url_var::PRE . url_var::VALUE_TEXT => '',
+            url_var::CONFIG_KEY => $text_key,
+        ];
+        $t->assert_text_contains($test_name, $ui->setting_saved_text($text_url), test_config_trees::VIEW_NAME_VALUE);
+        // negative: an empty text is not saved, so it is not confirmed either
+        $test_name = '... but nothing is confirmed for an empty text';
+        $text_url[url_var::VALUE_TEXT] = '';
+        $t->assert($test_name, $ui->setting_saved_text($text_url), '');
 
         $t->subheader($ts . 'page cache');
 
