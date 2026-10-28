@@ -147,22 +147,29 @@ class view_read_tests
 
         // the components of all system views are loaded at once, which must give each view the same
         // components in the same order as the load of the components of the single view
-        $sys_word = $lst->get_by_code_id(view_shared::WORD);
-        $single_word = new view($t->usr1);
-        $single_word->load_by_id($sys_word->id(), $msg);
-        $single_word->load_components($msg);
-        $test_name = 'the system view has the same components as the single load of the view';
-        $t->assert($test_name, $sys_word->cmp_lnk_lst->names(), $single_word->cmp_lnk_lst->names());
-        // negative: the split of the links of all system views gives a view no link of another view
-        $test_name = '... and no component link of another system view';
-        $t->assert($test_name, $sys_word->cmp_lnk_lst->view_ids(), [$sys_word->id()]);
-
         // the view relations of all system views are loaded at once too, which gives the table
         // its editor as the editor_views.json import has defined it
         $test_name = 'the table view has the table editor as editor';
         $t->assert($test_name, $lst->get_by_code_id(view_shared::TABLE)?->editor_id, view_shared::TABLE_EDITOR_ID);
-        $test_name = '... but a view without an editor relation has no editor';
-        $t->assert_null($test_name, $sys_word->editor_id);
+
+        // the missing word view is already reported by the check of its code id above
+        $sys_word = $lst->get_by_code_id(view_shared::WORD);
+        if ($sys_word === null) {
+            $t->dsp_warning('the component and editor tests of the system view '
+                . view_shared::WORD . ' are skipped, because the view is not loaded');
+        } else {
+            $single_word = new view($t->usr1);
+            $single_word->load_by_id($sys_word->id(), $msg);
+            $single_word->load_components($msg);
+            $test_name = 'the system view has the same components as the single load of the view';
+            $t->assert($test_name, $sys_word->cmp_lnk_lst->names(), $single_word->cmp_lnk_lst->names());
+            // negative: the split of the links of all system views gives a view no link of another view
+            $test_name = '... and no component link of another system view';
+            $t->assert($test_name, $sys_word->cmp_lnk_lst->view_ids(), [$sys_word->id()]);
+            // negative: unlike the table above, a view without an editor relation has no editor
+            $test_name = 'a view without an editor relation has no editor';
+            $t->assert_null($test_name, $sys_word->editor_id);
+        }
 
         // the editors change other views, so editor_views.json gives them the editor type
         $test_name = 'the calculator editor is an editor view';

@@ -391,8 +391,9 @@ class component_types
     const int SYSTEM_SUB_TITLE_ID = 3;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
     const int SYSTEM_SUB_TITLE_VAR_ID = 4;
-    // the "..." below the title of a default, detail, range or detail with range view that
-    // opens the menu to show the same object in one of the other three versions
+    // shows nothing, because the edit menu of the navbar offers the default, detail, range and
+    // detail with range view (sandbox::menu_views_ui); kept until the type is retired with the
+    // database, because the system views still use it and retiring it shifts the component ids
     const string RELATED_SYSTEM_VIEW_SELECTOR = "related_system_view_selector";
     const int RELATED_SYSTEM_VIEW_SELECTOR_ID = 12;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
@@ -468,6 +469,9 @@ class component_types
     const int LIST_PARENTS_OF_WORD_ID = 47;
     const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
     const int LIST_CHILDREN_OF_WORD_ID = 46;
+    // only the children that are triples e.g. Swiss franc and US Dollar for currency; the child words are WORDS_DOWN
+    const string LIST_CHILD_TRIPLES = "list_child_triples";
+    const int LIST_CHILD_TRIPLES_ID = 294;
     const string PHRASE_ALIASES = "phrase_aliases";
     const int PHRASE_ALIASES_ID = 42;
     const string PHRASE_ALIASES_COM = "show the phrases that are an alias of the given phrase e.g. 'has aliases: $, U.S. dollar' for 'US dollar'";
@@ -1021,6 +1025,14 @@ class component_types
         self::FORM_PHRASE_VALUE_LINE
     );
 
+    // the component types that show a value table, whose column and form selection the edit menu
+    // of the navbar offers e.g. "columns and values" and "as table" on the start page
+    const array TABLE_MENU_TYPES = [
+        self::CALC_SHEET,
+        self::TABLE_WITH_RELATED_COLUMNS,
+        self::TABLE_WITH_OWN_COLUMNS,
+    ];
+
     // list of component types that are used to combine lists
     const array LIST_GROUP = array(
         self::SYSTEM_SUB_TITLE,
@@ -1202,6 +1214,7 @@ class component_types
         [self::SELECT_VIEW, self::SELECT_VIEW_ID],
         [self::LIST_PARENTS_OF_WORD, self::LIST_PARENTS_OF_WORD_ID],
         [self::LIST_CHILDREN_OF_WORD, self::LIST_CHILDREN_OF_WORD_ID],
+        [self::LIST_CHILD_TRIPLES, self::LIST_CHILD_TRIPLES_ID],
         [self::PHRASE_ALIASES, self::PHRASE_ALIASES_ID],
         [self::PHRASE_SYMBOLS, self::PHRASE_SYMBOLS_ID],
         [self::LIST_PHRASES_RELATED_EX_SYMBOLS, self::LIST_PHRASES_RELATED_EX_SYMBOLS_ID],

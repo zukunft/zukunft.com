@@ -65,6 +65,7 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_cache.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -632,15 +634,21 @@ class import
                 }
             } elseif ($key == json_fields::WORDS) {
                 $this->step_start(msg_id::SAVE_SINGLE, word::class, $sec_cnt, $sec_est);
+                $has_preload_type = false;
                 foreach ($json_obj as $json_wrd) {
                     $wrd = new word($this->usr);
                     if ($wrd->import_obj($json_wrd, $msg)) {
                         $this->words_done++;
+                        $has_preload_type = $has_preload_type || $wrd->has_preload_type();
                     } else {
                         $this->words_failed++;
                     }
                     $this->display_progress($this->words_done);
                     $pos++;
+                }
+                // a unit or scaling word is part of the system phrases of the cached types api message
+                if ($has_preload_type) {
+                    new db_cache($this->usr)->del_types($msg);
                 }
             } elseif ($key == json_fields::WORD_LIST) {
                 $this->step_start(msg_id::SAVE_LIST, word::class, $sec_cnt, $sec_est);
@@ -661,15 +669,21 @@ class import
                 $pos++;
             } elseif ($key == json_fields::TRIPLES) {
                 $this->step_start(msg_id::SAVE_SINGLE, triple::class, $sec_cnt, $sec_est);
+                $has_preload_verb = false;
                 foreach ($json_obj as $json_trp) {
                     $wrd_lnk = new triple($this->usr);
                     if ($wrd_lnk->import_obj($json_trp, $msg)) {
                         $this->triples_done++;
+                        $has_preload_verb = $has_preload_verb || $wrd_lnk->has_preload_verb();
                     } else {
                         $this->triples_failed++;
                     }
                     $this->display_progress($this->triples_done);
                     $pos++;
+                }
+                // a symbol triple is part of the system phrases of the cached types api message
+                if ($has_preload_verb) {
+                    new db_cache($this->usr)->del_types($msg);
                 }
             } elseif ($key == json_fields::FORMULAS) {
                 $this->step_start(msg_id::SAVE_SINGLE, formula::class, $sec_cnt, $sec_est);

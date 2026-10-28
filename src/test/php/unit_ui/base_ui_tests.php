@@ -118,6 +118,7 @@ use Zukunft\ZukunftCom\test\php\create\test_mappers;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_sources;
 use Zukunft\ZukunftCom\test\php\create\test_values;
+use Zukunft\ZukunftCom\test\php\create\test_views;
 use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
@@ -135,6 +136,7 @@ class base_ui_tests
         $t_phr = new test_phrases($t);
         $t_src = new test_sources($t);
         $t_frm = new test_formulas($t);
+        $t_msk = new test_views($t);
         $msg = new user_message();
         $msg_ui = new user_message_ui();
 
@@ -573,17 +575,41 @@ class base_ui_tests
         $test_name = 'the edit menu of a view with an editor opens the editor with the same object';
         $table_page = [url_var::MASK => (string)views::TABLE_ID, url_var::ID => (string)word_names::MATH_ID];
         $navbar_table = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
-            views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
+            $t_msk->menu_table_editor_ui());
         $t->assert_text_contains($test_name, $navbar_table,
             url_var::MASK . '=' . views::TABLE_EDITOR_ID . '&amp;' . url_var::ID . '=' . word_names::MATH_ID);
         $t->assert_text_contains($test_name, $navbar_table, '>' . views::TABLE_EDITOR_NAME . '<');
         $test_name = '... and returns to the table';
         $t->assert_text_contains($test_name, $navbar_table, url_var::BACK . url_var::MASK . '=' . views::TABLE_ID);
         $alternative = '>' . $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW) . '<';
-        $test_name = '... instead of the alternative views';
-        $t->assert_text_not_contains($test_name, $navbar_table, $alternative);
-        $test_name = 'the edit menu of a view without an editor offers the alternative views';
-        $t->assert_text_contains($test_name, $navbar_normal_page, $alternative);
+        $test_name = '... below the sub header alternative views';
+        $t->assert_text_order($test_name, $navbar_table, $alternative, '>' . views::TABLE_EDITOR_NAME . '<');
+        // negative: a view without an editor and without suggested views has no sub header alternative views
+        $test_name = 'the edit menu of a view without editor and suggested views has no sub header alternative views';
+        $t->assert_text_not_contains($test_name, $navbar_normal_page, $alternative);
+        // changing and adding a view are below the sub header customize, which follows "... more"
+        $test_name = 'the sub header customize is between "... more" and "change this view"';
+        $customize = 'class="' . styles::MENU_HEADER . '">' . $mtr->txt(msg_id::NAVBAR_CUSTOMIZE);
+        $t->assert_text_order($test_name, $navbar_normal_page, '>' . $mtr->txt(msg_id::AND_MORE) . '<', $customize);
+        $t->assert_text_order($test_name, $navbar_normal_page, $customize, '>' . $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW) . '<');
+        $test_name = '"change this view" says that it calls the view editor';
+        $t->assert_text_contains($test_name, $navbar_normal_page, $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW_TIP));
+        $test_name = '"... more" names examples of the more views';
+        $navbar_names = $html->navbar(views::WORD_ID, [], null, null, false, $t_msk->menu_math_ui());
+        $names_tip = $lib->msg_var_replace($mtr->txt(msg_id::NAVBAR_MORE_VIEWS_NAMES_TIP), msg_id::VAR_NAME_LIST, views::SCIENCE);
+        $more_tip = $mtr->txt(msg_id::NAVBAR_MORE_VIEWS_TIP) . ' ' . $names_tip;
+        $t->assert_text_contains($test_name, $navbar_names, $more_tip);
+        $test_name = '"add view" names the shown object';
+        $for_tip = $lib->msg_var_replace($mtr->txt(msg_id::NAVBAR_ADD_VIEW_FOR_TIP), msg_id::VAR_NAME_LIST, word_names::MATH);
+        $add_tip = $mtr->txt(msg_id::NAVBAR_ADD_VIEW_TIP) . ' ' . $for_tip;
+        $t->assert_text_contains($test_name, $navbar_names, $add_tip);
+        // negative: without view names or object the tooltips name none
+        $test_name = '... but without the names of the views no examples';
+        $more_tip_start = $mtr->txt(msg_id::NAVBAR_MORE_VIEWS_TIP) . ' ';
+        $t->assert_text_not_contains($test_name, $navbar_normal_page, $more_tip_start);
+        $test_name = '... and without the shown object no object';
+        $add_tip_end = $mtr->txt(msg_id::NAVBAR_ADD_VIEW_TIP) . '"';
+        $t->assert_text_contains($test_name, $navbar_normal_page, $add_tip_end);
         // like the edit icons behind the title the editor of a user without login is grey and asks for a login
         $usr_known = $ui_sys->usr;
         $ip_ui = new user_ui();
@@ -592,7 +618,7 @@ class base_ui_tests
             json_fields::PROFILE_ID => $ui_sys->typ_lst_cache->usr_pro->id(user_profiles::IP_ONLY)], $msg_ui);
         $ui_sys->usr = $ip_ui;
         $navbar_table_ip = $html->navbar(views::TABLE_ID, $table_page, null, null, false,
-            views::TABLE_EDITOR_ID, views::TABLE_EDITOR_NAME);
+            $t_msk->menu_table_editor_ui());
         $ui_sys->usr = $usr_known;
         $test_name = 'the editor in the edit menu of a user without login is grey';
         $t->assert_text_contains($test_name, $navbar_table_ip, styles::STYLE_GREY);

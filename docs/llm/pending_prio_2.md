@@ -15,6 +15,81 @@ make this text translatable so that the frontend language shows the warning in t
   side by side columns, set the column width by the view instead and remove the rule
 - the toolbar `.bar` of the formula editor sticks at `top: 0` and slides under the fixed site header
   when the page scrolls; stick it below the site header
+- the formula editor inside the calculator editor reports every keystroke, which the calculator editor
+  adds by `mutate` with the history key `frm:<id>`; check that `pushHistory` merges the keystrokes of one
+  formula, so that one undo after typing a few characters takes back the typed text and not one character
+- the `toggle` listener of `calculator_editor.js` on `document` does not skip the formula editor hosts
+  like `onClick`, `onInput`, `onChange` and `onKey` (`inFormulaEditor`); it only reacts to `details.sect`
+  and `data-preview`, which the formula editor has not, but skip the formula editor hosts there too,
+  so that a later collapsed block of the formula editor never changes the open lists of the structure
+
+#### reach the formula editor from the page
+
+the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
+http://localhost/http/view.php?m=formula_editor&id=-2780, because the calculator has one editor relation
+(the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
+type, so that the edit menu offers both editors
+
+#### the formula editor inside the calculator editor
+
+the calculator editor shows a formula selected in the "Page structure" column in the formula editor
+(`startFormulaEditor` of `formula_editor.js` with the hosts `calcFormulaEditor` and `calcFormulaCompare`)
+instead of the settings and on the "Page preview" tab the result compare instead of the preview; open:
+- check in the browser: typing, the token tools and the reset of one formula change the "changed" chip
+  of the formula in the structure and the change count; undo, discard changes and the save of the
+  calculator editor update the formula editor; loading another phrase shows its formulas
+- the "Page preview" tab keeps its name while it shows the result compare; name it "Results" while a
+  formula is selected
+- the global rules of `calculator_editor.css` e.g. `.col`, `.btn` and `.chip` also format the formula
+  editor hosts where `formula_editor.css` sets no value; nesting `calculator_editor.css` (see below)
+  removes this
+
+#### one code for both editors
+
+`formula_editor.js` and `calculator_editor.js` each have their own `esc`, the read of the seed and the
+save by the update put message, and `formula_editor.css` and `calculator_editor.css` the same colour
+tokens; share them in one file, and nest `calculator_editor.css` in its host like `formula_editor.css`,
+so that the calculator editor page also keeps the standard css
+
+#### show a list with all results (to review)
+
+list below the formula the results and values sets used in this calculator
+show the results and the values in the formula expression format and make the lines selectable
+if a line is selected show below the formula with the results in the latex format
+
+#### selector for phrases and terms (to review)
+
+if in the formula expression a result phrase (left of the equal sign)
+or a term used for the values selection (right of the equal sign)
+is selected show an interactive phrase or term selection that reloads the phrases or terms based on the pattern
+
+## static files of the frontend
+
+the scripts and styles e.g. `formula_editor.js` and `calculator_editor.css` are served without a
+version, so a browser may run an old copy after a change, e.g. the calculator editor showed the old
+formula inspector after the formula editor was added; add the modification time of the file to the
+url of the script and the style (`html_base::script_src`, `html_base::link_style`, e.g. `?v=<time>`),
+with a fixed value in the test snapshots, so that the browser reads the changed file
+
+## headless browser of the calculator editor scenarios
+
+- name the inline literals by consts: the profile file `user.js`, the process dir `/proc/` and the
+  Marionette commands e.g. `WebDriver:Navigate` and `Marionette:Quit` in `test/php/utils/headless_browser.php`,
+  and the script dir `script` and the temp page of `use_case_ui_tests::scenario_page` in the test `paths.php`
+  and `files.php`
+- split the lines with more than one step: `trim(shell_exec(...) ?? '')` in `headless_browser::start`,
+  the ternary `$part = $part === '' ? false : $part` in `headless_browser::read` and the three conditions
+  of the wait in `headless_browser::stop`
+- read the message of a no-change scenario into a named variable before the assert in
+  `use_case_ui_tests::calculator_editor_scenario_tests`
+- if Marionette of the first browser found does not start, try the next one, e.g. Firefox if LibreWolf
+  fails; name the failed browser in the warning instead of "no headless browser found", and leave out
+  "in" of the subheader if no browser is used
+- if `Marionette:Quit` fails, `headless_browser::stop` waits the timeout and removes the profile of a
+  browser that may still run; end the process before the profile is removed; remove the temp page of
+  `scenario_page` also if a scenario test ends with an exception
+- add a test of `headless_browser` itself with a positive and a negative case: a page with the element,
+  a page without it (null) and no browser found
 
 ## calculator field value of the page triple
 
@@ -197,6 +272,14 @@ the formula line with the numbers of the result default view (result::load_expre
 
 see /docs/llm/coding.md and if the search e.g. http://localhost/http/view.php?m=67&pattern=Momo returns no result, additional to the simple add word button show an 'add word' button with a selection of the parent phrases last used by the user. For the phrase selection list use an list in the user section of the config.yaml that contains the x parent phrases last used by the user. x is the max number of phrases to show in the list that is itself a value in the config.yaml. A parent phrase is a phrase
 connected wth the 'is a' verb. So e.g. if a tripel 'basel is a city' has been added, add city to the list of last used parents and if the the word lugano is searched and the result is empty shown 'add lugano as a city' with a link that confirms the adding of the word lugano and the triple 'lugano is a city' in one confirm page.
+
+## search with the user overwrites
+
+check every search query again, so that it uses the user overwrites of the requesting user:
+the name the user has changed is found by the new name and no longer by the standard name,
+and an object the user has excluded is not found; e.g. the `load_sql_like` / `load_sql_by_pattern`
+of `word_list`, `phrase_list`, `term_list`, `formula_list`, `source_list` and `view_list`;
+add a unit test with the sql fixture and a db read test for each case
 
 ## after replacing the `$back` parameter by the url array of the calling page
 

@@ -165,7 +165,9 @@ class source_list extends sandbox_list_named
         foreach ($src_lst as $db_row) {
             $src = new source($this->get_user());
             $src->row_mapper_sandbox($db_row, $msg);
-            $result = $this->add($src);
+            if ($this->add($src)) {
+                $result = true;
+            }
         }
 
         return $result;

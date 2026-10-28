@@ -366,6 +366,18 @@ class view_tests
         $t->assert_false($test_name, $added);
         $msg->reset();
 
+        // an assigned term that is still not in the database when the view is saved is reported,
+        // but does not stop the import e.g. a term of a later import file
+        $test_name = 'an assigned term that is not in the database is reported when the view is saved';
+        $msk = $t_msk->view();
+        $msk->add_term($t_trm->by_name(word_names::PI), $msg);
+        $msk->save_term_links($msg);
+        $t->assert_text_contains($test_name, $msg->text(), word_names::PI);
+        $test_name = '... as an information that does not stop the import';
+        $is_ok = $msg->is_ok();
+        $t->assert_true($test_name, $is_ok);
+        $msg->reset();
+
 
         $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t_msk->view(), $t->usr_system);
@@ -438,6 +450,10 @@ class view_tests
         $t->assert_sql_update($sc, $mrl_moved, $mrl, [sql_type::LOG]);
 
         // sql write delete is already tested in the horizontal tests
+        // ... but not the logged removal of a user overwrite (sandbox::del_usr_cfg_exe)
+        $t->subheader($ts . 'sql write delete');
+        $mrl = $t_msk->view_relation_filled();
+        $t->assert_sql_delete($sc, $mrl, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'api mapper');
 

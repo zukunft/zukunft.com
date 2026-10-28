@@ -702,12 +702,13 @@ class verb_list extends type_list
      * a kind of replacement for the user_type_list->get() function but for the verb object
      *
      * @param string $code_id the code id of the requested verb
+     * @param bool $log_err false if the caller reports a missing verb itself
      * @return verb|null the verb object or null if no match is found
      */
-    function get_verb(string $code_id): ?verb
+    function get_verb(string $code_id, bool $log_err = true): ?verb
     {
         $result = null;
-        $id = $this->id($code_id);
+        $id = $this->id($code_id, $log_err);
         if ($id > 0) {
             $result = $this->get_verb_by_id($id);
         } else {

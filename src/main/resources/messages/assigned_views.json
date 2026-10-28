@@ -1,0 +1,26 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-27 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "assigned views"
+  ],
+  "words": [
+    {
+      "name": "constant"
+    },
+    {
+      "name": "mathematics"
+    }
+  ],
+  "triples": [
+    {
+      "name": "mathematical constant",
+      "from": "constant",
+      "verb": "is part of",
+      "to": "mathematics",
+      "view": "Mathematical constant"
+    }
+  ]
+}

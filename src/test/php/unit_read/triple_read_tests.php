@@ -37,8 +37,10 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
@@ -91,6 +93,17 @@ class triple_read_tests
         // negative: a triple imported without a type is no measure
         $test_name = '... and a triple without a type is no measure';
         $t->assert_false($test_name, $trp_by_id->is_measure());
+
+        $t->subheader($ts . 'views tab');
+        // assigned_views.json assigns the view of all mathematical constants to the triple as its default view
+        $test_name = 'the view directly assigned to ' . triple_names::MATH_CONST . ' is on top of its views tab';
+        $trp_by_id->load_views_related($msg);
+        $msk_ids = $trp_by_id->views_related->ids();
+        $top_id = $msk_ids[0] ?? 0;
+        $t->assert($test_name, $top_id, views::MATH_CONST_ID);
+        // negative: the system default triple view is only the fallback for a triple without any view
+        $test_name = '... and the system default triple view is not offered instead';
+        $t->assert_contains_not($test_name, $msk_ids, views::TRIPLE_ID);
 
         $test_name = 'triple load ' . word_names::CANTON . ' ' . word_names::ZH . ' by link';
         $lnk_canton = new triple($t->usr1);

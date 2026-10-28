@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::CONST . 'icons.php';
+include_once html_paths::HTML . 'view_menu.php';
 include_once html_paths::SHARED . 'group_id_url.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
@@ -466,17 +467,15 @@ class html_base
      * @param string|null $usr_name the logged-in username to display; null when not logged in
      * @param string|null $usr_role the profile/role name to display next to the username; null if not set
      * @param bool $is_admin true to offer the admin dashboard in the user menu
-     * @param int $edt_id the view id of the editor of the current view; 0 offers the alternative views instead
-     * @param string $edt_name the name of the editor view shown in the edit menu
+     * @param view_menu $mnu what the page knows for the edit menu e.g. the editor and the views of the shown word
      */
     function navbar(
-        int     $msk_id = 0,
-        array   $url_array = [],
-        ?string $usr_name = null,
-        ?string $usr_role = null,
-        bool    $is_admin = false,
-        int     $edt_id = 0,
-        string  $edt_name = ''
+        int       $msk_id = 0,
+        array     $url_array = [],
+        ?string   $usr_name = null,
+        ?string   $usr_role = null,
+        bool      $is_admin = false,
+        view_menu $mnu = new view_menu()
     ): string
     {
         global $ui_sys;
@@ -502,8 +501,7 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        // TODO Prio 3 switch the view mask to a suggested related view
-        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $edt_id, $edt_name) . "\n";
+        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
@@ -533,34 +531,69 @@ class html_base
      * @param int $msk_id the current view id used to build the view change links
      * @param array $url_array the current request parameters used to build back-navigation links
      * @param bool $is_admin true to offer the server admin page at the end
+     * @param view_menu $mnu what the page knows for the edit menu e.g. the editor and the views of the shown word
      */
-    private function view_change_list(int $msk_id = 0, array $url_array = [], bool $is_admin = false, int $edt_id = 0, string $edt_name = ''): string
+    private function view_change_list(
+        int       $msk_id = 0,
+        array     $url_array = [],
+        bool      $is_admin = false,
+        view_menu $mnu = new view_menu()
+    ): string
     {
-        global $mtr;
-        if ($edt_id != 0) {
+        $result = $mnu->page_items;
+        // the editor and the suggested views below one sub header like the entries of the page
+        if ($mnu->edt_id != 0 or $mnu->view_items != '') {
+            $result .= $this->list_item(msg_id::NAVBAR_ALTERNATIVE_VIEW->text(), styles::MENU_HEADER) . "\n";
+        }
+        if ($mnu->edt_id != 0) {
             // the editor shows the same object, so it gets the page vars of the current page
-            $edt_par = [url_var::MASK => $edt_id] + self::page_url_array($url_array);
+            $edt_par = [url_var::MASK => $mnu->edt_id] + self::page_url_array($url_array);
             $url_edt = $this->url_with_back($this->page_url($edt_par), $url_array);
             // like the edit icons behind the title grey with the request to log in if the user cannot save a change
             // and for a user who can no tooltip, because ref() skips a title that repeats the name
-            [$edt_style, $edt_tip] = $this->change_style_and_tip('', $edt_name);
-            $result = $this->list_item($this->ref($url_edt, $edt_name, $edt_tip, $edt_style)) . "\n";
-        } else {
-            $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
+            [$edt_style, $edt_tip] = $this->change_style_and_tip('', $mnu->edt_name);
+            $result .= $this->list_item($this->ref($url_edt, $mnu->edt_name, $edt_tip, $edt_style)) . "\n";
         }
-        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
+        // e.g. for a word its own and assigned views, the views of its parents and the default word views
+        $result .= $mnu->view_items;
+        $more_names = implode(', ', $mnu->more_names);
+        $more_tip = $this->tip_with_names(msg_id::NAVBAR_MORE_VIEWS_TIP, msg_id::NAVBAR_MORE_VIEWS_NAMES_TIP, $more_names);
+        $result .= $this->list_item($this->ref('?view=more', msg_id::AND_MORE->text(), $more_tip)) . "\n";
+        // changing or adding a view below one sub header like the entries of the page
+        $result .= $this->list_item(msg_id::NAVBAR_CUSTOMIZE->text(), styles::MENU_HEADER) . "\n";
         $url_msk_edit = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_EDIT_ID
             . '&' . url_var::ID . '=' . $msk_id, $url_array);
-        $result .= $this->list_item($this->ref($url_msk_edit, $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref($url_msk_edit, msg_id::NAVBAR_CHANGE_VIEW->text(),
+                msg_id::NAVBAR_CHANGE_VIEW_TIP->text())) . "\n";
         $url_msk_add = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
-        $result .= $this->list_item($this->ref($url_msk_add, $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        $add_tip = $this->tip_with_names(msg_id::NAVBAR_ADD_VIEW_TIP, msg_id::NAVBAR_ADD_VIEW_FOR_TIP, $mnu->obj_name);
+        $result .= $this->list_item($this->ref($url_msk_add, msg_id::NAVBAR_ADD_VIEW->text(), $add_tip)) . "\n";
         // the server admin page checks the access itself, the link is just not offered to the others
         if ($is_admin) {
-            $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, $mtr->txt(msg_id::NAVBAR_SERVER_ADMIN))) . "\n";
+            $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, msg_id::NAVBAR_SERVER_ADMIN->text())) . "\n";
         }
         return $this->list_unsorted($result);
+    }
+
+    /**
+     * a tooltip that names examples behind its text, e.g. "show more views e.g. Word, Triple"
+     *
+     * @param msg_id $tip_id the tooltip itself e.g. "show more views"
+     * @param msg_id $names_tip_id the addition with the names e.g. "e.g. z$VarObjNameList$z"
+     * @param string $names the names for the addition e.g. "Word, Triple"; empty for the tooltip alone
+     * @return string the tooltip text in the language of the user
+     */
+    function tip_with_names(msg_id $tip_id, msg_id $names_tip_id, string $names): string
+    {
+        $lib = new library();
+        $result = $tip_id->text();
+        if ($names != '') {
+            $names_tip = $lib->msg_var_replace($names_tip_id->text(), msg_id::VAR_NAME_LIST, $names);
+            $result .= ' ' . $names_tip;
+        }
+        return $result;
     }
 
     /**
@@ -3631,29 +3664,6 @@ class html_base
             $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
         return '<' . self::LI . $attr . '>' . $txt . '</' . self::LI . '>';
-    }
-
-    /**
-     * a popup menu that opens on a click without any javascript, because the html details
-     * element keeps the open state itself (docs/llm/frontend.md "Pure HTML, no JavaScript");
-     * the css class positions the entries below the label (see the menus of style_html.css)
-     *
-     * @param string $label the html code of the always shown part e.g. an icon or "..."
-     * @param string $items the html code of the list items of the menu
-     * @param string $style the css class of the menu e.g. styles::MENU_COLUMN
-     * @param string $title the mouseover text that says what the menu selects
-     * @return string the html code of the popup menu
-     */
-    function popup_menu(string $label, string $items, string $style, string $title = ''): string
-    {
-        $title_attr = '';
-        if ($title != '') {
-            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
-        }
-        $result = '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="' . $style . '">';
-        $result .= '<' . self::SUMMARY . $title_attr . '>' . $label . '</' . self::SUMMARY . '>';
-        $result .= $this->list_unsorted($items);
-        return $result . '</' . self::DETAILS . '>';
     }
 
     /**

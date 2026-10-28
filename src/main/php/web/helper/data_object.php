@@ -244,6 +244,9 @@ class data_object
     public bool $page_data_complete = false;
     // the phraseData answer of the page, which the calculator page embeds as the seed of its script
     public array $page_data = [];
+    // the column names per column tier selection of the value tables of the page
+    // (value_list::tier_names), which the tooltips of the column menu of the navbar name
+    public array $tier_names = [];
     // the seconds the frontend has waited for the backend (rest_call::api_call), so that the
     // time of creating a page can be split into the frontend work and the api wait
     public float $api_wait = 0;
@@ -707,6 +710,21 @@ class data_object
     {
         foreach ($chg_log->lst() as $log) {
             $this->chg_log->add($log, $msg);
+        }
+    }
+
+    /**
+     * add the column names of a value table of the page, so that the column menu of the navbar
+     * names the columns of every table of the page, each name once per column tier selection
+     *
+     * @param array $tier_names per column tier selection the column names of one table
+     */
+    function add_tier_names(array $tier_names): void
+    {
+        foreach ($tier_names as $tiers => $names) {
+            $known = $this->tier_names[$tiers] ?? [];
+            $merged = array_merge($known, $names);
+            $this->tier_names[$tiers] = array_values(array_unique($merged));
         }
     }
 

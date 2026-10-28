@@ -71,6 +71,10 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class group extends sandbox_named
 {
 
+    // a group has no edit view of its own (see sandbox::HAS_EDIT_VIEW)
+    // TODO Prio 1 create a edit view for groups
+    const bool HAS_EDIT_VIEW = false;
+
     /*
      * object vars
      */

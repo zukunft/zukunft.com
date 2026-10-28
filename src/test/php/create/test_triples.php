@@ -156,6 +156,8 @@ class test_triples extends test_objects
         // list unit test and the term list api read test share the fixture term_list.json,
         // so the in-memory twin and the db row must create the same api json
         $trp->weight = test_const::TRIPLE_WEIGHT;
+        // ... and the same default view as assigned_views.json sets for the db row
+        $trp->set_view_id(views::MATH_CONST_ID);
         return $trp;
     }
 

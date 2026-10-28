@@ -139,12 +139,15 @@ class start_ui_tests
         $t->assert_text_contains($test_name, $chart_html, 'class="' . styles::CHART_ROW . '"');
         $test_name = '... without the table';
         $t->assert_text_not_contains($test_name, $chart_html, '<' . html_base::TABLE);
-        $test_name = '... but with the "..." menu to get the table back';
-        $t->assert_text_contains($test_name, $chart_html, 'class="' . styles::MENU_COLUMN . '"');
+        // the way back to the table is the edit menu of the navbar, so the charts have no "..." menu
+        $test_name = '... and without the "..." menu, which the edit menu of the navbar offers';
+        $t->assert_text_not_contains($test_name, $chart_html, '<' . html_base::DETAILS);
+        $test_name = '... but the edit menu offers the table to get it back';
+        $chart_menu = $t_val->value_list_solution_prio_ui()->columns_menu_items($chart_url);
+        $t->assert_text_contains($test_name, $chart_menu,
+            url_var::DISPLAY_LIST_AS . '=' . table_forms::TABLE->value);
         $test_name = '... and with the header of the table above the charts';
         $t->assert_text_order($test_name, $chart_html, '<' . html_base::H4 . '>', '<svg');
-        $test_name = '... with the menu in the top right corner of the header line';
-        $t->assert_text_order($test_name, $chart_html, '<' . html_base::H4 . '>', 'class="' . styles::CHART_CORNER . '"');
         $both_url = [url_var::MASK => views::START_ID, url_var::DISPLAY_LIST_AS => table_forms::TABLE_AND_CHART->value];
         $both_html = $list->start_list($dto_ui, $msg, $both_url);
         $test_name = 'shown as table and chart the table comes first and the charts follow';
@@ -186,10 +189,10 @@ class start_ui_tests
         $t->assert_text_not_contains($test_name, $list->start_list($dto_ui, $msg, $col_url),
             '>' . triple_names::GLOBAL_WARMING . '</a>');
 
-        // the start page opens with the mayor columns, whose "..." header opens the menu that
-        // selects the columns, so every column tier of the ranking is one click away
+        // the start page opens with the mayor columns, and the edit menu of the navbar selects
+        // the columns, so every column tier of the ranking is one click away
         $url_array = [url_var::MASK => views::START_ID];
-        $start_menu = $list->start_list($dto_ui, $msg, $url_array);
+        $start_menu = $t_val->value_list_solution_prio_ui()->columns_menu_items($url_array);
         foreach (value_list_ui::COLUMN_TIER_NAMES as $tiers => $msg_tier) {
             $test_name = 'the start page menu selects ' . $msg_tier->text();
             $t->assert_text_contains($test_name, $start_menu,
@@ -197,13 +200,18 @@ class start_ui_tests
         }
         $test_name = 'the start page menu needs no javascript';
         $t->assert_text_not_contains($test_name, $start_menu, '<script');
-        // the full table shows the menu as well, so that the reader can narrow the columns
+        // the full table offers the menu as well, so that the reader can narrow the columns
         // again without the back button
-        $test_name = 'the full start page shows the menu too';
+        $test_name = 'the full start page offers the menu too';
         $url_array[url_var::DISPLAY_LIST_COLUMNS] = value_list_ui::COLUMN_TIERS_ALL;
         $url_array[url_var::DISPLAY_LIST_VARIANCE] = url_var::TRUE;
-        $t->assert_text_contains($test_name, $list->start_list($dto_ui, $msg, $url_array),
-            styles::MENU_COLUMN);
+        $full_menu = $t_val->value_list_solution_prio_ui()->columns_menu_items($url_array);
+        $t->assert_text_contains($test_name, $full_menu,
+            url_var::DISPLAY_LIST_COLUMNS . '=' . value_list_ui::COLUMN_TIERS_ALL);
+        // negative: the table of the start page itself has no "..." menu any more
+        $test_name = '... but not in the table, because the edit menu of the navbar offers it';
+        $full_html = $list->start_list($dto_ui, $msg, $url_array);
+        $t->assert_text_not_contains($test_name, $full_html, '<' . html_base::DETAILS);
 
         // negative: without the values of the global issues the start page shows no table at all
         // instead of an empty header row

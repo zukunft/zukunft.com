@@ -439,6 +439,7 @@ the object structure is:
 ├── sheetUi - create the html code to display a spreadsheet
 ├── stylesUi - css class constants used for html frontend
 ├── tableUi - $tbl - create the html code to display a spreadsheet
+├── view_menuUi - $mnu - what the page knows for the edit menu of the navbar
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
 ├── phrase_dataUi - $phd - the data of one phrase as the phraseData api sends it
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions

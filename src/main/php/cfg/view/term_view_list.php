@@ -42,6 +42,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST_FIELDS . 'view_fields.php';
 
@@ -164,6 +165,51 @@ class term_view_list extends sandbox_link_list
         global $db_con;
         $qp = $this->load_sql_by_view($db_con->sql_creator(), $msk);
         return $this->load($qp, $msg);
+    }
+
+    /**
+     * set the SQL query parameters to load the term views of one term, which are the views that
+     * the import has assigned to the term e.g. "Mathematical constant" to "Pi"
+     * @param sql_creator $sc with the target db_type set
+     * @param term $trm the term whose term views should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
+     */
+    function load_sql_by_term(sql_creator $sc, term $trm): sql_par
+    {
+        $qp = $this->load_sql($sc, 'term');
+        $sc->add_where(term_view::FLD_FROM, $trm->id());
+        // also load the names of both linked objects like load_sql_by_view, so that the view
+        // of each link can be named and linked without a further load
+        $sc->set_join_usr_fields(view_db::FLD_NAMES_USR_ALL, view::class, view_fields::FLD_ID, '', true);
+        $sc->set_join_usr_fields(term::FLD_NAMES_USR_NAME, term::class, term::FLD_ID, '', true);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * load the term views of one term, which are the views assigned to the term
+     * @param term $trm the term whose term views should be loaded
+     * @param user_message $msg to collect the loading problems for the requesting user
+     * @return bool true if at least one term view found
+     */
+    function load_by_term(term $trm, user_message $msg): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_term($db_con->sql_creator(), $trm);
+        return $this->load($qp, $msg);
+    }
+
+    /**
+     * @return view_list the views of the term views e.g. the views assigned to a word for its edit menu
+     */
+    function view_list(): view_list
+    {
+        $msk_lst = new view_list($this->get_user());
+        foreach ($this->lst() as $lnk) {
+            $msk_lst->add($lnk->get_view());
+        }
+        return $msk_lst;
     }
 
     /**

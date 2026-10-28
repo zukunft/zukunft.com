@@ -244,21 +244,34 @@ enum messages: string
     case TOTAL = 'total';
     case MORE = 'more';
     case AND_MORE = '... more';
-    // the tooltip and the entries of the "..." header menu of a table, which selects the
-    // column tiers to show and whether each number is shown with its variance
-    case TABLE_COLUMNS_TIP = 'table_columns_tip';
+    // the entries of the edit menu of the navbar that select the column tiers of a table to show
+    // and whether each number is shown with its variance
     case TABLE_COLUMNS_MAYOR = 'table_columns_mayor';
     case TABLE_COLUMNS_MAIN = 'table_columns_main';
     case TABLE_COLUMNS_MINOR = 'table_columns_minor';
     case TABLE_COLUMNS_ALL = 'table_columns_all';
     // added to the entry above for the same columns with the variance of each number
     case TABLE_COLUMNS_WITH_VARIANCE = 'table_columns_with_variance';
-    // the sub headers of the "..." menu and the entries that select the form of the table (table_forms)
+    // the tooltips of the column tier entries, each without and with the variance
+    case TABLE_COLUMNS_MAYOR_TIP = 'table_columns_mayor_tip';
+    case TABLE_COLUMNS_MAYOR_VARIANCE_TIP = 'table_columns_mayor_variance_tip';
+    case TABLE_COLUMNS_MAIN_TIP = 'table_columns_main_tip';
+    case TABLE_COLUMNS_MAIN_VARIANCE_TIP = 'table_columns_main_variance_tip';
+    case TABLE_COLUMNS_MINOR_TIP = 'table_columns_minor_tip';
+    case TABLE_COLUMNS_MINOR_VARIANCE_TIP = 'table_columns_minor_variance_tip';
+    case TABLE_COLUMNS_ALL_TIP = 'table_columns_all_tip';
+    case TABLE_COLUMNS_ALL_VARIANCE_TIP = 'table_columns_all_variance_tip';
+    // added to the tooltips above with the names of the columns of the tables of the page
+    case TABLE_COLUMNS_NAMES_TIP = 'table_columns_names_tip';
+    // the sub headers of the edit menu and the entries that select the form of the table (table_forms)
     case TABLE_MENU_COLUMNS = 'table_menu_columns';
     case TABLE_MENU_AS = 'table_menu_as';
     case TABLE_AS_TABLE = 'table_as_table';
     case TABLE_AS_CHART = 'table_as_chart';
     case TABLE_AS_TABLE_CHART = 'table_as_table_chart';
+    case TABLE_AS_TABLE_TIP = 'table_as_table_tip';
+    case TABLE_AS_CHART_TIP = 'table_as_chart_tip';
+    case TABLE_AS_TABLE_CHART_TIP = 'table_as_table_chart_tip';
     // the tooltips of the up / down icons behind a column header that sort the rows (table_orders)
     case TABLE_SORT_UP_TIP = 'table_sort_up_tip';
     case TABLE_SORT_DOWN_TIP = 'table_sort_down_tip';
@@ -273,13 +286,6 @@ enum messages: string
     case CHART_QUADRANT_HIGH = 'chart_quadrant_high';
     case CHART_QUADRANT_LOW = 'chart_quadrant_low';
     case CHART_PER = 'chart_per';
-    // the tooltip and the entries of the "..." menu below the title of a default view, which
-    // shows the same object in one of the versions of views::DEFAULT_VIEW_VERSIONS
-    case VIEW_VERSION_TIP = 'view_version_tip';
-    case VIEW_VERSION_DEFAULT = 'view_version_default';
-    case VIEW_VERSION_DETAIL = 'view_version_detail';
-    case VIEW_VERSION_RANGE = 'view_version_range';
-    case VIEW_VERSION_DETAIL_RANGE = 'view_version_detail_range';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
@@ -2260,6 +2266,9 @@ enum messages: string
     // if a non admin user tries to set the admin protection (or higher) on an object
     case PROTECTION_RAISE_DENIED = 'protection_raise_denied';
 
+    // if a database row of a term misses the id that selects the word, triple, formula or verb
+    case TERM_ROW_ID_MISSING = 'term_row_id_missing';
+
     // if an import step has not been checked, because its errors would only be a consequence
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
     // always added with ok = true, because it explains a suppression instead of causing one
@@ -2466,6 +2475,8 @@ enum messages: string
     // as the default view of the object and change the view itself (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
     case BUTTON_VIEW_SWITCH_TIP = 'button_view_switch_tip';
+    // the tooltip of the grey entry in the edit menu of the navbar of the view that shows the page
+    case BUTTON_VIEW_USED_TIP = 'button_view_used_tip';
     case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
@@ -2513,8 +2524,16 @@ enum messages: string
     case NAVBAR_SEARCH_PLACEHOLDER = 'navbar_search_placeholder';
     case NAVBAR_GET_NUMBERS = 'navbar_get_numbers';
     case NAVBAR_ALTERNATIVE_VIEW = 'navbar_alternative_view';
+    case NAVBAR_MORE_VIEWS_TIP = 'navbar_more_views_tip';
+    // added to the tooltip above with the names of some views that the menu does not offer
+    case NAVBAR_MORE_VIEWS_NAMES_TIP = 'navbar_more_views_names_tip';
+    case NAVBAR_CUSTOMIZE = 'navbar_customize';
     case NAVBAR_CHANGE_VIEW = 'navbar_change_view';
+    case NAVBAR_CHANGE_VIEW_TIP = 'navbar_change_view_tip';
     case NAVBAR_ADD_VIEW = 'navbar_add_view';
+    case NAVBAR_ADD_VIEW_TIP = 'navbar_add_view_tip';
+    // added to the tooltip above with the name of the shown object
+    case NAVBAR_ADD_VIEW_FOR_TIP = 'navbar_add_view_for_tip';
     case NAVBAR_SERVER_ADMIN = 'navbar_server_admin';
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';

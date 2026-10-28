@@ -35,16 +35,20 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
@@ -170,14 +174,14 @@ class word_read_tests
         // franc and the page of the Swiss franc the values that carry CHF; the Swiss franc is
         // a triple (franc "kind of" Swiss), so it is loaded as a triple and not as a word
         $test_name = 'the values related to CHF include the values of the Swiss franc';
-        $t->assert_contains($test_name,
-            $wrd_chf->values_related->phr_lst($msg)->names(), [triple_names::SWISS_FRANC]);
+        $val_phr_names = $this->value_phrase_names($wrd_chf->values_related, $msg);
+        $t->assert_contains($test_name, $val_phr_names, [triple_names::SWISS_FRANC]);
         $test_name = 'the values related to the Swiss franc include the values that carry CHF';
         $trp_franc = new triple($t->usr1);
         $trp_franc->load_by_name(triple_names::SWISS_FRANC, $msg);
         $trp_franc->load_values_related($msg);
-        $t->assert_contains($test_name,
-            $trp_franc->values_related->phr_lst($msg)->names(), [words::CHF]);
+        $val_phr_names = $this->value_phrase_names($trp_franc->values_related, $msg);
+        $t->assert_contains($test_name, $val_phr_names, [words::CHF]);
 
         // negative: an unknown id returns 0 and leaves phrases_related null/empty —
         // the asserted reported outcome is the int 0 return AND no spurious related
@@ -190,6 +194,48 @@ class word_read_tests
         $t->assert_true($test_name,
             $wrd_missing->phrases_related === null
             or $wrd_missing->phrases_related->is_empty());
+        $msg->reset();
+
+        $t->subheader($ts . 'views tab');
+        // e.g. Pi is a mathematical constant, so the views tab of Pi offers the view of all
+        // mathematical constants right after the own view of Pi, if Pi has one;
+        // each step has its own assert, so that a failure names the step that is missing
+        $test_name = word_names::PI . ' is a ' . triple_names::MATH_CONST;
+        $wrd_pi = new word($t->usr1);
+        $wrd_pi->load_by_name(word_names::PI, $msg);
+        $par_names = $wrd_pi->parents($msg)->names();
+        $t->assert_contains($test_name, $par_names, triple_names::MATH_CONST);
+        $test_name = '... which has the view of all mathematical constants as its default view';
+        $trp_math = new triple($t->usr1);
+        $trp_math->load_by_name(triple_names::MATH_CONST, $msg);
+        $math_view_id = $trp_math->get_view_id();
+        $t->assert($test_name, $math_view_id, views::MATH_CONST_ID);
+        $test_name = 'the view of the parent ' . triple_names::MATH_CONST . ' is almost on top of the views tab of ' . word_names::PI;
+        $wrd_pi->load_views_related($msg);
+        $msk_ids = $wrd_pi->views_related->ids();
+        $top_ids = array_slice($msk_ids, 0, 2);
+        $t->assert_contains($test_name, $top_ids, views::MATH_CONST_ID);
+        // negative: the system default word view is only the fallback for a word without any view
+        $test_name = '... and the system default word view is not offered instead';
+        $t->assert_contains_not($test_name, $msk_ids, views::WORD_ID);
+        $test_name = '... and the loads have reported no problem';
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+
+        // the edit menu of the navbar offers first the views directly linked to the word, which are
+        // the own default view and the views that the import assigns e.g. base_views.json to Pi
+        $test_name = 'the view of all mathematical constants is assigned to ' . word_names::PI;
+        $wrd_pi->load_views_assigned($msg);
+        $asg_ids = $wrd_pi->views_assigned->ids();
+        $t->assert_contains($test_name, $asg_ids, views::MATH_CONST_ID);
+        // negative: a word that no view names in its assigned list has no assigned view
+        $test_name = '... but no view is assigned to ' . word_names::CANTON;
+        $wrd_canton = new word($t->usr1);
+        $wrd_canton->load_by_name(word_names::CANTON, $msg);
+        $wrd_canton->load_views_assigned($msg);
+        $asg_ids = $wrd_canton->views_assigned->ids();
+        $t->assert($test_name, $asg_ids, []);
+        $msg->reset();
 
 
         $t->subheader($ts . 'types');
@@ -316,6 +362,20 @@ class word_read_tests
         $trp_err = new triple($t->usr1);
         $trp_err->load_by_name(triple_names::PI_NAME, $msg_err);
         $t->assert_true($test_name, $trp_err->has_verb());
+    }
+
+    /**
+     * @param value_list|null $val_lst the related values e.g. null if the phrase has not been loaded
+     * @param user_message $msg to report a problem of the phrase load
+     * @return array the names of the phrases of the values, empty if no values are loaded
+     */
+    private function value_phrase_names(?value_list $val_lst, user_message $msg): array
+    {
+        $result = [];
+        if ($val_lst !== null) {
+            $result = $val_lst->phr_lst($msg)->names();
+        }
+        return $result;
     }
 
 }

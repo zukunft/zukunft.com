@@ -46,6 +46,15 @@ include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once html_paths::HTML . 'html_base.php';
+// the frontend first, because it loads the web sandbox classes in the order they need
+include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SANDBOX . 'sandbox_link.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
 include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'json_validation.php';
@@ -62,12 +71,20 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id as sandbox_code_id_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_link as sandbox_link_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_typed as sandbox_typed_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use ReflectionClass;
+use ReflectionClassConstant;
 
 class coding_rule_tests
 {
@@ -93,6 +110,17 @@ class coding_rule_tests
         'Zukunft\ZukunftCom\main\php\cfg\const\paths',
         'Zukunft\ZukunftCom\main\php\web\const\paths',
         'Zukunft\ZukunftCom\test\php\const\paths'
+    ];
+
+    // the web base classes of the page objects, which are never shown as a page themselves, so
+    // they keep the switch icon of sandbox::HAS_EDIT_VIEW and the inherited word edit view of
+    // db_object for their children e.g. word, which sets its own edit view
+    const array WEB_SANDBOX_BASE_CLASSES = [
+        sandbox_code_id_ui::class,
+        sandbox_link_ui::class,
+        sandbox_named_ui::class,
+        sandbox_typed_ui::class,
+        sandbox_value_ui::class,
     ];
 
     function run(test_cleanup $t): void
@@ -184,6 +212,9 @@ class coding_rule_tests
 
         $t->subheader($ts . 'frontend back url');
         $this->php_web_no_back_param_tests($t);
+
+        $t->subheader($ts . 'frontend switch icon');
+        $this->php_web_switch_edit_view_tests($t);
 
         $t->subheader($ts . 'requesting user on the message');
         $this->php_user_message_param_shadow_tests($t);
@@ -1439,6 +1470,44 @@ class coding_rule_tests
         // php_only_allowed_globals_tests for why a silent pass would hide a scanner that reads no file)
         $test_name = 'web/ back url checked in ' . $files_checked . ' files';
         $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that every frontend page object that offers the switch icon has an edit view of its
+     * own: a class whose VIEW_EDIT_ID is only the word edit view inherited from db_object must set
+     * HAS_EDIT_VIEW to false, else the switch icon of the edit menu and of the views tab would
+     * change the object as a word (see sandbox::HAS_EDIT_VIEW)
+     *
+     * each violation produces one failing assertion naming the class; a clean tree produces the
+     * summary assertion only, which checks that at least one class has been checked
+     *
+     * positive (test fires when it should): a new page class without its own VIEW_EDIT_ID and
+     *     without "const bool HAS_EDIT_VIEW = false" flags the rule violation
+     * negative (test tolerates good code): word with its own VIEW_EDIT_ID and group with
+     *     HAS_EDIT_VIEW = false pass; the base classes of WEB_SANDBOX_BASE_CLASSES are skipped
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     * @return void
+     */
+    function php_web_switch_edit_view_tests(test_cleanup $t): void
+    {
+        $classes_checked = 0;
+        foreach (get_declared_classes() as $class) {
+            $is_page = is_subclass_of($class, sandbox_ui::class);
+            $is_base = in_array($class, self::WEB_SANDBOX_BASE_CLASSES);
+            if ($is_page and !$is_base) {
+                $classes_checked++;
+                $edit_const = new ReflectionClassConstant($class, 'VIEW_EDIT_ID');
+                $edit_class = $edit_const->getDeclaringClass()->getName();
+                if ($edit_class == db_object_ui::class and $class::HAS_EDIT_VIEW) {
+                    $test_name = $class . ' has no edit view of its own, so it must set HAS_EDIT_VIEW to false';
+                    // the class name is the actual result and no hit is the target
+                    $t->assert($test_name, $class);
+                }
+            }
+        }
+        $test_name = 'web/ switch icon edit view checked in ' . $classes_checked . ' classes';
+        $t->assert_greater($test_name, 0, $classes_checked);
     }
 
     /**

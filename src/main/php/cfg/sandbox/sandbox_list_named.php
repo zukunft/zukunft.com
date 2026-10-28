@@ -459,7 +459,7 @@ class sandbox_list_named extends sandbox_list
      * @param sandbox_named|triple|phrase|term|null $to_add the named object e.g. a word object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @param Message $msg to report which entry is double
-     * @returns bool true the object has been added
+     * @returns bool true if the object has been added, false e.g. if it is already in the list
      */
     function add(
         sandbox_named|triple|phrase|term|null $to_add,
@@ -479,20 +479,21 @@ class sandbox_list_named extends sandbox_list
             log_err('trying to add a none component to a component list');
         }
 
+        $added = false;
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $this->add_obj($to_add, $allow_duplicates, $msg);
+                $added = $this->add_obj($to_add, $allow_duplicates, $msg);
             } else {
                 if (!array_key_exists($to_add->id(), $this->id_pos_lst())) {
                     if ($to_add->id() != 0) {
-                        $this->add_obj($to_add, $allow_duplicates, $msg);
+                        $added = $this->add_obj($to_add, $allow_duplicates, $msg);
                     }
                 } else {
                     log_debug($to_add->dsp_id() . ' not added, because it is already in the list');
                 }
             }
         }
-        return $msg->is_ok();
+        return $added;
     }
 
     /**

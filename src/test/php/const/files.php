@@ -54,6 +54,7 @@ class files
     CONST string YAML = '.yaml';
     CONST string JSON = '.json';
     CONST string HTML = '.html';
+    CONST string JS = '.js';
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
     CONST string MD = '.md';
@@ -82,11 +83,37 @@ class files
     CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
     CONST string UPDATE_PUT_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_undo' . self::JSON;
     CONST string UPDATE_PUT_WITHOUT_WORD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_without_word' . self::JSON;
-    // a description change of the use case triple PV capacity label as the editor has sent it and its undo
-    CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label' . self::JSON;
-    CONST string UPDATE_PUT_PV_CAPACITY_LABEL_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_pv_capacity_label_undo' . self::JSON;
-    // an expression change of the use case formula of the autarky as the editor sends it; the undo puts the loaded expression
-    CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_autarky_formula' . self::JSON;
+    // the user actions that a headless browser runs in a copy of the calculator editor snapshot, selected by the
+    // scenario name as the url hash; the update put message that the editor sends after a scenario is compared
+    // with the file UI_PUT_PREFIX + scenario name in test_paths::WEB_CALCULATOR_EDITOR_RES
+    CONST string CALCULATOR_EDITOR_SCENARIOS = test_paths::JS . 'calculator_editor_scenarios' . self::JS;
+    CONST string UI_PUT_PREFIX = 'update_put_';
+    CONST string SCENARIO_AUTARKY_FORMULA = 'autarky_formula';
+    CONST string SCENARIO_AUTARKY_FORMULA_UNCHANGED = 'autarky_formula_unchanged';
+    CONST string SCENARIO_PV_CAPACITY_LABEL = 'pv_capacity_label';
+    CONST string SCENARIO_PV_CAPACITY_LABEL_UNDO = 'pv_capacity_label_undo';
+    CONST string SCENARIO_PV_CAPACITY_LABEL_UNDO_ALL = 'pv_capacity_label_undo_all';
+    CONST string SCENARIO_PV_CAPACITY_RENAME = 'pv_capacity_rename';
+    CONST string SCENARIO_PV_CAPACITY_NUMBER = 'pv_capacity_number';
+    CONST string SCENARIO_PV_CAPACITY_MAXIMUM = 'pv_capacity_maximum';
+    CONST string SCENARIO_PV_CAPACITY_MINIMUM_CLEARED = 'pv_capacity_minimum_cleared';
+    CONST string SCENARIO_ADD_INPUT = 'add_input';
+    CONST string SCENARIO_ADD_INPUT_WITHOUT_PHRASE = 'add_input_without_phrase';
+    CONST string SCENARIO_REMOVE_INPUT = 'remove_input';
+    CONST string SCENARIO_PV_CAPACITY_DOWN = 'pv_capacity_down';
+    CONST string SCENARIO_PV_CAPACITY_UP = 'pv_capacity_up';
+    CONST string SCENARIO_PV_CAPACITY_DOWN_UP = 'pv_capacity_down_up';
+    CONST string SCENARIO_AUTARKY_UP = 'autarky_up';
+    CONST string SCENARIO_EMBODIED_EMISSION_DOWN = 'embodied_emission_down';
+    // the messages of the scenarios that the write test saves and undoes
+    CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
+    CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_RENAME . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_NUMBER = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_NUMBER . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_MAXIMUM = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_MAXIMUM . self::JSON;
+    CONST string UPDATE_PUT_ADD_INPUT = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_ADD_INPUT . self::JSON;
+    CONST string UPDATE_PUT_AUTARKY_UP = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_UP . self::JSON;
+    CONST string UPDATE_PUT_EMBODIED_EMISSION_DOWN = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_EMBODIED_EMISSION_DOWN . self::JSON;
     // the expected api files whose received json is written next to them e.g. as
     // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
     // files are never committed (.gitignore) and an api test without its file here writes none
@@ -210,6 +237,8 @@ class files
     CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT_INCONSISTENCY . 'version_newer_test' . self::JSON;
     CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
     CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
+    CONST string IMPORT_TYPES_CACHE_SYMBOL = test_paths::IMPORT . 'types_cache_symbol';
+    CONST string IMPORT_TYPES_CACHE_UNIT = test_paths::IMPORT . 'types_cache_unit';
     CONST string IMPORT_NO_UPDATE = test_paths::IMPORT . 'no_update';
     CONST string IMPORT_NO_UPDATE_CHANGED = test_paths::IMPORT . 'no_update_changed';
     CONST string IMPORT_UPDATE_EXT = '_update';

@@ -135,6 +135,14 @@ class test_phrases
         return $t_trp->zh_city()->phrase();
     }
 
+    /**
+     * @return phrase_list without any phrase e.g. the phrases of names that the database does not have
+     */
+    function list_empty(): phrase_list
+    {
+        return new phrase_list($this->env->usr1);
+    }
+
     function phrase_list(): phrase_list
     {
         $t_wrd = new test_words($this->env);

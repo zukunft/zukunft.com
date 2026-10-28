@@ -563,7 +563,7 @@ class views
     const string MATH_CONST = 'math_const';
     const int MATH_CONST_ID = 185;
     const string MATH_CONST_NAME = 'Mathematical constant';
-    const string MATH_CONST_COM = 'Show a mathematical constant and the related words and formulas';
+    const string MATH_CONST_COM = 'Show all mathematical constants with their description and the main formulas';
     const string GLOBAL_PROBLEM = 'global_problem';
     const int GLOBAL_PROBLEM_ID = 186;
 
@@ -717,8 +717,8 @@ class views
     ];
 
     // the four versions of the default view of each main object, always in the order default,
-    // detail, range and detail with range, so that the related system view selector of each
-    // version can link to the other three
+    // detail, range and detail with range, so that the edit menu of the navbar offers the four
+    // versions in this order (sandbox::menu_views_ui)
     const array DEFAULT_VIEW_VERSIONS = [
         [self::WORD_ID, self::WORD_DEFAULT_DETAIL_ID, self::WORD_DEFAULT_RANGE_ID, self::WORD_DEFAULT_DETAIL_RANGE_ID],
         [self::TRIPLE_ID, self::TRIPLE_DEFAULT_DETAIL_ID, self::TRIPLE_DEFAULT_RANGE_ID, self::TRIPLE_DEFAULT_DETAIL_RANGE_ID],
@@ -1714,6 +1714,23 @@ class views
         $result = 0;
         if ($base_code_id != '') {
             $result = $this->code_id_to_id($base_code_id);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $msk_id the database id of a view e.g. views::WORD_ID, the default view of a word
+     * @return array the ids of the four versions of the default view that the given view is one of
+     *               e.g. the default, detail, range and detail with range view of a word, or an empty
+     *               array if the view is not a version of a default view
+     */
+    function default_versions(int $msk_id): array
+    {
+        $result = [];
+        foreach (self::DEFAULT_VIEW_VERSIONS as $versions) {
+            if (in_array($msk_id, $versions)) {
+                $result = $versions;
+            }
         }
         return $result;
     }

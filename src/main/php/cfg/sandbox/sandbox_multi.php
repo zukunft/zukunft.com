@@ -2203,7 +2203,8 @@ class sandbox_multi extends db_object_multi_user
 
         $db_con->set_class($this::class, true);
         try {
-            $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
+            // with the change log entry (e.g. value_delete_log_user), like del_usr_cfg
+            $qp = $this->sql_delete_user_row($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::LOG]));
             $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
             $msg = $usr_msg->get_message();
             if ($msg == '') {
@@ -2236,7 +2237,7 @@ class sandbox_multi extends db_object_multi_user
 
         if ($this->is_id_set() and $this->get_user()->id() > 0) {
             $db_con->usr_id = $this->get_user()->id();
-            $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG, sql_type::USER]));
+            $qp = $this->sql_delete_user_row($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG]));
             $db_con->delete($qp, 'del and log user ' . $this->dsp_id(), $msg);
             if ($msg->is_ok()) {
                 $this->usr_cfg_id = null;
@@ -3516,7 +3517,7 @@ class sandbox_multi extends db_object_multi_user
                             }
 
                             // delete all user records of the new owner
-                            // does not use del_usr_cfg because the deletion request has already been logged
+                            // with the change log entry of the removed user row (del_usr_cfg_exe)
                             if ($msg_txt == '') {
                                 if (!$this->del_usr_cfg_exe($db_con)) {
                                     $msg_txt .= 'Deleting of ' . $class_name . ' failed';
@@ -3612,7 +3613,8 @@ class sandbox_multi extends db_object_multi_user
             // if there is no difference between the user row and the norm row remove all fields from the user row
             if ($this->no_diff($norm_obj, $msg)) {
                 if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER]));
+                    // logged with the user row as stored, so that the log shows the number that the user had
+                    $qp = $db_obj->sql_delete_user_row($sc, $msg, new sql_type_list([sql_type::LOG]));
                     $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
                 }
             } else {
@@ -3631,7 +3633,7 @@ class sandbox_multi extends db_object_multi_user
                     }
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
-                        $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
+                        $qp = $this->sql_delete_user_row($sc, $msg, $sc_par_lst);
                         $db_con->delete($qp, 'del user ' . $obj_name, $msg);
                     }
                 }
@@ -3645,7 +3647,8 @@ class sandbox_multi extends db_object_multi_user
             // TODO Prio 2 review if $this or $db_obj must be used here because in sandbox $this is used
             if ($db_obj->has_usr_cfg()) {
                 if ($this->no_diff($norm_obj, $msg)) {
-                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER]));
+                    // logged with the user row as stored, so that the log shows the number that the user had
+                    $qp = $db_obj->sql_delete_user_row($sc, $msg, new sql_type_list([sql_type::LOG]));
                     $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
                 } else {
                     // update the user row only if it does not yet match the requested state
@@ -3687,18 +3690,47 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * use the placeholder source for a value without source, because one user can link a value
-     * to more than one source, so the source id is part of the user value prime key and cannot
-     * be null; the insert and the update of a user row use it alike, or the update compares the
-     * missing source with the placeholder of the stored row and finds a change of a key field only
+     * set the source that the user row is stored with, which only a value has (value_base)
      */
-    private function set_user_table_source(): void
+    protected function set_user_table_source(): void
     {
-        if ($this->source_id() == null) {
-            $src = new source($this->get_user());
-            $src->id = sources::TRUST_ME_BRO_ID;
-            $this->set_source($src);
-        }
+    }
+
+    /**
+     * @return bool true if a source is set, which only a value can have
+     */
+    function has_source(): bool
+    {
+        return $this->source_id() > 0;
+    }
+
+    /**
+     * @return bool true if the source is the placeholder that a user row without source is stored with
+     */
+    function has_placeholder_source(): bool
+    {
+        return $this->source_id() == sources::TRUST_ME_BRO_ID;
+    }
+
+    /**
+     * the delete of the user row of this object, which for a value names the source that the
+     * user row is stored with (set_user_table_source), because the source is part of its key
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $msg to collect the problems of the sql creation
+     * @param sql_type_list $sc_par_lst e.g. with sql_type::LOG to log the delete
+     * @return sql_par the delete statement of the user row
+     */
+    function sql_delete_user_row(
+        sql_creator   $sc,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $this->set_user_table_source();
+        $del_par_lst = clone $sc_par_lst;
+        $del_par_lst->add(sql_type::USER);
+        return $this->sql_delete($sc, $msg, $del_par_lst);
     }
 
     /**
@@ -4022,6 +4054,11 @@ class sandbox_multi extends db_object_multi_user
         // if this object does not yet have a db key ignore this
         if ($chk_obj->id() == 0) {
             $chk_obj->set_id($db_obj->id());
+        }
+        // the placeholder source of a user row (set_user_table_source) stands for no source,
+        // e.g. the undo of a change takes it over from the user row and matches the standard row again
+        if ($chk_obj->has_placeholder_source() and !$db_obj->has_source()) {
+            $chk_obj->set_source(null);
         }
         $fvt_lst = $chk_obj->db_fields_changed($db_obj, $msg);
         return $fvt_lst->is_empty_except_internal_fields();
@@ -4701,7 +4738,10 @@ class sandbox_multi extends db_object_multi_user
                 $sbx->excluded
             );
         }
-        if ($sbx->share_id != $this->share_id) {
+        // an unset share or protection of e.g. an update put message does not remove the database setting
+        // and matches the defaults that the standard row is loaded with (row_mapper_std)
+        // to remove a share or protection setting the type e.g. no_protection must be given
+        if ($this->share_id != null and $sbx->share_id != $this->share_id) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_SHARE,
@@ -4716,7 +4756,7 @@ class sandbox_multi extends db_object_multi_user
                 $sbx->share_id
             );
         }
-        if ($sbx->protection_id <> $this->protection_id) {
+        if ($this->protection_id != null and $sbx->protection_id <> $this->protection_id) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_PROTECT,
@@ -4787,14 +4827,15 @@ class sandbox_multi extends db_object_multi_user
                 sql_db::FLD_EXCLUDED_SQL_TYP
             ];
         }
-        if ($sbx->share_id <> $this->share_id) {
+        // an unset share or protection matches the defaults, like in db_changed_sandbox_list
+        if ($this->share_id != null and $sbx->share_id <> $this->share_id) {
             $lst[] = [
                 fields::FLD_SHARE,
                 $this->share_id,
                 self::FLD_SHARE_SQL_TYP
             ];
         }
-        if ($sbx->protection_id <> $this->protection_id) {
+        if ($this->protection_id != null and $sbx->protection_id <> $this->protection_id) {
             $lst[] = [
                 fields::FLD_PROTECT,
                 $this->protection_id,

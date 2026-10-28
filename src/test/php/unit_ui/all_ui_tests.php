@@ -63,6 +63,7 @@ include_once test_paths::UNIT_UI . 'view_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'component_ui_tests.php';
 include_once test_paths::UNIT_UI . 'component_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'process_catch_ui_tests.php';
+include_once test_paths::UTILS . 'headless_browser.php';
 include_once test_paths::UNIT_UI . 'use_case_ui_tests.php';
 include_once test_paths::UNIT_UI . 'phrase_data_ui_tests.php';
 include_once test_paths::UNIT_UI . 'source_ui_tests.php';

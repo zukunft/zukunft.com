@@ -125,9 +125,9 @@ class url_var
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
     const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
     const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
-    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the "..." header lowers step by step from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
+    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the edit menu of the navbar selects from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
     const string DISPLAY_LIST_VARIANCE = 'dlv'; // 1 to show the variance low and high behind each number of a list or table, 0 for the numbers only
-    const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the "..." header
+    const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the edit menu of the navbar
     const string TAB = 'tb'; // the number of the selected tab of a page with tabs e.g. of the process catch detail page, starting with 1
     const string PLACE = 'loc'; // the place name or postal code entered in the geolocator e.g. 8000
     const string DISPLAY_LIST_ORDER = 'dlo'; // the prime order of the rows of a table: the phrase id of a column and the condition (table_orders) e.g. 123.numeric_desc; without it the rows follow the impact

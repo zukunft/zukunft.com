@@ -1426,6 +1426,20 @@ class word_list extends sandbox_list_named
         return $result;
     }
 
+    /**
+     * @return bool true if at least one word has a type of phrase_types::PRELOAD_TYPES e.g. a unit,
+     *              so that the system phrases of the cached types api message change by saving the list
+     */
+    function has_preload_type(): bool
+    {
+        foreach ($this->lst() as $wrd) {
+            if ($wrd->has_preload_type()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /*
      * select linked

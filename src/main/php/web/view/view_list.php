@@ -178,6 +178,18 @@ class view_list extends ListBase
     }
 
     /**
+     * @return array the names of the views of this list in the list order
+     */
+    function names(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $msk) {
+            $result[] = $msk->name();
+        }
+        return $result;
+    }
+
+    /**
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
@@ -198,6 +210,17 @@ class view_list extends ListBase
     function name_link(array $url_arr = []): string
     {
         return implode(', ', $this->names_linked($url_arr));
+    }
+
+    /**
+     * sort the views by name like the named lists (natural and case-insensitive), so that e.g. the
+     * edit menu of the navbar does not depend on the api/db row order
+     */
+    function sort_by_name(): void
+    {
+        $sorted = $this->lst();
+        usort($sorted, fn($msk_a, $msk_b) => strnatcasecmp($msk_a->name() ?? '', $msk_b->name() ?? ''));
+        $this->set_lst($sorted);
     }
 
     /**

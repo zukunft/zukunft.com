@@ -437,7 +437,8 @@ class component_exe extends component
             component_types::FORMULA_EDITOR => $page->formula_editor($dbo, $msg, $cfg),
             component_types::FORMULA_SELECTOR => $page->formula_editor_selector($dbo, $msg),
             component_types::FORMULA_RESULT_COMPARE => $page->formula_result_compare($dbo, $msg),
-            component_types::RELATED_SYSTEM_VIEW_SELECTOR => $page->related_view_selector($msk_id, $dbo),
+            // the versions of the view are offered by the edit menu of the navbar (sandbox::menu_views_ui)
+            component_types::RELATED_SYSTEM_VIEW_SELECTOR => '',
             component_types::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_types::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_types::SYSTEM_BODY_SIGNUP => $page->signup_body($url_arr),
@@ -476,6 +477,7 @@ class component_exe extends component
             component_types::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage, $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_types::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo, $msg, $cfg->phrase_list()),
+            component_types::LIST_CHILD_TRIPLES => $list->child_triples($dbo, $msg, $cfg->phrase_list()),
             component_types::PHRASE_ALIASES => $list->phrase_aliases($dbo, $msg, $cfg->phrase_list()),
             component_types::PHRASE_SYMBOLS => $list->phrase_symbols($dbo, $msg, $cfg->phrase_list()),
             component_types::LIST_PHRASES_RELATED_EX_SYMBOLS => $list->phrases_related_ex_symbols($dbo, $msg, $cfg->phrase_list()),
@@ -600,7 +602,7 @@ class component_exe extends component
             // the formula results type shows the results related to the given word or term
             // like the results_related type, so the same renderer is used for both
             component_types::FORMULA_RESULTS => $list->results_related($dbo, $msg, $cfg, $url_arr),
-            component_types::WORDS_DOWN => $foaf->word_children($dbo),
+            component_types::WORDS_DOWN => $list->child_words($dbo, $msg, $cfg->phrase_list()),
             component_types::WORDS_UP => $foaf->word_parents($dbo),
 
             // preview

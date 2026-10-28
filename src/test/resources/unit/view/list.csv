@@ -183,7 +183,7 @@ view_id,user_id,view_name,description,view_type_id,view_style_id,usage,code_id,e
 182,1,Touristic,show things to see,28,,,touristic,,,
 183,1,Graph,show the related topics as a visual graph,28,,,graph,,,
 184,1,Simple,show only the most relevant facts,28,,,simple,,,
-185,1,Mathematical constant,Show a mathematical constant and the related words and formulas,28,,,math_const,,,
+185,1,Mathematical constant,Show all mathematical constants with their description and the main formulas,28,,,math_const,,,
 186,1,problem with solutions,Explain a problem and show the potential solutions,28,,,global_problem,,,
 187,1,Currency,Show a currency with the most relevant exchange rates and related formulas,28,,,currency,,,
 188,1,solution priority validation,"the ranking of the global problems by potential loss with the solution, its loss reduction, the initial effort and the reward ratio",11,,,solution_prio_validation,,,

@@ -742,11 +742,35 @@ class view extends view_exe
      */
     function open_link(int|string $dbo_id, string $dbo_name = ''): string
     {
+        return $this->show_link($dbo_id, $this->tip(msg_id::BUTTON_VIEW_SHOW_TIP, $dbo_name));
+    }
+
+    /**
+     * the grey link of the view that shows the page in the edit menu of the navbar, so the user
+     * sees which of the offered views is used at the moment
+     *
+     * @param int|string $dbo_id the id of the object that is shown with this view
+     * @param string $dbo_name the name of the object for the tooltip e.g. "mathematical constant"
+     * @return string the html link in grey with the tooltip
+     */
+    function used_link(int|string $dbo_id, string $dbo_name = ''): string
+    {
+        return $this->show_link($dbo_id, $this->tip(msg_id::BUTTON_VIEW_USED_TIP, $dbo_name), styles::STYLE_GREY);
+    }
+
+    /**
+     * @param int|string $dbo_id the id of the object to show with this view, a string for a value
+     * @param string $tip the tooltip of the link
+     * @param string $style the css class of the link e.g. grey for the view that shows the page
+     * @return string the html link with the view name that shows the object with this view
+     */
+    private function show_link(int|string $dbo_id, string $tip, string $style = ''): string
+    {
         $html = new html_base();
         $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $this->id()
             . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id;
         // a view without a name cannot be linked by it, and ref() would fatal on the null
-        return $html->ref($url, $this->name() ?? '', $this->tip(msg_id::BUTTON_VIEW_SHOW_TIP, $dbo_name));
+        return $html->ref($url, $this->name() ?? '', $tip, $style);
     }
 
     /**

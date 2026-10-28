@@ -14,9 +14,11 @@ client-side handler.
   `style_html.css` show the matched content **and** highlight its label, first tab
   default): a link to `…#changes` opens the "Changes" tab — no script needed.
 - A popup menu is the html `details` element, which keeps the open state itself:
-  `html_base::popup_menu` wraps the always shown label in the `summary` and the
-  entries in a list, and the `.<name>-menu` rules in `style_html.css` float the
-  list below the label (the header menus and the "…" column menu of a value table).
+  the header menus of `html_base::navbar` (edit, language and user) wrap the
+  always shown icon in the `summary` and the entries in a list, and the
+  `.<name>-menu` rules in `style_html.css` float the list below the icon. A page
+  has no menu of its own: its entries e.g. the columns of a value table are part
+  of the edit menu.
 - Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
   for a JS plugin, …) from a `web/` renderer, except the calculator scripts below.
 
@@ -662,7 +664,7 @@ and that is a gap to close by threading the context, not a licence to skip the
 link. When adding a new truncated list, pick (or create) the "show all" view
 first, then wire the tail to it.
 
-## The simple table and its "…" menu
+## The simple table and its versions in the edit menu
 
 A value table has a simple and a full version, like a list has a short and a
 more version. The simple version shows the columns of the mayor tier only, one
@@ -688,11 +690,10 @@ lowest tier are left to the full version. So which version shows a column is
 decided by its tier in the definitions: e.g. on the start page the main version
 shows the reason and its loss, the minor version adds the loss in percent, the
 initial effort and the loss reduction, and the reward ratio, a marginal column,
-is shown by the full version only. The start page opens with the simple version. The last header cell of every table,
-the full one included, is the "…" menu (`value_list::columns_menu`, built with
-`html_base::popup_menu`), which lets the reader pick the version directly
-instead of stepping through them — and from the full table it is the only way
-back to the fewer columns.
+is shown by the full version only. The start page opens with the simple version. The edit
+menu of the navbar offers every version (`value_list::columns_menu_items`), so the
+reader picks the version directly instead of stepping through them, also from
+the full table back to the fewer columns.
 
 The menu sets `url_var::DISPLAY_LIST_COLUMNS` (`dlc`, human
 `display_list_columns`). That number says how many tiers of
@@ -887,14 +888,34 @@ order, so `view.php?m=1` shows the biggest potential loss on top and a url with
 an order wins. The orders shown are kept in `table_model::orders`, which marks
 the active sort icon and seeds the links of the other icons.
 
-The "…" menu of the table has two sub headers (`styles::MENU_HEADER`, not
-bold): "columns and values" above the column tier entries and "as" above the
-entries `table`, `chart` and `table + chart` (`table_forms`), which set
-`url_var::DISPLAY_LIST_AS` (`dla`, human `display_list_as`), a page var and part
-of the page cache key like the other list vars. Shown as a chart only, the
-table is replaced by its charts below a `styles::CHART_HEAD` line that keeps
-the header of the table centred and puts the "…" menu in the top right corner
-(`styles::CHART_CORNER`), because the menu is the only way back to the table.
+The edit menu of the navbar offers the column and form selection of the value
+table of the page (`value_list::columns_menu_items`, for a view with a component
+of `component_types::TABLE_MENU_TYPES`) with two sub headers
+(`styles::MENU_HEADER`, not bold): "columns and values" above the column tier
+entries and "as" above the entries `table`, `chart` and `table + chart`
+(`table_forms`), which set `url_var::DISPLAY_LIST_AS` (`dla`, human
+`display_list_as`), a page var and part of the page cache key like the other
+list vars. The tooltip of each entry says what it shows, and the one of a
+column entry names the columns of that selection, which the tables of the page
+collect while they are created (`table_model::tier_names`,
+`data_object::add_tier_names`), because the navbar is created after the views.
+Below the sub header "alternative views" (`html_base::view_change_list`,
+only if there is one) follow the editor of the view and the views of the shown
+object (`sandbox::menu_view_items_ui`): its own view, the views assigned to it, the
+views of its parents and then the four default views of its type (default,
+detail, range and detail with range, `views::default_versions`). Each view has
+the switch icon behind its name except the own view of the object, which already
+shows it always; the view that shows the page is grey with the tooltip "this view
+has been used to show …" (`view::used_link`). An object without an edit view of its
+own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon, neither in
+the edit menu nor in the views tab, because the edit view it inherits from
+`db_object` is the one of a word; `coding_rule_tests::php_web_switch_edit_view_tests`
+reports a page class that forgets it. The tooltip
+of "... more" names some cached views that the menu does not offer
+(`sandbox::menu_more_names_ui`), and below the sub header "customize" follow
+"change this view" and "add view", whose tooltip names the shown object. Shown as a chart only, the table is
+replaced by its charts below a `styles::CHART_HEAD` line that keeps the header
+of the table centred; the way back to the table is the edit menu.
 
 ## The value quality is a mark behind the number, never a phrase before it
 

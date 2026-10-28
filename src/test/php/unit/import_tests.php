@@ -43,6 +43,8 @@ include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -64,6 +66,8 @@ use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
 use Zukunft\ZukunftCom\main\php\cfg\import\update_put;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -80,6 +84,8 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
@@ -965,6 +971,42 @@ class import_tests
             [[json_fields::NAME => refs::MATH_KEY, json_fields::TYPE_NAME => refs::WIKIDATA_TYPE]];
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
+
+
+        $t->subheader($ts . 'types cache clear');
+
+        // an imported symbol triple or unit word is part of the system phrases of the cached types
+        // api message, so saving it clears that cache (see data_object::save_triples and save_words)
+        $t_trp = new test_triples($t);
+        $t_wrd = new test_words($t);
+        $test_name = 'an alias triple clears the types cache';
+        $t->assert_true($test_name, $t_trp->triple_pi()->has_preload_verb());
+        $test_name = '... but an is a triple does not';
+        $t->assert_false($test_name, $t_trp->triple_gwp()->has_preload_verb());
+        $test_name = 'a triple list with an alias triple clears the types cache';
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->add($t_trp->triple_gwp());
+        $trp_lst->add($t_trp->triple_pi());
+        $t->assert_true($test_name, $trp_lst->has_preload_verb());
+        $test_name = '... but a triple list without one does not';
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->add($t_trp->triple_gwp());
+        $t->assert_false($test_name, $trp_lst->has_preload_verb());
+        $test_name = 'a percent word clears the types cache';
+        $t->assert_true($test_name, $t_wrd->word_percent()->has_preload_type());
+        $test_name = '... and a scaling word too';
+        $t->assert_true($test_name, $t_wrd->word_billion()->has_preload_type());
+        $test_name = '... but a factor word does not';
+        $t->assert_false($test_name, $t_wrd->word_factor()->has_preload_type());
+        $test_name = 'a word list with a scaling word clears the types cache';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->add($t_wrd->word_factor());
+        $wrd_lst->add($t_wrd->word_billion());
+        $t->assert_true($test_name, $wrd_lst->has_preload_type());
+        $test_name = '... but a word list without one does not';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->add($t_wrd->word_factor());
+        $t->assert_false($test_name, $wrd_lst->has_preload_type());
 
         $t->subheader($ts . 'convert');
 

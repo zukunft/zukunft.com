@@ -4044,11 +4044,7 @@ class library
             }
             if ($long_text) {
                 if ($type != self::STR_DIFF_UNCHANGED) {
-                    if (is_array($diff_val[$i])) {
-                        $msg .= $this->implode_recursive(',', $diff_val[$i]);
-                    } else {
-                        $msg .= $diff_val[$i];
-                    }
+                    $msg .= $this->str_diff_part_text($diff_val[$i]);
                 }
                 if ($type != self::STR_DIFF_DEL) {
                     $diff_val_used = $diff_val[$i];
@@ -4058,7 +4054,7 @@ class library
                     $pos = $pos + strlen($diff_val_used);
                 }
             } else {
-                $msg .= $diff_val[$i];
+                $msg .= $this->str_diff_part_text($diff_val[$i]);
             }
 
             $prev_type = $type;
@@ -4117,46 +4113,17 @@ class library
         $to_keys = array_keys($to);
         $from_pos = 0;
         $to_pos = 0;
-        $to_last_match_pos = 0;
-
-        // if to is empty from is always a diff
-        if (count($to_keys) == 0) {
-            if ($from_pos < count($from)) {
-                $diff_part[] = $from_sep[$from_keys[$from_pos]];
-                $diff_type[] = self::STR_DIFF_DEL;
-                $from_pos = $from;
-            }
-        }
 
         // check if the from parts are also part of to
-        while ($from_pos < count($from)) {
-            if (!array_key_exists($to_pos, $to_keys)) {
-                $to_pos = $to_last_match_pos;
-            }
-            if (!array_key_exists($from_pos, $from_keys)) {
-                log_err($from_pos . ' does not exist in ' . $this->dsp_array($from_keys));
-            } else {
-                if (!array_key_exists($from_keys[$from_pos], $from)) {
-                    log_err($from_keys[$from_pos] . ' does not exist in ' . $this->dsp_array($from));
-                }
-            }
-            if (!array_key_exists($to_pos, $to_keys)) {
-                log_err($to_pos . ' does not exist in ' . $this->dsp_array($to_keys));
-            } else {
-                if (!array_key_exists($to_keys[$to_pos], $to)) {
-                    log_err($to_keys[$to_pos] . ' does not exist in ' . $this->dsp_array($to));
-                }
-            }
+        while ($from_pos < count($from) and $to_pos < count($to)) {
             if ($from[$from_keys[$from_pos]] == $to[$to_keys[$to_pos]]) {
                 $diff_part[] = $to_sep[$to_keys[$to_pos]];
                 $diff_type[] = self::STR_DIFF_UNCHANGED;
-                if ($to_pos < count($to)) {
-                    $to_last_match_pos = $to_pos;
-                    $to_pos++;
-                }
+                $to_pos++;
                 $from_pos++;
             } else {
-                if (is_array($from[$from_keys[$from_pos]])) {
+                // only the same entry of both e.g. the same json key is compared part by part
+                if ($this->is_same_array_entry($from, $from_keys[$from_pos], $to_keys[$to_pos])) {
                     $from_key = $from_keys[$from_pos];
                     $to_key = $to_keys[$to_pos];
                     $from_part = $from[$from_key];
@@ -4182,15 +4149,13 @@ class library
                         $to_sep_part,
                         $str_type
                     );
-                    array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part) {
-                        $diff_part[$key] = $diff;
-                    });
-                    array_walk_recursive($sub_diff[self::STR_DIFF_TYP], function ($type, $key) use (&$diff_type) {
-                        $diff_type[$key] = $type;
-                    });
-                    if ($to_pos < count($to)) {
-                        $to_pos++;
+                    // appended in their order, because the keys of the sub diff start again at zero
+                    // and would overwrite the parts before, so that a part would miss its type
+                    foreach ($sub_diff[self::STR_DIFF_VAL] as $sub_pos => $sub_part) {
+                        $diff_part[] = $sub_part;
+                        $diff_type[] = $sub_diff[self::STR_DIFF_TYP][$sub_pos];
                     }
+                    $to_pos++;
                     $from_pos++;
                 } else {
                     if ($str_type == self::STR_TYPE_CODE) {
@@ -4213,6 +4178,14 @@ class library
                     }
                 }
             }
+        }
+
+        // the from parts after the last to part are not part of to
+        // and are never compared again with a to part already used
+        while ($from_pos < count($from)) {
+            $diff_part[] = $from_sep[$from_keys[$from_pos]];
+            $diff_type[] = self::STR_DIFF_DEL;
+            $from_pos++;
         }
 
         // add the parts extra in to at the end
@@ -4261,14 +4234,41 @@ class library
     }
 
     /**
-     * @param string|null $from the part of the target string that should be found in the $to string array
+     * @param string|int|float|bool|array|null $part a part of the diff e.g. a json object of a list
+     * @return string the part as text for the diff message
+     */
+    private
+    function str_diff_part_text(string|int|float|bool|array|null $part): string
+    {
+        if (is_array($part)) {
+            $result = $this->implode_recursive(',', $part);
+        } else {
+            $result = (string)$part;
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $from the result string converted to an array
+     * @param int|string $from_key the key of the part of the result that differs
+     * @param int|string $to_key the key of the part of the target at the same position
+     * @return bool true if the part of the result is an array with the same key as the part of the target
+     */
+    private
+    function is_same_array_entry(array $from, int|string $from_key, int|string $to_key): bool
+    {
+        return is_array($from[$from_key]) and $from_key === $to_key;
+    }
+
+    /**
+     * @param string|array|null $from the part of the target string that should be found in the $to string array e.g. a json object
      * @param array $to the result string converted to an array
      * @param array $to_keys the array keys to the to array for the case they are not integer
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
      */
     private
-    function str_diff_list_next_match(string|null $from, array $to, array $to_keys, int $start_pos): int
+    function str_diff_list_next_match(string|array|null $from, array $to, array $to_keys, int $start_pos): int
     {
         $check_pos = $start_pos;
         $found_pos = -1;

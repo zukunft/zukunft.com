@@ -109,6 +109,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
+// for sandbox_related::views_assigned, which cannot include it itself
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
@@ -284,6 +286,10 @@ class word extends sandbox_code_id
     // its parent words; populated lazily by load_views_related() and only emitted via
     // api_json_array() when the api_types::INCL_RELATED flag is set
     public ?view_list $views_related = null;
+    // the views assigned to this word by the import e.g. "Mathematical constant" to "Pi", which the
+    // edit menu of the navbar offers first; populated lazily by load_views_assigned() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?view_list $views_assigned = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -616,6 +622,11 @@ class word extends sandbox_code_id
                     }
                     $vars = array_merge($vars,
                         new sandbox_related()->views_array($this->views_related, $msg, $usr));
+                    if ($this->views_assigned == null and !$typ_lst->test_mode()) {
+                        $this->load_views_assigned($msg);
+                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }
@@ -728,11 +739,12 @@ class word extends sandbox_code_id
     /**
      * load the views related to this word into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; the list is the word's own
-     * default view plus the default views of its parent words (the phrases it "is a")
+     * default view on top, followed by the default views of its parent words and triples
+     * (the phrases it "is a", e.g. the triple "mathematical constant" of Pi)
      * each view is loaded by id because set_view_id() only stores the id, not the name that
      * the api export and the frontend name_link need
-     * TODO Prio 2 the parent loop loads each parent word and its view one by one; replace with a
-     *      single list load once a view_list->load_by_word_list() exists
+     * TODO Prio 2 the parent loop loads each parent phrase and its view one by one; replace with a
+     *      single list load once a view_list->load_by_phrase_list() exists
      */
     function load_views_related(user_message $msg): void
     {
@@ -743,6 +755,10 @@ class word extends sandbox_code_id
                 $par_wrd = new word($this->get_user());
                 $par_wrd->load_by_id($phr->id(), $msg);
                 $par_wrd->add_default_view_to($msk_lst, $msg);
+            } elseif ($phr->is_triple()) {
+                $par_trp = new triple($this->get_user());
+                $par_trp->load_by_id($phr->triple()->id(), $msg);
+                $msk_lst->add_by_id($par_trp->get_view_id(), $msg);
             }
         }
         // a word without an own default view and without parent views is shown with the system
@@ -758,6 +774,18 @@ class word extends sandbox_code_id
     }
 
     /**
+     * load the views that the import has assigned to this word into the in-memory views_assigned
+     * list, so that the edit menu of the navbar can offer them first e.g. "Mathematical constant" for "Pi"
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_assigned(user_message $msg): void
+    {
+        $this->views_assigned = new sandbox_related()->views_assigned($this->term(), $msg);
+    }
+
+    /**
      * add the fully loaded default view of this word to the given list (skipping duplicates,
      * words without a default view and a view that cannot be loaded); the view is loaded by id
      * so that it carries its name
@@ -766,15 +794,7 @@ class word extends sandbox_code_id
      */
     private function add_default_view_to(view_list $msk_lst, user_message $msg): void
     {
-        if ($this->view != null and $this->view->id() > 0) {
-            $msk = new view($this->get_user());
-            $msk->load_by_id($this->view->id(), $msg);
-            // a view that cannot be loaded must not enter the list, because a list holding an
-            // unloaded entry is not empty and would suppress the system default view fallback
-            if ($msk->id() > 0) {
-                $msk_lst->add($msk);
-            }
-        }
+        $msk_lst->add_by_id($this->get_view_id(), $msg);
     }
 
     /**
@@ -959,6 +979,15 @@ class word extends sandbox_code_id
     {
         global $sys;
         return $sys->typ_lst->phr_typ->code_id($this->type_id);
+    }
+
+    /**
+     * @return bool true if the phrase type is one of phrase_types::PRELOAD_TYPES e.g. a unit or scaling
+     *              word, so that the word is part of the system phrases of the cached types api message
+     */
+    function has_preload_type(): bool
+    {
+        return in_array($this->type_code_id(), phrase_types::PRELOAD_TYPES);
     }
 
     /**
@@ -1267,6 +1296,12 @@ class word extends sandbox_code_id
         }
         if ($this->impact != null) {
             if ($this->impact != $db_obj->impact) {
+                $result = true;
+            }
+        }
+        // like for a triple, a default view of the import is written to the database
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
                 $result = true;
             }
         }

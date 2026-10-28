@@ -165,7 +165,6 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 include_once paths::SHARED_HELPER . 'Message.php';
-include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
 include_once paths::SHARED_TYPES . 'job_statuum.php';
@@ -297,7 +296,6 @@ use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\helper\Message;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
-use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
 use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
@@ -1271,6 +1269,9 @@ class sql_db
             $import->import_system_data_appended($usr);
             // and the use cases that build on the appended system data e.g. the calculator keywords
             $import->import_use_case_data($usr, false, files::USE_CASE_FILES_APPENDED);
+            // a types api call during the imports may have cached the system phrases without the
+            // symbol triples imported after it e.g. "g/kWh is symbol for gram per kWh"
+            new db_cache(user::system())->del_types($sys_msg);
 
             // add the admin users if defined in the env file
             $this->add_admin_users_from_env($sys_msg, $usr);
@@ -1505,13 +1506,8 @@ class sql_db
             $this->load_db_code_link_file($csv_file_name, $msg, [sql_type::LOG]);
         }
 
-        // the cached types api message is the state before the csv load, so it is removed and
-        // the next types api call rebuilds it from the database (db_cache::is_outdated checks
-        // only the age), or a frontend misses a type added by the csv until the age limit
-        $cac = new db_cache(user::system());
-        if ($cac->load_by_type_id(db_cache_types::TYPES_ID, $msg) > 0) {
-            $cac->del($msg);
-        }
+        // the cached types api message is the state before the csv load
+        new db_cache(user::system())->del_types($msg);
 
         // set the seq number if needed
         // TODO Prio 2 check why this is needed and combine with the other sequence reset

@@ -1989,7 +1989,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * remove a user adjustment without check
+     * remove a user adjustment without check, but with the change log entry (e.g. word_delete_log_user)
      * log a system error if a technical error has occurred
      *
      * @return bool true if the user sandbox row has successfully been deleted
@@ -2005,7 +2005,7 @@ class sandbox extends db_object_seq_id_user
         $msg_failed = $this->id() . ' failed for ' . $this->get_user()->name;
 
         $db_con->set_class($this::class, true);
-        $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::USER]));
+        $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG, sql_type::USER]));
         $db_con->delete($qp, $this::class . ' user exclusions', $msg);
         $msg_txt = $msg->get_message();
         if ($msg_txt == '') {
@@ -2022,6 +2022,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * remove user adjustment and log it (used by user.php to undo the user changes)
+     * the log entry and the delete are one sql function of del_usr_cfg_exe (e.g. word_delete_log_user)
      * @return bool true if no error has occurred
      */
     function del_usr_cfg(user_message $msg): bool
@@ -2034,12 +2035,8 @@ class sandbox extends db_object_seq_id_user
         $result = true;
 
         if ($this->id() > 0 and $this->get_user()->id() > 0) {
-            $log = $this->log_del($msg);
-            if ($log->id() > 0) {
-                $db_con->usr_id = $this->get_user()->id;
-                $result = $this->del_usr_cfg_exe($db_con, $msg);
-            }
-
+            $db_con->usr_id = $this->get_user()->id;
+            $result = $this->del_usr_cfg_exe($db_con, $msg);
         } else {
             log_err('The database ID and the user must be set to remove a user-specific modification of ' . $class_name . '.', $this::class . '->del_usr_cfg');
         }
@@ -2314,18 +2311,6 @@ class sandbox extends db_object_seq_id_user
         log_err_msg('The dummy parent method log_del_link has been called for '
             . $this::class . ', which should never happen', $msg);
         return new change_link($this->get_user());
-    }
-
-    /**
-     * dummy function definition that will be overwritten by the child object
-     * @param user_message $msg to report a failed change log write to the requesting user
-     * @return change
-     */
-    function log_del(user_message $msg): change
-    {
-        log_err_msg('The dummy parent method log_del has been called for '
-            . $this::class . ', which should never happen', $msg);
-        return new change($this->get_user());
     }
 
     /**
@@ -3449,7 +3434,7 @@ class sandbox extends db_object_seq_id_user
                             }
 
                             // delete all user records of the new owner
-                            // does not use del_usr_cfg because the deletion request has already been logged
+                            // with the change log entry of the removed user row (del_usr_cfg_exe)
                             if ($msg_txt == '') {
                                 if (!$this->del_usr_cfg_exe($db_con, $msg)) {
                                     $msg_txt .= 'Deleting of ' . $class_name . ' failed';

@@ -66,6 +66,9 @@ class paths
     const string USER_LOG_ARCHIVE = ROOT_PATH . 'cache' . DIRECTORY_SEPARATOR . 'test_user_log' . DIRECTORY_SEPARATOR;
 
 
+    // the scripts that a headless browser runs in a page snapshot to act like a user
+    const string JS = TEST_PATH . 'js' . DIRECTORY_SEPARATOR;
+
     // main path for the test resources
     const string RESOURCE = TEST_PATH . 'resources' . DIRECTORY_SEPARATOR;
 
@@ -107,6 +110,8 @@ class paths
     // path for resources to test the frontend
     const string WEB_RES = self::RESOURCE . 'web' . DIRECTORY_SEPARATOR;
     const string WEB_SYSTEM_RES = self::WEB_RES . 'system' . DIRECTORY_SEPARATOR;
+    // the messages that the calculator editor sends after the user actions of a scenario
+    const string WEB_CALCULATOR_EDITOR_RES = self::WEB_RES . 'calculator_editor' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the user interface
     const string UI_RES = self::WEB_RES . 'ui' . DIRECTORY_SEPARATOR;

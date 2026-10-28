@@ -69,7 +69,6 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
@@ -133,7 +132,6 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -181,8 +179,10 @@ class system_view_ui_tests
     {
         global $mtr;
         global $sys;
+        global $ui_sys;
 
         // init
+        $msg = new user_message();
         $lib = new library();
         $tl = new test_lib();
         $t_usr = new test_users($t);
@@ -241,30 +241,30 @@ class system_view_ui_tests
         $test_name = '... and offers no form';
         $t->assert_text_not_contains($test_name, $page->not_yet_available(), '<' . html_base::FORM);
 
-        // the "..." below the title of a default view opens the menu with the other three versions
-        $t->subheader($ts . 'related view selector');
-        $test_name = 'the default word view links to the detail version';
-        $wrd_ui = new test_words($t)->chf_ui();
-        $sel_html = $page->related_view_selector(views::WORD_ID, $wrd_ui);
-        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_ID);
-        $test_name = '... to the range version';
-        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_RANGE_ID);
-        $test_name = '... to the detail with range version';
-        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_RANGE_ID);
-        $test_name = '... for the same word';
-        $t->assert_text_contains($test_name, $sel_html, url_var::ID . '=' . words::CHF_ID);
-        $test_name = '... and offers only the three other versions';
-        $t->assert($test_name, substr_count($sel_html, '<' . html_base::LI . '>'), 3);
-        $test_name = 'the detail with range version links back to the default version';
-        $sel_html = $page->related_view_selector(views::WORD_DEFAULT_DETAIL_RANGE_ID, $wrd_ui);
-        $t->assert_text_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DEFAULT->text() . '<');
-        $test_name = '... but not to itself';
-        $t->assert_text_not_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DETAIL_RANGE->text() . '<');
-        // negative: a view that is not a version of a default view e.g. an edit view has no menu
-        $test_name = 'the word edit view shows no view version menu';
-        $t->assert($test_name, $page->related_view_selector(views::WORD_EDIT_ID, $wrd_ui), '');
-        $test_name = 'without the object shown no view version menu is created';
-        $t->assert($test_name, $page->related_view_selector(views::WORD_ID, null), '');
+        // the edit menu of the navbar offers the four default views of the type of the shown object
+        $t->subheader($ts . 'view versions');
+        $msk_const = new views();
+        $test_name = 'the default word view is one of the four versions of the word';
+        $versions = $msk_const->default_versions(views::WORD_ID);
+        $t->assert($test_name, $versions, [views::WORD_ID, views::WORD_DEFAULT_DETAIL_ID,
+            views::WORD_DEFAULT_RANGE_ID, views::WORD_DEFAULT_DETAIL_RANGE_ID]);
+        $test_name = '... and the detail with range view of the word too';
+        $versions = $msk_const->default_versions(views::WORD_DEFAULT_DETAIL_RANGE_ID);
+        $t->assert_contains($test_name, $versions, views::WORD_ID);
+        // negative: a view that is not a version of a default view e.g. an edit view has none
+        $test_name = 'the word edit view has no versions';
+        $versions = $msk_const->default_versions(views::WORD_EDIT_ID);
+        $t->assert($test_name, $versions, []);
+        // a triple gets the default views of a triple and not the ones of a word
+        $test_name = 'the edit menu of a triple offers the detail view of a triple';
+        $trp_menu = new test_triples($t)->triple_impact_ui();
+        $menu_ids = $trp_menu->menu_views_ui($ui_sys->typ_lst_cache, $msg)->id_lst();
+        $t->assert_contains($test_name, $menu_ids, views::TRIPLE_DEFAULT_DETAIL_ID);
+        $msg->reset();
+        $test_name = '... but not the default views of a word';
+        $menu_ids = $trp_menu->menu_views_ui($ui_sys->typ_lst_cache, $msg)->id_lst();
+        $t->assert_contains_not($test_name, $menu_ids, views::WORD_DEFAULT_DETAIL_ID);
+        $msg->reset();
         // switch usr1 to the system test profile user (needed for the ui cache imports)
         // and remember the normal usr1 so the end of this run can restore it - otherwise every
         // later test would see a system-tier usr1 instead of the normal email profile user

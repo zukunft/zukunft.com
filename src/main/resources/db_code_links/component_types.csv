@@ -292,3 +292,4 @@ component_type_id, type_name, description, code_id
 291, 'formula editor', 'the expression of the selected formula of the page of the phrase with the save, built by a script from the phrase data of the phrase with its results', 'formula_editor'
 292, 'formula selector', 'the formulas of the page of the phrase to select the formula that the formula editor shows, filled by the script of the formula editor', 'formula_selector'
 293, 'formula result compare', 'the results of the page of the phrase until now against the results after the save of the formula editor and its changes, filled by the script of the formula editor', 'formula_result_compare'
+294, 'child triples', 'show the children of the given phrase that are triples e.g. Swiss franc and US Dollar for currency', 'list_child_triples'

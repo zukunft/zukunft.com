@@ -38,6 +38,7 @@
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /formula/formula.php
     \-- load_latex_terms - section for function load_latex_terms is expected to be load in /formula/formula.php
     \-- load_views_related - section for function load_views_related is expected to be load in /formula/formula.php
+    \-- load_views_assigned - section for function load_views_assigned is expected to be load in /formula/formula.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /formula/formul
             a.php
     \-- api_json_array - section for function api_json_array is expected to be api in /formula/formula.php
@@ -510,7 +511,10 @@
     \-- load_references_related - section for function load_references_related is expected to be load in /word/triple.ph
             p
     \-- load_views_related - section for function load_views_related is expected to be load in /word/triple.php
+    \-- load_views_assigned - section for function load_views_assigned is expected to be load in /word/triple.php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /word/triple.php
+    \-- has_preload_verb - section for function has_preload_verb not yet defined that it should be set and get in /word/
+            triple.php
     \-- name_given - section for function name_given not yet defined that it should be set and get in /word/triple.php
     \-- link_key - section for function link_key is expected to be link in /word/triple.php
     \-- name_generated - section for function name_generated not yet defined that it should be set and get in /word/trip
@@ -518,6 +522,8 @@
     \-- type_id - section for function type_id not yet defined that it should be set and get in /word/triple.php
     \-- cloned_named - section for function cloned_named not yet defined that it should be set and get in /word/triple.p
             hp
+    \-- needs_reverse_check - section for function needs_reverse_check not yet defined that it should be info in /word/t
+            riple.php
     \-- needs_from - section for function needs_from not yet defined that it should be info in /word/triple.php
     \-- has_verb - section for function has_verb not yet defined that it should be info in /word/triple.php
     \-- delta - section for function delta is expected to be del in /word/triple.php
@@ -552,14 +558,18 @@
             /word.php
     \-- load_references_related - section for function load_references_related is expected to be load in /word/word.php
     \-- load_views_related - section for function load_views_related is expected to be load in /word/word.php
+    \-- load_views_assigned - section for function load_views_assigned is expected to be load in /word/word.php
     \-- load_phrases_related - section for function load_phrases_related is expected to be load in /word/word.php
     \-- select_phrases_related - section for function select_phrases_related not yet defined that it should be related i
             n /word/word.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /word/word.php
+    \-- has_preload_type - section for function has_preload_type not yet defined that it should be preloaded in /word/wo
+            rd.php
     \-- delta - section for function delta is expected to be del in /word/word.php
     \-- calc_usage_old - section for function calc_usage_old not yet defined that it should be ui support in /word/word.
             php
-    \-- order error - order of section info has difference at delta should be before needs_db_update
+    \-- order error - order of section preloaded has difference at type_name should be before has_preload_type,
+            order of section info has difference at delta should be before needs_db_update
 ```
 
 ### main backend
@@ -988,6 +998,8 @@
         \-- view - add or update a view in the database or create a user view
     \-- save_component_links
         \-- view - add or update the component links of this view in the database or create a user view
+    \-- save_term_links
+        \-- view - save the terms that the import assigns to this view e.g. "Pi" to "Mathematical constant",
     \-- load_sql_user_changes
         \-- view - create an SQL statement to retrieve the user changes of the current view
 \-- message
@@ -1022,6 +1034,8 @@
         \-- formula - load the terms shown in the latex format into the in-memory latex_terms list so that
     \-- load_views_related
         \-- formula - load the views related to this formula into the in-memory views_related list so that
+    \-- load_views_assigned
+        \-- formula - load the views that the import has assigned to this formula into the in-memory views_assigned
     \-- load_by_id_with_related
         \-- formula - load the formula and, in the same call, the related view-models the default formula view
     \-- api_json_array
@@ -2177,6 +2191,7 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /helper/db_cache.php
     \-- del - section for function del is expected to be del in /helper/db_cache.php
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
+    \-- del_types - section for function del_types is expected to be del in /helper/db_cache.php
     \-- del_by_types - section for function del_by_types is expected to be del in /helper/db_cache.php
     \-- del_sql_by_type_ids - section for function del_sql_by_type_ids is expected to be del in /helper/db_cache.php
     \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
@@ -2915,6 +2930,8 @@
 \-- term
     \-- row_mapper - section for function row_mapper not yet defined that it should be construct and map in /phrase/term
             .php
+    \-- row_has_ids - section for function row_has_ids not yet defined that it should be construct and map in /phrase/te
+            rm.php
     \-- clone_reset - section for function clone_reset not yet defined that it should be construct and map in /phrase/te
             rm.php
     \-- owner_id - section for function owner_id not yet defined that it should be set and get in /phrase/term.php
@@ -3529,6 +3546,12 @@
     \-- add - section for function add not yet defined that it should be add in /sandbox/sandbox_multi.php
     \-- del - section for function del is expected to be del in /sandbox/sandbox_multi.php
     \-- save_fields_func - section for function save_fields_func is expected to be save in /sandbox/sandbox_multi.php
+    \-- has_source - section for function has_source not yet defined that it should be delete in /sandbox/sandbox_multi.
+            php
+    \-- has_placeholder_source - section for function has_placeholder_source not yet defined that it should be delete in
+             /sandbox/sandbox_multi.php
+    \-- sql_delete_user_row - section for function sql_delete_user_row not yet defined that it should be delete in /sand
+            box/sandbox_multi.php
     \-- sql_write - section for function sql_write not yet defined that it should be delete in /sandbox/sandbox_multi.ph
             p
     \-- sql_write_with_log - section for function sql_write_with_log not yet defined that it should be delete in /sandbo
@@ -3609,7 +3632,6 @@
     \-- log_last_msg - section for function log_last_msg is expected to be log in /sandbox/sandbox_named.php
     \-- log_last_field_msg - section for function log_last_field_msg is expected to be log in /sandbox/sandbox_named.php
     \-- log_add - section for function log_add is expected to be log in /sandbox/sandbox_named.php
-    \-- log_del - section for function log_del is expected to be log in /sandbox/sandbox_named.php
     \-- add - section for function add not yet defined that it should be add in /sandbox/sandbox_named.php
     \-- is_key_updated - section for function is_key_updated is expected to be info in /sandbox/sandbox_named.php
     \-- is_id_key_updated - section for function is_id_key_updated is expected to be info in /sandbox/sandbox_named.php
@@ -3634,6 +3656,10 @@
 \-- sandbox_related
     \-- views_array - section for function views_array not yet defined that it should be api in /sandbox/sandbox_related
             .php
+    \-- views_assigned_array - section for function views_assigned_array not yet defined that it should be api in /sandb
+            ox/sandbox_related.php
+    \-- views_assigned - section for function views_assigned not yet defined that it should be api in /sandbox/sandbox_r
+            elated.php
     \-- changes_array - section for function changes_array not yet defined that it should be api in /sandbox/sandbox_rel
             ated.php
     \-- load_changes - section for function load_changes is expected to be load in /sandbox/sandbox_related.php
@@ -4167,6 +4193,9 @@
 \-- term_view_list
     \-- load_by_ids - section for function load_by_ids is expected to be load in /view/term_view_list.php
     \-- load_by_view - section for function load_by_view is expected to be load in /view/term_view_list.php
+    \-- load_by_term - section for function load_by_term is expected to be load in /view/term_view_list.php
+    \-- view_list - section for function view_list not yet defined that it should be load sql in /view/term_view_list.ph
+            p
     \-- term_list - section for function term_list not yet defined that it should be load sql in /view/term_view_list.ph
             p
     \-- order error - order of section load sql has difference at load_sql_by_ids should be before load_sql
@@ -4179,6 +4208,7 @@
     \-- load_sql_by_pattern - section for function load_sql_by_pattern is expected to be load sql in /view/view_list.php
     \-- load_sql_by_type - section for function load_sql_by_type is expected to be load sql in /view/view_list.php
     \-- load_sql_by_ids - section for function load_sql_by_ids is expected to be load sql in /view/view_list.php
+    \-- add_by_id - section for function add_by_id not yet defined that it should be load in /view/view_list.php
     \-- save - section for function save is expected to be save in /view/view_list.php
     \-- order error - order of section load has difference at load_sql should be before load_sql_names
 \-- view_relation_list
@@ -4206,6 +4236,8 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /word/triple_list.php
     \-- has_values - section for function has_values not yet defined that it should be information in /word/triple_list.
             php
+    \-- has_preload_verb - section for function has_preload_verb not yet defined that it should be information in /word/
+            triple_list.php
     \-- del - section for function del is expected to be del in /word/triple_list.php
     \-- diff_msg - section for function diff_msg is expected to be info in /word/triple_list.php
     \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be sort in /word/triple_list
@@ -4276,6 +4308,8 @@
     \-- has_measure - section for function has_measure not yet defined that it should be info in /word/word_list.php
     \-- has_scaling - section for function has_scaling not yet defined that it should be info in /word/word_list.php
     \-- has_percent - section for function has_percent not yet defined that it should be info in /word/word_list.php
+    \-- has_preload_type - section for function has_preload_type not yet defined that it should be info in /word/word_li
+            st.php
     \-- view_lst - section for function view_lst not yet defined that it should be select linked in /word/word_list.php
     \-- max_time - section for function max_time not yet defined that it should be select functions - predefined data re
             trieval in /word/word_list.php
@@ -4828,6 +4862,8 @@
                  the type and the external key set
     \-- del_by_user
         \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
+    \-- del_types
+        \-- db_cache - remove the cached types api message, so that the next types api call rebuilds it from the
     \-- del_by_types
         \-- db_cache - remove the cache entries of the given types of all users,
                  because e.g. a default changed by an admin is
@@ -5549,6 +5585,11 @@
         \-- change_log_list - TODO Prio 2 instead of using an array for $other_values create a helper class with vars
     \-- views_array
         \-- sandbox_related - the views that can show the object for the views tab of the object page; the list is
+    \-- views_assigned_array
+        \-- sandbox_related - the views assigned to the object by the import for the edit menu of the navbar
+    \-- views_assigned
+        \-- sandbox_related - the views that the import has assigned to a word, triple or formula,
+                 which the edit menu of
     \-- changes_array
         \-- sandbox_related - the changes of the given object for the changes tab of the object page
     \-- load_changes
@@ -6753,7 +6794,6 @@
     \-- title_with_object_name - section for function title_with_object_name missing in /component/execute/system_page.p
             hp
     \-- title_for_phrase - section for function title_for_phrase missing in /component/execute/system_page.php
-    \-- related_view_selector - section for function related_view_selector missing in /component/execute/system_page.php
     \-- system_sub_tile - section for function system_sub_tile missing in /component/execute/system_page.php
     \-- system_sub_tile_var - section for function system_sub_tile_var missing in /component/execute/system_page.php
     \-- preview - section for function preview missing in /component/execute/system_page.php
@@ -6858,6 +6898,8 @@
 \-- ui_list
     \-- parents_of_word - section for function parents_of_word missing in /component/execute/ui_list.php
     \-- children_of_word - section for function children_of_word missing in /component/execute/ui_list.php
+    \-- child_words - section for function child_words missing in /component/execute/ui_list.php
+    \-- child_triples - section for function child_triples missing in /component/execute/ui_list.php
     \-- phrase_aliases - section for function phrase_aliases missing in /component/execute/ui_list.php
     \-- phrase_symbols - section for function phrase_symbols missing in /component/execute/ui_list.php
     \-- phrases_related_ex_symbols - section for function phrases_related_ex_symbols missing in /component/execute/ui_li
@@ -7233,6 +7275,8 @@
             ect.php
     \-- add_changes - section for function add_changes not yet defined that it should be set and get in /helper/data_obj
             ect.php
+    \-- add_tier_names - section for function add_tier_names not yet defined that it should be set and get in /helper/da
+            ta_object.php
     \-- change_log - section for function change_log not yet defined that it should be set and get in /helper/data_objec
             t.php
     \-- has_sys_log - section for function has_sys_log not yet defined that it should be set and get in /helper/data_obj
@@ -7316,6 +7360,8 @@
             ase.php
     \-- header - section for function header not yet defined that it should be header & footer in /html/html_base.php
     \-- navbar - section for function navbar not yet defined that it should be header & footer in /html/html_base.php
+    \-- tip_with_names - section for function tip_with_names not yet defined that it should be header & footer in /html/
+            html_base.php
     \-- dsp_notification - section for function dsp_notification not yet defined that it should be header & footer in /h
             tml/html_base.php
     \-- dsp_notification_html - section for function dsp_notification_html not yet defined that it should be header & fo
@@ -7566,7 +7612,6 @@
     \-- button - section for function button not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
-    \-- popup_menu - section for function popup_menu not yet defined that it should be internal in /html/html_base.php
     \-- details - section for function details not yet defined that it should be internal in /html/html_base.php
     \-- definition - section for function definition not yet defined that it should be internal in /html/html_base.php
     \-- mark - section for function mark not yet defined that it should be internal in /html/html_base.php
@@ -7742,6 +7787,9 @@
     \-- symbols_of - section for function symbols_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- symbol_of - section for function symbol_of not yet defined that it should be select in /phrase/phrase_list.php
     \-- parents - section for function parents is expected to be foaf in /phrase/phrase_list.php
+    \-- only_words - section for function only_words not yet defined that it should be select in /phrase/phrase_list.php
+    \-- only_triples - section for function only_triples not yet defined that it should be select in /phrase/phrase_list
+            .php
     \-- parent_triples - section for function parent_triples not yet defined that it should be select in /phrase/phrase_
             list.php
     \-- parent_triples_ex_verbs - section for function parent_triples_ex_verbs not yet defined that it should be select 
@@ -7804,6 +7852,8 @@
     \-- obj_id - section for function obj_id not yet defined that it should be set and get in /phrase/term.php
     \-- set_id_from_obj - section for function set_id_from_obj is expected to be set and get in /phrase/term.php
     \-- api_array - section for function api_array not yet defined that it should be interface in /phrase/term.php
+    \-- phrase_view_id - section for function phrase_view_id not yet defined that it should be interface in /phrase/term
+            .php
     \-- is_word - section for function is_word is expected to be info in /phrase/term.php
     \-- is_triple - section for function is_triple is expected to be info in /phrase/term.php
     \-- is_verb - section for function is_verb is expected to be info in /phrase/term.php
@@ -8057,6 +8107,12 @@
     \-- owner_name - section for function owner_name not yet defined that it should be set and get in /sandbox/sandbox.p
             hp
     \-- view_id - section for function view_id not yet defined that it should be set and get in /sandbox/sandbox.php
+    \-- menu_views_ui - section for function menu_views_ui not yet defined that it should be menu in /sandbox/sandbox.ph
+            p
+    \-- menu_view_items_ui - section for function menu_view_items_ui not yet defined that it should be menu in /sandbox/
+            sandbox.php
+    \-- menu_more_names_ui - section for function menu_more_names_ui not yet defined that it should be menu in /sandbox/
+            sandbox.php
     \-- api_array - section for function api_array not yet defined that it should be api in /sandbox/sandbox.php
     \-- share_id - section for function share_id not yet defined that it should be set and get in /sandbox/sandbox.php
     \-- protection_id - section for function protection_id not yet defined that it should be set and get in /sandbox/san
@@ -8307,6 +8363,8 @@
     \-- order error - order of section  has difference at name should be before reset,
             order of section display has difference at name_link should be before name_tip
 \-- type_lists
+    \-- has_phrase_types - section for function has_phrase_types not yet defined that it should be type list by class in
+             /types/type_lists.php
     \-- class_to_type_list - section for function class_to_type_list not yet defined that it should be type list by clas
             s in /types/type_lists.php
     \-- field_to_type_list - section for function field_to_type_list not yet defined that it should be type list by clas
@@ -8484,8 +8542,8 @@
             php
     \-- chart_model - section for function chart_model not yet defined that it should be display in /value/value_list.ph
             p
-    \-- columns_menu - section for function columns_menu not yet defined that it should be display in /value/value_list.
-            php
+    \-- columns_menu_items - section for function columns_menu_items not yet defined that it should be display in /value
+            /value_list.php
     \-- list_unit - section for function list_unit not yet defined that it should be display in /value/value_list.php
     \-- table - section for function table not yet defined that it should be display in /value/value_list.php
     \-- common_phrases - section for function common_phrases not yet defined that it should be info in /value/value_list
@@ -8552,6 +8610,7 @@
     \-- selector_page - section for function selector_page not yet defined that it should be to review in /view/view.php
     \-- log_err - section for function log_err is expected to be log in /view/view.php
     \-- open_link - section for function open_link not yet defined that it should be display in /view/view.php
+    \-- used_link - section for function used_link not yet defined that it should be display in /view/view.php
     \-- switch_link - section for function switch_link not yet defined that it should be display in /view/view.php
     \-- edit_link - section for function edit_link not yet defined that it should be display in /view/view.php
     \-- name_linked - section for function name_linked not yet defined that it should be display in /view/view.php
@@ -8560,6 +8619,8 @@
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_b
             ase.php
     \-- api_array - section for function api_array not yet defined that it should be api in /view/view_base.php
+    \-- shows_value_table - section for function shows_value_table not yet defined that it should be set and get in /vie
+            w/view_base.php
     \-- type_code_id - section for function type_code_id is expected to be preloaded in /view/view_base.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_base.php
     \-- title - section for function title not yet defined that it should be base in /view/view_base.php
@@ -8581,12 +8642,14 @@
     \-- api_mapper - section for function api_mapper is expected to be construct and map in /view/view_list.php
     \-- component_names - section for function component_names not yet defined that it should be base in /view/view_list
             .php
+    \-- names - section for function names is expected to be info in /view/view_list.php
     \-- name_tip - section for function name_tip not yet defined that it should be base in /view/view_list.php
     \-- name_link - section for function name_link not yet defined that it should be base in /view/view_list.php
+    \-- sort_by_name - section for function sort_by_name not yet defined that it should be base in /view/view_list.php
     \-- default_id - section for function default_id not yet defined that it should be info in /view/view_list.php
     \-- only_type - section for function only_type not yet defined that it should be filter in /view/view_list.php
     \-- selector - section for function selector not yet defined that it should be select in /view/view_list.php
-    \-- order error - order of section base has difference at name_link should be before name_tip
+    \-- order error - order of section base has difference at name_tip should be before names
 \-- view_relation
     \-- url_mapper - section for function url_mapper not yet defined that it should be construct and map in /view/view_r
             elation.php
@@ -8840,6 +8903,10 @@
         \-- phrase_list - the symbol that stands for the given phrase, e.g. "x" for the factor or "mio" for million
     \-- parents
         \-- phrase_list - get all phrases that are connected to the given phrase
+    \-- only_words
+        \-- phrase_list - @param user_message $msg to report a phrase that is listed twice
+    \-- only_triples
+        \-- phrase_list - @param user_message $msg to report a phrase that is listed twice
     \-- parent_triples
         \-- phrase_list - get all triples that are connected to the given phrase
     \-- parent_triples_ex_verbs
@@ -9270,6 +9337,8 @@
         \-- data_object - @return bool true if this context object contains at least some phrases
     \-- add_changes
         \-- data_object - @return bool true if this context object contains at least some phrases
+    \-- add_tier_names
+        \-- data_object - add the column names of a value table of the page, so that the column menu of the navbar
     \-- change_log
         \-- data_object - @return change_log_list the cache of the relevant change log entries
     \-- has_sys_log
@@ -9410,8 +9479,6 @@
     \-- title_for_phrase
         \-- system_page - HTML for a page title that names the phrase the page works on e.g. Table editor for populism s
                 olution
-    \-- related_view_selector
-        \-- system_page - the "..." in the right corner below the title of a default, detail, range or detail with
     \-- system_sub_tile
         \-- system_page - HTML for a subtitle
     \-- system_sub_tile_var
@@ -9508,8 +9575,6 @@
         \-- ui_base - @param db_object|null $dbo the formula whose expression should be displayed
     \-- name
         \-- ui_base - the label points to the field that it validates, so that a click on it opens the field and
-    \-- word_children
-        \-- ui_foaf - TODO Prio 2 move code from component_dsp_old
     \-- word_parents
         \-- ui_foaf - TODO Prio 2 move code from component_dsp_old
     \-- select_file
@@ -9531,6 +9596,10 @@
         \-- ui_list - HTML for a list of words or triples
     \-- children_of_word
         \-- ui_list - HTML for a list of words or triples
+    \-- child_words
+        \-- ui_list - HTML for the children of a phrase that are words, e.g. "Euro" of the children of currency
+    \-- child_triples
+        \-- ui_list - HTML for the children of a phrase that are triples, e.g. "Swiss franc" of the children of currency
     \-- phrase_aliases
         \-- ui_list - HTML for the phrases that are an alias of the given phrase
     \-- phrase_symbols
@@ -10459,6 +10528,8 @@
         \-- html_base - create the html code for the page header
     \-- navbar
         \-- html_base - @param int $msk_id the current view id used to build back params and view-change links
+    \-- tip_with_names
+        \-- html_base - a tooltip that names examples behind its text, e.g. "show more views e.g. Word, Triple"
     \-- dsp_notification
         \-- html_base - /**
     \-- dsp_notification_html
@@ -10741,8 +10812,6 @@
         \-- html_base - @param string $text the html code shown on the button e.g. a translated text or an icon
     \-- list_item
         \-- html_base - html list item entry
-    \-- popup_menu
-        \-- html_base - a popup menu that opens on a click without any javascript, because the html details
     \-- details
         \-- html_base - a part that the user can open and close without javascript, e.g. a node of a tree
     \-- definition
@@ -10851,6 +10920,13 @@
 \-- create the pure html (5) code for all formula links related to this value list
     \-- frm_links_html
         \-- result_list - create the pure html (5) code for all formula links related to this value list
+\-- menu
+    \-- menu_views_ui
+        \-- sandbox - the views that the edit menu of the navbar suggests for this object, in the order of the menu:
+    \-- menu_view_items_ui
+        \-- sandbox - the entries of the edit menu of the navbar for the suggested views of this object, each with
+    \-- menu_more_names_ui
+        \-- sandbox - the names of some cached views that the edit menu does not offer for this object, which the
 \-- debug
     \-- name
         \-- sandbox_list - to show the list name to the user in the most simple form (without any ids)

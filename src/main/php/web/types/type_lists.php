@@ -170,6 +170,14 @@ class type_lists
      */
 
     /**
+     * @return bool false if the backend has sent no phrase types e.g. to select the type of a word
+     */
+    function has_phrase_types(): bool
+    {
+        return $this->phr_typ !== null;
+    }
+
+    /**
      * get the type list related to a given object class
      * similar to cfg type_list::class_to_type_object but returning the cached frontend type list
      * e.g. the phrase type list for a word or triple

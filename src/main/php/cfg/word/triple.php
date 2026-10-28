@@ -94,6 +94,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -102,6 +103,8 @@ include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
+// for sandbox_related::views_assigned; loaded via word.php like view.php, because term.php includes this file
+//include_once paths::MODEL_VIEW . 'term_view_list.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
@@ -153,6 +156,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -293,6 +297,9 @@ class triple extends sandbox_link_named
     // the views suggested for this triple (currently its own default view); populated lazily by
     // load_views_related() and only emitted via api_json_array() when the INCL_RELATED flag is set
     public ?view_list $views_related = null;
+    // the views assigned to this triple by the import, which the edit menu of the navbar offers
+    // first; populated lazily by load_views_assigned() like the views of a word
+    public ?view_list $views_assigned = null;
 
 
     /*
@@ -404,6 +411,12 @@ class triple extends sandbox_link_named
             }
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
+            }
+            // the default view e.g. of the triple "mathematical constant", like for a word
+            if (array_key_exists(fields::FLD_VIEW, $db_row)) {
+                if ($db_row[fields::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[fields::FLD_VIEW]);
+                }
             }
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];
@@ -798,15 +811,8 @@ class triple extends sandbox_link_named
     function load_views_related(user_message $msg): void
     {
         $msk_lst = new view_list($this->get_user());
-        if ($this->view != null and $this->get_view_id() > 0) {
-            $msk = new view($this->get_user());
-            $msk->load_by_id($this->get_view_id(), $msg);
-            // a view that cannot be loaded must not enter the list, because a list holding an
-            // unloaded entry is not empty and would suppress the system default view fallback
-            if ($msk->id() > 0) {
-                $msk_lst->add($msk);
-            }
-        }
+        // the own default view on top
+        $msk_lst->add_by_id($this->get_view_id(), $msg);
         // a triple without an own default view is shown with the system default triple view,
         // so the views tab of the triple page offers at least this view
         if ($msk_lst->is_empty()) {
@@ -817,6 +823,18 @@ class triple extends sandbox_link_named
             }
         }
         $this->views_related = $msk_lst;
+    }
+
+    /**
+     * load the views that the import has assigned to this triple into the in-memory views_assigned
+     * list, so that the edit menu of the navbar can offer them first like for a word
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_assigned(user_message $msg): void
+    {
+        $this->views_assigned = new sandbox_related()->views_assigned($this->term(), $msg);
     }
 
     function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
@@ -947,6 +965,11 @@ class triple extends sandbox_link_named
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $msg, $usr);
                     }
+                    if ($this->views_assigned == null and !$typ_lst->test_mode()) {
+                        $this->load_views_assigned($msg);
+                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }
@@ -1350,6 +1373,15 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * @return bool true if the verb is one of verbs::PRELOAD_VERBS e.g. "is symbol for", so that the
+     *              triple is part of the system phrases of the cached types api message
+     */
+    function has_preload_verb(): bool
+    {
+        return in_array($this->get_verb_code_id(), verbs::PRELOAD_VERBS);
+    }
+
+    /**
      * set the "from" phrase of this triple
      * e.g. "city" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
      *
@@ -1734,6 +1766,14 @@ class triple extends sandbox_link_named
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * @return bool false if this triple may be the reverse of an existing one, e.g. an order triple
+     */
+    function needs_reverse_check(): bool
+    {
+        return !in_array($this->get_verb_code_id(), verbs::WITHOUT_REVERSE_CHECK);
     }
 
     function needs_from(): bool
@@ -2754,6 +2794,12 @@ class triple extends sandbox_link_named
                 $result = true;
             }
         }
+        // e.g. the default view that assigned_views.json adds to the triple "mathematical constant"
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
+                $result = true;
+            }
+        }
         return $result;
     }
 
@@ -3048,7 +3094,7 @@ class triple extends sandbox_link_named
         $sim = parent::get_similar($msg);
 
         // check if the opposite triple already exists and if yes, ask for confirmation
-        if ($this->id() == 0) {
+        if ($this->id() == 0 and $this->needs_reverse_check()) {
             log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
             // check if the reverse triple is already in the database
             $db_chk_rev = $this->clone_reset();

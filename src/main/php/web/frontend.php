@@ -68,6 +68,7 @@ include_once html_paths::HELPER . 'url_mapper.php';
 include_once html_paths::HELPER . 'user_request.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::HTML . 'view_menu.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::COMPONENT . 'component_link.php';
 include_once html_paths::FORMULA . 'formula.php';
@@ -186,6 +187,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\helper\user_request;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\html\view_menu;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_ui;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_ui;
@@ -1309,17 +1311,11 @@ class frontend
                     $result .= $html->header($title, $msg_ui, '', $lan);
                     if (!in_array($view_id, views::NO_NAVBAR_IDS)) {
                         $logged_in = $usr !== null && !$usr->is_ip_only();
-                        // the editor of the view as defined by a view relation e.g. the table editor
-                        $msk_edt = null;
-                        if ($msk_ui->editor_id != null) {
-                            $msk_edt = $this->dto->typ_lst_cache->get_view_by_id($msk_ui->editor_id);
-                        }
                         $result .= $html->navbar($view_id, $url_array,
                             $logged_in ? $usr->name() : null,
                             $logged_in ? $usr->navbar_role() : null,
                             ($logged_in and $usr->is_admin()),
-                            $msk_edt?->id() ?? 0,
-                            $msk_edt?->name() ?? '');
+                            $this->edit_menu($dbo, $msk_ui, $url_array, $dto, $msg_ui));
                     }
                     $result .= $html->main($dsp_text);
                     $result .= $this->user_msg_html($msg_ui);
@@ -3216,6 +3212,51 @@ class frontend
             $dbo_ui = $this->dbo_ui_by_view_type($view_id);
         }
         return $dbo_ui;
+    }
+
+    /**
+     * what the page knows for the edit menu of the navbar: the columns and the form of its value
+     * tables, the editor of the view and the views suggested for the shown object e.g. its own and
+     * assigned views and the default views of its type; the start page e.g. shows no such object
+     *
+     * @param object|null $dbo the object shown on the page e.g. the word Pi
+     * @param view_ui $msk_ui the view of the page e.g. the start page with its value table
+     * @param array $url_array the url parameters of the page, which the column and form entries keep
+     * @param data_object $dto the data of the page, which collects the column names of its value tables
+     * @param user_message_ui $msg_ui to report a view or a component type that cannot be found
+     * @return view_menu the parts of the edit menu, empty if the type cache is not loaded
+     */
+    private function edit_menu(
+        ?object         $dbo,
+        view_ui         $msk_ui,
+        array           $url_array,
+        data_object     $dto,
+        user_message_ui $msg_ui
+    ): view_menu
+    {
+        $mnu = new view_menu();
+        // the type cache is kept by the frontend and not by the data of the page
+        $typ_lst = $this->dto?->typ_lst_cache;
+        if ($typ_lst != null) {
+            if ($msk_ui->shows_value_table($typ_lst, $msg_ui)) {
+                $mnu->page_items = new value_list_ui()->columns_menu_items($url_array, $dto->tier_names);
+            }
+            // the editor of the view as defined by a view relation e.g. the table editor
+            if ($msk_ui->editor_id != null) {
+                $msk_edt = $typ_lst->get_view_by_id($msk_ui->editor_id);
+                $mnu->edt_id = $msk_edt?->id() ?? 0;
+                $mnu->edt_name = $msk_edt?->name() ?? '';
+            }
+            if ($dbo instanceof sandbox_ui) {
+                $menu_lst = $dbo->menu_views_ui($typ_lst, $msg_ui);
+                $mnu->view_items = $dbo->menu_view_items_ui($menu_lst, $msk_ui->id());
+                $mnu->more_names = $dbo->menu_more_names_ui($typ_lst, $menu_lst);
+                // e.g. a new word has no name yet replace with space at the last possible place
+                // before showing to the user
+                $mnu->obj_name = $dbo->name() ?? '';
+            }
+        }
+        return $mnu;
     }
 
     /**

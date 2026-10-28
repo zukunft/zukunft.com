@@ -152,6 +152,40 @@ class triple_tests
         $t->assert_false($test_name, $trp->set_code_id(
             triple_names::SYSTEM_TEST_ADD_CODE_ID, new user_message($t->usr_normal)));
 
+        $t->subheader($ts . 'view on load');
+
+        // the default view is read from the database, so that the views tab of the triple offers it on top
+        $test_name = 'the default view of a triple is read from the database';
+        $db_row = [
+            triple_fields::FLD_ID => triple_names::MATH_CONST_ID,
+            fields::FLD_VIEW => views::MATH_CONST_ID
+        ];
+        $trp = new triple($t->usr1);
+        $trp->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $trp->get_view_id(), views::MATH_CONST_ID);
+        $msg->reset();
+        $test_name = '... and a triple without a default view has none';
+        $db_row = [
+            triple_fields::FLD_ID => triple_names::MATH_CONST_ID,
+            fields::FLD_VIEW => null
+        ];
+        $trp = new triple($t->usr1);
+        $trp->row_mapper_sandbox($db_row, $msg);
+        $t->assert($test_name, $trp->get_view_id(), 0);
+        $msg->reset();
+
+        $t->subheader($ts . 'reverse check');
+
+        // e.g. a page part that moves up is the reverse of the order triple that the move removes
+        global $sys;
+        $test_name = 'an order triple can be the reverse of another order triple';
+        $trp = $t_trp->triple();
+        $trp->set_verb_id($sys->typ_lst->vrb->id(verbs::FOLLOW));
+        $t->assert_false($test_name, $trp->needs_reverse_check());
+        $test_name = '... but another triple must not be the reverse of an existing one';
+        $trp = $t_trp->triple();
+        $t->assert_true($test_name, $trp->needs_reverse_check());
+
         $t->subheader($ts . 'debug id');
 
         // the debug id names the verb between the linked phrases
@@ -624,6 +658,18 @@ class triple_tests
         $in_trp = $t_trp->triple_link_only();
         $db_trp = $t_trp->triple();
         $t->assert($t->name . 'needs_db_update ' . $test_name, $in_trp->needs_db_update($db_trp, $msg), false);
+
+        // e.g. assigned_views.json adds the default view to the existing triple "mathematical constant"
+        $test_name = 'an import that adds a default view to a triple updates the database';
+        $in_trp = $t_trp->triple_name_only();
+        $in_trp->set_view_id(views::MATH_CONST_ID);
+        $db_trp = $t_trp->triple();
+        $needs_upd = $in_trp->needs_db_update($db_trp, $msg);
+        $t->assert_true($test_name, $needs_upd);
+        $test_name = '... but not if the triple has this default view already';
+        $db_trp->set_view_id(views::MATH_CONST_ID);
+        $needs_upd = $in_trp->needs_db_update($db_trp, $msg);
+        $t->assert_false($test_name, $needs_upd);
 
     }
 

@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -51,17 +52,20 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_views.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -74,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -147,6 +152,29 @@ class test_words extends test_objects
         $wrd = $this->word();
         $wrd->id = 0;
         $wrd->set_name(null);
+        return $wrd;
+    }
+
+    /**
+     * @return word_ui "mathematics" with the views that the edit menu of the navbar suggests:
+     *                 the own default view "Mathematical constant", the assigned view "science"
+     *                 and the parent views "Historic" and "Education", which also repeat "science"
+     */
+    function menu_views_ui(): word_ui
+    {
+        $t_msk = new test_views($this->env);
+        $wrd = new word_ui($this->word()->api_json());
+        $wrd->view_id = views::MATH_CONST_ID;
+        // the own default view and the views of the parents as the backend sends them
+        $rel_lst = new view_list($this->env->usr1);
+        $rel_lst->add($t_msk->view_math());
+        $rel_lst->add($t_msk->view_historic());
+        $rel_lst->add($t_msk->view_education());
+        $rel_lst->add($t_msk->view_science());
+        $wrd->view_lst = new view_list_ui($rel_lst->api_json());
+        $asg_lst = new view_list($this->env->usr1);
+        $asg_lst->add($t_msk->view_science());
+        $wrd->view_assigned_lst = new view_list_ui($asg_lst->api_json());
         return $wrd;
     }
 

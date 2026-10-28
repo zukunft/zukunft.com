@@ -888,6 +888,7 @@ class test_mappers
             case component_types::SYSTEM_BODY_ERROR_UPDATE:
             case component_types::LIST_PARENTS_OF_WORD:
             case component_types::LIST_CHILDREN_OF_WORD:
+            case component_types::LIST_CHILD_TRIPLES:
             case component_types::LINK_LIST_WORD:
             case component_types::RANK_PHRASE:
             case component_types::RANKING_PARAMETERS:

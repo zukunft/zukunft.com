@@ -188,39 +188,93 @@ class ui_list extends ui_base
      */
     function children_of_word(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        global $ui_sys;
-        $result = '';
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children);
+    }
+
+    /**
+     * HTML for the children of a phrase that are words, e.g. "Euro" of the children of currency
+     * @param word|db_object $wrd the phrase whose children are shown e.g. the triple "mathematical constant"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code of the child words or an empty string if there are none
+     */
+    function child_words(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    {
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children->only_words($msg));
+    }
+
+    /**
+     * HTML for the children of a phrase that are triples, e.g. "Swiss franc" of the children of currency
+     * @param word|db_object $wrd the phrase whose children are shown e.g. the word "currency"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code of the child triples or an empty string if there are none
+     */
+    function child_triples(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    {
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children->only_triples($msg));
+    }
+
+    /**
+     * @param word|db_object $wrd the phrase whose children are selected
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return phrase_list the subclasses of the phrase, i.e. the phrases that "are a" this phrase
+     */
+    private function children(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst): phrase_list
+    {
+        $result = new phrase_list;
         $phr_cac = $this->related_list($wrd, $phr_lst);
-        $is_vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
+        $is_vrb = $this->is_verb();
         if ($phr_cac != null and $is_vrb != null) {
+            $result = $phr_cac->parents($wrd->phrase(), $msg, $is_vrb);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|db_object $wrd the phrase whose children are shown
+     * @param phrase_list $children the selected children e.g. only the words
+     * @return string the html code of the children with the header or an empty string if there are no children
+     */
+    private function children_html(word|db_object $wrd, phrase_list $children): string
+    {
+        $result = '';
+        $is_vrb = $this->is_verb();
+        if (!$children->is_empty() and $is_vrb != null) {
             $phr = $wrd->phrase();
-            // the children of a word are its subclasses, i.e. the phrases that "are a" this word
-            $children = $phr_cac->parents($phr, $msg, $is_vrb);
-            if (!$children->is_empty()) {
-                $html = new html_base();
-                if ($children->count() == 1) {
-                    // a single child reads as the full statement, e.g. "Euro is a currency";
-                    // name_link() is already safe html, the verb and phrase names are user input
-                    // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
-                    $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
-                } else {
-                    // several children get a header of the word plural and the verb plural,
-                    // e.g. "currencies are", followed by the list of the child phrases
-                    $plural = $wrd->get_plural();
-                    if ($plural == null or $plural == '') {
-                        $plural = $phr->name();
-                    }
-                    $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
+            $html = new html_base();
+            if ($children->count() == 1) {
+                // a single child reads as the full statement, e.g. "Euro is a currency";
+                // name_link() is already safe html, the verb and phrase names are user input
+                // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
+                $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
+            } else {
+                // several children get a header of the word plural and the verb plural,
+                // e.g. "currencies are", followed by the list of the child phrases
+                $plural = $wrd->get_plural();
+                if ($plural == null or $plural == '') {
+                    $plural = $phr->name();
                 }
-                // start with a line break and the header as an h4 subtitle, then (for several
-                // children) the linked child phrases
-                $result = $html->br() . $html->dsp_text_h2($header);
-                if ($children->count() > 1) {
-                    $result .= $children->name_link();
-                }
+                $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
+            }
+            // start with a line break and the header as an h4 subtitle, then (for several
+            // children) the linked child phrases
+            $result = $html->br() . $html->dsp_text_h2($header);
+            if ($children->count() > 1) {
+                $result .= $children->name_link();
             }
         }
         return $result;
+    }
+
+    /**
+     * @return verb|null the verb "is a" of the frontend cache, which links a child to its parent
+     */
+    private function is_verb(): ?verb
+    {
+        global $ui_sys;
+        return $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
     }
 
     /**
@@ -1226,16 +1280,21 @@ class ui_list extends ui_base
     {
         $result = '';
         $html = new html_base();
+        // e.g. a new word has no name yet
+        $obj_name = $dbo->name() ?? '';
         foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
             $preview = $html->div('view preview', view_styles::COL_SM_12);
             // the view name links to the object shown with the view, the switch icon opens the
             // edit view of the shown object with this view preselected as its default view, and
             // the edit icon changes the view itself; the edit view of the object differs per
-            // class, so its id is passed to the link builder. the links escape the names (stored
-            // xss via a user given name), so the div gets already-built html only
-            $links = $msk->open_link($dbo->id(), $dbo->name())
-                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $dbo->name())
-                . ' ' . $msk->edit_link();
+            // class, so its id is passed to the link builder, and an object without an edit view
+            // of its own gets no switch icon. the links escape the names (stored xss via a user
+            // given name), so the div gets already-built html only
+            $links = $msk->open_link($dbo->id(), $obj_name);
+            if ($dbo::HAS_EDIT_VIEW) {
+                $links .= ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $obj_name);
+            }
+            $links .= ' ' . $msk->edit_link();
             $result .= $html->div($preview . $links);
         }
         return $result;
@@ -1548,7 +1607,7 @@ class ui_list extends ui_base
                 // own columns of the table win, so that they never show up in other tables
                 $col_order = $col_names ?: ($dto?->phr_lst?->column_names() ?? []);
                 log_debug('column order of ' . count($col_order) . ' columns', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
-                // the "as" entry of the "..." menu says whether the rows are shown as a table,
+                // the "as" entry of the edit menu says whether the rows are shown as a table,
                 // as the default charts of the table or as both
                 $form = table_forms::by_url($url_array);
                 if ($form->with_table()) {
@@ -1567,16 +1626,14 @@ class ui_list extends ui_base
                         $value_rows_only);
                     log_debug('table of ' . $tbl_lst->count() . ' numbers created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 } else {
-                    // without the table its header says what the charts are about and its "..."
-                    // menu is the only way back to the table, so the header is centred above the
-                    // charts with the menu in the top right corner
+                    // without the table its header says what the charts are about, centred above
+                    // the charts; the way back to the table is the edit menu of the navbar
                     $html = new html_base();
                     $head = '';
                     if ($with_header) {
                         $head = $tbl_lst->table_header_by_related_columns($msg, $phr_lst, $col_order,
                             $dto?->phr_lst, null, $url_array, $col_values_only, $value_rows_only);
                     }
-                    $head .= $html->div($tbl_lst->columns_menu($url_array), styles::CHART_CORNER);
                     $result = $html->div($head, styles::CHART_HEAD);
                 }
                 if ($form->with_chart()) {
@@ -1586,6 +1643,11 @@ class ui_list extends ui_base
                     log_debug('chart definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                     $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
                         $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
+                }
+                // the column menu of the navbar is created after the views, so the names of the
+                // columns of each selection are kept for its tooltips
+                if ($dto != null) {
+                    $dto->add_tier_names($tbl_lst->tier_names);
                 }
             }
         }
@@ -4364,7 +4426,7 @@ class ui_list extends ui_base
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
         // no column stays on the page of the problem instead of adding a row here; by default
-        // only the mayor columns with the numbers are shown and the "..." header leads to the
+        // only the mayor columns with the numbers are shown and the edit menu leads to the
         // full table with every column and the variance of each number; a row whose numbers are
         // all in a column left out is no part of the ranking either, e.g. the reward ratio row
         // of a problem, so the ranking shows the rows with a number only

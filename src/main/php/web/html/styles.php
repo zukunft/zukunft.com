@@ -45,6 +45,8 @@ class styles
     const string CHANGE_PREVIEW = 'change-preview';
     // bootstrap css class to center the elements of a row e.g. the change preview of a confirm view
     const string JUSTIFY_CENTER = 'justify-content-center';
+    // bootstrap css class to show the elements side by side e.g. the view name and its switch icon in the edit menu
+    const string FLEX_ROW = 'd-flex';
     // the change impact line centered below the change preview table
     const string CHANGE_IMPACT = 'change-impact';
     const string STYLE_GLYPH = 'glyphicon glyphicon-pencil';
@@ -64,10 +66,7 @@ class styles
     const string COL_MAIN = 'd-none d-md-table-cell';
     const string COL_MINOR = 'd-none d-xl-table-cell';
     const string COL_MARGINAL = 'd-none d-xxl-table-cell';
-    // the popup menu of the "..." table header that selects the columns shown, styled like
-    // the menus of the page header (see style_html.css)
-    const string MENU_COLUMN = 'column-menu';
-    // a sub header inside a popup menu e.g. "columns and values" above the column entries
+    // a sub header inside the edit menu of the navbar e.g. "columns and values" above the column entries
     const string MENU_HEADER = 'menu-header';
     // the up / down icons behind a column header that sort the rows by the column, and the
     // icon of the order that the page shows (see style_html.css)
@@ -79,14 +78,9 @@ class styles
     // frame of each panel (see view_exe::dsp_entries and the .use-case rules of style_html.css)
     const string GRID = 'grid';
     const string PANEL = 'panel';
-    // the line above the charts of a table shown without the table: the header of the table
-    // centred and the "..." menu of the table in the top right corner (see style_html.css)
+    // the line above the charts of a table shown without the table with the header of the table
+    // centred (see style_html.css)
     const string CHART_HEAD = 'chart-head';
-    const string CHART_CORNER = 'chart-corner';
-    // the popup menu of the "..." below the title of a default view that selects the view
-    // version and the full width line that puts it in the right corner (see style_html.css)
-    const string MENU_VIEW_VERSION = 'view-version-menu';
-    const string VIEW_VERSION_CORNER = 'view-version-corner';
     // bootstrap css class to center a line e.g. the phrase above a value table
     const string TEXT_CENTER = 'text-center';
     // bootstrap css class to keep a short line like 'has aliases: $, U.S. dollar' unbroken

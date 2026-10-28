@@ -421,6 +421,8 @@ class json_fields
     const string VIEW = 'view'; // the view as a sub array
     // list of views
     const string VIEWS = 'views';
+    // the views assigned to a word by the import e.g. "Mathematical constant" to "Pi", which the edit menu of the navbar offers
+    const string VIEWS_ASSIGNED = 'views_assigned';
     // list of view relations e.g. the table editor of the table view
     const string VIEW_RELATIONS = 'view_relations';
     // the view id of the editor of a view, which the edit menu of the navbar offers

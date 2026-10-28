@@ -39,15 +39,6 @@ class ui_foaf
      * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
-    function word_children(): string
-    {
-        return $this::class;
-    }
-
-    /**
-     * TODO Prio 2 move code from component_dsp_old
-     * @return string a dummy text
-     */
     function word_parents(): string
     {
         return $this::class;

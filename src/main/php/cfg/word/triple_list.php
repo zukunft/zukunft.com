@@ -612,6 +612,20 @@ class triple_list extends sandbox_list_named
     }
 
     /**
+     * @return bool true if at least one triple has a verb of verbs::PRELOAD_VERBS e.g. "is symbol for",
+     *              so that the system phrases of the cached types api message change by saving the list
+     */
+    function has_preload_verb(): bool
+    {
+        foreach ($this->lst() as $trp) {
+            if ($trp->has_preload_verb()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * delete all loaded triples e.g. to delete all the triples linked to a word
      * @param user_message $msg the message for the user why deleting the triples has failed and a suggested solution
      * @return bool true if all triples has been deleted

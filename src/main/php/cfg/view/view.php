@@ -323,8 +323,8 @@ class view extends sandbox_code_id
             $this->check_component_positions_complete($json_lst, $msg);
         }
 
-        // TODO Prio 2 add the assigned terms
-        // after the view has it's components assign the view to the terms
+        // after the view has it's components assign the view to the terms, which view_list::save
+        // writes after the views (see view::save_term_links)
         if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
             $value = $in_ex_json[json_fields::ASSIGNED];
             foreach ($value as $trm_name) {
@@ -1260,6 +1260,33 @@ class view extends sandbox_code_id
     function save_component_links(user_message $msg): bool
     {
         return $this->cmp_lnk_lst->save($msg);
+    }
+
+    /**
+     * save the terms that the import assigns to this view e.g. "Pi" to "Mathematical constant",
+     * after the view save, because the link is saved with the view id; the save of a link that
+     * is already in the database changes nothing (get_similar)
+     *
+     * @param user_message $msg ok or the warning of an assigned term that is not in the database
+     * @return bool true if all assigned terms with a database id have been saved
+     */
+    function save_term_links(user_message $msg): bool
+    {
+        foreach ($this->trm_msk_lst?->lst() ?? [] as $lnk) {
+            $trm = $lnk->term();
+            if ($trm == null or $trm->id() == 0) {
+                // e.g. a term of a later import file, so the assignment is no error of this view and
+                // only informs; the import mapping has already logged the missing term
+                $msg->add(msg_id::IMPORT_TERM_NOT_FOUND, [
+                    msg_id::VAR_NAME => $trm?->name() ?? '',
+                    msg_id::VAR_ID => $this->dsp_id()
+                ], ok: true);
+            } else {
+                $lnk->set_view($this);
+                $lnk->save($msg);
+            }
+        }
+        return $msg->is_ok();
     }
 
     /**

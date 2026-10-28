@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::DB . 'sql.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -44,6 +45,7 @@ include_once test_paths::CREATE . 'test_phrases.php';
 include_once test_paths::CREATE . 'test_triples.php';
 include_once test_paths::CREATE . 'test_words.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
@@ -91,6 +93,20 @@ class phrase_tests
         $phr = new phrase($t->usr1);
         $t->assert_sql_by_id($sc, $phr);
         $t->assert_sql_by_name($sc, $phr);
+        // e.g. the calculator editor names a triple by the name that the user has given it in the same save
+        $test_name = 'a phrase is found by the name that the user has given it';
+        $qp = $phr->load_sql_by_name($sc, word_names::MATH);
+        $t->assert_text_contains($test_name, $qp->sql, 'u.' . phrase::FLD_NAME . ' = ');
+        $test_name = '... and by the standard name only if the user has not given it another name';
+        $t->assert_text_contains($test_name, $qp->sql, 'u.' . phrase::FLD_NAME . ' ' . sql::IS_NULL);
+        $test_name = '... of the user who loads the phrase, which is the first parameter of the query';
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr1->id());
+        $test_name = '... and another user gets the names that he has given';
+        $phr_other = new phrase($t->usr2);
+        $qp = $phr_other->load_sql_by_name($sc, word_names::MATH);
+        $par_usr_id = $qp->par[0] ?? null;
+        $t->assert($test_name, $par_usr_id, $t->usr2->id());
 
         $t->subheader($ts . 'type api');
         $phr = $t_phr->phrase();

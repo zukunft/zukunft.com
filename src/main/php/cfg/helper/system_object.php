@@ -243,11 +243,16 @@ class system_object
     /**
      * get a verb
      * @param string $code_id to select the verb
-     * @return verb object
+     * @param bool $log_err false if the caller reports a missing verb itself
+     * @return verb object or an empty verb if the pod does not have it
      */
-    function verb(string $code_id): verb
+    function verb(string $code_id, bool $log_err = true): verb
     {
-        return $this->typ_lst->vrb->get_verb($code_id);
+        $result = $this->typ_lst->vrb->get_verb($code_id, $log_err);
+        if ($result === null) {
+            $result = new verb();
+        }
+        return $result;
     }
 
     /**

@@ -1,0 +1,25 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-28 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "a symbol triple, which is part of the system phrases of the cached types api message"
+  ],
+  "words": [
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
+  "triples": [
+    {
+      "name": "System Test Triple",
+      "from": "System Test Word",
+      "verb": "is symbol for",
+      "to": "System Test Word To"
+    }
+  ]
+}
