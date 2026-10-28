@@ -127,6 +127,9 @@ class triples
     // the config.yaml keys whose sub keys are names of the data e.g. the url name of a pinned view,
     // which therefore need no word const (see coding_rule_tests::config_yaml_word_triple_tests)
     const array CONFIG_DATA_KEYS = [self::PINNED_VIEWS];
+    // the view and the phrase of a pinned view without url, from which the test run creates the url
+    const string VIEW_NAME = 'view name';
+    const string PHRASE_NAME = 'phrase name';
     const string SOURCE_TABLE = 'source table';
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';

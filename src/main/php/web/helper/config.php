@@ -183,8 +183,9 @@ class config extends value_list
         }
         if ($msg->is_ok()) {
             $this->api_mapper($json_body);
+            // only for the admin, because the page is shown with the fallback values of the config
             if ($this->is_empty()) {
-                $msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
+                log_warning(msg_id::CONFIG_API_MESSAGE_EMPTY->value);
             }
         }
         // continue with the section of the caller
@@ -216,6 +217,7 @@ class config extends value_list
      * value, because e.g. the names of a light editor colour are also the names of its dark colour
      *
      * @param array $names with the phrase names to select the config value
+     * @param array $without the phrase names that the config value must not have e.g. "dark" for a light colour
      * @return string|null the text of the config value or null if the config has no text value with these names
      */
     function text_by(array $names, array $without = []): ?string

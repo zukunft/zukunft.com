@@ -134,6 +134,17 @@ class files
     CONST string PINNED_PAGE_PATH = test_paths::DOCROOT . DIRECTORY_SEPARATOR;
     // the static start page with the links to the pinned views, which the test run rewrites
     CONST string START_PAGE = test_paths::DOCROOT . DIRECTORY_SEPARATOR . 'index' . self::HTML;
+    // the folder of the static pages that the server shows without the php frontend e.g. the reject
+    // page of a blocked ip address (see server_guard)
+    CONST string OPTIONAL_PATH = test_paths::DOCROOT . DIRECTORY_SEPARATOR . 'optional' . DIRECTORY_SEPARATOR;
+    // the static pages without the start page, into which the test run writes the font and the colours
+    CONST array STATIC_PAGES = [
+        self::OPTIONAL_PATH . 'default' . self::HTML,
+        self::OPTIONAL_PATH . 'database_upgrade' . self::HTML,
+        self::OPTIONAL_PATH . 'program_upgrade' . self::HTML,
+        self::OPTIONAL_PATH . 'ip_reject' . self::HTML,
+        self::OPTIONAL_PATH . 'user_reject' . self::HTML,
+    ];
     // the allow-list of the extensionless forward pages in the docroot
     CONST string HTACCESS = test_paths::DOCROOT . DIRECTORY_SEPARATOR . '.htaccess';
 

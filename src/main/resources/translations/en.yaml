@@ -259,6 +259,7 @@ messages:
   config_tree_default_saved: "the default setting for z$VarObjName$z has been updated for all users to z$VarValue$z (from z$VarValueCheck$z)"
   value_set_default_denied: "only an admin can change the default of a value for all users"
   config_system_admin_only: "only an admin can change the settings of the pod below 'system'"
+  value_text_empty: "an empty text is not saved, please enter a text"
   config_font_invalid: "the font z$VarValue$z of the settings is not used, because it may only contain letters, digits, spaces, commas, quotes and hyphens"
   config_colour_invalid: "the colour z$VarValue$z of the settings is not used, because it is no hex colour like #385eb7, no rgb or rgba colour and no colour name"
   system_title_user: "User"

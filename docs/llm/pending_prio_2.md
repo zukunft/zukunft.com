@@ -194,7 +194,7 @@ with CACHE_LOCATION file the config cache file is never dropped by a value chang
 
 the settings tree shows the config.yaml value as "default" behind a value that differs, but after an admin has changed the default in the database the default is the database standard value; the api could send the standard value besides the value of the user, so the tree shows the real default. The confirmation of an admin names the number that the admin has seen, which can be the own overwrite and not the previous default
 
-a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A text setting e.g. the language needs a text input. After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
+a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A number without a database value cannot be added on the settings page like a text without one (cfg/helper/config_tree::is_addable). The confirmation of a first saved text names an empty previous value as "(from )". After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
 
 ## security
 
@@ -2095,3 +2095,20 @@ it now includes `web/frontend.php` first; no include_once is removed until the i
 changed to a proper dynamic loading (docs/llm/file-layout.md), which also removes this order
 dependency; until then a coded check could load each web class file alone in a fresh php process
 and report the files that fail
+
+## theme: font, dark or light mode and colours
+
+- split the long lines into named steps (coding.md rule 2 and 110): the cast, `?->` and `??` of the
+  mode read in `html_base::theme_mode`, the inline `array_intersect($without, …) == []` of
+  `config::get_by_names_specific` (e.g. a named `value::has_none($names)`) and the ternary in the
+  `list_item` call of `html_base::theme_switch_item`
+- `html_base::theme_switch_item` builds its `<button>` inline, because neither `button()` nor
+  `button_submit_text()` takes a tooltip; add the tooltip to one of them and use it (coding.md 187)
+- `coding_rule_tests::config_yaml_theme_fallback_tests` names the dark group by the literal
+  `' dark '` instead of `words::DARK`
+- `html_base::theme_mode` scans the whole frontend config up to three times per page (`theme_css`,
+  `theme_switch`, `lang`) and once more per chart, and every chart repeats its 18 colour lookups;
+  read the mode and the chart colours once per request, which also reports an invalid chart colour
+  once and not once per chart
+- check by a write or workflow test that a mode saved by the switch of the user menu reaches the
+  `$ui_sys->cfg` of that user on the next request, so the page is then shown in the chosen mode

@@ -83,6 +83,14 @@ class config_tree
 
 
     /*
+     * object vars
+     */
+
+    // the phrase id by name of the config values (see config_numbers::phrase_ids), set by nodes
+    private array $phr_ids = [];
+
+
+    /*
      * api
      */
 
@@ -130,6 +138,7 @@ class config_tree
     function nodes(array $yaml, config_numbers $cfg): array
     {
         // built once, so that each setting finds its value without scanning all config values
+        $this->phr_ids = $cfg->phrase_ids();
         return $this->level($yaml, $cfg->exact_lookup(), self::ROOT_KEYS);
     }
 
@@ -216,7 +225,42 @@ class config_tree
             }
             $node[json_fields::CONFIG_FILE_VALUE] = $this->text($file_value);
         }
+        if (is_string($file_value)) {
+            $node[json_fields::CONFIG_IS_TEXT] = true;
+        }
+        $phr_ids = $this->phrase_ids($names);
+        // e.g. an empty text of config.yaml, which the import does not save, so its first save adds it
+        if ($this->is_addable($file_value, $db_value, $phr_ids)) {
+            $node[json_fields::CONFIG_PHRASE_IDS] = $phr_ids;
+        }
         return $node;
+    }
+
+    /**
+     * @param array $names the yaml keys of a setting, which are exactly the phrases of its value
+     * @return array the phrase ids of the names or an empty list if one name is no phrase of the config yet
+     */
+    private function phrase_ids(array $names): array
+    {
+        $result = [];
+        foreach ($names as $name) {
+            $result[] = $this->phr_ids[$name] ?? 0;
+        }
+        if (in_array(0, $result, true)) {
+            $result = [];
+        }
+        return $result;
+    }
+
+    /**
+     * @param mixed $file_value the value of the setting in config.yaml
+     * @param float|string|null $db_value the database value of the setting, null if there is none
+     * @param array $phr_ids the phrase ids of the setting
+     * @return bool true for a text setting without a database value whose phrases are all known
+     */
+    private function is_addable(mixed $file_value, float|string|null $db_value, array $phr_ids): bool
+    {
+        return is_string($file_value) and $db_value === null and $phr_ids != [];
     }
 
     /**

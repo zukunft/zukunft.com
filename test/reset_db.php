@@ -107,10 +107,7 @@ if ($db_con->is_open()) {
                 // without login; a login before the recreate would point to a dropped session user
                 $t->api_login();
 
-                // create the test dataset to check the basic write functions
-                // TODO Prio 3 make sure that all are created by import instead
                 $t_db = new test_db_load($t);
-                $t_db->create_unit_test_db_entries($t);
 
                 // check and update the fixed csv files
                 // e.g. to have an indication which words might be missing due to the code changes
@@ -120,6 +117,12 @@ if ($db_con->is_open()) {
                 // these fixed csv files help to detect the impact of code changes
                 // e.g. if some words are missing due to different error handling
                 $t_db->csv_recreate($msg);
+
+                // create the test dataset to check the basic write functions
+                // after the csv check like in test.php, because e.g. the term view of the test user
+                // is no row of the reset and the fixed csv files would differ by the reset script
+                // TODO Prio 3 make sure that all are created by import instead
+                $t_db->create_unit_test_db_entries($t);
 
                 // check and update the api test files that still contain database ids which are
                 // not yet fixed e.g. the component ids that shift as soon as a component is added

@@ -140,33 +140,33 @@ class table_chart
     // which style() adds for the light and the dark mode (see def::FALLBACK_CHART_COLOURS)
     const string STYLE_SHARED = '
         svg { font-family: system-ui, sans-serif; }
-        .bg { fill: var(--bg); }
-        .h { fill: var(--fg); font-size: ' . self::TITLE_SIZE . 'px; font-weight: 600; }
-        .sub { fill: var(--muted); font-size: ' . self::TEXT_SIZE . 'px; }
-        .grid { stroke: var(--grid); stroke-width: ' . self::GRID_WIDTH . '; }
-        .ax { fill: var(--muted); font-size: ' . self::TEXT_SIZE . 'px; }';
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: ' . self::TITLE_SIZE . 'px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: ' . self::TEXT_SIZE . 'px; }
+        .grid { stroke: var(--chart-grid); stroke-width: ' . self::GRID_WIDTH . '; }
+        .ax { fill: var(--chart-muted); font-size: ' . self::TEXT_SIZE . 'px; }';
     const string STYLE_RANGE_BARS = '
-        .lbl { fill: var(--fg); font-size: ' . self::LABEL_SIZE . 'px; text-anchor: end; dominant-baseline: central; }
-        .val { fill: var(--muted); font-size: ' . self::TEXT_SIZE . 'px; dominant-baseline: central; }
-        .rng { fill: var(--range); }
-        .mid { fill: var(--accent); }
+        .lbl { fill: var(--chart-fg); font-size: ' . self::LABEL_SIZE . 'px; text-anchor: end; dominant-baseline: central; }
+        .val { fill: var(--chart-muted); font-size: ' . self::TEXT_SIZE . 'px; dominant-baseline: central; }
+        .rng { fill: var(--chart-range); }
+        .mid { fill: var(--chart-accent); }
         .hit { fill: transparent; }
-        .bar:hover .hit { fill: var(--hover); }';
+        .bar:hover .hit { fill: var(--chart-hover); }';
     const string STYLE_SCATTER = '
-        .pt circle { fill: var(--accent2); }
-        .pt text { fill: var(--point-text); font-size: ' . self::POINT_TEXT_SIZE . 'px; font-weight: 600; text-anchor: middle; }
-        .pt:hover circle { fill: var(--accent); }
-        .lg { fill: var(--fg); font-size: ' . self::TEXT_SIZE . 'px; }
-        .lg tspan.p { fill: var(--muted); }
-        .lg tspan.n { font-weight: 600; fill: var(--accent2); }';
+        .pt circle { fill: var(--chart-point); }
+        .pt text { fill: var(--chart-point-text); font-size: ' . self::POINT_TEXT_SIZE . 'px; font-weight: 600; text-anchor: middle; }
+        .pt:hover circle { fill: var(--chart-accent); }
+        .lg { fill: var(--chart-fg); font-size: ' . self::TEXT_SIZE . 'px; }
+        .lg tspan.p { fill: var(--chart-muted); }
+        .lg tspan.n { font-weight: 600; fill: var(--chart-point); }';
     const string STYLE_LEVERAGE = '
-        .pt circle { fill: var(--accent2); }
-        .pt:hover circle { fill: var(--accent); }
-        .pt .lbl { fill: var(--fg); font-size: ' . self::LABEL_SIZE . 'px; dominant-baseline: central; }
-        .q-high { fill: var(--accent2); opacity: 0.07; }
-        .q-low { fill: var(--accent); opacity: 0.07; }
-        .ratio { stroke: var(--muted); stroke-dasharray: 4 4; opacity: 0.6; }
-        .ratio-txt { fill: var(--muted); font-size: ' . self::POINT_TEXT_SIZE . 'px; }';
+        .pt circle { fill: var(--chart-point); }
+        .pt:hover circle { fill: var(--chart-accent); }
+        .pt .lbl { fill: var(--chart-fg); font-size: ' . self::LABEL_SIZE . 'px; dominant-baseline: central; }
+        .q-high { fill: var(--chart-point); opacity: 0.07; }
+        .q-low { fill: var(--chart-accent); opacity: 0.07; }
+        .ratio { stroke: var(--chart-muted); stroke-dasharray: 4 4; opacity: 0.6; }
+        .ratio-txt { fill: var(--chart-muted); font-size: ' . self::POINT_TEXT_SIZE . 'px; }';
 
 
     /*

@@ -36,7 +36,8 @@ the server page because its host element carries the existing `use-case` class
 The font and every colour are config.yaml entries below user > default > frontend >
 layout: `font` and `colours` with the groups `page` (`--page-*` of `style_html.css`),
 `editor` (`--bg`, `--ink`, `--accent`, … of the calculator and the formula editor) and
-`chart` (the table charts), each with a `dark` group for the dark mode. The entry
+`chart` (`--chart-*` of the table charts, prefixed because the `:root` of a chart svg sets
+them for the whole page), each with a `dark` group for the dark mode. The entry
 `mode` decides which colours a page gets (`html_base::theme_css`): 1 is always light,
 which is the default (`def::FALLBACK_MODE`), so that a page looks the same for every user
 until the user switches, 2 is always dark, which also switches the bootstrap components by
@@ -286,13 +287,22 @@ in *Using a config.yaml setting in a script* in `docs/llm/architecture.md`.
 `/index.html` and the short urls in the docroot (`/pv`, `/cbam`, …) are static
 files, so no request reads the config for them. The pinned views of
 `config.yaml` (`system` → `view` → `startup` → `pinned views`) are keyed by
-their url name, and each has a `url`, a `name` and a `tooltip`.
-`base_ui_tests` writes them with `AUTO_UPDATE_TEST_FILES`, like the forward
-pages of `api::FORWARD_VIEWS`:
+their url name, and each has a `url`, a `name` and a `tooltip`. A pinned view
+with an empty `url`, which the import does not save as a value, and with a
+`view name` and a `phrase name` opens that view with
+that phrase e.g. `/http/view.php?m=16&id=-2793` for the view `Calculator` and the
+triple `example PV installation`, because the ids differ by pod.
+`system_views_read_tests::run_pinned_views` loads these ids from the database
+and writes the pages with `AUTO_UPDATE_TEST_FILES`; `base_ui_tests` writes the
+other static pages like the forward pages of `api::FORWARD_VIEWS`:
 
 - `html_base::start_page` writes the links between the
-  `PINNED_VIEWS_BEGIN` / `_END` comments of `index.html`; the rest of the page
-  stays hand-written.
+  `PINNED_VIEWS_BEGIN` / `_END` comments of `index.html` and the font and the
+  colours of `html_base::theme_style` between its `THEME_BEGIN` / `_END`
+  comments; the rest of the page stays hand-written.
+- `html_base::static_page` writes the font and the colours between the same
+  comments of the other static pages of `test_files::STATIC_PAGES` e.g.
+  `optional/ip_reject.html`.
 - `html_base::forward_url_page` writes one forward page per url name of
   `config.yaml` into `test_files::PINNED_PAGE_PATH`, a meta refresh without
   javascript.
@@ -654,11 +664,16 @@ the pod below `system` can only be changed by an admin
 shows the layout. Its search (`url_var::PATTERN`) and scope
 (`url_var::CONFIG_PART`) are no part of the page cache key, so a page with
 either is rendered for each request. For a logged-in user a click on a number
-with a database value opens an input with a small save icon (a `<details>`,
+or a text with a database value opens an input with a small save icon (a `<details>`,
 because a double click needs javascript); the post form uses the value edit
-mask with the confirmed step, so the number is saved as the user's own overwrite
+mask with the confirmed step, so the value is saved as the user's own overwrite
 without the confirm view, and the user's cached pages and config values are
-dropped (`frontend::drop_cached_pages`). The page after the save confirms in
+dropped (`frontend::drop_cached_pages`). A text without a database value, e.g.
+the empty `view name` of a pinned view, which the import does not save, shows
+the edit icon; the backend sends the phrase ids of its yaml path
+(`json_fields::CONFIG_PHRASE_IDS`), so its form uses the value add mask with
+these phrases. An empty text is never saved (`value_base::save`), because its
+api message would have no text and the config could not be read. The page after the save confirms in
 green which setting has changed from what to what
 (`frontend::setting_saved_text`, from `url_var::CONFIG_KEY` and the `'8'`
 value of the form). An admin's form also sends `url_var::SET_DEFAULT`, so the

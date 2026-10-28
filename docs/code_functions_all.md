@@ -2041,6 +2041,8 @@
 \-- config_numbers
     \-- exact_lookup - section for function exact_lookup not yet defined that it should be set and get in /helper/config
             _numbers.php
+    \-- phrase_ids - section for function phrase_ids not yet defined that it should be set and get in /helper/config_num
+            bers.php
     \-- fill_from_cache_json - section for function fill_from_cache_json not yet defined that it should be load in /help
             er/config_numbers.php
     \-- default_json - section for function default_json not yet defined that it should be default in /helper/config_num
@@ -4083,6 +4085,7 @@
     \-- add - section for function add not yet defined that it should be @param user_message $msg to enrich with problem
             s and suggested solutions in /value/value_base.php
     \-- save - section for function save is expected to be save in /value/value_base.php
+    \-- is_empty_text - section for function is_empty_text is expected to be info in /value/value_base.php
     \-- is_pod_setting_denied - section for function is_pod_setting_denied is expected to be info in /value/value_base.p
             hp
     \-- save_as_default - section for function save_as_default is expected to be save in /value/value_base.php
@@ -4147,6 +4150,7 @@
     \-- del - section for function del is expected to be del in /value/value_list.php
     \-- order error - order of section load has difference at load_sql_by_ids should be before load_by_id
 \-- value_text
+    \-- is_empty_text - section for function is_empty_text is expected to be info in /value/value_text.php
     \-- delta - section for function delta is expected to be del in /value/value_text.php
 \-- value_time
     \-- delta - section for function delta is expected to be del in /value/value_time.php
@@ -5228,6 +5232,8 @@
     \-- exact_lookup
         \-- config_numbers - the config values by their complete phrase set,
                  e.g. for the config tree that finds the value
+    \-- phrase_ids
+        \-- config_numbers - the phrase ids of the config values by name, e.g. for the config tree that offers to add a
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value
@@ -5326,6 +5332,8 @@
         \-- value_geo - overwrite the sandbox_value value() function to return the geolocation value
         \-- value_text - overwrite the sandbox_value value() function to return the text string
         \-- value_time - overwrite the sandbox_value value() function to return the DateTime value
+    \-- is_empty_text
+        \-- value_text - @return bool true if the text is missing or empty, which is not saved (see value_base::save)
     \-- set_text_value
         \-- value_text - accept only strings as value
 \-- basic interface function for the private class parameter
@@ -7354,6 +7362,7 @@
     \-- forward_url_page - section for function forward_url_page not yet defined that it should be page in /html/html_ba
             se.php
     \-- start_page - section for function start_page not yet defined that it should be page in /html/html_base.php
+    \-- static_page - section for function static_page not yet defined that it should be page in /html/html_base.php
     \-- header_html - section for function header_html not yet defined that it should be header & footer in /html/html_b
             ase.php
     \-- main_body - section for function main_body not yet defined that it should be header & footer in /html/html_base.
@@ -9912,7 +9921,9 @@
     \-- forward_url_page
         \-- html_base - @param string $url the complete url that the forward page opens e.g. the url of a pinned view
     \-- start_page
-        \-- html_base - write the links to the pinned views between the markers of the static start page, so that
+        \-- html_base - write the font and the colours and the links to the pinned views between the markers of the
+    \-- static_page
+        \-- html_base - write the font and the colours of config.yaml between the markers in the head of a static
 \-- lists
     \-- group
         \-- calculator - the group triple of a list: the triple from the page phrase to the list keyword, else the
@@ -10457,8 +10468,8 @@
     \-- user_msg_html
         \-- frontend - create the html notification for the user messages of the current request
     \-- setting_saved_text
-        \-- frontend - @param array $url_array the url of the save with the new number,
-                 the shown number and the yaml keys of the setting
+        \-- frontend - @param array $url_array the url of the save with the new number or text,
+                 the shown one and the yaml keys of the setting
     \-- save_html_page
         \-- frontend - remember the rendered html page for the next request of the same url
     \-- execute_and_next

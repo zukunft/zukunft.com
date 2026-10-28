@@ -178,17 +178,18 @@ class def
     ];
     // fallback for the colours of the table charts (web\value\table_chart) in the light and in the
     // dark mode; the css variable => the config.yaml key below frontend.layout.colours.chart, the
-    // light colour and the dark colour of the key below frontend.layout.colours.chart.dark
+    // light colour and the dark colour of the key below frontend.layout.colours.chart.dark;
+    // with the chart prefix, because the :root of a chart svg in a page sets the variables for the whole page
     const array FALLBACK_CHART_COLOURS = [
-        '--bg' => [words::BACKGROUND, '#fbfaf7', '#1b1b1a'],
-        '--fg' => [words::TEXT, '#1d1d1b', '#ecebe6'],
-        '--muted' => [words::MUTED, '#77756f', '#9a978f'],
-        '--grid' => [words::GRID, '#e3e0d8', '#353431'],
-        '--range' => [words::RANGE, '#f0c9a8', '#6b3d22'], // the range bar
-        '--accent' => [words::ACCENT, '#c4561c', '#f08a4b'], // the number of a range and a hovered point
-        '--accent2' => [words::POINT, '#2d6a8a', '#4f93b8'],
-        '--hover' => [words::HOVER, '#f4efe6', '#262523'], // the hovered row
-        '--point-text' => [words::LABEL, '#fff', '#fff'], // the number inside a point
+        '--chart-bg' => [words::BACKGROUND, '#fbfaf7', '#1b1b1a'],
+        '--chart-fg' => [words::TEXT, '#1d1d1b', '#ecebe6'],
+        '--chart-muted' => [words::MUTED, '#77756f', '#9a978f'],
+        '--chart-grid' => [words::GRID, '#e3e0d8', '#353431'],
+        '--chart-range' => [words::RANGE, '#f0c9a8', '#6b3d22'], // the range bar
+        '--chart-accent' => [words::ACCENT, '#c4561c', '#f08a4b'], // the number of a range and a hovered point
+        '--chart-point' => [words::POINT, '#2d6a8a', '#4f93b8'],
+        '--chart-hover' => [words::HOVER, '#f4efe6', '#262523'], // the hovered row
+        '--chart-point-text' => [words::LABEL, '#fff', '#fff'], // the number inside a point
     ];
     // fallback for the number of the most relevant values read for one phrase and used by the
     // phrase values view to pick the column phrases;

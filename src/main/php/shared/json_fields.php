@@ -227,6 +227,10 @@ class json_fields
     const string CONFIG_CHILDREN = 'children';
     // the value of a setting in config.yaml, sent only if the database value differs or is missing
     const string CONFIG_FILE_VALUE = 'file_value';
+    // true for a text setting, which the settings page changes with a text input
+    const string CONFIG_IS_TEXT = 'is_text';
+    // the phrase ids of a text setting without a database value, with which its first save adds the value
+    const string CONFIG_PHRASE_IDS = 'phrase_ids';
 
     // the child id used e.g. for the child view of view relations
     const string CHILD_ID = 'child_id';

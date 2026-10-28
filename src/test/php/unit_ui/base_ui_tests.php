@@ -468,31 +468,29 @@ class base_ui_tests
         $t->assert_text_not_contains($test_name, $html->forward_page(views::SYSTEM_CONFIG_ID), url_var::USER . url_var::EQ);
 
         // the pinned views of config.yaml are linked on the static start page and each has a static
-        // forward page by its url name, which the next run with AUTO_UPDATE_TEST_FILES writes
-        $yaml = yaml_parse_file(files_shared::CONFIG_YAML);
-        $pin_lst = $yaml[words::THIS_SYSTEM][triples::SYSTEM_CONFIG][words::SYSTEM][words::VIEW]
-            [words::STARTUP][triples::PINNED_VIEWS] ?? [];
-        unset($pin_lst[words::TOOLTIP_COMMENT]);
+        // forward page by its url name, which the db read test writes (system_views_read_tests::run_pinned_views)
+        $pin_lst = $t->pinned_views();
         // e.g. a moved yaml key would else skip every test of the pinned views silently
         $test_name = 'config.yaml has pinned views';
         $t->assert_greater_zero($test_name, count($pin_lst));
-        foreach ($pin_lst as $url_name => $pin) {
-            $url = $pin[words::URL] ?? '';
-            $test_name = 'the short url ' . $url_name . ' opens ' . $url;
-            $t->assert_file($test_name, $html->forward_url_page($url), test_files::PINNED_PAGE_PATH . $url_name);
-        }
-        $test_name = 'the start page links the pinned views of config.yaml';
-        $start_page = file_get_contents(test_files::START_PAGE);
-        $t->assert_file($test_name, $html->start_page($start_page, $pin_lst), test_files::START_PAGE);
         $test_name = 'a pinned view is linked by its name with the tooltip';
         $pin = array_slice($pin_lst, 0, 1, true);
         $pin_fields = reset($pin) ?: [];
-        $page_one = $html->start_page($html::PINNED_VIEWS_BEGIN . $html::PINNED_VIEWS_END, $pin);
+        $markers = $html::THEME_BEGIN . $html::THEME_END . $html::PINNED_VIEWS_BEGIN . $html::PINNED_VIEWS_END;
+        $page_one = $html->start_page($markers, $pin, $msg_ui);
         $t->assert_text_contains($test_name, $page_one, '>' . ($pin_fields[words::NAME] ?? '') . '<');
         $t->assert_text_contains($test_name, $page_one, 'title="' . ($pin_fields[words::TOOLTIP] ?? '') . '"');
         // negative: the static page is the same for every user, so a link never names the user
         $test_name = '... and without the user';
         $t->assert_text_not_contains($test_name, $page_one, url_var::USER . url_var::EQ);
+        // the static start page has no php head, so the test run writes the font of every page into it
+        $test_name = 'the start page has the font of every page';
+        $t->assert_text_contains($test_name, $page_one, '--font-page: ' . def::FALLBACK_FONT . ';');
+        foreach (test_files::STATIC_PAGES as $static_path) {
+            $test_name = 'the static page ' . basename($static_path) . ' has the font and the colours of config.yaml';
+            $static_page = file_get_contents($static_path);
+            $t->assert_file($test_name, $html->static_page($static_page, $msg_ui), $static_path);
+        }
         $test_name = 'the short url page opens the url with the escaped url vars';
         $url_one = $pin_fields[words::URL] ?? '';
         $forward_one = $html->forward_url_page($url_one);
@@ -693,7 +691,7 @@ class base_ui_tests
         $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
             [words::COLOURS, words::CHART, words::GRID], '#345678')->api_json([api_types::INCL_PHRASES]));
         [$chart_light] = $html->theme_colours(def::FALLBACK_CHART_COLOURS, [words::CHART, ...html_base::COLOUR_PATH], new user_message_ui());
-        $t->assert_text_contains($test_name, $chart_light, '--grid: #345678;');
+        $t->assert_text_contains($test_name, $chart_light, '--chart-grid: #345678;');
         // negative: a colour that could end the css rule or the style element is not used
         $test_name = 'a configured colour that could end the style element is not used';
         $ui_sys->cfg = new config_ui($t_val->value_list_config_text(
@@ -906,8 +904,10 @@ class base_ui_tests
 
         // the start of a slow page shows the loading text with the footer only after the delay
         $test_name = 'the loading start is shown after the delay';
-        $loading = $html->loading_start(1.5, 2);
+        $loading = $html->loading_start(1.5, 2, $msg_ui);
         $t->assert_text_contains($test_name, $loading, html_base::LOADING_ANIMATION . ' 0s 1.5s forwards');
+        $test_name = '... with the font of every page';
+        $t->assert_text_contains($test_name, $loading, '--font-page: ' . def::FALLBACK_FONT . ';');
         $test_name = '... with the loading text';
         $t->assert_text_contains($test_name, $loading, $mtr->txt(msg_id::PAGE_LOADING));
         $test_name = '... and the footer';
@@ -929,7 +929,7 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $loading, html_base::CLASS_LOADING_SECONDS . '"></');
         // negative: a request that has already reached the count limit shows no count
         $test_name = 'the loading text has no count at the count limit';
-        $at_limit = $html->loading_start(1.5, html_base::LOADING_COUNT_LIMIT);
+        $at_limit = $html->loading_start(1.5, html_base::LOADING_COUNT_LIMIT, $msg_ui);
         $t->assert_text_not_contains($test_name, $at_limit, html_base::CLASS_LOADING_SECONDS);
         $test_name = 'the loading end hides the loading start';
         $t->assert_text_contains($test_name, $html->loading_end(), html_base::CLASS_LOADING . ' {display: none;}');

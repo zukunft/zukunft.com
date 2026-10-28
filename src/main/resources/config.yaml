@@ -270,29 +270,41 @@ zukunft.com:
         tooltip-comment: "the number of views by one user to automatically lock/freeze the view for the user, so that changes from other user does not change the view any more"
         startup:
           pinned views:
-            tooltip-comment: "the views linked below the search field of the start page (index.html) by their name with the tooltip; the key is the url name for direct typing e.g. zukunft.com/pv"
+            tooltip-comment: "the views linked below the search field of the start page (index.html) by their name with the tooltip; the key is the url name for direct typing e.g. zukunft.com/pv; with an empty url, which is not saved as a value, the test run creates the url from the view name and the phrase name, because their ids differ by pod"
             problems:
               url: "/http/view.php?m=1&dla=table_chart"
+              view name: ""
+              phrase name: ""
               name: "Global problems"
               tooltip: "the global issues that are expected to cause the damage with the suggested solution to solve the problem"
             pv:
-              url: "http://localhost/http/view.php?m=16&id=-2780"
+              url: ""
+              view name: "Calculator"
+              phrase name: "example PV installation"
               name: "PV and climate"
               tooltip: "calculate the effects of a local photovoltaic installation on the climate gas emissions"
             panels:
               url: "/http/view.php?m=4&id=1954"
+              view name: ""
+              phrase name: ""
               name: "PV payoff"
               tooltip: "step by step process to calculate the installation of photovoltaic panels including the prices and payoff"
             cbam:
               url: "/http/view.php?m=4&id=1954"
+              view name: ""
+              phrase name: ""
               name: "CBAM Calculator"
               tooltip: "step by step process to calculate the carbon border adjustment"
             portfolio_split:
               url: "/http/view.php?m=4&id=1954"
+              view name: ""
+              phrase name: ""
               name: "Portfolio split"
               tooltip: "step by step process to calculate the splitting of an investment portfolio taking the round lots into account"
             company_sheet:
               url: "/http/view.php?m=4&id=1954"
+              view name: ""
+              phrase name: ""
               name: "Company sheet"
               tooltip: "compare two or more key figure sheets related to a company"
       component:
