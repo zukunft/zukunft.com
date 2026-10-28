@@ -391,8 +391,9 @@ class component_types
     const int SYSTEM_SUB_TITLE_ID = 3;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
     const int SYSTEM_SUB_TITLE_VAR_ID = 4;
-    // the "..." below the title of a default, detail, range or detail with range view that
-    // opens the menu to show the same object in one of the other three versions
+    // shows nothing, because the edit menu of the navbar offers the default, detail, range and
+    // detail with range view (sandbox::menu_views_ui); kept until the type is retired with the
+    // database, because the system views still use it and retiring it shifts the component ids
     const string RELATED_SYSTEM_VIEW_SELECTOR = "related_system_view_selector";
     const int RELATED_SYSTEM_VIEW_SELECTOR_ID = 12;
     const string SYSTEM_BODY_ABOUT = "system_body_about";

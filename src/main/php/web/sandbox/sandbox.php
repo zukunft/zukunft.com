@@ -80,6 +80,10 @@ class sandbox extends db_object
 
     // the number of views that the tooltip of "... more" of the edit menu names as examples
     const int MENU_MORE_NAMES = 3;
+    // false for an object without an edit view of its own e.g. a group, which inherits the word
+    // edit view of db_object, so that the edit menu and the views tab offer no switch icon that
+    // would change the object as a word
+    const bool HAS_EDIT_VIEW = true;
 
     // the share_id is used to define the access rights
     // which can be public, personal, group, private or log
@@ -300,7 +304,8 @@ class sandbox extends db_object
      * the view name and behind it the switch icon like in the views tab; the view itself is
      * changed by the "change this view" entry of the menu, so the entries have no edit icon;
      * the view that shows the page is grey and the own view of the object has no switch icon,
-     * because the object is already always shown with it
+     * because the object is already always shown with it; an object without an edit view of its
+     * own has no switch icon at all, because the inherited edit view is the one of a word
      *
      * @param view_list $menu_lst the suggested views of this object (see menu_views_ui)
      * @param int $used_id the id of the view that shows the page, 0 if not known
@@ -310,14 +315,16 @@ class sandbox extends db_object
     {
         $html = new html_base();
         $result = '';
+        // e.g. a new word has no name yet
+        $obj_name = $this->name() ?? '';
         foreach ($menu_lst->lst() as $msk) {
             if ($msk->id() == $used_id) {
-                $links = $msk->used_link($this->id(), $this->name());
+                $links = $msk->used_link($this->id(), $obj_name);
             } else {
-                $links = $msk->open_link($this->id(), $this->name());
+                $links = $msk->open_link($this->id(), $obj_name);
             }
-            if ($msk->id() != $this->view_id) {
-                $links .= $msk->switch_link($this->id(), static::VIEW_EDIT_ID, $this->name());
+            if ($msk->id() != $this->view_id and static::HAS_EDIT_VIEW) {
+                $links .= $msk->switch_link($this->id(), static::VIEW_EDIT_ID, $obj_name);
             }
             // in one row, because the menu shows each link of a list item as a block
             $result .= $html->list_item($links, styles::FLEX_ROW) . "\n";

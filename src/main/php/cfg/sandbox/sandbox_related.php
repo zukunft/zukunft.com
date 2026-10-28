@@ -49,8 +49,9 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
-// term and term_view_list are loaded via view.php, because including them here
-// would load triple.php via sandbox.php before sandbox_link_named is declared
+// term and term_view_list are included by the callers word.php and formula.php, and triple.php gets
+// them via word.php, because including them here would load triple.php via sandbox.php before
+// sandbox_link_named is declared
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view_list.php';

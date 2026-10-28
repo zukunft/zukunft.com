@@ -61,6 +61,7 @@ include_once paths::MODEL_HELPER . 'db_cache_db.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -78,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -366,6 +368,22 @@ class db_cache extends db_object_seq_id_user
 
         $qp = $this->del_sql_by_user($db_con->sql_creator(), $usr_id);
         return $db_con->delete($qp, 'cache entries of user ' . $usr_id, $msg);
+    }
+
+    /**
+     * remove the cached types api message, so that the next types api call rebuilds it from the
+     * database; needed after a change of the types or of the system phrases e.g. an imported symbol
+     * triple, because is_outdated checks only the age and a frontend would miss the change until the
+     * age limit; by the fixed id, because it can be called before the cache types are loaded
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return void
+     */
+    function del_types(user_message $msg): void
+    {
+        if ($this->load_by_type_id(db_cache_types::TYPES_ID, $msg) > 0) {
+            $this->del($msg);
+        }
     }
 
     /**

@@ -906,7 +906,11 @@ views of its parents and then the four default views of its type (default,
 detail, range and detail with range, `views::default_versions`). Each view has
 the switch icon behind its name except the own view of the object, which already
 shows it always; the view that shows the page is grey with the tooltip "this view
-has been used to show …" (`view::used_link`). The tooltip
+has been used to show …" (`view::used_link`). An object without an edit view of its
+own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon, neither in
+the edit menu nor in the views tab, because the edit view it inherits from
+`db_object` is the one of a word; `coding_rule_tests::php_web_switch_edit_view_tests`
+reports a page class that forgets it. The tooltip
 of "... more" names some cached views that the menu does not offer
 (`sandbox::menu_more_names_ui`), and below the sub header "customize" follow
 "change this view" and "add view", whose tooltip names the shown object. Shown as a chart only, the table is

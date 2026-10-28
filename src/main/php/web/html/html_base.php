@@ -540,11 +540,10 @@ class html_base
         view_menu $mnu = new view_menu()
     ): string
     {
-        global $mtr;
         $result = $mnu->page_items;
         // the editor and the suggested views below one sub header like the entries of the page
         if ($mnu->edt_id != 0 or $mnu->view_items != '') {
-            $result .= $this->list_item($mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW), styles::MENU_HEADER) . "\n";
+            $result .= $this->list_item(msg_id::NAVBAR_ALTERNATIVE_VIEW->text(), styles::MENU_HEADER) . "\n";
         }
         if ($mnu->edt_id != 0) {
             // the editor shows the same object, so it gets the page vars of the current page
@@ -559,21 +558,21 @@ class html_base
         $result .= $mnu->view_items;
         $more_names = implode(', ', $mnu->more_names);
         $more_tip = $this->tip_with_names(msg_id::NAVBAR_MORE_VIEWS_TIP, msg_id::NAVBAR_MORE_VIEWS_NAMES_TIP, $more_names);
-        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE), $more_tip)) . "\n";
+        $result .= $this->list_item($this->ref('?view=more', msg_id::AND_MORE->text(), $more_tip)) . "\n";
         // changing or adding a view below one sub header like the entries of the page
-        $result .= $this->list_item($mtr->txt(msg_id::NAVBAR_CUSTOMIZE), styles::MENU_HEADER) . "\n";
+        $result .= $this->list_item(msg_id::NAVBAR_CUSTOMIZE->text(), styles::MENU_HEADER) . "\n";
         $url_msk_edit = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_EDIT_ID
             . '&' . url_var::ID . '=' . $msk_id, $url_array);
-        $result .= $this->list_item($this->ref($url_msk_edit, $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW),
-                $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW_TIP))) . "\n";
+        $result .= $this->list_item($this->ref($url_msk_edit, msg_id::NAVBAR_CHANGE_VIEW->text(),
+                msg_id::NAVBAR_CHANGE_VIEW_TIP->text())) . "\n";
         $url_msk_add = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
         $add_tip = $this->tip_with_names(msg_id::NAVBAR_ADD_VIEW_TIP, msg_id::NAVBAR_ADD_VIEW_FOR_TIP, $mnu->obj_name);
-        $result .= $this->list_item($this->ref($url_msk_add, $mtr->txt(msg_id::NAVBAR_ADD_VIEW), $add_tip)) . "\n";
+        $result .= $this->list_item($this->ref($url_msk_add, msg_id::NAVBAR_ADD_VIEW->text(), $add_tip)) . "\n";
         // the server admin page checks the access itself, the link is just not offered to the others
         if ($is_admin) {
-            $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, $mtr->txt(msg_id::NAVBAR_SERVER_ADMIN))) . "\n";
+            $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, msg_id::NAVBAR_SERVER_ADMIN->text())) . "\n";
         }
         return $this->list_unsorted($result);
     }

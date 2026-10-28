@@ -513,6 +513,8 @@
     \-- load_views_related - section for function load_views_related is expected to be load in /word/triple.php
     \-- load_views_assigned - section for function load_views_assigned is expected to be load in /word/triple.php
     \-- predicate_name - section for function predicate_name is expected to be preloaded in /word/triple.php
+    \-- has_preload_verb - section for function has_preload_verb not yet defined that it should be set and get in /word/
+            triple.php
     \-- name_given - section for function name_given not yet defined that it should be set and get in /word/triple.php
     \-- link_key - section for function link_key is expected to be link in /word/triple.php
     \-- name_generated - section for function name_generated not yet defined that it should be set and get in /word/trip
@@ -561,10 +563,13 @@
     \-- select_phrases_related - section for function select_phrases_related not yet defined that it should be related i
             n /word/word.php
     \-- load_by_id_with_related - section for function load_by_id_with_related is expected to be load in /word/word.php
+    \-- has_preload_type - section for function has_preload_type not yet defined that it should be preloaded in /word/wo
+            rd.php
     \-- delta - section for function delta is expected to be del in /word/word.php
     \-- calc_usage_old - section for function calc_usage_old not yet defined that it should be ui support in /word/word.
             php
-    \-- order error - order of section info has difference at delta should be before needs_db_update
+    \-- order error - order of section preloaded has difference at type_name should be before has_preload_type,
+            order of section info has difference at delta should be before needs_db_update
 ```
 
 ### main backend
@@ -2186,6 +2191,7 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /helper/db_cache.php
     \-- del - section for function del is expected to be del in /helper/db_cache.php
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
+    \-- del_types - section for function del_types is expected to be del in /helper/db_cache.php
     \-- del_by_types - section for function del_by_types is expected to be del in /helper/db_cache.php
     \-- del_sql_by_type_ids - section for function del_sql_by_type_ids is expected to be del in /helper/db_cache.php
     \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
@@ -4230,6 +4236,8 @@
     \-- load_sql - section for function load_sql is expected to be load sql in /word/triple_list.php
     \-- has_values - section for function has_values not yet defined that it should be information in /word/triple_list.
             php
+    \-- has_preload_verb - section for function has_preload_verb not yet defined that it should be information in /word/
+            triple_list.php
     \-- del - section for function del is expected to be del in /word/triple_list.php
     \-- diff_msg - section for function diff_msg is expected to be info in /word/triple_list.php
     \-- sort_by_impact - section for function sort_by_impact not yet defined that it should be sort in /word/triple_list
@@ -4300,6 +4308,8 @@
     \-- has_measure - section for function has_measure not yet defined that it should be info in /word/word_list.php
     \-- has_scaling - section for function has_scaling not yet defined that it should be info in /word/word_list.php
     \-- has_percent - section for function has_percent not yet defined that it should be info in /word/word_list.php
+    \-- has_preload_type - section for function has_preload_type not yet defined that it should be info in /word/word_li
+            st.php
     \-- view_lst - section for function view_lst not yet defined that it should be select linked in /word/word_list.php
     \-- max_time - section for function max_time not yet defined that it should be select functions - predefined data re
             trieval in /word/word_list.php
@@ -4852,6 +4862,8 @@
                  the type and the external key set
     \-- del_by_user
         \-- db_cache - remove the cache entries of one user, because they reference the user row and are derived
+    \-- del_types
+        \-- db_cache - remove the cached types api message, so that the next types api call rebuilds it from the
     \-- del_by_types
         \-- db_cache - remove the cache entries of the given types of all users,
                  because e.g. a default changed by an admin is

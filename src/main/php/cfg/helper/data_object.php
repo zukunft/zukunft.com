@@ -51,6 +51,8 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_USER . 'user_message.php';
+// loaded via user.php like the user, because it loads sql_db
+//include_once paths::MODEL_HELPER . 'db_cache.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_REF . 'ref_list.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -1846,6 +1848,10 @@ class data_object
     private function save_words(user_message $msg, import $imp): void
     {
         $this->save_sandbox_list($imp, words::WORDS, $this->word_list(), word::class, $msg);
+        // a unit or scaling word is part of the system phrases of the cached types api message
+        if ($this->word_list()->has_preload_type()) {
+            new db_cache($this->get_user())->del_types($msg);
+        }
     }
 
     /**
@@ -1887,6 +1893,11 @@ class data_object
             $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
             $trp_lst->save_with_cache($msg, $imp, $cache);
             $imp->step_end($trp_lst->count(), $trp_per_sec);
+
+            // a symbol triple is part of the system phrases of the cached types api message
+            if ($trp_lst->has_preload_verb()) {
+                new db_cache($this->get_user())->del_types($msg);
+            }
 
             // fill up the data_object list to prevent reloading the same triples again
             $this->triple_list()->fill_by_name($trp_lst, $msg, false, false);

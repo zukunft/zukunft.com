@@ -103,6 +103,8 @@ include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
+// for sandbox_related::views_assigned; loaded via word.php like view.php, because term.php includes this file
+//include_once paths::MODEL_VIEW . 'term_view_list.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
@@ -1368,6 +1370,15 @@ class triple extends sandbox_link_named
     function get_predicate_code_id(): ?string
     {
         return $this->get_verb_code_id();
+    }
+
+    /**
+     * @return bool true if the verb is one of verbs::PRELOAD_VERBS e.g. "is symbol for", so that the
+     *              triple is part of the system phrases of the cached types api message
+     */
+    function has_preload_verb(): bool
+    {
+        return in_array($this->get_verb_code_id(), verbs::PRELOAD_VERBS);
     }
 
     /**

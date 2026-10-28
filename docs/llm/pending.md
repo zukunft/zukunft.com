@@ -15,7 +15,8 @@ use for the calculator editor buttons for main active buttons (load and sometime
 if a button is not active (save if there are no changes) reduce the intensity of the colours
 try to reduce the number of colour sets and name the colours set in the css with comments
 
-create a buttons.html test page in src/test/resources/web/html/object_pages that shows all colours sets used for buttones each with its own sample button and the name of the color set
+create a buttons.html test page in src/test/resources/web/html/object_pages that shows all colours sets used 
+for buttons each with its own sample button and the name of the color set
 
 ### change top row
 

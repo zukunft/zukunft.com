@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1519 of 6261 public functions have at least 2 unit test calls; the 4538 functions below do not; the 204 functions of the last section are called nowhere
+1523 of 6266 public functions have at least 2 unit test calls; the 4539 functions below do not; the 204 functions of the last section are called nowhere
 
 ## 2020 functions of main backend have no test at all
 
@@ -3269,7 +3269,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1028 functions of main backend have incomplete tests
+## 1029 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3381,6 +3381,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
     \-- del - 17 unit test calls shared by 21 classes
     \-- del_by_user - 2 unit test calls shared by 3 classes
+    \-- del_types - 1 unit test calls
     \-- load_by_type - 2 unit test calls shared by 4 classes
     \-- row_mapper - 6 unit test calls shared by 22 classes
     \-- set_type - 2 unit test calls shared by 14 classes

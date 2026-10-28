@@ -3251,7 +3251,9 @@ class frontend
                 $menu_lst = $dbo->menu_views_ui($typ_lst, $msg_ui);
                 $mnu->view_items = $dbo->menu_view_items_ui($menu_lst, $msk_ui->id());
                 $mnu->more_names = $dbo->menu_more_names_ui($typ_lst, $menu_lst);
-                $mnu->obj_name = $dbo->name();
+                // e.g. a new word has no name yet replace with space at the last possible place
+                // before showing to the user
+                $mnu->obj_name = $dbo->name() ?? '';
             }
         }
         return $mnu;

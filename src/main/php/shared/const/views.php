@@ -717,8 +717,8 @@ class views
     ];
 
     // the four versions of the default view of each main object, always in the order default,
-    // detail, range and detail with range, so that the related system view selector of each
-    // version can link to the other three
+    // detail, range and detail with range, so that the edit menu of the navbar offers the four
+    // versions in this order (sandbox::menu_views_ui)
     const array DEFAULT_VIEW_VERSIONS = [
         [self::WORD_ID, self::WORD_DEFAULT_DETAIL_ID, self::WORD_DEFAULT_RANGE_ID, self::WORD_DEFAULT_DETAIL_RANGE_ID],
         [self::TRIPLE_ID, self::TRIPLE_DEFAULT_DETAIL_ID, self::TRIPLE_DEFAULT_RANGE_ID, self::TRIPLE_DEFAULT_DETAIL_RANGE_ID],

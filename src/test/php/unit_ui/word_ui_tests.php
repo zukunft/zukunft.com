@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\group\group as group_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
@@ -393,6 +394,38 @@ class word_ui_tests
         $sci_lst = $t_msk->menu_view_list_ui($t_msk->view_science());
         $sci_items = $wrd_menu->menu_view_items_ui($sci_lst);
         $t->assert_text_contains($test_name, $sci_items, icons::VIEW_SWITCH);
+        // a word without a name e.g. a new word still gets the view entries
+        $test_name = 'a word without a name still gets the view entries of the edit menu';
+        $new_items = new word()->menu_view_items_ui($sci_lst);
+        $t->assert_text_contains($test_name, $new_items, views::SCIENCE);
+        // the tooltip of the view entry names the word by an empty name, because it has none yet
+        $test_name = '... with an empty word name in the tooltip';
+        $empty_tip = $lib->msg_var_replace($mtr->txt(msg_id::BUTTON_VIEW_SHOW_TIP), msg_id::VAR_NAME, '');
+        $empty_tip = $lib->msg_var_replace($empty_tip, msg_id::VAR_VIEW_NAME, views::SCIENCE);
+        $empty_title = htmlspecialchars($empty_tip, ENT_QUOTES);
+        $t->assert_text_contains($test_name, $new_items, $empty_title);
+        // negative: a word with a name e.g. mathematics is named in the tooltip
+        $test_name = '... but a word with a name has no empty name in the tooltip';
+        $t->assert_text_not_contains($test_name, $sci_items, $empty_title);
+        // an object without an edit view of its own e.g. a group gets no switch icon, because
+        // the inherited edit view is the one of a word
+        $test_name = 'an object without its own edit view has no switch icon in the edit menu';
+        $grp_items = new group_ui()->menu_view_items_ui($sci_lst);
+        $t->assert_text_not_contains($test_name, $grp_items, icons::VIEW_SWITCH);
+        // the views tab of the object page offers the same view links as the edit menu
+        $test_name = 'the views tab of a word without a name shows its views';
+        $wrd_new = new word();
+        $wrd_new->view_lst = $sci_lst;
+        $new_tab = $list->view_tab_box($wrd_new, $msg, true);
+        $t->assert_text_contains($test_name, $new_tab, views::SCIENCE);
+        $test_name = '... with the switch icon';
+        $t->assert_text_contains($test_name, $new_tab, icons::VIEW_SWITCH);
+        // negative: an object without its own edit view gets no switch icon in the views tab either
+        $test_name = 'the views tab of an object without its own edit view has no switch icon';
+        $grp = new group_ui();
+        $grp->view_lst = $sci_lst;
+        $grp_tab = $list->view_tab_box($grp, $msg, true);
+        $t->assert_text_not_contains($test_name, $grp_tab, icons::VIEW_SWITCH);
         // the view that shows the page is grey with a tooltip that names the shown word
         $test_name = 'the view that shows the page is grey in the edit menu';
         $used_items = $wrd_menu->menu_view_items_ui($own_lst, views::MATH_CONST_ID);

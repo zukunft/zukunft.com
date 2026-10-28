@@ -109,6 +109,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
+// for sandbox_related::views_assigned, which cannot include it itself
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
@@ -977,6 +979,15 @@ class word extends sandbox_code_id
     {
         global $sys;
         return $sys->typ_lst->phr_typ->code_id($this->type_id);
+    }
+
+    /**
+     * @return bool true if the phrase type is one of phrase_types::PRELOAD_TYPES e.g. a unit or scaling
+     *              word, so that the word is part of the system phrases of the cached types api message
+     */
+    function has_preload_type(): bool
+    {
+        return in_array($this->type_code_id(), phrase_types::PRELOAD_TYPES);
     }
 
     /**

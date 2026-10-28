@@ -237,6 +237,8 @@ class files
     CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT_INCONSISTENCY . 'version_newer_test' . self::JSON;
     CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
     CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
+    CONST string IMPORT_TYPES_CACHE_SYMBOL = test_paths::IMPORT . 'types_cache_symbol';
+    CONST string IMPORT_TYPES_CACHE_UNIT = test_paths::IMPORT . 'types_cache_unit';
     CONST string IMPORT_NO_UPDATE = test_paths::IMPORT . 'no_update';
     CONST string IMPORT_NO_UPDATE_CHANGED = test_paths::IMPORT . 'no_update_changed';
     CONST string IMPORT_UPDATE_EXT = '_update';

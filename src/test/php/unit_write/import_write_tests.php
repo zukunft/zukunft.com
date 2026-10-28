@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_CONST . 'files.php';
@@ -45,7 +46,10 @@ include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once test_paths::CONST . 'files.php';
+include_once test_paths::UNIT . 'db_cache_tests.php';
 
+use DateTime;
+use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
@@ -73,6 +77,7 @@ use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\unit\db_cache_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
@@ -222,6 +227,44 @@ class import_write_tests
             }
         }
 
+        $t->subheader($ts . 'types cache clear');
+
+        // a symbol triple is part of the system phrases of the cached types api message, so its
+        // import removes the cache and the next types api call rebuilds it (see data_object::save_triples)
+        $test_name = 'the types cache is filled before the symbol triple import';
+        $t->assert_true($test_name, $this->fill_types_cache($msg));
+        $test_name = 'import a symbol triple';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TYPES_CACHE_SYMBOL . test_files::JSON, $t->usr1, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $test_name = '... removes the types cache';
+        $t->assert_false($test_name, $this->types_cached($msg));
+        $this->del_types_cache_test_phrases($t, $msg);
+
+        // a unit word is part of the system phrases too (see data_object::save_words)
+        $test_name = 'the types cache is filled before the unit word import';
+        $t->assert_true($test_name, $this->fill_types_cache($msg));
+        $test_name = 'import a unit word';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TYPES_CACHE_UNIT . test_files::JSON, $t->usr1, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $test_name = '... removes the types cache';
+        $t->assert_false($test_name, $this->types_cached($msg));
+        $this->del_types_cache_test_phrases($t, $msg);
+
+        // an import of plain words and an "is a" triple does not change the system phrases
+        $test_name = 'the types cache is filled before the import without symbol or unit';
+        $t->assert_true($test_name, $this->fill_types_cache($msg));
+        $test_name = 'import plain words and an is a triple';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_LINK_RENAME_1 . test_files::JSON, $t->usr1, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $test_name = '... keeps the types cache';
+        $t->assert_true($test_name, $this->types_cached($msg));
+        $this->del_types_cache_test_phrases($t, $msg);
+
+        // the test cache row must not reach a frontend, so the next types api call rebuilds the real one
+        $test_name = 'remove the test types cache';
+        new db_cache(user::system())->del_types($msg);
+        $t->assert_false($test_name, $this->types_cached($msg));
+
         $t->subheader($ts . 'no update import only fills up empty fields');
 
         $imf = new import_file();
@@ -316,6 +359,53 @@ class import_write_tests
             $imf->drop_config_cache($t->usr1, $msg);
             $t->assert_msg($test_name, $msg);
             $msg->reset();
+        }
+    }
+
+    /**
+     * replace the types cache with a test row, so that the test can see if an import removes it
+     *
+     * @param user_message $msg to report a problem of the cache write
+     * @return bool true if the test row is in the database
+     */
+    private function fill_types_cache(user_message $msg): bool
+    {
+        $cac = new db_cache(user::system());
+        $cac->del_types($msg);
+        $snap_time = new DateTime(db_cache_tests::TV_TYPES_SNAP_TIME);
+        new ui_config()->cache_entry(db_cache_tests::TV_TYPES_JSON, $snap_time)->save($msg);
+        return $this->types_cached($msg);
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the cache read
+     * @return bool true if the database has a types cache row, independent of its age
+     */
+    private function types_cached(user_message $msg): bool
+    {
+        return new db_cache(user::system())->load_by_type_id(db_cache_types::TYPES_ID, $msg) > 0;
+    }
+
+    /**
+     * remove the triple and the words of the types cache imports
+     *
+     * @param test_cleanup $t the test environment
+     * @param user_message $msg to report a problem of the delete
+     * @return void
+     */
+    private function del_types_cache_test_phrases(test_cleanup $t, user_message $msg): void
+    {
+        $trp = new triple($t->usr1);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
+        if ($trp->id() > 0) {
+            $trp->del($msg);
+        }
+        foreach ([word_names::TEST_ADD, word_names::TEST_ADD_TO] as $wrd_name) {
+            $wrd = new word($t->usr1);
+            $wrd->load_by_name($wrd_name, $msg);
+            if ($wrd->id() > 0) {
+                $wrd->del($msg);
+            }
         }
     }
 
