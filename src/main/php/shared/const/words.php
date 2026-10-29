@@ -132,7 +132,7 @@ class words
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 466;
+    const int CHF_ID = 469;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -175,13 +175,15 @@ class words
     const string FACTORS = 'factors';
     const string FILE = 'file';
     const string FONT = 'font';
+    // the code id of the font setting, with which the settings page offers the font selection (see base_phrases.json)
+    const string FONT_CODE_ID = 'font';
     const string FORMAT = 'format';
     const string FORMULAS = 'formulas';
     const string FREEZE = 'freeze';
     const string FULL = 'full';
     const string FUTURE = 'future';
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 278;
+    const int HAPPY_ID = 281;
     const string HARDWARE = 'hardware';
     const string HTML = 'html';
     const string IMPACT = 'impact';
@@ -249,7 +251,7 @@ class words
     const string POINT = 'point';
     const int POINT_ID = 208;
     const string POINTS = 'points';
-    const int POINTS_ID = 280;
+    const int POINTS_ID = 283;
     const string PRECISE = 'precise';
     const string PREDICTION = 'prediction';
     const string PRELOAD = 'preload';
@@ -297,7 +299,7 @@ class words
     const string TOOLTIP = 'tooltip';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 393;
+    const int TOTAL_ID = 396;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
@@ -310,7 +312,7 @@ class words
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 807;
+    const int VERBS_ID = 810;
     const string VERSION = 'version';
     const string VERY = 'very';
     const string VIEW = 'view';

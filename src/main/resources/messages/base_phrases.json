@@ -227,6 +227,16 @@
     {
       "name": "high",
       "description": "above the usual, the average or the expected level e.g. a high precision"
+    },
+    {
+      "name": "font",
+      "code_id": "font"
+    },
+    {
+      "name": "colour"
+    },
+    {
+      "name": "mode"
     }
   ],
   "triples": [
@@ -422,6 +432,13 @@
       "from": "low",
       "verb": "is symbol for",
       "to": "variance low (system)"
+    },
+    {
+      "name": "colour mode",
+      "from": "colour",
+      "verb": "not set",
+      "to": "mode",
+      "code_id": "colour_mode"
     }
   ]
 }

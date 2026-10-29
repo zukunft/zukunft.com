@@ -586,7 +586,10 @@ class term extends combine_named
         return $this->obj()->owner_id();
     }
 
-    function code_id(): ?int
+    /**
+     * @return string|null the code id of the word, triple, verb or formula e.g. "font" or null if it has none
+     */
+    function code_id(): ?string
     {
         return $this->obj()->get_code_id();
     }

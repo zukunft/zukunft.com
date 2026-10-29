@@ -406,6 +406,32 @@ class db_cache extends db_object_seq_id_user
     }
 
     /**
+     * remove every cache entry of all types and users e.g. when an admin clears the cache on the
+     * settings page; derived data that the next request creates again (see del_by_user)
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cache entries have been removed
+     */
+    function del_all(user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $this->del_sql_all($db_con->sql_creator());
+        return $db_con->delete($qp, 'all cache entries', $msg);
+    }
+
+    /**
+     * create the sql statement to delete every cache entry of all types and users
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the sql statement to delete all cache entries
+     */
+    function del_sql_all(sql_creator $sc): sql_par
+    {
+        return $sc->del_sql_all(self::class);
+    }
+
+    /**
      * create the sql statement to delete the cache entries of the given types of all users
      *
      * @param sql_creator $sc with the target db_type set

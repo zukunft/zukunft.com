@@ -331,6 +331,7 @@ class url_var
     const string ACTION_JOB_UPGRADE = 'aju'; // an admin increases the priority of a batch job
     const string ACTION_JOB_DOWNGRADE = 'ajd'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL = 'ajc'; // cancel a batch job
+    const string ACTION_CLEAR_CACHE = 'acc'; // an admin removes all cached data on the settings page
 
     // the actions of the job list buttons that change a batch job directly without a confirm view
     const array JOB_ACTIONS = [
@@ -487,6 +488,7 @@ class url_var
     const string ACTION_JOB_UPGRADE_HUMAN = 'job_upgrade'; // an admin increases the priority of a batch job
     const string ACTION_JOB_DOWNGRADE_HUMAN = 'job_downgrade'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL_HUMAN = 'job_cancel'; // cancel a batch job
+    const string ACTION_CLEAR_CACHE_HUMAN = 'clear_cache'; // an admin removes all cached data
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE_HUMAN = 'no'; // no action process has been started
@@ -970,6 +972,7 @@ class url_var
         self::ACTION_JOB_UPGRADE => self::ACTION_JOB_UPGRADE_HUMAN,
         self::ACTION_JOB_DOWNGRADE => self::ACTION_JOB_DOWNGRADE_HUMAN,
         self::ACTION_JOB_CANCEL => self::ACTION_JOB_CANCEL_HUMAN,
+        self::ACTION_CLEAR_CACHE => self::ACTION_CLEAR_CACHE_HUMAN,
     ];
 
     // map human-readable url values to standard url values

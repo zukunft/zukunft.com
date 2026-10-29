@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1527 of 6278 public functions have at least 2 unit test calls; the 4546 functions below do not; the 205 functions of the last section are called nowhere
+1526 of 6284 public functions have at least 2 unit test calls; the 4553 functions below do not; the 205 functions of the last section are called nowhere
 
-## 2015 functions of main backend have no test at all
+## 2016 functions of main backend have no test at all
 
 ```
 \-- application
@@ -216,6 +216,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- fill_from_cache_json - 0 unit test calls
     \-- load_frontend_cfg - 0 unit test calls
     \-- load_usr_cfg - 0 unit test calls
+    \-- phrase_code_ids - 0 unit test calls
     \-- phrase_ids - 0 unit test calls shared by 3 classes
 \-- data_object
     \-- add_calc_validation - 0 unit test calls
@@ -2277,7 +2278,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 883 functions of frontend have no test at all
+## 885 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2373,9 +2374,11 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- is_new - 0 unit test calls
     \-- matches - 0 unit test calls
 \-- config_tree
+    \-- clear_cache_form - 0 unit test calls
     \-- columns_html - 0 unit test calls
     \-- hit_list - 0 unit test calls
     \-- key_names - 0 unit test calls
+    \-- mode_select - 0 unit test calls
     \-- search_form - 0 unit test calls
 \-- data_object
     \-- add_components_to_views - 0 unit test calls
@@ -3261,7 +3264,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- time_lst - 0 unit test calls shared by 3 classes
 ```
 
-## 1037 functions of main backend have incomplete tests
+## 1040 functions of main backend have incomplete tests
 
 ```
 \-- change
@@ -3372,14 +3375,16 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- db_cache
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
     \-- del - 17 unit test calls shared by 21 classes
+    \-- del_all - 1 unit test calls shared by 2 classes
     \-- del_by_user - 2 unit test calls shared by 3 classes
+    \-- del_sql_all - 2 unit test calls shared by 2 classes
     \-- del_types - 1 unit test calls
     \-- load_by_type - 2 unit test calls shared by 4 classes
     \-- row_mapper - 6 unit test calls shared by 22 classes
     \-- set_type - 2 unit test calls shared by 14 classes
 \-- db_cache_page
     \-- db_fields_changed - 24 unit test calls shared by 44 classes
-    \-- del_all - 1 unit test calls
+    \-- del_all - 1 unit test calls shared by 2 classes
     \-- del_by_user - 2 unit test calls shared by 3 classes
     \-- row_mapper - 6 unit test calls shared by 22 classes
 \-- db_cache_status_list
@@ -4007,6 +4012,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- load_dummy - 1 unit test calls shared by 37 classes
 \-- sql_creator
     \-- create_db_role - 1 unit test calls
+    \-- del_sql_all - 2 unit test calls shared by 2 classes
     \-- get_id_field_name - 2 unit test calls shared by 2 classes
     \-- get_par - 3 unit test calls shared by 2 classes
     \-- set_usr_fields - 3 unit test calls shared by 2 classes
@@ -4518,7 +4524,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 515 functions of frontend have incomplete tests
+## 516 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4593,6 +4599,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- config
     \-- load - 6 unit test calls shared by 17 classes
 \-- config_tree
+    \-- font_select - 1 unit test calls
     \-- load - 6 unit test calls shared by 17 classes
 \-- data_object
     \-- formula_link_list - 2 unit test calls shared by 2 classes

@@ -131,6 +131,10 @@ class triples
     // the view and the phrase of a pinned view without url, from which the test run creates the url
     const string VIEW_NAME = 'view name';
     const string PHRASE_NAME = 'phrase name';
+    // the light or dark mode of the pages (config.yaml user default frontend layout), whose code id
+    // makes the settings page offer the selection of the light or the dark colours (see base_phrases.json)
+    const string COLOUR_MODE = 'colour mode';
+    const string COLOUR_MODE_CODE_ID = 'colour_mode';
     const string SOURCE_TABLE = 'source table';
     const string START_DELAY = 'start delay';
     const string STORAGE_SIZE = 'storage size';

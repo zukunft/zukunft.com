@@ -64,6 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_tree;
 use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -341,6 +342,16 @@ class config_tests
         $t->assert_key_not_exists($test_name, json_fields::CONFIG_PHRASE_IDS, $default_node);
         $test_name = '... and a number is no text setting';
         $t->assert_key_not_exists($test_name, json_fields::CONFIG_IS_TEXT, $default_node);
+        // the settings page finds the font setting by the code id of its word and not by its name
+        $test_name = 'a setting names the code id of its word e.g. of the font';
+        $font_node = $t_cft->node_by_name($nodes, test_config_trees::FONT);
+        $t->assert($test_name, $font_node[json_fields::CODE_ID] ?? '', words::FONT_CODE_ID);
+        $test_name = '... and of a triple e.g. of the colour mode';
+        $mode_node = $t_cft->node_by_name($nodes, test_config_trees::COLOUR_MODE);
+        $t->assert($test_name, $mode_node[json_fields::CODE_ID] ?? '', triples::COLOUR_MODE_CODE_ID);
+        // negative: a word without code id names none
+        $test_name = '... but a word without code id names none';
+        $t->assert_key_not_exists($test_name, json_fields::CODE_ID, $default_node);
         // negative: a config.yaml without a key has no node, even if the database has values
         $test_name = 'an empty config.yaml has no node';
         $empty_nodes = $cft->nodes([], $t_cft->cfg());

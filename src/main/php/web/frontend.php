@@ -950,6 +950,9 @@ class frontend
             // a button of the job lists changes the priority of a job or cancels it without a confirm view
             in_array($action, url_var::JOB_ACTIONS) and $step == url_var::STEP_CONFIRMED => $url = $this->action_job(
                 $url_array, $msg_ui, $do_it),
+            // the button of an admin on the settings page removes all cached data without a confirm view
+            $action == url_var::ACTION_CLEAR_CACHE and $step == url_var::STEP_CONFIRMED => $url = $this->action_clear_cache(
+                $msg_ui, $do_it),
             // a confirmed delete request: triggered by a del mask or by an explicit delete action; the
             // explicit action overrules the crud action derived from the mask, because e.g. the delete
             // of a just added object is posted with the add mask of the object
@@ -2859,6 +2862,35 @@ class frontend
             $job->change($url_array[url_var::ACTION], $msg_ui);
         }
         return [url_var::MASK => $url_array[url_var::MASK]];
+    }
+
+    /**
+     * remove all cached data, i.e. the cached pages and api answers and the cached types and
+     * configurations of all users, which the next requests create again; only for an admin, because
+     * it slows down the next requests of every user, and then show the settings page again
+     *
+     * @param user_message_ui $msg_ui with the requesting user to get the result of the clear
+     * @param bool $do_it false to simulate the clear e.g. in a unit test
+     * @return array the url of the settings page
+     */
+    private function action_clear_cache(user_message_ui $msg_ui, bool $do_it): array
+    {
+        global $mtr;
+        $usr = $msg_ui->usr;
+        if ($usr == null or !$usr->is_admin()) {
+            $msg_ui->add_id(msg_id::CONFIG_CACHE_CLEAR_ADMIN_ONLY);
+        } elseif ($do_it) {
+            // cached data is no user data, so the cache rows are removed as the system user
+            $del_msg = new backend_user_message(user_backend::system());
+            new db_cache_page()->del_all($del_msg);
+            new db_cache(user_backend::system())->del_all($del_msg);
+            if ($del_msg->is_ok()) {
+                $msg_ui->add_info($mtr->txt(msg_id::CONFIG_CACHE_CLEARED));
+            } else {
+                $msg_ui->add_message_text($del_msg->get_message());
+            }
+        }
+        return [url_var::MASK => views::SYSTEM_CONFIG_ID];
     }
 
     /**

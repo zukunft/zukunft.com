@@ -2189,12 +2189,28 @@ enum messages: string
     case CONFIG_TREE_FILE_VALUE = 'config_tree_file_value';
     case CONFIG_TREE_VALUE_SAVED = 'config_tree_value_saved';
     case CONFIG_TREE_DEFAULT_SAVED = 'config_tree_default_saved';
+    // the button of an admin on the settings page that removes all cached data
+    case CONFIG_CACHE_CLEAR = 'config_cache_clear';
+    case CONFIG_CACHE_CLEAR_TIP = 'config_cache_clear_tip';
+    case CONFIG_CACHE_CLEARED = 'config_cache_cleared';
+    case CONFIG_CACHE_CLEAR_ADMIN_ONLY = 'config_cache_clear_admin_only';
     case VALUE_SET_DEFAULT_DENIED = 'value_set_default_denied';
     case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
     // an empty text has nothing to store and its api message would have no text, so e.g. the config could not be read
     case VALUE_TEXT_EMPTY = 'value_text_empty';
     // the configured font of the pages (config.yaml frontend.layout.font) has a char that css could misread
     case CONFIG_FONT_INVALID = 'config_font_invalid';
+    // the font selection of the settings page and its entries (see web/helper/config_tree::FONT_OPTIONS)
+    case CONFIG_FONT_SELECT = 'config_font_select';
+    case CONFIG_FONT_SANS_SERIF = 'config_font_sans_serif';
+    case CONFIG_FONT_SERIF = 'config_font_serif';
+    case CONFIG_FONT_MONOSPACE = 'config_font_monospace';
+    case CONFIG_FONT_SYSTEM_SANS = 'config_font_system_sans';
+    case CONFIG_FONT_SYSTEM_MONO = 'config_font_system_mono';
+    // the selection of the light or dark colours of the settings page (see web/helper/config_tree::MODE_OPTIONS)
+    case CONFIG_MODE_SELECT = 'config_mode_select';
+    case CONFIG_MODE_LIGHT = 'config_mode_light';
+    case CONFIG_MODE_DARK = 'config_mode_dark';
     // a configured colour of the pages or the editors (config.yaml frontend.layout.colours) that css could misread
     case CONFIG_COLOUR_INVALID = 'config_colour_invalid';
     case SYSTEM_TITLE_USER = 'system_title_user';

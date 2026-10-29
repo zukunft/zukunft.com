@@ -177,6 +177,14 @@ class db_cache_tests
         $qp = $cac->del_sql_by_type_ids($sc, [db_cache_types::SYSTEM_CONFIG_ID]);
         $t->assert_qp($qp, $sc->db_type);
 
+        // sql to remove all cache entries e.g. if an admin clears the cache on the settings page
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->del_sql_all($sc);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->del_sql_all($sc);
+        $t->assert_qp($qp, $sc->db_type);
+
         // sql to load a list of open batch db_caches
         $t_usr = new test_users($t);
         $sys_usr = $t_usr->system_user();

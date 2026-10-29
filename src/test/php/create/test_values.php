@@ -1698,9 +1698,9 @@ class test_values extends test_objects
 
     /**
      * the config of a pod that sets one number e.g. the dark or light mode of the pages
-     * (config.yaml user > default > frontend > layout > mode)
+     * (config.yaml user > default > frontend > layout > colour mode)
      *
-     * @param array $keys the config.yaml keys below user > default > frontend > layout e.g. [words::MODE]
+     * @param array $keys the config.yaml keys below user > default > frontend > layout e.g. [triples::COLOUR_MODE]
      * @param float $number the number of the config value e.g. def::MODE_DARK
      * @return value_list the config values, which the frontend config reads from their api message
      */

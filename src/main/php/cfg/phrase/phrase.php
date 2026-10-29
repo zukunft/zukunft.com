@@ -537,7 +537,10 @@ class phrase extends combine_named
         return $this->obj()->description;
     }
 
-    function code_id(): ?int
+    /**
+     * @return string|null the code id of the word or triple e.g. "font" or null if it has none
+     */
+    function code_id(): ?string
     {
         return $this->obj()->get_code_id();
     }

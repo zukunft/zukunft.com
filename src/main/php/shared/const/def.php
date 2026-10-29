@@ -112,7 +112,7 @@ class def
     // fallback for the css font family of every page, its buttons and the editors, which the page
     // head sets as --font-page (html_base::theme_style); overridden by config.yaml entry frontend.layout.font
     const string FALLBACK_FONT = 'sans-serif';
-    // the dark or light mode of a user (config.yaml frontend.layout.mode): the pages follow the
+    // the dark or light mode of a user (config.yaml frontend.layout.colour mode): the pages follow the
     // setting of the browser, are always light or always dark (see html_base::theme_css);
     // light by default, so that a page looks the same for every user until the user switches
     const int MODE_BROWSER = 0;

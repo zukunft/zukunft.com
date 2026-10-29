@@ -2043,6 +2043,8 @@
             _numbers.php
     \-- phrase_ids - section for function phrase_ids not yet defined that it should be set and get in /helper/config_num
             bers.php
+    \-- phrase_code_ids - section for function phrase_code_ids not yet defined that it should be set and get in /helper/
+            config_numbers.php
     \-- fill_from_cache_json - section for function fill_from_cache_json not yet defined that it should be load in /help
             er/config_numbers.php
     \-- default_json - section for function default_json not yet defined that it should be default in /helper/config_num
@@ -2195,6 +2197,8 @@
     \-- del_by_user - section for function del_by_user is expected to be del in /helper/db_cache.php
     \-- del_types - section for function del_types is expected to be del in /helper/db_cache.php
     \-- del_by_types - section for function del_by_types is expected to be del in /helper/db_cache.php
+    \-- del_all - section for function del_all is expected to be del in /helper/db_cache.php
+    \-- del_sql_all - section for function del_sql_all is expected to be del in /helper/db_cache.php
     \-- del_sql_by_type_ids - section for function del_sql_by_type_ids is expected to be del in /helper/db_cache.php
     \-- del_sql_by_user - section for function del_sql_by_user is expected to be del in /helper/db_cache.php
 \-- db_cache_page
@@ -4871,6 +4875,10 @@
     \-- del_by_types
         \-- db_cache - remove the cache entries of the given types of all users,
                  because e.g. a default changed by an admin is
+    \-- del_all
+        \-- db_cache - remove every cache entry of all types and users e.g. when an admin clears the cache on the
+    \-- del_sql_all
+        \-- db_cache - create the sql statement to delete every cache entry of all types and users
     \-- del_sql_by_type_ids
         \-- db_cache - create the sql statement to delete the cache entries of the given types of all users
     \-- del_sql_by_user
@@ -5234,6 +5242,9 @@
                  e.g. for the config tree that finds the value
     \-- phrase_ids
         \-- config_numbers - the phrase ids of the config values by name, e.g. for the config tree that offers to add a
+    \-- phrase_code_ids
+        \-- config_numbers - the code ids of the words of the config values by name,
+                 e.g. for the config tree that offers
     \-- set_cache_json
         \-- config_numbers - use the cached config json for the value lookups of this request (see get_by_names),
     \-- unique_value
@@ -7231,6 +7242,10 @@
     \-- columns_html - section for function columns_html not yet defined that it should be html in /helper/config_tree.p
             hp
     \-- search_form - section for function search_form not yet defined that it should be html in /helper/config_tree.php
+    \-- clear_cache_form - section for function clear_cache_form not yet defined that it should be html in /helper/confi
+            g_tree.php
+    \-- font_select - section for function font_select not yet defined that it should be html in /helper/config_tree.php
+    \-- mode_select - section for function mode_select not yet defined that it should be html in /helper/config_tree.php
     \-- hit_list - section for function hit_list not yet defined that it should be html in /helper/config_tree.php
     \-- marked - section for function marked not yet defined that it should be html in /helper/config_tree.php
     \-- order error - order of section construct and map has difference at api_mapper should be before __construct
@@ -10557,11 +10572,11 @@
     \-- theme_style
         \-- html_base - the font and the colours of config.yaml (frontend.layout) as the css variables of style_html.css
     \-- theme_css
-        \-- html_base - the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.mode)
-                :
+        \-- html_base - the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.colou
+                r mode):
     \-- theme_mode
         \-- html_base - @return int the dark or light mode of the user e.g. def::MODE_DARK (config.yaml frontend.layout.
-                mode)
+                colour mode)
     \-- theme_colours
         \-- html_base - the css variables of a colour group of config.yaml with a light and a dark colour per variable
     \-- navbar
