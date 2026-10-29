@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        AHV financing by VAT vote 2026 - Decision calculator - zukunft.com
+    </title>
+    <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    <!-- the font and the colours that html_base::theme_style sets in the head of every page -->
+    <style>
+:root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+    </style>
+    <!--
+        Prototype of a zukunft.com "decision calculator" view for the Swiss vote of 29 November 2026
+        on the federal decree on the additional financing of the AHV by an increase of the value added tax
+        (the partial financing of the 13th AHV pension). The header, the footer and the use case layout
+        are the standard ones of style_html.css; the stylesheet below only adds the parts that the use
+        case style does not have yet (the arguments, the slider field and the verdict) and the script at
+        the end replaces calculator.js. The numbers, the formulas and the sources are the ones of
+        ahv_vat_vote.json.
+    -->
+    <style>
+        /* the parts of the decision calculator that the use case style of style_html.css does not */
+        /* have yet; no standard selector is redefined, only the width of the collapsed introduction */
+        /* and the two slider rules refine a standard rule; the colours are the zukunft.com blues and */
+        /* grey and the bootstrap success, warning and danger colours */
+
+        /* the introduction behind "... more" below the title fills the whole width of the page */
+        .use-case header details p {
+            max-width: none;
+        }
+
+        /* the arguments of both sides side by side above the calculator */
+        .use-case .arguments {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 24px;
+        }
+        @media (max-width: 860px) {
+            .use-case .arguments {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        /* a coloured dot in front of the heading tells the side without changing the heading style */
+        .use-case .pro h2::before,
+        .use-case .contra h2::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .use-case .pro h2::before {
+            background: #198754;
+        }
+        .use-case .contra h2::before {
+            background: #dc3545;
+        }
+        .use-case .argument-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: .9rem;
+        }
+        .use-case .argument-list li {
+            padding: 8px 0;
+            border-top: 1px solid #dee2e6;
+        }
+        .use-case .argument-list li:first-child {
+            border-top: 0;
+        }
+        /* the arguments behind "... more" continue the list, so their first one keeps the line */
+        .use-case details .argument-list li:first-child {
+            border-top: 1px solid #dee2e6;
+        }
+        .use-case .argument-list b {
+            display: block;
+        }
+        .use-case .num {
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+        .use-case .ref {
+            font-size: .76rem;
+            color: #9ea09e;
+        }
+
+        /* the slider field (the proposed calculator slider): the range, the number and the unit in */
+        /* one line, so the number keeps a fixed width and the range takes the rest; the range is no */
+        /* text field, so it has no border and no padding */
+        .use-case .field .row > input[type=range] {
+            border: 0;
+            padding: 0;
+            background: none;
+        }
+        .use-case .field .row > input[type=number] {
+            flex: 0 0 6.5rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .use-case .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* the verdict (the proposed calculator verdict) with the meter from yes to no */
+        .use-case .verdict {
+            border: 2px solid #b9c6d6;
+            border-radius: 8px;
+            padding: 18px;
+            display: grid;
+            gap: 6px;
+        }
+        .use-case .verdict.yes {
+            border-color: #198754;
+        }
+        .use-case .verdict.no {
+            border-color: #dc3545;
+        }
+        .use-case .verdict.open {
+            border-color: #ffc107;
+        }
+        .use-case .verdict p {
+            margin: 0;
+        }
+        .use-case .verdict .headline {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .use-case .verdict .sub {
+            font-size: .76rem;
+            color: #9ea09e;
+        }
+        .use-case .verdict .meter {
+            position: relative;
+            height: 10px;
+            background: linear-gradient(90deg, #198754 0 45%, #dee2e6 45% 55%, #dc3545 55% 100%);
+            border-radius: 5px;
+            margin-top: 8px;
+        }
+        .use-case .verdict .needle {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 20px;
+            background: #274b8f;
+            border-radius: 2px;
+        }
+        .use-case .verdict .scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: .76rem;
+            color: #9ea09e;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar site-header fixed-top">
+    <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+        <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+    </a>
+    <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+        <input type="hidden" name="m" value="107">
+        <label for="kp" class="visually-hidden">
+            Search
+        </label>
+        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
+               style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">
+            Get numbers
+        </button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="view-menu">
+                    <summary>
+                        <i class="fas fa-edit">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                alternative
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?view=more">
+                                ... more
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=85&amp;id=1">
+                                change view
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=84">
+                                add view
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+                <details class="lang-menu">
+                    <summary>
+                        <i class="fas fa-globe">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=en">
+                                English
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=en_us">
+                                US English
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
+                                Deutsch
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=fr" title="French">
+                                Français
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=es" title="Spanish">
+                                Español
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                漢語
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                العربية
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=language_select">
+                                ... more
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary>
+                        <i class="fas fa-user-circle">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=11">
+                                Log in
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=13">
+                                Signup
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/settings">
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="main-container">
+    <div class="use-case">
+        <header>
+            <h4>
+                Financing the 13th AHV pension by a higher VAT: the vote of 29 November 2026
+            </h4>
+            <details>
+                <summary>
+                    ... more
+                </summary>
+            <p>
+                The Swiss electorate decides on the federal decree on the additional financing of the AHV by an
+                increase of the value added tax. The 13th AHV pension, accepted by 58 % of the voters in March 2024,
+                is paid for the first time in December 2026 to 2.6 million pensioners whatever the outcome; it costs
+                4.2 billion CHF in 2026 and more than 5 billion CHF a year from 2035. Parliament decided in June 2026
+                to cover part of it by raising the normal VAT rate by 0.4 percentage points from 8.1 to 8.5 %, the
+                hotel rate from 3.8 to 4.0 % and leaving the reduced rate of 2.6 % on food, medicines, books and
+                newspapers unchanged; the Federal Council had asked for 0.7 points and the Council of States for 0.4
+                points plus 0.2 points of payroll contributions, a cut of the federal contribution was rejected by both
+                chambers [1][4]. A VAT change amends the constitution, so the people and the cantons vote. The increase
+                would apply from 2028 at the earliest and bring the AHV about 1.4 billion CHF a year from 2029, with
+                the federal contribution roughly half of the cost of the 13th pension [1][2]. The Federal Council, the
+                National Council (108 to 85) and the Council of States (28 to 13), the SP, the Greens, the Centre, the
+                GLP, the EVP and the unions' federation SGB say yes; the FDP, the SVP, the employers, the trades and
+                the public service union VPOD say no; the first polls put the opponents slightly ahead [6][8][9][10].
+                Below are the arguments of both sides with their numbers, then a calculator: say what you spend and
+                earn, say how a no would be paid for instead, and see whether the VAT or the alternative costs your
+                household more - and what that suggests for your vote.
+            </p>
+            </details>
+        </header>
+
+        <div class="arguments">
+            <section class="panel pro">
+                <h2>
+                    Arguments for the VAT increase (yes)
+                </h2>
+                <ul class="argument-list">
+                    <li>
+                        <b>
+                            The people decided, the pension must be paid for
+                        </b>
+                        Without new revenue the AHV's pay-as-you-go deficit grows from more than <span
+                            class="num">1 billion CHF</span> in 2026 to almost <span class="num">5 billion CHF</span>
+                        in 2035; the VAT halves the deficit of 2030 from <span class="num">2.7</span> to <span
+                            class="num">1.2 billion CHF</span> and keeps the fund at about <span class="num">70 %</span>
+                        of a year's expenditure in 2035 instead of <span class="num">50 %</span>.
+                        <span class="ref">[1][2]</span>
+                    </li>
+                </ul>
+                <details>
+                    <summary>
+                        ... more
+                    </summary>
+                    <ul class="argument-list">
+                    <li>
+                        <b>
+                            All generations pay, pensioners included
+                        </b>
+                        Payroll contributions would fall on the working population alone; the VAT reaches consumption,
+                        so pensioner households contribute <span class="num">7 to 25 CHF</span> a month, and tourists
+                        pay too. The Federal Council calls it the fairest base. <span class="ref">[5][13]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Moderate and socially balanced
+                        </b>
+                        The Federal Tax Administration puts the extra VAT at <span class="num">15 CHF</span> a month
+                        for the average household, <span class="num">7 CHF</span> below 4'600 CHF of income and
+                        <span class="num">28 CHF</span> above 13'400 CHF; food, medicines and women's hygiene products
+                        stay at 2.6 %. <span class="ref">[5]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Money still flows from top to bottom
+                        </b>
+                        Nine of ten people get more out of the AHV than they pay in; high earners consume more and
+                        so pay more VAT, but never receive more than the maximum pension of <span
+                            class="num">2'520 CHF</span> a month. <span class="ref">[5][8]</span>
+                    </li>
+                    <li>
+                        <b>
+                            A no leaves the gap and invites a higher retirement age
+                        </b>
+                        The 4 to 5 billion CHF a year stay unfunded either way; the SGB warns that the opponents aim
+                        at a higher retirement age for all, the next reform AHV 2030 reaches Parliament in spring
+                        2027. <span class="ref">[1][8]</span>
+                    </li>
+                    <li>
+                        <b>
+                            A compromise with broad backing
+                        </b>
+                        Parliament settled on the minimum after two years: no payroll contributions, no cut of the
+                        federal contribution, 0.4 instead of 0.7 points; a cheap tax to collect that Switzerland has
+                        used for the AHV since 1999. <span class="ref">[4][6]</span>
+                    </li>
+                    </ul>
+                </details>
+            </section>
+            <section class="panel contra">
+                <h2>
+                    Arguments against the VAT increase (no)
+                </h2>
+                <ul class="argument-list">
+                    <li>
+                        <b>
+                            Reform the AHV instead of raising taxes
+                        </b>
+                        The most convincing argument in the polls: the gaps of the AHV should be closed by structural
+                        reform, not by taxes and levies. The FDP's model: if the fund falls below <span
+                            class="num">90 %</span>, the VAT rises by 0.5 points and the reference age by six months;
+                        the Confederation's <span class="num">90 billion CHF</span> a year must suffice.
+                        <span class="ref">[5][10][12]</span>
+                    </li>
+                </ul>
+                <details>
+                    <summary>
+                        ... more
+                    </summary>
+                    <ul class="argument-list">
+                    <li>
+                        <b>
+                            Less than half, and for ever
+                        </b>
+                        The <span class="num">1.4 to 1.5 billion CHF</span> cover a third of the 4.2 to 5.4 billion
+                        CHF, the increase is unlimited in time and not tied to any reform; the FDP speaks of a "VAT
+                        swindle" and salami tactics, the AHV 2030 scenarios already contain the next increase.
+                        <span class="ref">[4][7]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Purchasing power and the economy
+                        </b>
+                        Households already carry rising premiums, rents and prices; BAK Economics for the FDP puts
+                        the cost at <span class="num">545 CHF</span> per household and year and the loss of output at
+                        <span class="num">3.6 billion CHF</span> after ten years, with retail, restaurants and SMEs
+                        hit hardest and shopping tourism of more than 10 billion CHF a year growing.
+                        <span class="ref">[7][16]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Regressive, not solidary
+                        </b>
+                        Low-income households spend a larger share of their income, so the VAT weighs more on them;
+                        the public service union VPOD and the left wing wanted payroll contributions, which rise with
+                        the wage. <span class="ref">[6][9][12]</span>
+                    </li>
+                    <li>
+                        <b>
+                            The AHV is not in need
+                        </b>
+                        The fund holds about <span class="num">45 billion CHF</span>, earned <span class="num">6.3 %</span>
+                        in 2025 and made more than 10 billion CHF in two years; the VPOD calls it a record and sees no
+                        urgency. <span class="ref">[9][11]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Farmers and employers
+                        </b>
+                        Many farms do not settle VAT and bear the higher input cost themselves; the employers'
+                        association warns of the undesired macroeconomic effects of a permanent VAT increase.
+                        <span class="ref">[5][15]</span>
+                    </li>
+                    </ul>
+                </details>
+            </section>
+        </div>
+
+        <div class="grid">
+            <aside class="panel">
+                <div class="inputs">
+                    <h2>
+                        Your assumptions
+                    </h2>
+                    <div class="presets">
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="estv_avg"
+                                title="Federal Tax Administration: the average household pays 15 CHF a month, wage income about 8'000 CHF a month">
+                            Average household (ESTV)
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="pensioner_couple"
+                                title="Retired couple without wage income, receiving the maximum 13th pension of 3'780 CHF">
+                            Pensioner couple
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="unions_payroll"
+                                title="SP, Greens and VPOD: a no leads to payroll contributions instead">
+                            No = payroll contributions
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="fdp_budget"
+                                title="FDP: a no leads to savings in the federal budget">
+                            No = federal savings
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="vpod_fund"
+                                title="VPOD: a no leads to nothing, the fund can carry it and the missing francs do not count">
+                            No = the fund pays
+                        </button>
+                    </div>
+
+                    <div class="field">
+                        <label for="n-spend">
+                            Household spending at the normal VAT rate
+                            <span class="tag m">measured 1'900-7'600</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-spend" min="500" max="15000" step="50">
+                            <input type="number" id="n-spend" value="4050" min="500" max="15000" step="50">
+                            <span class="unit">CHF/month</span>
+                        </div>
+                        <span class="hint">
+                                    Clothes, furniture, electronics, restaurants, hairdresser, cars, fuel; not rent, premiums, food or medicines. ESTV: 7 CHF a month of extra VAT below 4'600 CHF of income, 13 CHF in the middle class, 15 CHF on average, 28 CHF above 13'400 CHF, i.e. about 1'900 to 7'600 CHF of normal-rate spending [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wage">
+                            Household wage income subject to AHV contributions
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wage" min="0" max="30000" step="100">
+                            <input type="number" id="n-wage" value="8000" min="0" max="30000" step="100">
+                            <span class="unit">CHF/month</span>
+                        </div>
+                        <span class="hint">
+                                    Gross wages of all earners in the household; the ESTV average household has 9'900 CHF of income including pensions [5]; 0 for a retired household
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-vat">
+                            VAT increase of the normal rate
+                            <span class="tag m">measured 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-vat" min="0" max="1" step="0.1">
+                            <input type="number" id="n-vat" value="0.4" min="0" max="1" step="0.1">
+                            <span class="unit">points</span>
+                        </div>
+                        <span class="hint">
+                                    The decree: 0.4 points from 8.1 to 8.5 %; the Federal Council had proposed 0.7 [1][4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-spay">
+                            After a no: share replaced by payroll contributions
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-spay" min="0" max="100" step="5">
+                            <input type="number" id="n-spay" value="50" min="0" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The Council of States wanted 0.2 points of payroll contributions, SP, Greens and VPOD prefer them, FDP and SVP reject them as well; the AHV 2030 scenarios combine VAT and payroll [4][12]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-sfed">
+                            After a no: share replaced from the federal budget
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-sfed" min="0" max="100" step="5">
+                            <input type="number" id="n-sfed" value="25" min="0" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The FDP's answer: savings elsewhere in the 90 billion CHF federal budget [5][7]; what neither share covers stays unfunded and is taken from the AHV fund
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wdef">
+                            Weight of the unfunded part
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wdef" min="0" max="1" step="0.05">
+                            <input type="number" id="n-wdef" value="1" min="0" max="1" step="0.05">
+                            <span class="unit">share</span>
+                        </div>
+                        <span class="hint">
+                                    1: a franc missing in the fund has to be raised later from your household by the next reform; 0: the fund's reserves can carry it and the missing francs cost you nothing (VPOD) [9]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-pass">
+                            Pass-through of the VAT increase to prices
+                            <span class="tag a">assumed 0.6</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-pass" min="50" max="100" step="5">
+                            <input type="number" id="n-pass" value="100" min="50" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The ESTV assumes that firms pass the increase on in full; retailers under price pressure may absorb part of it [5]
+                                </span>
+                    </div>
+                </div>
+                <details>
+                    <summary>
+                        Assumptions
+                    </summary>
+                    <div class="field">
+                        <label for="n-vyield">
+                            VAT revenue per point of the normal rate
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-vyield" min="2.5" max="4.5" step="0.1">
+                            <input type="number" id="n-vyield" value="3.5" min="2.5" max="4.5" step="0.1">
+                            <span class="unit">billion CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    BSV: 0.4 points bring about 1.4 billion CHF a year from 2029, about 1 billion in the first year 2028 [1][4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-pyield">
+                            Revenue per point of AHV payroll contributions
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-pyield" min="3" max="6" step="0.1">
+                            <input type="number" id="n-pyield" value="4.4" min="3" max="6" step="0.1">
+                            <span class="unit">billion CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    Contributions were 70 % of the AHV's 55 billion CHF of revenue in 2025 at a rate of 8.7 %, i.e. about 4.4 billion CHF per point [1]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-inc">
+                            Share of the payroll contribution borne by the employee
+                            <span class="tag a">assumed 0.5</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-inc" min="0.5" max="1" step="0.05">
+                            <input type="number" id="n-inc" value="0.75" min="0.5" max="1" step="0.05">
+                            <span class="unit">share</span>
+                        </div>
+                        <span class="hint">
+                                    Formally half each; most economists expect the employer's half to be shifted to wages over time
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-hh">
+                            Private households in Switzerland 2030
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-hh" min="3.5" max="4.8" step="0.1">
+                            <input type="number" id="n-hh" value="4.1" min="3.5" max="4.8" step="0.1">
+                            <span class="unit">million</span>
+                        </div>
+                        <span class="hint">
+                                    BFS household scenarios: about 4 million in 2025, 4.5 million in 2045 [14]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-fedhh">
+                            Your share of a federal budget cut, per billion CHF
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-fedhh" min="0" max="500" step="10">
+                            <input type="number" id="n-fedhh" value="240" min="0" max="500" step="10">
+                            <span class="unit">CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    An equal split of one billion CHF over 4.1 million households; a cut of subsidies or a higher federal tax hits households very differently
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-ind">
+                            Indirect cost of the VAT increase per household
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-ind" min="0" max="600" step="10">
+                            <input type="number" id="n-ind" value="0" min="0" max="600" step="10">
+                            <span class="unit">CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    Lower growth, shopping tourism, lost jobs: BAK Economics for the FDP sees output 3.6 billion CHF lower after ten years, about 90 CHF per household and year; the FDP's 545 CHF include the direct VAT [7]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-c13">
+                            Cost of the 13th pension 2030
+                            <span class="tag m">measured 4.2-5.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-c13" min="4" max="5.5" step="0.1">
+                            <input type="number" id="n-c13" value="4.5" min="4" max="5.5" step="0.1">
+                            <span class="unit">billion CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    4.2 billion CHF in 2026, about 4.5 in 2030 and 5.4 in 2040 [4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-fed">
+                            Federal contribution to the AHV expenditure
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-fed" min="18" max="22" step="0.1">
+                            <input type="number" id="n-fed" value="20.2" min="18" max="22" step="0.1">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    Fixed by law; the Federal Council's cut to 19.5 % was rejected, so the Confederation pays over 900 million CHF of the 13th pension in 2030 [1][4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-d30">
+                            Pay-as-you-go deficit 2030 without extra financing
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-d30" min="0" max="6" step="0.1">
+                            <input type="number" id="n-d30" value="2.7" min="0" max="6" step="0.1">
+                            <span class="unit">billion CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    BSV reference scenario of July 2026, prices of 2025: 1.3 billion CHF in 2026, 2.7 in 2030, 4.9 in 2035 [2]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-f35n">
+                            AHV fund 2035 without extra financing
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-f35n" min="0" max="120" step="1">
+                            <input type="number" id="n-f35n" value="50" min="0" max="120" step="1">
+                            <span class="unit">% of a year's expenditure</span>
+                        </div>
+                        <span class="hint">
+                                    BSV: about 50 %; the law wants the fund as a rule not to fall below 100 % [1][11]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-f35y">
+                            AHV fund 2035 with the VAT increase
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-f35y" min="0" max="120" step="1">
+                            <input type="number" id="n-f35y" value="69" min="0" max="120" step="1">
+                            <span class="unit">% of a year's expenditure</span>
+                        </div>
+                        <span class="hint">
+                                    BSV: just under 70 % [1]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-exp35">
+                            AHV expenditure 2035
+                            <span class="tag a">assumed 0.5</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-exp35" min="55" max="75" step="1">
+                            <input type="number" id="n-exp35" value="64" min="55" max="75" step="1">
+                            <span class="unit">billion CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    About 53 billion CHF in 2025 including the pay-as-you-go surplus of 1.8 billion [1][11]; grows with the number of pensioners and the wages
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-delay">
+                            Years without replacement financing after a no
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-delay" min="0" max="8" step="1">
+                            <input type="number" id="n-delay" value="4" min="0" max="8" step="1">
+                            <span class="unit">a</span>
+                        </div>
+                        <span class="hint">
+                                    Counted from 2028: the reform AHV 2030 reaches Parliament in spring 2027, a new VAT needs another popular vote; the 0.4 points took two years from the message to the vote [1]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-p13">
+                            13th pension received by your household
+                            <span class="tag m">measured 0-3'780</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-p13" min="0" max="3780" step="10">
+                            <input type="number" id="n-p13" value="0" min="0" max="3780" step="10">
+                            <span class="unit">CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    Up to 2'520 CHF for a single person and 3'780 CHF for a couple, paid in any case; only shifts the bottom line, not the difference [1]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-pcons">
+                            Pensioner households' share of normal-rate consumption
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-pcons" min="10" max="40" step="1">
+                            <input type="number" id="n-pcons" value="25" min="10" max="40" step="1">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    ESTV: pensioner households pay 7 to 25 CHF a month against 15 on average [5]; only used for the generation row
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-thr">
+                            Decision threshold
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-thr" min="0" max="300" step="10">
+                            <input type="number" id="n-thr" value="50" min="0" max="300" step="10">
+                            <span class="unit">CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    Below this difference the cost argument is called undecided and the vote should rest on the other arguments
+                                </span>
+                    </div>
+                </details>
+            </aside>
+
+            <section class="panel">
+                <div class="verdict open" id="verdict">
+                    <p class="headline" id="verdict-headline">
+                        Undecided on cost
+                    </p>
+                    <p id="verdict-text">
+                    </p>
+                    <div class="meter">
+                        <div class="needle" id="verdict-needle" style="left: 50%"></div>
+                    </div>
+                    <div class="scale">
+                        <span>VAT cheaper for you: vote yes</span>
+                        <span>-400 ... 0 ... +400 CHF/a</span>
+                        <span>VAT dearer for you: vote no</span>
+                    </div>
+                    <p class="sub" id="verdict-note">
+                        The vote decides how the 13th pension is paid for, not whether. A yes on cost grounds therefore
+                        means: of the ways to pay for it, the VAT is the one that costs your household least under
+                        your assumptions.
+                    </p>
+                </div>
+
+                <h2>
+                    Main results for the year 2030
+                </h2>
+                <div class="scroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>
+                                Result
+                            </th>
+                            <th class="n">
+                                yes: VAT
+                            </th>
+                            <th class="n">
+                                no: your alternative
+                            </th>
+                            <th class="n">
+                                difference
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="sec">
+                            <td colspan="4">
+                                Financing of the 13th pension
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Cost of the 13th pension
+                            </td>
+                            <td class="n" id="res-c13-with"></td>
+                            <td class="n" id="res-c13-without"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Federal contribution to it
+                            </td>
+                            <td class="n" id="res-fed13-with"></td>
+                            <td class="n" id="res-fed13-without"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Extra VAT revenue
+                            </td>
+                            <td class="n" id="res-rvat"></td>
+                            <td class="n">0 billion CHF/a</td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Payroll contributions instead
+                                <span class="sub" id="res-ppay-sub">
+                                                points of contribution
+                                            </span>
+                            </td>
+                            <td class="n">0 billion CHF/a</td>
+                            <td class="n" id="res-rpay"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Federal savings instead
+                            </td>
+                            <td class="n">0 billion CHF/a</td>
+                            <td class="n" id="res-rfed"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Left unfunded, taken from the fund
+                            </td>
+                            <td class="n">0 billion CHF/a</td>
+                            <td class="n" id="res-rnone"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Coverage of the 13th pension
+                                <span class="sub">
+                                                federal contribution plus new revenue
+                                            </span>
+                            </td>
+                            <td class="n" id="res-cov-with"></td>
+                            <td class="n" id="res-cov-without"></td>
+                            <td class="n" id="res-cov-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Pay-as-you-go deficit 2030
+                            </td>
+                            <td class="n" id="res-d-with"></td>
+                            <td class="n" id="res-d-without"></td>
+                            <td class="n" id="res-d-diff"></td>
+                        </tr>
+                        <tr class="sec">
+                            <td colspan="4">
+                                Your household
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Extra VAT per year
+                            </td>
+                            <td class="n" id="res-cvat"></td>
+                            <td class="n">0 CHF/a</td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Indirect economic cost
+                            </td>
+                            <td class="n" id="res-cind"></td>
+                            <td class="n">0 CHF/a</td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Payroll contribution per year
+                                <span class="sub">
+                                                your share of employee and employer part
+                                            </span>
+                            </td>
+                            <td class="n">0 CHF/a</td>
+                            <td class="n" id="res-cpay"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Your share of the federal savings
+                            </td>
+                            <td class="n">0 CHF/a</td>
+                            <td class="n" id="res-cfed"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Deferred cost of the unfunded part
+                            </td>
+                            <td class="n">0 CHF/a</td>
+                            <td class="n" id="res-cdef"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Annual cost of the financing for your household
+                            </td>
+                            <td class="n" id="res-cost-with"></td>
+                            <td class="n" id="res-cost-without"></td>
+                            <td class="n" id="res-cost-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                13th pension received
+                            </td>
+                            <td class="n" id="res-p13-with"></td>
+                            <td class="n" id="res-p13-without"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Bottom line for your household
+                                <span class="sub">
+                                                13th pension received minus your cost
+                                            </span>
+                            </td>
+                            <td class="n" id="res-net-with"></td>
+                            <td class="n" id="res-net-without"></td>
+                            <td class="n" id="res-net-diff"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Break-even spending
+                                <span class="sub">
+                                                normal-rate spending at which both options cost you the same
+                                            </span>
+                            </td>
+                            <td class="n" id="res-breakeven"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="sec">
+                            <td colspan="4">
+                                AHV and generations
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                AHV fund 2035
+                                <span class="sub">
+                                                share of a year's expenditure
+                                            </span>
+                            </td>
+                            <td class="n" id="res-f-with"></td>
+                            <td class="n" id="res-f-without"></td>
+                            <td class="n" id="res-f-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Share of the new revenue paid by pensioner households
+                            </td>
+                            <td class="n" id="res-ps-with"></td>
+                            <td class="n" id="res-ps-without"></td>
+                            <td class="n" id="res-ps-diff"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <details>
+                    <summary>
+                        Sensitivity: your cost difference by spending and by the shape of a no
+                    </summary>
+                    <div class="more">
+                <div class="scroll">
+                    <table id="sensitivity">
+                        <thead>
+                        <tr>
+                            <th>
+                                Normal-rate spending
+                            </th>
+                            <th class="n">
+                                no = 0 % payroll
+                            </th>
+                            <th class="n">
+                                no = 50 % payroll
+                            </th>
+                            <th class="n">
+                                no = 100 % payroll
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="sensitivity-body">
+                        </tbody>
+                    </table>
+                </div>
+                <p class="hint">
+                    Each cell: the extra VAT for your household in CHF a year and, in brackets, the cost difference
+                    against the no path with all other assumptions as set on the left (green: VAT cheaper for you,
+                    red: dearer, grey: within the threshold); the federal share stays as set, the rest is unfunded.
+                </p>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>
+                        Formulas and sources
+                    </summary>
+                    <div class="more">
+                        <div class="notes">
+                            <p>
+                                <b>
+                                    extra VAT revenue formula
+                                </b>
+                                the money the AHV gets from the increase: the increase in points times the revenue per
+                                point of the normal rate
+                            </p>
+                            <p>
+                                <b>
+                                    replacement formula
+                                </b>
+                                after a no the same amount has to come from somewhere: the share replaced by payroll
+                                contributions and the share replaced from the federal budget are set by the reader,
+                                the rest stays unfunded and is taken from the fund; if the two shares add up to more
+                                than 100 %, the federal share is cut to the remainder
+                            </p>
+                            <p>
+                                <b>
+                                    payroll points formula
+                                </b>
+                                the contribution rate needed for the payroll share: the replaced amount divided by the
+                                revenue per point of contributions
+                            </p>
+                            <p>
+                                <b>
+                                    extra VAT formula
+                                </b>
+                                what your household pays: the monthly spending at the normal rate times twelve, times
+                                the increase in points divided by 108.1 (the increase is applied to the net price, the
+                                spending includes today's 8.1 %), times the pass-through to prices
+                            </p>
+                            <p>
+                                <b>
+                                    payroll cost formula
+                                </b>
+                                the wage income times twelve, times the payroll points divided by 100, times the share
+                                of the contribution that falls on the employee's pocket
+                            </p>
+                            <p>
+                                <b>
+                                    federal cost formula
+                                </b>
+                                the amount replaced from the federal budget in billion CHF times the household's share
+                                of a billion of federal savings
+                            </p>
+                            <p>
+                                <b>
+                                    deferred cost formula
+                                </b>
+                                the unfunded amount divided by the number of households, times the weight the reader
+                                gives to a franc missing in the fund; billion CHF divided by million households gives
+                                thousand CHF
+                            </p>
+                            <p>
+                                <b>
+                                    household cost difference formula
+                                </b>
+                                the annual cost of the yes path (extra VAT plus indirect cost) minus the annual cost of
+                                the no path (payroll cost plus federal cost plus deferred cost); a negative difference
+                                means the VAT is the cheaper way for your household
+                            </p>
+                            <p>
+                                <b>
+                                    coverage formula
+                                </b>
+                                the share of the 13th pension that is paid for: the federal contribution (the federal
+                                share of the AHV expenditure times the cost of the 13th pension) plus the new revenue,
+                                divided by the cost of the 13th pension
+                            </p>
+                            <p>
+                                <b>
+                                    deficit formula
+                                </b>
+                                the pay-as-you-go deficit of 2030 without extra financing minus the extra VAT revenue
+                                (yes) or minus the replacement revenue if it has started by 2030 (no); the replacement
+                                starts 2028 plus the years of delay
+                            </p>
+                            <p>
+                                <b>
+                                    fund formula
+                                </b>
+                                the fund of 2035 with the VAT is the BSV figure; without it the BSV figure without
+                                extra financing plus the replacement revenue times the years it has flowed until 2035,
+                                divided by the expenditure of 2035
+                            </p>
+                            <p>
+                                <b>
+                                    generation formula
+                                </b>
+                                the share of the new revenue paid by pensioner households: their share of normal-rate
+                                consumption for the VAT and for the federal budget, zero for payroll contributions; the
+                                unfunded part is left out because nobody has paid it yet
+                            </p>
+                            <p>
+                                <b>
+                                    break-even spending formula
+                                </b>
+                                the normal-rate spending at which the cost difference is zero: the cost of the no path
+                                minus the indirect cost, divided by twelve times the increase over 108.1 times the
+                                pass-through
+                            </p>
+                            <p>
+                                <b>
+                                    verdict formula
+                                </b>
+                                yes if the cost difference is below minus the threshold, no if it is above plus the
+                                threshold, undecided in between; the threshold is an assumption of the reader
+                            </p>
+                            <p>
+                                <b>
+                                    model limits
+                                </b>
+                                one year of operation around 2030 in prices of 2025, no growth of spending or wages,
+                                no hotel rate, no VAT paid indirectly through businesses that cannot deduct it (banks,
+                                insurers, hospitals, the public sector), no investment return of the fund, no
+                                behavioural change of consumers, no structural reform as a way of a no (a higher
+                                retirement age is a cost in years of work, not in francs); the BSV financial
+                                perspectives and the ESTV estimate are the places to look for these effects
+                            </p>
+                        </div>
+                        <div class="src">
+                            <h2>
+                                Sources
+                            </h2>
+                            <ol>
+                                <li>
+                                    <a href="https://www.bsv.admin.ch/de/abstimmung-13-ahv-rente">
+                                        Federal Social Insurance Office BSV, 5 October 2026: 13. AHV-Rente,
+                                        Volksabstimmung über die AHV-Zusatzfinanzierung durch eine Erhöhung der
+                                        Mehrwertsteuer (cost, revenue, deficit and fund figures)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.bsv.admin.ch/de/newnsb/ycAZ-AX4nU4qc3hf5qwJP">
+                                        BSV, 2 July 2026: Neue Finanzperspektiven der Sozialwerke (AHV reference
+                                        scenario, deficit 2030 of 2.7 or 1.2 billion CHF)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.admin.ch/de/newnsb/gZ4zhuBYFjyi">
+                                        Federal Council, 5 October 2026: Bundesrat empfiehlt Ja zur Erhöhung der
+                                        Mehrwertsteuer für die 13. AHV-Rente
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.parlament.ch/de/services/news/Seiten/2026/20260619104626831194158159026_bsd070.aspx">
+                                        Parliament / sda, 19 June 2026: Fragen und Antworten zur Finanzierung der 13.
+                                        AHV-Rente (cost 2026 to 2040, revenue 2028 and 2030, federal contribution)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.bluewin.ch/de/news/politik/rechne-nach-so-viel-zahlst-du-bei-einem-ja-zur-mehrwertsteuer-fuer-die-ahv-li.3640395">
+                                        blue News, 19 October 2026: household burden estimated by the Federal Tax
+                                        Administration ESTV, 7 to 28 CHF a month by income class
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.srf.ch/news/auf-einen-blick-finanzierung-der-13-ahv-rente-in-kuerze">
+                                        SRF, October 2026: Finanzierung der 13. AHV-Rente in Kürze (arguments of both
+                                        sides, votes of the chambers)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.cash.ch/news/fdp-startet-ihre-kampagne-gegen-die-erhohung-der-mehrwertsteuer-972184">
+                                        cash / AWP, September 2026: FDP campaign launch with the BAK Economics study
+                                        (3.6 billion CHF, 545 CHF per household)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.blick.ch/politik/mehrwertsteuer-erhoehung-fuer-13-ahv-parteien-kaempfen-fuer-ein-ja/he297hj">
+                                        Blick, 13 October 2026: the yes alliance of SP, Greens, Centre, GLP and EVP
+                                        presents its arguments
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.20min.ch/story/13-ahv-rente-vpod-sagt-nein-zur-finanzierung-und-spaltet-die-gewerkschaften-103654662">
+                                        20 Minuten, 27 October 2026: the VPOD says no, the fund is a record 60 billion
+                                        CHF in its view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.watson.ch/schweiz/ahv/639875307-13-ahv-rente-darum-steht-die-erhoehung-der-mehrwertsteuer-auf-der-kippe">
+                                        watson, 23 October 2026: first YouGov poll, opponents slightly ahead, the
+                                        argument of structural reform convinces most
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.bsv.admin.ch/de/newnsb/WRt4HyqRpYgpldY11Ev_s">
+                                        compenswiss, 17 February 2026: result 2025, 50.6 billion CHF under management,
+                                        44.8 billion for the AHV including 10.3 billion owed by the IV, net return
+                                        6.34 %
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.parlament.ch/de/services/news/Seiten/2025/20250910192645909194158159026_bsd189.aspx">
+                                        Parliament / sda, 10 September 2025: National Council debate, the FDP's
+                                        stabilisation mechanism and the left's preference for payroll contributions
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.20min.ch/story/abstimmung-13-ahv-rente-die-argumente-des-bundesrats-fuer-die-mwst-erhoehung-103644446">
+                                        20 Minuten, 5 October 2026: the Federal Council's arguments, consumption base
+                                        and tourists
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://dam-api.bfs.admin.ch/hub/api/dam/assets/36197484/master">
+                                        Federal Statistical Office BFS: scenarios of the private households 2025 to
+                                        2055
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.swissinfo.ch/ger/f%c3%bcr-die-13%2e-ahv-rente-wird-die-mehrwertsteuer-erh%c3%b6ht/91614738">
+                                        swissinfo / Keystone-SDA, June 2026: final vote in Parliament and the criticism
+                                        of the social partners
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.blick.ch/politik/tiefere-wertfreigrenze-nuetzt-nichts-schweizer-einkaufstourismus-laesst-sich-nicht-bremsen-id21677707.html">
+                                        Blick, 2026: shopping tourism of more than 10 billion CHF a year despite the
+                                        lower duty-free limit
+                                    </a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </details>
+
+                <script type="application/json" id="calc-data">
+                    {
+                        "inputs": {
+                            "spend": {
+                                "unit": "CHF/month",
+                                "default": 4050,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "wage": {
+                                "unit": "CHF/month",
+                                "default": 8000,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "vat": {
+                                "unit": "points",
+                                "default": 0.4,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "spay": {
+                                "unit": "percent",
+                                "default": 50,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "sfed": {
+                                "unit": "percent",
+                                "default": 25,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wdef": {
+                                "unit": "share",
+                                "default": 1,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "pass": {
+                                "unit": "percent",
+                                "default": 100,
+                                "quality": "assumed",
+                                "confidence": 0.6
+                            },
+                            "vyield": {
+                                "unit": "billion CHF/a",
+                                "default": 3.5,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "pyield": {
+                                "unit": "billion CHF/a",
+                                "default": 4.4,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "inc": {
+                                "unit": "share",
+                                "default": 0.75,
+                                "quality": "assumed",
+                                "confidence": 0.5
+                            },
+                            "hh": {
+                                "unit": "million",
+                                "default": 4.1,
+                                "quality": "measured",
+                                "source": 14
+                            },
+                            "fedhh": {
+                                "unit": "CHF/a",
+                                "default": 240,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "ind": {
+                                "unit": "CHF/a",
+                                "default": 0,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "c13": {
+                                "unit": "billion CHF/a",
+                                "default": 4.5,
+                                "quality": "measured",
+                                "source": 4
+                            },
+                            "fed": {
+                                "unit": "percent",
+                                "default": 20.2,
+                                "quality": "measured",
+                                "source": 4
+                            },
+                            "d30": {
+                                "unit": "billion CHF/a",
+                                "default": 2.7,
+                                "quality": "measured",
+                                "source": 2
+                            },
+                            "f35n": {
+                                "unit": "percent",
+                                "default": 50,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "f35y": {
+                                "unit": "percent",
+                                "default": 69,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "exp35": {
+                                "unit": "billion CHF/a",
+                                "default": 64,
+                                "quality": "assumed",
+                                "confidence": 0.5
+                            },
+                            "delay": {
+                                "unit": "a",
+                                "default": 4,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "p13": {
+                                "unit": "CHF/a",
+                                "default": 0,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "pcons": {
+                                "unit": "percent",
+                                "default": 25,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "thr": {
+                                "unit": "CHF/a",
+                                "default": 50,
+                                "quality": "assumed"
+                            }
+                        },
+                        "presets": {
+                            "estv_avg": {
+                                "spend": 4050,
+                                "wage": 8000,
+                                "p13": 0
+                            },
+                            "pensioner_couple": {
+                                "spend": 3500,
+                                "wage": 0,
+                                "p13": 3780
+                            },
+                            "unions_payroll": {
+                                "spay": 100,
+                                "sfed": 0,
+                                "wdef": 1
+                            },
+                            "fdp_budget": {
+                                "spay": 0,
+                                "sfed": 100,
+                                "wdef": 1
+                            },
+                            "vpod_fund": {
+                                "spay": 0,
+                                "sfed": 0,
+                                "wdef": 0
+                            }
+                        },
+                        "format": {
+                            "dec_point": ".",
+                            "thousand_sep": "'",
+                            "unit_sep": " ",
+                            "positive": "pos",
+                            "negative": "neg"
+                        }
+                    }
+                </script>
+                <script>
+                    (function () {
+                        "use strict";
+
+                        var calc_data = JSON.parse(document.getElementById("calc-data").textContent);
+                        var input_ids = Object.keys(calc_data.inputs);
+                        var format = calc_data.format;
+                        var current_rate = 8.1;
+                        var start_of_increase = 2028;
+                        var meter_scale = 400;
+
+                        function read_number(id) {
+                            var field = document.getElementById("n-" + id);
+                            var result = parseFloat(field.value);
+                            if (isNaN(result)) {
+                                result = calc_data.inputs[id]["default"];
+                            }
+                            return result;
+                        }
+
+                        function read_inputs() {
+                            var result = {};
+                            var i;
+                            for (i = 0; i < input_ids.length; i++) {
+                                result[input_ids[i]] = read_number(input_ids[i]);
+                            }
+                            return result;
+                        }
+
+                        function vat_factor(points, pass) {
+                            // the share of today's gross spending that the increase adds, including the pass-through
+                            var result = points / (100 + current_rate) * pass / 100;
+                            return result;
+                        }
+
+                        function calculate(inp) {
+                            var r = {};
+                            var factor = vat_factor(inp.vat, inp.pass);
+                            r.rvat = inp.vat * inp.vyield;
+                            r.spay = Math.min(inp.spay, 100);
+                            r.sfed = Math.min(inp.sfed, 100 - r.spay);
+                            r.snone = 100 - r.spay - r.sfed;
+                            r.rpay = r.rvat * r.spay / 100;
+                            r.rfed = r.rvat * r.sfed / 100;
+                            r.rnone = r.rvat * r.snone / 100;
+                            r.ppay = r.rpay / inp.pyield;
+                            r.cvat = inp.spend * 12 * factor;
+                            r.cind = inp.ind;
+                            r.cpay = inp.wage * 12 * r.ppay / 100 * inp.inc;
+                            r.cfed = r.rfed * inp.fedhh;
+                            r.cdef = r.rnone * 1000 / inp.hh * inp.wdef;
+                            r.cost_yes = r.cvat + r.cind;
+                            r.cost_no = r.cpay + r.cfed + r.cdef;
+                            r.diff = r.cost_yes - r.cost_no;
+                            r.net_yes = inp.p13 - r.cost_yes;
+                            r.net_no = inp.p13 - r.cost_no;
+                            r.fed13 = inp.c13 * inp.fed / 100;
+                            r.cov_yes = (r.fed13 + r.rvat) / inp.c13 * 100;
+                            r.cov_no = (r.fed13 + r.rpay + r.rfed) / inp.c13 * 100;
+                            r.start_year = start_of_increase + inp.delay;
+                            r.d_yes = inp.d30 - r.rvat;
+                            r.d_no = inp.d30;
+                            if (r.start_year <= 2030) {
+                                r.d_no = inp.d30 - r.rpay - r.rfed;
+                            }
+                            r.years = Math.max(0, 2036 - r.start_year);
+                            r.f_yes = inp.f35y;
+                            r.f_no = inp.f35n + (r.rpay + r.rfed) * r.years / inp.exp35 * 100;
+                            r.ps_yes = inp.pcons;
+                            r.ps_no = NaN;
+                            if (r.spay + r.sfed > 0) {
+                                r.ps_no = r.sfed * inp.pcons / (r.spay + r.sfed);
+                            }
+                            r.spend_even = NaN;
+                            if (factor > 0) {
+                                r.spend_even = (r.cost_no - r.cind) / (12 * factor);
+                            }
+                            if (r.diff < -inp.thr) {
+                                r.verdict = "yes";
+                            } else if (r.diff > inp.thr) {
+                                r.verdict = "no";
+                            } else {
+                                r.verdict = "open";
+                            }
+                            return r;
+                        }
+
+                        function fmt(number, decimals) {
+                            var fixed = Math.abs(number).toFixed(decimals);
+                            var parts = fixed.split(".");
+                            var int_part = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, format.thousand_sep);
+                            var result = int_part;
+                            if (parts.length > 1) {
+                                result = result + format.dec_point + parts[1];
+                            }
+                            if (number < 0) {
+                                result = "-" + result;
+                            }
+                            return result;
+                        }
+
+                        function fmt_unit(number, decimals, unit) {
+                            var result = "-";
+                            if (!isNaN(number)) {
+                                result = fmt(number, decimals) + format.unit_sep + unit;
+                            }
+                            return result;
+                        }
+
+                        function fmt_signed(number, decimals, unit) {
+                            var cls = format.positive;
+                            var sign = "+";
+                            if (number < 0) {
+                                cls = format.negative;
+                                sign = "";
+                            }
+                            // for a cost difference a negative number is the good case for the yes side
+                            var result = "<span class=\"" + cls + "\">" + sign + fmt_unit(number, decimals, unit) + "</span>";
+                            if (isNaN(number)) {
+                                result = "-";
+                            }
+                            return result;
+                        }
+
+                        function set_text(id, html) {
+                            document.getElementById(id).innerHTML = html;
+                        }
+
+                        function render(inp, r) {
+                            set_text("res-c13-with", fmt_unit(inp.c13, 1, "billion CHF/a"));
+                            set_text("res-c13-without", fmt_unit(inp.c13, 1, "billion CHF/a"));
+                            set_text("res-fed13-with", fmt_unit(r.fed13, 2, "billion CHF/a"));
+                            set_text("res-fed13-without", fmt_unit(r.fed13, 2, "billion CHF/a"));
+                            set_text("res-rvat", fmt_unit(r.rvat, 2, "billion CHF/a"));
+                            set_text("res-rpay", fmt_unit(r.rpay, 2, "billion CHF/a"));
+                            set_text("res-ppay-sub", fmt(r.ppay, 2) + " points of contribution");
+                            set_text("res-rfed", fmt_unit(r.rfed, 2, "billion CHF/a"));
+                            set_text("res-rnone", fmt_unit(r.rnone, 2, "billion CHF/a"));
+                            set_text("res-cov-with", fmt_unit(r.cov_yes, 0, "%"));
+                            set_text("res-cov-without", fmt_unit(r.cov_no, 0, "%"));
+                            set_text("res-cov-diff", fmt_signed(r.cov_yes - r.cov_no, 0, "points"));
+                            set_text("res-d-with", fmt_unit(r.d_yes, 1, "billion CHF/a"));
+                            set_text("res-d-without", fmt_unit(r.d_no, 1, "billion CHF/a"));
+                            set_text("res-d-diff", fmt_signed(r.d_yes - r.d_no, 1, "billion CHF/a"));
+                            set_text("res-cvat", fmt_unit(r.cvat, 0, "CHF/a"));
+                            set_text("res-cind", fmt_unit(r.cind, 0, "CHF/a"));
+                            set_text("res-cpay", fmt_unit(r.cpay, 0, "CHF/a"));
+                            set_text("res-cfed", fmt_unit(r.cfed, 0, "CHF/a"));
+                            set_text("res-cdef", fmt_unit(r.cdef, 0, "CHF/a"));
+                            set_text("res-cost-with", fmt_unit(r.cost_yes, 0, "CHF/a"));
+                            set_text("res-cost-without", fmt_unit(r.cost_no, 0, "CHF/a"));
+                            set_text("res-cost-diff", fmt_signed(r.diff, 0, "CHF/a"));
+                            set_text("res-p13-with", fmt_unit(inp.p13, 0, "CHF/a"));
+                            set_text("res-p13-without", fmt_unit(inp.p13, 0, "CHF/a"));
+                            set_text("res-net-with", fmt_unit(r.net_yes, 0, "CHF/a"));
+                            set_text("res-net-without", fmt_unit(r.net_no, 0, "CHF/a"));
+                            set_text("res-net-diff", fmt_signed(r.net_yes - r.net_no, 0, "CHF/a"));
+                            set_text("res-breakeven", fmt_unit(r.spend_even, 0, "CHF/month"));
+                            set_text("res-f-with", fmt_unit(r.f_yes, 0, "%"));
+                            set_text("res-f-without", fmt_unit(r.f_no, 0, "%"));
+                            set_text("res-f-diff", fmt_signed(r.f_yes - r.f_no, 0, "points"));
+                            set_text("res-ps-with", fmt_unit(r.ps_yes, 0, "%"));
+                            set_text("res-ps-without", fmt_unit(r.ps_no, 0, "%"));
+                            set_text("res-ps-diff", fmt_signed(r.ps_yes - r.ps_no, 0, "points"));
+                            render_verdict(inp, r);
+                            render_sensitivity(inp);
+                        }
+
+                        function render_verdict(inp, r) {
+                            var box = document.getElementById("verdict");
+                            var headline;
+                            var text;
+                            var diff = fmt(Math.abs(r.diff), 0);
+                            var cost_yes = fmt(r.cost_yes, 0);
+                            var cost_no = fmt(r.cost_no, 0);
+                            var shape = fmt(r.spay, 0) + " % payroll contributions, " + fmt(r.sfed, 0) + " % federal savings and " + fmt(r.snone, 0) + " % left unfunded";
+                            if (r.verdict === "yes") {
+                                headline = "Yes - under your assumptions the VAT is the cheaper way for your household";
+                                text = "The VAT increase costs your household " + cost_yes + " CHF a year; the way a no would be paid for instead (" + shape + ") costs " + cost_no + " CHF. The VAT path is " + diff + " CHF a year cheaper for you, and it covers " + fmt(r.cov_yes, 0) + " % of the 13th pension against " + fmt(r.cov_no, 0) + " % on the no path.";
+                            } else if (r.verdict === "no") {
+                                headline = "No - under your assumptions the VAT is the dearer way for your household";
+                                text = "The VAT increase costs your household " + cost_yes + " CHF a year; the way a no would be paid for instead (" + shape + ") costs " + cost_no + " CHF. The no path is " + diff + " CHF a year cheaper for you; it covers " + fmt(r.cov_no, 0) + " % of the 13th pension against " + fmt(r.cov_yes, 0) + " % with the VAT.";
+                            } else {
+                                headline = "Undecided on cost - decide on the other arguments";
+                                text = "The difference of " + fmt(r.diff, 0) + " CHF a year is within your threshold of " + fmt(inp.thr, 0) + " CHF: the cost argument does not settle the vote; weigh the fairness between generations, the stability of the AHV, the purchasing power of other households and the chances of a reform instead. The break-even spending is " + fmt_unit(r.spend_even, 0, "CHF a month") + ".";
+                            }
+                            box.className = "verdict " + r.verdict;
+                            set_text("verdict-headline", headline);
+                            set_text("verdict-text", text);
+                            var position = 50 + r.diff / meter_scale * 50;
+                            position = Math.max(1, Math.min(99, position));
+                            document.getElementById("verdict-needle").style.left = position + "%";
+                        }
+
+                        function render_sensitivity(inp) {
+                            var spend_levels = [1500, 2500, 4050, 6000, 9000];
+                            var payroll_levels = [0, 50, 100];
+                            var html = "";
+                            var i;
+                            var j;
+                            for (i = 0; i < spend_levels.length; i++) {
+                                html = html + "<tr><td>" + fmt(spend_levels[i], 0) + " CHF/month</td>";
+                                for (j = 0; j < payroll_levels.length; j++) {
+                                    var scenario = Object.assign({}, inp);
+                                    scenario.spend = spend_levels[i];
+                                    scenario.spay = payroll_levels[j];
+                                    var res = calculate(scenario);
+                                    var cls = "";
+                                    if (res.verdict === "yes") {
+                                        cls = "pos";
+                                    } else if (res.verdict === "no") {
+                                        cls = "neg";
+                                    }
+                                    html = html + "<td class=\"n\"><span class=\"" + cls + "\">" + fmt(res.cvat, 0) + " (" + fmt_signed_plain(res.diff) + ")</span></td>";
+                                }
+                                html = html + "</tr>";
+                            }
+                            set_text("sensitivity-body", html);
+                        }
+
+                        function fmt_signed_plain(number) {
+                            var result = fmt(number, 0);
+                            if (number > 0) {
+                                result = "+" + result;
+                            }
+                            return result;
+                        }
+
+                        function sync_from_number(id) {
+                            var number = document.getElementById("n-" + id);
+                            var range = document.getElementById("r-" + id);
+                            range.value = number.value;
+                        }
+
+                        function sync_from_range(id) {
+                            var number = document.getElementById("n-" + id);
+                            var range = document.getElementById("r-" + id);
+                            number.value = range.value;
+                        }
+
+                        function recalculate() {
+                            var inp = read_inputs();
+                            var r = calculate(inp);
+                            render(inp, r);
+                        }
+
+                        function apply_preset(name) {
+                            var preset = calc_data.presets[name];
+                            var keys = Object.keys(preset);
+                            var i;
+                            for (i = 0; i < keys.length; i++) {
+                                document.getElementById("n-" + keys[i]).value = preset[keys[i]];
+                                sync_from_number(keys[i]);
+                            }
+                            recalculate();
+                        }
+
+                        function bind() {
+                            var i;
+                            for (i = 0; i < input_ids.length; i++) {
+                                (function (id) {
+                                    var number = document.getElementById("n-" + id);
+                                    var range = document.getElementById("r-" + id);
+                                    sync_from_number(id);
+                                    range.addEventListener("input", function () {
+                                        sync_from_range(id);
+                                        recalculate();
+                                    });
+                                    number.addEventListener("input", function () {
+                                        sync_from_number(id);
+                                        recalculate();
+                                    });
+                                }(input_ids[i]));
+                            }
+                            var buttons = document.querySelectorAll("[data-preset]");
+                            for (i = 0; i < buttons.length; i++) {
+                                (function (button) {
+                                    button.addEventListener("click", function () {
+                                        apply_preset(button.getAttribute("data-preset"));
+                                    });
+                                }(buttons[i]));
+                            }
+                        }
+
+                        bind();
+                        recalculate();
+                    }());
+                </script>
+            </section>
+        </div>
+    </div>
+</main>
+<!--usr_msg-->
+<footer class="site-footer">
+    <p>
+        <a href="http://localhost/http/about.php">
+            About
+        </a>
+        &middot;
+        <a href="http://localhost/http/privacy_policy.html">
+            Privacy Policy
+        </a>
+        &middot;
+        All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+            Creative Commons CC0
+        </a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com">
+            program code
+        </a>
+        of this version 0.0.3
+        under the
+        <a href="https://www.gnu.org/licenses/agpl.html">
+            AGPL3
+        </a>
+        Licence.
+    </p>
+</footer>
+</body>
+</html>
