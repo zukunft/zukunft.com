@@ -1,0 +1,719 @@
+{
+  "pod": "zukunft.com",
+  "type": "phraseData",
+  "user": "zukunft.com system test",
+  "version": "0.0.3",
+  "time": "2026-10-29 12:00:00",
+  "selection": [
+    {
+      "name": "sample house",
+      "description": "a fictional house of the sample calculator: 150 m² living space, heated by a heat pump"
+    }
+  ],
+  "description": "Sample of the calculator editor json, which uses every structure that the calculator editor reads at least once (see docs/json_structure.md); the numbers are fictional",
+  "words": [
+    {
+      "name": "house heating",
+      "description": "the heating of a house, which holds the calculator lists and the texts of the page"
+    },
+    {
+      "name": "sample house",
+      "description": "the page phrase, whose values and results the page shows"
+    },
+    {
+      "name": "heated area"
+    },
+    {
+      "name": "living space"
+    },
+    {
+      "name": "square metre"
+    },
+    {
+      "name": "heating system"
+    },
+    {
+      "name": "heat pump"
+    },
+    {
+      "name": "oil boiler"
+    },
+    {
+      "name": "district heating"
+    },
+    {
+      "name": "wood pellets"
+    },
+    {
+      "name": "insulation standard"
+    },
+    {
+      "name": "Minergie"
+    },
+    {
+      "name": "old building"
+    },
+    {
+      "name": "heat pump efficiency"
+    },
+    {
+      "name": "oil price"
+    },
+    {
+      "name": "assumed"
+    },
+    {
+      "name": "confidence"
+    },
+    {
+      "name": "heat demand"
+    },
+    {
+      "name": "annual heat demand"
+    },
+    {
+      "name": "heat demand per area"
+    },
+    {
+      "name": "renewable share"
+    },
+    {
+      "name": "saving"
+    },
+    {
+      "name": "energy cost"
+    },
+    {
+      "name": "energy cost today"
+    },
+    {
+      "name": "first year"
+    },
+    {
+      "name": "lifetime"
+    },
+    {
+      "name": "fuel"
+    },
+    {
+      "name": "heating oil"
+    },
+    {
+      "name": "electricity"
+    },
+    {
+      "name": "price"
+    },
+    {
+      "name": "average"
+    },
+    {
+      "name": "2026"
+    },
+    {
+      "name": "kWh"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "litre"
+    },
+    {
+      "name": "CHF"
+    },
+    {
+      "name": "percent"
+    }
+  ],
+  "triples": [
+    {
+      "name": "kWh per year",
+      "type": "measure unit",
+      "from": "kWh",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "kWh per square metre",
+      "type": "measure unit",
+      "from": "kWh",
+      "verb": "per",
+      "to": "square metre"
+    },
+    {
+      "name": "CHF per litre",
+      "type": "measure unit",
+      "from": "CHF",
+      "verb": "per",
+      "to": "litre"
+    },
+    {
+      "name": "CHF per kWh",
+      "type": "measure unit",
+      "from": "CHF",
+      "verb": "per",
+      "to": "kWh"
+    },
+    {
+      "from": "m²",
+      "verb": "is symbol for",
+      "to": "square metre"
+    },
+    {
+      "from": "%",
+      "verb": "is symbol for",
+      "to": "percent"
+    },
+    {
+      "name": "house heating label",
+      "description": "Heating costs of a house",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating hint",
+      "description": "Compare the heat demand and the energy costs of a heating system for your house.",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating inputs",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator input"
+    },
+    {
+      "name": "house heating inputs label",
+      "description": "Your house",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating input heated area",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "heated area"
+    },
+    {
+      "name": "house heating input heated area label",
+      "description": "Heated living space",
+      "from": "house heating input heated area",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating input heated area hint",
+      "description": "the floor area of all heated rooms",
+      "from": "house heating input heated area",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "field heated area",
+      "from": "heated area",
+      "verb": "can be",
+      "to": "number with limits"
+    },
+    {
+      "name": "heated area input kind",
+      "from": "heated area",
+      "verb": "has a",
+      "to": "living space"
+    },
+    {
+      "name": "heated area field value phrase",
+      "description": "the input shows and stores the value of the living space and not of the whole building",
+      "from": "heated area input kind",
+      "verb": "can be",
+      "to": "field value phrases"
+    },
+    {
+      "name": "house heating input heating system",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "heating system"
+    },
+    {
+      "name": "house heating input heating system order",
+      "from": "house heating input heating system",
+      "verb": "is follower of",
+      "to": "house heating input heated area"
+    },
+    {
+      "name": "field heating system",
+      "from": "heating system",
+      "verb": "can be",
+      "to": "phrase selector"
+    },
+    {
+      "name": "heating system option heat pump",
+      "from": "heating system",
+      "verb": "has a",
+      "to": "heat pump"
+    },
+    {
+      "name": "heating system option heat pump label",
+      "description": "Heat pump (air/water)",
+      "from": "heating system option heat pump",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "heating system option oil boiler",
+      "from": "heating system",
+      "verb": "has a",
+      "to": "oil boiler"
+    },
+    {
+      "name": "heating system option oil boiler order",
+      "from": "heating system option oil boiler",
+      "verb": "is follower of",
+      "to": "heating system option heat pump"
+    },
+    {
+      "from": "district heating",
+      "verb": "is a",
+      "to": "heating system"
+    },
+    {
+      "from": "wood pellets",
+      "verb": "is a",
+      "to": "heating system"
+    },
+    {
+      "name": "wood pellets order",
+      "from": "wood pellets",
+      "verb": "is follower of",
+      "to": "district heating"
+    },
+    {
+      "name": "heating system of the sample house",
+      "from": "sample house",
+      "verb": "uses",
+      "to": "heat pump"
+    },
+    {
+      "name": "house heating input insulation standard",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "insulation standard"
+    },
+    {
+      "name": "house heating input insulation standard order",
+      "from": "house heating input insulation standard",
+      "verb": "is follower of",
+      "to": "house heating input heating system"
+    },
+    {
+      "name": "field insulation standard",
+      "from": "insulation standard",
+      "verb": "can be",
+      "to": "phrase selector"
+    },
+    {
+      "name": "insulation standard options",
+      "description": "the standards offered by the selector are the phrases of the insulation standard values",
+      "from": "insulation standard",
+      "verb": "can be",
+      "to": "field phrase selector value based"
+    },
+    {
+      "name": "house heating assumptions",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator assumption"
+    },
+    {
+      "name": "house heating assumption heat pump efficiency",
+      "from": "house heating assumptions",
+      "verb": "has a",
+      "to": "heat pump efficiency"
+    },
+    {
+      "name": "heat pump efficiency label",
+      "description": "Seasonal performance factor",
+      "from": "heat pump efficiency",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "heat pump efficiency hint",
+      "description": "the heat delivered per kWh of electricity over a whole year",
+      "from": "heat pump efficiency",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating assumption oil price",
+      "from": "house heating assumptions",
+      "verb": "has a",
+      "to": "oil price"
+    },
+    {
+      "name": "house heating assumption oil price order",
+      "from": "house heating assumption oil price",
+      "verb": "is follower of",
+      "to": "house heating assumption heat pump efficiency"
+    },
+    {
+      "name": "house heating assumption oil price hint",
+      "description": "the price of heating oil delivered to the house",
+      "from": "house heating assumption oil price",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating result columns",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator result column"
+    },
+    {
+      "name": "house heating result columns label",
+      "description": "Results",
+      "from": "house heating result columns",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating column first year",
+      "from": "house heating result columns",
+      "verb": "has a",
+      "to": "first year"
+    },
+    {
+      "name": "house heating column lifetime",
+      "from": "house heating result columns",
+      "verb": "has a",
+      "to": "lifetime"
+    },
+    {
+      "name": "house heating column lifetime order",
+      "from": "house heating column lifetime",
+      "verb": "is follower of",
+      "to": "house heating column first year"
+    },
+    {
+      "name": "house heating column lifetime label",
+      "description": "20 years",
+      "from": "house heating column lifetime",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating row groups",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator row group"
+    },
+    {
+      "name": "house heating rows heat demand",
+      "from": "house heating row groups",
+      "verb": "has a",
+      "to": "heat demand"
+    },
+    {
+      "name": "house heating row annual heat demand",
+      "from": "house heating rows heat demand",
+      "verb": "has a",
+      "to": "annual heat demand"
+    },
+    {
+      "name": "house heating row annual heat demand label",
+      "description": "Heat demand",
+      "from": "house heating row annual heat demand",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating row annual heat demand hint",
+      "description": "the heat for the rooms and the hot water",
+      "from": "house heating row annual heat demand",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "house heating row annual heat demand highlight",
+      "from": "house heating row annual heat demand",
+      "verb": "has a",
+      "to": "calculator highlight"
+    },
+    {
+      "name": "annual heat demand side result",
+      "from": "annual heat demand",
+      "verb": "has a",
+      "to": "heat demand per area"
+    },
+    {
+      "name": "house heating row renewable share",
+      "from": "house heating rows heat demand",
+      "verb": "has a",
+      "to": "renewable share"
+    },
+    {
+      "name": "house heating row renewable share order",
+      "from": "house heating row renewable share",
+      "verb": "is follower of",
+      "to": "house heating row annual heat demand"
+    },
+    {
+      "name": "house heating row renewable share filter",
+      "from": "house heating row renewable share",
+      "verb": "with",
+      "to": "heat pump"
+    },
+    {
+      "name": "renewable share highlight",
+      "from": "renewable share",
+      "verb": "has a",
+      "to": "calculator highlight"
+    },
+    {
+      "name": "house heating rows saving",
+      "from": "house heating row groups",
+      "verb": "has a",
+      "to": "saving"
+    },
+    {
+      "name": "house heating rows saving order",
+      "from": "house heating rows saving",
+      "verb": "is follower of",
+      "to": "house heating rows heat demand"
+    },
+    {
+      "name": "house heating rows saving label",
+      "description": "Saving compared with today",
+      "from": "house heating rows saving",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating rows saving signed",
+      "from": "house heating rows saving",
+      "verb": "has a",
+      "to": "calculator signed"
+    },
+    {
+      "name": "saving heat pump",
+      "from": "saving",
+      "verb": "with",
+      "to": "heat pump"
+    },
+    {
+      "name": "saving oil boiler",
+      "from": "saving",
+      "verb": "with",
+      "to": "oil boiler"
+    },
+    {
+      "name": "heat pump label",
+      "description": "Heat pump",
+      "from": "heat pump",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating row saving heat pump",
+      "from": "house heating rows saving",
+      "verb": "has a",
+      "to": "saving heat pump"
+    },
+    {
+      "name": "house heating row saving oil boiler",
+      "from": "house heating rows saving",
+      "verb": "has a",
+      "to": "saving oil boiler"
+    },
+    {
+      "name": "house heating row saving oil boiler order",
+      "from": "house heating row saving oil boiler",
+      "verb": "is follower of",
+      "to": "house heating row saving heat pump"
+    },
+    {
+      "name": "house heating detail tables",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator detail table"
+    },
+    {
+      "name": "house heating detail tables label",
+      "description": "Details and sources",
+      "from": "house heating detail tables",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating detail fuel",
+      "from": "house heating detail tables",
+      "verb": "has a",
+      "to": "fuel"
+    },
+    {
+      "name": "house heating detail fuel label",
+      "description": "Energy prices",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "from": "heating oil",
+      "verb": "is a",
+      "to": "fuel"
+    },
+    {
+      "from": "electricity",
+      "verb": "is a",
+      "to": "fuel"
+    },
+    {
+      "name": "house heating detail column price",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "price"
+    },
+    {
+      "name": "house heating detail column price filter",
+      "from": "house heating detail column price",
+      "verb": "with",
+      "to": "2026"
+    },
+    {
+      "name": "house heating detail fuel average",
+      "from": "house heating detail fuel",
+      "verb": "with",
+      "to": "average"
+    },
+    {
+      "name": "house heating detail fuel average highlight",
+      "from": "house heating detail fuel average",
+      "verb": "has a",
+      "to": "calculator highlight"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "heat demand formula",
+      "description": "the heat demand of a year: the heated area times the heat demand per area of the insulation standard",
+      "expression": "\"annual heat demand\" = \"heated area\" * \"heat demand per area\""
+    },
+    {
+      "name": "saving formula",
+      "description": "the energy cost of today's heating minus the energy cost of the heating system",
+      "expression": "\"saving\" = \"energy cost today\" - \"energy cost\""
+    }
+  ],
+  "sources": [
+    {
+      "name": "sample fuel price statistic",
+      "description": "a fictional statistic of the energy prices for households, used to show a measured value with its source",
+      "url": "https://example.org/fuel-prices"
+    }
+  ],
+  "values": [
+    {
+      "words": ["sample house", "heated area", "living space", "square metre"],
+      "number": "150",
+      "description": "the input value, which names the field value phrase living space"
+    },
+    {
+      "words": ["heated area", "field limit down"],
+      "number": "50"
+    },
+    {
+      "words": ["heated area", "field limit up"],
+      "number": "500"
+    },
+    {
+      "words": ["heated area", "field step"],
+      "number": "10"
+    },
+    {
+      "words": ["insulation standard", "Minergie", "kWh per square metre"],
+      "number": "38",
+      "description": "an option of the value based selector"
+    },
+    {
+      "words": ["insulation standard", "old building", "kWh per square metre"],
+      "number": "120"
+    },
+    {
+      "words": ["sample house", "heat pump efficiency", "assumed"],
+      "number": "3.2",
+      "description": "an assumed value, which the page tags as assumed"
+    },
+    {
+      "words": ["sample house", "heat pump efficiency", "assumed", "confidence"],
+      "number": "0.8",
+      "description": "the confidence of the assumed value, which the page shows next to the assumed tag"
+    },
+    {
+      "words": ["sample house", "oil price", "CHF per litre"],
+      "number": "1.1",
+      "source": "sample fuel price statistic",
+      "description": "a value with a source, which the page tags as measured"
+    },
+    {
+      "words": ["sample house", "price", "heating oil", "2026", "CHF per kWh"],
+      "number": "0.11"
+    },
+    {
+      "words": ["sample house", "price", "electricity", "2026", "CHF per kWh"],
+      "number": "0.27"
+    },
+    {
+      "words": ["sample house", "price", "average", "2026", "CHF per kWh"],
+      "number": "0.19"
+    }
+  ],
+  "results": [
+    {
+      "words": ["sample house", "annual heat demand", "first year", "kWh per year"],
+      "formula": "heat demand formula",
+      "context": ["sample house", "heated area", "living space", "Minergie"],
+      "number": 5700
+    },
+    {
+      "words": ["sample house", "annual heat demand", "lifetime", "kWh"],
+      "formula": "heat demand formula",
+      "number": 114000
+    },
+    {
+      "words": ["sample house", "annual heat demand", "heat demand per area", "kWh per square metre"],
+      "formula": "heat demand formula",
+      "number": 38
+    },
+    {
+      "words": ["sample house", "renewable share", "heat pump", "first year", "percent"],
+      "number": 0.69
+    },
+    {
+      "words": ["sample house", "renewable share", "heat pump", "lifetime", "percent"],
+      "number": 0.72
+    },
+    {
+      "words": ["sample house", "saving heat pump", "first year", "CHF"],
+      "formula": "saving formula",
+      "number": 820
+    },
+    {
+      "words": ["sample house", "saving heat pump", "lifetime", "CHF"],
+      "formula": "saving formula",
+      "number": 16400
+    },
+    {
+      "words": ["sample house", "saving oil boiler", "first year", "CHF"],
+      "formula": "saving formula",
+      "number": -150
+    },
+    {
+      "words": ["sample house", "saving oil boiler", "lifetime", "CHF"],
+      "formula": "saving formula",
+      "number": -3000
+    }
+  ]
+}

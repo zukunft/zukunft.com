@@ -8,26 +8,6 @@ and the use of the values table instead of values_prime
 
 ## Calculator editor
 
-### change top row
-
-in the top row of the calculation editor is written 'Calculator editor  Phrase ... example PV installation  load'
-replace the 'Phrase' with 'for' (translatable if possible) 
-
-### export
-
-add to the Calculator Editor an export button that saves the seed json on the local disc.
-
-### sample 'Calculator Editor' json
-
-create a sample 'Calculator Editor' json that shown all possible cases at least once and create in /docs/json_structure.md
-(not /docs/llm/json_strukture.md, which is written for other LLM KI systems) a short explain for humans of the json structure
-
-### JSON import
-
-add to the 'Calculator Editor' an import button that can be used . The import button to import a calculator json
-(or any other valid json) should be grey with the tooltip 'Save or discard changes before import'
-if there are pending changes.
-
 ## use cases
 
 ### Portfolio Split Calculator
@@ -118,6 +98,10 @@ use a pattern base phrase search for the 'happy time points' phrase and all othe
 Select it by triples linked to a triple 'phrase selector (system)' with the  code_id 'phrase_select'
 
 like for the phrase selector do the same for view selector and other fields where a db row should be selected
+
+### check past changes again
+
+dark / light mode switch, phrase selector, view selector, colour picker, font selector
 
 ## calculator
 

@@ -53,6 +53,153 @@
     function startFormulaEditor(options) {
 
         /* ------------------------------------------------------------------ */
+        /* the translated texts, which the view embeds by their message id      */
+        /* (system_page::formula_editor_texts), with the variables of the       */
+        /* messages of the pod e.g. z$VarPhraseName$z                           */
+        /* ------------------------------------------------------------------ */
+
+        const TEXTS_ID = 'formulaEditorTexts';
+        const VAR_START = 'z$';
+        const VAR_END = '$z';
+        const VAR = {
+            phrase: 'VarPhraseName',
+            formula: 'VarFormulaName',
+            count: 'VarValueCount',
+            countChk: 'VarValueCountCheck',
+            value: 'VarValue',
+            list: 'VarValueList'
+        };
+        const TXT = {
+            save: 'calculator_save',
+            title: 'formula_editor_title',
+            formula: 'formula_editor_formula',
+            results: 'formula_editor_results',
+            formulas: 'formula_editor_formulas',
+            formulasOfPage: 'formula_editor_formulas_of_page',
+            phrase: 'formula_editor_phrase',
+            otherPagePlaceholder: 'formula_editor_other_page_placeholder',
+            load: 'formula_editor_load',
+            filterPlaceholder: 'formula_editor_filter_placeholder',
+            page: 'formula_editor_page',
+            noChanges: 'formula_editor_no_changes',
+            discardAll: 'formula_editor_discard_all',
+            saveCount: 'formula_editor_save_count',
+            tabCompare: 'formula_editor_tab_compare',
+            tabChanges: 'formula_editor_tab_changes',
+            errQuotesEmpty: 'formula_editor_err_quotes_empty',
+            errCommaJoin: 'formula_editor_err_comma_join',
+            errCommaPlace: 'formula_editor_err_comma_place',
+            errChar: 'formula_editor_err_char',
+            errCommaEnd: 'formula_editor_err_comma_end',
+            errNoEqual: 'formula_editor_err_no_equal',
+            errLeft: 'formula_editor_err_left',
+            errRight: 'formula_editor_err_right',
+            errArithmetic: 'formula_editor_err_arithmetic',
+            errCompareNote: 'formula_editor_err_compare_note',
+            formulaCount: 'formula_editor_formula_count',
+            resultOne: 'formula_editor_result_one',
+            resultMany: 'formula_editor_result_many',
+            chipChanged: 'formula_editor_chip_changed',
+            removeName: 'formula_editor_remove_name',
+            replaceBy: 'formula_editor_replace_by',
+            addPhraseTo: 'formula_editor_add_phrase_to',
+            phraseCounts: 'formula_editor_phrase_counts',
+            inContext: 'formula_editor_in_context',
+            morePhrases: 'formula_editor_more_phrases',
+            phrasesOfOperand: 'formula_editor_phrases_of_operand',
+            addPhrase: 'formula_editor_add_phrase',
+            pickerNote: 'formula_editor_picker_note',
+            searchPhrase: 'formula_editor_search_phrase',
+            number: 'formula_editor_number',
+            operator: 'formula_editor_operator',
+            editExpression: 'formula_editor_edit_expression',
+            clickToken: 'formula_editor_click_token',
+            insertAfter: 'formula_editor_insert_after',
+            insPhrase: 'formula_editor_ins_phrase',
+            insNumber: 'formula_editor_ins_number',
+            selection: 'formula_editor_selection',
+            moveLeft: 'formula_editor_move_left',
+            moveRight: 'formula_editor_move_right',
+            remove: 'formula_editor_remove',
+            selectFormula: 'formula_editor_select_formula',
+            discard: 'formula_editor_discard',
+            addOperandTip: 'formula_editor_add_operand_tip',
+            expression: 'formula_editor_expression',
+            expressionText: 'formula_editor_expression_text',
+            expressionTextNote: 'formula_editor_expression_text_note',
+            noValueNames: 'formula_editor_no_value_names',
+            kindValue: 'formula_editor_kind_value',
+            kindResult: 'formula_editor_kind_result',
+            outsideTip: 'formula_editor_outside_tip',
+            outside: 'formula_editor_outside',
+            notCalculated: 'formula_editor_not_calculated',
+            chipSame: 'formula_editor_chip_same',
+            chipChanges: 'formula_editor_chip_changes',
+            chipMissing: 'formula_editor_chip_missing',
+            selectCompare: 'formula_editor_select_compare',
+            ownResultOne: 'formula_editor_own_result_one',
+            ownResultMany: 'formula_editor_own_result_many',
+            ownChangesOne: 'formula_editor_own_changes_one',
+            ownChangesMany: 'formula_editor_own_changes_many',
+            ownMissing: 'formula_editor_own_missing',
+            otherChanges: 'formula_editor_other_changes',
+            noResultChanges: 'formula_editor_no_result_changes',
+            noStoredResult: 'formula_editor_no_stored_result',
+            usesChanged: 'formula_editor_uses_changed',
+            compareNote: 'formula_editor_compare_note',
+            colResult: 'formula_editor_col_result',
+            untilNow: 'formula_editor_until_now',
+            afterSave: 'formula_editor_after_save',
+            noFormulaChanged: 'formula_editor_no_formula_changed',
+            errFix: 'formula_editor_err_fix',
+            formulaOne: 'formula_editor_formula_one',
+            formulaMany: 'formula_editor_formula_many',
+            pageResultsOne: 'formula_editor_page_results_one',
+            pageResultsMany: 'formula_editor_page_results_many',
+            updatePut: 'formula_editor_update_put',
+            copy: 'formula_editor_copy',
+            applyLocalTip: 'formula_editor_apply_local_tip',
+            applyLocal: 'formula_editor_apply_local',
+            savePosts: 'formula_editor_save_posts',
+            saving: 'formula_editor_saving',
+            podAnswered: 'formula_editor_pod_answered',
+            saved: 'formula_editor_saved',
+            notSaved: 'formula_editor_not_saved',
+            changedOne: 'formula_editor_changed_one',
+            changedMany: 'formula_editor_changed_many',
+            invalidTip: 'formula_editor_invalid_tip',
+            copied: 'formula_editor_copied',
+            copyBlocked: 'formula_editor_copy_blocked',
+            loaded: 'formula_editor_loaded',
+            loadFailed: 'formula_editor_load_failed',
+            applied: 'formula_editor_applied'
+        };
+        const textsElement = document.getElementById(TEXTS_ID);
+        const TEXTS = textsElement !== null ? JSON.parse(textsElement.textContent) : {};
+
+        /* the translated text of the message id with its variables e.g. txt(TXT.loaded, {[VAR.phrase]: name}),
+           or the message id itself, so that a missing text is seen */
+        function txt(txtId, vars) {
+            let result = TEXTS[txtId] || txtId;
+            Object.keys(vars || {}).forEach(function (key) {
+                result = result.split(VAR_START + key + VAR_END).join(String(vars[key]));
+            });
+            return result;
+        }
+
+        /* the translated text of the message id as html */
+        function txtHtml(txtId, vars) {
+            const result = esc(txt(txtId, vars));
+            return result;
+        }
+
+        /* the translated text of a number e.g. "1 result" or "2 results" */
+        function txtCount(oneId, manyId, count) {
+            const result = txt(count === 1 ? oneId : manyId, {[VAR.count]: count});
+            return result;
+        }
+
+        /* ------------------------------------------------------------------ */
         /* the hosts of the three components and the toast                      */
         /* ------------------------------------------------------------------ */
 
@@ -70,9 +217,9 @@
             return null;
         }
         if (embedded) {
-            editorHost.innerHTML = '<section class="col editor" aria-label="Formula" id="editor"></section>';
+            editorHost.innerHTML = '<section class="col editor" aria-label="' + txtHtml(TXT.formula) + '" id="editor"></section>';
             if (compareHost !== null) {
-                compareHost.innerHTML = '<section class="col compare" aria-label="Results"><div id="compare"></div></section>';
+                compareHost.innerHTML = '<section class="col compare" aria-label="' + txtHtml(TXT.results) + '"><div id="compare"></div></section>';
             }
         } else {
             buildHosts();
@@ -82,36 +229,36 @@
         function buildHosts() {
             if (selectorHost !== null) {
                 selectorHost.innerHTML = [
-                    '<section class="col formulas" aria-label="Formulas">',
-                    '<div class="col-head"><h2>Formulas of the page</h2><span class="note" id="formulaCount"></span></div>',
+                    '<section class="col formulas" aria-label="' + txtHtml(TXT.formulas) + '">',
+                    '<div class="col-head"><h2>' + txtHtml(TXT.formulasOfPage) + '</h2><span class="note" id="formulaCount"></span></div>',
                     '<form class="tools" id="pageForm">',
-                    '<label for="pageIn" class="note">Phrase</label>',
-                    '<input class="inp" id="pageIn" type="text" placeholder="another page phrase">',
-                    '<button class="btn" type="submit">Load</button>',
+                    '<label for="pageIn" class="note">' + txtHtml(TXT.phrase) + '</label>',
+                    '<input class="inp" id="pageIn" type="text" placeholder="' + txtHtml(TXT.otherPagePlaceholder) + '">',
+                    '<button class="btn" type="submit">' + txtHtml(TXT.load) + '</button>',
                     '</form>',
-                    '<input class="inp" id="formulaFilter" type="search" placeholder="filter by name or phrase">',
+                    '<input class="inp" id="formulaFilter" type="search" placeholder="' + txtHtml(TXT.filterPlaceholder) + '">',
                     '<ul class="flist" id="formulaList"></ul>',
                     '</section>'
                 ].join('');
             }
             editorHost.innerHTML = [
                 '<header class="bar">',
-                '<div class="brand"><b>Formula editor</b><span id="pageName">page</span></div>',
+                '<div class="brand"><b>' + txtHtml(TXT.title) + '</b><span id="pageName">' + txtHtml(TXT.page) + '</span></div>',
                 '<div class="tools right">',
-                '<span class="chip" id="changeCount">no changes</span>',
-                '<button class="btn" id="btnResetAll" type="button" disabled>Discard all</button>',
-                '<button class="btn primary" id="btnSave" type="button" disabled>Save</button>',
+                '<span class="chip" id="changeCount">' + txtHtml(TXT.noChanges) + '</span>',
+                '<button class="btn" id="btnResetAll" type="button" disabled>' + txtHtml(TXT.discardAll) + '</button>',
+                '<button class="btn primary" id="btnSave" type="button" disabled>' + txtHtml(TXT.save) + '</button>',
                 '</div>',
                 '</header>',
-                '<section class="col editor" aria-label="Formula" id="editor"></section>',
+                '<section class="col editor" aria-label="' + txtHtml(TXT.formula) + '" id="editor"></section>',
                 '<div class="toast" id="toast" hidden></div>'
             ].join('');
             if (compareHost !== null) {
                 compareHost.innerHTML = [
-                    '<section class="col compare" aria-label="Results">',
+                    '<section class="col compare" aria-label="' + txtHtml(TXT.results) + '">',
                     '<div class="tabs" role="tablist">',
-                    '<button class="tab on" type="button" data-tab="compare" role="tab">Results until now vs. after save</button>',
-                    '<button class="tab" type="button" data-tab="changes" role="tab">Changes</button>',
+                    '<button class="tab on" type="button" data-tab="compare" role="tab">' + txtHtml(TXT.tabCompare) + '</button>',
+                    '<button class="tab" type="button" data-tab="changes" role="tab">' + txtHtml(TXT.tabChanges) + '</button>',
                     '</div>',
                     '<div id="compare"></div>',
                     '<div id="changes" hidden></div>',
@@ -305,7 +452,7 @@
                     const name = m[1].trim();
                     if (name === '') {
                         result.ok = false;
-                        result.error = 'A phrase name between the quotes is missing.';
+                        result.error = txt(TXT.errQuotesEmpty);
                     } else if (joinNext && last !== undefined && last.t === T_PHR) {
                         last.names.push(name);
                     } else {
@@ -314,7 +461,7 @@
                     joinNext = false;
                 } else if (joinNext) {
                     result.ok = false;
-                    result.error = 'A comma joins two phrases of one operand, e.g. "delivered electricity","lifetime".';
+                    result.error = txt(TXT.errCommaJoin);
                 } else if (m[2] !== undefined) {
                     result.tokens.push({t: T_NUM, v: Number(m[2])});
                 } else if (m[3] !== undefined) {
@@ -326,11 +473,11 @@
                         joinNext = true;
                     } else {
                         result.ok = false;
-                        result.error = 'A comma is only allowed between two phrases of one operand.';
+                        result.error = txt(TXT.errCommaPlace);
                     }
                 } else {
                     result.ok = false;
-                    result.error = 'Unexpected character "' + m[6] + '": only phrases in quotes, numbers, + - * / and brackets are allowed.';
+                    result.error = txt(TXT.errChar, {[VAR.value]: m[6]});
                 }
                 if (m[0] === '') {
                     m = null;
@@ -340,7 +487,7 @@
             }
             if (result.ok && joinNext) {
                 result.ok = false;
-                result.error = 'A phrase is expected after the comma.';
+                result.error = txt(TXT.errCommaEnd);
             }
             return result;
         }
@@ -351,7 +498,7 @@
             const pos = String(text).indexOf(CHAR_CALC);
             if (pos < 0) {
                 result.ok = false;
-                result.error = 'The expression needs a "=": the phrase left of it gets the result.';
+                result.error = txt(TXT.errNoEqual);
             } else {
                 const left = tokenize(text.slice(0, pos));
                 const right = tokenize(text.slice(pos + 1));
@@ -360,13 +507,13 @@
                     result.error = left.error;
                 } else if (left.tokens.length !== 1 || left.tokens[0].t !== T_PHR) {
                     result.ok = false;
-                    result.error = 'Left of the "=" exactly one phrase (or phrases joined by a comma) is expected.';
+                    result.error = txt(TXT.errLeft);
                 } else if (!right.ok) {
                     result.ok = false;
                     result.error = right.error;
                 } else if (right.tokens.length === 0) {
                     result.ok = false;
-                    result.error = 'Right of the "=" the calculation is missing.';
+                    result.error = txt(TXT.errRight);
                 } else {
                     result.left = left.tokens[0];
                     result.right = right.tokens;
@@ -375,7 +522,7 @@
                     });
                     if (check === null) {
                         result.ok = false;
-                        result.error = 'The arithmetic is not valid: check the operators and the brackets.';
+                        result.error = txt(TXT.errArithmetic);
                     }
                 }
             }
@@ -806,15 +953,15 @@
                 const result = needle === '' || hay.includes(needle);
                 return result;
             });
-            document.getElementById('formulaCount').textContent = shown.length + ' of ' + model.formulas.length;
+            document.getElementById('formulaCount').textContent = txt(TXT.formulaCount, {[VAR.count]: shown.length, [VAR.countChk]: model.formulas.length});
             host.innerHTML = shown.map(function (f) {
                 const sel = f.key === selectedKey ? ' sel' : '';
                 const n = model.results.filter(function (r) {
                     return r.formula === f.name;
                 }).length;
-                let chip = '<span class="note">' + n + (n === 1 ? ' result' : ' results') + '</span>';
+                let chip = '<span class="note">' + esc(txtCount(TXT.resultOne, TXT.resultMany, n)) + '</span>';
                 if (isChanged(f)) {
-                    chip = '<span class="chip changed">changed</span>';
+                    chip = '<span class="chip changed">' + txtHtml(TXT.chipChanged) + '</span>';
                 }
                 const result = '<li class="' + sel.trim() + '" data-key="' + esc(f.key) + '" tabindex="0" role="option" aria-selected="' + (sel ? 'true' : 'false') + '">' +
                     '<div class="fname"><span>' + esc(f.name) + '</span>' + chip + '</div>' +
@@ -895,14 +1042,14 @@
         function pickerHtml(f, tok) {
             const names = tok.names.map(function (name, i) {
                 const sel = pickerMode === 'replace' && i === selName ? ' sel' : '';
-                const x = tok.names.length > 1 ? '<button type="button" class="x" data-act="dropName" data-i="' + i + '" title="remove this phrase from the operand">×</button>' : '';
+                const x = tok.names.length > 1 ? '<button type="button" class="x" data-act="dropName" data-i="' + i + '" title="' + txtHtml(TXT.removeName) + '">×</button>' : '';
                 const result = '<span class="name' + sel + '" data-act="pickName" data-i="' + i + '">' + esc(name) + x + '</span>';
                 return result;
             }).join('');
             const addSel = pickerMode === 'add' ? ' primary' : '';
-            let title = 'Replace "' + esc(tok.names[selName] || tok.names[0]) + '" by';
+            let title = txt(TXT.replaceBy, {[VAR.phrase]: tok.names[selName] || tok.names[0]});
             if (pickerMode === 'add') {
-                title = 'Add a phrase to the operand';
+                title = txt(TXT.addPhraseTo);
             }
             const list = pickerPhrases(f);
             const shown = list.slice(0, pickerFilter.trim() === '' ? 80 : 200);
@@ -910,11 +1057,11 @@
                 const cur = tok.names.includes(x.p.name) ? ' cur' : '';
                 let count = '';
                 if (x.p.values > 0 || x.p.results > 0) {
-                    count = '<span class="note n">' + x.p.values + ' val · ' + x.p.results + ' res</span>';
+                    count = '<span class="note n">' + txtHtml(TXT.phraseCounts, {[VAR.count]: x.p.values, [VAR.countChk]: x.p.results}) + '</span>';
                 }
                 let ctx = '';
                 if (x.ctx) {
-                    ctx = ' <span class="chip ok">in context</span>';
+                    ctx = ' <span class="chip ok">' + txtHtml(TXT.inContext) + '</span>';
                 }
                 const result = '<li data-act="pick" data-name="' + esc(x.p.name) + '" title="' + esc(x.p.description) + '">' +
                     '<span>' + esc(x.p.name) + ctx + '</span>' +
@@ -923,13 +1070,13 @@
             }).join('');
             let more = '';
             if (list.length > shown.length) {
-                more = '<div class="note">' + (list.length - shown.length) + ' more phrases: narrow the filter.</div>';
+                more = '<div class="note">' + txtHtml(TXT.morePhrases, {[VAR.count]: list.length - shown.length}) + '</div>';
             }
-            const result = '<div class="box"><div class="box-head"><h4>Phrases of the operand</h4>' +
-                '<button type="button" class="btn small' + addSel + '" data-act="addMode">+ phrase</button></div>' +
+            const result = '<div class="box"><div class="box-head"><h4>' + txtHtml(TXT.phrasesOfOperand) + '</h4>' +
+                '<button type="button" class="btn small' + addSel + '" data-act="addMode">' + txtHtml(TXT.addPhrase) + '</button></div>' +
                 '<div class="names">' + names + '</div>' +
-                '<div class="note">' + title + ' (the result is calculated for every value that names all phrases of the operand):</div>' +
-                '<input class="inp" id="pickerIn" type="search" placeholder="search phrase" value="' + esc(pickerFilter) + '" autocomplete="off">' +
+                '<div class="note">' + txtHtml(TXT.pickerNote, {[VAR.value]: title}) + '</div>' +
+                '<input class="inp" id="pickerIn" type="search" placeholder="' + txtHtml(TXT.searchPhrase) + '" value="' + esc(pickerFilter) + '" autocomplete="off">' +
                 '<ul class="plist" id="pickerList">' + items + '</ul>' + more + '</div>';
             return result;
         }
@@ -937,9 +1084,9 @@
         function toolsHtml(parsed, tok) {
             let specific = '';
             if (tok !== null && tok.t === T_NUM) {
-                specific = '<label class="row">Number <input class="inp" id="numIn" type="number" step="any" value="' + esc(tok.v) + '" style="width: 140px;"></label>';
+                specific = '<label class="row">' + txtHtml(TXT.number) + ' <input class="inp" id="numIn" type="number" step="any" value="' + esc(tok.v) + '" style="width: 140px;"></label>';
             } else if (tok !== null && tok.t === T_OP) {
-                specific = '<div class="row"><span class="note">Operator</span>' + ['+', '-', '*', '/'].map(function (c) {
+                specific = '<div class="row"><span class="note">' + txtHtml(TXT.operator) + '</span>' + ['+', '-', '*', '/'].map(function (c) {
                     const on = tok.c === c ? ' primary' : '';
                     const result = '<button type="button" class="btn small' + on + '" data-act="setOp" data-c="' + c + '">' + c + '</button>';
                     return result;
@@ -947,21 +1094,21 @@
             }
             const onRight = selTok !== null && selTok.side === 'right';
             const dis = onRight ? '' : ' disabled';
-            const result = '<div class="box"><div class="box-head"><h4>Edit the expression</h4><span class="note">click a token to select it</span></div>' +
+            const result = '<div class="box"><div class="box-head"><h4>' + txtHtml(TXT.editExpression) + '</h4><span class="note">' + txtHtml(TXT.clickToken) + '</span></div>' +
                 specific +
-                '<div class="row"><span class="note">Insert after the selection</span>' +
-                '<button type="button" class="btn small" data-act="ins" data-kind="phr">phrase</button>' +
-                '<button type="button" class="btn small" data-act="ins" data-kind="num">number</button>' +
+                '<div class="row"><span class="note">' + txtHtml(TXT.insertAfter) + '</span>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="phr">' + txtHtml(TXT.insPhrase) + '</button>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="num">' + txtHtml(TXT.insNumber) + '</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="+">+</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="-">−</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="*">×</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="/">÷</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="br" data-c="(">(</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="br" data-c=")">)</button></div>' +
-                '<div class="row"><span class="note">Selection</span>' +
-                '<button type="button" class="btn small" data-act="move" data-d="-1"' + dis + '>◀ move</button>' +
-                '<button type="button" class="btn small" data-act="move" data-d="1"' + dis + '>move ▶</button>' +
-                '<button type="button" class="btn small danger" data-act="del"' + dis + '>remove</button></div></div>';
+                '<div class="row"><span class="note">' + txtHtml(TXT.selection) + '</span>' +
+                '<button type="button" class="btn small" data-act="move" data-d="-1"' + dis + '>' + txtHtml(TXT.moveLeft) + '</button>' +
+                '<button type="button" class="btn small" data-act="move" data-d="1"' + dis + '>' + txtHtml(TXT.moveRight) + '</button>' +
+                '<button type="button" class="btn small danger" data-act="del"' + dis + '>' + txtHtml(TXT.remove) + '</button></div></div>';
             return result;
         }
 
@@ -969,36 +1116,36 @@
             const host = document.getElementById('editor');
             const f = formulaByKey(selectedKey);
             if (f === null) {
-                host.innerHTML = '<h2>Formula</h2><div class="note">Select a formula on the left.</div>';
+                host.innerHTML = '<h2>' + txtHtml(TXT.formula) + '</h2><div class="note">' + txtHtml(TXT.selectFormula) + '</div>';
             } else {
                 const parsed = currentParsed(f);
                 const draft = drafts[f.key];
                 const text = currentText(f);
                 let chip = '';
                 if (isChanged(f)) {
-                    chip = '<span class="chip changed">changed</span> <button type="button" class="btn small" data-act="resetOne">discard</button>';
+                    chip = '<span class="chip changed">' + txtHtml(TXT.chipChanged) + '</span> <button type="button" class="btn small" data-act="resetOne">' + txtHtml(TXT.discard) + '</button>';
                 }
                 let err = '';
                 if (draft !== undefined && draft.error) {
-                    err = '<div class="err">' + esc(draft.error) + ' The compare list shows the last valid expression.</div>';
+                    err = '<div class="err">' + esc(draft.error) + ' ' + txtHtml(TXT.errCompareNote) + '</div>';
                 }
                 const tokens = [tokenHtml(parsed.left, 'left', 0), '<span class="tok eq">=</span>']
                     .concat(parsed.right.map(function (tok, i) {
                         return tokenHtml(tok, 'right', i);
                     }));
-                tokens.push('<button type="button" class="tok add" data-act="ins" data-kind="phr" data-end="1" title="add an operand at the end">+ phrase</button>');
+                tokens.push('<button type="button" class="tok add" data-act="ins" data-kind="phr" data-end="1" title="' + txtHtml(TXT.addOperandTip) + '">' + txtHtml(TXT.addPhrase) + '</button>');
                 const tok = selectedToken(parsed);
                 let picker = '';
                 if (tok !== null && tok.t === T_PHR) {
                     picker = pickerHtml(f, tok);
                 }
-                host.innerHTML = '<div class="col-head"><h2>Formula</h2><span>' + chip + '</span></div>' +
+                host.innerHTML = '<div class="col-head"><h2>' + txtHtml(TXT.formula) + '</h2><span>' + chip + '</span></div>' +
                     '<h3>' + esc(f.name) + '</h3>' +
                     (f.description ? '<div class="note">' + esc(f.description) + '</div>' : '') +
-                    '<div class="expr" id="exprRow" role="listbox" aria-label="expression">' + tokens.join('') + '</div>' +
+                    '<div class="expr" id="exprRow" role="listbox" aria-label="' + txtHtml(TXT.expression) + '">' + tokens.join('') + '</div>' +
                     toolsHtml(parsed, tok) +
                     picker +
-                    '<div class="box"><div class="box-head"><h4>Expression as text</h4><span class="note">the phrase left of the = gets the result; each operand is a phrase in quotes</span></div>' +
+                    '<div class="box"><div class="box-head"><h4>' + txtHtml(TXT.expressionText) + '</h4><span class="note">' + txtHtml(TXT.expressionTextNote) + '</span></div>' +
                     '<textarea class="inp" id="expText" rows="2" spellcheck="false">' + esc(text) + '</textarea>' + err + '</div>';
             }
         }
@@ -1049,12 +1196,12 @@
             const base = BASE.operands[i];
             const rows = used.map(function (u, k) {
                 const before = base[k] !== undefined && base[k].hit !== null && base[k].names.join(',') === u.names.join(',') ? base[k].number : null;
-                let entry = '<span class="chip missing">no value names ' + esc(u.names.join(', ')) + ' in the context</span>';
+                let entry = '<span class="chip missing">' + txtHtml(TXT.noValueNames, {[VAR.list]: u.names.join(', ')}) + '</span>';
                 if (u.hit !== null) {
                     const e = u.hit.entry;
-                    let kind = e.kind === 'value' ? 'value' : 'result of ' + esc(e.formula);
+                    let kind = e.kind === 'value' ? txtHtml(TXT.kindValue) : txtHtml(TXT.kindResult, {[VAR.formula]: e.formula});
                     if (!u.hit.strict) {
-                        kind = kind + ' <span class="chip changed" title="no value names the phrases within the context of the result; the nearest value of the page is used">outside the context</span>';
+                        kind = kind + ' <span class="chip changed" title="' + txtHtml(TXT.outsideTip) + '">' + txtHtml(TXT.outside) + '</span>';
                     }
                     entry = wordsHtml(e, null) + ' <span class="note">' + kind + '</span>';
                 }
@@ -1067,7 +1214,7 @@
                 }).join(',')) + '</td><td>' + entry + '</td><td class="n">' + num + '</td></tr>';
                 return result;
             }).join('');
-            let result = '<div class="note">The expression could not be calculated.</div>';
+            let result = '<div class="note">' + txtHtml(TXT.notCalculated) + '</div>';
             if (rows !== '') {
                 result = '<table class="ops"><tbody>' + rows + '</tbody></table>';
             }
@@ -1084,11 +1231,11 @@
                 const pct = (after - res.stored) / Math.abs(res.stored) * 100;
                 delta = '<div class="delta">' + (after - res.stored > 0 ? '+' : '') + fmt(after - res.stored) + ' (' + (pct > 0 ? '+' : '') + fmt(pct) + ' %)</div>';
             }
-            let chip = '<span class="chip same">same</span>';
+            let chip = '<span class="chip same">' + txtHtml(TXT.chipSame) + '</span>';
             if (status === 'changed') {
-                chip = '<span class="chip changed">changes</span>';
+                chip = '<span class="chip changed">' + txtHtml(TXT.chipChanges) + '</span>';
             } else if (status === 'missing') {
-                chip = '<span class="chip missing">cannot be calculated</span>';
+                chip = '<span class="chip missing">' + txtHtml(TXT.chipMissing) + '</span>';
             }
             let result = '<tr class="res' + (open ? ' open' : '') + '" data-i="' + i + '" tabindex="0" aria-expanded="' + (open ? 'true' : 'false') + '">' +
                 '<td>' + wordsHtml(res, f) + '</td>' +
@@ -1107,7 +1254,7 @@
             if (host === null) {
                 /* the view has no result compare */
             } else if (f === null) {
-                host.innerHTML = '<div class="note">Select a formula to compare its results.</div>';
+                host.innerHTML = '<div class="note">' + txtHtml(TXT.selectCompare) + '</div>';
             } else {
                 const own = [];
                 const others = new Map();
@@ -1131,36 +1278,37 @@
                 others.forEach(function (list) {
                     otherCount = otherCount + list.length;
                 });
-                let summary = '<span class="chip">' + own.length + ' ' + (own.length === 1 ? 'result' : 'results') + ' of this formula</span>';
+                let summary = '<span class="chip">' + esc(txtCount(TXT.ownResultOne, TXT.ownResultMany, own.length)) + '</span>';
                 if (ownChanged > 0) {
-                    summary = summary + '<span class="chip changed">' + ownChanged + ' change' + (ownChanged === 1 ? 's' : '') + '</span>';
+                    summary = summary + '<span class="chip changed">' + esc(txtCount(TXT.ownChangesOne, TXT.ownChangesMany, ownChanged)) + '</span>';
                 }
                 if (ownMissing > 0) {
-                    summary = summary + '<span class="chip missing">' + ownMissing + ' cannot be calculated</span>';
+                    summary = summary + '<span class="chip missing">' + txtHtml(TXT.ownMissing, {[VAR.count]: ownMissing}) + '</span>';
                 }
                 if (otherCount > 0) {
-                    summary = summary + '<span class="chip changed">' + otherCount + ' result' + (otherCount === 1 ? '' : 's') + ' of ' + others.size + ' other formula' + (others.size === 1 ? '' : 's') + ' change' + (otherCount === 1 ? 's' : '') + ' too</span>';
+                    summary = summary + '<span class="chip changed">' + txtHtml(TXT.otherChanges, {[VAR.count]: otherCount}) + '</span>';
                 }
                 if (ownChanged === 0 && ownMissing === 0 && otherCount === 0) {
-                    summary = summary + '<span class="chip ok">no result changes</span>';
+                    summary = summary + '<span class="chip ok">' + txtHtml(TXT.noResultChanges) + '</span>';
                 }
                 let rows = '<tr class="grp"><td colspan="4">' + esc(f.name) + ' <span class="note mono">' + esc(currentText(f)) + '</span></td></tr>';
                 if (own.length === 0) {
-                    rows = rows + '<tr><td colspan="4" class="note">The page has no stored result of this formula.</td></tr>';
+                    rows = rows + '<tr><td colspan="4" class="note">' + txtHtml(TXT.noStoredResult) + '</td></tr>';
                 }
                 rows = rows + own.map(function (i) {
                     return rowHtml(i, f);
                 }).join('');
                 others.forEach(function (list, name) {
                     const of = formulaByName(name);
-                    rows = rows + '<tr class="grp"><td colspan="4">' + esc(name) + ' <span class="note">changes because it uses a changed result</span> <span class="note mono">' + esc(of !== null ? currentText(of) : '') + '</span></td></tr>';
+                    rows = rows + '<tr class="grp"><td colspan="4">' + esc(name) + ' <span class="note">' + txtHtml(TXT.usesChanged) + '</span> <span class="note mono">' + esc(of !== null ? currentText(of) : '') + '</span></td></tr>';
                     rows = rows + list.map(function (i) {
                         return rowHtml(i, of);
                     }).join('');
                 });
                 host.innerHTML = '<div class="summary">' + summary + '</div>' +
-                    '<div class="note">Until now: the number stored by the pod. After save: the number calculated with the changed expression, using the same values; click a row to see the values used.</div>' +
-                    '<div class="twrap"><table class="cmp"><thead><tr><th>result</th><th class="n">until now</th><th class="n">after save</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+                    '<div class="note">' + txtHtml(TXT.compareNote) + '</div>' +
+                    '<div class="twrap"><table class="cmp"><thead><tr><th>' + txtHtml(TXT.colResult) + '</th><th class="n">' + txtHtml(TXT.untilNow) + '</th>' +
+                    '<th class="n">' + txtHtml(TXT.afterSave) + '</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div>';
             }
         }
 
@@ -1201,25 +1349,25 @@
                 }
             });
             if (list.length === 0) {
-                host.innerHTML = '<div class="note">No formula is changed.</div>';
+                host.innerHTML = '<div class="note">' + txtHtml(TXT.noFormulaChanged) + '</div>';
             } else {
                 const diffs = list.map(function (f) {
-                    const result = '<div class="box"><div class="box-head"><h4>' + esc(f.name) + '</h4><button type="button" class="btn small" data-act="resetKey" data-key="' + esc(f.key) + '">discard</button></div>' +
-                        '<div class="diff"><span class="k">until now</span><span class="mono old">' + esc(f.expression) + '</span>' +
-                        '<span class="k">after save</span><span class="mono">' + esc(currentText(f)) + '</span></div></div>';
+                    const result = '<div class="box"><div class="box-head"><h4>' + esc(f.name) + '</h4><button type="button" class="btn small" data-act="resetKey" data-key="' + esc(f.key) + '">' + txtHtml(TXT.discard) + '</button></div>' +
+                        '<div class="diff"><span class="k">' + txtHtml(TXT.untilNow) + '</span><span class="mono old">' + esc(f.expression) + '</span>' +
+                        '<span class="k">' + txtHtml(TXT.afterSave) + '</span><span class="mono">' + esc(currentText(f)) + '</span></div></div>';
                     return result;
                 }).join('');
                 let errNote = '';
                 if (hasErrors()) {
-                    errNote = '<div class="err">A changed expression is not valid; fix it before the save.</div>';
+                    errNote = '<div class="err">' + txtHtml(TXT.errFix) + '</div>';
                 }
-                host.innerHTML = '<div class="summary"><span class="chip changed">' + list.length + ' formula' + (list.length === 1 ? '' : 's') + '</span>' +
-                    '<span class="chip">' + changedResults + ' result' + (changedResults === 1 ? '' : 's') + ' of the page change</span></div>' + errNote +
+                host.innerHTML = '<div class="summary"><span class="chip changed">' + esc(txtCount(TXT.formulaOne, TXT.formulaMany, list.length)) + '</span>' +
+                    '<span class="chip">' + esc(txtCount(TXT.pageResultsOne, TXT.pageResultsMany, changedResults)) + '</span></div>' + errNote +
                     diffs +
-                    '<div class="box"><div class="box-head"><h4>Update put message</h4><div class="row">' +
-                    '<button type="button" class="btn small" data-act="copyJson">copy</button>' +
-                    '<button type="button" class="btn small" data-act="applyLocal" title="take the changed expressions as the stored ones without a pod, e.g. to try the editor">apply without pod</button></div></div>' +
-                    '<div class="note">Save posts this message to ' + esc(API_UPDATE_PUT) + '; the pod stores the expression as your own version of the formula and calculates the results again.</div>' +
+                    '<div class="box"><div class="box-head"><h4>' + txtHtml(TXT.updatePut) + '</h4><div class="row">' +
+                    '<button type="button" class="btn small" data-act="copyJson">' + txtHtml(TXT.copy) + '</button>' +
+                    '<button type="button" class="btn small" data-act="applyLocal" title="' + txtHtml(TXT.applyLocalTip) + '">' + txtHtml(TXT.applyLocal) + '</button></div></div>' +
+                    '<div class="note">' + txtHtml(TXT.savePosts, {[VAR.value]: API_UPDATE_PUT}) + '</div>' +
                     '<pre class="json" id="jsonOut">' + esc(JSON.stringify(putMessage(), null, 2)) + '</pre></div>';
             }
         }
@@ -1258,7 +1406,7 @@
             const btn = document.getElementById('btnSave');
             const message = putMessage();
             btn.disabled = true;
-            btn.textContent = 'Saving…';
+            btn.textContent = txt(TXT.saving);
             fetch(API_UPDATE_PUT, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken()},
@@ -1268,16 +1416,16 @@
                 if (response.ok) {
                     result = response.json();
                 } else {
-                    throw new Error('the pod answered ' + response.status);
+                    throw new Error(txt(TXT.podAnswered, {[VAR.value]: response.status}));
                 }
                 return result;
             }).then(function () {
                 applySaved();
-                toast('Saved: the changed formulas are stored as your version.');
+                toast(txt(TXT.saved));
             }).catch(function (e) {
                 tab = 'changes';
                 renderAll();
-                toast('Not saved: ' + e.message + '. The message is shown in the Changes tab.');
+                toast(txt(TXT.notSaved, {[VAR.value]: e.message}));
             });
         }
 
@@ -1288,14 +1436,14 @@
             }
             const n = changedFormulas().length;
             const chip = document.getElementById('changeCount');
-            chip.textContent = n === 0 ? 'no changes' : n + ' formula' + (n === 1 ? '' : 's') + ' changed';
+            chip.textContent = n === 0 ? txt(TXT.noChanges) : txtCount(TXT.changedOne, TXT.changedMany, n);
             chip.className = n === 0 ? 'chip' : 'chip changed';
             document.getElementById('btnResetAll').disabled = n === 0;
             const btn = document.getElementById('btnSave');
             btn.disabled = n === 0 || hasErrors();
-            btn.textContent = n === 0 ? 'Save' : 'Save (' + n + ')';
-            btn.title = hasErrors() ? 'a changed expression is not valid' : '';
-            document.getElementById('pageName').textContent = model.page || 'page';
+            btn.textContent = n === 0 ? txt(TXT.save) : txt(TXT.saveCount, {[VAR.count]: n});
+            btn.title = hasErrors() ? txt(TXT.invalidTip) : '';
+            document.getElementById('pageName').textContent = model.page || txt(TXT.page);
         }
 
         function renderAll() {
@@ -1438,14 +1586,14 @@
         function copyJson() {
             const text = document.getElementById('jsonOut').textContent;
             navigator.clipboard.writeText(text).then(function () {
-                toast('Message copied.');
+                toast(txt(TXT.copied));
             }).catch(function () {
                 const range = document.createRange();
                 range.selectNodeContents(document.getElementById('jsonOut'));
                 const sel = window.getSelection();
                 sel.removeAllRanges();
                 sel.addRange(range);
-                toast('Copy is blocked here: the message is selected, copy it with the keyboard.');
+                toast(txt(TXT.copyBlocked));
             });
         }
 
@@ -1457,14 +1605,14 @@
                 if (response.ok) {
                     result = response.json();
                 } else {
-                    throw new Error('the pod answered ' + response.status);
+                    throw new Error(txt(TXT.podAnswered, {[VAR.value]: response.status}));
                 }
                 return result;
             }).then(function (doc) {
                 boot(doc);
-                toast('Loaded ' + (model.page || name) + '.');
+                toast(txt(TXT.loaded, {[VAR.phrase]: model.page || name}));
             }).catch(function (e) {
-                toast('Cannot load "' + name + '": ' + e.message + '.');
+                toast(txt(TXT.loadFailed, {[VAR.phrase]: name, [VAR.value]: e.message}));
             });
         }
 
@@ -1528,7 +1676,7 @@
                     copyJson();
                 } else if (act === 'applyLocal' && !hasErrors()) {
                     applySaved();
-                    toast('Applied without a pod: the changed expressions are now the stored ones.');
+                    toast(txt(TXT.applied));
                 }
             }
         }

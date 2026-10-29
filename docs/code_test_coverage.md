@@ -2278,7 +2278,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 885 functions of frontend have no test at all
+## 884 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2378,7 +2378,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- columns_html - 0 unit test calls
     \-- hit_list - 0 unit test calls
     \-- key_names - 0 unit test calls
-    \-- mode_select - 0 unit test calls
     \-- search_form - 0 unit test calls
 \-- data_object
     \-- add_components_to_views - 0 unit test calls
@@ -4524,7 +4523,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 516 functions of frontend have incomplete tests
+## 517 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4601,6 +4600,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- config_tree
     \-- font_select - 1 unit test calls
     \-- load - 6 unit test calls shared by 17 classes
+    \-- mode_select - 1 unit test calls
 \-- data_object
     \-- formula_link_list - 2 unit test calls shared by 2 classes
     \-- formula_list - 6 unit test calls shared by 4 classes

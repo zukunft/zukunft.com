@@ -147,7 +147,22 @@ the calculator editor and gets the changes back after an undo, so that one save 
 the unit and scaling phrases of the frontend type cache with their id and name in
 the format of the typeLists api (`system_page::calculator_editor_types`), so that
 the script finds the id of a verb and knows a unit without an api call; only
-these, because the whole typeLists answer is much larger than the page. The save posts one update put
+these, because the whole typeLists answer is much larger than the page. The script has no text of its
+own: the page embeds the translated texts by their message id as json data too, i.e. all messages
+with the prefix `calc_editor_` and the texts of the calculator page that the preview shows
+(`system_page::calculator_editor_texts`); the script names each message id once (`TXT` in
+`calculator_editor.js`) and fills the variables of a message like the pod e.g. `z$VarPhraseName$z`.
+The formula editor gets its texts the same way with the prefix `formula_editor_`
+(`system_page::formula_editor_texts`), which the formula editor view and the calculator editor
+embed, because both start the formula editor. The export button saves the loaded data with the
+unsaved changes in the format of the seed as a json file on the device (`exportDoc` and `editedDoc`
+in `calculator_editor.js`): the triples as a save would store them, the new words, the changed,
+added and removed values and the changed expressions, of which a new object has no id yet; so the
+file can be the seed of a test or of a page without a pod. The import button, shown on a pod
+only, sends a json file to the standard json import of the pod (`PUT /api/json/`, `import::put_json`)
+without the parts of the phraseData answer that are no import data (`IMPORT_SKIP_KEYS`), and then
+loads the page phrase of the file with its new database id like the load button; it is grey with
+the tooltip "Save or discard changes before import" while the editor has unsaved changes. The save posts one update put
 message with the changes to `/api/updatePut/` (`cfg/import/update_put.php`, see
 `docs/llm/json_structure.md` "Update put message"), with the session token of
 the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id

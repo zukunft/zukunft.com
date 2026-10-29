@@ -69,14 +69,24 @@ class controller
      */
 
     /**
+     * read the body of the current write request as it has been sent e.g. a json file to import
+     *
+     * @return string the body or an empty string if the request has none
+     */
+    function request_text(): string
+    {
+        $result = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
+        return $result === false ? '' : $result;
+    }
+
+    /**
      * read the json body of the current write request (post/put/delete)
      *
      * @return array the decoded json body or an empty array for a missing or malformed body
      */
     function request_json(): array
     {
-        $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
-        $result = json_decode($request_text, true);
+        $result = json_decode($this->request_text(), true);
         // an empty or malformed body decodes to null; return an empty array so the : array return
         // type never fatals and the caller (a write with no/invalid body) maps nothing
         return is_array($result) ? $result : [];
