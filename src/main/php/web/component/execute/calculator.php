@@ -446,12 +446,32 @@ class calculator
     /**
      * @param phrase|null $phr a phrase that a triple points to
      * @return bool true if the phrase is a calculator keyword, so the triple to it is a list or a property
+     *              and never an item, also for a proposed keyword that the page does not show yet
      */
     private function is_keyword(?phrase $phr): bool
     {
-        $name = $phr == null ? '' : $this->cached($phr)->name();
-        return array_key_exists($name, triples::CALCULATOR_LISTS)
-            or array_key_exists($name, triples::CALCULATOR_PROPERTIES);
+        $result = false;
+        if ($phr != null) {
+            $kwd = $this->cached($phr);
+            $name = $kwd->name();
+            $result = (array_key_exists($name, triples::CALCULATOR_LISTS)
+                or array_key_exists($name, triples::CALCULATOR_PROPERTIES)
+                or $this->is_from_calculator_keyword($kwd));
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr a phrase of the request cache e.g. calculator file import
+     * @return bool true if the phrase is a triple from the calculator keyword (calculator (system))
+     */
+    private function is_from_calculator_keyword(phrase $phr): bool
+    {
+        $result = false;
+        if ($phr->is_triple() and $phr->get_from() != null) {
+            $result = ($this->cached($phr->get_from())->name() == triples::SYSTEM_CALCULATOR);
+        }
+        return $result;
     }
 
     /**

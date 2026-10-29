@@ -222,10 +222,13 @@
         return result;
     }
 
+    /* a triple from the calculator keyword is a keyword too, also a proposed one that the page does not show yet */
     function isKeyword(name) {
         const lists = [KW.input, KW.assumption, KW.column, KW.rowgroup, KW.detail];
         const props = [KW.label, KW.hint, KW.highlight, KW.signed];
-        const result = lists.indexOf(name) >= 0 || props.indexOf(name) >= 0;
+        const phr = phrases.get(name);
+        const fromRoot = phr !== undefined && phr.from === KW.root;
+        const result = lists.indexOf(name) >= 0 || props.indexOf(name) >= 0 || fromRoot;
         return result;
     }
 

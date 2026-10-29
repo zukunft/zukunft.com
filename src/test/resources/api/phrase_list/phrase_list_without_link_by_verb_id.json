@@ -31,7 +31,7 @@
         "class": "triple"
     },
     {
-        "id": 2593,
+        "id": 3052,
         "name": "bond (finance)",
         "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
         "class": "triple"
@@ -44,9 +44,21 @@
         "class": "word"
     },
     {
+        "id": 613,
+        "name": "cash",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
         "id": 2489,
         "name": "CBAM good",
         "description": "a good listed in Annex I of the CBAM regulation, whose import into the EU needs CBAM certificates for its embedded emission",
+        "class": "triple"
+    },
+    {
+        "id": 3140,
+        "name": "child portfolio",
+        "description": "the part of the original portfolio that one child receives; every child portfolio is a child portfolio, so that the page shows one input and one column per child",
         "class": "triple"
     },
     {
@@ -159,14 +171,14 @@
         "class": "triple"
     },
     {
-        "id": 2204,
+        "id": 2138,
         "name": "EPR",
         "description": "European Pressurized Reactor of EDF\/Framatome, generation III+, 1.63 GW net in the BAK study",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 2975,
+        "id": 2891,
         "name": "existing NPP",
         "description": "Beznau 1 and 2, G\u00f6sgen and Leibstadt",
         "class": "triple"
@@ -232,6 +244,13 @@
         "class": "triple"
     },
     {
+        "id": 2205,
+        "name": "holding",
+        "description": "the quantity of one security or currency in a portfolio, also called a position",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
         "id": 1792,
         "name": "ISBN",
         "description": "International Standard Book Number: identifies one edition of a book; since 2007 it has 13 digits and equals the EAN of the book with the prefix 978 or 979",
@@ -290,7 +309,7 @@
         "class": "triple"
     },
     {
-        "id": 2974,
+        "id": 2890,
         "name": "new NPP",
         "description": "a nuclear power plant built after the vote of 2027, in operation from about 2050",
         "class": "triple"
@@ -348,7 +367,7 @@
         "class": "word"
     },
     {
-        "id": 2782,
+        "id": 2698,
         "name": "replacement mix",
         "description": "the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix",
         "class": "triple"

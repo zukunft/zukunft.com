@@ -73,8 +73,12 @@ class files
     CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
     // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
     CONST string CALCULATOR_EDITOR = 'calculator_editor';
-    // the calculator page of the example PV installation that the browser builds (url_var::JAVASCRIPT), next to pv_lifetime_balance.html
-    CONST string PV_LIFETIME_BALANCE_JSON = 'pv_lifetime_balance_json';
+    // the calculator page of the example PV installation that the server renders without javascript (url_var::JAVASCRIPT = 0)
+    CONST string PV_LIFETIME_BALANCE_NO_JS = 'pv_lifetime_balance_no_js';
+    // the calculator page of the example PV installation that the browser builds with javascript, next to pv_lifetime_balance_no_js.html
+    CONST string PV_LIFETIME_BALANCE_JS = 'pv_lifetime_balance_js';
+    // the calculator page of the example portfolio split that the server renders without javascript
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS = 'portfolio_split_calculator_no_js';
     // the formula editor of the example PV installation in the use case folder next to the hand made
     // formula_editor_sample.html, because the view test removes every file below views_by_object that it has not written
     CONST string FORMULA_EDITOR = 'formula_editor';

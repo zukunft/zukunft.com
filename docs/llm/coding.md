@@ -81,6 +81,11 @@ then ask the developer to run them and report the results.
 Branches: `feature/*` → `develop` → `release` → `master`. Commit messages
 reference issues, e.g. `fix auth flow as part of fix #232`.
 
+**An LLM never commits — not even when asked to "commit".** Every commit needs a review
+by a human first, so the LLM leaves the changes in the working tree, may suggest a commit
+message, and the developer reviews and commits. This also excludes `git commit --amend`,
+`git push`, a merge and a rebase.
+
 ## Always-on rules
 
 Each rule is one line. When one governs your current edit, open the linked
@@ -199,7 +204,7 @@ words, triples, formulas, sources, values) and `docs/llm/json_views.md`
 `docs/llm/architecture.md`.
 
 - Use the domain nouns exactly: word, verb, triple, source, ref, value, group, formula, result, view, component. `phrase` = word|triple; `term` = word|verb|triple|formula. Every phrase is a term; a verb/formula is a term but not a phrase.
-- Keep a change to an import json as small as the task: fix the named entry only — never reformat, re-indent or re-order a file, and never add or remove a word, triple, view, component, formula or source that the task did not ask for, because every insert or delete shifts the db id of all later objects. An id shift itself is not avoided e.g. by a separate file imported later or by a less fitting place: put the object where it belongs, ask the developer to confirm the shift and name it in the report, because the re-pin tools (`test/test_re_pin.php`, `files::AUTO_RE_PIN_OBJECT_ID`) update the pinned `*_ID` consts and the `list.csv` baselines. → `docs/llm/json_structure.md`
+- Keep a change to an import json as small as the task: fix the named entry only — never reformat, re-indent or re-order a file, and never add or remove a word, triple, view, component, formula or source that the task did not ask for, because every insert or delete shifts the db id of all later objects. An id shift itself is not avoided e.g. by a separate file imported later or by a less fitting place: put the object where it belongs and name the shift in the report without asking for a confirmation, because the re-pin process (`test/test_re_pin.php`, `files::AUTO_RE_PIN_OBJECT_ID`, `docs/llm/testing.md`) updates the pinned `*_ID` consts and the `list.csv` baselines. → `docs/llm/json_structure.md`
 - `percent`-measure formulas auto-scale: never add `* 100` to a ratio assigned to `percent`. A stored `percent` value is the decimal ratio too — 18 % is `"0.18"`, 0.5 % is `"0.005"` — so no `/ 100` in the consumer either; sanity-check the magnitude, a small number can be either form. → `docs/llm/json_structure.md`
 - Symbols/abbreviations may alias several phrases on purpose (`m` = metre = million); only flag genuine unintended collisions, never force-uniquify. A new ambiguous symbol gets one named `is symbol for` triple per meaning (`tn (scaling)`, `tn (weight)`) and a `can be symbol for` triple from the symbol to each; a page uses the symbol for one meaning only, the one it shortens most. → `docs/llm/json_structure.md`
 - Disambiguate an ambiguous *word* with qualifier triples via the `must be one of` verb — define the word once, reference the triples; display the bare word, qualifier in the tooltip.
@@ -272,6 +277,9 @@ Detail and worked examples: `docs/llm/testing.md`.
 - Every machine-checkable coding rule (e.g. frontend code may only read `$ui_sys`/`$mtr`) has a coded check in `unit/coding_rule_tests.php`; reviewer attention is not a substitute. → `docs/llm/testing.md`
 
 ## Pre-commit checklist
+
+The developer commits after a human review (an LLM never commits, see "Build / test / commit"); this
+list is what the LLM checks before it hands the changes over for that review.
 
 - Do **not** raise the micro version yet: raising the fourth part of `CODE_VERSION` / `UI_VERSION` in `version.txt` with every commit starts only after the next production release, which has not happened yet — until then `version.txt` stays unchanged. → `docs/llm/versions.md`
 - Raise the **minor** version (`0.0.3` → `0.0.4`, micro back to `.0`) whenever the json format or the database structure changes, because the minor version is the version of the exports and of the database (`def::PRG_VERSION` = `SYSTEM_MINOR_VERSION`); a raised minor version needs a matching database upgrade script in `db_check`. → `docs/llm/versions.md`

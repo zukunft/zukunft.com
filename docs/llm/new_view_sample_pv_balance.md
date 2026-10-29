@@ -840,7 +840,7 @@ for the user if another user uses it.
    phrases for the options and rows that *is a* the phrase.
 6. Tests: `use_case_ui_tests.php` per renderer with a fixed `data_object`.
    `run_pv_lifetime_balance` renders the `Calculator` view for
-   `example PV installation` and compares with `pv_lifetime_balance.html`.
+   `example PV installation` and compares with `pv_lifetime_balance_no_js.html`.
    The difference to `pv_lifetime_balance_sample.html` should shrink to the
    numbers.
 7. The `Calculator editor` view with the components of section 6, the view

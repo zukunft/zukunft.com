@@ -90,11 +90,18 @@ use Zukunft\ZukunftCom\test\php\utils\test_lib;
 class a_selected_test extends all_unit_tests
 {
 
+    // the system data files with code ids to load again before SELECTED_IMPORT_FILES, imported
+    // as the system user like the db setup does, e.g. the calculator keywords of a use case page
+    const array SELECTED_SYSTEM_IMPORT_FILES = [
+        cfg_files::CALCULATOR_KEYWORDS_FILE,
+    ];
+
     // the import json files to load for a fast single-file debugging cycle
     // comment out the entries that are not needed to import just one file at a time
     const array SELECTED_IMPORT_FILES = [
         // the use case is user data, so it is imported as the normal test user usr1 like the db setup does
         cfg_files::PV_LIFETIME_BALANCE_FILE,
+        cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
         //test_files::IMPORT_COSTS_ELECTRICITY_WIKI_EN,
@@ -261,6 +268,11 @@ class a_selected_test extends all_unit_tests
             global $cfg;
             $cfg = new config_numbers($usr);
             $cfg->load_cfg($sys_msg, null, $usr);
+            foreach (self::SELECTED_SYSTEM_IMPORT_FILES as $import_file) {
+                $test_name = 'the selected system file ' . basename($import_file) . ' is imported again';
+                $imp_msg = $imf->json_file($import_file, user::system(), false);
+                $this->assert_msg($test_name, $imp_msg, $this::TIMEOUT_LIMIT_IMPORT);
+            }
             foreach (self::SELECTED_IMPORT_FILES as $import_file) {
                 $test_name = 'the selected file ' . basename($import_file) . ' is imported again';
                 $imp_msg = $imf->json_file($import_file, $usr, false);
@@ -296,7 +308,7 @@ class a_selected_test extends all_unit_tests
             //new triple_list_read_tests()->run($this);
             // run the selected db read tests
             // the system view pages by section; only the view of the use case imported above is
-            // rendered into resources/web/html/use_cases/pv_lifetime_balance.html next to the
+            // rendered into resources/web/html/use_cases/pv_lifetime_balance_no_js.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
             // the data of a phrase for api/phraseData, checked against the hand made sample
             new phrase_data_read_tests()->run($this);
@@ -317,6 +329,8 @@ class a_selected_test extends all_unit_tests
             //$msk_tests->run_system_pages($this);
             //$msk_tests->run_use_cases($this, $cfg);
             //$msk_tests->run_pv_lifetime_balance($this);
+            // the portfolio split page next to the hand made portfolio_split_calculator_sample.html
+            $msk_tests->run_portfolio_split_calculator($this);
             //$msk_tests->run_web_frontend($this);
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);

@@ -211,64 +211,14 @@ AZ-/l-/e-1M+1O+1P+95+9T+,1,,"the number of digits for views, values or results t
 bt-br-b0-aw-,1,,direct emissions of the electrolysis only; the indirect emissions of the electricity are not part of the benchmark
 c/-bS-35+N2+Pw+,1,,a mix of electric and diesel traction
 cI-bw-bs-35+8X+,1,,"the round certificate price of the first worked example, the order of magnitude of the EU ETS auction prices; the measured quarterly prices of 2026 are the values with Q1, Q2 and Q3"
-dt-cb-2X+3L+VA+,1,,"step 8 of the split walk: the target of 349707.695578 units, which already subtracts the carried deviation, rounded to the lot size"
-dt-cb-3L+55+VB+,1,,"step 9 of the split walk: the target of 419691.358025 units, which already subtracts the carried deviation, rounded to the lot size"
-dt-cb-3L+5J+V7+,1,,"step 3 of the split walk: the target of 521517.412935 units, which already subtracts the carried deviation, rounded to the lot size"
-dt-cb-3L+5J+V8+,1,,"step 4 of the split walk: the target of 526528.056112 units, which already subtracts the carried deviation, rounded to the lot size"
-dt-cb-3L+5J+V9+,1,,"step 5 of the split walk: the target of 351540.40404 units, which already subtracts the carried deviation, rounded to the lot size"
-dt-ci-3L+5J+Uf+,1,,after step 1 of the split walk
-dt-ci-3L+5J+Ug+,1,,after step 2 of the split walk
-dt-ci-3L+5J+Uh+,1,,after step 6 of the split walk
-dt-ci-3L+5J+Ui+,1,,after step 7 of the split walk
-dt-ci-3L+5J+Uj+,1,,after step 10 of the split walk
-dt-ci-3L+5J+Uk+,1,,after step 11 of the split walk
-dt-ci-3L+5J+Ul+,1,,after step 12 of the split walk
-dt-ci-3L+5J+Um+,1,,after step 13 of the split walk
-dt-ci-3L+5J+Un+,1,,after step 14 of the split walk
-dt-ci-3L+5J+Uo+,1,,after step 15 of the split walk
-dt-ci-3L+5J+Up+,1,,after step 16 of the split walk
-dt-ci-3L+5J+Uq+,1,,after step 17 of the split walk
-dt-ci-3L+5J+Ur+,1,,after step 18 of the split walk
-dt-ci-3L+5J+Us+,1,,after step 19 of the split walk
-dt-ci-3L+5J+Ut+,1,,after step 20 of the split walk
-dt-ci-3L+5J+Uu+,1,,after step 21 of the split walk
-dt-ci-3L+5J+Uv+,1,,after step 22 of the split walk
-dt-ci-3L+5J+Uw+,1,,after step 23 of the split walk
-dt-ci-3L+5J+Ux+,1,,after step 24 of the split walk
-dt-ci-3L+5J+Uy+,1,,after step 25 of the split walk
-dt-ci-3L+5J+Uz+,1,,after step 26 of the split walk
-dt-ci-3L+5J+V.+,1,,after step 27 of the split walk
-dt-ci-3L+5J+V/+,1,,after step 28 of the split walk
-dt-ci-3L+5J+V0+,1,,after step 29 of the split walk
-dt-ci-3L+5J+V1+,1,,after step 30 of the split walk
-dt-ci-3L+5J+V2+,1,,after step 31 of the split walk
-dt-ci-3L+5J+V3+,1,,after step 32 of the split walk
-dt-ci-3L+5J+V4+,1,,after step 33 of the split walk
-dt-ci-3L+5J+V5+,1,,after step 34 of the split walk
-dt-ci-3L+5J+V6+,1,,after step 35 of the split walk
-dt-ci-3L+5J+V7+,1,,after step 3 of the split walk
-dt-ci-3L+5J+V8+,1,,after step 4 of the split walk
-dt-ci-3L+5J+V9+,1,,after step 5 of the split walk
-dt-ci-3L+5J+VA+,1,,after step 8 of the split walk
-dt-ci-3L+5J+VB+,1,,after step 9 of the split walk
-dt-ck-ci-3L+5J+,1,,after step 37 of the split walk
-dt-cl-ci-3L+5J+,1,,after step 38 of the split walk
-dt-cm-ci-3L+5J+,1,,after step 39 of the split walk
-dt-cn-ci-3L+5J+,1,,after step 36 of the split walk
-dt-co-ci-3L+5J+,1,,after step 42 of the split walk
-dt-cp-ci-3L+5J+,1,,after step 40 of the split walk
-dt-cq-ci-3L+5J+,1,,after step 41 of the split walk
-du-cb-2X+3L+VA+,1,,"the same count as the first child, because both target shares are equal"
-du-cb-3L+55+VB+,1,,"the same count as the first child, because both target shares are equal"
-du-cb-3L+5J+V7+,1,,"the same count as the first child, because both target shares are equal"
-du-cb-3L+5J+V8+,1,,"the same count as the first child, because both target shares are equal"
-du-cb-3L+5J+V9+,1,,"the same count as the first child, because both target shares are equal"
+dh-T7-T6-DR+OX+Pw+,1,,"the European residual mix that Swissolar uses as the replacement mix for the CO2 saving of PV; the European production mix 2022 of treeze is lower, 350 to 440 g per month"
 /e-08+1M+1O+34+9T+B0+B1+,1,,a prediction that is used by two times more user accounts is used with factor e.g. of 2
 /e-08+1M+1O+34+9T+B2+B3+,1,,a value or formula that is used by two times more user accounts used with factor e.g. of 2 for the ranking
 /e-08+1M+1O+9T+Ay+B0+B1+,1,,a prediction with double the impact is used with factor e.g. of 2
 /e-08+1M+1O+9T+Ay+B2+B3+,1,,a value or formula with double the impact on others is used with factor e.g. of 2 for the ranking
 /e-08+1M+1O+9T+B0+B3+B4+,1,,a valid predictions makes e.g. 20% of the total user ranking
 /e-08+1M+1O+9T+B2+B3+B4+,1,,a valid contribution makes e.g. 80% of the total user ranking
+e.-0U+35+38+Ua+,1,,"the published figures span a factor of five, so the middle is a guess"
 /e-1E+1M+1O+95+9T+BO+BR+Bj+C.+,1,,a point of a scatter chart in the dark mode
 /e-1E+1M+1O+95+9T+BO+BR+C.+,1,,a point of a scatter chart and its number in the legend
 /e-1H+1M+1O+9T+AL+,1,,either 'technical' for a shortest possible url which is not human readable or 'readable' for an url which is easier to understand for humans or 'moveable' for a pod independent url
@@ -372,6 +322,12 @@ du-cb-3L+5J+V9+,1,,"the same count as the first child, because both target share
 /e-1M+9L+9U+C7+C8+,1,,"if true the values of a phrase are selected together with the values of its aliases and the other way round, e.g. the page of 'Euro' shows also the values of '€'"
 /e-1M+9L+AG+C5+,1,,"if the selection list contains more than the initial entries, the number of suggested entries show on the top"
 /e-1M+9L+AG+C6+,1,,"if the selection list contains more than the initial entries, the number of alphabetic sorted entries show initially and added with each click on more"
+e4-dt-0U+0e+1G+35+,1,,"the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"
+e4-dt-0U+1G+35+38+,1,,"the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"
+e4-e/-0U+0e+1G+35+,1,,"the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"
+e5-T7-T2-0e+1G+DR+Pw+UY+,1,,"monthly mean of the five years 2018 to 2022 at low voltage, table 5.1; the twelve values are the base of the PV-weighted consumption mix"
+e.-do-05+Ua+Uc+,1,,"the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
+e.-do-8Y+Ua+Ub+,1,,"the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
 /e-I+0U+1M+AJ+AN+,1,,"the max share of objects that an api answer may have more than its expected minimal sample e.g. 1 for twice the objects of api/phrase_data/phrase_data_pv_install.json, because other use cases add values to the shared triples of the sample e.g. the PV yield of each postal code"
 /e-I+1D+1E+1M+,1,,the geo location of the main pod to estimate the time delays
 /e-I+1D+1H+1M+,1,,the url name of this pod
@@ -398,12 +354,19 @@ du-cb-3L+5J+V9+,1,,"the same count as the first child, because both target share
 /e-I+/a+1D+1M+8S+9T+9g+AX+Ai+,1,,the max number of days that a user log entry is kept in the database before it is exported to the archive and removed
 /e-I+/a+1D+1M+9T+9g+AX+Al+,1,,the number of last days whose user log sessions are summed per user for the admin dashboard
 /e-I+/a+1M+8u+8x+9.+9e+,1,,if the cache is older than e.g. 150 days it will be recreated prevent issues due to potential refresh bugs
+eI-dx-35+38+Ua+,1,,"manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
 /e-I+M+1D+1M+9S+9T+9g+AX+Al+Am+,1,,a user whose data changing api requests have taken at least these milliseconds in the dashboard days is shown as critical
 /e-I+M+1D+1M+9T+9g+AX+Al+Am+Ap+,1,,a user whose api requests have taken at least these milliseconds in the dashboard days is shown as critical
 /e-I+/X+1M+9.+9e+9f+9g+9j+,1,,if the log type is round robin older log entries are automatically deleted
 /e-I+/X+/a+1M+8u+9.+9E+9e+,1,,a cached html page older than this is recreated on the next request to prevent stale pages
+eM-dt-/u+0e+3L+,1,,"the monthly dispatch of the page as described at the annual direct use: the PV production of a month is the annual production times the monthly share of the PV production, the household consumption the annual consumption times its monthly share, the direct use the smaller of the PV production and the day share of the consumption, the battery charge the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; stored as modelled values, because the dispatch needs a minimum function; the battery discharge, the export and the grid import of a month are results of the formulas"
+eM-dv-/u+2Y+3L+,1,,the annual sum of the monthly battery charge of the dispatch described at the direct use
+eM-e0-/u+2Y+3L+,1,,"monthly dispatch of the page: in each month the direct use is the smaller of the PV production and the day share of the consumption, the battery charge is the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; this needs a minimum function that the zukunft.com formulas do not have, so the annual sum is stored as a modelled value"
+eM-e5-di-T7-3L+Pw+UY+,1,,"the sum over the twelve months of the delivered PV electricity times the monthly Swiss consumption mix, divided by the annual delivered electricity; a weighted mean of the twelve monthly values above with the monthly dispatch of the page as the weight"
+eM-eF-e/-2Y+35+,1,,"the local electricity consumption, the fourth input of the page; 4500 kWh is a typical Swiss family household without heat pump or electric car"
+eM-eI-e3-e/-35+,1,,"the share of the household consumption that falls into the hours with PV production; a household where nobody is at home during the day, higher with home office or a heat pump running at noon"
+eM-eI-e3-e/-35+38+,1,,"a rough split, the hourly profile of a household is well known but varies a lot between households"
 /e-/X+08+1M+1O+9T+B0+B1+,1,,a prediction with double the time period is used with factor e.g. of 2
-fc-fF-35+38+Vc+,1,,"manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
 FG-0d-0T-/m-2c+,1,,the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 FG-0d-0T-/n-2c+,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 FG-0d-0U-0K-/m-,1,,the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
@@ -490,13 +453,6 @@ FG-1K-0N-/m-0T+2S+,1,,"the centre times 2.5, the range factor of an estimate"
 FG-1K-0N-/m-0U+,1,,"the centre times 2.5 would exceed the share limit, so the upper bound is clamped at the centre of 100 percent"
 FG-1K-0N-/n-0T+2S+,1,,"the centre divided by 2.5, the range factor of an estimate, because the gain rests on the assumed loss"
 FG-1K-0N-/n-0U+,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
-fg-fB-/u+0e+3L+,1,,"the monthly dispatch of the page as described at the annual direct use: the PV production of a month is the annual production times the monthly share of the PV production, the household consumption the annual consumption times its monthly share, the direct use the smaller of the PV production and the day share of the consumption, the battery charge the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; stored as modelled values, because the dispatch needs a minimum function; the battery discharge, the export and the grid import of a month are results of the formulas"
-fg-fc-fN-fJ-35+,1,,"the share of the household consumption that falls into the hours with PV production; a household where nobody is at home during the day, higher with home office or a heat pump running at noon"
-fg-fc-fN-fJ-35+38+,1,,"a rough split, the hourly profile of a household is well known but varies a lot between households"
-fg-fD-/u+2Y+3L+,1,,the annual sum of the monthly battery charge of the dispatch described at the direct use
-fg-fK-/u+2Y+3L+,1,,"monthly dispatch of the page: in each month the direct use is the smaller of the PV production and the day share of the consumption, the battery charge is the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; this needs a minimum function that the zukunft.com formulas do not have, so the annual sum is stored as a modelled value"
-fg-fP-f0-T7-3L+Pw+Va+,1,,"the sum over the twelve months of the delivered PV electricity times the monthly Swiss consumption mix, divided by the annual delivered electricity; a weighted mean of the twelve monthly values above with the monthly dispatch of the page as the weight"
-fg-fZ-fJ-2Y+35+,1,,"the local electricity consumption, the fourth input of the page; 4500 kWh is a typical Swiss family household without heat pump or electric car"
 FG-/m-0T+27+2A+2S+,1,,"the centre times 1.5, the range factor of a structural number"
 FG-/m-0T+28+29+2S+,1,,"the centre times 1.5, the range factor of a structural number"
 FG-/m-0T+2B+2C+2S+,1,,"the centre times 1.5, the range factor of a structural number"
@@ -529,14 +485,6 @@ FG-/n-27+2T+2X+,1,,the centre divided by 2.5 for the 80 percent probability rang
 FG-/n-29+2T+2X+,1,,the centre divided by 2.0 for the 80 percent probability range of an estimate with a confidence of 25 percent (see the view-validation of solution_prio.json)
 FG-/n-2B+2T+2X+,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent (see the view-validation of solution_prio.json)
 FG-/n-2T+2X+2c+,1,,the centre divided by 3.0 for the 80 percent probability range of an estimate with a confidence below 15 percent (see the view-validation of solution_prio.json)
-fI-0U+35+38+Vc+,1,,"the published figures span a factor of five, so the middle is a guess"
-fI-f6-05+Vc+Ve+,1,,"the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
-fI-f6-8Y+Vc+Vd+,1,,"the upper end of the cradle-to-gate production of lithium-ion cells, 58 to 92 kg per kWh of cell capacity; optimised LFP cells about 37 kg"
-fO-fB-0U+0e+1G+35+,1,,"the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"
-fO-fB-0U+1G+35+38+,1,,"the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"
-fO-fJ-0U+0e+1G+35+,1,,"the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"
-fP-T7-T2-0e+1G+DR+Pw+Va+,1,,"monthly mean of the five years 2018 to 2022 at low voltage, table 5.1; the twelve values are the base of the PV-weighted consumption mix"
-f/-T7-T6-DR+OX+Pw+,1,,"the European residual mix that Swissolar uses as the replacement mix for the CO2 saving of PV; the European production mix 2022 of treeze is lower, 350 to 440 g per month"
 Fv-0D-0.-2T+2X+3x+,1,,"the monetised value of the heat-related deaths of people over 65 in 2023 in the world, the 222 billion EUR of problem_global_warming.json in trillion EUR; 240 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
 Fx-0D-2B+2T+2X+35+3x+,1,,"the potential loss of the lack of education is the lifetime earnings lost by the learning poor (problem_education.json), so this reason causes the whole loss: 0.4998 percent of the world GDP of 110.047 trillion EUR"
 Fy-0D-0.-2T+2X+3x+,1,,"the annual cost 2000-2019 of the extreme weather attributable to climate change in the world, the 132.2 billion EUR of problem_global_warming.json in trillion EUR; 143 billion USD at the ECB 2023 average of 1.0813 USD per EUR"
@@ -565,79 +513,91 @@ H3-Gs-0T+2X+8Z+M7+,1,,15 billion USD at the ECB 2023 average of 1.0813 USD per E
 H3-Gs-0T+2X+8Z+M8+,1,,21 billion USD at the ECB 2023 average of 1.0813 USD per EUR
 H3-Gs-0T+2X+8Z+M9+,1,,17.1 billion USD at the ECB 2023 average of 1.0813 USD per EUR
 H3-Gu-Gt-0U+2Y+35+Gh+,1,,"the share of the annual damage of global warming that the observed annual costs of these three reasons (lost labour income, heat deaths and extreme weather) cover; the other half are the reasons that are projections and no annual cost of today yet (sea level rise, crop yields, ecosystems, migration, tipping points), see problem_global_warming_reasons.json; with 50 percent the observed costs of 1.126 trillion EUR imply an annual damage of 2 percent of the world GDP"
+h4-1G+35+MK+QV+Vc+,1,,"grid 10.75, metering 1.65 and levies 3.76 of 2026 kept in real terms; the word levies stands for the whole non-energy part here"
+h4-1G+8X+C/+QV+,1,,median grid tariff without metering; metering adds 1.65 Rp
+h4-1G+8X+QV+Vc+,1,,"grid surcharge 2.3, electricity reserve 0.41, solidarised costs 0.05, municipalities 1.0"
+h4-Te-1G+8X+QV+,1,,median of all grid operators
 H5-FG-0d-/m-1t+,1,,the centre times 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 H5-FG-0d-/n-1t+,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
 H5-FG-/m-0T+1t+2S+,1,,"the centre times 1.5, the range factor of a structural number"
 H5-FG-/m-0U+1t+,1,,"the centre times 2.5 would exceed the share limit, so the upper bound is clamped at the centre of 100 percent"
 H5-FG-/n-0T+1t+2S+,1,,"the centre divided by 1.5, the range factor of a structural number, which is narrower than the factor of an estimate"
 H5-FG-/n-0U+1t+,1,,the centre divided by 2.5 for the 80 percent probability range of an estimate with a confidence of 20 percent
+h9-0U+1G+2z+DR+,1,,share of the Swiss electricity production today
+ha-h8-0U+35+38+,1,,"a value judgement of the reader, not a measurement"
+hd-h4-1G+8X+QV+,1,,median
+hi-h8-Fc+HC+VI+,1,,built by the models with state support and a WACC of 5 percent
 Hl-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of a platform change and its enforcement
+hl-h8-R8-0S+5J+VO+,1,,per year incl. the state support of 625 million; 938 million net of it
+hl-hE-h8-0S+5J+VO+,1,,S-curve of the capital outflow 2040 to 2050
+hl-hO-h8-VO+Vv+,1,,per year over 60 years of operation incl. the annualised construction
+hl-hR-h8-h1-VP+,1,,the low variant of the study: one unit
+hl-hT-h8-0S+5J+VO+,1,,per year; the market pays 55 percent of the levelised cost
 Hn-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of a curriculum change and teacher training in most countries
 Ho-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of teaching material and teacher training in most countries
+ho-hG-h8-0U+35+Af+,1,,"r / (1 - (1 + r)^-n) with r = 0.05 and n = 60 years; computed outside the engine, see the annuity factor formula; assumed, because no published table lists the factor for 60 years"
 Hp-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of independent fact-checking teams for the large languages
+hR-h4-2b+HC+Ps+,1,,"ground-mounted, Germany, EUR cent treated as Rp"
+hR-h8-h1-HC+MK+,1,,range of the Axpo Energy Report 2026 and PSI 2017
+hR-h8-h4-2b+H9+,1,,"EUR cent per kWh treated as Rp, Germany"
+hR-h8-h4-2b+HC+,1,,"EUR cent per kWh treated as Rp, Germany"
+hS-h8-h1-DR+MK+,1,,"Axpo market simulation, real in prices of 2024"
 Ht-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of infrastructure and services for the lagging regions of many countries
+hU-hI-0U+35+38+,1,,"order of magnitude only; the ETH/PSI models optimise storage endogenously, so the published results carry no separate number"
 Hv-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of programmes for the displaced workers of the industrial regions
 Hw-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of public and subsidised building in the expensive cities
 Hx-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of independent agencies and courts in many countries
+hX-0U+1G+35+38+MK+VW+,1,,depends on the decarbonisation and the price spreads of the neighbours
+hX-h1-1G+35+MK+VW+,1,,between the annual average of about 90 and the winter peak of 130 to 135 CHF per MWh of the BAK scenario without new NPP
 Hy-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the registers and their enforcement
+hY-h1-1G+35+MK+VX+,1,,low because all neighbours export PV at noon
 I0-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the votes and their information campaigns
 I/-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of protection schemes and independent regulators
 I1-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of regular assemblies in many countries
+i1-hk-h8-h2-,1,,the level of recent projects in Europe and the US
 I2-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the polls
+i2-h8-0U+35+38+,1,,calibrated on one study
 I3-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the process in many municipalities
 I5-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the change and the voter information
+i5-hl-h8-0S+5J+VO+,1,,"per year: avoided hedging cost 50, avoided outage damage 50, avoided shortage damage 420 million CHF, conservative"
 I6-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of building regional administrations
 I9-0b-0T+35+55+,1,,"the cost to set up the solution worldwide: the cost of language courses, work programmes and housing"
+i9-hd-h4-1G+35+MK+QV+,1,,"today's median energy tariff kept in real terms; shifts only the level of the household price, not the difference"
+i9-i4-1G+H9+MK+VH+,1,,the highest of the four models
+i9-i4-1G+HC+MK+VH+,1,,the lowest of the four models
+i9-i4-1G+MK+VH+,1,,balance model; peak 8.1 TWh in 2045
 Ia-0b-0T+35+55+,1,,"the cost to set up the solution worldwide: the cost of border management, processing and integration"
 IA-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of evaluation units and data
+iA-hG-h8-0U+35+Af+,1,,r / (1 - (1 + r)^-n) with r = 0.08 and n = 60 years; assumed like the factor for the de-risked WACC
 Ib-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the portals and the data preparation
 Ic-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the funding in many countries
 IC-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of administrative reform in many countries
 Id-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of teacher training and material
 ID-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of programmes and media rules
+iD-T7-1G+98+VW+,1,,"winter import mix 2022/23 from France, Germany, Austria and Italy"
 Ie-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of extended programmes
 IE-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the programmes
+iE-hl-h8-h1-VO+,1,,"7 to 9 CHF per MWh against the scenario without new NPP, derived from Schwarz et al. 2023"
 If-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of cultural and educational programmes
 IF-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of supporting local associations
+iF-i9-h1-1G+MK+,1,,130 to 135 CHF per MWh in the most expensive winter month
 Ih-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of regulators and compliance
 IH-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of programmes for the adult population
 IJ-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the campaigns
 IK-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the videos and their placement
 IL-0b-0T+35+55+,1,,"the cost to set up the solution worldwide: the cost of stocks, plans and exercises"
-il-iO-2b+HC+Ps+,1,,"ground-mounted, Germany, EUR cent treated as Rp"
-il-iS-iL-HC+MK+,1,,range of the Axpo Energy Report 2026 and PSI 2017
-il-iS-iO-2b+H9+,1,,"EUR cent per kWh treated as Rp, Germany"
-il-iS-iO-2b+HC+,1,,"EUR cent per kWh treated as Rp, Germany"
 IM-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the transfers and the rule changes
-im-iS-iL-DR+MK+,1,,"Axpo market simulation, real in prices of 2024"
 IO-0b-0T+35+55+,1,,"the cost to set up the solution worldwide: the cost is small, the agreement itself"
-iO-1G+35+MK+QV+We+,1,,"grid 10.75, metering 1.65 and levies 3.76 of 2026 kept in real terms; the word levies stands for the whole non-energy part here"
-iO-1G+8X+C/+QV+,1,,median grid tariff without metering; metering adds 1.65 Rp
-iO-1G+8X+QV+We+,1,,"grid surcharge 2.3, electricity reserve 0.41, solidarised costs 0.05, municipalities 1.0"
-io-ic-0U+35+38+,1,,"order of magnitude only; the ETH/PSI models optimise storage endogenously, so the published results carry no separate number"
-iO-Te-1G+8X+QV+,1,,median of all grid operators
 IQ-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of oversight bodies and disclosure
-ir-0U+1G+35+38+MK+WY+,1,,depends on the decarbonisation and the price spreads of the neighbours
-ir-iL-1G+35+MK+WY+,1,,between the annual average of about 90 and the winter peak of 130 to 135 CHF per MWh of the BAK scenario without new NPP
 IS-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of building or reforming broadcasters in many countries
-is-iL-1G+35+MK+WZ+,1,,low because all neighbours export PV at noon
 IT-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of audits and disclosure rules for the large platforms
-iT-0U+1G+2z+DR+,1,,share of the Swiss electricity production today
+iT-hl-1G+MK+VH+,1,,with one EPR
 IU-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of a redistribution large enough to be felt in most countries
-iu-iS-0U+35+38+,1,,"a value judgement of the reader, not a measurement"
 IV-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of extending the nets in the countries without them
 IW-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of public funding and enforcement
 IX-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of court reform and judge training in many countries
-ix-iO-1G+8X+QV+,1,,median
 IY-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the change and the voter information
 IZ-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of party reform and outreach
-j0-iS-Fc+HC+WK+,1,,built by the models with state support and a WACC of 5 percent
-j3-ii-iS-WQ+Wx+,1,,per year over 60 years of operation incl. the annualised construction
-j3-il-iS-iL-WR+,1,,the low variant of the study: one unit
-j3-in-iS-0S+5J+WQ+,1,,per year; the market pays 55 percent of the levelised cost
-j3-iS-R8-0S+5J+WQ+,1,,per year incl. the state support of 625 million; 938 million net of it
-j3-iY-iS-0S+5J+WQ+,1,,S-curve of the capital outflow 2040 to 2050
-j6-ia-iS-0U+35+Af+,1,,"r / (1 - (1 + r)^-n) with r = 0.05 and n = 60 years; computed outside the engine, see the annuity factor formula; assumed, because no published table lists the factor for 60 years"
 Ja-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the enforcement
 JA-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the public investment that growth needs
 Jb-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of public building in the growing cities
@@ -657,33 +617,21 @@ JJ-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the sy
 Jk-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the clinics and midwives
 JK-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the meals and supplements
 Jl-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of one year of transfers to the extreme poor
-jL-j2-iS-iM-,1,,the level of recent projects in Europe and the US
 Jm-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of one year of transfers
-jM-iS-0U+35+38+,1,,calibrated on one study
 Jn-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the credits
 JN-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the assets and the coaching
-jn-j3-1G+MK+WJ+,1,,with one EPR
 Jo-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the wages
 JP-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the payments
-jP-j3-iS-0S+5J+WQ+,1,,"per year: avoided hedging cost 50, avoided outage damage 50, avoided shortage damage 420 million CHF, conservative"
 JQ-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of one year of a payment at the poverty line
 JR-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the pensions
 JS-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the subsidised premiums
 JT-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of extending the nets
-jT-ix-iO-1G+35+MK+QV+,1,,"today's median energy tariff kept in real terms; shifts only the level of the household price, not the difference"
-jT-jO-1G+H9+MK+WJ+,1,,the highest of the four models
-jT-jO-1G+HC+MK+WJ+,1,,the lowest of the four models
-jT-jO-1G+MK+WJ+,1,,balance model; peak 8.1 TWh in 2045
 JU-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the grid and the solar systems
-jU-ia-iS-0U+35+Af+,1,,r / (1 - (1 + r)^-n) with r = 0.08 and n = 60 years; assumed like the factor for the de-risked WACC
 JV-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the roads
 JW-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the systems and the agents
 JX-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the surveys and registries
-jX-T7-1G+98+WY+,1,,"winter import mix 2022/23 from France, Germany, Austria and Italy"
 JY-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the advisers and the inputs
-jY-j3-iS-iL-WQ+,1,,"7 to 9 CHF per MWh against the scenario without new NPP, derived from Schwarz et al. 2023"
 JZ-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the negotiations and the adjustment
-jZ-jT-iL-1G+MK+,1,,130 to 135 CHF per MWh in the most expensive winter month
 Kc-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of public and subsidised building in the expensive cities
 Kd-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the rule change
 Ke-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the institutions
@@ -716,6 +664,63 @@ L9-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the co
 LB-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the valuation and collection
 LC-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of the reporting
 LD-0T-0U+2c+35+,1,,"the share by which the platform regulation reduces the disinformation in the public discourse; the phrase public discourse keeps this value out of the probability range of the ranking cells, which name the platform regulation and disinformation as well"
+lG-jm-2X+3L+XV+,1,,"step 8 of the split walk: the target of 349707.695578 units, which already subtracts the carried deviation, rounded to the lot size"
+lG-jm-3L+55+XW+,1,,"step 9 of the split walk: the target of 419691.358025 units, which already subtracts the carried deviation, rounded to the lot size"
+lG-jm-3L+5J+XS+,1,,"step 3 of the split walk: the target of 521517.412935 units, which already subtracts the carried deviation, rounded to the lot size"
+lG-jm-3L+5J+XT+,1,,"step 4 of the split walk: the target of 526528.056112 units, which already subtracts the carried deviation, rounded to the lot size"
+lG-jm-3L+5J+XU+,1,,"step 5 of the split walk: the target of 351540.40404 units, which already subtracts the carried deviation, rounded to the lot size"
+lG-jt-3L+5J+X.+,1,,after step 1 of the split walk
+lG-jt-3L+5J+X/+,1,,after step 2 of the split walk
+lG-jt-3L+5J+X0+,1,,after step 6 of the split walk
+lG-jt-3L+5J+X1+,1,,after step 7 of the split walk
+lG-jt-3L+5J+X2+,1,,after step 10 of the split walk
+lG-jt-3L+5J+X3+,1,,after step 11 of the split walk
+lG-jt-3L+5J+X4+,1,,after step 12 of the split walk
+lG-jt-3L+5J+X5+,1,,after step 13 of the split walk
+lG-jt-3L+5J+X6+,1,,after step 14 of the split walk
+lG-jt-3L+5J+X7+,1,,after step 15 of the split walk
+lG-jt-3L+5J+X8+,1,,after step 16 of the split walk
+lG-jt-3L+5J+X9+,1,,after step 17 of the split walk
+lG-jt-3L+5J+XA+,1,,after step 18 of the split walk
+lG-jt-3L+5J+XB+,1,,after step 19 of the split walk
+lG-jt-3L+5J+XC+,1,,after step 20 of the split walk
+lG-jt-3L+5J+XD+,1,,after step 21 of the split walk
+lG-jt-3L+5J+XE+,1,,after step 22 of the split walk
+lG-jt-3L+5J+XF+,1,,after step 23 of the split walk
+lG-jt-3L+5J+XG+,1,,after step 24 of the split walk
+lG-jt-3L+5J+XH+,1,,after step 25 of the split walk
+lG-jt-3L+5J+XI+,1,,after step 26 of the split walk
+lG-jt-3L+5J+XJ+,1,,after step 27 of the split walk
+lG-jt-3L+5J+XK+,1,,after step 28 of the split walk
+lG-jt-3L+5J+XL+,1,,after step 29 of the split walk
+lG-jt-3L+5J+XM+,1,,after step 30 of the split walk
+lG-jt-3L+5J+XN+,1,,after step 31 of the split walk
+lG-jt-3L+5J+XO+,1,,after step 32 of the split walk
+lG-jt-3L+5J+XP+,1,,after step 33 of the split walk
+lG-jt-3L+5J+XQ+,1,,after step 34 of the split walk
+lG-jt-3L+5J+XR+,1,,after step 35 of the split walk
+lG-jt-3L+5J+XS+,1,,after step 3 of the split walk
+lG-jt-3L+5J+XT+,1,,after step 4 of the split walk
+lG-jt-3L+5J+XU+,1,,after step 5 of the split walk
+lG-jt-3L+5J+XV+,1,,after step 8 of the split walk
+lG-jt-3L+5J+XW+,1,,after step 9 of the split walk
+lG-jv-jt-3L+5J+,1,,after step 37 of the split walk
+lG-jw-jt-3L+5J+,1,,after step 38 of the split walk
+lG-jx-jt-3L+5J+,1,,after step 39 of the split walk
+lG-jy-jt-3L+5J+,1,,after step 36 of the split walk
+lG-jz-jt-3L+5J+,1,,after step 42 of the split walk
+lG-k.-jt-3L+5J+,1,,after step 40 of the split walk
+lG-k/-jt-3L+5J+,1,,after step 41 of the split walk
+lH-jm-2X+3L+XV+,1,,"the same count as the first child, because both target shares are equal"
+lH-jm-3L+55+XW+,1,,"the same count as the first child, because both target shares are equal"
+lH-jm-3L+5J+XS+,1,,"the same count as the first child, because both target shares are equal"
+lH-jm-3L+5J+XT+,1,,"the same count as the first child, because both target shares are equal"
+lH-jm-3L+5J+XU+,1,,"the same count as the first child, because both target shares are equal"
+lI-jj-3L+5J+7Z+,1,,the value of the cash of the parent after the walk: the sum of the amounts times the exchange rate
+lI-jj-3L+5J+O8+,1,,the value of the stocks of the parent after the walk: the sum of the shares times the stock price
+lI-jj-jg-3L+5J+,1,,the value of the bonds of the parent after the walk: the sum of the face value times the bond price and the exchange rate
+lI-ju-3L+5J+WN+,1,,the deviations of all beneficiaries together: the split conserves the original portfolio value
+lI-l3-jj-0U+3L+,1,,the realised value of the parent divided by the original portfolio value
 Lo-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of teams for the main public questions
 Lp-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of platforms and their regulation
 Lr-0b-0T+35+55+,1,,the cost to set up the solution worldwide: the cost of registries and their review

@@ -209,7 +209,7 @@ class word_names
     // the chart type of start_page_charts.json, which the db setup imports last, so the id
     // follows the highest word id of the seed data; check it in the word list.csv
     const string LEVERAGE_PLOT = 'leverage plot';
-    const int LEVERAGE_PLOT_ID = 2133;
+    const int LEVERAGE_PLOT_ID = 2054;
     const string ALTERNATIVE = 'alternative';
     const int ALTERNATIVE_ID = 376;
     const string RANGE_BARS = 'range bars';
@@ -336,6 +336,11 @@ class word_names
     const int SPEED_ID = 85;
     const string METRE = 'metre';
     const int METRE_ID = 25;
+    // the is a parents of the metre in units.json: metre is a SI base unit is a Physical constant
+    const string SI_BASE_UNIT = 'SI base unit';
+    const string PHYSICAL_CONSTANT = 'Physical constant';
+    // linked to the metre by can be in the triple square metre, so no is a parent of the metre
+    const string SQUARE = 'square';
     // the unit symbol of the metre, which scaling.json uses as a symbol of million too
     const string M = 'm';
     const int M_ID = 26;

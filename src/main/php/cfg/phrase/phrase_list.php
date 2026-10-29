@@ -131,6 +131,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
+use Exception;
 
 class phrase_list extends sandbox_list_named
 {
@@ -843,6 +844,8 @@ class phrase_list extends sandbox_list_named
 
         $additional_added_triples = new phrase_list($this->get_user());
         $additional_added_phrases = new phrase_list($this->get_user());
+        // per level the added phrases, so that a walk that reaches the loop limit can be followed
+        $walk_trace = [];
 
         do {
             $loops = $loops + 1;
@@ -889,9 +892,10 @@ class phrase_list extends sandbox_list_named
 
             // accumulate the list used as a base for the search
             $accumulated_list->merge($added_phr_lst);
+            $walk_trace[] = $this->foaf_trace_level($loops, $additional_added_triples, $additional_added_phrases);
 
             if ($loops >= def::MAX_RECURSIVE) {
-                log_fatal("max number (" . $loops . ") of loops for phrase reached.", "phrase_list->tree_up_level");
+                log_fatal($this->foaf_loop_text($loops, $vrb, $direction, $walk_trace), self::class . '->foaf_level');
             }
         } while ((
             !empty($additional_added_triples->lst()) or
@@ -899,6 +903,37 @@ class phrase_list extends sandbox_list_named
         ) and $loops < $max_loops);
         log_debug('->foaf_level done');
         return $added_phr_lst;
+    }
+
+    /**
+     * @param int $level the number of the walk step
+     * @param phrase_list $trp_lst the linking triples added in this step
+     * @param phrase_list $phr_lst the linked phrases added in this step
+     * @return string one line of the walk trace e.g. to find the phrase that keeps the walk going
+     */
+    private function foaf_trace_level(int $level, phrase_list $trp_lst, phrase_list $phr_lst): string
+    {
+        return 'level ' . $level . ' added the triples ' . $trp_lst->name()
+            . ' and the phrases ' . $phr_lst->name();
+    }
+
+    /**
+     * @param int $loops the number of walk steps done
+     * @param verb|null $vrb the verb that the walk follows or null if it follows every verb
+     * @param foaf_direction $direction the direction of the walk
+     * @param array $walk_trace one line per walk step (foaf_trace_level)
+     * @return string the error text with the start of the walk, each step and the php call trace
+     */
+    private function foaf_loop_text(int $loops, ?verb $vrb, foaf_direction $direction, array $walk_trace): string
+    {
+        $vrb_name = 'every verb';
+        if ($vrb != null) {
+            $vrb_name = $vrb->name();
+        }
+        $walk = 'max number (' . $loops . ') of loops for phrase reached walking '
+            . $direction->value . ' by ' . $vrb_name . ' from ' . $this->name();
+        return $walk . "\n" . implode("\n", $walk_trace)
+            . "\nphp trace\n" . (new Exception)->getTraceAsString();
     }
 
     /**

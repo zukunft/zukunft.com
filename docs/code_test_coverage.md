@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1526 of 6284 public functions have at least 2 unit test calls; the 4553 functions below do not; the 205 functions of the last section are called nowhere
+1525 of 6285 public functions have at least 2 unit test calls; the 4555 functions below do not; the 205 functions of the last section are called nowhere
 
 ## 2016 functions of main backend have no test at all
 
@@ -4523,7 +4523,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 517 functions of frontend have incomplete tests
+## 519 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4604,6 +4604,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- data_object
     \-- formula_link_list - 2 unit test calls shared by 2 classes
     \-- formula_list - 6 unit test calls shared by 4 classes
+    \-- get_view_by_id - 3 unit test calls shared by 2 classes
     \-- result_list - 5 unit test calls shared by 3 classes
     \-- set_from_json - 9 unit test calls shared by 9 classes
     \-- set_value_list - 1 unit test calls shared by 2 classes
@@ -4990,6 +4991,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- type_lists
     \-- get_html - 1 unit test calls shared by 3 classes
     \-- get_view - 7 unit test calls shared by 7 classes
+    \-- get_view_by_id - 3 unit test calls shared by 2 classes
     \-- set_from_json - 9 unit test calls shared by 9 classes
     \-- set_from_json_array - 1 unit test calls shared by 6 classes
 \-- type_object

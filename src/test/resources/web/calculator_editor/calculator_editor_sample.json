@@ -10,7 +10,7 @@
       "description": "a fictional house of the sample calculator: 150 m² living space, heated by a heat pump"
     }
   ],
-  "description": "Sample of the calculator editor json, which uses every structure that the calculator editor reads at least once (see docs/json_structure.md); the numbers are fictional",
+  "description": "Sample of the calculator editor json, which uses every structure that the calculator editor reads and every proposed structure at least once (see docs/json_structure.md); the numbers are fictional",
   "words": [
     {
       "name": "house heating",
@@ -124,6 +124,28 @@
     },
     {
       "name": "percent"
+    },
+    {
+      "name": "solar thermal"
+    },
+    {
+      "name": "occupant"
+    },
+    {
+      "name": "first"
+    },
+    {
+      "name": "day"
+    },
+    {
+      "name": "heat pump capacity gap",
+      "description": "the heat demand minus the heat that the heat pump can deliver in a year"
+    },
+    {
+      "name": "billing unit"
+    },
+    {
+      "name": "expected"
     }
   ],
   "triples": [
@@ -154,6 +176,13 @@
       "from": "CHF",
       "verb": "per",
       "to": "kWh"
+    },
+    {
+      "name": "litre per day",
+      "type": "measure unit",
+      "from": "litre",
+      "verb": "per",
+      "to": "day"
     },
     {
       "from": "m²",
@@ -322,6 +351,109 @@
       "to": "field phrase selector value based"
     },
     {
+      "name": "house heating input heat demand per area",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "heat demand per area"
+    },
+    {
+      "name": "house heating input heat demand per area order",
+      "from": "house heating input heat demand per area",
+      "verb": "is follower of",
+      "to": "house heating input insulation standard"
+    },
+    {
+      "name": "house heating input heat demand per area read only",
+      "description": "proposed: the field shows the result of the insulation standard and cannot be changed",
+      "from": "house heating input heat demand per area",
+      "verb": "has a",
+      "to": "calculator read only"
+    },
+    {
+      "name": "house heating input solar thermal",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "solar thermal"
+    },
+    {
+      "name": "house heating input solar thermal order",
+      "from": "house heating input solar thermal",
+      "verb": "is follower of",
+      "to": "house heating input heat demand per area"
+    },
+    {
+      "name": "house heating input solar thermal label",
+      "description": "Solar thermal collectors for the hot water",
+      "from": "house heating input solar thermal",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "field solar thermal",
+      "description": "proposed: a checkbox, whose value is 1 if checked and 0 if not",
+      "from": "solar thermal",
+      "verb": "can be",
+      "to": "calculator checkbox"
+    },
+    {
+      "name": "house heating input occupant",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "occupant"
+    },
+    {
+      "name": "house heating input occupant order",
+      "from": "house heating input occupant",
+      "verb": "is follower of",
+      "to": "house heating input solar thermal"
+    },
+    {
+      "name": "house heating input occupant label",
+      "description": "Hot water per occupant",
+      "from": "house heating input occupant",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating input occupant repeat",
+      "description": "proposed: one field per occupant, which the user can add and remove",
+      "from": "house heating input occupant",
+      "verb": "has a",
+      "to": "calculator repeat"
+    },
+    {
+      "name": "first occupant",
+      "from": "occupant",
+      "verb": "kind of",
+      "to": "first"
+    },
+    {
+      "name": "first occupant instance",
+      "description": "proposed: the instances of a repeated input are the phrases that is a the item phrase",
+      "from": "first occupant",
+      "verb": "is a",
+      "to": "occupant"
+    },
+    {
+      "name": "heat pump capacity gap warning",
+      "description": "The heat demand exceeds the capacity of the heat pump.",
+      "from": "heat pump capacity gap",
+      "verb": "has a",
+      "to": "calculator warning"
+    },
+    {
+      "name": "house heating inputs download",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "calculator download"
+    },
+    {
+      "name": "house heating inputs printable report",
+      "from": "house heating inputs",
+      "verb": "has a",
+      "to": "calculator printable report"
+    },
+    {
       "name": "house heating assumptions",
       "from": "house heating",
       "verb": "has a",
@@ -378,6 +510,12 @@
       "from": "house heating result columns",
       "verb": "has a",
       "to": "calculator label"
+    },
+    {
+      "name": "house heating result columns colour",
+      "from": "house heating result columns",
+      "verb": "has a",
+      "to": "calculator colour"
     },
     {
       "name": "house heating column first year",
@@ -593,6 +731,121 @@
       "from": "house heating detail fuel average",
       "verb": "has a",
       "to": "calculator highlight"
+    },
+    {
+      "name": "house heating detail fuel section",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "calculator section"
+    },
+    {
+      "name": "house heating detail fuel row number",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "calculator row number"
+    },
+    {
+      "name": "house heating detail fuel ranking",
+      "description": "proposed: the rows are ordered by their price, the highest first",
+      "from": "house heating detail fuel",
+      "verb": "is ranked by",
+      "to": "price"
+    },
+    {
+      "name": "house heating detail column price editable",
+      "from": "house heating detail column price",
+      "verb": "has a",
+      "to": "calculator editable"
+    },
+    {
+      "name": "house heating detail column price diagram",
+      "from": "house heating detail column price",
+      "verb": "has a",
+      "to": "calculator diagram"
+    },
+    {
+      "name": "house heating detail column billing unit",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "billing unit"
+    },
+    {
+      "name": "house heating detail column billing unit order",
+      "from": "house heating detail column billing unit",
+      "verb": "is follower of",
+      "to": "house heating detail column price"
+    },
+    {
+      "name": "house heating detail column billing unit phrase",
+      "description": "proposed: the column shows the billing unit of the prices of the fuel, e.g. CHF per kWh",
+      "from": "house heating detail column billing unit",
+      "verb": "has a",
+      "to": "calculator phrase column"
+    },
+    {
+      "name": "CHF per kWh billing unit",
+      "from": "CHF per kWh",
+      "verb": "is a",
+      "to": "billing unit"
+    },
+    {
+      "name": "house heating detail fuel page independent",
+      "description": "proposed: the energy prices are the same for every house, so the table shows the prices without the page phrase",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "calculator page independent"
+    },
+    {
+      "name": "house heating detail fuel import",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "calculator file import"
+    },
+    {
+      "name": "house heating detail fuel import label",
+      "description": "Import energy prices",
+      "from": "house heating detail fuel import",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating detail fuel copy",
+      "from": "house heating detail fuel",
+      "verb": "has a",
+      "to": "calculator copy"
+    },
+    {
+      "name": "house heating checks",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator check"
+    },
+    {
+      "name": "house heating checks label",
+      "description": "Check against the energy certificate",
+      "from": "house heating checks",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "house heating notes",
+      "from": "house heating",
+      "verb": "has a",
+      "to": "calculator note"
+    },
+    {
+      "name": "house heating note sizing",
+      "description": "A heat pump sized for the coldest day runs most of the year at part load, which lowers its efficiency.",
+      "from": "house heating notes",
+      "verb": "has a",
+      "to": "heat pump efficiency"
+    },
+    {
+      "name": "house heating note sizing label",
+      "description": "Sizing",
+      "from": "house heating note sizing",
+      "verb": "has a",
+      "to": "calculator label"
     }
   ],
   "formulas": [
@@ -612,6 +865,10 @@
       "name": "sample fuel price statistic",
       "description": "a fictional statistic of the energy prices for households, used to show a measured value with its source",
       "url": "https://example.org/fuel-prices"
+    },
+    {
+      "name": "sample energy certificate",
+      "description": "a fictional energy certificate of the sample house, which states the expected heat demand"
     }
   ],
   "values": [
@@ -658,16 +915,47 @@
       "description": "a value with a source, which the page tags as measured"
     },
     {
-      "words": ["sample house", "price", "heating oil", "2026", "CHF per kWh"],
-      "number": "0.11"
+      "words": ["price", "heating oil", "2026", "CHF per kWh"],
+      "number": "0.11",
+      "description": "a price without the page phrase, which the page independent detail table shows"
     },
     {
-      "words": ["sample house", "price", "electricity", "2026", "CHF per kWh"],
+      "words": ["price", "electricity", "2026", "CHF per kWh"],
       "number": "0.27"
     },
     {
-      "words": ["sample house", "price", "average", "2026", "CHF per kWh"],
+      "words": ["price", "average", "2026", "CHF per kWh"],
       "number": "0.19"
+    },
+    {
+      "words": ["price", "calculator decimals"],
+      "number": "3",
+      "description": "proposed: every price cell shows three decimals"
+    },
+    {
+      "words": ["sample house", "solar thermal"],
+      "number": "0",
+      "description": "proposed: the value of the checkbox, which is not checked"
+    },
+    {
+      "words": ["house heating input occupant repeat", "field limit down"],
+      "number": "1",
+      "description": "proposed: the minimum number of occupants"
+    },
+    {
+      "words": ["house heating input occupant repeat", "field limit up"],
+      "number": "6"
+    },
+    {
+      "words": ["sample house", "first occupant", "litre per day"],
+      "number": "50",
+      "description": "proposed: the value of the first instance of the repeated input"
+    },
+    {
+      "words": ["sample house", "annual heat demand", "first year", "expected", "kWh per year"],
+      "number": "5700",
+      "source": "sample energy certificate",
+      "description": "proposed: a value with the word expected is a row of the check table, which compares it with the result that has the same phrases"
     }
   ],
   "results": [
@@ -714,6 +1002,10 @@
       "words": ["sample house", "saving oil boiler", "lifetime", "CHF"],
       "formula": "saving formula",
       "number": -3000
+    },
+    {
+      "words": ["sample house", "heat pump capacity gap", "kWh per year"],
+      "number": -1300
     }
   ]
 }

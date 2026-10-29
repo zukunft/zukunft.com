@@ -98,7 +98,7 @@ with the page phrase, and takes both sides of the triple as parts; the `to` side
 qualifier that many unrelated values share, e.g. "example" of "example PV installation" (PV
 installation kind of example), so the PV yield field of the PV lifetime balance page shows the
 assumed 1000 kWh per kWp of `pv_yield.json` with the word "example" instead of the measured 976
-kWh/kWp·a with its source (snapshot `src/test/resources/web/html/use_cases/pv_lifetime_balance.html`,
+kWh/kWp·a with its source (snapshot `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html`,
 field n-1997)
 
 count only the `from` side of the page triple, the phrase the page is about e.g. PV installation or
@@ -247,6 +247,24 @@ the url form of a group id (shared/group_id_url.php) has known limits:
 - a raw "+" in a hand written old link arrives as a space (a url reads "+" as a space) and is not repaired; only the "%2B" form of an old link is accepted
 
 the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "variance high (system)" lists every result with "variance high (system)"; the fallback should be the phrases of the formula expression instead
+
+### Portfolio Split Calculator
+
+the system view Calculator shows the example portfolio split by the calculator triples of portfolio split
+(system_views_read_tests::run_portfolio_split_calculator), so the own view of the use case is not used any more;
+remove from src/main/resources/messages/use_cases/portfolio_split_calculator.json the view "Portfolio Split Calculator"
+and its components "Title example portfolio split", "description example portfolio split" and
+"table example portfolio split per beneficiary", and then views::PORTFOLIO_SPLIT_CALCULATOR_NAME if nothing else uses it;
+the removal shifts the view and component ids of every later import, which the re-pin process handles
+
+the page json of portfolio_split_calculator.json uses the proposed calculator elements (PROPOSED NEW ELEMENT in
+calculator_keywords.json, "Proposed elements" in docs/json_structure.md), which the calculator view does not read yet;
+until they are implemented the generated portfolio_split_calculator_no_js.html shows only the frame, the existing input
+fields and the summary rows; the open points are listed as (1) to (18) in the description of the use case file
+
+test/test_part.php (a_selected_test) re-imports the calculator keywords and the portfolio use case and renders the
+page, but cannot rebuild the database, because a_selected_test extends all_unit_tests and not all_unit_write_tests;
+after a change of the import order run test/test_re_pin.php first
 
 ## start page data
 

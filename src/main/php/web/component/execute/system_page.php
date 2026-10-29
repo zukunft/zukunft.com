@@ -185,6 +185,8 @@ class system_page extends component
     ];
     // the names of the calculator and field keywords by the key that the script reads
     const array CALC_PAGE_KEYWORD_NAMES = [
+        // every keyword is a triple from it, so a proposed keyword is never shown as an item
+        'root' => triples::SYSTEM_CALCULATOR,
         'input' => triples::CALCULATOR_INPUT,
         'assumption' => triples::CALCULATOR_ASSUMPTION,
         'column' => triples::CALCULATOR_RESULT_COLUMN,

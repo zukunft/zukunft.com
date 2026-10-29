@@ -104,7 +104,7 @@ class views
     // column tiers define, headed by the phrase title, e.g. the use case "PV in Switzerland" with
     // the avoided emission with and without the displacement mix concept (pv_switzerland_co2.json)
     const string COMPARISON_TABLE = 'comparison_table';
-    const int COMPARISON_TABLE_ID = 201;
+    const int COMPARISON_TABLE_ID = 200;
     const string COMPARISON_TABLE_NAME = 'Comparison table';
     // the view of the use case cbam_calculator.json, selected by its name only as well
     const string CBAM_TREE_CALCULATOR_NAME = 'CBAM Part Tree Calculator';
@@ -112,14 +112,14 @@ class views
     const string PORTFOLIO_SPLIT_CALCULATOR_NAME = 'Portfolio Split Calculator';
     // placeholders with a title and a phrase selector until the editors are done (editor_views.json)
     const string TABLE_EDITOR = 'table_editor';
-    const int TABLE_EDITOR_ID = 195;
+    const int TABLE_EDITOR_ID = 194;
     const string TABLE_EDITOR_NAME = 'Table editor';
     const string CALCULATOR_EDITOR = 'calculator_editor';
-    const int CALCULATOR_EDITOR_ID = 196;
+    const int CALCULATOR_EDITOR_ID = 195;
     const string CALCULATOR_EDITOR_NAME = 'Calculator editor';
     // the editor of the formulas of a page phrase, appended to calculator_views.json, so that no id moves
     const string FORMULA_EDITOR = 'formula_editor';
-    const int FORMULA_EDITOR_ID = 202;
+    const int FORMULA_EDITOR_ID = 201;
     const string FORMULA_EDITOR_NAME = 'Formula editor';
     // the views whose phrase selector sends the name of the phrase that the view shows next
     // (see frontend::url_with_selected_phrase)

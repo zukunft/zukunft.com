@@ -47,6 +47,62 @@
     },
     {
       "name": "table"
+    },
+    {
+      "name": "repeat",
+      "description": "an input that the user can add and remove several times e.g. one target weight per child"
+    },
+    {
+      "name": "checkbox"
+    },
+    {
+      "name": "read only"
+    },
+    {
+      "name": "warning"
+    },
+    {
+      "name": "section",
+      "description": "a part of a page that can be opened and closed"
+    },
+    {
+      "name": "editable"
+    },
+    {
+      "name": "phrase"
+    },
+    {
+      "name": "row number"
+    },
+    {
+      "name": "decimals"
+    },
+    {
+      "name": "colour"
+    },
+    {
+      "name": "note"
+    },
+    {
+      "name": "check"
+    },
+    {
+      "name": "diagram"
+    },
+    {
+      "name": "file import"
+    },
+    {
+      "name": "download"
+    },
+    {
+      "name": "printable report"
+    },
+    {
+      "name": "copy"
+    },
+    {
+      "name": "page independent"
     }
   ],
   "triples": [
@@ -137,6 +193,132 @@
       "verb": "has a",
       "to": "sign",
       "code_id": "system_calculator_signed"
+    },
+    {
+      "name": "calculator repeat",
+      "description": "PROPOSED NEW ELEMENT: field type: an input item with a triple to this keyword is shown once per instance with an add and a remove button e.g. the target weight of every child; the minimum and the maximum count are the values field limit down and field limit up of the triple to this keyword, the instances are the phrases that is a the item phrase e.g. first child portfolio, a new instance is named by the next ordinal word, and the result columns and the detail table columns of the repeated phrase follow the count; needs a repeat field and a dynamic column list in the frontend code",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "repeat"
+    },
+    {
+      "name": "calculator checkbox",
+      "description": "PROPOSED NEW ELEMENT: field type: an input phrase with a triple to this keyword is shown as a checkbox with its label and hint e.g. mirror the children or split cash; checked is the value 1, unchecked the value 0, so a formula can use it as a factor; needs a new field type in the frontend code",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "checkbox"
+    },
+    {
+      "name": "calculator read only",
+      "description": "PROPOSED NEW ELEMENT: flag: an input item with a triple to this keyword shows a result instead of a field e.g. the target weight of the parent as 100 % minus the weights of the children, and is calculated again when an input changes; needs a read only field in calculator_fields",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "read only"
+    },
+    {
+      "name": "calculator warning",
+      "description": "PROPOSED NEW ELEMENT: text property: the description of a triple from a result phrase to this keyword is shown below the input fields as a warning while the result of the page phrase is above zero e.g. the excess of the weights of the children above 100 %; needs a warning in calculator_fields and the sign of a result or a comparison in the formula engine",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "warning"
+    },
+    {
+      "name": "calculator section",
+      "description": "PROPOSED NEW ELEMENT: flag: a detail table, a check table, a diagram or the notes with a triple to this keyword get a collapsed section of their own with their label as the summary, in the order of the is follower of chain e.g. check, deviation diagram, splitting walk, holdings, notes and sources; needs a section per item in calculation_result instead of one block for all details",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "section"
+    },
+    {
+      "name": "calculator editable",
+      "description": "PROPOSED NEW ELEMENT: flag: the cells of a detail table column with a triple to this keyword are number fields that join the save form e.g. the quantity, the price and the lot size of the holdings; needs input cells in calculation_detail_tables",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "editable"
+    },
+    {
+      "name": "calculator phrase column",
+      "description": "PROPOSED NEW ELEMENT: list item property: a detail table column with a triple to this keyword shows instead of a number the phrase that the numbers of the row have and that is a column phrase e.g. CHF, which is a currency, for a holding; needs a phrase cell in calculation_detail_tables",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "phrase"
+    },
+    {
+      "name": "calculator row number",
+      "description": "PROPOSED NEW ELEMENT: flag: a detail table with a triple to this keyword shows the position of the row as the first column e.g. the step of the splitting walk",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "row number"
+    },
+    {
+      "name": "calculator decimals",
+      "description": "PROPOSED NEW ELEMENT: number property: a value with a phrase and this keyword sets the decimals of every cell of the phrase e.g. 0 for shares and 2 for cash, so that one column shows the rows with different decimals",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "decimals"
+    },
+    {
+      "name": "calculator colour",
+      "description": "PROPOSED NEW ELEMENT: flag: the columns of a list with a triple to this keyword get the colours of the page palette in their order e.g. the dark blue for the parent and four cycling blues for the children, in the header, the cells and the diagram lines",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "colour"
+    },
+    {
+      "name": "calculator note",
+      "description": "PROPOSED NEW ELEMENT: list: the items of the group triple to this keyword are the notes of the page: the description of an item is the text with the label of the item in bold in front, in the order of the is follower of chain and before the formula notes e.g. why the order of the walk matters",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "note"
+    },
+    {
+      "name": "calculator check",
+      "description": "PROPOSED NEW ELEMENT: a triple from the base phrase to this keyword shows a check table with one row per value of the page with the word expected: the expected number, the calculated number, which is the number with the same phrases without expected, and match or differs as the status; the source of the expected value is the hint of the row e.g. the split agreement; needs a new component type calculator_check",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "check"
+    },
+    {
+      "name": "calculator diagram",
+      "description": "PROPOSED NEW ELEMENT: flag: a detail table column with a triple to this keyword is also drawn as a line along the rows of its table in a diagram below the table, with a legend of the last numbers e.g. the cumulative deviation of every child along the walk; needs a diagram in calculation_detail_tables",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "diagram"
+    },
+    {
+      "name": "calculator file import",
+      "description": "PROPOSED NEW ELEMENT: button: a triple from a list, an item or a detail table to this keyword shows an import button, whose label is the label of the triple and whose file fills the values of its phrase e.g. import the portfolio or the exchange rates; needs the file import of the calculator page",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "file import"
+    },
+    {
+      "name": "calculator download",
+      "description": "PROPOSED NEW ELEMENT: button: a triple from the inputs list to this keyword shows a download button that exports the tables of the page as a spreadsheet",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "download"
+    },
+    {
+      "name": "calculator printable report",
+      "description": "PROPOSED NEW ELEMENT: button: a triple from the inputs list to this keyword shows a report button that shows the page as a printable pdf",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "printable report"
+    },
+    {
+      "name": "calculator copy",
+      "description": "PROPOSED NEW ELEMENT: button: a triple from a detail table to this keyword shows the two buttons copy as zukunft.com json and copy as csv, which copy the rows of the table to the clipboard and shows the text selected if copying is blocked",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "copy"
+    },
+    {
+      "name": "calculator page independent",
+      "description": "PROPOSED NEW ELEMENT: flag: an item, a detail table or the check table with a triple to this keyword selects its numbers without the page phrase e.g. the holdings of a bank statement, which are the same for every split of the depot; needs the numbers of the walked phrases without the page phrase in calculator_numbers",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "page independent"
     }
   ]
 }

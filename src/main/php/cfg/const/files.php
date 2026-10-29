@@ -381,7 +381,6 @@ class files
         // that it shifts the database id of no phrase that a test pins
         self::PROBLEM_MAIN_REASONS_FILE,
         self::CBAM_CALCULATOR_FILE,
-        self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
     ];
 
     // system data with code ids added after the database ids of the tested phrases have been
@@ -402,6 +401,7 @@ class files
     const array USE_CASE_FILES_APPENDED = [
         self::PV_LIFETIME_BALANCE_FILE,
         self::NPP_CH_VOTE_FILE,
+        self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

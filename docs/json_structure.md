@@ -1,7 +1,7 @@
 # The calculator editor json
 
 The calculator editor reads, exports and shows one json file per calculator page.
-A complete example that uses every part at least once is
+A complete example that uses every part, including the proposed ones, at least once is
 [calculator_editor_sample.json](../src/test/resources/web/calculator_editor/calculator_editor_sample.json):
 a fictional page that compares the heating costs of a house.
 
@@ -108,3 +108,79 @@ editor shows the name of the phrase.
 - **a row phrase built from the group phrase**: if the row phrase is a triple from the
   group phrase, e.g. `saving heat pump` = `saving` · `with` · `heat pump`, the row shows
   the label of `heat pump`
+
+## Proposed elements
+
+These keywords are defined in
+[calculator_keywords.json](../src/main/resources/messages/calculator_keywords.json),
+each with a description that starts with `PROPOSED NEW ELEMENT`. The editor does not
+read them yet. The sample uses each of them once, so that the page structure that
+they need is clear before the code is written.
+
+### Input fields
+
+| element | triple in the sample | effect |
+|---|---|---|
+| checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
+| read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the result of the item phrase instead of a field |
+| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button |
+| warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero |
+
+A repeated input:
+
+- the values `field limit down` and `field limit up` of the repeat triple are the
+  minimum and the maximum count
+- the instances are the phrases that `is a` the item phrase, e.g. `first occupant` · `is a` · `occupant`;
+  a new instance is named by the next ordinal word
+- the value of an instance has the instance phrase, e.g. `sample house`, `first occupant`, `litre per day`
+- a result column or a detail table column of the repeated phrase is shown once per instance
+
+### Tables
+
+| element | triple in the sample | effect |
+|---|---|---|
+| section | `house heating detail fuel` · `has a` · `calculator section` | the detail table gets a collapsed section of its own with its label as the summary |
+| row number | `house heating detail fuel` · `has a` · `calculator row number` | the first column is the position of the row |
+| order | `house heating detail fuel` · `is ranked by` · `price` | the rows are ordered by the number of the phrase, the highest first |
+| editable column | `house heating detail column price` · `has a` · `calculator editable` | the cells are number fields that join the save form |
+| phrase column | `house heating detail column billing unit` · `has a` · `calculator phrase column` | a cell shows the phrase that the numbers of the row have and that is a column phrase, e.g. `CHF per kWh` with `CHF per kWh` · `is a` · `billing unit` |
+| page independent | `house heating detail fuel` · `has a` · `calculator page independent` | the cells select their numbers without the page phrase, e.g. the energy prices that are the same for every house; also for an item or the check table |
+| diagram | `house heating detail column price` · `has a` · `calculator diagram` | the column is also drawn as a line along the rows, with a legend of the last numbers |
+| decimals | the value `price`, `calculator decimals` = 3 | every cell of the phrase shows this number of decimals |
+| colour | `house heating result columns` · `has a` · `calculator colour` | the columns get the colours of the page palette in their order |
+
+Two proposed rules for the detail tables need no keyword:
+
+- the rows are the phrases below the table phrase over several levels of `is a` and
+  `is part of`, without the phrases that have rows below them, e.g. the stocks, the bonds
+  and the cash of a portfolio below `holding`
+- a cell skips the numbers that have the phrase of another column of the same table, e.g.
+  the count column of a child skips the cumulative deviation of that child
+
+### Checks and notes
+
+- **check table**: `house heating` · `has a` · `calculator check` shows one row per value
+  of the page with the word `expected`. The calculated number is the number with the
+  same phrases without `expected`, and the source of the expected value is the hint of
+  the row. The table shows both numbers and whether they match.
+- **notes**: `house heating notes` = `house heating` · `has a` · `calculator note` is a list.
+  The description of an item, e.g. `house heating note sizing`, is a note of the page with
+  the label of the item in bold in front. The notes come before the descriptions of the
+  formulas.
+
+### Buttons
+
+| element | triple in the sample | effect |
+|---|---|---|
+| file import | `house heating detail fuel` · `has a` · `calculator file import` | an import button with the label of the triple; the file fills the values of its phrase |
+| download | `house heating inputs` · `has a` · `calculator download` | exports the tables of the page as a spreadsheet |
+| printable report | `house heating inputs` · `has a` · `calculator printable report` | shows the page as a printable pdf |
+| copy | `house heating detail fuel` · `has a` · `calculator copy` | copies the rows of the table as zukunft.com json or as csv |
+
+### Calculations
+
+The formula engine calculates with `+ - * /` only. A calculator like the portfolio split
+also needs rounding to a multiple, min and max, a sum over a list, a condition, a sort by
+a result and a walk that carries a number from one row into the next. Until the engine
+has them, such results are stored as values and an input change does not calculate
+them again.

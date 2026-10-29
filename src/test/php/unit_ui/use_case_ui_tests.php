@@ -562,6 +562,14 @@ class use_case_ui_tests
         $test_name = 'the items follow the order chain and an item without order triple comes after it';
         $t->assert($test_name, array_map(fn($item) => $item->name(), $inputs), [
             triple_names::CALC_ZH_INPUT_INHABITANTS, triple_names::CALC_ZH_INPUT_CANTON, triple_names::CALC_ZH_INPUT_YEAR]);
+        // a triple to a proposed keyword e.g. a download button is a triple from the calculator keyword
+        // as well, so it is no input item, also before the page shows the proposed keyword
+        $cac_kwd = $t_phr->list_calculator_proposed_ui();
+        $test_name = 'the request cache of the proposed keyword test has the triple to the proposed keyword';
+        $t->assert_true($test_name, $cac_kwd->get_by_name(triple_names::CALC_ZH_INPUTS_DOWNLOAD, $msg) != null);
+        $test_name = '... which is no input item';
+        $t->assert($test_name, $this->zh_input_names($cac_kwd, $msg), [
+            triple_names::CALC_ZH_INPUT_INHABITANTS, triple_names::CALC_ZH_INPUT_CANTON, triple_names::CALC_ZH_INPUT_YEAR]);
         $test_name = 'an item without a label shows the label of its phrase';
         $t->assert($test_name, $calc->label($inputs[0]), triple_names::CALC_INHABITANTS_LABEL_COM);
         $test_name = 'the label of the item wins over the label of its phrase';
@@ -1240,6 +1248,17 @@ class use_case_ui_tests
             $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         }
         return $result;
+    }
+
+    /**
+     * @param phrase_list_ui $cac_kwd the request cache of a calculator test with the page phrase Zurich (city)
+     * @param user_message $msg to collect the messages of the reader
+     * @return array the names of the input items of the calculator of Zurich (city)
+     */
+    private function zh_input_names(phrase_list_ui $cac_kwd, user_message $msg): array
+    {
+        $calc = new calculator($cac_kwd->get_by_name(triple_names::CITY_ZH_NAME, $msg), $cac_kwd);
+        return array_map(fn($item) => $item->name(), $calc->items(triples::CALCULATOR_INPUT));
     }
 
     /**

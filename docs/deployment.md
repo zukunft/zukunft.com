@@ -36,6 +36,28 @@ changed, the test fails and you decide if the new page is right. The hand made t
 next to it, e.g. calculator_editor_sample.html, is never checked by a test; compare the
 two pages yourself in a browser.
 
+The PV lifetime balance has three files in src/test/resources/web/html/use_cases/:
+
+| file | made by | used for |
+|---|---|---|
+| pv_lifetime_balance_sample.html | hand | the target layout of the calculator page: a stand-alone mock up with its own script, which the generated pages should come close to |
+| pv_lifetime_balance_no_js.html | test run | the calculator page as the server renders it without javascript (`sc=0`), which every browser shows and which the save of the inputs uses |
+| pv_lifetime_balance_js.html | test run | the same page as the browser builds it by default from the phraseData answer with calculator_json.js, which recalculates the results while an input changes |
+
+Both generated pages are written by system_views_read_tests::run_pv_lifetime_balance from
+the system view Calculator for the phrase example PV installation and checked against their
+last version like every use case page, so the diff of a file shows what a code or data
+change did to the page. The two generated pages should show the same
+content, so a difference between them points to a rule that calculator.php and
+calculator_json.js implement differently.
+
+Compare the sample with pv_lifetime_balance_no_js.html, because only that page has the
+inputs, the labels, the units and the result rows as html like the sample;
+pv_lifetime_balance_js.html holds only the json data that the browser builds the page from,
+so a diff against it shows nothing of the layout. The numbers of the sample come from its
+own script, so they can differ from the stored values and the formula results of the
+generated pages.
+
 ## local web server for the api tests and the html snapshots
 
 The api tests and the html snapshot pages use a local web server on http://localhost/
