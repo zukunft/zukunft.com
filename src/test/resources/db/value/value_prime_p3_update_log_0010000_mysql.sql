@@ -19,7 +19,7 @@ PREPARE value_prime_p3_update_log_0010000_call FROM
     'SELECT value_prime_p3_update_log_0010000 (?,?,?,?)';
 
 SELECT value_prime_p3_update_log_0010000
-       (217,
-        201,
+       (228,
+        212,
         135,
         0);

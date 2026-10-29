@@ -80,9 +80,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const string POD = 'pod';
-    const int POD_ID = 207;
+    const int POD_ID = 218;
     const string MASTER_POD_NAME = 'zukunft.com';
-    const int MASTER_POD_NAME_ID = 216;
+    const int MASTER_POD_NAME_ID = 227;
     const string JOB = 'job';
     const string USER = 'user';
     const string FRONTEND = 'frontend';
@@ -127,12 +127,12 @@ class words
     const string CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const string CATEGORY = 'category';
     const string CH = 'Switzerland';
-    const int CH_ID = 210;
+    const int CH_ID = 221;
     const string CHANGE = 'change';
     const string CHANGES = 'changes';
     const string CHECK = 'check';
     const string CHF = 'CHF';
-    const int CHF_ID = 469;
+    const int CHF_ID = 480;
     const string COLUMNS = 'columns';
     const string COMBINATION = 'combination';
     const string COMPONENT = 'component';
@@ -183,7 +183,7 @@ class words
     const string FULL = 'full';
     const string FUTURE = 'future';
     const string HAPPY = 'happy';
-    const int HAPPY_ID = 281;
+    const int HAPPY_ID = 292;
     const string HARDWARE = 'hardware';
     const string HTML = 'html';
     const string IMPACT = 'impact';
@@ -194,7 +194,7 @@ class words
     const string IP = 'ip';
     const string IP_RANGES = 'ip-ranges';
     const string LAUNCH = 'launch';
-    const int LAUNCH_ID = 202;
+    const int LAUNCH_ID = 213;
     const string LAYOUT = 'layout';
     const string LAYOUT_COM = 'the settings to position the components on the screen';
     const string LEVEL = 'level';
@@ -231,6 +231,10 @@ class words
     const int PCT_ID = 160;
     // the qualifier of an estimate
     const string ASSUMED = 'assumed';
+    // the qualifier of the output of a model, e.g. a value that a formula cannot calculate
+    const string MODELLED = 'modelled';
+    // the qualifier of a stored number that a formula of the same file calculates
+    const string CALCULATED = 'calculated';
     // the word that tags the confidence that the range of a value contains the true value
     const string CONFIDENCE = 'confidence';
     // the qualifiers of a value that a table shows as the tooltip of the cell
@@ -249,9 +253,9 @@ class words
     const string PHRASE = 'phrase';
     const string PODS = 'pods';
     const string POINT = 'point';
-    const int POINT_ID = 208;
+    const int POINT_ID = 219;
     const string POINTS = 'points';
-    const int POINTS_ID = 283;
+    const int POINTS_ID = 294;
     const string PRECISE = 'precise';
     const string PREDICTION = 'prediction';
     const string PRELOAD = 'preload';
@@ -299,20 +303,20 @@ class words
     const string TOOLTIP = 'tooltip';
     const string TOP = 'top';
     const string TOTAL_PRE = 'total';
-    const int TOTAL_ID = 396;
+    const int TOTAL_ID = 407;
     const string TRIPLES = 'triples';
     const string TRUSTED = 'trusted';
     const string TYPE = 'type';
     const string UPDATE = 'update';
     const string UPDATES = 'updates';
     const string URL = 'url';
-    const int URL_ID = 211;
+    const int URL_ID = 222;
     const string USAGE = 'usage';
     const string VALIDATE = 'validate';
     const string VALUE = 'value';
     const string VALUES = 'values';
     const string VERBS = 'verbs';
-    const int VERBS_ID = 810;
+    const int VERBS_ID = 821;
     const string VERSION = 'version';
     const string VERY = 'very';
     const string VIEW = 'view';

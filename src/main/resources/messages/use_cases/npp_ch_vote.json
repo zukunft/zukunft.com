@@ -487,8 +487,7 @@
       "name": "residual"
     },
     {
-      "name": "net zero",
-      "description": "the Swiss climate target of net zero greenhouse-gas emissions by 2050"
+      "name": "zero"
     },
     {
       "name": "competitiveness"
@@ -1170,6 +1169,13 @@
       "from": "timing",
       "verb": "limits",
       "to": "lifting the NPP ban"
+    },
+    {
+      "name": "net zero",
+      "description": "the Swiss climate target of net zero greenhouse-gas emissions by 2050",
+      "from": "zero",
+      "verb": "kind of",
+      "to": "net"
     },
     {
       "name": "net zero limits lifting the NPP ban",

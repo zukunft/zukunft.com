@@ -12,6 +12,9 @@
       "name": "photovoltaic"
     },
     {
+      "name": "calculated"
+    },
+    {
       "name": "PV",
       "description": "the usual acronym for photovoltaic"
     },
@@ -233,7 +236,7 @@
       "url": "https://www.ecobau.ch/resources/uploads/Oekobilanzdaten/Hintergrundberichte/KBOB_BAFU_AHB_2022_Energiesysteme_v1_0.pdf"
     },
     {
-      "name": "BAFU Swiss electricity mixes 2018",
+      "name": "Krebs & Frischknecht (treeze): Umweltbilanz Strommixe Schweiz 2018, for BAFU",
       "description": "Krebs L., Frischknecht R. (treeze Ltd.): Umweltbilanz Strommixe Schweiz 2018, v2.01, for the Federal Office for the Environment (FOEN/BAFU), Uster, 27 April 2021. The life cycle inventories of the Swiss production mix, the supplier mix based on guarantees of origin (HKN, 54.7 g CO2-eq/kWh) and the consumption mix of 2018.",
       "url": "https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf.download.pdf/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf"
     }
@@ -314,7 +317,8 @@
         "avoided emission",
         "consumption mix",
         "CO2-eq",
-        "gram per kWh"
+        "gram per kWh",
+        "calculated"
       ],
       "number": "79.2",
       "description": "the climate benefit of one kWh of Swiss PV without the displacement concept: the Swiss consumption mix minus the PV life cycle emission, 126 - 46.8"
@@ -325,7 +329,8 @@
         "avoided emission",
         "displacement mix",
         "CO2-eq",
-        "gram per kWh"
+        "gram per kWh",
+        "calculated"
       ],
       "number": "939.2",
       "description": "the climate benefit of one kWh of Swiss PV with the displacement concept: the EU displacement mix minus the PV life cycle emission, 986 - 46.8, about twelve times the benefit of the classic comparison"

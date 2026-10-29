@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            global problem - Start view - zukunft.com
+        </title>
+        <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="?view=more" title="show more views">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=84" title="create a new named view editor">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=11">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/http/view.php?m=13">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="http://localhost/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <div class="row col-md-12">
+                global problem
+            </div>
+            <div class="container text-center">
+                <h4>
+                    <a href="http://localhost/http/view.php?m=4&amp;id=139" title="here more a personal issue (wikipedia does not really match)">
+                        global problems
+                    </a>
+                </h4>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=220" title="A problem is if someone is getting unhappy. This can be measured with &quot;happy time points&quot;.">
+                            problem
+                        </a>
+                    </th>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=177" title="the loss that a problem can cause if it is not solved">
+                            potential loss
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=298" title="the scaling factor of 10^12">
+                            trillion
+                        </a>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=302" title="ISO 4217 alphabetic code for the euro.">
+                            EUR
+                        </a>
+                    </th>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=241" title="a homogeneous mixture of a solute dissolved in a solvent">
+                            solution
+                        </a>
+                    </th>
+                    <th>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=178" title="the gain that a solution can reach if it is implemented">
+                            potential gain
+                        </a>
+                        in
+                        <a href="http://localhost/http/view.php?m=3&amp;id=298" title="the scaling factor of 10^12">
+                            trillion
+                        </a>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=302" title="ISO 4217 alphabetic code for the euro.">
+                            EUR
+                        </a>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=276" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
+                            health
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0l-2I_2e_2i_3G_">
+                            5.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=279" title="A tax is a mandatory financial charge imposed on a taxpayer by a governmental organisation to fund government spending and public expenditures.">
+                            taxes
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0m-2I_2L_2e_2i_3G_">
+                            0.55
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=260" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
+                            populism
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 30 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0l-22_2e_2i_3G_">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1257" title="a button that lets a reader hide a post or an account with one click, so that emotional content spreads less far (see fermi_internet_pro_contra.json)">
+                            one-click hide
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1256" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=Hd-0m-22_2e_2i_3G_">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=162" title="the long-term rise in Earth&#039;s average surface temperature, driven mainly by human greenhouse-gas emissions, measured relative to the 1850-1900 pre-industrial baseline.">
+                            global warming
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 20 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0l-0W-2e_2i_3G_">
+                            2.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=1186" title="the calculation of the carbon border tariff by a public, source-verifiable tool, so that every importer and exporter can check the price of the embedded emissions; the leading measure of the solution reduce climate gas emissions and the part of the carbon border tariff that removes its main obstacle, the complexity of the calculation (concept paper section 3)">
+                            public CBAM calculation
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1707" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=GW-0m-0W-2e_2i_3G_">
+                            1.6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=278" title="the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.">
+                            poverty
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 25 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0l-2K_2e_2i_3G_">
+                            2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=3&amp;id=277" title="systematic investigation to discover new knowledge">
+                            research
+                        </a>
+                        ,
+                        <a href="http://localhost/http/view.php?m=2&amp;id=-1361" title="there are more, all are shown on the page of this row">
+                            ...
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0m-2J_2K_2e_2i_3G_">
+                            0.02
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=183" title="the ability of a market dominant company to prevent competition, dictate prices and shift profits to low tax jurisdictions (concept paper section 7)">
+                            market power
+                        </a>
+                    </td>
+                    <td title="assumed, confidence 15 %">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=0r-0l-2e_2i_3G_">
+                            1.6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=4&amp;id=247" title="supplementary taxation of corporate profits linked to the market share in the smallest relevant market segment and levied where the economic use occurs (concept paper section 7)">
+                            market share tax
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="http://localhost/http/view.php?m=9&amp;id=1r-0r-0m-2e_2i_3G_">
+                            0.48
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="http://localhost/http/view.php?m=114&amp;id=-139">
+                            ... and 8 more
+                        </a>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="http://localhost/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="http://localhost/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

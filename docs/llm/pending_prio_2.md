@@ -26,7 +26,7 @@ make this text translatable so that the frontend language shows the warning in t
 #### reach the formula editor from the page
 
 the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2780, because the calculator has one editor relation
+http://localhost/http/view.php?m=formula_editor&id=-2746, because the calculator has one editor relation
 (the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
 type, so that the edit menu offers both editors
 
@@ -98,7 +98,7 @@ with the page phrase, and takes both sides of the triple as parts; the `to` side
 qualifier that many unrelated values share, e.g. "example" of "example PV installation" (PV
 installation kind of example), so the PV yield field of the PV lifetime balance page shows the
 assumed 1000 kWh per kWp of `pv_yield.json` with the word "example" instead of the measured 976
-kWh/kWp·a with its source (snapshot `src/test/resources/web/html/use_cases/pv_lifetime_balance.html`,
+kWh/kWp·a with its source (snapshot `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html`,
 field n-1997)
 
 count only the `from` side of the page triple, the phrase the page is about e.g. PV installation or
@@ -133,7 +133,7 @@ comment that a result always has its group, so that the asymmetry is explained
 ## test of the page object of a phrase view
 
 frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
-of a negative phrase id, e.g. the calculator editor of example PV installation with id -2780;
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2746;
 it is private and only reached by url_to_html with the view in the cache, so add a unit test
 via url_to_html for a word view and a triple view, each called with a word and with a triple id
 
@@ -226,6 +226,16 @@ assign all values assigned to a symbol to the main word or triple but in the def
 
 if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
 
+check the words that a later file uses with another meaning than their home file (the first imported, which has the only description); if both meanings are needed, give the second one its own triple, e.g. "physical power" (power of physics), and use it in the later file:
+- `x`: the symbol of a factor (`scaling.json`) and a stereotactic coordinate next to `y` (`math.json`, `conformity_mri_berns.json`)
+- `power`: the energy per time in watt (`solution_prio.json`, also `math.json`, `physics.json`) and the result of raising a number to an exponent (`math_propagation_of_uncertainty.json`)
+- `factor`: how many times bigger one number is (`scaling.json`) and a circumstance that contributes to a result (`zurich_htp_impact.json`)
+- `adaptation`: the change of how people live and build for a changed climate (`problem_global_warming_reasons.json`) and a trait that increases the fitness of an organism (`biology.json`)
+- `trial`: a test of the performance or the effect of something (`solution_prio.json`) and a single presentation and judgment cycle of a task (`accounting.json`, `conformity_mri_berns.json`)
+- `measurement`: finding the size of a quantity by a unit (`solution_prio.json`) and running a study to estimate a factor (`fermi_internet_pro_contra.json`)
+- `self-consumption share`: the use at the time of the production (`pv_yield.json`) and the use on site directly or via the battery (`pv_lifetime_balance.json`)
+- `duration`: the average length of time a health condition lasts (`health.json`) and any length of time, e.g. in the triple `duration unit` of the use cases (`pv_lifetime_balance.json`, `ahv_vat_vote.json`, `share_buy_sell_abb.json`)
+
 the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
 
 ## use case
@@ -247,6 +257,24 @@ the url form of a group id (shared/group_id_url.php) has known limits:
 - a raw "+" in a hand written old link arrives as a space (a url reads "+" as a space) and is not repaired; only the "%2B" form of an old link is accepted
 
 the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "variance high (system)" lists every result with "variance high (system)"; the fallback should be the phrases of the formula expression instead
+
+### Portfolio Split Calculator
+
+the system view Calculator shows the example portfolio split by the calculator triples of portfolio split
+(system_views_read_tests::run_portfolio_split_calculator), so the own view of the use case is not used any more;
+remove from src/main/resources/messages/use_cases/portfolio_split_calculator.json the view "Portfolio Split Calculator"
+and its components "Title example portfolio split", "description example portfolio split" and
+"table example portfolio split per beneficiary", and then views::PORTFOLIO_SPLIT_CALCULATOR_NAME if nothing else uses it;
+the removal shifts the view and component ids of every later import, which the re-pin process handles
+
+the page json of portfolio_split_calculator.json uses the proposed calculator elements (PROPOSED NEW ELEMENT in
+calculator_keywords.json, "Proposed elements" in docs/json_structure.md), which the calculator view does not read yet;
+until they are implemented the generated portfolio_split_calculator_no_js.html shows only the frame, the existing input
+fields and the summary rows; the open points are listed as (1) to (18) in the description of the use case file
+
+test/test_part.php (a_selected_test) re-imports the calculator keywords and the portfolio use case and renders the
+page, but cannot rebuild the database, because a_selected_test extends all_unit_tests and not all_unit_write_tests;
+after a change of the import order run test/test_re_pin.php first
 
 ## start page data
 

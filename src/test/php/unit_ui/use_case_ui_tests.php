@@ -562,6 +562,14 @@ class use_case_ui_tests
         $test_name = 'the items follow the order chain and an item without order triple comes after it';
         $t->assert($test_name, array_map(fn($item) => $item->name(), $inputs), [
             triple_names::CALC_ZH_INPUT_INHABITANTS, triple_names::CALC_ZH_INPUT_CANTON, triple_names::CALC_ZH_INPUT_YEAR]);
+        // a triple to a proposed keyword e.g. a download button is a triple from the calculator keyword
+        // as well, so it is no input item, also before the page shows the proposed keyword
+        $cac_kwd = $t_phr->list_calculator_proposed_ui();
+        $test_name = 'the request cache of the proposed keyword test has the triple to the proposed keyword';
+        $t->assert_true($test_name, $cac_kwd->get_by_name(triple_names::CALC_ZH_INPUTS_DOWNLOAD, $msg) != null);
+        $test_name = '... which is no input item';
+        $t->assert($test_name, $this->zh_input_names($cac_kwd, $msg), [
+            triple_names::CALC_ZH_INPUT_INHABITANTS, triple_names::CALC_ZH_INPUT_CANTON, triple_names::CALC_ZH_INPUT_YEAR]);
         $test_name = 'an item without a label shows the label of its phrase';
         $t->assert($test_name, $calc->label($inputs[0]), triple_names::CALC_INHABITANTS_LABEL_COM);
         $test_name = 'the label of the item wins over the label of its phrase';
@@ -742,9 +750,11 @@ class use_case_ui_tests
         $test_name = 'a row built from the group phrase shows the other phrase and an empty cell without a number';
         $t->assert_text_contains($test_name, $res_html, $html->block(html_base::TR,
             $html->block(html_base::TD, word_names::BE) . $html->block(html_base::TD, '', styles::CALC_NUMBER)));
-        $test_name = 'a highlighted row is a key row with the hint as sub text';
+        // the row inhabitants is filtered by canton, so its label shows the number of inhabitants without the filter
+        $test_name = 'a highlighted row is a key row with the number of its row phrase and the hint as sub text';
+        $inh_txt = $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->val_formatted($msg);
         $t->assert_text_contains($test_name, $res_html, '<' . html_base::TR . ' class="' . styles::CALC_KEY . '">'
-            . $html->block(html_base::TD, triple_names::CALC_INHABITANTS_LABEL_COM
+            . $html->block(html_base::TD, triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . $inh_txt . ')'
                 . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::CALC_SUB)));
         $test_name = '... and the number of a signed group with its sign';
         $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
@@ -888,7 +898,7 @@ class use_case_ui_tests
         // negative: a phrase without calculator triples has no table, and an offline page without values no numbers
         $test_name = 'a calculator without columns and rows shows no table';
         $calc_empty = new calculator($wrd->phrase(), new phrase_list_ui());
-        $t->assert($test_name, $list->calculation_table($calc_empty, $wrd, new value_list_ui(), $msg), '');
+        $t->assert($test_name, $list->calculation_table($calc_empty, $wrd, new value_list_ui(), $dto_off, $msg), '');
         $test_name = 'an offline page without values has no calculator numbers';
         $t->assert($test_name, $list->calculator_numbers($wrd, $dto_off, $msg)->count(), 0);
         $msg->reset();
@@ -898,7 +908,7 @@ class use_case_ui_tests
         $js_list = new ui_list();
         $js_calc = new calculator($wrd->phrase(), $dto_res->phr_lst);
         $js_lst = $js_list->calculator_numbers($wrd, $dto_res, $msg);
-        $js_list->calculation_table($js_calc, $wrd, $js_lst, $msg);
+        $js_list->calculation_table($js_calc, $wrd, $js_lst, $dto_res, $msg);
         $script = $js_list->calculator_script($js_calc, $wrd, $js_lst, $dto_res, $msg);
         $test_name = 'the calculator script gets the numbers of the page as data';
         $t->assert_text_contains($test_name, $script, '<script type="application/json" id="' . ui_list::CALC_DATA_ID . '">');
@@ -1240,6 +1250,17 @@ class use_case_ui_tests
             $result = json_encode($json, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         }
         return $result;
+    }
+
+    /**
+     * @param phrase_list_ui $cac_kwd the request cache of a calculator test with the page phrase Zurich (city)
+     * @param user_message $msg to collect the messages of the reader
+     * @return array the names of the input items of the calculator of Zurich (city)
+     */
+    private function zh_input_names(phrase_list_ui $cac_kwd, user_message $msg): array
+    {
+        $calc = new calculator($cac_kwd->get_by_name(triple_names::CITY_ZH_NAME, $msg), $cac_kwd);
+        return array_map(fn($item) => $item->name(), $calc->items(triples::CALCULATOR_INPUT));
     }
 
     /**

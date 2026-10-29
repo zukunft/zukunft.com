@@ -36,12 +36,14 @@ use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once test_paths::UTILS . 'html_page_diff.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
@@ -73,7 +75,6 @@ use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
-use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_components;
@@ -82,6 +83,7 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\html_page_diff;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_views_read_tests
@@ -118,10 +120,11 @@ class system_views_read_tests
         $this->run_use_cases($t, $cfg);
         // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t);
+        $this->run_pv_lifetime_balance_diff($t);
         $this->run_calculator_editor($t);
         $this->run_formula_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
-        $this->run_portfolio_split_calculator($t, $cfg);
+        $this->run_portfolio_split_calculator($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -589,13 +592,43 @@ class system_views_read_tests
         // sc=0 asks for the page of the server, which shows the page also without javascript
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
-            test_paths::HTML . test_paths::USE_CASES . cfg_files::PV_LIFETIME_BALANCE,
+            test_paths::HTML . test_paths::USE_CASES . test_files::PV_LIFETIME_BALANCE_NO_JS,
             [url_var::JAVASCRIPT => url_var::FALSE]);
         // by default the browser builds the same page from the json data of the page, because
         // config.yaml allows javascript for the calculator
         $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
             triple_names::EXAMPLE_PV_INSTALLATION, $t->view_context(),
-            test_paths::HTML . test_paths::USE_CASES . test_files::PV_LIFETIME_BALANCE_JSON);
+            test_paths::HTML . test_paths::USE_CASES . test_files::PV_LIFETIME_BALANCE_JS);
+    }
+
+    /**
+     * the differences of the PV calculator page without javascript (run_pv_lifetime_balance) to the
+     * hand made sample page as an html report, which can be given to an llm as the prompt to bring
+     * the page closer to the sample; the report is checked against its last version like every use
+     * case page, so a change of the page shows up as a change of the report
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_pv_lifetime_balance_diff(test_cleanup $t): void
+    {
+        $hpd = new html_page_diff();
+        $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+        $sample_file = test_files::PV_LIFETIME_BALANCE_SAMPLE . test_files::HTML;
+        $page_file = test_files::PV_LIFETIME_BALANCE_NO_JS . test_files::HTML;
+        $sample = $hpd->page_items($t->path_file($dir . $sample_file));
+        $page = $hpd->page_items($t->path_file($dir . $page_file));
+
+        $test_name = 'the sample of the PV calculator page has items to compare';
+        $t->assert_true($test_name, count($sample) > 0);
+        // negative: a page compared with itself has no difference, so every finding comes from the pages
+        $test_name = '... and a page compared with itself has no difference';
+        $self_report = $hpd->report($sample, $sample, $sample_file, $sample_file);
+        $t->assert_text_contains($test_name, $self_report, 'Missing in the generated page (0)');
+        $t->assert_text_contains($test_name, $self_report, 'Different (0)');
+        $test_name = 'the differences of the generated PV calculator page to the sample are reported';
+        $t->assert_html_page($test_name, $hpd->report($sample, $page, $sample_file, $page_file),
+            test_paths::HTML . test_paths::USE_CASES . test_files::PV_LIFETIME_BALANCE_DIFF);
     }
 
     /**
@@ -652,17 +685,21 @@ class system_views_read_tests
     }
 
     /**
-     * the portfolio split use case brings its own view as well; the page is written to the use
-     * case folder next to the hand made sample page (portfolio_split_calculator_sample.html)
+     * the portfolio split use case like the PV lifetime balance: the system view Calculator shows
+     * the example portfolio split by the calculator triples of portfolio split; the page is written
+     * to the use case folder next to the hand made sample page (portfolio_split_calculator_sample.html),
+     * so that the generated page can be compared with the target layout
      *
      * @param test_cleanup $t the test environment with the test users
-     * @param data_object_ui $cfg the stable test context of context()
      * @return void
      */
-    function run_portfolio_split_calculator(test_cleanup $t, data_object_ui $cfg): void
+    function run_portfolio_split_calculator(test_cleanup $t): void
     {
-        $t->assert_view_by_name(views::PORTFOLIO_SPLIT_CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
-            triple_names::EXAMPLE_PORTFOLIO_SPLIT, $cfg, test_paths::HTML . test_paths::USE_CASES . cfg_files::PORTFOLIO_SPLIT_CALCULATOR);
+        // sc=0 asks for the page of the server, which shows the page also without javascript
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PORTFOLIO_SPLIT, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::PORTFOLIO_SPLIT_CALCULATOR_NO_JS,
+            [url_var::JAVASCRIPT => url_var::FALSE]);
     }
 
     /**

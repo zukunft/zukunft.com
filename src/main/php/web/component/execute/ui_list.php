@@ -2888,10 +2888,11 @@ class ui_list extends ui_base
      * @param calculator $calc the calculator reader of the page
      * @param word|triple $dbo the phrase of the page
      * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param data_object $dto the request cache with the values and the field triples of the page
      * @param user_message $msg to report a problem of the phrase types
      * @return string the html code of the table or an empty string if the calculator has no columns and no rows
      */
-    function calculation_table(calculator $calc, word|triple $dbo, value_list $lst, user_message $msg): string
+    function calculation_table(calculator $calc, word|triple $dbo, value_list $lst, data_object $dto, user_message $msg): string
     {
         global $mtr;
         $html = new html_base();
@@ -2917,7 +2918,8 @@ class ui_list extends ui_base
                     foreach (array_keys($cols) as $c) {
                         $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, true, $msg);
                     }
-                    $first = $html->esc($calc->label($row, $grp)) . $this->calculator_sub($calc, $row, $ctx, $lst, $msg);
+                    $first = $html->esc($calc->label($row, $grp) . $this->calculator_row_number($calc, $row, $dbo, $dto, $msg))
+                        . $this->calculator_sub($calc, $row, $ctx, $lst, $msg);
                     $rows .= $this->calculator_row($first, $cells, $calc->has_flag($row, triples::CALCULATOR_HIGHLIGHT));
                 }
             }
@@ -3624,6 +3626,32 @@ class ui_list extends ui_base
             $sub = implode(', ', $parts);
         }
         return $sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB);
+    }
+
+    /**
+     * the number of the row phrase after the label of a row with a filter, because its cells show
+     * the numbers of the filter e.g. the net avoided emission against the consumption mix and not
+     * the consumption mix itself; it is the value that a field of the row phrase would show
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $row a row of the main table e.g. PV installation row saving consumption mix
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values and the field triples of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the number with its unit in brackets e.g. " (128 g/kWh)" or an empty string
+     *                for a row without filter or if the row phrase has no value
+     */
+    private function calculator_row_number(calculator $calc, phrase $row, word|triple $dbo, data_object $dto, user_message $msg): string
+    {
+        $result = '';
+        $phr = $calc->chosen($calc->item_phrase($row));
+        if ($calc->filter($row) != null and $phr != null) {
+            $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+            if ($val != null and !$val->is_null()) {
+                $result = ' (' . $this->calculator_number_text($val, $msg) . ')';
+            }
+        }
+        return $result;
     }
 
     /**

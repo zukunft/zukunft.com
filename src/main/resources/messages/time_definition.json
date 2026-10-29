@@ -157,6 +157,39 @@
       ]
     },
     {
+      "name": "Jan"
+    },
+    {
+      "name": "Feb"
+    },
+    {
+      "name": "Mar"
+    },
+    {
+      "name": "Apr"
+    },
+    {
+      "name": "Jun"
+    },
+    {
+      "name": "Jul"
+    },
+    {
+      "name": "Aug"
+    },
+    {
+      "name": "Sep"
+    },
+    {
+      "name": "Oct"
+    },
+    {
+      "name": "Nov"
+    },
+    {
+      "name": "Dec"
+    },
+    {
       "name": "latest",
       "type": "latest",
       "protection": "admin_protection"
@@ -167,6 +200,42 @@
     {
       "name": "factor"
     }
+  ],
+  "triples": [
+    {"from": "January", "verb": "is a", "to": "month"},
+    {"from": "February", "verb": "is a", "to": "month"},
+    {"from": "March", "verb": "is a", "to": "month"},
+    {"from": "April", "verb": "is a", "to": "month"},
+    {"from": "May", "verb": "is a", "to": "month"},
+    {"from": "June", "verb": "is a", "to": "month"},
+    {"from": "July", "verb": "is a", "to": "month"},
+    {"from": "August", "verb": "is a", "to": "month"},
+    {"from": "September", "verb": "is a", "to": "month"},
+    {"from": "October", "verb": "is a", "to": "month"},
+    {"from": "November", "verb": "is a", "to": "month"},
+    {"from": "December", "verb": "is a", "to": "month"},
+    {"from": "February", "verb": "is follower of", "to": "January"},
+    {"from": "March", "verb": "is follower of", "to": "February"},
+    {"from": "April", "verb": "is follower of", "to": "March"},
+    {"from": "May", "verb": "is follower of", "to": "April"},
+    {"from": "June", "verb": "is follower of", "to": "May"},
+    {"from": "July", "verb": "is follower of", "to": "June"},
+    {"from": "August", "verb": "is follower of", "to": "July"},
+    {"from": "September", "verb": "is follower of", "to": "August"},
+    {"from": "October", "verb": "is follower of", "to": "September"},
+    {"from": "November", "verb": "is follower of", "to": "October"},
+    {"from": "December", "verb": "is follower of", "to": "November"},
+    {"from": "Jan", "verb": "is an acronym for", "to": "January"},
+    {"from": "Feb", "verb": "is an acronym for", "to": "February"},
+    {"from": "Mar", "verb": "is an acronym for", "to": "March"},
+    {"from": "Apr", "verb": "is an acronym for", "to": "April"},
+    {"from": "Jun", "verb": "is an acronym for", "to": "June"},
+    {"from": "Jul", "verb": "is an acronym for", "to": "July"},
+    {"from": "Aug", "verb": "is an acronym for", "to": "August"},
+    {"from": "Sep", "verb": "is an acronym for", "to": "September"},
+    {"from": "Oct", "verb": "is an acronym for", "to": "October"},
+    {"from": "Nov", "verb": "is an acronym for", "to": "November"},
+    {"from": "Dec", "verb": "is an acronym for", "to": "December"}
   ],
   "formulas": [
     {

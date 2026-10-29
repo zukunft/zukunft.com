@@ -1729,6 +1729,41 @@ class test_triples extends test_objects
     }
 
     /**
+     * the triples that the proposed keyword test adds to the reader test (calculator_zh): the
+     * calculator keyword root, the proposed keyword calculator download from it, which the page does
+     * not show yet, and the triple from the inputs of Zurich to it, which is no input item
+     *
+     * @return triple[] the root, the proposed keyword and the triple to it
+     */
+    function calculator_zh_proposed(): array
+    {
+        $t_vrb = new test_verbs($this->env);
+        $calc = [];
+        foreach ($this->calculator_zh() as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        $id = triple_names::CALC_PROPOSED_FIRST_ID;
+        $trp = new triple($this->env->usr1);
+        $trp->set($id--, triple_names::CALC_PROPOSED_KEYWORD);
+        $trp->set_from($this->calculator_root()->phrase());
+        return [
+            $this->calculator_root(), $trp,
+            $this->calc_triple($id, triple_names::CALC_ZH_INPUTS_DOWNLOAD, $calc[triple_names::CALC_ZH_INPUTS]->phrase(),
+                $t_vrb->verb_has(), $trp),
+        ];
+    }
+
+    /**
+     * @return triple "calculator (system)" - the calculator keyword root, from which every keyword is a triple
+     */
+    private function calculator_root(): triple
+    {
+        $trp = new triple($this->env->usr1);
+        $trp->set(triple_names::CALC_ROOT_ID, triples::SYSTEM_CALCULATOR);
+        return $trp;
+    }
+
+    /**
      * @param int $id the id of the triple, counted down for the next triple
      * @return triple a triple of the calculator of the reader test
      */

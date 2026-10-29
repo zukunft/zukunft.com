@@ -104,8 +104,8 @@ The calculator page built in the browser (`system_page::calculator_json`) is the
 if the config allows javascript for the calculator and the phrase has calculator triples
 (`system_page::is_javascript_calculator`); the url asks for the page of the server with `sc=0`
 (`url_var::JAVASCRIPT`, human `javascript=0`, `view_exe::is_javascript_page`), which is never
-cached. The database read test writes both: `use_cases/pv_lifetime_balance_json.html` by default
-and `use_cases/pv_lifetime_balance.html` with `sc=0`. It has, like the
+cached. The database read test writes both: `use_cases/pv_lifetime_balance_js.html` by default
+and `use_cases/pv_lifetime_balance_no_js.html` with `sc=0`. It has, like the
 editor, no html of its own: it renders the empty host, the seed and the types of the editor
 and the settings of the page (`system_page::calculator_page_settings`: the number format, the
 translated texts, the save form of the server and the names of the calculator keywords and
@@ -121,7 +121,7 @@ formula notes and the sources of the server page, checks the stored results once
 `ui_list::check_results` and calculates every result again when an input changes.
 
 The formula editor view (`views::FORMULA_EDITOR` of `calculator_views.json`, e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2780) has three components side by side: the
+http://localhost/http/view.php?m=formula_editor&id=-2746) has three components side by side: the
 formula selector (`system_page::formula_editor_selector`, host `formulaSelector`), the formula editor
 (`system_page::formula_editor`, host `formulaEditor`) and the result compare
 (`system_page::formula_result_compare`, host `formulaCompare`). Only the formula editor component adds,
@@ -181,8 +181,9 @@ and, if the answer names nothing that it does not contain, marks the cache as
 complete (`data_object::$page_data_complete`), so that the components load no
 values, results, sources and field triples of their own: the answer is the prime
 source of the page, and `phrase_data_ui_tests` renders the complete page from the
-sample answer alone (`use_cases/pv_lifetime_balance_json.html`, next to the page of
-the database read test `use_cases/pv_lifetime_balance.html`).
+sample answer alone and checks its parts; the snapshots of the page,
+`use_cases/pv_lifetime_balance_js.html` and `use_cases/pv_lifetime_balance_no_js.html`, are
+written by the database read test (`system_views_read_tests::run_pv_lifetime_balance`).
 
 The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
 views, and e.g. the undo or the paste table view) have the view type `mask_default`
@@ -362,7 +363,7 @@ no `web/` file touches the database at all.
 
 Every api route is a directory with an `index.php` (e.g. `api/updatePut/index.php`),
 so every client writes the api url with the trailing slash, e.g. `/api/updatePut/`
-or `/api/phraseData/?id=-2780`: `html_base` and `rest_call` for the php frontend
+or `/api/phraseData/?id=-2746`: `html_base` and `rest_call` for the php frontend
 and `apiUrl` of `calculator_editor.js`. Without the slash the web server answers
 with a redirect to the directory (Apache `mod_dir`), and a browser repeats a
 redirected post as a get without its body, so a change is lost without a

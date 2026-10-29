@@ -41,6 +41,7 @@ include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_log_sum.php';
 include_once html_paths::USER . 'user_log_sum_list.php';
@@ -117,6 +118,7 @@ use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
@@ -1057,6 +1059,25 @@ class system_view_ui_tests
      * @param string $col the html code of one admin dashboard column
      * @return array the html code shown directly and the html code behind the plus sign, which is empty if there is none
      */
+    /**
+     * @param type_lists $typ_lst the frontend type cache filled from the type_lists.json fixture
+     * @param int $id the database id that views::TEST_VIEW_IDS pins for the view
+     * @param string $code_id the code id of the pinned view
+     * @return string empty if the cache has the view with this id, else which view the id selects
+     *                and which id the pinned view has in the cache, which is the id to re-pin
+     */
+    private function stale_view(type_lists $typ_lst, int $id, string $code_id): string
+    {
+        $result = '';
+        $cached_code_id = $typ_lst->get_view_by_id($id)?->code_id;
+        if ($cached_code_id != $code_id) {
+            $cached_id = $typ_lst->get_view($code_id)?->id();
+            $result = 'view ' . $id . ' is ' . ($cached_code_id ?? 'missing') . ' instead of ' . $code_id
+                . ', which has the id ' . ($cached_id ?? 'missing') . ' in type_lists.json';
+        }
+        return $result;
+    }
+
     private function admin_split(string $col): array
     {
         $parts = explode('<details', $col, 2);
@@ -1086,14 +1107,16 @@ class system_view_ui_tests
         // regenerates only after the unit tests; if a view has been added to the seed views since, the cached ids
         // are shifted and a view would be rendered with the object of another view (a fatal type error), so the
         // loop and the snapshot cleanup are skipped until the fixture matches views::TEST_VIEW_IDS again
-        $test_name = 'the views of type_lists.json have the ids of views::TEST_VIEW_IDS (else reset the database)';
-        $stale = '';
+        $test_name = 'the views of type_lists.json have the ids of views::TEST_VIEW_IDS (else re-pin the views::*_ID'
+            . ' consts with test/test_re_pin.php and docs/pinned_id_findings.md, or reset the database if the consts are right)';
+        $stale_lst = [];
         foreach (views::TEST_VIEW_IDS as $id => $code_id) {
-            $cached_code_id = $ui->dto->typ_lst_cache->get_view_by_id($id)?->code_id;
-            if ($stale == '' and $cached_code_id != $code_id) {
-                $stale = 'view ' . $id . ' is ' . ($cached_code_id ?? 'missing') . ' instead of ' . $code_id;
+            $stale_txt = $this->stale_view($ui->dto->typ_lst_cache, $id, $code_id);
+            if ($stale_txt != '') {
+                $stale_lst[] = $stale_txt;
             }
         }
+        $stale = implode('; ', $stale_lst);
         $t->assert($test_name, $stale, '');
         if ($stale != '') {
             return;

@@ -1897,6 +1897,15 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the request cache of the proposed keyword test: the calculator input
+     *         test with a triple from the inputs to a keyword that the page does not show yet
+     */
+    function list_calculator_proposed_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_proposed());
+    }
+
+    /**
      * @param array $extra the triples that a test adds to the calculator input test
      * @return phrase_list_ui the request cache of the calculator input test with the given triples
      */

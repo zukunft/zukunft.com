@@ -339,6 +339,8 @@ const KW = {
     signed: "calculator signed"
 };
 const KW_SET = new Set(Object.values(KW));
+/* every keyword is a triple from this root, also a proposed one that the editor does not edit yet */
+const KW_ROOT = "calculator (system)";
 const FIELD = {
     number: "number with limits",
     selector: "phrase selector",
@@ -655,6 +657,14 @@ function childKind(parentKind, verb) {
     return result;
 }
 
+/* a triple to a keyword is a list or a property and never an item, like calculator::is_keyword */
+function isKeyword(name) {
+    const j = IDX.byName.get(name);
+    const fromRoot = j !== undefined && IDX.T[j].from === KW_ROOT;
+    const result = KW_SET.has(name) || fromRoot;
+    return result;
+}
+
 function parseNode(i, kind, used) {
     const T = IDX.T;
     const t = T[i];
@@ -685,7 +695,7 @@ function parseNode(i, kind, used) {
         } else if (c.verb === HAS && c.to === KW.signed) {
             node.signed = newFlag(j, customName(c.name, t.name + " signed"), true);
             used.add(j);
-        } else if ((c.verb === HAS || c.verb === WITH) && !KW_SET.has(c.to) && c.name) {
+        } else if ((c.verb === HAS || c.verb === WITH) && !isKeyword(c.to) && c.name) {
             kidIdx.push(j);
         }
     });
@@ -744,7 +754,7 @@ function parseDoc(doc) {
                 if (c.verb === HAS && c.to === KW.label) {
                     group.label = newProp(j, customName(c.name, gname + " label"), c.description || "");
                     used.add(j);
-                } else if (c.verb === HAS && !KW_SET.has(c.to) && c.name) {
+                } else if (c.verb === HAS && !isKeyword(c.to) && c.name) {
                     nodes.push(parseNode(j, L.key, used));
                 }
             });

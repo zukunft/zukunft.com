@@ -709,16 +709,15 @@ class word extends sandbox_code_id
     }
 
     /**
-     * load the formulas assigned to the ancestor phrases of this word (the full 'is a' / 'is symbol
-     * for' chain) into the in-memory parent_formulas_related list so that api_json_array() can emit
+     * load the formulas assigned to the ancestor phrases of this word (phrase::formula_ancestors)
+     * into the in-memory parent_formulas_related list so that api_json_array() can emit
      * them per ancestor under the INCL_RELATED flag; an ancestor without formulas is skipped
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function load_parent_formulas_related(user_message $msg): void
     {
         $result = [];
-        // all ancestors via any up-relation (is a, is symbol for, ...), nearest first
-        foreach ($this->phrase_list()->foaf_parents($msg)->lst() as $par_phr) {
+        foreach ($this->phrase()->formula_ancestors($msg)->lst() as $par_phr) {
             $frm_lst = new formula_list($this->get_user());
             $frm_lst->load_by_phr($par_phr, $msg);
             if (!$frm_lst->is_empty()) {

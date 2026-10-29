@@ -60,10 +60,11 @@ Therefore, when the task is to fix one entry:
   explicitly asks for it, and prefer the fix that keeps the object count equal
   (rename a key, correct a `verb`, move a description);
 - if the task needs to add or remove an object, put it where it belongs and do not
-  avoid the id shift e.g. by a separate file imported later: ask the developer to
-  confirm the shift and name it in the report, because the re-pin tools
-  (`test/test_re_pin.php`, `files::AUTO_RE_PIN_OBJECT_ID`) update the pinned ids
-  and the `list.csv` baselines; never absorb it silently.
+  avoid the id shift e.g. by a separate file imported later: name the shift in
+  the report, without asking for a confirmation, because the re-pin process
+  (`test/test_re_pin.php`, `files::AUTO_RE_PIN_OBJECT_ID`, *Phrase id consts are
+  re-baselined …* in `docs/llm/testing.md`) updates the pinned ids and the
+  `list.csv` baselines; never absorb it silently.
 
 A reformat is a task of its own: run the repo's own formatter only when asked
 for it, never as a side effect of another change.
@@ -1539,7 +1540,10 @@ or triple itself: a file must not define a `measured value` word, nor a
 `value kind of measured` / `value must be one of measured` triple.
 
 A measured number without a `source` is a smell — either name the source or,
-if it really is an assumption, mark it `assumed`.
+if it really is an assumption, mark it `assumed`. A `modelled` or `calculated` value and a
+`field limit down`, `field limit up` or `field step` of an input are no
+measurement either and need no source; a chosen point of a sensitivity grid is
+an own choice and is marked `assumed`.
 
 ### A calculated value inherits the lowest quality of its inputs
 

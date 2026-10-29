@@ -1919,6 +1919,20 @@ class phrase extends combine_named
     }
 
     /**
+     * the phrases whose formulas are the parent formulas of this phrase: the 'is a' ancestors of
+     * this phrase and of its symbols and aliases, nearest first; never the phrases linked by any
+     * other verb, because over all verbs a phrase is linked to most of the graph and the walk
+     * reaches the loop limit e.g. from "column" to "calculator (system)"
+     *
+     * @param user_message $msg to collect the problems while loading the linked phrases
+     * @return phrase_list the ancestors without this phrase
+     */
+    function formula_ancestors(user_message $msg): phrase_list
+    {
+        return $this->formula_selection($msg)->is($msg);
+    }
+
+    /**
      * @param user_message $msg to collect the problems while loading the linked phrases
      * @param bool $with_symbols true to add the symbols of this phrase and, for a symbol, the phrase it stands for
      * @param bool $with_aliases true to add the aliases of this phrase and, for an alias, the phrase it stands for

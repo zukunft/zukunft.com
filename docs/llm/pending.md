@@ -1,5 +1,75 @@
 # pending - list of planned llm prompts with prio 1
 
+## calculator
+
+### compare
+
+for the compare test of e.g. src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html
+with pv_lifetime_balance_sample.html use also different input values and assumptions to check the js formula usage. 
+Create at least three test cases: standard, high and low where all input values and assumptions are changed. 
+
+add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that 
+all *_sample.html files are part of the compare and generation build
+
+### base on json
+
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2746 is built in the browser by
+`calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
+(`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
+`&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_js.html`
+and `use_cases/pv_lifetime_balance_no_js.html`; every "which value, which format" decision lives in the
+data, the code only applies plain rules (phrase match, the arithmetic, the number format)
+
+open points of the review:
+1. `number_format::unit_conversions` has no unit test of its own: a conversion formula e.g.
+   "kg" = "tonne" * 1000 gives both directions, and a formula that is no conversion e.g.
+   "t" = ln( 2 ) / "η" is left out; the page settings (`system_page::calculator_page_settings`,
+   `calculator_type_names`) are only checked indirectly
+2. the open differences of the two snapshots: the server numbers the operand sources by the results
+   in the preferred order of numbers (`sandbox_value::sorted`, first by the `impact`), which the
+   phraseData answer does not carry, so the script numbers e.g. the monthly mixes of treeze 2025
+   before the Swissolar fact sheet 2024; and the option "production mix" of the replacement
+   mix selector has two equal values (395 g/kWh of Europe 2022 and 32.4 g/kWh of Switzerland 2018),
+   so the script leaves it out, which `pv_lifetime_balance.json` fixes by naming the option value
+3. `system_page::CALC_EDITOR_SEED_ID` and `CALC_EDITOR_TYPES_ID` are also the ids of the calculator
+   page, so a name without "editor" fits better (a rename is the developer's decision)
+4. the page object: the calculator view loads its phrase with the related objects
+   (`frontend::page_api_par`, `views::VIEWS_WITHOUT_RELATED`), which the page does not use; load it
+   without them or take it from the selection of the phraseData answer, and count the api calls of
+   the page in a database read test, so that the page needs only the view, one phraseData answer
+   and the typeLists and config of the session
+5. `calculator_json.js` repeats code: `evaluate` the arithmetic of `calculator.js`, `readJson` the
+   big id handling of `calculator_editor.js`, the reader of the calculator triples and the layout
+   the editor preview (`calculator_editor.js::previewPage`), and `fieldEntry` the ranking of
+   `ui_list::calculator_value`; share the script code in one file, and replace the ranking by a
+   plain match of the data: where two values fit a field equally, the use case gets the missing
+   qualifier phrase or a calculator triple that names the used value, and a tie is reported by the
+   calc validation of the use case
+6. `calculator_json.js` has no test, because the repository has no javascript runtime; one json
+   test fixture per rule (seed and settings in, field values, cell texts, operand fields, notes and
+   sources out), read by the PHP unit test and by a check of the script, so that the PHP and the
+   javascript implementation of the plain rules cannot drift
+7. the page of the server (`sc=0`) embeds the seed and the verbs and units of the type cache
+   (`system_page::calculation_result` → `calculator_page_data`, about 100 KB), which its script
+   `calculator.js` never reads; the `fields` plan and the `digits` of the `calc-data`
+   (`ui_list::calculator_script`) are not read either; remove all three and move the test
+   "... the phrase data of the page as the seed" of `use_case_ui_tests` to the json page tests
+
+### load the phrase data once per step
+
+`cfg/export/phrase_data.php` collects the data by the phrase ids and loads it once per step, but two
+places load per object:
+- `value_phrase_ids` calls `load_phrases()` for each value; take the phrase ids from the group key
+  (`$val->grp()->id_lst()`) like `result_phrase_ids`, because `complete_phrases` loads them once with
+  all other phrases
+- `with_ids` calls `export_json($msg)` with the default `$do_load = true`, which reloads each value and
+  result by its id and loads its phrases; set the phrase lists of the value and result groups (incl. the
+  source group of a result, whose names `result::export_json` exports as context) from the completed
+  phrase list and export with `$do_load = false`
+
+`phrase_list::get_by_ids` reads each id from the new empty list instead of `$this`, so it always returns
+an empty list; fix it and add a unit test before it is used to set the group phrase lists
+
 ## prime group id within 2^53
 
 limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
@@ -9,18 +79,6 @@ and the use of the values table instead of values_prime
 ## Calculator editor
 
 ## use cases
-
-### Portfolio Split Calculator
-
-based on the sample 'Calculator Editor' json detect which elements might be missing to recreated 
-src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html based on existing a 'Calculator Editor' json
-
-add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
-
-create a json that once imported would recreate src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html
-and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/portfolio_split_calculator.html
-and compares it with src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html
-similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
 
 ### Swiss NPP
 
@@ -102,67 +160,6 @@ like for the phrase selector do the same for view selector and other fields wher
 ### check past changes again
 
 dark / light mode switch, phrase selector, view selector, colour picker, font selector
-
-## calculator
-
-### base on json
-
-the calculator page e.g. http://localhost/http/view.php?m=16&id=-2780 is built in the browser by
-`calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
-(`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
-`&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_json.html`
-and `use_cases/pv_lifetime_balance.html`; every "which value, which format" decision lives in the
-data, the code only applies plain rules (phrase match, the arithmetic, the number format)
-
-open points of the review:
-1. the page of the server (`sc=0`) embeds the seed and the verbs and units of the type cache
-   (`system_page::calculation_result` → `calculator_page_data`, about 100 KB), which its script
-   `calculator.js` never reads; the `fields` plan and the `digits` of the `calc-data`
-   (`ui_list::calculator_script`) are not read either; remove all three and move the test
-   "... the phrase data of the page as the seed" of `use_case_ui_tests` to the json page tests
-2. `number_format::unit_conversions` has no unit test of its own: a conversion formula e.g.
-   "kg" = "tonne" * 1000 gives both directions, and a formula that is no conversion e.g.
-   "t" = ln( 2 ) / "η" is left out; the page settings (`system_page::calculator_page_settings`,
-   `calculator_type_names`) are only checked indirectly
-3. `calculator_json.js` has no test, because the repository has no javascript runtime; one json
-   test fixture per rule (seed and settings in, field values, cell texts, operand fields, notes and
-   sources out), read by the PHP unit test and by a check of the script, so that the PHP and the
-   javascript implementation of the plain rules cannot drift
-4. `calculator_json.js` repeats code: `evaluate` the arithmetic of `calculator.js`, `readJson` the
-   big id handling of `calculator_editor.js`, the reader of the calculator triples and the layout
-   the editor preview (`calculator_editor.js::previewPage`), and `fieldEntry` the ranking of
-   `ui_list::calculator_value`; share the script code in one file, and replace the ranking by a
-   plain match of the data: where two values fit a field equally, the use case gets the missing
-   qualifier phrase or a calculator triple that names the used value, and a tie is reported by the
-   calc validation of the use case
-5. the open differences of the two snapshots: the server numbers the operand sources by the results
-   in the preferred order of numbers (`sandbox_value::sorted`, first by the `impact`), which the
-   phraseData answer does not carry, so the script numbers e.g. "treeze monthly electricity mixes
-   2025" before "Swissolar PV fact sheet 2024"; and the option "production mix" of the replacement
-   mix selector has two equal values (395 g/kWh of Europe 2022 and 32.4 g/kWh of Switzerland 2018),
-   so the script leaves it out, which `pv_lifetime_balance.json` fixes by naming the option value
-6. the page object: the calculator view loads its phrase with the related objects
-   (`frontend::page_api_par`, `views::VIEWS_WITHOUT_RELATED`), which the page does not use; load it
-   without them or take it from the selection of the phraseData answer, and count the api calls of
-   the page in a database read test, so that the page needs only the view, one phraseData answer
-   and the typeLists and config of the session
-7. `system_page::CALC_EDITOR_SEED_ID` and `CALC_EDITOR_TYPES_ID` are also the ids of the calculator
-   page, so a name without "editor" fits better (a rename is the developer's decision)
-
-### load the phrase data once per step
-
-`cfg/export/phrase_data.php` collects the data by the phrase ids and loads it once per step, but two
-places load per object:
-- `value_phrase_ids` calls `load_phrases()` for each value; take the phrase ids from the group key
-  (`$val->grp()->id_lst()`) like `result_phrase_ids`, because `complete_phrases` loads them once with
-  all other phrases
-- `with_ids` calls `export_json($msg)` with the default `$do_load = true`, which reloads each value and
-  result by its id and loads its phrases; set the phrase lists of the value and result groups (incl. the
-  source group of a result, whose names `result::export_json` exports as context) from the completed
-  phrase list and export with `$do_load = false`
-
-`phrase_list::get_by_ids` reads each id from the new empty list instead of `$this`, so it always returns
-an empty list; fix it and add a unit test before it is used to set the group phrase lists
 
 ## calculation editor
 
@@ -575,7 +572,7 @@ so the split between query, phrase names, json and cache insert is not visible y
 
 ### remaining
 
-the differences of `pv_lifetime_balance.html` to `pv_lifetime_balance_sample.html`, as steps in
+the differences of `pv_lifetime_balance_no_js.html` to `pv_lifetime_balance_sample.html`, as steps in
 the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
 renderer, never by adapting the sample
 
@@ -634,7 +631,7 @@ renderer, never by adapting the sample
 
 ### general
 
-the generated page `src/test/resources/web/html/use_cases/pv_lifetime_balance.html` should
+the generated page `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html` should
 match the hand made sample `pv_lifetime_balance_sample.html` without hardcoding, generated
 from the database of the use case json; the calculation follows the double calculation check
 of `docs/llm/frontend.md`. the sample is the target and is never adapted to the renderer.
@@ -646,7 +643,7 @@ calculator triples of `pv_lifetime_balance.json` (guide: `docs/llm/new_view_samp
 run the steps one at a time, each as its own commit with the tests written first, and ask for
 the test run after each step (an llm never runs test/*, docs/llm/coding.md).
 
-1. the values and results in `src/test/resources/web/html/use_cases/pv_lifetime_balance.html`:
+1. the values and results in `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html`:
    when the page is created, all values and results of the page are already in the database
    (imported from `pv_lifetime_balance.json` and calculated), so the page shows the numbers of
    the input fields, the main result table, the detail tables and "PV life-cycle emissions"
@@ -902,7 +899,7 @@ db row identification should not be based on the database id instead the code_id
 ### calculator data only with the numbers the page uses
 
 `ui_list::calculator_number_plan` writes every number of the request cache into the `calc-data` json of a calculator page, also the values of other use cases (e.g. solution priorities, city values). The PV lifetime balance page carries 467 numbers, but shows about 30 cells and has 75 inputs, which adds about 15 KB to each page.
-Suggestion: write only the numbers that a cell, an input or a result token of the page references (`cells`, `inputs`, `results`), and the results that a cell shows or another result uses. Test positive (a referenced number is in the data) and negative (a value of another phrase is not), then regenerate `pv_lifetime_balance.html`.
+Suggestion: write only the numbers that a cell, an input or a result token of the page references (`cells`, `inputs`, `results`), and the results that a cell shows or another result uses. Test positive (a referenced number is in the data) and negative (a value of another phrase is not), then regenerate `pv_lifetime_balance_no_js.html`.
 
 ### config value 0 is treated as missing
 

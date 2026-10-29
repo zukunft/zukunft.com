@@ -2756,6 +2756,8 @@
             hrase/phrase.php
     \-- formula_selection - section for function formula_selection not yet defined that it should be display functions i
             n /phrase/phrase.php
+    \-- formula_ancestors - section for function formula_ancestors not yet defined that it should be display functions i
+            n /phrase/phrase.php
     \-- phrases - section for function phrases not yet defined that it should be display functions in /phrase/phrase.php
     \-- dsp_time_selector - section for function dsp_time_selector not yet defined that it should be display functions i
             n /phrase/phrase.php
@@ -9965,8 +9967,8 @@
     \-- own_label
         \-- calculator - @param phrase|null $phr e.g. the group of the inputs
     \-- phrase_label
-        \-- calculator - @param phrase $phr a phrase that is no item e.g. an option of a selector that is a kind of the 
-                field phrase
+        \-- calculator - @param phrase $phr a phrase that is no item e.g. an option of a selector or a row of a detail t
+                able
     \-- options
         \-- calculator - the options of a phrase selector (rule 6): the "has a" triples of the field phrase in their
     \-- kinds

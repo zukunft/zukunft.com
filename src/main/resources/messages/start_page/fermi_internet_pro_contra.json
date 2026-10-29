@@ -87,8 +87,7 @@
       "name": "intervention"
     },
     {
-      "name": "measurement",
-      "description": "the act of running a study to estimate the sign-determining factor"
+      "name": "measurement"
     },
     {
       "name": "study"

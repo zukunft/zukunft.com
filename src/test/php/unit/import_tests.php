@@ -776,6 +776,50 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
 
+        // the Swiss AHV VAT vote use case chains the extra VAT revenue, its replacement by payroll
+        // and federal money and the annual cost of a household, so every pre-calculated result of
+        // the file must be reproduced from its values and formulas
+        $test_name = 'the import of the Swiss AHV VAT vote use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::AHV_VAT_VOTE_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: a changed VAT yield breaks the pre-calculated extra VAT revenue
+        $test_name = '... and a changed VAT yield is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::AHV_VAT_YIELD, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '4';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the ABB share use case derives the target price from several valuation methods and
+        // compares the weighted target with the price, so every pre-calculated result of the file
+        // must be reproduced from its values and formulas
+        $test_name = 'the import of the ABB share buy or sell use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::SHARE_BUY_SELL_ABB_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: a changed fair P/E breaks the pre-calculated earnings multiple target
+        $test_name = '... and a changed fair P/E is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::ABB_FAIR_PE, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '30';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
         // the unique keys use case is user data as well, so a normal user must import it
         $test_name = 'the import of the unique keys use case reports no problem';
         $msg = new user_message($t->usr1);
