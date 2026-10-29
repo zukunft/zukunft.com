@@ -9967,8 +9967,8 @@
     \-- own_label
         \-- calculator - @param phrase|null $phr e.g. the group of the inputs
     \-- phrase_label
-        \-- calculator - @param phrase $phr a phrase that is no item e.g. an option of a selector that is a kind of the 
-                field phrase
+        \-- calculator - @param phrase $phr a phrase that is no item e.g. an option of a selector or a row of a detail t
+                able
     \-- options
         \-- calculator - the options of a phrase selector (rule 6): the "has a" triples of the field phrase in their
     \-- kinds

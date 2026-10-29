@@ -211,6 +211,7 @@ class system_page extends component
         'uses' => verbs::USES,
         'follow' => verbs::FOLLOW,
         'symbol' => verbs::SYMBOL,
+        'acronym' => verbs::ACRONYM,
     ];
     // the translated texts of the calculator page script by their message id
     const array CALC_PAGE_TEXT_IDS = [
@@ -1533,7 +1534,7 @@ class system_page extends component
             $html = new html_base();
             $list = new ui_list();
             $lst = $list->calculator_numbers($dbo, $cfg, $msg);
-            $table = $list->calculation_table($calc, $dbo, $lst, $msg);
+            $table = $list->calculation_table($calc, $dbo, $lst, $cfg, $msg);
             if ($table != '') {
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
                 $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;

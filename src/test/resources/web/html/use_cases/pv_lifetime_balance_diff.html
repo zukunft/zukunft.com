@@ -14,65 +14,14 @@
             Change the generated page pv_lifetime_balance_no_js.html so that it shows what the hand made sample pv_lifetime_balance_sample.html shows: add what is missing, correct what differs and remove what only the generated page has, unless the sample lacks it by mistake. A number can differ for a good reason, because the sample calculates its numbers with its own script, so check the value or the formula before changing it. Fix a finding in the use case json or in the calculator renderer, never in the sample or in the generated snapshot.
         </p>
         <h2>
-            Missing in the generated page (22)
+            Missing in the generated page (4)
         </h2>
         <ul>
-            <li>
-                row: CO₂-eq saved, net of production emissions / vs. Swiss consumer mix, annual (128 g/kWh)
-            </li>
             <li>
                 row: CO₂-eq saved, net of production emissions / vs. Swiss consumer mix, monthly (106 g/kWh PV-weighted)
             </li>
             <li>
-                row: CO₂-eq saved, net of production emissions / vs. replacement mix (523 g/kWh)
-            </li>
-            <li>
-                row: Month / Jan
-            </li>
-            <li>
-                row: Month / Feb
-            </li>
-            <li>
-                row: Month / Mar
-            </li>
-            <li>
-                row: Month / Apr
-            </li>
-            <li>
-                row: Month / May
-            </li>
-            <li>
-                row: Month / Jun
-            </li>
-            <li>
-                row: Month / Jul
-            </li>
-            <li>
-                row: Month / Aug
-            </li>
-            <li>
-                row: Month / Sep
-            </li>
-            <li>
-                row: Month / Oct
-            </li>
-            <li>
-                row: Month / Nov
-            </li>
-            <li>
-                row: Month / Dec
-            </li>
-            <li>
-                list item: Stucki, Götz, de Wild-Scholten, Frischknecht: IEA PVPS Task 12 fact sheet, LCA of PV electricity, 2023 update
-            </li>
-            <li>
                 list item: Krebs &amp; Frischknecht (treeze): Umweltbilanz Strommixe Schweiz 2018, for BAFU
-            </li>
-            <li>
-                list item: Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)
-            </li>
-            <li>
-                list item: Swissolar: Fiche d&#039;information Photovoltaïque, Feb 2024 (European residual mix)
             </li>
             <li>
                 list item: Comparative LCA of Li-ion, Na-ion and solid-state cells, J. Industrial Ecology 29 (2025): 58–92 kg CO₂-eq/kWh cell, LFP down to ~37
@@ -80,12 +29,9 @@
             <li>
                 list item: HTW Berlin (Weniger et al.) 2019: Sind Solarstromspeicher Klimaschützer? (212 kg CO₂-eq/kWh)
             </li>
-            <li>
-                list item: Orientation yield table, 30° tilt: S 100 %, SE/SW 95 %, E/W 82 %, N 59 %
-            </li>
         </ul>
         <h2>
-            Different (15)
+            Different (29)
         </h2>
         <ul>
             <li>
@@ -131,11 +77,53 @@
                 row: Production emissions / Battery, sub text: the sample shows &quot;2 × 10 kWh × 100 kg/kWh&quot; and the generated page &quot;&quot;
             </li>
             <li>
+                row: CO₂-eq saved, net of production emissions / vs. Swiss consumer mix, annual (128 g/kWh), sub text: the sample shows &quot;payback 12.1 a&quot; and the generated page &quot;&quot;
+            </li>
+            <li>
+                row: CO₂-eq saved, net of production emissions / vs. replacement mix (523 g/kWh), sub text: the sample shows &quot;payback 3.0 a&quot; and the generated page &quot;&quot;
+            </li>
+            <li>
+                row: Month / Jan, cells: the sample shows &quot;207 | 450 | 158 | 45 | 0 | 248 | 151&quot; and the generated page &quot;207 | 450.0 | 158 | 45 | 0 | 247.6 | &quot;
+            </li>
+            <li>
+                row: Month / Feb, cells: the sample shows &quot;373 | 405 | 142 | 208 | 0 | 55 | 147&quot; and the generated page &quot;373 | 405.0 | 142 | 208 | 0 | 54.8 | &quot;
+            </li>
+            <li>
+                row: Month / Mar, cells: the sample shows &quot;664 | 405 | 142 | 263 | 229 | 0 | 141&quot; and the generated page &quot;664 | 405.0 | 142 | 263 | 229 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / Apr, cells: the sample shows &quot;913 | 360 | 126 | 234 | 527 | 0 | 100&quot; and the generated page &quot;913 | 360.0 | 126 | 234 | 527 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / May, cells: the sample shows &quot;1&#039;037 | 338 | 118 | 219 | 675 | 0 | 69&quot; and the generated page &quot;1&#039;037 | 337.5 | 118 | 219 | 675 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / Jun, cells: the sample shows &quot;1&#039;078 | 315 | 110 | 205 | 741 | 0 | 80&quot; and the generated page &quot;1&#039;078 | 315.0 | 110 | 205 | 741 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / Jul, cells: the sample shows &quot;1&#039;120 | 315 | 110 | 205 | 782 | 0 | 88&quot; and the generated page &quot;1&#039;120 | 315.0 | 110 | 205 | 782 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / Aug, cells: the sample shows &quot;996 | 315 | 110 | 205 | 658 | 0 | 89&quot; and the generated page &quot;996 | 315.0 | 110 | 205 | 658 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / Sep, cells: the sample shows &quot;830 | 338 | 118 | 219 | 468 | 0 | 130&quot; and the generated page &quot;830 | 337.5 | 118 | 219 | 468 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / Oct, cells: the sample shows &quot;581 | 382 | 134 | 249 | 171 | 0 | 135&quot; and the generated page &quot;581 | 382.5 | 134 | 249 | 171 | 0.0 | &quot;
+            </li>
+            <li>
+                row: Month / Nov, cells: the sample shows &quot;290 | 428 | 150 | 127 | 0 | 151 | 164&quot; and the generated page &quot;290 | 427.5 | 150 | 127 | 0 | 151.2 | &quot;
+            </li>
+            <li>
+                row: Month / Dec, cells: the sample shows &quot;207 | 450 | 158 | 45 | 0 | 248 | 153&quot; and the generated page &quot;207 | 450.0 | 158 | 45 | 0 | 247.6 | &quot;
+            </li>
+            <li>
                 row: Month / Year, cells: the sample shows &quot;8&#039;296 | 4&#039;500 | 1&#039;575 | 2&#039;224 | 4&#039;250 | 701 | 106&quot; and the generated page &quot;8&#039;296 | 4&#039;500 | 1&#039;575 | 2&#039;224 | 4&#039;250 | 701.2 | 105.8&quot;
             </li>
         </ul>
         <h2>
-            Only in the generated page (11)
+            Only in the generated page (5)
         </h2>
         <ul>
             <li>
@@ -148,28 +136,10 @@
                 field: east-west yield factor
             </li>
             <li>
-                row: CO₂-eq saved, net of production emissions / vs. Swiss consumer mix, annual
+                row: CO₂-eq saved, net of production emissions / vs. Swiss consumer mix, monthly (105.83 g/kWh)
             </li>
             <li>
-                row: CO₂-eq saved, net of production emissions / vs. Swiss consumer mix, monthly
-            </li>
-            <li>
-                row: CO₂-eq saved, net of production emissions / vs. replacement mix
-            </li>
-            <li>
-                list item: IEA PVPS Task 12 fact sheet 2023
-            </li>
-            <li>
-                list item: BAFU Swiss electricity mixes 2018
-            </li>
-            <li>
-                list item: gruenes.haus tilt and orientation table
-            </li>
-            <li>
-                list item: Swissolar PV fact sheet 2024
-            </li>
-            <li>
-                list item: treeze monthly electricity mixes 2025
+                list item: Krebs &amp;amp; Frischknecht (treeze): Umweltbilanz Strommixe Schweiz 2018, for BAFU
             </li>
         </ul>
         <h2>

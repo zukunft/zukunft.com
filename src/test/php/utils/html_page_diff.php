@@ -114,10 +114,12 @@ class html_page_diff
         if (trim($html) != '') {
             $dom = new DOMDocument();
             // the html5 tags are unknown to libxml, which reports them but reads the page anyway
-            libxml_use_internal_errors(true);
+            // the previous setting is restored, so that the later tests still see the libxml warnings
+            $use_errors = libxml_use_internal_errors(true);
             // the declaration makes libxml read the page as utf-8 also without a meta tag it knows
             $dom->loadHTML('<?xml encoding="utf-8"?>' . $html);
             libxml_clear_errors();
+            libxml_use_internal_errors($use_errors);
             $result = new DOMXPath($dom);
         }
         return $result;

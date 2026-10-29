@@ -95,6 +95,8 @@
     // the symbol of a unit e.g. kWh/a of kilowatthours per year, and the phrase that a symbol stands for
     const symbols = new Map();
     const owners = new Map();
+    // the acronym of a phrase e.g. Jan of January, the first one like calculator::acronym
+    const acronyms = new Map();
     (seed.words || []).forEach(function (w) {
         phrases.set(w.name, {name: w.name, id: String(w.id), type: w.type || '', description: w.description || ''});
     });
@@ -109,6 +111,9 @@
         if (t.verb === VERB.symbol) {
             symbols.set(t.to, t.from);
             owners.set(t.from, t.to);
+        }
+        if (t.verb === VERB.acronym && !acronyms.has(t.to)) {
+            acronyms.set(t.to, t.from);
         }
     });
     // the numbers of the page: the values first, then the results, as the server resolves an operand
@@ -307,7 +312,7 @@
     }
 
     function phraseLabel(name) {
-        const result = ownText(name, KW.label) || capital(name);
+        const result = ownText(name, KW.label) || acronyms.get(name) || capital(name);
         return result;
     }
 
@@ -1029,6 +1034,13 @@
         return result;
     }
 
+    /* the number of the row phrase after the label of a row with a filter e.g. " (128 g/kWh)" (ui_list::calculator_row_number) */
+    function rowNumber(row) {
+        const entry = filterOf(row) === null ? null : fieldEntry(chosen(row.to));
+        const result = entry === null ? '' : ' (' + numberText(entry, columnFormats([entry], true), true) + ')';
+        return result;
+    }
+
     function resultTable() {
         const cols = items(KW.column);
         const grps = items(KW.rowgroup);
@@ -1062,7 +1074,7 @@
                     const cells = r.cells.map(function (e, i) {
                         return cellHtml(e, formats[i], signed, true);
                     }).join('');
-                    const first = esc(label(r.row, g)) + rowSub(r.row, r.ctx);
+                    const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row, r.ctx);
                     body += block('tr', block('td', first) + cells, hasFlag(r.row, KW.highlight) ? STYLE.key : '');
                 });
             });

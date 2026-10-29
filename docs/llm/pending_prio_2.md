@@ -26,7 +26,7 @@ make this text translatable so that the frontend language shows the warning in t
 #### reach the formula editor from the page
 
 the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2780, because the calculator has one editor relation
+http://localhost/http/view.php?m=formula_editor&id=-2746, because the calculator has one editor relation
 (the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
 type, so that the edit menu offers both editors
 
@@ -133,7 +133,7 @@ comment that a result always has its group, so that the asymmetry is explained
 ## test of the page object of a phrase view
 
 frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
-of a negative phrase id, e.g. the calculator editor of example PV installation with id -2780;
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2746;
 it is private and only reached by url_to_html with the view in the cache, so add a unit test
 via url_to_html for a word view and a triple view, each called with a word and with a triple id
 

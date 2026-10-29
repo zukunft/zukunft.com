@@ -131,7 +131,7 @@ class phrase_data
     /**
      * all data of one phrase in the import format with the database id of each object
      *
-     * @param int $phr_id the id of the requested phrase e.g. -2780 for the triple example PV installation
+     * @param int $phr_id the id of the requested phrase e.g. -2746 for the triple example PV installation
      * @param phrase_data_walks $walk VALUE for the values of the phrase, FROM for the triples on its from side
      * @param bool $incl_res true to add the results of the phrase
      * @param user_message $msg with the requesting user, to report e.g. a phrase that does not exist
@@ -309,11 +309,12 @@ class phrase_data
         $found_lst = new phrase_list($msg->usr);
         $itm_lst = new phrase_list($msg->usr);
         $leaf_lst = new phrase_list($msg->usr);
+        $tbl_lst = new phrase_list($msg->usr);
         $next = $this->built_from($phr, $msg);
         $loops = 0;
         while (!$next->is_empty() and $loops < def::MAX_LOOP) {
             $found_lst->merge($next);
-            $next = $this->next_phrases($next, $found_lst, $itm_lst, $leaf_lst, $kwd_ids, $msg);
+            $next = $this->next_phrases($next, $found_lst, $itm_lst, $leaf_lst, $tbl_lst, $kwd_ids, $msg);
             $loops++;
             $this->debug_step('walk step ' . $loops . ' of ' . $found_lst->count() . ' walked, next', $next->count());
         }
@@ -378,6 +379,7 @@ class phrase_data
      * @param phrase_list $walked all phrases walked so far
      * @param phrase_list $itm_lst the phrases of the list items so far, extended by this step
      * @param phrase_list $leaf_lst the leaves so far, extended by this step
+     * @param phrase_list $tbl_lst the detail table groups so far e.g. PV installation detail tables, extended by this step
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
      * @param user_message $msg with the requesting user
      * @return phrase_list the phrases to walk in the next step
@@ -387,12 +389,13 @@ class phrase_data
         phrase_list  $walked,
         phrase_list  $itm_lst,
         phrase_list  $leaf_lst,
+        phrase_list  $tbl_lst,
         array        $kwd_ids,
         user_message $msg
     ): phrase_list
     {
         $next = new phrase_list($msg->usr);
-        // the field phrases of the phrase selectors, whose options are added
+        // the field phrases of the phrase selectors and the phrases of the detail tables, whose kinds are added
         $src_phr_lst = new phrase_list($msg->usr);
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_phr_lst($step, $msg, null, foaf_direction::UP);
@@ -406,8 +409,14 @@ class phrase_data
             if ($this->is_selector_field($trp, $kwd_ids)) {
                 $this->add_new($src_phr_lst, new phrase_list($msg->usr), [], $trp->get_from(), $msg);
             }
+            if ($this->is_detail_table_group($trp, $kwd_ids)) {
+                $this->add_new($tbl_lst, new phrase_list($msg->usr), [], $trp->phrase(), $msg);
+            }
+            if ($this->is_item_link($trp, $kwd_ids) and $tbl_lst->has_id($trp->from_id())) {
+                $this->add_new($src_phr_lst, new phrase_list($msg->usr), [], $trp->get_to(), $msg);
+            }
         }
-        $this->add_selector_options($next, $walked, $kwd_ids, $src_phr_lst, $msg);
+        $this->add_kinds($next, $walked, $kwd_ids, $src_phr_lst, $msg);
         return $next;
     }
 
@@ -475,17 +484,29 @@ class phrase_data
     }
 
     /**
-     * add the options of the phrase selector fields, which are the phrases that "is a" field phrase
-     * e.g. residual mix and production mix for the replacement mix
+     * @param triple $trp a triple whose from side has been walked
+     * @param array $kwd_ids the phrase ids of the keywords by their code id
+     * @return bool true if the triple is the group of the detail tables e.g. PV installation has a calculator detail table
+     */
+    private function is_detail_table_group(triple $trp, array $kwd_ids): bool
+    {
+        $detail_id = $kwd_ids[triples::CALCULATOR_DETAIL_TABLE_CODE_ID] ?? 0;
+        return ($detail_id != 0 and $trp->to_id() == $detail_id);
+    }
+
+    /**
+     * add the phrases that "is a" phrase of the list: the options of a phrase selector field e.g.
+     * residual mix and production mix for the replacement mix and the rows of a detail table e.g.
+     * January to December for the month
      *
      * @param phrase_list $next the phrases to walk in the next step
      * @param phrase_list $walked all phrases walked so far
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
-     * @param phrase_list $selector_lst the field phrases of the phrase selectors
+     * @param phrase_list $selector_lst the field phrases of the phrase selectors and the phrases of the detail tables
      * @param user_message $msg with the requesting user
      * @return void
      */
-    private function add_selector_options(
+    private function add_kinds(
         phrase_list  $next,
         phrase_list  $walked,
         array        $kwd_ids,

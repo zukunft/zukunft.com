@@ -284,12 +284,14 @@ class calculator
     }
 
     /**
-     * @param phrase $phr a phrase that is no item e.g. an option of a selector that is a kind of the field phrase
-     * @return string the label of the phrase, else its name with a capital first letter
+     * @param phrase $phr a phrase that is no item e.g. an option of a selector or a row of a detail table
+     * @return string the label of the phrase, else its acronym e.g. Jan for January, else its name with a capital first letter
      */
     function phrase_label(phrase $phr): string
     {
-        return $this->own_text($this->cached($phr), triples::CALCULATOR_LABEL) ?? $this->capital($phr->name());
+        return $this->own_text($this->cached($phr), triples::CALCULATOR_LABEL)
+            ?? $this->acronym($phr)
+            ?? $this->capital($phr->name());
     }
 
     /**
@@ -422,6 +424,22 @@ class calculator
     {
         $txt = $this->property($phr, $keyword)?->get_description();
         return $txt == '' ? null : $txt;
+    }
+
+    /**
+     * @param phrase $phr a phrase e.g. January
+     * @return string|null the name of the phrase that is an acronym for it e.g. Jan or null if it has none
+     */
+    private function acronym(phrase $phr): ?string
+    {
+        $result = null;
+        foreach ($this->cac->lst() as $trp) {
+            if ($result == null and $trp->is_triple() and $trp->get_verb()?->id() == verbs::ACRONYM_ID
+                and $trp->get_to()?->id() == $phr->id() and $trp->get_from() != null) {
+                $result = $this->cached($trp->get_from())->name();
+            }
+        }
+        return $result;
     }
 
     /**

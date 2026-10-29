@@ -22,7 +22,7 @@ SELECT value_prime_p3_update_log_0010000
         ($1,$2,$3,$4);
 
 SELECT value_prime_p3_update_log_0010000
-       (217::smallint,
-        201::smallint,
+       (228::smallint,
+        212::smallint,
         135::smallint,
         0::smallint);

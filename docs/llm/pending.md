@@ -2,9 +2,18 @@
 
 ## calculator
 
+### compare
+
+for the compare test of e.g. src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html
+with pv_lifetime_balance_sample.html use also different input values and assumptions. 
+Create at least three test cases: standard, high and low where all input values and assumptions are changed. 
+
+add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that 
+all *_sample.html files are part of the compare and generation build
+
 ### base on json
 
-the calculator page e.g. http://localhost/http/view.php?m=16&id=-2780 is built in the browser by
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2746 is built in the browser by
 `calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
 (`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
 `&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_js.html`
@@ -18,8 +27,8 @@ open points of the review:
    `calculator_type_names`) are only checked indirectly
 2. the open differences of the two snapshots: the server numbers the operand sources by the results
    in the preferred order of numbers (`sandbox_value::sorted`, first by the `impact`), which the
-   phraseData answer does not carry, so the script numbers e.g. "treeze monthly electricity mixes
-   2025" before "Swissolar PV fact sheet 2024"; and the option "production mix" of the replacement
+   phraseData answer does not carry, so the script numbers e.g. the monthly mixes of treeze 2025
+   before the Swissolar fact sheet 2024; and the option "production mix" of the replacement
    mix selector has two equal values (395 g/kWh of Europe 2022 and 32.4 g/kWh of Switzerland 2018),
    so the script leaves it out, which `pv_lifetime_balance.json` fixes by naming the option value
 3. `system_page::CALC_EDITOR_SEED_ID` and `CALC_EDITOR_TYPES_ID` are also the ids of the calculator

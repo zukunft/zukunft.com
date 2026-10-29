@@ -29,6 +29,6 @@ SELECT ref_delete_log_user
         'global warming potential'::text,
         null::text,
         'Q999999999'::text,
-        -129::bigint,
+        -163::bigint,
         null::smallint,
         12::bigint);
