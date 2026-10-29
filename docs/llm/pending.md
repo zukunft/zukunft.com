@@ -6,39 +6,7 @@ limit the use of the prime value table to the javascript int limit of 9,007,199,
 if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
 and the use of the values table instead of values_prime
 
-## cache
-
-add a 'clear cache' button to the settings page that removes all cache data
-
-## fonts 
-
-note that only fonts of the include fontawesome version can be used 
-
-## external links
-
-create a script that collects or potential external links and dependencies and list the in '/docs/dependencies.md'
-
 ## Calculator editor
-
-### change top row
-
-in the top row of the calculation editor is written 'Calculator editor  Phrase ... example PV installation  load'
-replace the 'Phrase' with 'for' (translatable if possible)
-
-### export
-
-add to the Calculator Editor an export button that saves the seed json on the local disc.
-
-### sample 'Calculator Editor' json
-
-create a sample 'Calculator Editor' json that shown all possible cases at least once and create in /docs/json_structure.md
-(not /docs/llm/json_strukture.md, which is written for other LLM KI systems) a short explain for humans of the json structure
-
-### JSON import
-
-add to the 'Calculator Editor' an import button that can be used . The import button to import a calculator json
-(or any other valid json) should be grey with the tooltip 'Save or discard changes before import'
-if there are pending changes.
 
 ## use cases
 
@@ -91,14 +59,6 @@ in the formula editor and all other places add the power sign '^' as an operator
 
 add other usual math operators that are missing
 
-## cache
-
-add a 'clear cache' button to the settings page that removes all cache data
-
-## fonts
-
-note that only fonts of the include fontawesome version can be used
-
 ## external links
 
 create a script that collects or potential external links and dependencies and list the in '/docs/dependencies.md'
@@ -124,6 +84,24 @@ the `*_norm_by_name` loads select the standard row by design and stay as they ar
   by name uses the shown name; tests first
 - see /docs/llm/coding.md and let `group::load_sql_by_name` find a group by the name that the user has given
   it in `user_groups`, like the other named objects; tests first
+
+## settings
+
+for phrase names used in the settings page e.g. http://localhost/http/view.php?m=126&u=9 e.g. for  'user
+    default
+        backend
+            impact
+                phrase
+                    happy time points'
+
+use a pattern base phrase search for the 'happy time points' phrase and all other phrases. 
+Select it by triples linked to a triple 'phrase selector (system)' with the  code_id 'phrase_select'
+
+like for the phrase selector do the same for view selector and other fields where a db row should be selected
+
+### check past changes again
+
+dark / light mode switch, phrase selector, view selector, colour picker, font selector
 
 ## calculator
 

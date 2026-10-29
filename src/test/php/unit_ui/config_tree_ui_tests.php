@@ -43,6 +43,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED . 'json_fields.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_names;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -234,9 +236,35 @@ class config_tree_ui_tests
         $test_name = '... which a screen reader names';
         $save_label = html_base::ARIA_LABEL . '="' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '"';
         $t->assert_text_contains($test_name, $page_edit, $save_label);
-        // negative: a boolean is shown as true or false, so it has no number input, and a setting without an id has nothing to overwrite
-        $test_name = '... but only for a number with a database value';
-        $t->assert($test_name, substr_count($page_edit, $submit_field), 1);
+        // negative: a boolean is shown as true or false, so it has no input, and a setting without an id has nothing to overwrite
+        $test_name = '... but only for a number or a text with a database value e.g. the initial entries, the font and the colour mode';
+        $t->assert($test_name, substr_count($page_edit, $submit_field), 3);
+        // the setting of the triple with the colour mode code id offers the light and the dark colours
+        $test_name = 'the colour mode is selected as light or dark colours';
+        $t->assert_text_contains($test_name, $page_edit, '>' . $mtr->txt(msg_id::CONFIG_MODE_LIGHT) . '<');
+        $t->assert_text_contains($test_name, $page_edit, '>' . $mtr->txt(msg_id::CONFIG_MODE_DARK) . '<');
+        $test_name = '... which saves 1 or 2 as the number of the setting';
+        $t->assert_text_contains($test_name, $page_edit, html_base::VALUE . '="' . def::MODE_DARK . '"  selected');
+        // negative: the mode has no free number input, so no mode is saved that the pages do not know
+        $test_name = '... and not entered as number';
+        $mode_input = html_base::NAME . '="' . url_var::NUMERIC_VALUE . '" ' . html_base::VALUE . '="' . def::MODE_DARK . '"';
+        $t->assert_text_not_contains($test_name, $page_edit, $mode_input);
+        // the setting of the word with the font code id offers the fonts that can be used
+        $test_name = 'the font is selected from the generic fonts and the font lists of bootstrap';
+        $mono_option = html_base::VALUE . '="' . htmlspecialchars(config_tree::FONT_SYSTEM_MONO, ENT_QUOTES) . '"';
+        $t->assert_text_contains($test_name, $page_edit, $mono_option);
+        $t->assert_text_contains($test_name, $page_edit, html_base::VALUE . '="' . test_config_trees::FONT_VALUE . '"');
+        // negative: the font has no free text input, so no font is entered that the pages cannot show
+        $test_name = '... and not entered as text';
+        $font_input = html_base::NAME . '="' . url_var::VALUE_TEXT . '" ' . html_base::VALUE . '="' . test_config_trees::FONT_VALUE . '"';
+        $t->assert_text_not_contains($test_name, $page_edit, $font_input);
+        $test_name = '... but a font of config.yaml that is not in the list is offered too';
+        $t->assert_text_contains($test_name, $cft->font_select(test_config_trees::FONT_UNKNOWN),
+            html_base::VALUE . '="' . test_config_trees::FONT_UNKNOWN . '"');
+        $test_name = '... and a mode of config.yaml that is not in the list too, so a save never changes it unnoticed';
+        $mode_unknown = (string)test_config_trees::COLOUR_MODE_UNKNOWN;
+        $t->assert_text_contains($test_name, $cft->mode_select($mode_unknown),
+            html_base::VALUE . '="' . $mode_unknown . '"  selected');
         $default_field = html_base::NAME . '="' . url_var::SET_DEFAULT . '" ' . html_base::VALUE . '="' . url_var::TRUE . '"';
         // negative: a normal user saves the own overwrite and never the default of all users
         $test_name = '... as the own overwrite';
@@ -247,6 +275,12 @@ class config_tree_ui_tests
         $t->assert_text_contains($test_name, $page_admin, $default_field);
         $test_name = '... also of a setting of the pod';
         $t->assert_text_contains($test_name, $page_admin, $max_id_field);
+        $clear_field = html_base::NAME . '="' . url_var::ACTION . '" ' . html_base::VALUE . '="' . url_var::ACTION_CLEAR_CACHE . '"';
+        $test_name = 'an admin can clear the cache of all users';
+        $t->assert_text_contains($test_name, $page_admin, $clear_field);
+        // negative: clearing the cache slows down the next requests of every user, so a normal user has no button
+        $test_name = '... but a normal user cannot';
+        $t->assert_text_not_contains($test_name, $page_edit, $clear_field);
         $cft->is_admin = false;
         $cft->can_edit = false;
         $test_name = '... with the shown number and the name of the setting for the confirmation';
@@ -287,7 +321,8 @@ class config_tree_ui_tests
         $t->assert_text_contains($test_name, $ui->setting_saved_text($default_url), $setting_key);
 
         // a text e.g. the view name of a pinned view, which an admin changes, because it is a setting of the pod
-        $text_field = html_base::NAME . '="' . url_var::VALUE_TEXT . '"';
+        // the text input and not the font selection, which posts the same url var
+        $text_field = html_base::TYPE . '="' . html_base::INPUT_TEXT . '" ' . html_base::NAME . '="' . url_var::VALUE_TEXT . '"';
         $test_name = 'an admin can change a text setting with a text input';
         $cft->can_edit = true;
         $cft->is_admin = true;

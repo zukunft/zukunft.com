@@ -97,7 +97,8 @@ class html_selector
                     $result .= '<option ' . html_names::VALUE . '="' . $option_text . '"'
                         . ' ' . html_names::DATA_VALUE . '="' . $key . '"></option>';
                 } else {
-                    $result .= '<option value="' . $key . '" ' . $row_option . ' >' . $option_text . '</option>';
+                    // escaped, because a key can be a text e.g. a css font family with a quoted font name
+                    $result .= '<option value="' . htmlspecialchars((string)$key, ENT_QUOTES) . '" ' . $row_option . ' >' . $option_text . '</option>';
                 }
             }
         }

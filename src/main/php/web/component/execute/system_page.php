@@ -145,10 +145,25 @@ class system_page extends component
     const string FORMULA_EDITOR_HOST_ID = 'formulaEditor';
     const string FORMULA_SELECTOR_HOST_ID = 'formulaSelector';
     const string FORMULA_COMPARE_HOST_ID = 'formulaCompare';
+    const string FORMULA_EDITOR_TEXTS_ID = 'formulaEditorTexts';
+    // the formula editor script gets all messages with this prefix (see formula_editor_texts)
+    const string FORMULA_EDITOR_TEXT_PREFIX = 'formula_editor_';
+    // the texts of the formula editor without the prefix
+    const array FORMULA_EDITOR_TEXT_IDS = [
+        msg_id::CALCULATOR_SAVE,
+    ];
     // the html ids that the calculator editor script reads (script/calculator_editor.js)
     const string CALC_EDITOR_HOST_ID = 'calcEditor';
     const string CALC_EDITOR_SEED_ID = 'seed';
     const string CALC_EDITOR_TYPES_ID = 'calcEditorTypes';
+    const string CALC_EDITOR_TEXTS_ID = 'calcEditorTexts';
+    // the calculator editor script gets all messages with this prefix (see calculator_editor_texts)
+    const string CALC_EDITOR_TEXT_PREFIX = 'calc_editor_';
+    // the texts of the editor without the prefix, which the calculator page uses too
+    const array CALC_EDITOR_TEXT_IDS = [
+        msg_id::SYSTEM_TITLE_CALCULATION_EDITOR,
+        msg_id::CALCULATOR_SAVE,
+    ];
     // the html ids and the keys of the settings that the calculator page script reads (script/calculator_json.js)
     const string CALC_PAGE_HOST_ID = 'calcPage';
     const string CALC_PAGE_SETTINGS_ID = 'calcPageSettings';
@@ -1347,6 +1362,8 @@ class system_page extends component
                 . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
                 . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
+                . $html->script_data(self::CALC_EDITOR_TEXTS_ID, $this->calculator_editor_texts())
+                . $html->script_data(self::FORMULA_EDITOR_TEXTS_ID, $this->formula_editor_texts())
                 . $html->script_src(files::FORMULA_EDITOR_SCRIPT)
                 . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
         }
@@ -1379,6 +1396,7 @@ class system_page extends component
                 . $result
                 . $html->form_session_token()
                 . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_data(self::FORMULA_EDITOR_TEXTS_ID, $this->formula_editor_texts())
                 . $html->script_src(files::FORMULA_EDITOR_SCRIPT);
         }
         return $result;
@@ -1616,21 +1634,60 @@ class system_page extends component
      */
     private function calculator_page_settings(word|triple $dbo, string $form_name, string|int $msk_key, user_message $msg): array
     {
-        global $mtr, $ui_sys;
-        $texts = [];
-        foreach (self::CALC_PAGE_TEXT_IDS as $txt_id) {
-            $texts[$txt_id->value] = $mtr->txt($txt_id);
-        }
+        global $ui_sys;
         return [
             self::CALC_PAGE_FORMAT => new ui_list()->calculator_number_format(),
             self::CALC_PAGE_FORM => $form_name,
             self::CALC_PAGE_SAVE => $this->calculator_button_save($form_name, $msk_key, $dbo),
-            self::CALC_PAGE_TEXTS => $texts,
+            self::CALC_PAGE_TEXTS => $this->message_texts(self::CALC_PAGE_TEXT_IDS),
             self::CALC_PAGE_KEYWORDS => self::CALC_PAGE_KEYWORD_NAMES,
             self::CALC_PAGE_VERBS => $this->calculator_type_names($ui_sys?->typ_lst_cache?->vrb, self::CALC_PAGE_VERB_CODE_IDS),
             self::CALC_PAGE_PHRASE_TYPES => $this->calculator_type_names($ui_sys?->typ_lst_cache?->phr_typ, self::CALC_PAGE_PHRASE_TYPE_CODE_IDS),
             self::CALC_PAGE_CONVERSIONS => new number_format()->unit_conversions($msg),
         ];
+    }
+
+    /**
+     * @return array the translated texts of the calculator editor by their message id: all messages with the
+     *               editor prefix and the texts of the calculator page, which the preview of the editor shows too
+     */
+    private function calculator_editor_texts(): array
+    {
+        $editor_ids = $this->message_ids_by_prefix(self::CALC_EDITOR_TEXT_PREFIX);
+        return $this->message_texts(array_merge(self::CALC_PAGE_TEXT_IDS, self::CALC_EDITOR_TEXT_IDS, $editor_ids));
+    }
+
+    /**
+     * @return array the translated texts of the formula editor by their message id, which the formula editor
+     *               view and the calculator editor, which starts the formula editor itself, embed
+     */
+    private function formula_editor_texts(): array
+    {
+        $editor_ids = $this->message_ids_by_prefix(self::FORMULA_EDITOR_TEXT_PREFIX);
+        return $this->message_texts(array_merge(self::FORMULA_EDITOR_TEXT_IDS, $editor_ids));
+    }
+
+    /**
+     * @param string $prefix the start of the message ids of a script e.g. self::FORMULA_EDITOR_TEXT_PREFIX
+     * @return array the message ids that start with the prefix, so that a new text of a script needs no list
+     */
+    private function message_ids_by_prefix(string $prefix): array
+    {
+        return array_filter(msg_id::cases(), fn(msg_id $txt_id) => str_starts_with($txt_id->value, $prefix));
+    }
+
+    /**
+     * @param array $txt_ids the message ids of the texts that a script shows e.g. self::CALC_PAGE_TEXT_IDS
+     * @return array the translated text by its message id, so that a script shows the language of the user
+     */
+    private function message_texts(array $txt_ids): array
+    {
+        global $mtr;
+        $texts = [];
+        foreach ($txt_ids as $txt_id) {
+            $texts[$txt_id->value] = $mtr->txt($txt_id);
+        }
+        return $texts;
     }
 
     /**

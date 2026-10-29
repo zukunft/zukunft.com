@@ -162,7 +162,7 @@ class html_base
     // as the confirmation of the mode switch names them
     const array LAYOUT_PATH = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT];
     // the config.yaml keys of the dark or light mode of the user (see theme_mode and theme_switch)
-    const array MODE_PATH = [...html_base::LAYOUT_PATH, words::MODE];
+    const array MODE_PATH = [...html_base::LAYOUT_PATH, triples::COLOUR_MODE];
     // the config.yaml keys above the colour groups page, editor and chart (see theme_style)
     const array COLOUR_PATH = [...html_base::LAYOUT_PATH, words::COLOURS];
     const string CLASS_HTML = 'class';
@@ -497,7 +497,7 @@ class html_base
     }
 
     /**
-     * the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.mode):
+     * the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.colour mode):
      * the light colours and if the browser asks for it the dark colours, always the light colours or
      * always the dark colours; with the colour scheme, so that the browser shows its form elements
      * and scroll bars in the same mode
@@ -518,7 +518,7 @@ class html_base
     }
 
     /**
-     * @return int the dark or light mode of the user e.g. def::MODE_DARK (config.yaml frontend.layout.mode)
+     * @return int the dark or light mode of the user e.g. def::MODE_DARK (config.yaml frontend.layout.colour mode)
      */
     function theme_mode(): int
     {
@@ -813,7 +813,7 @@ class html_base
 
     /**
      * the entry of the user menu that switches to the other mode, saved as the overwrite of the user of the
-     * config value frontend.layout.mode through the value edit mask like a setting (see config_tree::edit_form),
+     * config value frontend.layout.colour mode through the value edit mask like a setting (see config_tree::edit_form),
      * so that the next visits keep it; if the user follows the browser, both entries are in the menu and
      * the css shows only the one to the other mode than the browser (theme-to-dark and theme-to-light)
      *

@@ -375,6 +375,31 @@ class config_numbers extends value_list
     }
 
     /**
+     * the code ids of the words of the config values by name, e.g. for the config tree that offers
+     * the font selection for the setting whose word has the font code id; built once from the values
+     *
+     * @return array the code id by phrase name of the words that have a code id
+     */
+    function phrase_code_ids(): array
+    {
+        $result = [];
+        if ($this->cache_json === null) {
+            foreach ($this->lst() as $val) {
+                foreach ($val->grp()->phrase_list()->lst() as $phr) {
+                    $result[$phr->name()] = $phr->code_id() ?? '';
+                }
+            }
+        } else {
+            foreach ($this->cache_json as $api_row) {
+                foreach ($api_row[json_fields::PHRASES] ?? [] as $phr_row) {
+                    $result[$phr_row[json_fields::NAME] ?? ''] = $phr_row[json_fields::CODE_ID] ?? '';
+                }
+            }
+        }
+        return array_filter($result);
+    }
+
+    /**
      * @param array $phr_row a phrase of a cached config value e.g. {"id":754,"name":"pinned views","class":"triple"}
      * @return int the phrase id, which is negative for a triple
      */

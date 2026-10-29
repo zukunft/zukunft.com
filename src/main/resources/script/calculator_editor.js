@@ -7,41 +7,313 @@
 /* the toolbar, the three columns and the toast of the editor           */
 /* ------------------------------------------------------------------ */
 const EDITOR_HOST_ID = "calcEditor";
+
+/* ------------------------------------------------------------------ */
+/* the translated texts, which the view embeds by their message id      */
+/* (system_page::calculator_editor_texts), with the variables of the    */
+/* messages of the pod e.g. z$VarObjName$z                              */
+/* ------------------------------------------------------------------ */
+const EDITOR_TEXTS_ID = "calcEditorTexts";
+const VAR_START = "z$";
+const VAR_END = "$z";
+const VAR = {
+    name: "VarObjName",
+    phrase: "VarPhraseName",
+    type: "VarObjType",
+    id: "VarObjId",
+    count: "VarValueCount",
+    value: "VarValue",
+    list: "VarValueList",
+    source: "VarSource",
+    time: "VarTime"
+};
+const TXT = {
+    title: "system_title_calculation_editor",
+    save: "calculator_save",
+    inputs: "calculator_inputs",
+    assumptions: "calculator_assumptions",
+    result: "calculator_result",
+    details: "calculator_details",
+    sources: "calculator_sources",
+    measured: "field_tag_measured",
+    assumed: "field_tag_assumed",
+    for: "calc_editor_for",
+    phrasePlaceholder: "calc_editor_phrase_placeholder",
+    load: "calc_editor_load",
+    loading: "calc_editor_loading",
+    noChanges: "calc_editor_no_changes",
+    change: "calc_editor_change",
+    changes: "calc_editor_changes",
+    warning: "calc_editor_warning",
+    warnings: "calc_editor_warnings",
+    undo: "calc_editor_undo",
+    undoTip: "calc_editor_undo_tip",
+    redo: "calc_editor_redo",
+    redoTip: "calc_editor_redo_tip",
+    discardChanges: "calc_editor_discard_changes",
+    discardTip: "calc_editor_discard_tip",
+    viewPage: "calc_editor_view_page",
+    export: "calc_editor_export",
+    exportTip: "calc_editor_export_tip",
+    exported: "calc_editor_exported",
+    import: "calc_editor_import",
+    importTip: "calc_editor_import_tip",
+    importBlocked: "calc_editor_import_blocked",
+    importing: "calc_editor_importing",
+    imported: "calc_editor_imported",
+    importFailed: "calc_editor_import_failed",
+    importNoJson: "calc_editor_import_no_json",
+    saving: "calc_editor_saving",
+    saveTip: "calc_editor_save_tip",
+    chipDatabase: "calc_editor_chip_database",
+    pageStructure: "calc_editor_page_structure",
+    itemCount: "calc_editor_item_count",
+    settings: "calc_editor_settings",
+    tabPage: "calc_editor_tab_page",
+    tabTexts: "calc_editor_tab_texts",
+    tabChanges: "calc_editor_tab_changes",
+    listColumns: "calc_editor_list_columns",
+    listRowgroups: "calc_editor_list_rowgroups",
+    listDetails: "calc_editor_list_details",
+    kindPage: "calc_editor_kind_page",
+    kindInput: "calc_editor_kind_input",
+    kindAssumption: "calc_editor_kind_assumption",
+    kindColumn: "calc_editor_kind_column",
+    kindRowgroup: "calc_editor_kind_rowgroup",
+    kindRow: "calc_editor_kind_row",
+    kindFilter: "calc_editor_kind_filter",
+    kindDetail: "calc_editor_kind_detail",
+    kindDcol: "calc_editor_kind_dcol",
+    kindDextra: "calc_editor_kind_dextra",
+    kindDfilter: "calc_editor_kind_dfilter",
+    kindSub: "calc_editor_kind_sub",
+    addInput: "calc_editor_add_input",
+    addAssumption: "calc_editor_add_assumption",
+    addColumn: "calc_editor_add_column",
+    addRowgroup: "calc_editor_add_rowgroup",
+    addRow: "calc_editor_add_row",
+    addFilter: "calc_editor_add_filter",
+    addDetail: "calc_editor_add_detail",
+    addDcol: "calc_editor_add_dcol",
+    addDextra: "calc_editor_add_dextra",
+    fromItem: "calc_editor_from_item",
+    fromNothing: "calc_editor_from_nothing",
+    fromPhraseName: "calc_editor_from_phrase_name",
+    fromPhraseLabel: "calc_editor_from_phrase_label",
+    fromOtherLabel: "calc_editor_from_other_label",
+    fromOtherName: "calc_editor_from_other_name",
+    fromPhraseHint: "calc_editor_from_phrase_hint",
+    fromPhrase: "calc_editor_from_phrase",
+    fromFilterPhrase: "calc_editor_from_filter_phrase",
+    noPhraseYet: "calc_editor_no_phrase_yet",
+    warnTripleTwice: "calc_editor_warn_triple_twice",
+    warnNameTwice: "calc_editor_warn_name_twice",
+    warnNoPhrase: "calc_editor_warn_no_phrase",
+    keyRowTip: "calc_editor_key_row_tip",
+    chipKey: "calc_editor_chip_key",
+    signTip: "calc_editor_sign_tip",
+    chipSelect: "calc_editor_chip_select",
+    phraseSelector: "calc_editor_phrase_selector",
+    chipNew: "calc_editor_chip_new",
+    chipNoPhrase: "calc_editor_chip_no_phrase",
+    chipChanged: "calc_editor_chip_changed",
+    chipShared: "calc_editor_chip_shared",
+    moveUp: "calc_editor_move_up",
+    moveDown: "calc_editor_move_down",
+    remove: "calc_editor_remove",
+    pageNode: "calc_editor_page_node",
+    listEmpty: "calc_editor_list_empty",
+    pagePhrase: "calc_editor_page_phrase",
+    readFrom: "calc_editor_read_from",
+    pageTitle: "calc_editor_page_title",
+    leadText: "calc_editor_lead_text",
+    listHeadings: "calc_editor_list_headings",
+    noHeading: "calc_editor_no_heading",
+    labelOf: "calc_editor_label_of",
+    pageHelp: "calc_editor_page_help",
+    phrase: "calc_editor_phrase",
+    phraseShortPlaceholder: "calc_editor_phrase_short_placeholder",
+    notInFile: "calc_editor_not_in_file",
+    labelOwnNote: "calc_editor_label_own_note",
+    emptyShows: "calc_editor_empty_shows",
+    labelPage: "calc_editor_label_page",
+    hintPage: "calc_editor_hint_page",
+    alreadyKeyRow: "calc_editor_already_key_row",
+    boldRow: "calc_editor_bold_row",
+    keyRowPage: "calc_editor_key_row_page",
+    showSign: "calc_editor_show_sign",
+    signNote: "calc_editor_sign_note",
+    tripleName: "calc_editor_triple_name",
+    followsPhrase: "calc_editor_follows_phrase",
+    tripleNameNote: "calc_editor_triple_name_note",
+    removeItem: "calc_editor_remove_item",
+    shownNumber: "calc_editor_shown_number",
+    valueNote: "calc_editor_value_note",
+    phraseBox: "calc_editor_phrase_box",
+    phraseBoxNote: "calc_editor_phrase_box_note",
+    generalLabel: "calc_editor_general_label",
+    generalHint: "calc_editor_general_hint",
+    keyFigure: "calc_editor_key_figure",
+    sideResults: "calc_editor_side_results",
+    sideNote: "calc_editor_side_note",
+    sidePhrase: "calc_editor_side_phrase",
+    removeSide: "calc_editor_remove_side",
+    addSide: "calc_editor_add_side",
+    fieldType: "calc_editor_field_type",
+    typeNumber: "calc_editor_type_number",
+    typeLimits: "calc_editor_type_limits",
+    minimum: "calc_editor_minimum",
+    maximum: "calc_editor_maximum",
+    step: "calc_editor_step",
+    valuePhrases: "calc_editor_value_phrases",
+    valuePhrasesNote: "calc_editor_value_phrases_note",
+    valuePhrase: "calc_editor_value_phrase",
+    removeValuePhrase: "calc_editor_remove_value_phrase",
+    addValuePhrase: "calc_editor_add_value_phrase",
+    options: "calc_editor_options",
+    optionsNote: "calc_editor_options_note",
+    optionPhrase: "calc_editor_option_phrase",
+    optionLabel: "calc_editor_option_label",
+    moveOptionUp: "calc_editor_move_option_up",
+    removeOption: "calc_editor_remove_option",
+    addOption: "calc_editor_add_option",
+    optionsIsa: "calc_editor_options_isa",
+    optionsIsaNote: "calc_editor_options_isa_note",
+    isaOptionPhrase: "calc_editor_isa_option_phrase",
+    addIsaOption: "calc_editor_add_isa_option",
+    valueBased: "calc_editor_value_based",
+    valueBasedNote: "calc_editor_value_based_note",
+    selectedOn: "calc_editor_selected_on",
+    firstOption: "calc_editor_first_option",
+    usesNote: "calc_editor_uses_note",
+    noOptions: "calc_editor_no_options",
+    noValue: "calc_editor_no_value",
+    legendClick: "calc_editor_legend_click",
+    legendNumbers: "calc_editor_legend_numbers",
+    noInputs: "calc_editor_no_inputs",
+    noAssumptions: "calc_editor_no_assumptions",
+    otherOperands: "calc_editor_other_operands",
+    noRowGroups: "calc_editor_no_row_groups",
+    noRows: "calc_editor_no_rows",
+    rowsNote: "calc_editor_rows_note",
+    formulasNote: "calc_editor_formulas_note",
+    listHeading: "calc_editor_list_heading",
+    kindHint: "calc_editor_kind_hint",
+    phraseLabel: "calc_editor_phrase_label",
+    phraseHint: "calc_editor_phrase_hint",
+    optionOf: "calc_editor_option_of",
+    textsIntro: "calc_editor_texts_intro",
+    textsShared: "calc_editor_texts_shared",
+    colTriple: "calc_editor_col_triple",
+    colText: "calc_editor_col_text",
+    checkBeforeSaving: "calc_editor_check_before_saving",
+    noChangesSince: "calc_editor_no_changes_since",
+    saveSends: "calc_editor_save_sends",
+    addedTriples: "calc_editor_added_triples",
+    changedTriples: "calc_editor_changed_triples",
+    removedTriples: "calc_editor_removed_triples",
+    values: "calc_editor_values",
+    newWords: "calc_editor_new_words",
+    changedFormulas: "calc_editor_changed_formulas",
+    removed: "calc_editor_removed",
+    discarded: "calc_editor_discarded",
+    podAnswered: "calc_editor_pod_answered",
+    podUnreachable: "calc_editor_pod_unreachable",
+    savedChange: "calc_editor_saved_change",
+    savedChanges: "calc_editor_saved_changes",
+    saveRefused: "calc_editor_save_refused",
+    noAnswer: "calc_editor_no_answer",
+    ownVersion: "calc_editor_own_version",
+    sharedVersion: "calc_editor_shared_version",
+    notConfirmed: "calc_editor_not_confirmed",
+    saveNotConfirmed: "calc_editor_save_not_confirmed",
+    noLists: "calc_editor_no_lists",
+    phraseNotFound: "calc_editor_phrase_not_found",
+    verbUnknown: "calc_editor_verb_unknown",
+    readFailed: "calc_editor_read_failed",
+    enterName: "calc_editor_enter_name",
+    unsavedLost: "calc_editor_unsaved_lost",
+    loadAnyway: "calc_editor_load_anyway",
+    cancel: "calc_editor_cancel",
+    loaded: "calc_editor_loaded",
+    offlineOnly: "calc_editor_offline_only",
+    reading: "calc_editor_reading",
+    notOnPod: "calc_editor_not_on_pod",
+    readingId: "calc_editor_reading_id",
+    unsavedFrom: "calc_editor_unsaved_from",
+    restore: "calc_editor_restore",
+    discard: "calc_editor_discard",
+    restored: "calc_editor_restored"
+};
+const EDITOR_TEXTS = (function () {
+    const el = document.getElementById(EDITOR_TEXTS_ID);
+    const result = el ? JSON.parse(el.textContent) : {};
+    return result;
+})();
+
+/* the translated text of the message id with its variables e.g. txt(TXT.loaded, {[VAR.phrase]: name}),
+   or the message id itself, so that a missing text is seen */
+function txt(txtId, vars) {
+    let result = EDITOR_TEXTS[txtId] || txtId;
+    Object.keys(vars || {}).forEach(function (key) {
+        result = result.split(VAR_START + key + VAR_END).join(String(vars[key]));
+    });
+    return result;
+}
+
+/* the translated text of the message id as html */
+function txtHtml(txtId, vars) {
+    const result = esc(txt(txtId, vars));
+    return result;
+}
+
+/* the translated text of a number e.g. "1 change" or "2 changes" */
+function txtCount(oneId, manyId, count) {
+    const result = txt(count === 1 ? oneId : manyId, {[VAR.count]: count});
+    return result;
+}
+
+/* ------------------------------------------------------------------ */
+/* the toolbar, the three columns and the toast of the editor           */
+/* ------------------------------------------------------------------ */
 document.getElementById(EDITOR_HOST_ID).innerHTML = [
     '<div class="bar">',
-    '<div class="brand"><b>Calculator editor</b></div>',
+    '<div class="brand"><b>' + txtHtml(TXT.title) + '</b></div>',
     '<form class="phrasebar" id="phraseForm" autocomplete="off">',
-    '<label for="phraseIn">Phrase</label>',
-    '<input class="inp" id="phraseIn" list="phraseList" placeholder="word or triple, e.g. example PV installation" spellcheck="false">',
-    '<button class="btn primary" type="submit" id="btnLoad">Load</button>',
+    '<label for="phraseIn">' + txtHtml(TXT.for) + '</label>',
+    '<input class="inp" id="phraseIn" list="phraseList" placeholder="' + txtHtml(TXT.phrasePlaceholder) + '" spellcheck="false">',
+    '<button class="btn primary" type="submit" id="btnLoad">' + txtHtml(TXT.load) + '</button>',
     '</form>',
     '<div class="tools">',
-    '<span class="chip" id="srcChip">loading…</span>',
-    '<span class="chip count" id="changeCount">no changes</span>',
+    '<span class="chip" id="srcChip">' + txtHtml(TXT.loading) + '</span>',
+    '<span class="chip count" id="changeCount">' + txtHtml(TXT.noChanges) + '</span>',
     '<span class="chip warn" id="warnCount" hidden></span>',
-    '<button class="btn" id="btnUndo" title="Undo (Ctrl+Z)" disabled>Undo</button>',
-    '<button class="btn" id="btnRedo" title="Redo (Ctrl+Shift+Z)" disabled>Redo</button>',
-    '<button class="btn" id="btnReset" title="Throw away all edits since the last save">Discard changes</button>',
-    '<a class="btn" id="btnView" target="_blank" rel="noopener" hidden>View page</a>',
-    '<button class="btn primary" id="btnSave" disabled>Save</button>',
+    '<button class="btn" id="btnUndo" title="' + txtHtml(TXT.undoTip) + '" disabled>' + txtHtml(TXT.undo) + '</button>',
+    '<button class="btn" id="btnRedo" title="' + txtHtml(TXT.redoTip) + '" disabled>' + txtHtml(TXT.redo) + '</button>',
+    '<button class="btn" id="btnReset" title="' + txtHtml(TXT.discardTip) + '">' + txtHtml(TXT.discardChanges) + '</button>',
+    '<a class="btn" id="btnView" target="_blank" rel="noopener" hidden>' + txtHtml(TXT.viewPage) + '</a>',
+    '<button class="btn" id="btnExport" title="' + txtHtml(TXT.exportTip) + '" disabled>' + txtHtml(TXT.export) + '</button>',
+    '<button class="btn" id="btnImport" title="' + txtHtml(TXT.importTip) + '" hidden>' + txtHtml(TXT.import) + '</button>',
+    '<input type="file" id="importFile" accept=".json,application/json" hidden>',
+    '<button class="btn primary" id="btnSave" disabled>' + txtHtml(TXT.save) + '</button>',
     '</div>',
     '</div>',
     '<div id="noticeHost"></div>',
     '<div class="work">',
     '<div class="col tree-col">',
-    '<div class="col-head"><h2>Page structure</h2><span class="chip" id="itemCount"></span></div>',
+    '<div class="col-head"><h2>' + txtHtml(TXT.pageStructure) + '</h2><span class="chip" id="itemCount"></span></div>',
     '<div id="tree"></div>',
     '</div>',
     '<div class="col insp-col">',
-    '<div class="col-head"><h2>Settings</h2></div>',
+    '<div class="col-head"><h2>' + txtHtml(TXT.settings) + '</h2></div>',
     '<div id="insp" class="insp"></div>',
     '<div class="formula-editor" id="calcFormulaEditor" hidden></div>',
     '</div>',
     '<div class="col preview-col">',
     '<div class="tabs" role="tablist">',
-    '<button class="tab" role="tab" id="tab-page" aria-selected="true" data-tab="page">Page preview</button>',
-    '<button class="tab" role="tab" id="tab-texts" aria-selected="false" data-tab="texts">All texts</button>',
-    '<button class="tab" role="tab" id="tab-changes" aria-selected="false" data-tab="changes">Changes</button>',
+    '<button class="tab" role="tab" id="tab-page" aria-selected="true" data-tab="page">' + txtHtml(TXT.tabPage) + '</button>',
+    '<button class="tab" role="tab" id="tab-texts" aria-selected="false" data-tab="texts">' + txtHtml(TXT.tabTexts) + '</button>',
+    '<button class="tab" role="tab" id="tab-changes" aria-selected="false" data-tab="changes">' + txtHtml(TXT.tabChanges) + '</button>',
     '</div>',
     '<div class="pane" id="pane"></div>',
     '<div class="formula-editor" id="calcFormulaCompare" hidden></div>',
@@ -85,38 +357,38 @@ const WITH = "with";
 
 /* the five lists of a calculator page, in the order of the page */
 const LISTS = [
-    {key: "input", kw: KW.input, title: "Inputs", suffix: "inputs", fallback: "Inputs"},
-    {key: "assumption", kw: KW.assumption, title: "Assumptions", suffix: "assumptions", fallback: "Assumptions"},
-    {key: "column", kw: KW.column, title: "Result columns", suffix: "result columns", fallback: ""},
-    {key: "rowgroup", kw: KW.rowgroup, title: "Row groups and rows", suffix: "row groups", fallback: ""},
-    {key: "detail", kw: KW.detail, title: "Detail tables", suffix: "detail tables", fallback: ""}
+    {key: "input", kw: KW.input, title: txt(TXT.inputs), suffix: "inputs", fallback: txt(TXT.inputs)},
+    {key: "assumption", kw: KW.assumption, title: txt(TXT.assumptions), suffix: "assumptions", fallback: txt(TXT.assumptions)},
+    {key: "column", kw: KW.column, title: txt(TXT.listColumns), suffix: "result columns", fallback: ""},
+    {key: "rowgroup", kw: KW.rowgroup, title: txt(TXT.listRowgroups), suffix: "row groups", fallback: ""},
+    {key: "detail", kw: KW.detail, title: txt(TXT.listDetails), suffix: "detail tables", fallback: ""}
 ];
 
 /* what each kind of item is, which verb links it to its parent and which sub-items it can have */
 const KIND = {
-    input: {name: "Input field", verb: HAS, kids: [], prefix: "input", field: true, hint: true},
-    assumption: {name: "Assumption", verb: HAS, kids: [], prefix: "assumption", field: true, hint: true},
-    column: {name: "Result column", verb: HAS, kids: [], prefix: "column"},
-    rowgroup: {name: "Row group", verb: HAS, kids: ["row"], prefix: "rows", signed: true},
-    row: {name: "Result row", verb: HAS, kids: ["filter"], prefix: "row", hint: true, highlight: true, side: true},
-    filter: {name: "Row filter", verb: WITH, kids: [], prefix: null, highlight: false, side: true},
-    detail: {name: "Detail table", verb: HAS, kids: ["dcol", "dextra"], prefix: "detail"},
-    dcol: {name: "Detail column", verb: HAS, kids: ["dfilter"], prefix: "detail column"},
-    dextra: {name: "Extra row", verb: WITH, kids: [], prefix: null, highlight: true},
-    dfilter: {name: "Column filter", verb: WITH, kids: [], prefix: null},
-    sub: {name: "Sub-item", verb: HAS, kids: [], prefix: null}
+    input: {name: txt(TXT.kindInput), verb: HAS, kids: [], prefix: "input", field: true, hint: true},
+    assumption: {name: txt(TXT.kindAssumption), verb: HAS, kids: [], prefix: "assumption", field: true, hint: true},
+    column: {name: txt(TXT.kindColumn), verb: HAS, kids: [], prefix: "column"},
+    rowgroup: {name: txt(TXT.kindRowgroup), verb: HAS, kids: ["row"], prefix: "rows", signed: true},
+    row: {name: txt(TXT.kindRow), verb: HAS, kids: ["filter"], prefix: "row", hint: true, highlight: true, side: true},
+    filter: {name: txt(TXT.kindFilter), verb: WITH, kids: [], prefix: null, highlight: false, side: true},
+    detail: {name: txt(TXT.kindDetail), verb: HAS, kids: ["dcol", "dextra"], prefix: "detail"},
+    dcol: {name: txt(TXT.kindDcol), verb: HAS, kids: ["dfilter"], prefix: "detail column"},
+    dextra: {name: txt(TXT.kindDextra), verb: WITH, kids: [], prefix: null, highlight: true},
+    dfilter: {name: txt(TXT.kindDfilter), verb: WITH, kids: [], prefix: null},
+    sub: {name: txt(TXT.kindSub), verb: HAS, kids: [], prefix: null}
 };
 const ADD_TEXT = {
-    input: "+ Add input",
-    assumption: "+ Add assumption",
-    column: "+ Add column",
-    rowgroup: "+ Add row group",
-    row: "+ row",
-    filter: "+ filter",
-    detail: "+ Add detail table",
-    dcol: "+ column",
-    dextra: "+ extra row",
-    dfilter: "+ filter"
+    input: txt(TXT.addInput),
+    assumption: txt(TXT.addAssumption),
+    column: txt(TXT.addColumn),
+    rowgroup: txt(TXT.addRowgroup),
+    row: txt(TXT.addRow),
+    filter: txt(TXT.addFilter),
+    detail: txt(TXT.addDetail),
+    dcol: txt(TXT.addDcol),
+    dextra: txt(TXT.addDextra),
+    dfilter: txt(TXT.addFilter)
 };
 
 /* ------------------------------------------------------------------ */
@@ -785,8 +1057,17 @@ function phraseFlag(name) {
     return result;
 }
 
+/* the source of a text or flag that the item sets itself, which is never shown as such (see fromText) */
+const FROM_ITEM = "item";
+
+/* where a text or flag comes from as shown e.g. "this item" or "the phrase “autarky”" */
+function fromText(from) {
+    const result = from === FROM_ITEM ? txt(TXT.fromItem) : from;
+    return result;
+}
+
 function labelInfo(node, parent) {
-    let result = {text: cap(node.to), from: "the phrase name"};
+    let result = {text: cap(node.to), from: txt(TXT.fromPhraseName)};
     const ph = phraseText(node.to, "label");
     const own = node.label.text;
     let other = "";
@@ -797,25 +1078,25 @@ function labelInfo(node, parent) {
         }
     }
     if (own) {
-        result = {text: own, from: "item"};
+        result = {text: own, from: FROM_ITEM};
     } else if (ph) {
-        result = {text: ph, from: "the label of the phrase “" + node.to + "”"};
+        result = {text: ph, from: txt(TXT.fromPhraseLabel, {[VAR.phrase]: node.to})};
     } else if (other) {
         const otherLabel = phraseText(other, "label");
         if (otherLabel) {
             result = {
                 text: otherLabel,
-                from: "the label of “" + other + "” (the row phrase is built from the group phrase)"
+                from: txt(TXT.fromOtherLabel, {[VAR.phrase]: other})
             };
         } else {
             result = {
                 text: cap(other),
-                from: "the name of “" + other + "” (the row phrase is built from the group phrase)"
+                from: txt(TXT.fromOtherName, {[VAR.phrase]: other})
             };
         }
     }
     if (!node.to && !own) {
-        result = {text: "(no phrase yet)", from: "nothing"};
+        result = {text: txt(TXT.noPhraseYet), from: txt(TXT.fromNothing)};
     }
     return result;
 }
@@ -824,9 +1105,9 @@ function hintInfo(node) {
     let result = {text: "", from: ""};
     const ph = phraseText(node.to, "hint");
     if (node.hint.text) {
-        result = {text: node.hint.text, from: "item"};
+        result = {text: node.hint.text, from: FROM_ITEM};
     } else if (ph) {
-        result = {text: ph, from: "the hint of the phrase “" + node.to + "”"};
+        result = {text: ph, from: txt(TXT.fromPhraseHint, {[VAR.phrase]: node.to})};
     }
     return result;
 }
@@ -846,11 +1127,11 @@ function highlightInfo(node) {
         return phraseFlag(f);
     });
     if (node.highlight.on) {
-        result = {on: true, from: "item"};
+        result = {on: true, from: FROM_ITEM};
     } else if (phraseFlag(node.to)) {
-        result = {on: true, from: "the phrase “" + node.to + "”"};
+        result = {on: true, from: txt(TXT.fromPhrase, {[VAR.phrase]: node.to})};
     } else if (node.kind === "row" && filterHit) {
-        result = {on: true, from: "the filter phrase “" + filterHit + "”"};
+        result = {on: true, from: txt(TXT.fromFilterPhrase, {[VAR.phrase]: filterHit})};
     }
     return result;
 }
@@ -1282,7 +1563,7 @@ function buildOutput() {
 
     const changed = changes.add.length + changes.del.length + changes.mod.length + changes.values.length + changes.words.length + changes.formulas.length;
     const warnings = validate(finalTriples);
-    const result = {changes: changes, changed: changed, warnings: warnings};
+    const result = {changes: changes, changed: changed, warnings: warnings, triples: finalTriples};
     return result;
 }
 
@@ -1299,17 +1580,17 @@ function validate(finalTriples) {
     });
     keySeen.forEach(function (n, k) {
         if (n > 1) {
-            warns.push("The triple “" + k + "” exists " + n + " times. Two items with the same phrase in one list need a filter or another phrase.");
+            warns.push(txt(TXT.warnTripleTwice, {[VAR.name]: k, [VAR.count]: n}));
         }
     });
     nameSeen.forEach(function (n, k) {
         if (n > 1) {
-            warns.push("The name “" + k + "” is used by " + n + " triples. Give one of the items another name.");
+            warns.push(txt(TXT.warnNameTwice, {[VAR.name]: k, [VAR.count]: n}));
         }
     });
     walkAll(function (n) {
         if (!n.to) {
-            warns.push("A " + KIND[n.kind].name.toLowerCase() + " has no phrase yet and is left out of the file.");
+            warns.push(txt(TXT.warnNoPhrase, {[VAR.type]: KIND[n.kind].name}));
         }
     });
     const result = warns;
@@ -1386,20 +1667,26 @@ function refreshStatus() {
     lastOutput = buildOutput();
     const cc = document.getElementById("changeCount");
     const wc = document.getElementById("warnCount");
-    cc.textContent = lastOutput.changed === 0 ? "no changes" : lastOutput.changed + (lastOutput.changed === 1 ? " change" : " changes");
+    cc.textContent = lastOutput.changed === 0 ? txt(TXT.noChanges) : txtCount(TXT.change, TXT.changes, lastOutput.changed);
     wc.hidden = lastOutput.warnings.length === 0;
-    wc.textContent = lastOutput.warnings.length + (lastOutput.warnings.length === 1 ? " warning" : " warnings");
+    wc.textContent = txtCount(TXT.warning, TXT.warnings, lastOutput.warnings.length);
     const save = document.getElementById("btnSave");
     save.disabled = SOURCE.mode !== "api" || lastOutput.changed === 0 || saving;
-    save.textContent = saving ? "Saving…" : "Save";
-    save.title = "Write the changes to the database";
+    save.textContent = saving ? txt(TXT.saving) : txt(TXT.save);
+    save.title = txt(TXT.saveTip);
+    /* an import loads another phrase, so the changes are saved or discarded before */
+    const imp = document.getElementById("btnImport");
+    const unsaved = lastOutput.changed > 0 || saving;
+    imp.hidden = !SOURCE.online;
+    imp.disabled = unsaved;
+    imp.title = unsaved ? txt(TXT.importBlocked) : txt(TXT.importTip);
     document.getElementById("btnUndo").disabled = history.undo.length === 0;
     document.getElementById("btnRedo").disabled = history.redo.length === 0;
     let count = 0;
     walkAll(function () {
         count = count + 1;
     });
-    document.getElementById("itemCount").textContent = count + " items";
+    document.getElementById("itemCount").textContent = txt(TXT.itemCount, {[VAR.count]: count});
 }
 
 /* ------------------------------------------------------------------ */
@@ -1459,20 +1746,20 @@ function nodeRow(n, parent, listKey, arr, i) {
     const hl = highlightInfo(n);
     const chips = [];
     if (hl.on && (n.kind === "row" || n.kind === "dextra")) {
-        chips.push('<span class="chip key" title="key row, from ' + esc(hl.from) + '">key</span>');
+        chips.push('<span class="chip key" title="' + txtHtml(TXT.keyRowTip, {[VAR.source]: fromText(hl.from)}) + '">' + txtHtml(TXT.chipKey) + "</span>");
     }
     if (n.signed.on) {
-        chips.push('<span class="chip" title="the cells show the sign">±</span>');
+        chips.push('<span class="chip" title="' + txtHtml(TXT.signTip) + '">±</span>');
     }
     const f = state.phrases[n.to] ? state.phrases[n.to].field : null;
     if (f && f.type === FIELD.selector && (n.kind === "input" || n.kind === "assumption")) {
-        chips.push('<span class="chip" title="phrase selector">select</span>');
+        chips.push('<span class="chip" title="' + txtHtml(TXT.phraseSelector) + '">' + txtHtml(TXT.chipSelect) + "</span>");
     }
     if (n.src === null) {
-        chips.push('<span class="chip new">new</span>');
+        chips.push('<span class="chip new">' + txtHtml(TXT.chipNew) + "</span>");
     }
     if (!n.to) {
-        chips.push('<span class="chip warn">no phrase</span>');
+        chips.push('<span class="chip warn">' + txtHtml(TXT.chipNoPhrase) + "</span>");
     }
     const verbNote = n.verb === WITH ? "with " : "";
     const sel = selected === n.uid ? " sel" : "";
@@ -1492,13 +1779,13 @@ function nodeRow(n, parent, listKey, arr, i) {
     const result =
         '<div class="node' + sel + '" data-uid="' + n.uid + '" data-kind="' + n.kind + '" draggable="true" tabindex="0" role="treeitem" aria-selected="' + (sel ? "true" : "false") + '">' +
         '<span class="grip" aria-hidden="true">⋮⋮</span>' +
-        '<span class="txt"><span class="lbl' + (info.from === "item" ? "" : " inh") + '">' + esc(info.text) + "</span>" +
+        '<span class="txt"><span class="lbl' + (info.from === FROM_ITEM ? "" : " inh") + '">' + esc(info.text) + "</span>" +
         '<span class="ph">' + esc(verbNote + (n.to || "—")) + "</span></span>" +
         '<span class="side">' + chips.join("") +
         '<span class="acts">' +
-        '<button class="ico" data-act="up" data-uid="' + n.uid + '" title="Move up" aria-label="Move up"' + (i === 0 ? " disabled" : "") + ">↑</button>" +
-        '<button class="ico" data-act="down" data-uid="' + n.uid + '" title="Move down" aria-label="Move down"' + (i === arr.length - 1 ? " disabled" : "") + ">↓</button>" +
-        '<button class="ico rm" data-act="remove" data-uid="' + n.uid + '" title="Remove" aria-label="Remove">✕</button>' +
+        '<button class="ico" data-act="up" data-uid="' + n.uid + '" title="' + txtHtml(TXT.moveUp) + '" aria-label="' + txtHtml(TXT.moveUp) + '"' + (i === 0 ? " disabled" : "") + ">↑</button>" +
+        '<button class="ico" data-act="down" data-uid="' + n.uid + '" title="' + txtHtml(TXT.moveDown) + '" aria-label="' + txtHtml(TXT.moveDown) + '"' + (i === arr.length - 1 ? " disabled" : "") + ">↓</button>" +
+        '<button class="ico rm" data-act="remove" data-uid="' + n.uid + '" title="' + txtHtml(TXT.remove) + '" aria-label="' + txtHtml(TXT.remove) + '">✕</button>' +
         "</span></span>" +
         "</div>" + kids;
     return result;
@@ -1509,7 +1796,7 @@ function renderTree() {
     const pageSel = selected === "page" ? " sel" : "";
     let html = '<div class="sect"><div class="node page-node' + pageSel + '" data-uid="page" tabindex="0" role="treeitem">' +
         '<span class="txt"><span class="lbl">' + esc(phraseText(state.base, "label") || cap(state.base)) + "</span>" +
-        '<span class="ph">page title, lead text and headings</span></span><span></span></div></div>';
+        '<span class="ph">' + txtHtml(TXT.pageNode) + "</span></span><span></span></div></div>";
     LISTS.forEach(function (L) {
         const g = state.lists[L.key];
         const items = g.items.map(function (n, i) {
@@ -1519,7 +1806,7 @@ function renderTree() {
         const open = openLists.has(L.key) ? " open" : "";
         html += '<details class="sect" data-list="' + L.key + '"' + open + '>' +
             '<summary class="sect-head"><h3>' + esc(L.title) + '</h3><span class="chip">' + g.items.length + '</span><span class="kw mono">' + esc(L.kw) + "</span></summary>" +
-            '<div class="list" data-list="' + L.key + '">' + (items || '<div class="empty">Nothing in this list yet.</div>') + "</div>" +
+            '<div class="list" data-list="' + L.key + '">' + (items || '<div class="empty">' + txtHtml(TXT.listEmpty) + "</div>") + "</div>" +
             '<div class="addrow" style="padding-left:6px"><button class="addlink" data-act="addTop" data-list="' + L.key + '">' + esc(ADD_TEXT[L.key]) + "</button></div>" +
             "</details>";
     });
@@ -1578,30 +1865,30 @@ function renderInspector() {
 
 function pageInspector() {
     const base = state.base;
-    let html = '<div class="insp-title"><span class="kind">Page</span><span class="big">' + esc(phraseText(base, "label") || cap(base)) + "</span></div>";
-    html += '<div class="triple">page phrase <b>' + esc(state.page || "—") + "</b><br>lists and texts read from <b>" + esc(base) + "</b></div>";
+    let html = '<div class="insp-title"><span class="kind">' + txtHtml(TXT.kindPage) + '</span><span class="big">' + esc(phraseText(base, "label") || cap(base)) + "</span></div>";
+    html += '<div class="triple">' + txtHtml(TXT.pagePhrase) + " <b>" + esc(state.page || "—") + "</b><br>" + txtHtml(TXT.readFrom) + " <b>" + esc(base) + "</b></div>";
     html += inputHtml({t: "ph", p: base, f: "label"}, phraseText(base, "label"), {
-        label: "Page title",
+        label: txtHtml(TXT.pageTitle),
         placeholder: cap(base),
         note: "<span class=\"mono\">" + esc(base) + " label</span>"
     });
     html += inputHtml({t: "ph", p: base, f: "hint"}, phraseText(base, "hint"), {
-        label: "Lead text",
+        label: txtHtml(TXT.leadText),
         area: true,
         note: "<span class=\"mono\">" + esc(base) + " hint</span>"
     });
-    html += '<div class="box"><div class="box-head"><h4>Headings of the lists</h4></div>';
+    html += '<div class="box"><div class="box-head"><h4>' + txtHtml(TXT.listHeadings) + "</h4></div>";
     LISTS.forEach(function (L) {
         const g = state.lists[L.key];
-        const fb = L.fallback ? L.fallback : "no heading";
+        const fb = L.fallback ? L.fallback : txt(TXT.noHeading);
         html += inputHtml({t: "grp", l: L.key}, g.label.text, {
             label: esc(L.title),
             placeholder: fb,
-            note: "label of <span class=\"mono\">" + esc(groupName(L.key)) + "</span>"
+            note: txtHtml(TXT.labelOf) + " <span class=\"mono\">" + esc(groupName(L.key)) + "</span>"
         });
     });
     html += "</div>";
-    html += '<div class="note" style="font-size:12px;color:var(--muted)">Select an item in the structure or click a part of the preview to change it. Drag items by the grip to reorder them.</div>';
+    html += '<div class="note" style="font-size:12px;color:var(--muted)">' + txtHtml(TXT.pageHelp) + "</div>";
     return html;
 }
 
@@ -1614,40 +1901,41 @@ function nodeInspector(hit) {
     const parentName = parentNameOf(hit);
     let html = '<div class="insp-title"><span class="kind">' + esc(K.name) + '</span><span class="big">' + esc(info.text) + "</span></div>";
     html += inputHtml({t: "node", uid: n.uid, f: "to"}, n.to, {
-        label: "Phrase", phrases: true, mono: true, id: "phrase_" + n.uid,
-        placeholder: "word or triple",
-        note: n.to && !IDX.known.has(n.to) ? "Not in the file yet: it is added to <span class=\"mono\">words</span> on save." : ""
+        label: txtHtml(TXT.phrase), phrases: true, mono: true, id: "phrase_" + n.uid,
+        placeholder: txt(TXT.phraseShortPlaceholder),
+        note: n.to && !IDX.known.has(n.to) ? txtHtml(TXT.notInFile) : ""
     });
-    const labelNote = n.label.text ? "Shown on this page only. Clear it to use " + esc(labelInfo(Object.assign({}, n, {label: newProp(null, null, "")}), hit.parent).from) + "." : "Empty: shows " + esc(info.from) + ".";
+    const ownFrom = labelInfo(Object.assign({}, n, {label: newProp(null, null, "")}), hit.parent).from;
+    const labelNote = n.label.text ? txtHtml(TXT.labelOwnNote, {[VAR.source]: ownFrom}) : txtHtml(TXT.emptyShows, {[VAR.source]: info.from});
     html += inputHtml({t: "node", uid: n.uid, f: "label"}, n.label.text, {
-        label: "Label on this page",
+        label: txtHtml(TXT.labelPage),
         placeholder: n.label.text ? "" : info.text,
         note: labelNote
     });
     if (K.hint || n.hint.text) {
-        const hintNote = hint.from && hint.from !== "item" ? "Empty: shows " + esc(hint.from) + "." : "";
+        const hintNote = hint.from && hint.from !== FROM_ITEM ? txtHtml(TXT.emptyShows, {[VAR.source]: hint.from}) : "";
         html += inputHtml({t: "node", uid: n.uid, f: "hint"}, n.hint.text, {
-            label: "Hint on this page",
+            label: txtHtml(TXT.hintPage),
             area: true,
             placeholder: n.hint.text ? "" : hint.text,
             note: hintNote
         });
     }
     if (K.highlight || n.highlight.on) {
-        const small = !n.highlight.on && hl.on ? "Already a key row by " + esc(hl.from) + "." : "Shows the row in bold (calculator highlight).";
-        html += checkHtml({t: "node", uid: n.uid, f: "highlight"}, n.highlight.on, "Key row on this page", small);
+        const small = !n.highlight.on && hl.on ? txtHtml(TXT.alreadyKeyRow, {[VAR.source]: hl.from}) : txtHtml(TXT.boldRow);
+        html += checkHtml({t: "node", uid: n.uid, f: "highlight"}, n.highlight.on, txtHtml(TXT.keyRowPage), small);
     }
     if (K.signed || n.signed.on) {
         html += checkHtml({
             t: "node",
             uid: n.uid,
             f: "signed"
-        }, n.signed.on, "Show the sign of the numbers", "Positive and negative cells get their own colour (calculator signed).");
+        }, n.signed.on, txtHtml(TXT.showSign), txtHtml(TXT.signNote));
     }
     html += '<div class="triple"><b>' + esc(n.name || "—") + "</b> = " + esc(parentName) + " <i>" + esc(n.verb) + "</i> " + esc(n.to || "…") + "</div>";
     html += inputHtml({t: "node", uid: n.uid, f: "name"}, n.name, {
-        label: "Triple name" + (n.nameAuto ? ' <span class="chip">follows the phrase</span>' : ""), mono: true,
-        note: "The label, hint, order and sub-item triples are named after it."
+        label: txtHtml(TXT.tripleName) + (n.nameAuto ? ' <span class="chip">' + txtHtml(TXT.followsPhrase) + "</span>" : ""), mono: true,
+        note: txtHtml(TXT.tripleNameNote)
     });
     if (n.kind === "input" || n.kind === "assumption") {
         html += exampleValueHtml(n);
@@ -1655,7 +1943,7 @@ function nodeInspector(hit) {
     if (n.to) {
         html += phraseBox(n);
     }
-    html += '<div class="danger-zone"><button class="btn danger" data-act="remove" data-uid="' + n.uid + '">Remove ' + esc(K.name.toLowerCase()) + "</button></div>";
+    html += '<div class="danger-zone"><button class="btn danger" data-act="remove" data-uid="' + n.uid + '">' + txtHtml(TXT.removeItem) + "</button></div>";
     return html;
 }
 
@@ -1666,8 +1954,8 @@ function exampleValueHtml(n) {
     const entry = n.to && !isSelector ? fieldValue(n.to) : null;
     if (entry) {
         html = inputHtml({t: "val", v: entry.vidx}, poolNumber(entry), {
-            label: "Shown number", type: "number",
-            note: "The value (" + esc(entry.words.join(", ")) + "). A change here changes the stored value."
+            label: txtHtml(TXT.shownNumber), type: "number",
+            note: txtHtml(TXT.valueNote, {[VAR.list]: entry.words.join(", ")})
         });
     }
     return html;
@@ -1677,12 +1965,12 @@ function phraseBox(n) {
     const x = n.to;
     const p = phrase(x);
     const K = KIND[n.kind];
-    let html = '<div class="box shared"><div class="box-head"><h4>Phrase “' + esc(x) + '”</h4><span class="chip shared">shared</span>' +
-        "<p>These settings belong to the phrase. They change every calculator that shows “" + esc(x) + "”.</p></div>";
-    html += inputHtml({t: "ph", p: x, f: "label"}, p.label.text, {label: "General label", placeholder: cap(x)});
-    html += inputHtml({t: "ph", p: x, f: "hint"}, p.hint.text, {label: "General hint", area: true});
+    let html = '<div class="box shared"><div class="box-head"><h4>' + txtHtml(TXT.phraseBox, {[VAR.phrase]: x}) + '</h4><span class="chip shared">' + txtHtml(TXT.chipShared) + "</span>" +
+        "<p>" + txtHtml(TXT.phraseBoxNote, {[VAR.phrase]: x}) + "</p></div>";
+    html += inputHtml({t: "ph", p: x, f: "label"}, p.label.text, {label: txtHtml(TXT.generalLabel), placeholder: cap(x)});
+    html += inputHtml({t: "ph", p: x, f: "hint"}, p.hint.text, {label: txtHtml(TXT.generalHint), area: true});
     if (n.kind === "row" || n.kind === "filter") {
-        html += checkHtml({t: "ph", p: x, f: "highlight"}, p.highlight.on, "Key figure on every page");
+        html += checkHtml({t: "ph", p: x, f: "highlight"}, p.highlight.on, txtHtml(TXT.keyFigure));
         html += sideHtml(x, p);
     }
     if (K.field) {
@@ -1693,45 +1981,45 @@ function phraseBox(n) {
 }
 
 function sideHtml(x, p) {
-    let html = '<div class="fg"><span class="lab">Side results <span class="note">shown in the sub text of the row</span></span><div class="mini">';
+    let html = '<div class="fg"><span class="lab">' + txtHtml(TXT.sideResults) + ' <span class="note">' + txtHtml(TXT.sideNote) + '</span></span><div class="mini">';
     p.side.forEach(function (s) {
         html += '<div class="mini-row two">' +
             '<input class="inp mono" list="phraseList" data-bind="' + bindAttr({
                 t: "side",
                 p: x,
                 uid: s.uid
-            }) + '" value="' + esc(s.to) + '" aria-label="side result phrase">' +
-            '<button class="ico rm" data-act="rmSide" data-p="' + esc(x) + '" data-uid="' + s.uid + '" aria-label="Remove side result">✕</button></div>';
+            }) + '" value="' + esc(s.to) + '" aria-label="' + txtHtml(TXT.sidePhrase) + '">' +
+            '<button class="ico rm" data-act="rmSide" data-p="' + esc(x) + '" data-uid="' + s.uid + '" aria-label="' + txtHtml(TXT.removeSide) + '">✕</button></div>';
     });
-    html += '</div><div><button class="addlink" data-act="addSide" data-p="' + esc(x) + '">+ side result</button></div></div>';
+    html += '</div><div><button class="addlink" data-act="addSide" data-p="' + esc(x) + '">' + txtHtml(TXT.addSide) + "</button></div></div>";
     return html;
 }
 
 function fieldHtml(x, p) {
     const f = p.field;
-    let html = '<div class="fg"><label for="ftype_' + esc(x) + '">Field type</label>' +
+    let html = '<div class="fg"><label for="ftype_' + esc(x) + '">' + txtHtml(TXT.fieldType) + "</label>" +
         '<select class="inp" id="ftype_' + esc(x) + '" data-bind="' + bindAttr({t: "ph", p: x, f: "type"}) + '">' +
-        '<option value=""' + (f.type === "" ? " selected" : "") + ">Number (default)</option>" +
-        '<option value="' + FIELD.number + '"' + (f.type === FIELD.number ? " selected" : "") + ">Number with limits</option>" +
-        '<option value="' + FIELD.selector + '"' + (f.type === FIELD.selector ? " selected" : "") + ">Phrase selector</option>" +
+        '<option value=""' + (f.type === "" ? " selected" : "") + ">" + txtHtml(TXT.typeNumber) + "</option>" +
+        '<option value="' + FIELD.number + '"' + (f.type === FIELD.number ? " selected" : "") + ">" + txtHtml(TXT.typeLimits) + "</option>" +
+        '<option value="' + FIELD.selector + '"' + (f.type === FIELD.selector ? " selected" : "") + ">" + txtHtml(TXT.phraseSelector) + "</option>" +
         "</select></div>";
     if (f.type !== FIELD.selector) {
         html += '<div class="row2">' +
-            inputHtml({t: "lim", p: x, k: "min"}, f.limits.min.num, {label: "Minimum", type: "number"}) +
-            inputHtml({t: "lim", p: x, k: "max"}, f.limits.max.num, {label: "Maximum", type: "number"}) +
-            inputHtml({t: "lim", p: x, k: "step"}, f.limits.step.num, {label: "Step", type: "number"}) +
+            inputHtml({t: "lim", p: x, k: "min"}, f.limits.min.num, {label: txtHtml(TXT.minimum), type: "number"}) +
+            inputHtml({t: "lim", p: x, k: "max"}, f.limits.max.num, {label: txtHtml(TXT.maximum), type: "number"}) +
+            inputHtml({t: "lim", p: x, k: "step"}, f.limits.step.num, {label: txtHtml(TXT.step), type: "number"}) +
             "</div>";
     }
-    html += '<div class="fg"><span class="lab">Value phrases <span class="note">the stored value must have these phrases too</span></span><div class="mini">';
+    html += '<div class="fg"><span class="lab">' + txtHtml(TXT.valuePhrases) + ' <span class="note">' + txtHtml(TXT.valuePhrasesNote) + '</span></span><div class="mini">';
     f.valuePhrases.forEach(function (v) {
         html += '<div class="mini-row two"><input class="inp mono" list="phraseList" data-bind="' + bindAttr({
                 t: "vp",
                 p: x,
                 uid: v.uid
-            }) + '" value="' + esc(v.to) + '" aria-label="value phrase">' +
-            '<button class="ico rm" data-act="rmVp" data-p="' + esc(x) + '" data-uid="' + v.uid + '" aria-label="Remove value phrase">✕</button></div>';
+            }) + '" value="' + esc(v.to) + '" aria-label="' + txtHtml(TXT.valuePhrase) + '">' +
+            '<button class="ico rm" data-act="rmVp" data-p="' + esc(x) + '" data-uid="' + v.uid + '" aria-label="' + txtHtml(TXT.removeValuePhrase) + '">✕</button></div>';
     });
-    html += '</div><div><button class="addlink" data-act="addVp" data-p="' + esc(x) + '">+ value phrase</button></div></div>';
+    html += '</div><div><button class="addlink" data-act="addVp" data-p="' + esc(x) + '">' + txtHtml(TXT.addValuePhrase) + "</button></div></div>";
     if (f.type === FIELD.selector) {
         html += optionsHtml(x, f);
     }
@@ -1795,7 +2083,7 @@ function isUnit(w) {
 }
 
 function optionsHtml(x, f) {
-    let html = '<div class="fg"><span class="lab">Options <span class="note">“' + esc(x) + '” has a …, in this order</span></span><div class="mini">';
+    let html = '<div class="fg"><span class="lab">' + txtHtml(TXT.options) + ' <span class="note">' + txtHtml(TXT.optionsNote, {[VAR.phrase]: x}) + '</span></span><div class="mini">';
     f.options.forEach(function (o, i) {
         html += '<div class="mini-row">' +
             '<input class="inp mono" list="phraseList" data-bind="' + bindAttr({
@@ -1803,44 +2091,44 @@ function optionsHtml(x, f) {
                 p: x,
                 uid: o.uid,
                 f: "to"
-            }) + '" value="' + esc(o.to) + '" aria-label="option phrase">' +
+            }) + '" value="' + esc(o.to) + '" aria-label="' + txtHtml(TXT.optionPhrase) + '">' +
             '<input class="inp" data-bind="' + bindAttr({
                 t: "opt",
                 p: x,
                 uid: o.uid,
                 f: "label"
-            }) + '" value="' + esc(o.label.text) + '" placeholder="' + esc(cap(o.to)) + '" aria-label="option label">' +
+            }) + '" value="' + esc(o.label.text) + '" placeholder="' + esc(cap(o.to)) + '" aria-label="' + txtHtml(TXT.optionLabel) + '">' +
             '<span style="display:flex">' +
-            '<button class="ico" data-act="optUp" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="Move option up"' + (i === 0 ? " disabled" : "") + ">↑</button>" +
-            '<button class="ico rm" data-act="rmOpt" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="Remove option">✕</button></span></div>';
+            '<button class="ico" data-act="optUp" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="' + txtHtml(TXT.moveOptionUp) + '"' + (i === 0 ? " disabled" : "") + ">↑</button>" +
+            '<button class="ico rm" data-act="rmOpt" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="' + txtHtml(TXT.removeOption) + '">✕</button></span></div>';
     });
-    html += '</div><div><button class="addlink" data-act="addOpt" data-p="' + esc(x) + '">+ option</button></div></div>';
-    html += '<div class="fg"><span class="lab">Options by “is a” <span class="note">… is a “' + esc(x) + '”</span></span><div class="mini">';
+    html += '</div><div><button class="addlink" data-act="addOpt" data-p="' + esc(x) + '">' + txtHtml(TXT.addOption) + "</button></div></div>";
+    html += '<div class="fg"><span class="lab">' + txtHtml(TXT.optionsIsa) + ' <span class="note">' + txtHtml(TXT.optionsIsaNote, {[VAR.phrase]: x}) + '</span></span><div class="mini">';
     f.isa.forEach(function (o, i) {
         html += '<div class="mini-row two">' +
             '<input class="inp mono" list="phraseList" data-bind="' + bindAttr({
                 t: "isa",
                 p: x,
                 uid: o.uid
-            }) + '" value="' + esc(o.from) + '" aria-label="is a option phrase">' +
+            }) + '" value="' + esc(o.from) + '" aria-label="' + txtHtml(TXT.isaOptionPhrase) + '">' +
             '<span style="display:flex">' +
-            '<button class="ico" data-act="isaUp" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="Move option up"' + (i === 0 ? " disabled" : "") + ">↑</button>" +
-            '<button class="ico rm" data-act="rmIsa" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="Remove option">✕</button></span></div>';
+            '<button class="ico" data-act="isaUp" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="' + txtHtml(TXT.moveOptionUp) + '"' + (i === 0 ? " disabled" : "") + ">↑</button>" +
+            '<button class="ico rm" data-act="rmIsa" data-p="' + esc(x) + '" data-uid="' + o.uid + '" aria-label="' + txtHtml(TXT.removeOption) + '">✕</button></span></div>';
     });
-    html += '</div><div><button class="addlink" data-act="addIsa" data-p="' + esc(x) + '">+ “is a” option</button></div></div>';
+    html += '</div><div><button class="addlink" data-act="addIsa" data-p="' + esc(x) + '">' + txtHtml(TXT.addIsaOption) + "</button></div></div>";
     html += checkHtml({
         t: "ph",
         p: x,
         f: "valueBased"
-    }, f.valueBased, "Take the options from the values", "Used when no option is listed: every phrase with a value of “" + esc(x) + "”.");
+    }, f.valueBased, txtHtml(TXT.valueBased), txtHtml(TXT.valueBasedNote, {[VAR.phrase]: x}));
     const choices = optionChoices(x, f);
-    html += '<div class="fg"><label for="uses_' + esc(x) + '">Selected on “' + esc(state.page) + '”</label>' +
+    html += '<div class="fg"><label for="uses_' + esc(x) + '">' + txtHtml(TXT.selectedOn, {[VAR.phrase]: state.page}) + "</label>" +
         '<select class="inp" id="uses_' + esc(x) + '" data-bind="' + bindAttr({t: "ph", p: x, f: "uses"}) + '">' +
-        '<option value="">— first option —</option>' +
+        '<option value="">' + txtHtml(TXT.firstOption) + "</option>" +
         choices.map(function (c) {
             return '<option value="' + esc(c.phrase) + '"' + (c.phrase === f.uses.to ? " selected" : "") + ">" + esc(c.label) + "</option>";
         }).join("") +
-        '</select><div class="note">The page phrase <i>uses</i> this option.</div></div>';
+        '</select><div class="note">' + txtHtml(TXT.usesNote) + "</div></div>";
     return html;
 }
 
@@ -1867,7 +2155,7 @@ function previewField(n, inInputs) {
             const v = val ? poolNumber(val) : "";
             return "<option" + (c.phrase === f.uses.to ? " selected" : "") + ' value="' + esc(v) + '">' + esc(c.label) + "</option>";
         }).join("");
-        body = "<select tabindex=\"-1\">" + (opts || "<option>no options</option>") + "</select>";
+        body = "<select tabindex=\"-1\">" + (opts || "<option>" + txtHtml(TXT.noOptions) + "</option>") + "</select>";
     } else {
         const entry = fieldValue(n.to);
         const num = entry ? poolNumber(entry) : "";
@@ -1878,17 +2166,17 @@ function previewField(n, inInputs) {
         if (!inInputs && entry) {
             const conf = confidenceOf(n.to, entry);
             if (entry.source) {
-                tag = '<span class="tag m">measured</span>';
+                tag = '<span class="tag m">' + txtHtml(TXT.measured) + "</span>";
                 const sn = sourceNumber(entry.source);
                 if (sn && hintText) {
                     hintText = hintText + " [" + sn + "]";
                 }
             } else if (entry.words.indexOf("assumed") >= 0) {
-                tag = '<span class="tag a">assumed' + (conf ? " " + esc(conf) : "") + "</span>";
+                tag = '<span class="tag a">' + txtHtml(TXT.assumed) + (conf ? " " + esc(conf) : "") + "</span>";
             }
         }
         if (!entry) {
-            body += '<span class="hint">no value with “' + esc(n.to) + '” in the file</span>';
+            body += '<span class="hint">' + txtHtml(TXT.noValue, {[VAR.phrase]: n.to}) + "</span>";
         }
     }
     const result = '<div class="field"' + selAttr(n.uid) + "><label>" + esc(info.text) + tag + "</label>" + body + (hintText ? '<span class="hint">' + esc(hintText) + "</span>" : "") + "</div>";
@@ -1949,7 +2237,7 @@ function previewPage() {
     const cols = state.lists.column.items.filter(function (c) {
         return c.to;
     });
-    let html = '<div class="legend"><span><i></i>click a part to edit it</span><span>numbers come from the values and the results of the file</span></div>';
+    let html = '<div class="legend"><span><i></i>' + txtHtml(TXT.legendClick) + "</span><span>" + txtHtml(TXT.legendNumbers) + "</span></div>";
     html += '<div class="use-case">';
     html += '<header data-sel="page"><h4>' + esc(phraseText(base, "label") || cap(base)) + "</h4>" +
         (phraseText(base, "hint") ? "<p>" + esc(phraseText(base, "hint")) + "</p>" : "") + "</header>";
@@ -1959,21 +2247,21 @@ function previewPage() {
     });
     html += inputs.map(function (n) {
         return previewField(n, true);
-    }).join("") || '<div class="empty-list">No inputs.</div>';
-    html += '<button type="button" class="btn-save" tabindex="-1">Save</button></div>';
+    }).join("") || '<div class="empty-list">' + txtHtml(TXT.noInputs) + "</div>";
+    html += '<button type="button" class="btn-save" tabindex="-1">' + txtHtml(TXT.save) + "</button></div>";
     html += previewDetailsStart("assumption") + "<summary>" + esc(groupLabel("assumption")) + "</summary>";
     const assumptions = state.lists.assumption.items.filter(function (n) {
         return n.to;
     });
     html += assumptions.map(function (n) {
         return previewField(n, false);
-    }).join("") || '<div class="empty-list">No assumptions listed.</div>';
-    html += '<p class="derived">+ the other operands of the results, derived from the formulas</p></details></aside>';
+    }).join("") || '<div class="empty-list">' + txtHtml(TXT.noAssumptions) + "</div>";
+    html += '<p class="derived">' + txtHtml(TXT.otherOperands) + "</p></details></aside>";
     html += '<section class="panel">';
     if (groupLabel("column")) {
         html += "<h2>" + esc(groupLabel("column")) + "</h2>";
     }
-    html += '<div class="scroll"><table><thead><tr><th>Result</th>' +
+    html += '<div class="scroll"><table><thead><tr><th>' + txtHtml(TXT.result) + "</th>" +
         cols.map(function (c) {
             return '<th class="n"' + selAttr(c.uid) + ">" + esc(labelInfo(c, null).text) + "</th>";
         }).join("") + "</tr></thead><tbody>";
@@ -2001,13 +2289,13 @@ function previewPage() {
         }
     });
     if (state.lists.rowgroup.items.length === 0) {
-        html += '<tr><td colspan="' + span + '" class="miss">No row groups.</td></tr>';
+        html += '<tr><td colspan="' + span + '" class="miss">' + txtHtml(TXT.noRowGroups) + "</td></tr>";
     }
     html += "</tbody></table></div>";
     const details = state.lists.detail.items.filter(function (d) {
         return d.to;
     });
-    html += previewDetailsStart("detail") + "<summary>" + esc(groupLabel("detail") || "Details") + '</summary><div class="more">';
+    html += previewDetailsStart("detail") + "<summary>" + esc(groupLabel("detail") || txt(TXT.details)) + '</summary><div class="more">';
     details.forEach(function (d) {
         html += detailTable(d);
     });
@@ -2053,9 +2341,9 @@ function detailTable(d) {
             }).join("") + "</tr>";
     });
     if (rowPhrases.length === 0 && extra.length === 0) {
-        html += '<tr><td colspan="' + (colsD.length + 1) + '" class="miss">No rows: no phrase <i>is a</i> “' + esc(d.to) + "”.</td></tr>";
+        html += '<tr><td colspan="' + (colsD.length + 1) + '" class="miss">' + txtHtml(TXT.noRows, {[VAR.phrase]: d.to}) + "</td></tr>";
     } else if (rowPhrases.length === 0) {
-        html += '<tr><td colspan="' + (colsD.length + 1) + '" class="miss"><small>The rows of the table are the phrases that <i>is a</i> “' + esc(d.to) + "”; the file has none yet.</small></td></tr>";
+        html += '<tr><td colspan="' + (colsD.length + 1) + '" class="miss"><small>' + txtHtml(TXT.rowsNote, {[VAR.phrase]: d.to}) + "</small></td></tr>";
     }
     html += "</tbody></table></div>";
     return html;
@@ -2125,7 +2413,7 @@ function findFormula(sel) {
 function formulaRow(f) {
     const key = FORMULA_SEL + f.id;
     const sel = selected === key ? " sel" : "";
-    const changed = formulaExpression(f) !== (f.expression || "") ? '<span class="chip new">changed</span>' : "";
+    const changed = formulaExpression(f) !== (f.expression || "") ? '<span class="chip new">' + txtHtml(TXT.chipChanged) + "</span>" : "";
     const result = '<div class="node formula' + sel + '" data-uid="' + esc(key) + '" tabindex="0" role="treeitem" aria-selected="' + (sel ? "true" : "false") + '">' +
         '<span class="txt"><span class="lbl">' + esc(f.name) + "</span>" +
         '<span class="ph mono">' + esc(formulaExpression(f)) + "</span></span>" +
@@ -2178,7 +2466,7 @@ function notesHtml() {
     const notes = (DOC.formulas || []).map(function (f) {
         return "<p><b>" + esc(f.name) + "</b> " + esc(f.description || "") + "</p>";
     }).join("");
-    const result = notes ? '<div class="notes">' + notes + '<p class="derived">derived from the formulas; a formula is changed in the structure below the result row it calculates</p></div>' : "";
+    const result = notes ? '<div class="notes">' + notes + '<p class="derived">' + txtHtml(TXT.formulasNote) + "</p></div>" : "";
     return result;
 }
 
@@ -2186,7 +2474,7 @@ function sourcesHtml() {
     const items = (DOC.sources || []).map(function (s) {
         return "<li>" + (s.url ? '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a>" : esc(s.name)) + "</li>";
     }).join("");
-    const result = items ? '<div class="src"><h2>Sources</h2><ol>' + items + "</ol></div>" : "";
+    const result = items ? '<div class="src"><h2>' + txtHtml(TXT.sources) + "</h2><ol>" + items + "</ol></div>" : "";
     return result;
 }
 
@@ -2197,14 +2485,14 @@ function textsPane() {
     const rows = [];
     rows.push({
         own: state.base + " label",
-        where: "page title",
+        where: txt(TXT.pageTitle),
         bind: {t: "ph", p: state.base, f: "label"},
         text: phraseText(state.base, "label"),
         shared: false
     });
     rows.push({
         own: state.base + " hint",
-        where: "lead text",
+        where: txt(TXT.leadText),
         bind: {t: "ph", p: state.base, f: "hint"},
         text: phraseText(state.base, "hint"),
         shared: false
@@ -2212,7 +2500,7 @@ function textsPane() {
     LISTS.forEach(function (L) {
         rows.push({
             own: groupName(L.key) + " label",
-            where: L.title + " heading",
+            where: txt(TXT.listHeading, {[VAR.name]: L.title}),
             bind: {t: "grp", l: L.key},
             text: state.lists[L.key].label.text,
             shared: false,
@@ -2227,16 +2515,16 @@ function textsPane() {
             bind: {t: "node", uid: n.uid, f: "label"},
             text: n.label.text,
             shared: false,
-            ph: info.from === "item" ? "" : info.text
+            ph: info.from === FROM_ITEM ? "" : info.text
         });
         if (KIND[n.kind].hint || n.hint.text) {
             rows.push({
                 own: n.name + " hint",
-                where: KIND[n.kind].name + " hint",
+                where: txt(TXT.kindHint, {[VAR.type]: KIND[n.kind].name}),
                 bind: {t: "node", uid: n.uid, f: "hint"},
                 text: n.hint.text,
                 shared: false,
-                ph: hintInfo(n).from === "item" ? "" : hintInfo(n).text
+                ph: hintInfo(n).from === FROM_ITEM ? "" : hintInfo(n).text
             });
         }
     });
@@ -2245,7 +2533,7 @@ function textsPane() {
         if (x !== state.base && p.label.text) {
             rows.push({
                 own: x + " label",
-                where: "phrase label",
+                where: txt(TXT.phraseLabel),
                 bind: {t: "ph", p: x, f: "label"},
                 text: p.label.text,
                 shared: true
@@ -2254,7 +2542,7 @@ function textsPane() {
         if (x !== state.base && p.hint.text) {
             rows.push({
                 own: x + " hint",
-                where: "phrase hint",
+                where: txt(TXT.phraseHint),
                 bind: {t: "ph", p: x, f: "hint"},
                 text: p.hint.text,
                 shared: true
@@ -2264,7 +2552,7 @@ function textsPane() {
             if (o.label.text) {
                 rows.push({
                     own: o.name + " label",
-                    where: "option of " + x,
+                    where: txt(TXT.optionOf, {[VAR.phrase]: x}),
                     bind: {t: "opt", p: x, uid: o.uid, f: "label"},
                     text: o.label.text,
                     shared: true
@@ -2272,10 +2560,11 @@ function textsPane() {
             }
         });
     });
-    let html = '<p style="margin:0 0 12px;color:var(--muted);font-size:12.5px">Every label and hint of the page in one list, for proofreading. <span class="chip shared">shared</span> texts belong to a phrase and change every calculator that shows it.</p>';
-    html += '<div class="scrollx"><table class="texts"><thead><tr><th>Triple</th><th>Text</th></tr></thead><tbody>';
+    const sharedChip = '<span class="chip shared">' + txtHtml(TXT.chipShared) + "</span>";
+    let html = '<p style="margin:0 0 12px;color:var(--muted);font-size:12.5px">' + txtHtml(TXT.textsIntro) + " " + sharedChip + " " + txtHtml(TXT.textsShared) + "</p>";
+    html += '<div class="scrollx"><table class="texts"><thead><tr><th>' + txtHtml(TXT.colTriple) + "</th><th>" + txtHtml(TXT.colText) + "</th></tr></thead><tbody>";
     rows.forEach(function (r) {
-        html += '<tr><td><div class="own">' + esc(r.own) + '</div><div style="font-size:11.5px;color:var(--muted)">' + esc(r.where) + (r.shared ? ' <span class="chip shared">shared</span>' : "") + "</div></td>" +
+        html += '<tr><td><div class="own">' + esc(r.own) + '</div><div style="font-size:11.5px;color:var(--muted)">' + esc(r.where) + (r.shared ? " " + sharedChip : "") + "</div></td>" +
             '<td><input class="inp" data-bind="' + bindAttr(r.bind) + '" value="' + esc(r.text) + '" placeholder="' + esc(r.ph || "") + '" aria-label="' + esc(r.own) + '"></td></tr>';
     });
     html += "</tbody></table></div>";
@@ -2292,42 +2581,42 @@ function changesPane() {
     const c = o.changes;
     let html = '<div class="chg">';
     if (o.warnings.length > 0) {
-        html += "<div><h3>Check before saving</h3><ul>" + o.warnings.map(function (w) {
+        html += "<div><h3>" + txtHtml(TXT.checkBeforeSaving) + "</h3><ul>" + o.warnings.map(function (w) {
             return '<li class="wrn">' + esc(w) + "</li>";
         }).join("") + "</ul></div>";
     }
     if (o.changed === 0) {
-        html += '<p style="color:var(--muted);margin:0">No changes since the last save.</p>';
+        html += '<p style="color:var(--muted);margin:0">' + txtHtml(TXT.noChangesSince) + "</p>";
     } else if (SOURCE.mode === "api") {
-        html += '<p style="color:var(--muted);margin:0">Save sends these changes to the database, one api call each.</p>';
+        html += '<p style="color:var(--muted);margin:0">' + txtHtml(TXT.saveSends) + "</p>";
     }
     if (c.add.length) {
-        html += "<div><h3>Added triples (" + c.add.length + ")</h3><ul>" + c.add.map(function (t) {
+        html += "<div><h3>" + txtHtml(TXT.addedTriples, {[VAR.count]: c.add.length}) + "</h3><ul>" + c.add.map(function (t) {
             return '<li class="add">+ ' + esc(tripleLine(t)) + "</li>";
         }).join("") + "</ul></div>";
     }
     if (c.mod.length) {
-        html += "<div><h3>Changed triples (" + c.mod.length + ")</h3><ul>" + c.mod.map(function (m) {
+        html += "<div><h3>" + txtHtml(TXT.changedTriples, {[VAR.count]: c.mod.length}) + "</h3><ul>" + c.mod.map(function (m) {
             return '<li class="mod">' + esc(tripleLine(m.before)) + "<br>→ " + esc(tripleLine(m.after)) + "</li>";
         }).join("") + "</ul></div>";
     }
     if (c.del.length) {
-        html += "<div><h3>Removed triples (" + c.del.length + ")</h3><ul>" + c.del.map(function (d) {
+        html += "<div><h3>" + txtHtml(TXT.removedTriples, {[VAR.count]: c.del.length}) + "</h3><ul>" + c.del.map(function (d) {
             return '<li class="del">− ' + esc(tripleLine(d.t)) + "</li>";
         }).join("") + "</ul></div>";
     }
     if (c.values.length) {
-        html += "<div><h3>Values (" + c.values.length + ")</h3><ul>" + c.values.map(function (v) {
+        html += "<div><h3>" + txtHtml(TXT.values, {[VAR.count]: c.values.length}) + "</h3><ul>" + c.values.map(function (v) {
             return '<li class="' + v.kind + '">' + esc(v.text) + "</li>";
         }).join("") + "</ul></div>";
     }
     if (c.words.length) {
-        html += "<div><h3>New words (" + c.words.length + ")</h3><ul>" + c.words.map(function (w) {
+        html += "<div><h3>" + txtHtml(TXT.newWords, {[VAR.count]: c.words.length}) + "</h3><ul>" + c.words.map(function (w) {
             return '<li class="add">+ ' + esc(w) + "</li>";
         }).join("") + "</ul></div>";
     }
     if (c.formulas.length) {
-        html += "<div><h3>Changed formulas (" + c.formulas.length + ")</h3><ul>" + c.formulas.map(function (f) {
+        html += "<div><h3>" + txtHtml(TXT.changedFormulas, {[VAR.count]: c.formulas.length}) + "</h3><ul>" + c.formulas.map(function (f) {
             return '<li class="mod">' + esc(f.name) + ": " + esc(f.before) + "<br>→ " + esc(f.after) + "</li>";
         }).join("") + "</ul></div>";
     }
@@ -2382,11 +2671,12 @@ function renderAll() {
     const chip = document.getElementById("srcChip");
     chip.hidden = SOURCE.mode !== "api";
     chip.className = "chip live";
-    chip.textContent = "database";
+    chip.textContent = txt(TXT.chipDatabase);
     chip.title = DOC_NAME;
     const view = document.getElementById("btnView");
     view.hidden = SOURCE.mode !== "api" || !SOURCE.pageId;
     view.href = SOURCE.root + "http/view.php?m=calculator&id=" + SOURCE.pageId;
+    document.getElementById("btnExport").disabled = !state.page;
 }
 
 /* ------------------------------------------------------------------ */
@@ -2444,7 +2734,7 @@ function removeNode(id) {
                 selected = hit.parent ? hit.parent.uid : "page";
             }
         });
-        toast("Removed. Undo brings it back.");
+        toast(txt(TXT.removed));
     }
 }
 
@@ -2749,11 +3039,11 @@ async function apiCall(method, route, params, body) {
         if (json && !Array.isArray(json) && json.message) {
             message = String(json.message);
         } else if (!resp.ok) {
-            message = "the pod answered " + resp.status + " " + resp.statusText + " for " + method + " " + route;
+            message = txt(TXT.podAnswered, {[VAR.value]: resp.status + " " + resp.statusText, [VAR.name]: method + " " + route});
         }
         result = {ok: resp.ok && !(json && json.message), status: resp.status, json: json, message: message};
     } catch (e) {
-        result = {ok: false, status: 0, json: null, message: "the pod could not be reached (" + e.message + ")"};
+        result = {ok: false, status: 0, json: null, message: txt(TXT.podUnreachable, {[VAR.value]: e.message})};
     }
     return result;
 }
@@ -2884,12 +3174,11 @@ async function save() {
             const failed = loaded ? "" : "<br>" + esc(document.getElementById("noticeHost").textContent);
             notice(report.html + failed, report.warn || !loaded ? "err" : "");
             if (!report.warn && loaded) {
-                toast("Saved " + out.changed + (out.changed === 1 ? " change." : " changes."));
+                toast(txtCount(TXT.savedChange, TXT.savedChanges, out.changed));
             }
         } else {
             refreshStatus();
-            notice("Not all changes are saved. The pod refused the save: " + esc(r.message || "no answer") +
-                ". The changes before the problem may be saved; Load shows the database.", "err");
+            notice(txtHtml(TXT.saveRefused, {[VAR.value]: r.message || txt(TXT.noAnswer)}), "err");
         }
     }
 }
@@ -2903,18 +3192,18 @@ function savedReport(body) {
     ["words", "triples", "formulas", "values"].forEach(function (section) {
         (body[section] || []).forEach(function (o) {
             const name = o.name || (section.slice(0, -1) + " " + o.id);
-            const own = o.user_overwrite ? " (your own version)" : " (the shared version)";
+            const own = " " + (o.user_overwrite ? txt(TXT.ownVersion) : txt(TXT.sharedVersion));
             const fields = (o.changes || []).map(function (c) {
                 const old = c.old_value === null ? "" : JSON.stringify(c.old_value) + " → ";
                 return c.field + " " + old + JSON.stringify(c.new_value);
             });
             warn = warn || !o.action || o.action === "unchanged";
-            lines.push(esc(name) + ": " + esc(o.action || "not confirmed") + own + (fields.length ? ": " + esc(fields.join(", ")) : ""));
+            lines.push(esc(name) + ": " + esc((o.action || txt(TXT.notConfirmed)) + own) + (fields.length ? ": " + esc(fields.join(", ")) : ""));
         });
     });
     (body.delete || []).forEach(function (d) {
         warn = warn || d.action !== "removed";
-        lines.push(esc(d.class + " " + d.id) + ": " + esc(d.action || "not confirmed"));
+        lines.push(esc(d.class + " " + d.id) + ": " + esc(d.action || txt(TXT.notConfirmed)));
     });
     if (body.warnings) {
         lines.push(esc(body.warnings));
@@ -2922,7 +3211,7 @@ function savedReport(body) {
     /* a save is only called with changes, so an answer without any confirmation is never a success */
     if (lines.length === 0) {
         warn = true;
-        lines.push("The pod has not confirmed the save, so the changes may not be saved. Load shows the database.");
+        lines.push(txtHtml(TXT.saveNotConfirmed));
     }
     const result = {html: lines.join("<br>"), warn: warn};
     return result;
@@ -3003,7 +3292,7 @@ function loadDoc(doc, name, savedState) {
         return state.lists[L.key].src !== null;
     }).length;
     if (lists === 0 && state.page) {
-        notice("“" + esc(state.page) + "” has no calculator lists yet. The lists you add here are added to “" + esc(state.base) + "”.", "");
+        notice(txtHtml(TXT.noLists, {[VAR.phrase]: state.page, [VAR.name]: state.base}), "");
     }
     renderAll();
 }
@@ -3024,7 +3313,7 @@ async function loadFromApi() {
     }
     SOURCE.seedUsed = true;
     if (!message && !selectionName(doc)) {
-        message = "the phrase " + SOURCE.pageId + " was not found";
+        message = txt(TXT.phraseNotFound, {[VAR.id]: SOURCE.pageId});
     }
     if (!message) {
         message = readIds(doc);
@@ -3048,7 +3337,7 @@ function readIds(doc) {
     let message = "";
     (doc.triples || []).forEach(function (t) {
         if (!message && t.verb && !SOURCE.verbIds.has(t.verb)) {
-            message = "the verb \"" + t.verb + "\" is not in the type lists of the page";
+            message = txt(TXT.verbUnknown, {[VAR.name]: t.verb});
         }
     });
     return message;
@@ -3086,7 +3375,7 @@ async function reload() {
         notice("", "");
         loadDoc(r.doc, location.host, null);
     } else {
-        notice("The calculator could not be read from the database: " + esc(r.message) + ".", "err");
+        notice(txtHtml(TXT.readFailed, {[VAR.value]: r.message}), "err");
     }
     return r.ok;
 }
@@ -3323,9 +3612,148 @@ document.getElementById("btnReset").addEventListener("click", function () {
             parseDoc(DOC);
             selected = findNode(keep) ? keep : "page";
         });
-        toast("Changes discarded. Undo brings them back.");
+        toast(txt(TXT.discarded));
     }
 });
+document.getElementById("btnExport").addEventListener("click", exportDoc);
+document.getElementById("btnImport").addEventListener("click", function () {
+    document.getElementById("importFile").click();
+});
+document.getElementById("importFile").addEventListener("change", function (e) {
+    const file = e.target.files[0];
+    /* empty, so that the same file can be chosen again e.g. after a fix */
+    e.target.value = "";
+    if (file) {
+        importFile(file);
+    }
+});
+
+/* the import of a json file into the pod by the standard json import (api/json) */
+const IMPORT_ROUTE = "json";
+/* the parts of the phraseData answer e.g. of the export that are no import data; the pod calculates the results again */
+const IMPORT_SKIP_KEYS = ["type", "user_id", "results"];
+
+/* the json to import without the parts of the phraseData answer */
+function importJson(doc) {
+    const result = Object.assign({}, doc);
+    IMPORT_SKIP_KEYS.forEach(function (key) {
+        delete result[key];
+    });
+    return result;
+}
+
+/* the page phrase of an import file, which the selection names by its name or as an object e.g. of the export */
+function importPageName(doc) {
+    const sel = (doc.selection || [])[0];
+    const result = typeof sel === "string" ? sel : selectionName(doc);
+    return result;
+}
+
+/* import the file into the pod and load the calculator of its page phrase with the database ids of the import */
+async function importFile(file) {
+    const blocked = !SOURCE.online || (lastOutput && lastOutput.changed > 0) || saving;
+    if (!blocked) {
+        let doc = null;
+        try {
+            doc = parseJson(await file.text());
+        } catch (e) {
+            doc = null;
+        }
+        if (doc === null || typeof doc !== "object" || Array.isArray(doc)) {
+            notice(txtHtml(TXT.importNoJson, {[VAR.name]: file.name}), "err");
+        } else {
+            const btn = document.getElementById("btnImport");
+            btn.disabled = true;
+            notice(txtHtml(TXT.importing, {[VAR.name]: file.name}), "");
+            const r = await apiCall("PUT", IMPORT_ROUTE, {}, importJson(doc));
+            btn.disabled = false;
+            const name = importPageName(doc);
+            if (!r.ok) {
+                notice(txtHtml(TXT.importFailed, {[VAR.name]: file.name, [VAR.value]: r.message || txt(TXT.noAnswer)}), "err");
+            } else if (name) {
+                document.getElementById("phraseIn").value = name;
+                await loadPhrase(true);
+            } else {
+                notice("", "");
+                toast(txt(TXT.imported, {[VAR.name]: file.name}));
+            }
+        }
+    }
+}
+
+/* the export of the loaded data with the unsaved changes in the format of the seed, i.e. of the
+   phraseData answer, so that the file can be the seed of a test or of a page without a pod */
+const EXPORT_TYPE = "application/json";
+const EXPORT_EXT = ".json";
+const EXPORT_INDENT = 2;
+/* a char that a file name must not have e.g. on windows */
+const EXPORT_NAME_CHAR = /[\\\/:*?"<>|]+/g;
+const EXPORT_NAME_REPLACE = "_";
+
+/* the json of the loaded data with each long id as a number again, which parseJson keeps as text,
+   because a javascript number cannot hold it exactly */
+function exportJson(doc) {
+    const text = JSON.stringify(doc, null, EXPORT_INDENT);
+    const result = text.replace(/("id":\s*)"(-?\d{16,})"/g, "$1$2");
+    return result;
+}
+
+/* the file name of the export e.g. "example PV installation.json" */
+function exportName(doc) {
+    const result = selectionName(doc).replace(EXPORT_NAME_CHAR, EXPORT_NAME_REPLACE) + EXPORT_EXT;
+    return result;
+}
+
+/* the loaded data with the unsaved changes: the triples as a save would store them, the new words,
+   the changed, added and removed values and the changed expressions; a new object has no id yet */
+function editedDoc() {
+    const out = buildOutput();
+    const removed = new Set();
+    const numbers = new Map();
+    const added = [];
+    out.changes.values.forEach(function (v) {
+        if (v.kind === "del") {
+            removed.add(v.src);
+        } else if (v.kind === "mod") {
+            numbers.set(v.src, v.number);
+        } else {
+            added.push({words: v.words, number: v.number});
+        }
+    });
+    const values = (DOC.values || []).map(function (v, i) {
+        const result = numbers.has(i) ? Object.assign({}, v, {number: numbers.get(i)}) : v;
+        return result;
+    }).filter(function (v, i) {
+        return !removed.has(i);
+    });
+    const result = Object.assign({}, DOC, {
+        words: (DOC.words || []).concat(out.changes.words.map(function (w) {
+            return {name: w};
+        })),
+        triples: out.triples,
+        formulas: (DOC.formulas || []).map(function (f) {
+            return Object.assign({}, f, {expression: formulaExpression(f)});
+        }),
+        values: values.concat(added)
+    });
+    return result;
+}
+
+/* save the loaded data with the unsaved changes as a file on the device by the download of the browser */
+function exportDoc() {
+    if (DOC && state.page) {
+        const name = exportName(DOC);
+        const url = URL.createObjectURL(new Blob([exportJson(editedDoc())], {type: EXPORT_TYPE}));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        toast(txt(TXT.exported, {[VAR.name]: name}));
+    }
+}
 
 /* start: with ?id=<phrase id> on a pod the calculator of that phrase is read from the database,
    anywhere else the embedded demo file is shown; a draft of unsaved edits is offered if one was left */
@@ -3375,10 +3803,11 @@ async function loadPhrase(force) {
     const name = document.getElementById("phraseIn").value.trim();
     const unsaved = lastOutput && lastOutput.changed > 0;
     if (!name) {
-        notice("Enter the name of a word or triple first.", "err");
+        notice(txtHtml(TXT.enterName), "err");
     } else if (unsaved && !force) {
-        notice("The " + lastOutput.changed + " unsaved changes to “" + esc(state.page) + "” will be lost. " +
-            '<button class="btn small" id="btnLoadAnyway">Load “' + esc(name) + '” anyway</button> <button class="btn small ghost" id="btnLoadCancel">Cancel</button>', "err");
+        notice(txtHtml(TXT.unsavedLost, {[VAR.count]: lastOutput.changed, [VAR.phrase]: state.page}) + " " +
+            '<button class="btn small" id="btnLoadAnyway">' + txtHtml(TXT.loadAnyway, {[VAR.phrase]: name}) + "</button> " +
+            '<button class="btn small ghost" id="btnLoadCancel">' + txtHtml(TXT.cancel) + "</button>", "err");
         document.getElementById("btnLoadAnyway").addEventListener("click", function () {
             loadPhrase(true);
         });
@@ -3392,17 +3821,17 @@ async function loadPhrase(force) {
             notice("", "");
             clearDraft();
             loadDoc(seed.doc, seed.name, null);
-            toast("Loaded “" + name + "”.");
+            toast(txt(TXT.loaded, {[VAR.phrase]: name}));
         } else {
-            notice("This page is not connected to a zukunft.com pod, so only “" + esc(selectionName(seed.doc)) + "” can be loaded.", "err");
+            notice(txtHtml(TXT.offlineOnly, {[VAR.phrase]: selectionName(seed.doc)}), "err");
         }
     } else {
         const btn = document.getElementById("btnLoad");
         btn.disabled = true;
-        notice("Reading the calculator of “" + esc(name) + "” from the database…", "");
+        notice(txtHtml(TXT.reading, {[VAR.phrase]: name}), "");
         const id = await resolvePhrase(name);
         if (!id) {
-            notice("No word or triple “" + esc(name) + "” on this pod. Pick one of the suggestions.", "err");
+            notice(txtHtml(TXT.notOnPod, {[VAR.phrase]: name}), "err");
         } else {
             const before = SOURCE.pageId;
             SOURCE.mode = "api";
@@ -3411,7 +3840,7 @@ async function loadPhrase(force) {
             if (ok) {
                 clearDraft();
                 setUrlId(id);
-                toast("Loaded “" + name + "”.");
+                toast(txt(TXT.loaded, {[VAR.phrase]: name}));
             } else {
                 SOURCE.pageId = before;
             }
@@ -3435,7 +3864,7 @@ async function boot() {
     if (SOURCE.online && id !== 0) {
         SOURCE.mode = "api";
         SOURCE.pageId = id;
-        notice("Reading the calculator of phrase " + esc(String(id)) + " from the database…", "");
+        notice(txtHtml(TXT.readingId, {[VAR.id]: id}), "");
         loaded = await reload();
     }
     if (!loaded && SOURCE.online && id === 0) {
@@ -3453,12 +3882,13 @@ async function boot() {
     const sameData = draft && draft.mode === SOURCE.mode && draft.pageId === SOURCE.pageId && draft.sig === signature(DOC);
     if (sameData) {
         const when = new Date(draft.at).toLocaleString();
-        notice("Unsaved edits from " + esc(when) + ". " +
-            '<button class="btn small" id="btnRestore">Restore</button> <button class="btn small ghost" id="btnDiscard">Discard</button>', "");
+        notice(txtHtml(TXT.unsavedFrom, {[VAR.time]: when}) + " " +
+            '<button class="btn small" id="btnRestore">' + txtHtml(TXT.restore) + "</button> " +
+            '<button class="btn small ghost" id="btnDiscard">' + txtHtml(TXT.discard) + "</button>", "");
         document.getElementById("btnRestore").addEventListener("click", function () {
             loadDoc(DOC, DOC_NAME, draft.state);
             notice("", "");
-            toast("Edits restored.");
+            toast(txt(TXT.restored));
         });
         document.getElementById("btnDiscard").addEventListener("click", function () {
             clearDraft();

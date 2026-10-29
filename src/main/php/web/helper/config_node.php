@@ -61,6 +61,8 @@ class config_node
     public string $unit = '';
     // true for a text setting, which is changed with a text input
     public bool $is_text = false;
+    // the code id of the word of the key e.g. words::FONT_CODE_ID for the setting with the font selection
+    public string $code_id = '';
     // the phrase ids of a text setting without a database value, with which its first save adds the value
     public array $phr_ids = [];
     // the tooltip-comment of the key in config.yaml
@@ -83,7 +85,7 @@ class config_node
 
     /**
      * @param array $json the node of the api message with name, value, value id, config.yaml value, unit,
-     *                    the text flag, the phrase ids of a new text, tooltip and children
+     *                    the text flag, the phrase ids of a new text, the code id of the key word, tooltip and children
      * @return void
      */
     function api_mapper(array $json): void
@@ -96,6 +98,7 @@ class config_node
         $this->file_value = (string)($json[json_fields::CONFIG_FILE_VALUE] ?? '');
         $this->unit = (string)($json[json_fields::CONFIG_UNIT] ?? '');
         $this->is_text = (($json[json_fields::CONFIG_IS_TEXT] ?? false) === true);
+        $this->code_id = (string)($json[json_fields::CODE_ID] ?? '');
         $phr_ids = (array)($json[json_fields::CONFIG_PHRASE_IDS] ?? []);
         // only the ids, so that a malformed entry never ends in the url of the save
         $int_ids = array_filter($phr_ids, 'is_int');

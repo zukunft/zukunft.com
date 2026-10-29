@@ -38,7 +38,8 @@ layout: `font` and `colours` with the groups `page` (`--page-*` of `style_html.c
 `editor` (`--bg`, `--ink`, `--accent`, … of the calculator and the formula editor) and
 `chart` (`--chart-*` of the table charts, prefixed because the `:root` of a chart svg sets
 them for the whole page), each with a `dark` group for the dark mode. The entry
-`mode` decides which colours a page gets (`html_base::theme_css`): 1 is always light,
+`colour mode` (`triples::COLOUR_MODE`, a triple with its own code id, because the word
+`mode` alone is too generic to select the setting) decides which colours a page gets (`html_base::theme_css`): 1 is always light,
 which is the default (`def::FALLBACK_MODE`), so that a page looks the same for every user
 until the user switches, 2 is always dark, which also switches the bootstrap components by
 `data-bs-theme`, and 0 follows the setting of the browser by a media query. The user menu of a logged-in user offers the
@@ -146,7 +147,22 @@ the calculator editor and gets the changes back after an undo, so that one save 
 the unit and scaling phrases of the frontend type cache with their id and name in
 the format of the typeLists api (`system_page::calculator_editor_types`), so that
 the script finds the id of a verb and knows a unit without an api call; only
-these, because the whole typeLists answer is much larger than the page. The save posts one update put
+these, because the whole typeLists answer is much larger than the page. The script has no text of its
+own: the page embeds the translated texts by their message id as json data too, i.e. all messages
+with the prefix `calc_editor_` and the texts of the calculator page that the preview shows
+(`system_page::calculator_editor_texts`); the script names each message id once (`TXT` in
+`calculator_editor.js`) and fills the variables of a message like the pod e.g. `z$VarPhraseName$z`.
+The formula editor gets its texts the same way with the prefix `formula_editor_`
+(`system_page::formula_editor_texts`), which the formula editor view and the calculator editor
+embed, because both start the formula editor. The export button saves the loaded data with the
+unsaved changes in the format of the seed as a json file on the device (`exportDoc` and `editedDoc`
+in `calculator_editor.js`): the triples as a save would store them, the new words, the changed,
+added and removed values and the changed expressions, of which a new object has no id yet; so the
+file can be the seed of a test or of a page without a pod. The import button, shown on a pod
+only, sends a json file to the standard json import of the pod (`PUT /api/json/`, `import::put_json`)
+without the parts of the phraseData answer that are no import data (`IMPORT_SKIP_KEYS`), and then
+loads the page phrase of the file with its new database id like the load button; it is grey with
+the tooltip "Save or discard changes before import" while the editor has unsaved changes. The save posts one update put
 message with the changes to `/api/updatePut/` (`cfg/import/update_put.php`, see
 `docs/llm/json_structure.md` "Update put message"), with the session token of
 the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
@@ -680,7 +696,26 @@ value of the form). An admin's form also sends `url_var::SET_DEFAULT`, so the
 number becomes the default of all users without an own overwrite
 (`value_base::save_as_default`: the standard row with its change log, the owner
 stays, the admin's own overwrite is removed) and the cached pages and config
-values of all users are dropped.
+values of all users are dropped. An admin also has a "clear cache" button in the
+toolbar (`config_tree::clear_cache_form`), whose post with
+`url_var::ACTION_CLEAR_CACHE` removes all cached pages, api answers, types and
+configurations of all users without a confirm view (`frontend::action_clear_cache`,
+`db_cache_page::del_all`, `db_cache::del_all`); the next requests create them
+again. The cache rows are derived data, so they are removed without a change log.
+
+Each node names the code id of its word (`json_fields::CODE_ID`, from
+`config_numbers::phrase_code_ids`), so the page finds a setting by the code id
+and not by its name. The setting of the word with `words::FONT_CODE_ID` (set in
+`base_phrases.json`) is a selection instead of a text input
+(`config_tree::font_select`): the external libraries bring no text font,
+because fontawesome has only icon fonts and bootstrap no font file, so the
+selection offers the generic families sans-serif, serif and monospace and the
+bootstrap lists of fonts installed on the device (`config_tree::FONT_OPTIONS`);
+a font of `config.yaml` that is not in the list is offered too. The setting of the
+triple with `triples::COLOUR_MODE_CODE_ID` is a selection of "light color" and "dark
+color" (`config_tree::mode_select`, `config_tree::MODE_OPTIONS`), which saves 1 or 2
+(`def::MODE_LIGHT`, `def::MODE_DARK`) as the number of the setting; a mode of
+`config.yaml` that is not in the list is offered too.
 
 ## "… more" is always a link that shows more
 

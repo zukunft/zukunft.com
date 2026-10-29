@@ -533,6 +533,10 @@ class word extends sandbox_code_id
             if ($typ_lst->phrase_names()) {
                 $vars[json_fields::ID] = $this->id();
                 $vars[json_fields::NAME] = $this->name();
+                // e.g. so that the settings page finds the font setting by the code id of its word
+                if ($this->get_code_id() != null) {
+                    $vars[json_fields::CODE_ID] = $this->get_code_id();
+                }
             } else {
                 $vars = parent::api_json_array($typ_lst, $msg, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;

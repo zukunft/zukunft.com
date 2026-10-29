@@ -59,9 +59,11 @@ Therefore, when the task is to fix one entry:
 - do not add or remove a word, a triple or any other object unless the task
   explicitly asks for it, and prefer the fix that keeps the object count equal
   (rename a key, correct a `verb`, move a description);
-- if the requested fix cannot avoid adding or removing an object, say so in the
-  report together with the id shift it causes, so the developer can plan the
-  re-baseline; never absorb it silently.
+- if the task needs to add or remove an object, put it where it belongs and do not
+  avoid the id shift e.g. by a separate file imported later: ask the developer to
+  confirm the shift and name it in the report, because the re-pin tools
+  (`test/test_re_pin.php`, `files::AUTO_RE_PIN_OBJECT_ID`) update the pinned ids
+  and the `list.csv` baselines; never absorb it silently.
 
 A reformat is a task of its own: run the repo's own formatter only when asked
 for it, never as a side effect of another change.

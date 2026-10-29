@@ -88,6 +88,8 @@ class config_tree
 
     // the phrase id by name of the config values (see config_numbers::phrase_ids), set by nodes
     private array $phr_ids = [];
+    // the code id by name of the words of the config values (see config_numbers::phrase_code_ids), set by nodes
+    private array $code_ids = [];
 
 
     /*
@@ -139,6 +141,7 @@ class config_tree
     {
         // built once, so that each setting finds its value without scanning all config values
         $this->phr_ids = $cfg->phrase_ids();
+        $this->code_ids = $cfg->phrase_code_ids();
         return $this->level($yaml, $cfg->exact_lookup(), self::ROOT_KEYS);
     }
 
@@ -174,6 +177,10 @@ class config_tree
     private function node(string $name, mixed $entry, array $values, array $path): array
     {
         $result = [json_fields::NAME => $name];
+        // e.g. the font code id, with which the settings page offers the font selection
+        if (array_key_exists($name, $this->code_ids)) {
+            $result[json_fields::CODE_ID] = $this->code_ids[$name];
+        }
         $node_path = array_merge($path, [$name]);
         if (is_array($entry)) {
             $settings = array_diff_key($entry, array_flip(self::META_KEYS));

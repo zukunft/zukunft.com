@@ -709,7 +709,7 @@ class base_ui_tests
 
         // a user who has chosen the dark mode gets the dark colours without asking the browser
         $nav_url = [url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID];
-        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([words::MODE], def::MODE_DARK)->api_json([api_types::INCL_PHRASES]));
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([triples::COLOUR_MODE], def::MODE_DARK)->api_json([api_types::INCL_PHRASES]));
         $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
         $test_name = 'a user in the dark mode gets the dark colours';
         $t->assert_text_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][2] . ';');
@@ -729,7 +729,7 @@ class base_ui_tests
         $test_name = '... and not hidden by the setting of the browser';
         $t->assert_text_not_contains($test_name, $nav, styles::THEME_TO_LIGHT);
         // a user who has chosen the light mode gets the light colours only
-        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([words::MODE], def::MODE_LIGHT)->api_json([api_types::INCL_PHRASES]));
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([triples::COLOUR_MODE], def::MODE_LIGHT)->api_json([api_types::INCL_PHRASES]));
         $head = $html->header_html(views::START_NAME, POD_NAME, new user_message_ui());
         $test_name = 'a user in the light mode gets the light colours';
         $t->assert_text_contains($test_name, $head, '--page-white: ' . def::FALLBACK_PAGE_COLOURS['--page-white'][1] . ';');
@@ -741,7 +741,7 @@ class base_ui_tests
         $t->assert_text_contains($test_name, $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME),
             $html->esc(msg_id::NAVBAR_DARK_MODE->text()));
         // a user who follows the browser gets both switches, of which the css shows the one to the other mode
-        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([words::MODE], def::MODE_BROWSER)->api_json([api_types::INCL_PHRASES]));
+        $ui_sys->cfg = new config_ui($t_val->value_list_config_number([triples::COLOUR_MODE], def::MODE_BROWSER)->api_json([api_types::INCL_PHRASES]));
         $nav = $html->navbar(views::WORD_ID, $nav_url, users::SYSTEM_TEST_NAME);
         $test_name = 'a user who follows the browser gets the switch to the dark mode';
         $t->assert_text_contains($test_name, $nav, styles::THEME_TO_DARK);

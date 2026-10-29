@@ -483,8 +483,8 @@ class coding_rule_tests
         $colours = $layout[words::COLOURS] ?? [];
         $diff = [];
         $this->theme_fallback_diff(words::FONT, def_shared::FALLBACK_FONT, $layout[words::FONT] ?? [], $diff);
-        $this->theme_fallback_diff(words::MODE, (string)def_shared::FALLBACK_MODE,
-            [words::SYS_CONF_VALUE => (string)($layout[words::MODE][words::SYS_CONF_VALUE] ?? '')], $diff);
+        $this->theme_fallback_diff(triples::COLOUR_MODE, (string)def_shared::FALLBACK_MODE,
+            [words::SYS_CONF_VALUE => (string)($layout[triples::COLOUR_MODE][words::SYS_CONF_VALUE] ?? '')], $diff);
         $groups = [
             words::PAGE => def_shared::FALLBACK_PAGE_COLOURS,
             words::EDITOR => def_shared::FALLBACK_EDITOR_COLOURS,
