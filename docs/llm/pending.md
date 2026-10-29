@@ -2,18 +2,26 @@
 
 ## calculator
 
-### compare
+### min function for the energy flows
 
-for the compare test of e.g. src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html
-with pv_lifetime_balance_sample.html use also different input values and assumptions to check the js formula usage. 
-Create at least three test cases: standard, high and low where all input values and assumptions are changed. 
+add a min function to the formulas, so that `pv_lifetime_balance.json` calculates the direct use, the
+battery charge, the export and the grid import of each month from the consumption, the day share,
+the battery capacity and the round-trip efficiency like `pv_lifetime_balance_sample.html` instead of
+storing them as modelled values, and the input cases of
+`system_views_read_tests::run_pv_lifetime_balance_cases` match the sample also in these rows
+(details in `docs/llm/pending_prio_2.md` under "use case"); the function is needed in all four
+evaluators of an expression: the backend `service/math/calc_internal.php` (next to `chars::FUNC_IF`
+and `FUNC_SUM`), the frontend `shared/calc/arithmetic.php` with `web/formula/formula_calc.php`, its
+twin `evaluate` in `calculator_json.js` and the expression parser `shared/calc/expression.php`
+
+### compare
 
 add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that 
 all *_sample.html files are part of the compare and generation build
 
 ### base on json
 
-the calculator page e.g. http://localhost/http/view.php?m=16&id=-2746 is built in the browser by
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2754 is built in the browser by
 `calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
 (`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
 `&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_js.html`
@@ -96,6 +104,11 @@ add costs of CO2-eq reduction to the npp
 
 add to the calculator a 'Share assumptions and vote' button
 and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
+### ahv vat 
+
+Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the 
+possibility to set the weight of the targets and combine them with the personal gain to one index rating 
 
 ## pure HTML ans JavaScript views
 

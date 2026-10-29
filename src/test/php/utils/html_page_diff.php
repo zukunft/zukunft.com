@@ -11,8 +11,8 @@
     styles and the ids of the pod, so both pages are read as the items that a reader sees: the
     title, the lead text, the headings, the input fields, the table rows, the buttons and the
     list items of the notes and sources; the report lists what the generated page misses, what
-    differs, what only the generated page has and where the order differs, as an html page that
-    can be given to an llm as the prompt to bring the generated page closer to the sample
+    differs, what only the generated page has and where the order differs, as a markdown text
+    that can be given to an llm as the prompt to bring the generated page closer to the sample
 
 
     This file is part of zukunft.com - calc with words
@@ -342,7 +342,7 @@ class html_page_diff
      * @param array $page the items of the generated page (page_items)
      * @param string $sample_name the file name of the sample e.g. pv_lifetime_balance_sample.html
      * @param string $page_name the file name of the generated page e.g. pv_lifetime_balance_no_js.html
-     * @return string the html page with the differences and the prompt for an llm
+     * @return string the markdown text with the differences and the prompt for an llm
      */
     function report(array $sample, array $page, string $sample_name, string $page_name): string
     {
@@ -355,15 +355,11 @@ class html_page_diff
             . ' reason, because the sample calculates its numbers with its own script, so check the value'
             . ' or the formula before changing it. Fix a finding in the use case json or in the calculator'
             . ' renderer, never in the sample or in the generated snapshot.';
-        return '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n"
-            . '<head><meta charset="utf-8"><title>' . $this->esc($title) . '</title></head>' . "\n"
-            . '<body>' . "\n" . '<h1>' . $this->esc($title) . '</h1>' . "\n"
-            . '<p>' . $this->esc($prompt) . '</p>' . "\n"
+        return '# ' . $title . "\n\n" . $prompt . "\n"
             . $this->report_section('Missing in the generated page', $missing)
             . $this->report_section('Different', $this->different_lines($sample, $page))
             . $this->report_section('Only in the generated page', $extra)
-            . $this->report_section('Different order', $this->order_lines($sample, $page))
-            . '</body>' . "\n" . '</html>' . "\n";
+            . $this->report_section('Different order', $this->order_lines($sample, $page));
     }
 
     /**
@@ -426,28 +422,18 @@ class html_page_diff
     /**
      * @param string $title the heading of the section
      * @param array $lines the findings of the section
-     * @return string the html code of the section with the number of findings in the heading
+     * @return string the markdown of the section with the number of findings in the heading and one list entry per finding
      */
     private function report_section(string $title, array $lines): string
     {
-        $result = '<h2>' . $this->esc($title) . ' (' . count($lines) . ')</h2>' . "\n";
+        $result = "\n" . '## ' . $title . ' (' . count($lines) . ')' . "\n";
         if ($lines != []) {
-            $result .= '<ul>' . "\n";
+            $result .= "\n";
             foreach ($lines as $line) {
-                $result .= '<li>' . $this->esc($line) . '</li>' . "\n";
+                $result .= '- ' . $line . "\n";
             }
-            $result .= '</ul>' . "\n";
         }
         return $result;
-    }
-
-    /**
-     * @param string $text a text of a page
-     * @return string the text escaped for the html of the report
-     */
-    private function esc(string $text): string
-    {
-        return htmlspecialchars($text, ENT_QUOTES);
     }
 
 }

@@ -138,6 +138,8 @@
     const inputEntries = new Map();
     // the names of the sources of the page in the order of their number (see sourceNames)
     let pageSources = [];
+    // the values and results that the results of the page use (see operandValues)
+    let pageOperands = new Set();
     // the results of the page phrase, whose operands are the assumptions and whose formulas are the notes of the page
     const pageResults = pool.filter(function (e) {
         return e.result && e.words.indexOf(page.name) >= 0;
@@ -455,7 +457,8 @@
         return onlyOne(best, wanted.join(', '));
     }
 
-    /* the value of a field: with the page phrase before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value) */
+    /* the value of a field: the operand of a result of the page first, so that a changed field changes the results, then with the page phrase
+       before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value) */
     function fieldEntry(name) {
         const props = [KW.limit_down, KW.limit_up, KW.step, KW.confidence];
         const parts = [page.from, page.to].filter(function (p) {
@@ -475,7 +478,8 @@
                 const context = e.words.filter(function (w) {
                     return w !== name && !isMarker(w);
                 }).length;
-                const rank = [pageRank, context, e.words.length];
+                const operandRank = pageOperands.has(e) ? 0 : 1;
+                const rank = [operandRank, pageRank, context, e.words.length];
                 const cmp = bestRank === null ? -1 : compareRank(rank, bestRank);
                 if (cmp < 0) {
                     best = [e];
@@ -1173,6 +1177,7 @@
 
     // the stored results are checked once, after an input change the page shows the numbers that it calculates
     checkResults();
+    pageOperands = new Set(operandValues());
     pageSources = sourceNames();
     // the host has the style of the use case page (system_page::calculator_json), so it gets only its content
     host.innerHTML = title() + block('div', inputPanel() + resultPanel(), STYLE.grid);

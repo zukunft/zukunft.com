@@ -43,6 +43,7 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once test_paths::UTILS . 'headless_browser.php';
 include_once test_paths::UTILS . 'html_page_diff.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -83,11 +84,23 @@ use Zukunft\ZukunftCom\test\php\create\test_log;
 use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_views;
+use Zukunft\ZukunftCom\test\php\utils\headless_browser;
 use Zukunft\ZukunftCom\test\php\utils\html_page_diff;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_views_read_tests
 {
+
+    // the element of pv_lifetime_balance_cases.js with the result of a case as json and its two fields
+    const string CASE_RESULT_ID = 'caseResult';
+    const string CASE_MISSING = 'missing';
+    const string CASE_PAGE = 'page';
+    // the field of the case test_files::PV_CASE_MISSING_FIELD that no page has
+    const string CASE_UNKNOWN_FIELD = 'Wind turbine size';
+    // the missing field of a case that has not ended in the browser e.g. because the page script has failed
+    const string CASE_NOT_ENDED = 'the case has not ended in the headless browser';
+    // the row of the PV calculator page whose numbers every input case changes
+    const string PV_PRODUCTION_ROW = html_page_diff::KIND_ROW . ': Electricity / PV production';
 
     /**
      * render every system view with the data read from the database and compare it with the snapshot
@@ -121,6 +134,7 @@ class system_views_read_tests
         // TODO Prio 2 rename it to run_sample_use_cases
         $this->run_pv_lifetime_balance($t);
         $this->run_pv_lifetime_balance_diff($t);
+        $this->run_pv_lifetime_balance_cases($t);
         $this->run_calculator_editor($t);
         $this->run_formula_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
@@ -603,7 +617,7 @@ class system_views_read_tests
 
     /**
      * the differences of the PV calculator page without javascript (run_pv_lifetime_balance) to the
-     * hand made sample page as an html report, which can be given to an llm as the prompt to bring
+     * hand made sample page as a markdown report, which can be given to an llm as the prompt to bring
      * the page closer to the sample; the report is checked against its last version like every use
      * case page, so a change of the page shows up as a change of the report
      *
@@ -627,8 +641,100 @@ class system_views_read_tests
         $t->assert_text_contains($test_name, $self_report, 'Missing in the generated page (0)');
         $t->assert_text_contains($test_name, $self_report, 'Different (0)');
         $test_name = 'the differences of the generated PV calculator page to the sample are reported';
-        $t->assert_html_page($test_name, $hpd->report($sample, $page, $sample_file, $page_file),
-            test_paths::HTML . test_paths::USE_CASES . test_files::PV_LIFETIME_BALANCE_DIFF);
+        $t->assert_file($test_name, $hpd->report($sample, $page, $sample_file, $page_file),
+            $dir . test_files::PV_LIFETIME_BALANCE_DIFF . test_files::MD, test_files::MD);
+    }
+
+    /**
+     * the PV calculator page that the browser builds (run_pv_lifetime_balance) and the hand made sample get the
+     * same numbers of an input case typed in like a user, so that the differences of the two pages show if the
+     * javascript uses the formulas like the sample: standard with the numbers of the sample, high and low with
+     * every input and assumption changed; the actions run in a headless browser, so without one they are skipped
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_pv_lifetime_balance_cases(test_cleanup $t): void
+    {
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the PV calculator input cases are skipped');
+        } else {
+            $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+            $sample_html = $t->path_file($dir . test_files::PV_LIFETIME_BALANCE_SAMPLE . test_files::HTML);
+            $page_html = $t->path_file($dir . test_files::PV_LIFETIME_BALANCE_JS . test_files::HTML);
+            $sample = $brw->page_copy($sample_html, test_files::PV_LIFETIME_BALANCE_CASES);
+            $page = $brw->page_copy($page_html, test_files::PV_LIFETIME_BALANCE_CASES);
+            $std_cells = '';
+            foreach (test_files::PV_CASES as $case) {
+                $cells = $this->assert_pv_case($t, $brw, $sample, $page, $case);
+                if ($case == test_files::PV_CASE_STANDARD) {
+                    $std_cells = $cells;
+                } else {
+                    $test_name = '... and the ' . $case . ' case changes the PV production of the generated page';
+                    $t->assert_not($test_name, $cells, $std_cells);
+                }
+            }
+            // negative: a field of a case that the page does not have is reported, not skipped
+            $test_name = 'a case with a field that the page does not have is reported';
+            $case_res = $this->pv_case($brw, $page, test_files::PV_CASE_MISSING_FIELD);
+            $missing = $case_res[self::CASE_MISSING];
+            $t->assert($test_name, $missing, [self::CASE_UNKNOWN_FIELD]);
+            unlink($sample);
+            unlink($page);
+        }
+        $brw->stop();
+    }
+
+    /**
+     * type the numbers of the case into the sample and into the generated page and compare the two pages
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param headless_browser $brw the started headless browser
+     * @param string $sample the path of the sample copy with the case script
+     * @param string $page the path of the generated page copy with the case script
+     * @param string $case the name of the case e.g. test_files::PV_CASE_HIGH
+     * @return string the numbers of the PV production row of the generated page after the case
+     */
+    private function assert_pv_case(test_cleanup $t, headless_browser $brw, string $sample, string $page, string $case): string
+    {
+        $hpd = new html_page_diff();
+        $sample_res = $this->pv_case($brw, $sample, $case);
+        $page_res = $this->pv_case($brw, $page, $case);
+        $test_name = 'the ' . $case . ' case types every number into the sample';
+        $sample_missing = $sample_res[self::CASE_MISSING];
+        $t->assert($test_name, $sample_missing, []);
+        $test_name = '... and into the generated page';
+        $page_missing = $page_res[self::CASE_MISSING];
+        $t->assert($test_name, $page_missing, []);
+        $sample_items = $hpd->page_items($sample_res[self::CASE_PAGE]);
+        $page_items = $hpd->page_items($page_res[self::CASE_PAGE]);
+        $sample_name = test_files::PV_LIFETIME_BALANCE_SAMPLE . test_files::HTML . '#' . $case;
+        $page_name = test_files::PV_LIFETIME_BALANCE_JS . test_files::HTML . '#' . $case;
+        $test_name = '... and the differences of the two pages are reported';
+        $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+        $t->assert_file($test_name, $hpd->report($sample_items, $page_items, $sample_name, $page_name),
+            $dir . test_files::PV_CASE_DIFF_PREFIX . $case . test_files::MD, test_files::MD);
+        $row = $page_items[self::PV_PRODUCTION_ROW] ?? [];
+        return $row[html_page_diff::PROP_CELLS] ?? '';
+    }
+
+    /**
+     * @param headless_browser $brw the started headless browser
+     * @param string $page the path of the page copy with the case script
+     * @param string $case the name of the case e.g. test_files::PV_CASE_HIGH
+     * @return array the labels of the case that the page does not have and the html of the page after the case,
+     *               which for a case that has not ended are CASE_NOT_ENDED and an empty page
+     */
+    private function pv_case(headless_browser $brw, string $page, string $case): array
+    {
+        $result = [self::CASE_MISSING => [self::CASE_NOT_ENDED], self::CASE_PAGE => ''];
+        $json = $brw->text('file://' . $page . '#' . $case, self::CASE_RESULT_ID);
+        if ($json !== null) {
+            $result = json_decode($json, true) ?? $result;
+        }
+        return $result;
     }
 
     /**

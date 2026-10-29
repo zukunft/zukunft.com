@@ -1540,10 +1540,10 @@ or triple itself: a file must not define a `measured value` word, nor a
 `value kind of measured` / `value must be one of measured` triple.
 
 A measured number without a `source` is a smell — either name the source or,
-if it really is an assumption, mark it `assumed`. A `modelled` or `calculated` value and a
-`field limit down`, `field limit up` or `field step` of an input are no
-measurement either and need no source; a chosen point of a sensitivity grid is
-an own choice and is marked `assumed`.
+if it really is an assumption, mark it `assumed`. A `modelled` or
+`calculated` value and a `field limit down`, `field limit up` or `field step`
+of an input are no measurement either and need no source; a chosen point of a
+sensitivity grid is an own choice and is marked `assumed`.
 
 ### A calculated value inherits the lowest quality of its inputs
 

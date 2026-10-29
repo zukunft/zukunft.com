@@ -42,7 +42,7 @@ The PV lifetime balance has four files in src/test/resources/web/html/use_cases/
 |---|---|---|
 | pv_lifetime_balance_sample.html | hand | the target layout of the calculator page: a stand-alone mock up with its own script, which the generated pages should come close to |
 | pv_lifetime_balance_no_js.html | test run | the calculator page as the server renders it without javascript (`sc=0`), which every browser shows and which the save of the inputs uses |
-| pv_lifetime_balance_diff.html | test run | what pv_lifetime_balance_no_js.html misses, shows differently, has in addition or shows in another order compared with the sample, as a page whose text can be given to an llm as the prompt to bring the generated page closer to the sample |
+| pv_lifetime_balance_diff.md | test run | what pv_lifetime_balance_no_js.html misses, shows differently, has in addition or shows in another order compared with the sample, as a markdown text that can be given to an llm as the prompt to bring the generated page closer to the sample |
 | pv_lifetime_balance_js.html | test run | the same page as the browser builds it by default from the phraseData answer with calculator_json.js, which recalculates the results while an input changes |
 
 The two generated pages are written by system_views_read_tests::run_pv_lifetime_balance from

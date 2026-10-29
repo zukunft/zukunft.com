@@ -38,7 +38,9 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class headless_browser
 {
@@ -132,6 +134,23 @@ class headless_browser
                 $result = html_entity_decode($match[1]);
             }
         }
+        return $result;
+    }
+
+    /**
+     * a copy of a page snapshot that loads the scripts of this checkout instead of the ones of the pod and the test script
+     *
+     * @param string $html the html code of the page snapshot
+     * @param string $script the path of the script that acts like a user e.g. test_files::CALCULATOR_EDITOR_SCENARIOS
+     * @return string the path of the copy in the temp folder, which the caller removes
+     */
+    function page_copy(string $html, string $script): string
+    {
+        $local = preg_replace('#src="[^"]*' . preg_quote(files::SCRIPT_PATH, '#') . '#',
+            'src="file://' . files::RESOURCE_PATH . 'script' . DIRECTORY_SEPARATOR, $html);
+        $acted = str_replace('</body>', '<script src="file://' . $script . '"></script></body>', $local);
+        $result = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('headless_browser_page_') . test_files::HTML;
+        file_put_contents($result, $acted);
         return $result;
     }
 

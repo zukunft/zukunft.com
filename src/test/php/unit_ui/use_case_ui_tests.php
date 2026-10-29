@@ -667,6 +667,24 @@ class use_case_ui_tests
         // negative: the bigger value of Bern, which is no part of Zurich (city), is not shown
         $test_name = '... and not the value of a phrase outside the page triple';
         $t->assert_text_not_contains($test_name, $foreign_html, 'value="' . values::SAMPLE_BIG . '"');
+        // but the value that a result of the page uses comes first, so that a changed field changes the result
+        $frm_used = new formula_ui();
+        $frm_used->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_used->set_name(formula_names::CITY_POPULATION);
+        $frm_used->set_usr_text('"' . formula_names::CITY_POPULATION . '" = "' . word_names::INHABITANTS . '"');
+        $frm_used_lst = new formula_list_ui();
+        $frm_used_lst->add($frm_used, $msg);
+        $res_used_lst = new result_list_ui();
+        $res_used_lst->add($t_res->result_zh_city_bern_inhabitants_ui(values::SAMPLE_BIG), $msg);
+        $dto_used = clone $dto_foreign;
+        $dto_used->set_formula_list($frm_used_lst);
+        $dto_used->set_result_list($res_used_lst);
+        $used_html = $page->calculator_input($zh_city, $msg, $dto_used, $form, views::CALCULATOR, []);
+        $test_name = 'a field shows the value that a result of the page uses before the value with a part of the page triple';
+        $t->assert_text_contains($test_name, $used_html, 'value="' . values::SAMPLE_BIG . '"');
+        // negative: the value with a part of the page triple, which no result uses, is not shown
+        $test_name = '... and not the value that no result uses';
+        $t->assert_text_not_contains($test_name, $used_html, 'value="' . values::CITY_ZH_INHABITANTS_2019 . '"');
         // two values that fit a field equally e.g. the inhabitants of Zurich and of a city are picked
         // by the preferred order of numbers and not by the order of the list, which the backend
         // returns in any order; here the bigger number of the same unit
@@ -1174,7 +1192,7 @@ class use_case_ui_tests
         if ($browser_name == '') {
             $t->dsp_warning('no headless browser found, so the calculator editor scenario tests are skipped');
         } else {
-            $page = $this->scenario_page();
+            $page = $this->scenario_page($brw);
             // the scenarios that save a change by the description of the test
             $saved = [
                 test_files::SCENARIO_AUTARKY_FORMULA => 'the changed expression of a formula is sent as its user text',
@@ -1215,19 +1233,14 @@ class use_case_ui_tests
     /**
      * a copy of the calculator editor snapshot that loads the scripts of this checkout and the scenarios
      *
+     * @param headless_browser $brw the started headless browser
      * @return string the path of the copy in the temp folder, which the caller removes
      */
-    private function scenario_page(): string
+    private function scenario_page(headless_browser $brw): string
     {
         $html = file_get_contents(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES
             . test_files::CALCULATOR_EDITOR . test_files::HTML);
-        $html = preg_replace('#src="[^"]*' . preg_quote(files::SCRIPT_PATH, '#') . '#',
-            'src="file://' . files::RESOURCE_PATH . 'script' . DIRECTORY_SEPARATOR, $html);
-        $html = str_replace('</body>',
-            '<script src="file://' . test_files::CALCULATOR_EDITOR_SCENARIOS . '"></script></body>', $html);
-        $page = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('calculator_editor_') . test_files::HTML;
-        file_put_contents($page, $html);
-        return $page;
+        return $brw->page_copy($html, test_files::CALCULATOR_EDITOR_SCENARIOS);
     }
 
     /**

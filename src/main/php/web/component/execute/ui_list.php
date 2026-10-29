@@ -2802,7 +2802,8 @@ class ui_list extends ui_base
 
     /**
      * the value that a calculator field shows: a value of the item phrase with the field value
-     * phrases, the one with the page phrase first, then the one with a phrase that the page triple
+     * phrases, the one that a result of the page uses first, so that a changed field changes the
+     * results, then the one with the page phrase, then the one with a phrase that the page triple
      * is built from e.g. PV installation of example PV installation, so that the value of another
      * use case with the same field phrase e.g. the lifetime of a new NPP is not shown, else the one
      * with the fewest context phrases, so the general value of a use case wins over the value of a
@@ -2820,6 +2821,8 @@ class ui_list extends ui_base
         $properties = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE];
         $page_phr = $dbo->phrase();
         $page_parts = array_filter([$page_phr->get_from(), $page_phr->get_to()]);
+        // before the loop, because the operands may add the values of the result context to the cache
+        $operands = $this->operand_values($dbo, $msg, $dto);
         $best_vals = [];
         $best = null;
         foreach ($dto->val_lst->lst() as $val) {
@@ -2832,7 +2835,11 @@ class ui_list extends ui_base
                 } elseif (array_filter($page_parts, fn($part) => $val->has_phrase($part, $msg)) != []) {
                     $page_rank = 1;
                 }
-                $rank = [$page_rank, $this->context_count($phr, $val, $msg), count($names)];
+                $operand_rank = 1;
+                if (in_array($val, $operands, true)) {
+                    $operand_rank = 0;
+                }
+                $rank = [$operand_rank, $page_rank, $this->context_count($phr, $val, $msg), count($names)];
                 if ($best == null or $rank < $best) {
                     $best_vals = [$val];
                     $best = $rank;

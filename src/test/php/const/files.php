@@ -79,8 +79,17 @@ class files
     CONST string PV_LIFETIME_BALANCE_JS = 'pv_lifetime_balance_js';
     // the hand made target layout of the PV calculator page, which no test changes
     CONST string PV_LIFETIME_BALANCE_SAMPLE = 'pv_lifetime_balance_sample';
-    // the differences of pv_lifetime_balance_no_js.html to the sample as an html prompt for an llm
+    // the differences of pv_lifetime_balance_no_js.html to the sample as a markdown prompt for an llm
     CONST string PV_LIFETIME_BALANCE_DIFF = 'pv_lifetime_balance_diff';
+    // the input cases that a headless browser types into the sample and into pv_lifetime_balance_js.html, selected
+    // by the case name as the url hash; the differences of a case are written to PV_CASE_DIFF_PREFIX + case name
+    CONST string PV_LIFETIME_BALANCE_CASES = test_paths::JS . 'pv_lifetime_balance_cases' . self::JS;
+    CONST string PV_CASE_DIFF_PREFIX = self::PV_LIFETIME_BALANCE_DIFF . '_';
+    CONST string PV_CASE_STANDARD = 'standard';
+    CONST string PV_CASE_HIGH = 'high';
+    CONST string PV_CASE_LOW = 'low';
+    CONST string PV_CASE_MISSING_FIELD = 'missing_field';
+    CONST array PV_CASES = [self::PV_CASE_STANDARD, self::PV_CASE_HIGH, self::PV_CASE_LOW];
     // the calculator page of the example portfolio split that the server renders without javascript
     CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS = 'portfolio_split_calculator_no_js';
     // the formula editor of the example PV installation in the use case folder next to the hand made

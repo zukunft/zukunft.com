@@ -121,7 +121,7 @@ formula notes and the sources of the server page, checks the stored results once
 `ui_list::check_results` and calculates every result again when an input changes.
 
 The formula editor view (`views::FORMULA_EDITOR` of `calculator_views.json`, e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2746) has three components side by side: the
+http://localhost/http/view.php?m=formula_editor&id=-2754) has three components side by side: the
 formula selector (`system_page::formula_editor_selector`, host `formulaSelector`), the formula editor
 (`system_page::formula_editor`, host `formulaEditor`) and the result compare
 (`system_page::formula_result_compare`, host `formulaCompare`). Only the formula editor component adds,
@@ -363,7 +363,7 @@ no `web/` file touches the database at all.
 
 Every api route is a directory with an `index.php` (e.g. `api/updatePut/index.php`),
 so every client writes the api url with the trailing slash, e.g. `/api/updatePut/`
-or `/api/phraseData/?id=-2746`: `html_base` and `rest_call` for the php frontend
+or `/api/phraseData/?id=-2754`: `html_base` and `rest_call` for the php frontend
 and `apiUrl` of `calculator_editor.js`. Without the slash the web server answers
 with a redirect to the directory (Apache `mod_dir`), and a browser repeats a
 redirected post as a get without its body, so a change is lost without a

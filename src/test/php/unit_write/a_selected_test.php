@@ -331,6 +331,8 @@ class a_selected_test extends all_unit_tests
             // the PV page without javascript and its differences to the hand made sample as a prompt for an llm
             $msk_tests->run_pv_lifetime_balance($this);
             $msk_tests->run_pv_lifetime_balance_diff($this);
+            // the sample and the page built by javascript with the standard, high and low input numbers
+            $msk_tests->run_pv_lifetime_balance_cases($this);
             // the portfolio split page next to the hand made portfolio_split_calculator_sample.html
             $msk_tests->run_portfolio_split_calculator($this);
             //$msk_tests->run_web_frontend($this);

@@ -402,6 +402,30 @@ class test_results
     }
 
     /**
+     * a stored result of the page Zurich (city) whose calculation uses the inhabitants of Bern
+     * (test_values::value_list_calculator_input_foreign_ui), so that the inhabitants field shows
+     * the value that the result uses and not the value with a part of the page triple
+     *
+     * @param float $number the stored number
+     * @return result_ui the frontend result with the formula id and the context phrases
+     */
+    function result_zh_city_bern_inhabitants_ui(float $number): result_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $res = $this->result_for_phrases([$t_trp->zh_city()->phrase(), $inhab], $number);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $res->set_formula($frm);
+        $ctx_lst = new phrase_list($this->env->usr1);
+        $ctx_lst->add($inhab);
+        $ctx_lst->add($t_wrd->word_bern()->phrase());
+        $res->set_src_grp($ctx_lst->get_grp_id(false));
+        return new result_ui($res->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
      * a calculated number of the page phrase of the triple table test, so that the table shows
      * the result in the row of the remaining phrase next to the measured values of the page
      *
