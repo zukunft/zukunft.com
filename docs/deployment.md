@@ -36,20 +36,26 @@ changed, the test fails and you decide if the new page is right. The hand made t
 next to it, e.g. calculator_editor_sample.html, is never checked by a test; compare the
 two pages yourself in a browser.
 
-The PV lifetime balance has three files in src/test/resources/web/html/use_cases/:
+The PV lifetime balance has four files in src/test/resources/web/html/use_cases/:
 
 | file | made by | used for |
 |---|---|---|
 | pv_lifetime_balance_sample.html | hand | the target layout of the calculator page: a stand-alone mock up with its own script, which the generated pages should come close to |
 | pv_lifetime_balance_no_js.html | test run | the calculator page as the server renders it without javascript (`sc=0`), which every browser shows and which the save of the inputs uses |
+| pv_lifetime_balance_diff.html | test run | what pv_lifetime_balance_no_js.html misses, shows differently, has in addition or shows in another order compared with the sample, as a page whose text can be given to an llm as the prompt to bring the generated page closer to the sample |
 | pv_lifetime_balance_js.html | test run | the same page as the browser builds it by default from the phraseData answer with calculator_json.js, which recalculates the results while an input changes |
 
-Both generated pages are written by system_views_read_tests::run_pv_lifetime_balance from
+The two generated pages are written by system_views_read_tests::run_pv_lifetime_balance from
 the system view Calculator for the phrase example PV installation and checked against their
 last version like every use case page, so the diff of a file shows what a code or data
 change did to the page. The two generated pages should show the same
 content, so a difference between them points to a rule that calculator.php and
 calculator_json.js implement differently.
+
+The diff report is written by system_views_read_tests::run_pv_lifetime_balance_diff right
+after the page (src/test/php/utils/html_page_diff.php): it compares what a reader sees, the
+title, the headings, the fields with their unit, hint and value, the table rows with their
+cells, the buttons and the notes and sources, and never the markup of the two files.
 
 Compare the sample with pv_lifetime_balance_no_js.html, because only that page has the
 inputs, the labels, the units and the result rows as html like the sample;

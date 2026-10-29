@@ -227,7 +227,8 @@
         const lists = [KW.input, KW.assumption, KW.column, KW.rowgroup, KW.detail];
         const props = [KW.label, KW.hint, KW.highlight, KW.signed];
         const phr = phrases.get(name);
-        const fromRoot = phr !== undefined && phr.from === KW.root;
+        // a word has no from phrase, so without the root name every word would count as a keyword
+        const fromRoot = KW.root !== undefined && phr !== undefined && phr.from === KW.root;
         const result = lists.indexOf(name) >= 0 || props.indexOf(name) >= 0 || fromRoot;
         return result;
     }

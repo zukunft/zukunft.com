@@ -2,14 +2,6 @@
 
 ## calculator
 
-### compare PV lifetime balance
-
-add a test that compares the generated src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html
-with the fixed src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
-and reports the differences in src/test/resources/web/html/use_cases/pv_lifetime_balance_diff.html
-so that the diff report can be used as a prompt for an LLM
-and add this test to /test/test.php and /test/test_part.php
-
 ### base on json
 
 the calculator page e.g. http://localhost/http/view.php?m=16&id=-2780 is built in the browser by

@@ -77,6 +77,10 @@ class files
     CONST string PV_LIFETIME_BALANCE_NO_JS = 'pv_lifetime_balance_no_js';
     // the calculator page of the example PV installation that the browser builds with javascript, next to pv_lifetime_balance_no_js.html
     CONST string PV_LIFETIME_BALANCE_JS = 'pv_lifetime_balance_js';
+    // the hand made target layout of the PV calculator page, which no test changes
+    CONST string PV_LIFETIME_BALANCE_SAMPLE = 'pv_lifetime_balance_sample';
+    // the differences of pv_lifetime_balance_no_js.html to the sample as an html prompt for an llm
+    CONST string PV_LIFETIME_BALANCE_DIFF = 'pv_lifetime_balance_diff';
     // the calculator page of the example portfolio split that the server renders without javascript
     CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS = 'portfolio_split_calculator_no_js';
     // the formula editor of the example PV installation in the use case folder next to the hand made

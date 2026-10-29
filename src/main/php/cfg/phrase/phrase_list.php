@@ -131,7 +131,6 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
-use Exception;
 
 class phrase_list extends sandbox_list_named
 {
@@ -922,7 +921,8 @@ class phrase_list extends sandbox_list_named
      * @param verb|null $vrb the verb that the walk follows or null if it follows every verb
      * @param foaf_direction $direction the direction of the walk
      * @param array $walk_trace one line per walk step (foaf_trace_level)
-     * @return string the error text with the start of the walk, each step and the php call trace
+     * @return string the error text with the start of the walk and each step; never the php call trace,
+     *                because log_fatal shows the text to the user and writes the call trace only to the error log
      */
     private function foaf_loop_text(int $loops, ?verb $vrb, foaf_direction $direction, array $walk_trace): string
     {
@@ -932,8 +932,7 @@ class phrase_list extends sandbox_list_named
         }
         $walk = 'max number (' . $loops . ') of loops for phrase reached walking '
             . $direction->value . ' by ' . $vrb_name . ' from ' . $this->name();
-        return $walk . "\n" . implode("\n", $walk_trace)
-            . "\nphp trace\n" . (new Exception)->getTraceAsString();
+        return $walk . "\n" . implode("\n", $walk_trace);
     }
 
     /**

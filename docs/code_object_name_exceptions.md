@@ -62,6 +62,8 @@ word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $is_wrd, $max_wrd
 
 ## Classes without a suggested var name
 
+DOMDocument: $dom
+DOMXPath: $result
 DateTime: $actual_time, $before, $cut_time, $cutoff, $dt, $end_time, $expired, $first_start, $fix_now, $fixed, $fresh_time, $now, $request_time, $request_timestamp, $reset_end, $result, $since, $snap_time, $start_time, $sys_log_timestamp, $time, $timeout, $upd
 ListOfIdNamedCodeObjects: $del_lst, $lst
 ListOfIdNamedObjects: $del_lst, $lst
@@ -147,6 +149,7 @@ group_link: $grp_lnk
 group_list: $grp_lst, $grp_lst_add, $grp_lst_dsp, $lst, $phr_grp_lst_val
 headless_browser: $brw
 html_base: $head_html, $html, $html_base
+html_page_diff: $hpd
 import_file: $imf, $import
 import_wikidata: $imp
 ip_range: $ip, $ip_range
