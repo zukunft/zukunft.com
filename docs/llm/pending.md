@@ -5,7 +5,7 @@
 ### compare
 
 for the compare test of e.g. src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html
-with pv_lifetime_balance_sample.html use also different input values and assumptions. 
+with pv_lifetime_balance_sample.html use also different input values and assumptions to check the js formula usage. 
 Create at least three test cases: standard, high and low where all input values and assumptions are changed. 
 
 add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that 

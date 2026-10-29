@@ -12,6 +12,9 @@
       "name": "photovoltaic"
     },
     {
+      "name": "calculated"
+    },
+    {
       "name": "PV",
       "description": "the usual acronym for photovoltaic"
     },
@@ -314,7 +317,8 @@
         "avoided emission",
         "consumption mix",
         "CO2-eq",
-        "gram per kWh"
+        "gram per kWh",
+        "calculated"
       ],
       "number": "79.2",
       "description": "the climate benefit of one kWh of Swiss PV without the displacement concept: the Swiss consumption mix minus the PV life cycle emission, 126 - 46.8"
@@ -325,7 +329,8 @@
         "avoided emission",
         "displacement mix",
         "CO2-eq",
-        "gram per kWh"
+        "gram per kWh",
+        "calculated"
       ],
       "number": "939.2",
       "description": "the climate benefit of one kWh of Swiss PV with the displacement concept: the EU displacement mix minus the PV life cycle emission, 986 - 46.8, about twelve times the benefit of the classic comparison"

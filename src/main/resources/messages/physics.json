@@ -102,7 +102,6 @@
     },
     {
       "name": "power",
-      "description": "Power is the amount of energy transferred or converted per unit time; the SI unit is the watt.",
       "protection": "admin_protection",
       "refs": [
         {

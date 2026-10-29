@@ -179,6 +179,10 @@ class files
     const string PORTFOLIO_SPLIT_CALCULATOR_FILE = self::USE_CASE_PATH . self::PORTFOLIO_SPLIT_CALCULATOR . self::JSON;
     // the cost calculator for the Swiss vote on lifting the ban on new nuclear power plants
     const string NPP_CH_VOTE_FILE = self::USE_CASE_PATH . 'npp_ch_vote' . self::JSON;
+    // the cost per household of the Swiss vote on the additional financing of the AHV by an increase of the value added tax
+    const string AHV_VAT_VOTE_FILE = self::USE_CASE_PATH . 'ahv_vat_vote' . self::JSON;
+    // the buy, sell or hold decision on the ABB share from a target price of several valuation methods
+    const string SHARE_BUY_SELL_ABB_FILE = self::USE_CASE_PATH . 'share_buy_sell_abb' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -402,6 +406,8 @@ class files
         self::PV_LIFETIME_BALANCE_FILE,
         self::NPP_CH_VOTE_FILE,
         self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
+        self::AHV_VAT_VOTE_FILE,
+        self::SHARE_BUY_SELL_ABB_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

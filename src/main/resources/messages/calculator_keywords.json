@@ -56,7 +56,10 @@
       "name": "checkbox"
     },
     {
-      "name": "read only"
+      "name": "read"
+    },
+    {
+      "name": "only"
     },
     {
       "name": "warning"
@@ -72,7 +75,10 @@
       "name": "phrase"
     },
     {
-      "name": "row number"
+      "name": "row"
+    },
+    {
+      "name": "number"
     },
     {
       "name": "decimals"
@@ -90,19 +96,28 @@
       "name": "diagram"
     },
     {
-      "name": "file import"
+      "name": "file"
+    },
+    {
+      "name": "import"
     },
     {
       "name": "download"
     },
     {
-      "name": "printable report"
+      "name": "printable"
+    },
+    {
+      "name": "report"
     },
     {
       "name": "copy"
     },
     {
-      "name": "page independent"
+      "name": "page"
+    },
+    {
+      "name": "independent"
     }
   ],
   "triples": [
@@ -207,6 +222,36 @@
       "from": "calculator (system)",
       "verb": "has a",
       "to": "checkbox"
+    },
+    {
+      "name": "read only",
+      "from": "only",
+      "verb": "kind of",
+      "to": "read"
+    },
+    {
+      "name": "row number",
+      "from": "number",
+      "verb": "of",
+      "to": "row"
+    },
+    {
+      "name": "file import",
+      "from": "import",
+      "verb": "of",
+      "to": "file"
+    },
+    {
+      "name": "printable report",
+      "from": "report",
+      "verb": "kind of",
+      "to": "printable"
+    },
+    {
+      "name": "page independent",
+      "from": "independent",
+      "verb": "of",
+      "to": "page"
     },
     {
       "name": "calculator read only",

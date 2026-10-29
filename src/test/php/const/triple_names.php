@@ -507,6 +507,10 @@ class triple_names
     const string FIRST_CHILD_PORTFOLIO = 'first child portfolio';
     // an input of the use case cbam_calculator.json that two results of its chain depend on
     const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
+    // an input of the use case ahv_vat_vote.json that the extra VAT revenue and its chain depend on
+    const string AHV_VAT_YIELD = 'VAT yield';
+    // an input of the use case share_buy_sell_abb.json that the earnings multiple target depends on
+    const string ABB_FAIR_PE = 'fair P/E';
     const string CASH_FLOW = 'cash flow';
     const int CASH_FLOW_ID = 661;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';
@@ -582,9 +586,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2742;
+    const int SHARE_RATIO_ID = 2749;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2792;
+    const int SHARE_SYMBOL_ID = 2800;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

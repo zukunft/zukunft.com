@@ -7,7 +7,7 @@
   "time": "2026-10-16 01:40:00",
   "selection": [
     {
-      "id": "2746",
+      "id": "2754",
       "name": "example PV installation",
       "description": "the default installation of the page: 10 kWp east-west on a flat roof in the Swiss plateau, a 10 kWh battery and a household that uses 4500 kWh a year; every input can be changed, the numbers of this phrase are the worked example"
     }
@@ -54,7 +54,7 @@
       "description": "the making of a good or an energy, here the electricity generated within a country"
     },
     {
-      "id": 2092,
+      "id": 2089,
       "name": "residual",
       "description": "what remains after the tracked part is taken out; for electricity the mix that is left after all guarantees of origin have been assigned"
     },
@@ -104,7 +104,7 @@
       "description": "the years a system is operated before it is dismantled"
     },
     {
-      "id": 2093,
+      "id": 2090,
       "name": "embodied",
       "description": "built into a product during its making, for an emission the greenhouse gases released by the production, transport and disposal of the product",
       "refs": [
@@ -119,7 +119,7 @@
       "name": "intensity"
     },
     {
-      "id": 2094,
+      "id": 2091,
       "name": "payback",
       "description": "the time until the saving has repaid the initial cost; for emissions the operating years until the avoided emission equals the embodied emission"
     },
@@ -165,7 +165,7 @@
       "description": "measured over one year"
     },
     {
-      "id": 2095,
+      "id": 2092,
       "name": "mean"
     },
     {
@@ -193,7 +193,7 @@
       "description": "the maximum amount that something can hold or process"
     },
     {
-      "id": 2096,
+      "id": 2093,
       "name": "installation"
     },
     {
@@ -206,7 +206,7 @@
       "description": "people living together in one dwelling"
     },
     {
-      "id": 2097,
+      "id": 2094,
       "name": "battery",
       "description": "an electrochemical store; here a stationary lithium-ion home storage system charged by the PV surplus",
       "refs": [
@@ -217,12 +217,20 @@
       ]
     },
     {
-      "name": "lithium-ion cell",
-      "description": "the battery cells alone, without the housing, the inverter and the control of a home storage system"
+      "id": 2095,
+      "name": "lithium-ion"
     },
     {
-      "name": "home storage system",
-      "description": "a complete stationary battery of a house with the cells, the housing, the inverter and the control"
+      "id": 2096,
+      "name": "cell"
+    },
+    {
+      "id": 1020,
+      "name": "home"
+    },
+    {
+      "id": 760,
+      "name": "storage"
     },
     {
       "name": "2019"
@@ -236,11 +244,11 @@
       "description": "Electric charge (symbol q, sometimes Q) is a physical property of matter that causes it to experience a force when placed in an electromagnetic field. Electric charge can be positive or negative."
     },
     {
-      "id": 2100,
+      "id": 2097,
       "name": "discharge"
     },
     {
-      "id": 2101,
+      "id": 2098,
       "name": "round-trip",
       "description": "charge and discharge taken together"
     },
@@ -277,7 +285,7 @@
       "name": "grid"
     },
     {
-      "id": 2102,
+      "id": 2099,
       "name": "delivered",
       "description": "handed to a consumer, at home or through the grid"
     },
@@ -287,7 +295,7 @@
       "description": "the use of self-produced electricity in the own house, which saves the purchase of the same kWh from the grid"
     },
     {
-      "id": 2103,
+      "id": 2100,
       "name": "autarky",
       "description": "the share of the own consumption that is covered by the own production",
       "refs": [
@@ -298,27 +306,27 @@
       ]
     },
     {
-      "id": 2105,
+      "id": 2102,
       "name": "south"
     },
     {
-      "id": 2106,
+      "id": 2103,
       "name": "south-east"
     },
     {
-      "id": 2107,
+      "id": 2104,
       "name": "south-west"
     },
     {
-      "id": 2108,
+      "id": 2105,
       "name": "east"
     },
     {
-      "id": 2109,
+      "id": 2106,
       "name": "west"
     },
     {
-      "id": 2110,
+      "id": 2107,
       "name": "north"
     },
     {
@@ -509,7 +517,7 @@
       "description": "a word or a triple, which selects or stores a value"
     },
     {
-      "id": 2111,
+      "id": 2108,
       "name": "losses"
     },
     {
@@ -517,7 +525,7 @@
       "name": "effect"
     },
     {
-      "id": 2112,
+      "id": 2109,
       "name": "site"
     },
     {
@@ -569,16 +577,20 @@
       "description": "whether a number is positive or negative"
     },
     {
-      "id": 2113,
+      "id": 2110,
       "name": "kWh/a"
     },
     {
-      "id": 2114,
+      "id": 2111,
       "name": "kWh/kWp·a"
     },
     {
-      "id": 2115,
-      "name": "duration unit"
+      "id": 1106,
+      "name": "duration"
+    },
+    {
+      "id": 19,
+      "name": "unit"
     },
     {
       "id": 1178,
@@ -594,11 +606,11 @@
       "name": "maximum"
     },
     {
-      "id": 2116,
+      "id": 2112,
       "name": "g/kWh"
     },
     {
-      "id": 2117,
+      "id": 2113,
       "name": "kg/kWh"
     }
   ],
@@ -617,7 +629,7 @@
       "description": "photovoltaic electricity generated in Switzerland, the subject of this use case; the table of this phrase compares its climate benefit with and without the displacement concept"
     },
     {
-      "id": 2702,
+      "id": 2709,
       "name": "PV installation",
       "from": "installation",
       "verb": "of",
@@ -625,7 +637,7 @@
       "description": "a photovoltaic system on a building: the modules, the inverter and, if present, the battery"
     },
     {
-      "id": 2746,
+      "id": 2754,
       "name": "example PV installation",
       "from": "PV installation",
       "verb": "kind of",
@@ -650,7 +662,7 @@
       "description": "the average mix of the electricity generated within a country, without imports and exports"
     },
     {
-      "id": 2703,
+      "id": 2710,
       "name": "residual mix",
       "from": "mix",
       "verb": "kind of",
@@ -658,7 +670,7 @@
       "description": "the European mix that remains after all guarantees of origin have been taken out, so the generation a consumer without a certificate gets; used on the page as the replacement mix, the second reference next to the Swiss consumption mix"
     },
     {
-      "id": 2704,
+      "id": 2711,
       "name": "PV-weighted consumption mix",
       "from": "consumption mix",
       "verb": "weighted by",
@@ -680,7 +692,7 @@
       ]
     },
     {
-      "id": 2705,
+      "id": 2712,
       "name": "embodied emission",
       "from": "emission",
       "verb": "kind of",
@@ -688,7 +700,7 @@
       "description": "the greenhouse gases released to make, install and dispose of a system, before it has delivered any electricity"
     },
     {
-      "id": 2706,
+      "id": 2713,
       "name": "embodied intensity",
       "from": "intensity",
       "verb": "kind of",
@@ -696,14 +708,14 @@
       "description": "the embodied emission per unit of rated power"
     },
     {
-      "id": 2747,
+      "id": 2755,
       "name": "PV embodied emission",
       "from": "embodied emission",
       "verb": "of",
       "to": "PV"
     },
     {
-      "id": 2748,
+      "id": 2756,
       "name": "PV embodied intensity",
       "from": "embodied intensity",
       "verb": "of",
@@ -711,7 +723,7 @@
       "description": "the embodied emission of one kWp of PV, derived from the life cycle emission per kWh of the reference system times its reference yield and lifetime"
     },
     {
-      "id": 2749,
+      "id": 2757,
       "name": "battery embodied emission",
       "from": "embodied emission",
       "verb": "of",
@@ -726,7 +738,7 @@
       "description": "the emission of the reference mix minus the emission of the new source, so the climate benefit of one kWh of the new source"
     },
     {
-      "id": 2707,
+      "id": 2714,
       "name": "gross avoided emission",
       "from": "avoided emission",
       "verb": "kind of",
@@ -734,7 +746,7 @@
       "description": "the emission of the reference mix that the delivered PV electricity displaces, before the embodied emission of the installation is subtracted"
     },
     {
-      "id": 2708,
+      "id": 2715,
       "name": "net avoided emission",
       "from": "avoided emission",
       "verb": "kind of",
@@ -742,7 +754,7 @@
       "description": "the gross avoided emission minus the embodied emission of the PV system and the battery: the lifetime climate benefit of the installation"
     },
     {
-      "id": 2709,
+      "id": 2716,
       "name": "emission payback",
       "from": "payback",
       "verb": "of",
@@ -758,7 +770,7 @@
       "description": "the unit of the emission intensity of electricity"
     },
     {
-      "id": 2710,
+      "id": 2717,
       "from": "kg",
       "verb": "per",
       "to": "kWh",
@@ -781,7 +793,7 @@
       "description": "the electricity that photovoltaic panels deliver to the grid or the house, after the losses of the cables, the inverter, the temperature and the dirt"
     },
     {
-      "id": 2712,
+      "id": 2719,
       "name": "yield factor",
       "from": "factor",
       "verb": "of",
@@ -789,7 +801,7 @@
       "description": "the annual yield of a panel orientation relative to the best orientation, south with 30 degree tilt"
     },
     {
-      "id": 2713,
+      "id": 2720,
       "name": "east-west",
       "from": "east",
       "verb": "and",
@@ -797,7 +809,7 @@
       "description": "half the modules facing east, half facing west, the usual layout on a flat roof"
     },
     {
-      "id": 2714,
+      "id": 2721,
       "name": "PV capacity",
       "from": "capacity",
       "verb": "of",
@@ -805,7 +817,7 @@
       "description": "the rated power of the PV modules in kWp"
     },
     {
-      "id": 2715,
+      "id": 2722,
       "name": "PV production",
       "from": "production",
       "verb": "of",
@@ -813,7 +825,7 @@
       "description": "the electricity the PV modules generate"
     },
     {
-      "id": 2716,
+      "id": 2723,
       "name": "battery capacity",
       "from": "capacity",
       "verb": "of",
@@ -821,7 +833,7 @@
       "description": "the usable storage capacity of the battery in kWh"
     },
     {
-      "id": 2717,
+      "id": 2724,
       "name": "battery charge",
       "from": "charge",
       "verb": "of",
@@ -829,7 +841,7 @@
       "description": "the PV surplus that goes into the battery"
     },
     {
-      "id": 2718,
+      "id": 2725,
       "name": "battery discharge",
       "from": "discharge",
       "verb": "of",
@@ -837,7 +849,7 @@
       "description": "the electricity the battery gives back to the house, the charge minus the losses"
     },
     {
-      "id": 2719,
+      "id": 2726,
       "name": "round-trip efficiency",
       "from": "efficiency",
       "verb": "kind of",
@@ -845,7 +857,7 @@
       "description": "the share of the charged energy that comes back out of the battery"
     },
     {
-      "id": 2720,
+      "id": 2727,
       "name": "battery count",
       "from": "count",
       "verb": "of",
@@ -853,14 +865,14 @@
       "description": "how many batteries are bought over the lifetime of the installation, the lifetime divided by the battery lifetime rounded up"
     },
     {
-      "id": 2721,
+      "id": 2728,
       "name": "battery lifetime",
       "from": "lifetime",
       "verb": "of",
       "to": "battery"
     },
     {
-      "id": 2722,
+      "id": 2729,
       "name": "battery production emission",
       "from": "emission",
       "verb": "of",
@@ -868,7 +880,7 @@
       "description": "the greenhouse gases released to produce one kWh of battery storage capacity"
     },
     {
-      "id": 2723,
+      "id": 2730,
       "name": "household consumption",
       "from": "consumption",
       "verb": "kind of",
@@ -876,7 +888,7 @@
       "description": "the electricity the household uses in a year, the local consumption that the PV electricity can replace first"
     },
     {
-      "id": 2724,
+      "id": 2731,
       "name": "direct use",
       "from": "use",
       "verb": "kind of",
@@ -884,7 +896,7 @@
       "description": "the PV electricity used in the house in the hour it is produced"
     },
     {
-      "id": 2725,
+      "id": 2732,
       "name": "grid import",
       "from": "import",
       "verb": "of",
@@ -892,7 +904,7 @@
       "description": "the electricity the household still buys from the grid"
     },
     {
-      "id": 2726,
+      "id": 2733,
       "name": "delivered electricity",
       "from": "electricity",
       "verb": "kind of",
@@ -908,7 +920,7 @@
       "description": "the share of the PV production that is used on site, directly or via the battery"
     },
     {
-      "id": 2727,
+      "id": 2734,
       "name": "day share",
       "from": "share",
       "verb": "of",
@@ -916,7 +928,7 @@
       "description": "the share of the household consumption that falls into the hours with PV production"
     },
     {
-      "id": 2728,
+      "id": 2735,
       "name": "monthly share",
       "from": "share",
       "verb": "of",
@@ -924,7 +936,7 @@
       "description": "the share of an annual amount that falls into one month"
     },
     {
-      "id": 2729,
+      "id": 2736,
       "from": "2018",
       "verb": "to",
       "to": "2022"
@@ -1026,7 +1038,7 @@
       "description": "the phrase whose values offer their phrases for the selection e.g. global warming solution"
     },
     {
-      "id": 2750,
+      "id": 2758,
       "name": "field PV capacity",
       "description": "the input of the rated power of the PV modules on the page, a number between the field limits in the field steps",
       "from": "PV capacity",
@@ -1034,7 +1046,7 @@
       "to": "number with limits"
     },
     {
-      "id": 2751,
+      "id": 2759,
       "name": "field battery capacity",
       "description": "the input of the usable battery capacity on the page",
       "from": "battery capacity",
@@ -1042,7 +1054,7 @@
       "to": "number with limits"
     },
     {
-      "id": 2752,
+      "id": 2760,
       "name": "field household consumption",
       "description": "the input of the annual electricity consumption of the household on the page",
       "from": "household consumption",
@@ -1050,7 +1062,7 @@
       "to": "number with limits"
     },
     {
-      "id": 2753,
+      "id": 2761,
       "name": "household consumption input period",
       "description": "the household consumption is entered as the annual consumption",
       "from": "household consumption",
@@ -1058,7 +1070,7 @@
       "to": "annual"
     },
     {
-      "id": 2797,
+      "id": 2805,
       "name": "household consumption field value phrase",
       "description": "the input field of the household consumption shows and stores the annual value and not a monthly value or the day share",
       "from": "household consumption input period",
@@ -1066,7 +1078,7 @@
       "to": "field value phrases"
     },
     {
-      "id": 2754,
+      "id": 2762,
       "name": "field yield factor",
       "description": "the orientation of the modules as a selection on the page: one of the orientations with a yield factor",
       "from": "yield factor",
@@ -1074,7 +1086,7 @@
       "to": "phrase selector"
     },
     {
-      "id": 2755,
+      "id": 2763,
       "name": "yield factor options",
       "description": "the orientations offered by the selector are the phrases of the yield factor values",
       "from": "yield factor",
@@ -1082,7 +1094,7 @@
       "to": "field phrase selector value based"
     },
     {
-      "id": 2798,
+      "id": 2806,
       "name": "orientation of the example PV installation",
       "description": "the example installation is an east-west split on a flat roof, so the selector of the page shows east-west selected",
       "from": "example PV installation",
@@ -1090,7 +1102,7 @@
       "to": "east-west"
     },
     {
-      "id": 2730,
+      "id": 2737,
       "name": "battery losses",
       "from": "losses",
       "verb": "of",
@@ -1098,7 +1110,7 @@
       "description": "the part of the battery charge that the round-trip efficiency loses"
     },
     {
-      "id": 2731,
+      "id": 2738,
       "name": "battery effect",
       "from": "effect",
       "verb": "of",
@@ -1106,7 +1118,7 @@
       "description": "the change of the net avoided emission by the battery compared with the same PV installation without battery: the battery losses reduce the delivered electricity and the battery production adds an embodied emission"
     },
     {
-      "id": 2799,
+      "id": 2807,
       "name": "PV site intensity",
       "from": "PV embodied intensity",
       "verb": "of",
@@ -1114,7 +1126,7 @@
       "description": "the embodied emission of the PV system per kWh produced at this site over the lifetime, in contrast to the intensity of the reference system"
     },
     {
-      "id": 2732,
+      "id": 2739,
       "name": "replacement mix",
       "from": "mix",
       "verb": "kind of",
@@ -1122,21 +1134,21 @@
       "description": "the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix"
     },
     {
-      "id": 2756,
+      "id": 2764,
       "from": "residual mix",
       "verb": "is a",
       "to": "replacement mix",
       "description": "the European residual mix is the default replacement mix of the page"
     },
     {
-      "id": 2757,
+      "id": 2765,
       "from": "production mix",
       "verb": "is a",
       "to": "replacement mix",
       "description": "the European production mix is the alternative replacement mix of the page"
     },
     {
-      "id": 2758,
+      "id": 2766,
       "name": "field replacement mix",
       "description": "the replacement mix as a selection on the page: one of the mixes that is a replacement mix",
       "from": "replacement mix",
@@ -1144,7 +1156,7 @@
       "to": "phrase selector"
     },
     {
-      "id": 2800,
+      "id": 2808,
       "name": "replacement mix of the example PV installation",
       "description": "the example installation is compared with the European residual mix, so the selector of the page shows the residual mix selected",
       "from": "example PV installation",
@@ -1160,7 +1172,7 @@
       "description": "keyword of the calculator view; a phrase gets its calculator page by the triples to the keywords below"
     },
     {
-      "id": 2675,
+      "id": 2680,
       "name": "calculator label",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1168,7 +1180,7 @@
       "description": "text property: the description of a triple from an item or from a phrase to this keyword is the label of the item e.g. the page title, a heading, a field label, a column header or a row label; the label of the item wins over the label of its phrase"
     },
     {
-      "id": 2676,
+      "id": 2681,
       "name": "calculator hint",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1176,7 +1188,7 @@
       "description": "text property: the description of a triple from an item or from a phrase to this keyword is the hint of the item e.g. the lead text or the sub text of a row; the hint of the item wins over the hint of its phrase"
     },
     {
-      "id": 2677,
+      "id": 2682,
       "name": "calculator input",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1184,7 +1196,7 @@
       "description": "list: the items of the group triple to this keyword are the input fields"
     },
     {
-      "id": 2678,
+      "id": 2683,
       "name": "calculator assumption",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1192,7 +1204,7 @@
       "description": "list: the assumptions shown first and with a label; the other operands follow sorted by label"
     },
     {
-      "id": 2679,
+      "id": 2684,
       "name": "calculator result column",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1200,7 +1212,7 @@
       "description": "list: the column phrases of the main result table"
     },
     {
-      "id": 2680,
+      "id": 2685,
       "name": "calculator row group",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1208,7 +1220,7 @@
       "description": "list of lists: the row groups of the main result table, each with its rows; a row has with filters, and its side results are the has a triples of the row phrase or the filter phrase"
     },
     {
-      "id": 2681,
+      "id": 2686,
       "name": "calculator detail table",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1216,7 +1228,7 @@
       "description": "list: the detail tables, each with its columns (has a) and its extra rows (with)"
     },
     {
-      "id": 2682,
+      "id": 2687,
       "name": "calculator highlight",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1224,7 +1236,7 @@
       "description": "flag: an item, or a phrase on every page, with a triple to this keyword is shown as a key row"
     },
     {
-      "id": 2683,
+      "id": 2688,
       "name": "calculator signed",
       "from": "calculator (system)",
       "verb": "has a",
@@ -1232,7 +1244,7 @@
       "description": "flag: the cells of a row group with a triple to this keyword show the sign of the number"
     },
     {
-      "id": 2759,
+      "id": 2767,
       "name": "PV installation label",
       "description": "PV lifetime CO₂ balance",
       "from": "PV installation",
@@ -1240,7 +1252,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2760,
+      "id": 2768,
       "name": "PV installation hint",
       "description": "Rooftop photovoltaic installation in the Swiss plateau: electricity produced over the lifetime and greenhouse-gas savings against the Swiss consumer mix and against a replacement (import) mix. Edit the four inputs; all assumptions are open below them.",
       "from": "PV installation",
@@ -1248,7 +1260,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2761,
+      "id": 2769,
       "name": "PV capacity label",
       "description": "System size",
       "from": "PV capacity",
@@ -1256,7 +1268,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2762,
+      "id": 2770,
       "name": "yield factor label",
       "description": "Orientation",
       "from": "yield factor",
@@ -1264,7 +1276,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2763,
+      "id": 2771,
       "name": "yield factor hint",
       "description": "Yield factor relative to south 30°",
       "from": "yield factor",
@@ -1272,7 +1284,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2764,
+      "id": 2772,
       "name": "battery capacity label",
       "description": "Battery capacity (usable)",
       "from": "battery capacity",
@@ -1280,7 +1292,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2765,
+      "id": 2773,
       "name": "household consumption label",
       "description": "Local electricity consumption",
       "from": "household consumption",
@@ -1288,7 +1300,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2766,
+      "id": 2774,
       "name": "day share label",
       "description": "Load share during PV hours",
       "from": "day share",
@@ -1296,7 +1308,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2767,
+      "id": 2775,
       "name": "battery production emission label",
       "description": "Battery production emissions",
       "from": "battery production emission",
@@ -1304,7 +1316,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2768,
+      "id": 2776,
       "name": "embodied emission label",
       "description": "Production emissions",
       "from": "embodied emission",
@@ -1312,7 +1324,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2769,
+      "id": 2777,
       "name": "net avoided emission label",
       "description": "CO₂-eq saved, net of production emissions",
       "from": "net avoided emission",
@@ -1320,7 +1332,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2770,
+      "id": 2778,
       "name": "direct use label",
       "description": "Used directly",
       "from": "direct use",
@@ -1328,7 +1340,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2771,
+      "id": 2779,
       "name": "battery discharge label",
       "description": "Used via battery",
       "from": "battery discharge",
@@ -1336,7 +1348,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2772,
+      "id": 2780,
       "name": "battery discharge hint",
       "description": "after losses",
       "from": "battery discharge",
@@ -1344,7 +1356,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2733,
+      "id": 2740,
       "name": "self-consumption share label",
       "description": "Self-consumption rate",
       "from": "self-consumption share",
@@ -1352,7 +1364,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2734,
+      "id": 2741,
       "name": "self-consumption share hint",
       "description": "share of PV used on site",
       "from": "self-consumption share",
@@ -1360,7 +1372,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2735,
+      "id": 2742,
       "name": "autarky hint",
       "description": "share of load covered by PV",
       "from": "autarky",
@@ -1368,7 +1380,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2773,
+      "id": 2781,
       "name": "emission payback label",
       "description": "payback",
       "from": "emission payback",
@@ -1376,7 +1388,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2774,
+      "id": 2782,
       "name": "battery effect label",
       "description": "Effect of the battery",
       "from": "battery effect",
@@ -1384,7 +1396,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2736,
+      "id": 2743,
       "name": "annual label",
       "description": "Per year",
       "from": "annual",
@@ -1392,7 +1404,7 @@
       "to": "calculator label"
     },
     {
-      "id": 2737,
+      "id": 2744,
       "name": "PV label",
       "description": "PV system",
       "from": "PV",
@@ -1400,49 +1412,49 @@
       "to": "calculator label"
     },
     {
-      "id": 2775,
+      "id": 2783,
       "name": "PV production highlight",
       "from": "PV production",
       "verb": "has a",
       "to": "calculator highlight"
     },
     {
-      "id": 2738,
+      "id": 2745,
       "name": "autarky highlight",
       "from": "autarky",
       "verb": "has a",
       "to": "calculator highlight"
     },
     {
-      "id": 2776,
+      "id": 2784,
       "name": "net avoided emission highlight",
       "from": "net avoided emission",
       "verb": "has a",
       "to": "calculator highlight"
     },
     {
-      "id": 2833,
+      "id": 2842,
       "name": "PV embodied emission side result",
       "from": "PV embodied emission",
       "verb": "has a",
       "to": "PV site intensity"
     },
     {
-      "id": 2777,
+      "id": 2785,
       "name": "net avoided emission side result",
       "from": "net avoided emission",
       "verb": "has a",
       "to": "emission payback"
     },
     {
-      "id": 2778,
+      "id": 2786,
       "name": "yield factor option south",
       "from": "yield factor",
       "verb": "has a",
       "to": "south"
     },
     {
-      "id": 2801,
+      "id": 2809,
       "name": "yield factor option south label",
       "description": "South, ~30° tilt",
       "from": "yield factor option south",
@@ -1450,14 +1462,14 @@
       "to": "calculator label"
     },
     {
-      "id": 2779,
+      "id": 2787,
       "name": "yield factor option south-east",
       "from": "yield factor",
       "verb": "has a",
       "to": "south-east"
     },
     {
-      "id": 2802,
+      "id": 2810,
       "name": "yield factor option south-east label",
       "description": "South-east / south-west, ~30°",
       "from": "yield factor option south-east",
@@ -1465,21 +1477,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2803,
+      "id": 2811,
       "name": "yield factor option south-east order",
       "from": "yield factor option south-east",
       "verb": "is follower of",
       "to": "yield factor option south"
     },
     {
-      "id": 2780,
+      "id": 2788,
       "name": "yield factor option east-west",
       "from": "yield factor",
       "verb": "has a",
       "to": "east-west"
     },
     {
-      "id": 2804,
+      "id": 2812,
       "name": "yield factor option east-west label",
       "description": "East-west split, flat tilt",
       "from": "yield factor option east-west",
@@ -1487,21 +1499,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2805,
+      "id": 2813,
       "name": "yield factor option east-west order",
       "from": "yield factor option east-west",
       "verb": "is follower of",
       "to": "yield factor option south-east"
     },
     {
-      "id": 2781,
+      "id": 2789,
       "name": "yield factor option east",
       "from": "yield factor",
       "verb": "has a",
       "to": "east"
     },
     {
-      "id": 2806,
+      "id": 2814,
       "name": "yield factor option east label",
       "description": "East or west only, ~30°",
       "from": "yield factor option east",
@@ -1509,21 +1521,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2807,
+      "id": 2815,
       "name": "yield factor option east order",
       "from": "yield factor option east",
       "verb": "is follower of",
       "to": "yield factor option east-west"
     },
     {
-      "id": 2782,
+      "id": 2790,
       "name": "yield factor option horizontal",
       "from": "yield factor",
       "verb": "has a",
       "to": "horizontal"
     },
     {
-      "id": 2808,
+      "id": 2816,
       "name": "yield factor option horizontal label",
       "description": "Flat (0°)",
       "from": "yield factor option horizontal",
@@ -1531,21 +1543,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2809,
+      "id": 2817,
       "name": "yield factor option horizontal order",
       "from": "yield factor option horizontal",
       "verb": "is follower of",
       "to": "yield factor option east"
     },
     {
-      "id": 2783,
+      "id": 2791,
       "name": "yield factor option north",
       "from": "yield factor",
       "verb": "has a",
       "to": "north"
     },
     {
-      "id": 2810,
+      "id": 2818,
       "name": "yield factor option north label",
       "description": "North, ~30°",
       "from": "yield factor option north",
@@ -1553,84 +1565,84 @@
       "to": "calculator label"
     },
     {
-      "id": 2811,
+      "id": 2819,
       "name": "yield factor option north order",
       "from": "yield factor option north",
       "verb": "is follower of",
       "to": "yield factor option horizontal"
     },
     {
-      "id": 2784,
+      "id": 2792,
       "name": "PV installation inputs",
       "from": "PV installation",
       "verb": "has a",
       "to": "calculator input"
     },
     {
-      "id": 2812,
+      "id": 2820,
       "name": "PV installation input PV capacity",
       "from": "PV installation inputs",
       "verb": "has a",
       "to": "PV capacity"
     },
     {
-      "id": 2813,
+      "id": 2821,
       "name": "PV installation input yield factor",
       "from": "PV installation inputs",
       "verb": "has a",
       "to": "yield factor"
     },
     {
-      "id": 2834,
+      "id": 2843,
       "name": "PV installation input yield factor order",
       "from": "PV installation input yield factor",
       "verb": "is follower of",
       "to": "PV installation input PV capacity"
     },
     {
-      "id": 2814,
+      "id": 2822,
       "name": "PV installation input battery capacity",
       "from": "PV installation inputs",
       "verb": "has a",
       "to": "battery capacity"
     },
     {
-      "id": 2835,
+      "id": 2844,
       "name": "PV installation input battery capacity order",
       "from": "PV installation input battery capacity",
       "verb": "is follower of",
       "to": "PV installation input yield factor"
     },
     {
-      "id": 2815,
+      "id": 2823,
       "name": "PV installation input household consumption",
       "from": "PV installation inputs",
       "verb": "has a",
       "to": "household consumption"
     },
     {
-      "id": 2836,
+      "id": 2845,
       "name": "PV installation input household consumption order",
       "from": "PV installation input household consumption",
       "verb": "is follower of",
       "to": "PV installation input battery capacity"
     },
     {
-      "id": 2785,
+      "id": 2793,
       "name": "PV installation assumptions",
       "from": "PV installation",
       "verb": "has a",
       "to": "calculator assumption"
     },
     {
-      "id": 2816,
+      "id": 2824,
       "name": "PV installation assumption PV yield",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "PV yield"
     },
     {
-      "id": 2837,
+      "id": 2846,
       "name": "PV installation assumption PV yield label",
       "description": "Specific yield, south 30°",
       "from": "PV installation assumption PV yield",
@@ -1638,28 +1650,28 @@
       "to": "calculator label"
     },
     {
-      "id": 2817,
+      "id": 2825,
       "name": "PV installation assumption lifetime",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "lifetime"
     },
     {
-      "id": 2838,
+      "id": 2847,
       "name": "PV installation assumption lifetime order",
       "from": "PV installation assumption lifetime",
       "verb": "is follower of",
       "to": "PV installation assumption PV yield"
     },
     {
-      "id": 2818,
+      "id": 2826,
       "name": "PV installation assumption PV in Switzerland",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "PV in Switzerland"
     },
     {
-      "id": 2839,
+      "id": 2848,
       "name": "PV installation assumption PV in Switzerland label",
       "description": "PV life-cycle emissions",
       "from": "PV installation assumption PV in Switzerland",
@@ -1667,21 +1679,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2840,
+      "id": 2849,
       "name": "PV installation assumption PV in Switzerland order",
       "from": "PV installation assumption PV in Switzerland",
       "verb": "is follower of",
       "to": "PV installation assumption lifetime"
     },
     {
-      "id": 2819,
+      "id": 2827,
       "name": "PV installation assumption consumption mix",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "consumption mix"
     },
     {
-      "id": 2841,
+      "id": 2850,
       "name": "PV installation assumption consumption mix label",
       "description": "Swiss consumer mix, annual",
       "from": "PV installation assumption consumption mix",
@@ -1689,49 +1701,49 @@
       "to": "calculator label"
     },
     {
-      "id": 2842,
+      "id": 2851,
       "name": "PV installation assumption consumption mix order",
       "from": "PV installation assumption consumption mix",
       "verb": "is follower of",
       "to": "PV installation assumption PV in Switzerland"
     },
     {
-      "id": 2820,
+      "id": 2828,
       "name": "PV installation assumption replacement mix",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "replacement mix"
     },
     {
-      "id": 2843,
+      "id": 2852,
       "name": "PV installation assumption replacement mix order",
       "from": "PV installation assumption replacement mix",
       "verb": "is follower of",
       "to": "PV installation assumption consumption mix"
     },
     {
-      "id": 2821,
+      "id": 2829,
       "name": "PV installation assumption day share",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "day share"
     },
     {
-      "id": 2844,
+      "id": 2853,
       "name": "PV installation assumption day share order",
       "from": "PV installation assumption day share",
       "verb": "is follower of",
       "to": "PV installation assumption replacement mix"
     },
     {
-      "id": 2822,
+      "id": 2830,
       "name": "PV installation assumption round-trip efficiency",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "round-trip efficiency"
     },
     {
-      "id": 2845,
+      "id": 2854,
       "name": "PV installation assumption round-trip efficiency label",
       "description": "Battery round-trip efficiency",
       "from": "PV installation assumption round-trip efficiency",
@@ -1739,49 +1751,49 @@
       "to": "calculator label"
     },
     {
-      "id": 2846,
+      "id": 2855,
       "name": "PV installation assumption round-trip efficiency order",
       "from": "PV installation assumption round-trip efficiency",
       "verb": "is follower of",
       "to": "PV installation assumption day share"
     },
     {
-      "id": 2823,
+      "id": 2831,
       "name": "PV installation assumption battery production emission",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "battery production emission"
     },
     {
-      "id": 2847,
+      "id": 2856,
       "name": "PV installation assumption battery production emission order",
       "from": "PV installation assumption battery production emission",
       "verb": "is follower of",
       "to": "PV installation assumption round-trip efficiency"
     },
     {
-      "id": 2824,
+      "id": 2832,
       "name": "PV installation assumption battery lifetime",
       "from": "PV installation assumptions",
       "verb": "has a",
       "to": "battery lifetime"
     },
     {
-      "id": 2848,
+      "id": 2857,
       "name": "PV installation assumption battery lifetime order",
       "from": "PV installation assumption battery lifetime",
       "verb": "is follower of",
       "to": "PV installation assumption battery production emission"
     },
     {
-      "id": 2786,
+      "id": 2794,
       "name": "PV installation result columns",
       "from": "PV installation",
       "verb": "has a",
       "to": "calculator result column"
     },
     {
-      "id": 2825,
+      "id": 2833,
       "name": "PV installation result columns label",
       "description": "Main results over the lifetime",
       "from": "PV installation result columns",
@@ -1789,119 +1801,119 @@
       "to": "calculator label"
     },
     {
-      "id": 2826,
+      "id": 2834,
       "name": "PV installation column lifetime",
       "from": "PV installation result columns",
       "verb": "has a",
       "to": "lifetime"
     },
     {
-      "id": 2827,
+      "id": 2835,
       "name": "PV installation column annual",
       "from": "PV installation result columns",
       "verb": "has a",
       "to": "annual"
     },
     {
-      "id": 2849,
+      "id": 2858,
       "name": "PV installation column annual order",
       "from": "PV installation column annual",
       "verb": "is follower of",
       "to": "PV installation column lifetime"
     },
     {
-      "id": 2787,
+      "id": 2795,
       "name": "PV installation row groups",
       "from": "PV installation",
       "verb": "has a",
       "to": "calculator row group"
     },
     {
-      "id": 2828,
+      "id": 2836,
       "name": "PV installation rows electricity",
       "from": "PV installation row groups",
       "verb": "has a",
       "to": "electricity"
     },
     {
-      "id": 2829,
+      "id": 2837,
       "name": "PV installation rows production emissions",
       "from": "PV installation row groups",
       "verb": "has a",
       "to": "embodied emission"
     },
     {
-      "id": 2850,
+      "id": 2859,
       "name": "PV installation rows production emissions order",
       "from": "PV installation rows production emissions",
       "verb": "is follower of",
       "to": "PV installation rows electricity"
     },
     {
-      "id": 2830,
+      "id": 2838,
       "name": "PV installation rows saving",
       "from": "PV installation row groups",
       "verb": "has a",
       "to": "net avoided emission"
     },
     {
-      "id": 2851,
+      "id": 2860,
       "name": "PV installation rows saving signed",
       "from": "PV installation rows saving",
       "verb": "has a",
       "to": "calculator signed"
     },
     {
-      "id": 2852,
+      "id": 2861,
       "name": "PV installation rows saving order",
       "from": "PV installation rows saving",
       "verb": "is follower of",
       "to": "PV installation rows production emissions"
     },
     {
-      "id": 2853,
+      "id": 2862,
       "name": "PV installation row PV production",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "PV production"
     },
     {
-      "id": 2854,
+      "id": 2863,
       "name": "PV installation row direct use",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "direct use"
     },
     {
-      "id": 2882,
+      "id": 2891,
       "name": "PV installation row direct use order",
       "from": "PV installation row direct use",
       "verb": "is follower of",
       "to": "PV installation row PV production"
     },
     {
-      "id": 2855,
+      "id": 2864,
       "name": "PV installation row battery discharge",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "battery discharge"
     },
     {
-      "id": 2883,
+      "id": 2892,
       "name": "PV installation row battery discharge order",
       "from": "PV installation row battery discharge",
       "verb": "is follower of",
       "to": "PV installation row direct use"
     },
     {
-      "id": 2856,
+      "id": 2865,
       "name": "PV installation row export",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "export"
     },
     {
-      "id": 2884,
+      "id": 2893,
       "name": "PV installation row export label",
       "description": "Exported to grid",
       "from": "PV installation row export",
@@ -1909,35 +1921,35 @@
       "to": "calculator label"
     },
     {
-      "id": 2885,
+      "id": 2894,
       "name": "PV installation row export order",
       "from": "PV installation row export",
       "verb": "is follower of",
       "to": "PV installation row battery discharge"
     },
     {
-      "id": 2857,
+      "id": 2866,
       "name": "PV installation row battery losses",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "battery losses"
     },
     {
-      "id": 2886,
+      "id": 2895,
       "name": "PV installation row battery losses order",
       "from": "PV installation row battery losses",
       "verb": "is follower of",
       "to": "PV installation row export"
     },
     {
-      "id": 2858,
+      "id": 2867,
       "name": "PV installation row grid import",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "grid import"
     },
     {
-      "id": 2887,
+      "id": 2896,
       "name": "PV installation row grid import label",
       "description": "Grid import still needed",
       "from": "PV installation row grid import",
@@ -1945,70 +1957,70 @@
       "to": "calculator label"
     },
     {
-      "id": 2888,
+      "id": 2897,
       "name": "PV installation row grid import order",
       "from": "PV installation row grid import",
       "verb": "is follower of",
       "to": "PV installation row battery losses"
     },
     {
-      "id": 2859,
+      "id": 2868,
       "name": "PV installation row self-consumption share",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "self-consumption share"
     },
     {
-      "id": 2889,
+      "id": 2898,
       "name": "PV installation row self-consumption share order",
       "from": "PV installation row self-consumption share",
       "verb": "is follower of",
       "to": "PV installation row grid import"
     },
     {
-      "id": 2860,
+      "id": 2869,
       "name": "PV installation row autarky",
       "from": "PV installation rows electricity",
       "verb": "has a",
       "to": "autarky"
     },
     {
-      "id": 2890,
+      "id": 2899,
       "name": "PV installation row autarky order",
       "from": "PV installation row autarky",
       "verb": "is follower of",
       "to": "PV installation row self-consumption share"
     },
     {
-      "id": 2861,
+      "id": 2870,
       "name": "PV installation row PV embodied emission",
       "from": "PV installation rows production emissions",
       "verb": "has a",
       "to": "PV embodied emission"
     },
     {
-      "id": 2862,
+      "id": 2871,
       "name": "PV installation row battery embodied emission",
       "from": "PV installation rows production emissions",
       "verb": "has a",
       "to": "battery embodied emission"
     },
     {
-      "id": 2891,
+      "id": 2900,
       "name": "PV installation row battery embodied emission order",
       "from": "PV installation row battery embodied emission",
       "verb": "is follower of",
       "to": "PV installation row PV embodied emission"
     },
     {
-      "id": 2863,
+      "id": 2872,
       "name": "PV installation row saving consumption mix",
       "from": "PV installation rows saving",
       "verb": "has a",
       "to": "consumption mix"
     },
     {
-      "id": 2892,
+      "id": 2901,
       "name": "PV installation row saving consumption mix label",
       "description": "vs. Swiss consumer mix, annual",
       "from": "PV installation row saving consumption mix",
@@ -2016,21 +2028,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2893,
+      "id": 2902,
       "name": "PV installation row saving consumption mix filter",
       "from": "PV installation row saving consumption mix",
       "verb": "with",
       "to": "net avoided emission"
     },
     {
-      "id": 2864,
+      "id": 2873,
       "name": "PV installation row saving PV-weighted mix",
       "from": "PV installation rows saving",
       "verb": "has a",
       "to": "PV-weighted consumption mix"
     },
     {
-      "id": 2894,
+      "id": 2903,
       "name": "PV installation row saving PV-weighted mix label",
       "description": "vs. Swiss consumer mix, monthly",
       "from": "PV installation row saving PV-weighted mix",
@@ -2038,28 +2050,28 @@
       "to": "calculator label"
     },
     {
-      "id": 2895,
+      "id": 2904,
       "name": "PV installation row saving PV-weighted mix filter",
       "from": "PV installation row saving PV-weighted mix",
       "verb": "with",
       "to": "net avoided emission"
     },
     {
-      "id": 2896,
+      "id": 2905,
       "name": "PV installation row saving PV-weighted mix order",
       "from": "PV installation row saving PV-weighted mix",
       "verb": "is follower of",
       "to": "PV installation row saving consumption mix"
     },
     {
-      "id": 2865,
+      "id": 2874,
       "name": "PV installation row saving replacement mix",
       "from": "PV installation rows saving",
       "verb": "has a",
       "to": "replacement mix"
     },
     {
-      "id": 2897,
+      "id": 2906,
       "name": "PV installation row saving replacement mix label",
       "description": "vs. replacement mix",
       "from": "PV installation row saving replacement mix",
@@ -2067,28 +2079,28 @@
       "to": "calculator label"
     },
     {
-      "id": 2898,
+      "id": 2907,
       "name": "PV installation row saving replacement mix filter",
       "from": "PV installation row saving replacement mix",
       "verb": "with",
       "to": "net avoided emission"
     },
     {
-      "id": 2899,
+      "id": 2908,
       "name": "PV installation row saving replacement mix order",
       "from": "PV installation row saving replacement mix",
       "verb": "is follower of",
       "to": "PV installation row saving PV-weighted mix"
     },
     {
-      "id": 2866,
+      "id": 2875,
       "name": "PV installation row battery effect",
       "from": "PV installation rows saving",
       "verb": "has a",
       "to": "battery effect"
     },
     {
-      "id": 2900,
+      "id": 2909,
       "name": "PV installation row battery effect hint",
       "description": "vs. same PV without battery, annual Swiss mix",
       "from": "PV installation row battery effect",
@@ -2096,28 +2108,28 @@
       "to": "calculator hint"
     },
     {
-      "id": 2901,
+      "id": 2910,
       "name": "PV installation row battery effect filter",
       "from": "PV installation row battery effect",
       "verb": "with",
       "to": "consumption mix"
     },
     {
-      "id": 2902,
+      "id": 2911,
       "name": "PV installation row battery effect order",
       "from": "PV installation row battery effect",
       "verb": "is follower of",
       "to": "PV installation row saving replacement mix"
     },
     {
-      "id": 2788,
+      "id": 2796,
       "name": "PV installation detail tables",
       "from": "PV installation",
       "verb": "has a",
       "to": "calculator detail table"
     },
     {
-      "id": 2831,
+      "id": 2839,
       "name": "PV installation detail tables label",
       "description": "Monthly details and sources",
       "from": "PV installation detail tables",
@@ -2125,14 +2137,14 @@
       "to": "calculator label"
     },
     {
-      "id": 2832,
+      "id": 2840,
       "name": "PV installation detail monthly balance",
       "from": "PV installation detail tables",
       "verb": "has a",
       "to": "month"
     },
     {
-      "id": 2867,
+      "id": 2876,
       "name": "PV installation detail monthly balance label",
       "description": "Monthly energy balance, average year",
       "from": "PV installation detail monthly balance",
@@ -2140,14 +2152,14 @@
       "to": "calculator label"
     },
     {
-      "id": 2868,
+      "id": 2877,
       "name": "PV installation detail column PV production",
       "from": "PV installation detail monthly balance",
       "verb": "has a",
       "to": "PV production"
     },
     {
-      "id": 2903,
+      "id": 2912,
       "name": "PV installation detail column PV production label",
       "description": "PV kWh",
       "from": "PV installation detail column PV production",
@@ -2155,14 +2167,14 @@
       "to": "calculator label"
     },
     {
-      "id": 2869,
+      "id": 2878,
       "name": "PV installation detail column household consumption",
       "from": "PV installation detail monthly balance",
       "verb": "has a",
       "to": "household consumption"
     },
     {
-      "id": 2904,
+      "id": 2913,
       "name": "PV installation detail column household consumption label",
       "description": "Load kWh",
       "from": "PV installation detail column household consumption",
@@ -2170,21 +2182,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2905,
+      "id": 2914,
       "name": "PV installation detail column household consumption order",
       "from": "PV installation detail column household consumption",
       "verb": "is follower of",
       "to": "PV installation detail column PV production"
     },
     {
-      "id": 2870,
+      "id": 2879,
       "name": "PV installation detail column direct use",
       "from": "PV installation detail monthly balance",
       "verb": "has a",
       "to": "direct use"
     },
     {
-      "id": 2906,
+      "id": 2915,
       "name": "PV installation detail column direct use label",
       "description": "Direct",
       "from": "PV installation detail column direct use",
@@ -2192,21 +2204,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2907,
+      "id": 2916,
       "name": "PV installation detail column direct use order",
       "from": "PV installation detail column direct use",
       "verb": "is follower of",
       "to": "PV installation detail column household consumption"
     },
     {
-      "id": 2871,
+      "id": 2880,
       "name": "PV installation detail column battery discharge",
       "from": "PV installation detail monthly balance",
       "verb": "has a",
       "to": "battery discharge"
     },
     {
-      "id": 2908,
+      "id": 2917,
       "name": "PV installation detail column battery discharge label",
       "description": "Battery",
       "from": "PV installation detail column battery discharge",
@@ -2214,49 +2226,49 @@
       "to": "calculator label"
     },
     {
-      "id": 2909,
+      "id": 2918,
       "name": "PV installation detail column battery discharge order",
       "from": "PV installation detail column battery discharge",
       "verb": "is follower of",
       "to": "PV installation detail column direct use"
     },
     {
-      "id": 2872,
+      "id": 2881,
       "name": "PV installation detail column export",
       "from": "PV installation detail monthly balance",
       "verb": "has a",
       "to": "export"
     },
     {
-      "id": 2910,
+      "id": 2919,
       "name": "PV installation detail column export order",
       "from": "PV installation detail column export",
       "verb": "is follower of",
       "to": "PV installation detail column battery discharge"
     },
     {
-      "id": 2873,
+      "id": 2882,
       "name": "PV installation detail column grid import",
       "from": "PV installation detail monthly balance",
       "verb": "has a",
       "to": "grid import"
     },
     {
-      "id": 2911,
+      "id": 2920,
       "name": "PV installation detail column grid import order",
       "from": "PV installation detail column grid import",
       "verb": "is follower of",
       "to": "PV installation detail column export"
     },
     {
-      "id": 2874,
+      "id": 2883,
       "name": "PV installation detail column consumption mix",
       "from": "PV installation detail monthly balance",
       "verb": "has a",
       "to": "consumption mix"
     },
     {
-      "id": 2912,
+      "id": 2921,
       "name": "PV installation detail column consumption mix label",
       "description": "CH mix g/kWh",
       "from": "PV installation detail column consumption mix",
@@ -2264,21 +2276,21 @@
       "to": "calculator label"
     },
     {
-      "id": 2913,
+      "id": 2922,
       "name": "PV installation detail column consumption mix order",
       "from": "PV installation detail column consumption mix",
       "verb": "is follower of",
       "to": "PV installation detail column grid import"
     },
     {
-      "id": 2875,
+      "id": 2884,
       "name": "PV installation detail total",
       "from": "PV installation detail monthly balance",
       "verb": "with",
       "to": "annual"
     },
     {
-      "id": 2914,
+      "id": 2923,
       "name": "PV installation detail total label",
       "description": "Year",
       "from": "PV installation detail total",
@@ -2286,14 +2298,14 @@
       "to": "calculator label"
     },
     {
-      "id": 2915,
+      "id": 2924,
       "name": "PV installation detail total highlight",
       "from": "PV installation detail total",
       "verb": "has a",
       "to": "calculator highlight"
     },
     {
-      "id": 2916,
+      "id": 2925,
       "name": "PV installation detail column consumption mix unit",
       "description": "the column shows the mix in gram per kWh and not the net avoided emission or the battery effect, which name the consumption mix too",
       "from": "PV installation detail column consumption mix",
@@ -2301,7 +2313,7 @@
       "to": "gram per kWh"
     },
     {
-      "id": 2739,
+      "id": 2746,
       "name": "kilowatthours per year",
       "description": "the unit of an annual electricity amount e.g. the household consumption",
       "from": "kWh",
@@ -2310,13 +2322,13 @@
       "type": "measure_unit"
     },
     {
-      "id": 2789,
+      "id": 2797,
       "from": "kWh/a",
       "verb": "is symbol for",
       "to": "kilowatthours per year"
     },
     {
-      "id": 2740,
+      "id": 2747,
       "name": "kilowatthours per kilowatt peak and year",
       "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
       "from": "kWh per kWp",
@@ -2325,13 +2337,43 @@
       "type": "measure_unit"
     },
     {
-      "id": 2790,
+      "id": 2798,
       "from": "kWh/kWp·a",
       "verb": "is symbol for",
       "to": "kilowatthours per kilowatt peak and year"
     },
     {
-      "id": 2741,
+      "id": 2707,
+      "name": "lithium-ion cell",
+      "description": "the battery cells alone, without the housing, the inverter and the control of a home storage system",
+      "from": "cell",
+      "verb": "kind of",
+      "to": "lithium-ion"
+    },
+    {
+      "id": 2708,
+      "name": "storage system",
+      "from": "system",
+      "verb": "of",
+      "to": "storage"
+    },
+    {
+      "id": 2753,
+      "name": "home storage system",
+      "description": "a complete stationary battery of a house with the cells, the housing, the inverter and the control",
+      "from": "storage system",
+      "verb": "of",
+      "to": "home"
+    },
+    {
+      "id": 2748,
+      "name": "duration unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "duration"
+    },
+    {
+      "id": 2799,
       "name": "year (duration unit)",
       "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
       "from": "year",
@@ -2340,13 +2382,13 @@
       "type": "measure_unit"
     },
     {
-      "id": 2791,
+      "id": 2841,
       "from": "a",
       "verb": "is symbol for",
       "to": "year (duration unit)"
     },
     {
-      "id": 2742,
+      "id": 2749,
       "name": "share (ratio)",
       "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
       "from": "share",
@@ -2355,19 +2397,19 @@
       "type": "percent"
     },
     {
-      "id": 2792,
+      "id": 2800,
       "from": "share",
       "verb": "is symbol for",
       "to": "share (ratio)"
     },
     {
-      "id": 2743,
+      "id": 2750,
       "from": "g/kWh",
       "verb": "is symbol for",
       "to": "gram per kWh"
     },
     {
-      "id": 2793,
+      "id": 2801,
       "from": "kg/kWh",
       "verb": "is symbol for",
       "to": "kg per kWh"
@@ -2381,7 +2423,7 @@
       "description": "the highest number that the field accepts"
     },
     {
-      "id": 2744,
+      "id": 2751,
       "name": "consumption mix input year",
       "description": "the Swiss consumption mix of the page is the annual mix of 2018 and not the monthly mix or the avoided emission of another use case",
       "from": "consumption mix",
@@ -2389,14 +2431,14 @@
       "to": "2018"
     },
     {
-      "id": 2794,
+      "id": 2802,
       "name": "consumption mix field value phrase",
       "from": "consumption mix input year",
       "verb": "can be",
       "to": "field value phrases"
     },
     {
-      "id": 2745,
+      "id": 2752,
       "name": "PV in Switzerland input year",
       "description": "the life cycle emission of the page is the 2023 update and not the 2018 figure of KBOB",
       "from": "PV in Switzerland",
@@ -2404,14 +2446,14 @@
       "to": "2023"
     },
     {
-      "id": 2795,
+      "id": 2803,
       "name": "PV in Switzerland field value phrase",
       "from": "PV in Switzerland input year",
       "verb": "can be",
       "to": "field value phrases"
     },
     {
-      "id": 2796,
+      "id": 2804,
       "name": "production mix order",
       "description": "the residual mix is the first option of the replacement mix selector",
       "from": "production mix",
@@ -2419,7 +2461,7 @@
       "to": "residual mix"
     },
     {
-      "id": 2876,
+      "id": 2885,
       "name": "PV installation assumption PV yield hint",
       "description": "Lifetime average incl. 0.7 %/a degradation",
       "from": "PV installation assumption PV yield",
@@ -2427,7 +2469,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2877,
+      "id": 2886,
       "name": "PV installation assumption lifetime hint",
       "description": "Reference lifetime used in the LCA",
       "from": "PV installation assumption lifetime",
@@ -2435,7 +2477,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2878,
+      "id": 2887,
       "name": "PV installation assumption PV in Switzerland hint",
       "description": "Swiss 3 kWp mono-Si pitched roof, 2023 update; converted to a fixed amount per kWp",
       "from": "PV installation assumption PV in Switzerland",
@@ -2443,7 +2485,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2879,
+      "id": 2888,
       "name": "PV installation assumption consumption mix hint",
       "description": "2018 consumer mix, low voltage",
       "from": "PV installation assumption consumption mix",
@@ -2451,7 +2493,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2880,
+      "id": 2889,
       "name": "PV installation assumption day share hint",
       "description": "Household; raise for home office or a heat pump running at noon",
       "from": "PV installation assumption day share",
@@ -2459,7 +2501,7 @@
       "to": "calculator hint"
     },
     {
-      "id": 2881,
+      "id": 2890,
       "name": "PV installation assumption battery production emission hint",
       "description": "Literature spans ~37–212 kg CO₂-eq per kWh capacity",
       "from": "PV installation assumption battery production emission",
@@ -2983,7 +3025,7 @@
   ],
   "values": [
     {
-      "id": 513693286521277114,
+      "id": 513693286521735874,
       "words": [
         "example PV installation",
         "PV capacity",
@@ -2994,7 +3036,7 @@
       "description": "the system size, the first input of the page; 10 kWp is a typical single family roof"
     },
     {
-      "id": 95139068439726778,
+      "id": 95139068440185538,
       "words": [
         "example PV installation",
         "battery capacity",
@@ -3005,7 +3047,7 @@
       "description": "the usable battery capacity, the third input of the page; set it to 0 for an installation without battery"
     },
     {
-      "id": "eu-en-eX-2j+3G+",
+      "id": "f0-eu-ee-2j+3G+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -3017,7 +3059,7 @@
       "description": "the local electricity consumption, the fourth input of the page; 4500 kWh is a typical Swiss family household without heat pump or electric car"
     },
     {
-      "id": 9040916679320,
+      "id": 9028031777439,
       "words": [
         "yield factor",
         "south",
@@ -3028,7 +3070,7 @@
       "description": "the best case, the reference of the factor"
     },
     {
-      "id": 9045211646616,
+      "id": 9032326744735,
       "words": [
         "yield factor",
         "south-east",
@@ -3039,7 +3081,7 @@
       "description": "30 degree tilt facing south-east"
     },
     {
-      "id": 9049506613912,
+      "id": 9036621712031,
       "words": [
         "yield factor",
         "south-west",
@@ -3050,7 +3092,7 @@
       "description": "30 degree tilt facing south-west"
     },
     {
-      "id": 9053801581208,
+      "id": 9040916679327,
       "words": [
         "yield factor",
         "east",
@@ -3061,7 +3103,7 @@
       "description": "30 degree tilt facing east"
     },
     {
-      "id": 9058096548504,
+      "id": 9045211646623,
       "words": [
         "yield factor",
         "west",
@@ -3072,7 +3114,7 @@
       "description": "30 degree tilt facing west"
     },
     {
-      "id": 9062391515800,
+      "id": 9049506613919,
       "words": [
         "yield factor",
         "north",
@@ -3083,7 +3125,7 @@
       "description": "30 degree tilt facing north"
     },
     {
-      "id": 7821145967256,
+      "id": 7821145967263,
       "words": [
         "yield factor",
         "horizontal",
@@ -3094,7 +3136,7 @@
       "description": "flat roof without tilt"
     },
     {
-      "id": 689520020121,
+      "id": 689520478880,
       "words": [
         "yield factor",
         "east-west",
@@ -3105,7 +3147,7 @@
       "description": "half east, half west with a flat tilt of 10 to 15 degree, the usual flat roof layout; the orientation of the example installation, the second input of the page"
     },
     {
-      "id": 193656087633693364,
+      "id": 193656087633693371,
       "words": [
         "PV yield",
         "annual",
@@ -3117,7 +3159,7 @@
       "description": "the lifetime average annual yield of the reference system, a pitched roof facing south in Switzerland, including the linear degradation of 0.7 percent per year"
     },
     {
-      "id": 3532787714741,
+      "id": 3532788173551,
       "words": [
         "PV installation",
         "lifetime",
@@ -3171,7 +3213,7 @@
       "description": "the European production mix of 2022 as the alternative replacement mix: the midpoint of the monthly range of about 350 (May) to 440 (September) g CO2-eq per kWh"
     },
     {
-      "id": "eD-Tf-Te-Dc+Oi+Q5+",
+      "id": "eK-Tf-Te-Dc+Oi+Q5+",
       "words": [
         "Europe",
         "electricity",
@@ -3185,7 +3227,7 @@
       "description": "the European residual mix that Swissolar uses as the replacement mix for the CO2 saving of PV; the European production mix 2022 of treeze is lower, 350 to 440 g per month"
     },
     {
-      "id": "ed-Tf-Ta-0e+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0e+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3201,7 +3243,7 @@
       "description": "monthly mean of the five years 2018 to 2022 at low voltage, table 5.1; the twelve values are the base of the PV-weighted consumption mix"
     },
     {
-      "id": "ed-Tf-Ta-0f+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0f+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3216,7 +3258,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0g+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0g+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3231,7 +3273,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0h+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0h+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3246,7 +3288,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0i+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0i+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3261,7 +3303,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0j+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0j+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3276,7 +3318,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0k+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0k+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3291,7 +3333,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0l+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0l+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3306,7 +3348,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0m+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0m+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3321,7 +3363,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0n+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0n+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3336,7 +3378,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0o+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0o+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3351,7 +3393,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "ed-Tf-Ta-0p+1R+Dc+Q5+Uj+",
+      "id": "ek-Tf-Ta-0p+1R+Dc+Q5+Ug+",
       "words": [
         "Switzerland",
         "electricity",
@@ -3366,7 +3408,7 @@
       "source": "Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)"
     },
     {
-      "id": "eu-eq-eb-eX-3G+",
+      "id": "f0-ex-ei-ee-3G+",
       "words": [
         "example PV installation",
         "day share",
@@ -3378,7 +3420,7 @@
       "description": "the share of the household consumption that falls into the hours with PV production; a household where nobody is at home during the day, higher with home office or a heat pump running at noon"
     },
     {
-      "id": "eu-eq-eb-eX-3G+3J+",
+      "id": "f0-ex-ei-ee-3G+3J+",
       "words": [
         "example PV installation",
         "day share",
@@ -3391,7 +3433,7 @@
       "description": "a rough split, the hourly profile of a household is well known but varies a lot between households"
     },
     {
-      "id": 590254480186903222,
+      "id": 589410055257230013,
       "words": [
         "battery",
         "round-trip efficiency",
@@ -3402,7 +3444,7 @@
       "description": "the usual system efficiency of a lithium-ion home storage incl. the inverter losses"
     },
     {
-      "id": "eq-eT-3G+3J+Ul+",
+      "id": "ex-ea-3G+3J+Ui+",
       "words": [
         "battery",
         "round-trip efficiency",
@@ -3414,7 +3456,7 @@
       "description": "manufacturers state 90 to 95 percent for the cells, measured systems reach 80 to 92 percent"
     },
     {
-      "id": 590254480186313378,
+      "id": 589410055256640169,
       "words": [
         "battery",
         "battery production emission",
@@ -3425,7 +3467,7 @@
       "description": "the middle of the literature: cells alone 37 to 92 kg per kWh, a complete home storage system in the HTW study 212 kg per kWh"
     },
     {
-      "id": "eW-0U+3G+3J+Ul+",
+      "id": "ed-0U+3G+3J+Ui+",
       "words": [
         "battery",
         "battery production emission",
@@ -3461,7 +3503,7 @@
       "description": "the production of a complete lithium home storage system with housing, inverter and control, the upper end of the literature"
     },
     {
-      "id": 590254480187034293,
+      "id": 589410055257361135,
       "words": [
         "battery",
         "battery lifetime",
@@ -3472,7 +3514,7 @@
       "description": "a lithium-ion home storage with one cycle a day lasts 10 to 20 years"
     },
     {
-      "id": "eV-0U+3G+3J+Ul+",
+      "id": "ec-0U+3G+3J+Ui+",
       "words": [
         "battery",
         "battery lifetime",
@@ -3483,7 +3525,7 @@
       "number": "0.6"
     },
     {
-      "id": 1454024723130,
+      "id": 1454025181890,
       "words": [
         "example PV installation",
         "battery count",
@@ -3493,7 +3535,7 @@
       "description": "the lifetime of 30 years divided by the battery lifetime of 15 years, rounded up: the first battery and one replacement"
     },
     {
-      "id": "ec-eP-0U+0e+1R+3G+",
+      "id": "ej-eW-0U+0e+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3506,7 +3548,7 @@
       "description": "the share of the annual PV production that falls into the month, a typical profile for the Swiss plateau with winter fog; the twelve shares sum to 1"
     },
     {
-      "id": "ec-eP-0U+0f+1R+3G+",
+      "id": "ej-eW-0U+0f+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3518,7 +3560,7 @@
       "number": "0.05"
     },
     {
-      "id": "ec-eP-0U+0g+1R+3G+",
+      "id": "ej-eW-0U+0g+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3530,7 +3572,7 @@
       "number": "0.08"
     },
     {
-      "id": "ec-eP-0U+0h+1R+3G+",
+      "id": "ej-eW-0U+0h+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3542,7 +3584,7 @@
       "number": "0.11"
     },
     {
-      "id": "ec-eP-0U+0i+1R+3G+",
+      "id": "ej-eW-0U+0i+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3554,7 +3596,7 @@
       "number": "0.13"
     },
     {
-      "id": "ec-eP-0U+0j+1R+3G+",
+      "id": "ej-eW-0U+0j+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3566,7 +3608,7 @@
       "number": "0.13"
     },
     {
-      "id": "ec-eP-0U+0k+1R+3G+",
+      "id": "ej-eW-0U+0k+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3578,7 +3620,7 @@
       "number": "0.14"
     },
     {
-      "id": "ec-eP-0U+0l+1R+3G+",
+      "id": "ej-eW-0U+0l+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3590,7 +3632,7 @@
       "number": "0.12"
     },
     {
-      "id": "ec-eP-0U+0m+1R+3G+",
+      "id": "ej-eW-0U+0m+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3602,7 +3644,7 @@
       "number": "0.1"
     },
     {
-      "id": "ec-eP-0U+0n+1R+3G+",
+      "id": "ej-eW-0U+0n+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3614,7 +3656,7 @@
       "number": "0.07"
     },
     {
-      "id": "ec-eP-0U+0o+1R+3G+",
+      "id": "ej-eW-0U+0o+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3626,7 +3668,7 @@
       "number": "0.04"
     },
     {
-      "id": "ec-eP-0U+0p+1R+3G+",
+      "id": "ej-eW-0U+0p+1R+3G+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3638,7 +3680,7 @@
       "number": "0.03"
     },
     {
-      "id": "ec-eP-0U+1R+3G+3J+",
+      "id": "ej-eW-0U+1R+3G+3J+",
       "words": [
         "Switzerland",
         "PV production",
@@ -3651,7 +3693,7 @@
       "description": "the seasonal shape is well known from PVGIS, the exact shares depend on the place and the year"
     },
     {
-      "id": "ec-eX-0U+0e+1R+3G+",
+      "id": "ej-ee-0U+0e+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3664,7 +3706,7 @@
       "description": "the share of the annual household consumption that falls into the month, more in winter for light and heating pumps; the twelve shares sum to 1"
     },
     {
-      "id": "ec-eX-0U+0f+1R+3G+",
+      "id": "ej-ee-0U+0f+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3676,7 +3718,7 @@
       "number": "0.09"
     },
     {
-      "id": "ec-eX-0U+0g+1R+3G+",
+      "id": "ej-ee-0U+0g+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3688,7 +3730,7 @@
       "number": "0.09"
     },
     {
-      "id": "ec-eX-0U+0h+1R+3G+",
+      "id": "ej-ee-0U+0h+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3700,7 +3742,7 @@
       "number": "0.08"
     },
     {
-      "id": "ec-eX-0U+0i+1R+3G+",
+      "id": "ej-ee-0U+0i+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3712,7 +3754,7 @@
       "number": "0.08"
     },
     {
-      "id": "ec-eX-0U+0j+1R+3G+",
+      "id": "ej-ee-0U+0j+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3724,7 +3766,7 @@
       "number": "0.07"
     },
     {
-      "id": "ec-eX-0U+0k+1R+3G+",
+      "id": "ej-ee-0U+0k+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3736,7 +3778,7 @@
       "number": "0.07"
     },
     {
-      "id": "ec-eX-0U+0l+1R+3G+",
+      "id": "ej-ee-0U+0l+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3748,7 +3790,7 @@
       "number": "0.07"
     },
     {
-      "id": "ec-eX-0U+0m+1R+3G+",
+      "id": "ej-ee-0U+0m+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3760,7 +3802,7 @@
       "number": "0.08"
     },
     {
-      "id": "ec-eX-0U+0n+1R+3G+",
+      "id": "ej-ee-0U+0n+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3772,7 +3814,7 @@
       "number": "0.09"
     },
     {
-      "id": "ec-eX-0U+0o+1R+3G+",
+      "id": "ej-ee-0U+0o+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3784,7 +3826,7 @@
       "number": "0.1"
     },
     {
-      "id": "ec-eX-0U+0p+1R+3G+",
+      "id": "ej-ee-0U+0p+1R+3G+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3796,7 +3838,7 @@
       "number": "0.1"
     },
     {
-      "id": "ec-eX-0U+1R+3G+3J+",
+      "id": "ej-ee-0U+1R+3G+3J+",
       "words": [
         "Switzerland",
         "household consumption",
@@ -3808,7 +3850,7 @@
       "number": "0.6"
     },
     {
-      "id": "eu-eY-/u+2j+3W+",
+      "id": "f0-ef-/u+2j+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -3820,7 +3862,7 @@
       "description": "monthly dispatch of the page: in each month the direct use is the smaller of the PV production and the day share of the consumption, the battery charge is the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; this needs a minimum function that the zukunft.com formulas do not have, so the annual sum is stored as a modelled value"
     },
     {
-      "id": "eu-eR-/u+2j+3W+",
+      "id": "f0-eY-/u+2j+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -3832,7 +3874,7 @@
       "description": "the annual sum of the monthly battery charge of the dispatch described at the direct use"
     },
     {
-      "id": "eu-ed-eE-Tf-3W+Q5+Uj+",
+      "id": "f0-ek-eL-Tf-3W+Q5+Ug+",
       "words": [
         "example PV installation",
         "PV-weighted consumption mix",
@@ -3846,7 +3888,7 @@
       "description": "the sum over the twelve months of the delivered PV electricity times the monthly Swiss consumption mix, divided by the annual delivered electricity; a weighted mean of the twelve monthly values above with the monthly dispatch of the page as the weight"
     },
     {
-      "id": 2320796314,
+      "id": 2320796321,
       "words": [
         "PV capacity",
         "field limit down"
@@ -3855,7 +3897,7 @@
       "description": "the smallest PV installation the page accepts"
     },
     {
-      "id": 2320861850,
+      "id": 2320861857,
       "words": [
         "PV capacity",
         "field step"
@@ -3864,7 +3906,7 @@
       "description": "the PV capacity is entered in half kWp steps"
     },
     {
-      "id": 2320796316,
+      "id": 2320796323,
       "words": [
         "battery capacity",
         "field limit down"
@@ -3873,7 +3915,7 @@
       "description": "no battery is a valid input"
     },
     {
-      "id": 2320861852,
+      "id": 2320861859,
       "words": [
         "battery capacity",
         "field step"
@@ -3882,7 +3924,7 @@
       "description": "the battery capacity is entered in kWh steps"
     },
     {
-      "id": 2320796323,
+      "id": 2320796330,
       "words": [
         "household consumption",
         "field limit down"
@@ -3891,7 +3933,7 @@
       "description": "a household without consumption is a valid input, then every kWh is exported"
     },
     {
-      "id": 2320861859,
+      "id": 2320861866,
       "words": [
         "household consumption",
         "field step"
@@ -3935,7 +3977,7 @@
       "description": "the consumption mix is entered in gram per kWh"
     },
     {
-      "id": 2320796327,
+      "id": 2320796334,
       "words": [
         "day share",
         "field limit down"
@@ -3944,7 +3986,7 @@
       "description": "a household without consumption during the PV hours"
     },
     {
-      "id": 2320730791,
+      "id": 2320730798,
       "words": [
         "day share",
         "field limit up"
@@ -3953,7 +3995,7 @@
       "description": "the whole consumption during the PV hours"
     },
     {
-      "id": 2320861863,
+      "id": 2320861870,
       "words": [
         "day share",
         "field step"
@@ -3962,7 +4004,7 @@
       "description": "the day share is entered in steps of five percent"
     },
     {
-      "id": 2320861855,
+      "id": 2320861862,
       "words": [
         "round-trip efficiency",
         "field step"
@@ -3971,7 +4013,7 @@
       "description": "the round-trip efficiency is entered in steps of one percent"
     },
     {
-      "id": 2320861858,
+      "id": 2320861865,
       "words": [
         "battery production emission",
         "field step"
@@ -3980,7 +4022,7 @@
       "description": "the battery production emission is entered in steps of 5 kg per kWh"
     },
     {
-      "id": 2320861857,
+      "id": 2320861864,
       "words": [
         "battery lifetime",
         "field step"
@@ -3989,7 +4031,7 @@
       "description": "the battery lifetime is entered in years"
     },
     {
-      "id": "eu-eP-/u+0e+3W+",
+      "id": "f0-eW-/u+0e+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4001,7 +4043,7 @@
       "description": "the monthly dispatch of the page as described at the annual direct use: the PV production of a month is the annual production times the monthly share of the PV production, the household consumption the annual consumption times its monthly share, the direct use the smaller of the PV production and the day share of the consumption, the battery charge the smallest of the surplus, one full battery cycle per day and the night consumption divided by the round-trip efficiency; stored as modelled values, because the dispatch needs a minimum function; the battery discharge, the export and the grid import of a month are results of the formulas"
     },
     {
-      "id": "eu-eX-/u+0e+3W+",
+      "id": "f0-ee-/u+0e+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4012,7 +4054,7 @@
       "number": "450"
     },
     {
-      "id": "eu-eY-/u+0e+3W+",
+      "id": "f0-ef-/u+0e+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4023,7 +4065,7 @@
       "number": "157.5"
     },
     {
-      "id": "eu-eR-/u+0e+3W+",
+      "id": "f0-eY-/u+0e+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4034,7 +4076,7 @@
       "number": "49.9"
     },
     {
-      "id": "eu-eP-/u+0f+3W+",
+      "id": "f0-eW-/u+0f+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4045,7 +4087,7 @@
       "number": "373.32"
     },
     {
-      "id": "eu-eX-/u+0f+3W+",
+      "id": "f0-ee-/u+0f+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4056,7 +4098,7 @@
       "number": "405"
     },
     {
-      "id": "eu-eY-/u+0f+3W+",
+      "id": "f0-ef-/u+0f+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4067,7 +4109,7 @@
       "number": "141.75"
     },
     {
-      "id": "eu-eR-/u+0f+3W+",
+      "id": "f0-eY-/u+0f+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4078,7 +4120,7 @@
       "number": "231.57"
     },
     {
-      "id": "eu-eP-/u+0g+3W+",
+      "id": "f0-eW-/u+0g+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4089,7 +4131,7 @@
       "number": "663.68"
     },
     {
-      "id": "eu-eX-/u+0g+3W+",
+      "id": "f0-ee-/u+0g+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4100,7 +4142,7 @@
       "number": "405"
     },
     {
-      "id": "eu-eY-/u+0g+3W+",
+      "id": "f0-ef-/u+0g+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4111,7 +4153,7 @@
       "number": "141.75"
     },
     {
-      "id": "eu-eR-/u+0g+3W+",
+      "id": "f0-eY-/u+0g+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4122,7 +4164,7 @@
       "number": "292.5"
     },
     {
-      "id": "eu-eP-/u+0h+3W+",
+      "id": "f0-eW-/u+0h+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4133,7 +4175,7 @@
       "number": "912.56"
     },
     {
-      "id": "eu-eX-/u+0h+3W+",
+      "id": "f0-ee-/u+0h+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4144,7 +4186,7 @@
       "number": "360"
     },
     {
-      "id": "eu-eY-/u+0h+3W+",
+      "id": "f0-ef-/u+0h+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4155,7 +4197,7 @@
       "number": "126"
     },
     {
-      "id": "eu-eR-/u+0h+3W+",
+      "id": "f0-eY-/u+0h+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4166,7 +4208,7 @@
       "number": "260"
     },
     {
-      "id": "eu-eP-/u+0i+3W+",
+      "id": "f0-eW-/u+0i+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4177,7 +4219,7 @@
       "number": "1037"
     },
     {
-      "id": "eu-eX-/u+0i+3W+",
+      "id": "f0-ee-/u+0i+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4188,7 +4230,7 @@
       "number": "337.5"
     },
     {
-      "id": "eu-eY-/u+0i+3W+",
+      "id": "f0-ef-/u+0i+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4199,7 +4241,7 @@
       "number": "118.125"
     },
     {
-      "id": "eu-eR-/u+0i+3W+",
+      "id": "f0-eY-/u+0i+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4210,7 +4252,7 @@
       "number": "243.75"
     },
     {
-      "id": "eu-eP-/u+0j+3W+",
+      "id": "f0-eW-/u+0j+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4221,7 +4263,7 @@
       "number": "1078.48"
     },
     {
-      "id": "eu-eX-/u+0j+3W+",
+      "id": "f0-ee-/u+0j+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4232,7 +4274,7 @@
       "number": "315"
     },
     {
-      "id": "eu-eY-/u+0j+3W+",
+      "id": "f0-ef-/u+0j+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4243,7 +4285,7 @@
       "number": "110.25"
     },
     {
-      "id": "eu-eR-/u+0j+3W+",
+      "id": "f0-eY-/u+0j+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4254,7 +4296,7 @@
       "number": "227.5"
     },
     {
-      "id": "eu-eP-/u+0k+3W+",
+      "id": "f0-eW-/u+0k+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4265,7 +4307,7 @@
       "number": "1119.96"
     },
     {
-      "id": "eu-eX-/u+0k+3W+",
+      "id": "f0-ee-/u+0k+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4276,7 +4318,7 @@
       "number": "315"
     },
     {
-      "id": "eu-eY-/u+0k+3W+",
+      "id": "f0-ef-/u+0k+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4287,7 +4329,7 @@
       "number": "110.25"
     },
     {
-      "id": "eu-eR-/u+0k+3W+",
+      "id": "f0-eY-/u+0k+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4298,7 +4340,7 @@
       "number": "227.5"
     },
     {
-      "id": "eu-eP-/u+0l+3W+",
+      "id": "f0-eW-/u+0l+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4309,7 +4351,7 @@
       "number": "995.52"
     },
     {
-      "id": "eu-eX-/u+0l+3W+",
+      "id": "f0-ee-/u+0l+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4320,7 +4362,7 @@
       "number": "315"
     },
     {
-      "id": "eu-eY-/u+0l+3W+",
+      "id": "f0-ef-/u+0l+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4331,7 +4373,7 @@
       "number": "110.25"
     },
     {
-      "id": "eu-eR-/u+0l+3W+",
+      "id": "f0-eY-/u+0l+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4342,7 +4384,7 @@
       "number": "227.5"
     },
     {
-      "id": "eu-eP-/u+0m+3W+",
+      "id": "f0-eW-/u+0m+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4353,7 +4395,7 @@
       "number": "829.6"
     },
     {
-      "id": "eu-eX-/u+0m+3W+",
+      "id": "f0-ee-/u+0m+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4364,7 +4406,7 @@
       "number": "337.5"
     },
     {
-      "id": "eu-eY-/u+0m+3W+",
+      "id": "f0-ef-/u+0m+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4375,7 +4417,7 @@
       "number": "118.125"
     },
     {
-      "id": "eu-eR-/u+0m+3W+",
+      "id": "f0-eY-/u+0m+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4386,7 +4428,7 @@
       "number": "243.75"
     },
     {
-      "id": "eu-eP-/u+0n+3W+",
+      "id": "f0-eW-/u+0n+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4397,7 +4439,7 @@
       "number": "580.72"
     },
     {
-      "id": "eu-eX-/u+0n+3W+",
+      "id": "f0-ee-/u+0n+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4408,7 +4450,7 @@
       "number": "382.5"
     },
     {
-      "id": "eu-eY-/u+0n+3W+",
+      "id": "f0-ef-/u+0n+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4419,7 +4461,7 @@
       "number": "133.875"
     },
     {
-      "id": "eu-eR-/u+0n+3W+",
+      "id": "f0-eY-/u+0n+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4430,7 +4472,7 @@
       "number": "276.25"
     },
     {
-      "id": "eu-eP-/u+0o+3W+",
+      "id": "f0-eW-/u+0o+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4441,7 +4483,7 @@
       "number": "290.36"
     },
     {
-      "id": "eu-eX-/u+0o+3W+",
+      "id": "f0-ee-/u+0o+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4452,7 +4494,7 @@
       "number": "427.5"
     },
     {
-      "id": "eu-eY-/u+0o+3W+",
+      "id": "f0-ef-/u+0o+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4463,7 +4505,7 @@
       "number": "149.625"
     },
     {
-      "id": "eu-eR-/u+0o+3W+",
+      "id": "f0-eY-/u+0o+3W+",
       "words": [
         "example PV installation",
         "battery charge",
@@ -4474,7 +4516,7 @@
       "number": "140.735"
     },
     {
-      "id": "eu-eP-/u+0p+3W+",
+      "id": "f0-eW-/u+0p+3W+",
       "words": [
         "example PV installation",
         "PV production",
@@ -4485,7 +4527,7 @@
       "number": "207.4"
     },
     {
-      "id": "eu-eX-/u+0p+3W+",
+      "id": "f0-ee-/u+0p+3W+",
       "words": [
         "example PV installation",
         "household consumption",
@@ -4496,7 +4538,7 @@
       "number": "450"
     },
     {
-      "id": "eu-eY-/u+0p+3W+",
+      "id": "f0-ef-/u+0p+3W+",
       "words": [
         "example PV installation",
         "direct use",
@@ -4507,7 +4549,7 @@
       "number": "157.5"
     },
     {
-      "id": "eu-eR-/u+0p+3W+",
+      "id": "f0-eY-/u+0p+3W+",
       "words": [
         "example PV installation",
         "battery charge",

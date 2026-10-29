@@ -231,6 +231,10 @@ class words
     const int PCT_ID = 160;
     // the qualifier of an estimate
     const string ASSUMED = 'assumed';
+    // the qualifier of the output of a model, e.g. a value that a formula cannot calculate
+    const string MODELLED = 'modelled';
+    // the qualifier of a stored number that a formula of the same file calculates
+    const string CALCULATED = 'calculated';
     // the word that tags the confidence that the range of a value contains the true value
     const string CONFIDENCE = 'confidence';
     // the qualifiers of a value that a table shows as the tooltip of the cell

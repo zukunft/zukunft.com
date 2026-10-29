@@ -588,8 +588,8 @@ class coding_rule_tests
 
     /**
      * verify that the source check of json_validation lists a measured value without a source
-     * and a source that the file does not define, but neither an assumed value nor a value with
-     * a defined source; the main data is only listed in docs/json_findings.md and not asserted,
+     * and a source that the file does not define, but neither an assumed, modelled or calculated value, a
+     * setting of an input field nor a value with a defined source; the main data is only listed in docs/json_findings.md and not asserted,
      * because many values still wait for their source
      *
      * @param test_cleanup $t the test environment
@@ -619,6 +619,23 @@ class coding_rule_tests
         $val[json_fields::WORDS] = [words::YEAR, words::CONFIDENCE];
         $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
         $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a modelled value without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::MODELLED];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a calculated value without a source is not listed';
+        $val[json_fields::WORDS] = [words::YEAR, words::CALCULATED];
+        $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+        $t->assert($test_name, array_keys($hits), []);
+
+        $test_name = 'a limit or a step of an input field without a source is not listed';
+        foreach ([triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP] as $fld_phr) {
+            $val[json_fields::WORDS] = [words::YEAR, $fld_phr];
+            $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
+            $t->assert($test_name, array_keys($hits), []);
+        }
 
         $test_name = 'a value with a source of the file is not listed';
         $val = [json_fields::WORDS => $phr_names, json_fields::SOURCE_NAME => sources::WIKIDATA];

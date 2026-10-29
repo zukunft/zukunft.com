@@ -155,12 +155,16 @@
       ]
     },
     {
-      "name": "lithium-ion cell",
-      "description": "the battery cells alone, without the housing, the inverter and the control of a home storage system"
+      "name": "lithium-ion"
     },
     {
-      "name": "home storage system",
-      "description": "a complete stationary battery of a house with the cells, the housing, the inverter and the control"
+      "name": "cell"
+    },
+    {
+      "name": "home"
+    },
+    {
+      "name": "storage"
     },
     {
       "name": "charge"
@@ -379,7 +383,10 @@
       "name": "kWh/kWp·a"
     },
     {
-      "name": "duration unit"
+      "name": "duration"
+    },
+    {
+      "name": "unit"
     },
     {
       "name": "a"
@@ -398,6 +405,26 @@
     }
   ],
   "triples": [
+    {
+      "name": "lithium-ion cell",
+      "description": "the battery cells alone, without the housing, the inverter and the control of a home storage system",
+      "from": "cell",
+      "verb": "kind of",
+      "to": "lithium-ion"
+    },
+    {
+      "name": "storage system",
+      "from": "system",
+      "verb": "of",
+      "to": "storage"
+    },
+    {
+      "name": "home storage system",
+      "description": "a complete stationary battery of a house with the cells, the housing, the inverter and the control",
+      "from": "storage system",
+      "verb": "of",
+      "to": "home"
+    },
     {
       "from": "PV",
       "verb": "is an acronym for",
@@ -667,8 +694,7 @@
       "name": "self-consumption share",
       "from": "share",
       "verb": "of",
-      "to": "self-consumption",
-      "description": "the share of the PV production that is used on site, directly or via the battery"
+      "to": "self-consumption"
     },
     {
       "name": "day share",
@@ -1882,6 +1908,12 @@
       "to": "kilowatthours per kilowatt peak and year"
     },
     {
+      "name": "duration unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "duration"
+    },
+    {
       "name": "year (duration unit)",
       "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
       "from": "year",
@@ -2243,7 +2275,6 @@
     },
     {
       "name": "Krebs & Frischknecht (treeze): Umweltbilanz Strommixe Schweiz 2018, for BAFU",
-      "description": "Krebs L., Frischknecht R. (treeze Ltd.): Umweltbilanz Strommixe Schweiz 2018, version 2.01, for the Swiss Federal Office for the Environment (BAFU). The Swiss consumer mix of 2018 at low voltage emits 128 g CO2-eq per kWh including the imports per hour.",
       "url": "https://www.bafu.admin.ch/dam/bafu/de/dokumente/klima/fachinfo-daten/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf.download.pdf/Umweltbilanz-Strommix-Schweiz-2018-v2.01.pdf"
     }
   ],

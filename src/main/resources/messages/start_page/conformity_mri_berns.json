@@ -121,8 +121,7 @@
       "description": "the true measured performance"
     },
     {
-      "name": "trial",
-      "description": "a single presentation and judgment cycle in the task"
+      "name": "trial"
     },
     {
       "name": "voxel",
@@ -281,8 +280,7 @@
       "description": "upper bound of a range"
     },
     {
-      "name": "x",
-      "description": "x stereotactic coordinate"
+      "name": "x"
     },
     {
       "name": "y",

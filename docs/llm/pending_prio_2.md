@@ -226,6 +226,16 @@ assign all values assigned to a symbol to the main word or triple but in the def
 
 if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
 
+check the words that a later file uses with another meaning than their home file (the first imported, which has the only description); if both meanings are needed, give the second one its own triple, e.g. "physical power" (power of physics), and use it in the later file:
+- `x`: the symbol of a factor (`scaling.json`) and a stereotactic coordinate next to `y` (`math.json`, `conformity_mri_berns.json`)
+- `power`: the energy per time in watt (`solution_prio.json`, also `math.json`, `physics.json`) and the result of raising a number to an exponent (`math_propagation_of_uncertainty.json`)
+- `factor`: how many times bigger one number is (`scaling.json`) and a circumstance that contributes to a result (`zurich_htp_impact.json`)
+- `adaptation`: the change of how people live and build for a changed climate (`problem_global_warming_reasons.json`) and a trait that increases the fitness of an organism (`biology.json`)
+- `trial`: a test of the performance or the effect of something (`solution_prio.json`) and a single presentation and judgment cycle of a task (`accounting.json`, `conformity_mri_berns.json`)
+- `measurement`: finding the size of a quantity by a unit (`solution_prio.json`) and running a study to estimate a factor (`fermi_internet_pro_contra.json`)
+- `self-consumption share`: the use at the time of the production (`pv_yield.json`) and the use on site directly or via the battery (`pv_lifetime_balance.json`)
+- `duration`: the average length of time a health condition lasts (`health.json`) and any length of time, e.g. in the triple `duration unit` of the use cases (`pv_lifetime_balance.json`, `ahv_vat_vote.json`, `share_buy_sell_abb.json`)
+
 the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
 
 ## use case

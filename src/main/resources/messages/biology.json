@@ -503,7 +503,6 @@
     },
     {
       "name": "adaptation",
-      "description": "a trait that increases the fitness of an organism in its environment",
       "refs": [
         {
           "name": "Adaptation",
