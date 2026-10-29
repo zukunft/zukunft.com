@@ -564,7 +564,9 @@ class config_tree
     /**
      * the selection of the light or the dark colours of the pages, which is posted as the number of
      * the setting e.g. 1 for light (see def::MODE_LIGHT); the mode 0 to follow the browser is shown as
-     * the "please select" entry of the selector, whose value is 0, so a save without a choice keeps it
+     * the "please select" entry of the selector, whose value is 0, so a save without a choice keeps it;
+     * a mode that is not in the list e.g. set in config.yaml is offered too, so that a save of the
+     * form never changes the mode unnoticed
      *
      * @param string $mode the number of the setting as text e.g. "1"
      * @return string the html code of the select
@@ -572,9 +574,13 @@ class config_tree
     function mode_select(string $mode): string
     {
         global $mtr;
+        $number = (int)$mode;
         $lst = [];
-        foreach (self::MODE_OPTIONS as $number => $label) {
-            $lst[$number] = $mtr->txt($label);
+        foreach (self::MODE_OPTIONS as $option => $label) {
+            $lst[$option] = $mtr->txt($label);
+        }
+        if ($this->is_unknown_mode($number)) {
+            $lst[$number] = (string)$number;
         }
         $sel = new html_selector();
         $sel->name = url_var::NUMERIC_VALUE;
@@ -583,8 +589,18 @@ class config_tree
         $sel->with_label = false;
         $sel->with_group = false;
         $sel->lst = $lst;
-        $sel->selected = (int)$mode;
+        $sel->selected = $number;
         return $sel->display();
+    }
+
+    /**
+     * @param int $number the number of the colour mode setting e.g. 3
+     * @return bool true if the mode is neither in MODE_OPTIONS nor the browser mode, which the selector
+     *              shows as its "please select" entry
+     */
+    private function is_unknown_mode(int $number): bool
+    {
+        return $number != def::MODE_BROWSER and !array_key_exists($number, self::MODE_OPTIONS);
     }
 
     /**

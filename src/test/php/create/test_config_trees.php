@@ -134,11 +134,15 @@ class test_config_trees
     const string FONT = words::FONT;
     const string FONT_VALUE = 'serif';
     const int FONT_ID = 15;
+    // a font of config.yaml that is not in the font selection, which the selection offers too
+    const string FONT_UNKNOWN = 'Arial';
     // the dark or light mode of the user, whose triple has the colour mode code id, so the tree offers
     // the selection of the light or the dark colours
     const string COLOUR_MODE = triples::COLOUR_MODE;
     const int COLOUR_MODE_VALUE = def::MODE_DARK;
     const int COLOUR_MODE_ID = 16;
+    // a mode number that is not in the mode selection, which the selection offers too
+    const int COLOUR_MODE_UNKNOWN = 3;
     // the code ids of the words and triples like in the database (see base_phrases.json)
     const array CODE_IDS = [
         self::FONT => words::FONT_CODE_ID,

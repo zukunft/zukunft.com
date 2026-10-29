@@ -259,7 +259,12 @@ class config_tree_ui_tests
         $font_input = html_base::NAME . '="' . url_var::VALUE_TEXT . '" ' . html_base::VALUE . '="' . test_config_trees::FONT_VALUE . '"';
         $t->assert_text_not_contains($test_name, $page_edit, $font_input);
         $test_name = '... but a font of config.yaml that is not in the list is offered too';
-        $t->assert_text_contains($test_name, $cft->font_select('Arial'), html_base::VALUE . '="Arial"');
+        $t->assert_text_contains($test_name, $cft->font_select(test_config_trees::FONT_UNKNOWN),
+            html_base::VALUE . '="' . test_config_trees::FONT_UNKNOWN . '"');
+        $test_name = '... and a mode of config.yaml that is not in the list too, so a save never changes it unnoticed';
+        $mode_unknown = (string)test_config_trees::COLOUR_MODE_UNKNOWN;
+        $t->assert_text_contains($test_name, $cft->mode_select($mode_unknown),
+            html_base::VALUE . '="' . $mode_unknown . '"  selected');
         $default_field = html_base::NAME . '="' . url_var::SET_DEFAULT . '" ' . html_base::VALUE . '="' . url_var::TRUE . '"';
         // negative: a normal user saves the own overwrite and never the default of all users
         $test_name = '... as the own overwrite';

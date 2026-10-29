@@ -699,7 +699,8 @@ bootstrap lists of fonts installed on the device (`config_tree::FONT_OPTIONS`);
 a font of `config.yaml` that is not in the list is offered too. The setting of the
 triple with `triples::COLOUR_MODE_CODE_ID` is a selection of "light color" and "dark
 color" (`config_tree::mode_select`, `config_tree::MODE_OPTIONS`), which saves 1 or 2
-(`def::MODE_LIGHT`, `def::MODE_DARK`) as the number of the setting.
+(`def::MODE_LIGHT`, `def::MODE_DARK`) as the number of the setting; a mode of
+`config.yaml` that is not in the list is offered too.
 
 ## "… more" is always a link that shows more
 
