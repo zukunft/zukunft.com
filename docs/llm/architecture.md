@@ -266,6 +266,10 @@ any object, but only the api answers that can show the changed object
 (`frontend::api_lists_outdated_by`), e.g. a changed source drops the value lists
 and a changed view none. An object class that is in neither of its two lists
 drops all api answers, so a new object type never leaves an outdated answer.
+The cached config is dropped only if the write can change it
+(`frontend::config_outdated_by`): a value that names the system configuration or
+has unknown phrases, a save of the settings page, and the object types that are not in
+`frontend::CONFIG_KEPT_BY`, e.g. a word, because its name is part of the cached config.
 
 **API layer**: Backend objects produce JSON via `api_json()` for the frontend.
 Frontend `web/` objects consume these via `api_mapper()`. Import/export JSON uses

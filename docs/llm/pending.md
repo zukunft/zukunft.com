@@ -1,9 +1,5 @@
 # pending - list of planned llm prompts with prio 1
 
-## keep the config cache on a write
-
-many save requests of a test run spend about 1.8 seconds on loading the config again: `db_map` 1.1 s, `db_read` 0.4 s, `load_sys_config` and `write_config_cache` in the time report of a confirmed workflow step, and some cleanup steps show a similar `db_read` of about 0.45 s. Keep the config cache unless the write changes the config. The estimate from one log of `test/test.php` is 60 to 75 of 1178 seconds, and a save in production should get faster too. The cause comes from the log only, so first check in the code why a write rebuilds the cache and which writes really change the config.
-
 ## prime group id within 2^53
 
 limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
