@@ -36,9 +36,10 @@ open points of the review:
 2. the open differences of the two snapshots: the server numbers the operand sources by the results
    in the preferred order of numbers (`sandbox_value::sorted`, first by the `impact`), which the
    phraseData answer does not carry, so the script numbers e.g. the monthly mixes of treeze 2025
-   before the Swissolar fact sheet 2024; and the option "production mix" of the replacement
-   mix selector has two equal values (395 g/kWh of Europe 2022 and 32.4 g/kWh of Switzerland 2018),
-   so the script leaves it out, which `pv_lifetime_balance.json` fixes by naming the option value
+   before the Swissolar fact sheet 2024; for the same reason a field whose value no result uses
+   and that two values fit equally shows the first value of the preferred order on the server,
+   while the script leaves the field empty with a warning (`onlyOne`), until the ranking of
+   point 5 is replaced; the use case fixes such a tie by naming the field value
 3. `system_page::CALC_EDITOR_SEED_ID` and `CALC_EDITOR_TYPES_ID` are also the ids of the calculator
    page, so a name without "editor" fits better (a rename is the developer's decision)
 4. the page object: the calculator view loads its phrase with the related objects
@@ -49,8 +50,9 @@ open points of the review:
 5. `calculator_json.js` repeats code: `evaluate` the arithmetic of `calculator.js`, `readJson` the
    big id handling of `calculator_editor.js`, the reader of the calculator triples and the layout
    the editor preview (`calculator_editor.js::previewPage`), and `fieldEntry` the ranking of
-   `ui_list::calculator_value`; share the script code in one file, and replace the ranking by a
-   plain match of the data: where two values fit a field equally, the use case gets the missing
+   `ui_list::calculator_value`; share the script code in one file, and replace the ranking after
+   the first rank, the value that a result of the page uses, which the formulas of the data decide,
+   by a plain match of the data: where two values fit a field equally, the use case gets the missing
    qualifier phrase or a calculator triple that names the used value, and a tie is reported by the
    calc validation of the use case
 6. `calculator_json.js` has no test, because the repository has no javascript runtime; one json

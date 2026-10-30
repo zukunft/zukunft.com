@@ -1897,6 +1897,16 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the request cache of the number note test: the calculation result test
+     *         with a note behind the unit of the number of the row inhabitants
+     */
+    function list_calculator_number_note_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        return $this->calculator_input_ui([...$t_trp->calculator_zh_result(), ...$t_trp->calculator_zh_number_note()]);
+    }
+
+    /**
      * @return phrase_list_ui the request cache of the proposed keyword test: the calculator input
      *         test with a triple from the inputs to a keyword that the page does not show yet
      */

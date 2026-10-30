@@ -210,6 +210,20 @@
       "code_id": "system_calculator_signed"
     },
     {
+      "name": "number note",
+      "from": "note",
+      "verb": "of",
+      "to": "number"
+    },
+    {
+      "name": "calculator number note",
+      "description": "text property: the description of a triple from a row to this keyword is a short note that the page shows behind the unit of the number in the label of the row e.g. PV-weighted",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "number note",
+      "code_id": "system_calculator_number_note"
+    },
+    {
       "name": "calculator repeat",
       "description": "PROPOSED NEW ELEMENT: field type: an input item with a triple to this keyword is shown once per instance with an add and a remove button e.g. the target weight of every child; the minimum and the maximum count are the values field limit down and field limit up of the triple to this keyword, the instances are the phrases that is a the item phrase e.g. first child portfolio, a new instance is named by the next ordinal word, and the result columns and the detail table columns of the repeated phrase follow the count; needs a repeat field and a dynamic column list in the frontend code",
       "from": "calculator (system)",

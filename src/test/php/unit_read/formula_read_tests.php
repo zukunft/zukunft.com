@@ -38,10 +38,14 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 include_once paths::SHARED_CONST . 'formulas.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
@@ -110,6 +114,25 @@ class formula_read_tests
         } else {
             log_err($ts . $test_name . ' failed');
         }
+
+        $t->subheader($ts . 'link reload');
+        // the delete log names the linked phrase and its sql function is created only once per name,
+        // so the phrase is reloaded also if the message already reports a problem of the request
+        $test_name = 'the phrase of a formula link is reloaded also if the message already reports a problem';
+        $frm_sec = $t_db->load_formula(formula_names::SCALE_TO_SEC);
+        $phr_min = new phrase($t->usr1);
+        $phr_min->load_by_name(word_names::MINUTE, $msg);
+        $lnk_id = new formula_link($t->usr1)->load_by_link($frm_sec, $phr_min, $msg);
+        $lnk = new formula_link($t->usr1);
+        $lnk->load_by_id($lnk_id, $msg);
+        $err_msg = new user_message($t->usr1);
+        $err_msg->add(msg_id::LOAD_FORMULA_BY_ID_FAILED, [msg_id::VAR_FORMULA => $frm_sec->dsp_id()]);
+        $lnk->reload_objects($err_msg);
+        $t->assert($test_name, $lnk->to_name(), word_names::MINUTE);
+        $test_name = 'a formula link loaded by id without a reload has no phrase name';
+        $lnk_raw = new formula_link($t->usr1);
+        $lnk_raw->load_by_id($lnk_id, $msg);
+        $t->assert_null($test_name, $lnk_raw->to_name());
 
         $t->subheader($ts . 'update latex');
         // the increase formula "percent" = ( "this" - "prior" ) / "prior" creates a fraction

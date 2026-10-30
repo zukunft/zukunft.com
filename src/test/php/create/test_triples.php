@@ -1754,6 +1754,29 @@ class test_triples extends test_objects
     }
 
     /**
+     * the triples that the number note test adds to the result test (calculator_zh_result): the
+     * keyword calculator number note and the note of the row inhabitants, which the label of the
+     * row shows behind the unit of its number
+     *
+     * @return triple[] the keyword and the note of the row
+     */
+    function calculator_zh_number_note(): array
+    {
+        $calc = [];
+        foreach ($this->calculator_zh() as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        $id = triple_names::CALC_NOTE_FIRST_ID;
+        $trp_kw = new triple($this->env->usr1);
+        $trp_kw->set($id--, triples::CALCULATOR_NUMBER_NOTE);
+        return [
+            $trp_kw,
+            $this->calc_triple($id, 'Zurich row inhabitants number note', $calc[triple_names::CALC_ZH_ROW_INHABITANTS]->phrase(),
+                new test_verbs($this->env)->verb_has(), $trp_kw, triple_names::CALC_INHABITANTS_NOTE_COM),
+        ];
+    }
+
+    /**
      * @return triple "calculator (system)" - the calculator keyword root, from which every keyword is a triple
      */
     private function calculator_root(): triple

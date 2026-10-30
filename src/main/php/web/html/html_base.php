@@ -2500,7 +2500,7 @@ class html_base
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
                 $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), $url_arr);
-                $result .= $this->ref($url, $this->esc($item->name()));
+                $result .= $this->ref($url, $item->name());
                 $result .= '<' . self::BR . '>';
             }
         }

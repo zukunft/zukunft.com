@@ -301,7 +301,10 @@ class formula_link_write_tests
 
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_RATIO, word_names::TEST_SHARE);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_SECTOR, word_names::TEST_SHARE);
-        $t_db->test_formula_link(formula_names::SYSTEM_TEST_ADD, words::YEAR_CAP);
+        // linked to its own input word and not to the seed word year, because the phrase data of a
+        // use case page with year e.g. the PV calculator would else show the test formula and its
+        // test words, whose ids depend on the tests that have run before
+        $t_db->test_formula_link(formula_names::SYSTEM_TEST_ADD, word_names::TEST_THIS);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_K, word_names::TEST_IN_K);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_TO_K, word_names::ONE);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_MIO, word_names::MIO);

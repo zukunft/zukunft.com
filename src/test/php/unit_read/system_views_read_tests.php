@@ -668,7 +668,7 @@ class system_views_read_tests
             $page = $brw->page_copy($page_html, test_files::PV_LIFETIME_BALANCE_CASES);
             $std_cells = '';
             foreach (test_files::PV_CASES as $case) {
-                $cells = $this->assert_pv_case($t, $brw, $sample, $page, $case);
+                $cells = $this->assert_pv_case($t, $brw, $sample, $page, $dir, $case);
                 if ($case == test_files::PV_CASE_STANDARD) {
                     $std_cells = $cells;
                 } else {
@@ -694,10 +694,18 @@ class system_views_read_tests
      * @param headless_browser $brw the started headless browser
      * @param string $sample the path of the sample copy with the case script
      * @param string $page the path of the generated page copy with the case script
+     * @param string $dir the use case folder of the snapshots, to which the report of the case is written
      * @param string $case the name of the case e.g. test_files::PV_CASE_HIGH
      * @return string the numbers of the PV production row of the generated page after the case
      */
-    private function assert_pv_case(test_cleanup $t, headless_browser $brw, string $sample, string $page, string $case): string
+    private function assert_pv_case(
+        test_cleanup     $t,
+        headless_browser $brw,
+        string           $sample,
+        string           $page,
+        string           $dir,
+        string           $case
+    ): string
     {
         $hpd = new html_page_diff();
         $sample_res = $this->pv_case($brw, $sample, $case);
@@ -713,7 +721,6 @@ class system_views_read_tests
         $sample_name = test_files::PV_LIFETIME_BALANCE_SAMPLE . test_files::HTML . '#' . $case;
         $page_name = test_files::PV_LIFETIME_BALANCE_JS . test_files::HTML . '#' . $case;
         $test_name = '... and the differences of the two pages are reported';
-        $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
         $t->assert_file($test_name, $hpd->report($sample_items, $page_items, $sample_name, $page_name),
             $dir . test_files::PV_CASE_DIFF_PREFIX . $case . test_files::MD, test_files::MD);
         $row = $page_items[self::PV_PRODUCTION_ROW] ?? [];

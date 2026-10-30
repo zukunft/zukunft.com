@@ -223,6 +223,15 @@ class calculator
     }
 
     /**
+     * @param phrase $item a row e.g. PV installation row saving PV-weighted mix
+     * @return string the note behind the unit of the number in the label of the row e.g. PV-weighted, else an empty string
+     */
+    function number_note(phrase $item): string
+    {
+        return $this->own_text($item, triples::CALCULATOR_NUMBER_NOTE) ?? '';
+    }
+
+    /**
      * @param phrase $item the item e.g. a row or a row group
      * @param string $flag the name of the flag keyword e.g. triples::CALCULATOR_HIGHLIGHT
      * @return bool true if the item, its phrase or the filter phrase of the item has the flag

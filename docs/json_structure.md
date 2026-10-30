@@ -76,6 +76,7 @@ is the `description` of that triple.
 | `calculator hint`      | the help text, e.g. the lead text or the text below a field |
 | `calculator highlight` | shows a row in bold as a key figure             |
 | `calculator signed`    | colours the positive and negative numbers of a row group |
+| `calculator number note` | a short note behind the unit of the number in a row label, e.g. PV-weighted |
 
 A text of an item is used on this page only. A text of a phrase is used on every
 page that shows the phrase, and the text of the item wins. Without any text, the

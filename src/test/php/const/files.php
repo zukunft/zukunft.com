@@ -79,6 +79,8 @@ class files
     CONST string PV_LIFETIME_BALANCE_JS = 'pv_lifetime_balance_js';
     // the hand made target layout of the PV calculator page, which no test changes
     CONST string PV_LIFETIME_BALANCE_SAMPLE = 'pv_lifetime_balance_sample';
+    // the end of the name of a hand made target page next to the page that a use case view renders
+    CONST string SAMPLE_SUFFIX = '_sample';
     // the differences of pv_lifetime_balance_no_js.html to the sample as a markdown prompt for an llm
     CONST string PV_LIFETIME_BALANCE_DIFF = 'pv_lifetime_balance_diff';
     // the input cases that a headless browser types into the sample and into pv_lifetime_balance_js.html, selected

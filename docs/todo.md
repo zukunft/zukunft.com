@@ -26,6 +26,10 @@ A proper issue ticket should be created for these TODOs notes:
     TODO add a Swiss NPP (AKW) sample
     TODO add translations for the pinned view e.g. NPP -> de: AKW
     TODO for CH AKW yes/no to top field is to vote yes or no based on the total price per kWh
+    TODO by default guess the location of the user e.g. to auto switch the language
+    TODO is the user is in Switzerland show in the navbar language menu the list of pinned languages related to the location e.g. de for Zurich, but with fr, it and romantsch as preferrend languages
+    TODO base on the location also adjust the pinned pages on the frontpage
+    TODO list in the admin dashboard the top urls call within the last day, week, month, year ; use for this a round robin table
     TODO create a list of the most important gaps in research
     TODO make the pinned views region specific
     TODO for ip users guess the region and show it in the user menu

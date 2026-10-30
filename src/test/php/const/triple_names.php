@@ -330,6 +330,9 @@ class triple_names
     // a proposed keyword, which the calculator does not show yet, but is a triple from the calculator keyword
     const string CALC_PROPOSED_KEYWORD = 'calculator download';
     const string CALC_ZH_INPUTS_DOWNLOAD = 'Zurich inputs download';
+    // the triples of the number note test, which follow the 2 other triples of the proposed keyword test
+    const int CALC_NOTE_FIRST_ID = 939;
+    const string CALC_INHABITANTS_NOTE_COM = 'by census';
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 201;
     // the minor and marginal columns of the ranking and the unit of the initial effort
@@ -586,9 +589,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2749;
+    const int SHARE_RATIO_ID = 2751;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2800;
+    const int SHARE_SYMBOL_ID = 2802;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

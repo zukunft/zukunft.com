@@ -389,6 +389,8 @@ class triples
     const string CALCULATOR_HIGHLIGHT_CODE_ID = 'system_calculator_highlight';
     const string CALCULATOR_SIGNED = 'calculator signed';
     const string CALCULATOR_SIGNED_CODE_ID = 'system_calculator_signed';
+    const string CALCULATOR_NUMBER_NOTE = 'calculator number note';
+    const string CALCULATOR_NUMBER_NOTE_CODE_ID = 'system_calculator_number_note';
     // the lists of a calculator page by their code id
     const array CALCULATOR_LISTS = [
         self::CALCULATOR_INPUT => self::CALCULATOR_INPUT_CODE_ID,
@@ -403,6 +405,7 @@ class triples
         self::CALCULATOR_HINT => self::CALCULATOR_HINT_CODE_ID,
         self::CALCULATOR_HIGHLIGHT => self::CALCULATOR_HIGHLIGHT_CODE_ID,
         self::CALCULATOR_SIGNED => self::CALCULATOR_SIGNED_CODE_ID,
+        self::CALCULATOR_NUMBER_NOTE => self::CALCULATOR_NUMBER_NOTE_CODE_ID,
     ];
     // the keywords of the calculator and of the input fields by their code id, which the data of a
     // phrase (see phrase_data) never walks through, because every page phrase links to them

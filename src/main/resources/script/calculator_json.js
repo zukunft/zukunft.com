@@ -75,6 +75,8 @@
         return;
     }
     const KW = settings.keywords || {};
+    // the phrases of a value that make it a property of a field and not the number of the field (ui_list::CALC_FIELD_PROPERTIES)
+    const FIELD_PROPERTIES = [KW.limit_down, KW.limit_up, KW.step, KW.confidence];
     const VERB = settings.verbs || {};
     // the names of the phrase types that decide the unit and the format of a number
     const PT = settings.phrase_types || {};
@@ -460,7 +462,7 @@
     /* the value of a field: the operand of a result of the page first, so that a changed field changes the results, then with the page phrase
        before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value) */
     function fieldEntry(name) {
-        const props = [KW.limit_down, KW.limit_up, KW.step, KW.confidence];
+        const props = FIELD_PROPERTIES;
         const parts = [page.from, page.to].filter(function (p) {
             return p;
         });
@@ -562,13 +564,52 @@
         return result;
     }
 
+    /* the numbers of the source of a field value, else of the values it is based on e.g. [5][6] (ui_list::field_source_refs) */
+    function fieldSourceRefs(name, entry) {
+        const refs = [sourceRef(entry)].concat(basisEntries(name, entry).map(sourceRef));
+        const result = refs.filter(function (r, i) {
+            return refs.indexOf(r) === i;
+        }).join('');
+        return result;
+    }
+
+    /* the names of the unit, scaling and percent phrases of a number in alphabetic order (sandbox_value::unit_key) */
+    function unitKey(entry) {
+        const result = entry.words.filter(function (w) {
+            return isMeasure(w) || isPercent(w) || hasType(w, PT.scaling) || hasType(w, PT.scaling_hidden);
+        }).sort().join(', ');
+        return result;
+    }
+
+    /* the measured values that an assumed field value is based on: the values of the field phrase with the same unit and a
+       source, but no property of the field, ordered by their phrase names (ui_list::calculator_basis_values) */
+    function basisEntries(name, entry) {
+        let result = [];
+        if (entry !== null && !entry.result && !entry.source) {
+            const unit = unitKey(entry);
+            result = pool.filter(function (e) {
+                const noProperty = !FIELD_PROPERTIES.some(function (p) {
+                    return e.words.indexOf(p) >= 0;
+                });
+                return !e.result && e.source && noProperty && e.words.indexOf(name) >= 0 && unitKey(e) === unit;
+            }).sort(function (a, b) {
+                const keyA = a.words.slice().sort().join(', ');
+                const keyB = b.words.slice().sort().join(', ');
+                return keyA < keyB ? -1 : (keyA > keyB ? 1 : 0);
+            });
+        }
+        return result;
+    }
+
     /* the sources of the page in the order of their first use: the values of the number fields of
        the inputs and of the listed assumptions, then the operands of the results (ui_list::calculator_source_ids) */
     function sourceNames() {
-        const fieldValues = items(KW.input).concat(items(KW.assumption)).filter(function (item) {
+        let fieldValues = [];
+        items(KW.input).concat(items(KW.assumption)).filter(function (item) {
             return fieldType(item.to) !== KW.selector;
-        }).map(function (item) {
-            return fieldEntry(item.to);
+        }).forEach(function (item) {
+            const entry = fieldEntry(item.to);
+            fieldValues = fieldValues.concat([entry], basisEntries(item.to, entry));
         });
         const result = [];
         fieldValues.concat(operandValues()).forEach(function (e) {
@@ -760,15 +801,15 @@
     }
 
     /* the nearest conversion of the unit if the largest number of a group has too many or too few digits (number_format::next_unit) */
-    function nextUnit(num, unit) {
-        const tooBig = magnitude(num) > FMT.digits;
+    function nextUnit(num, unit, digits) {
+        const tooBig = magnitude(num) > digits;
         const tooSmall = num < 1;
         let result = null;
         CONVERSIONS.forEach(function (cnv) {
             const isUnit = cnv[0] === unit || cnv[0] === owners.get(unit);
             const shown = num * cnv[3];
             const toLarger = tooBig && cnv[3] < 1 && shown >= 1;
-            const toSmaller = tooSmall && cnv[3] > 1 && magnitude(shown) <= FMT.digits;
+            const toSmaller = tooSmall && cnv[3] > 1 && magnitude(shown) <= digits;
             const nearer = result === null || Math.abs(Math.log(cnv[3])) < Math.abs(Math.log(result[3]));
             if (isUnit && (toLarger || toSmaller) && nearer) {
                 result = cnv;
@@ -777,23 +818,23 @@
         return result;
     }
 
-    /* the unit, its text, the factor and the decimals of a group of numbers of one unit (number_format::group) */
-    function groupFormat(numbers, unit) {
+    /* the unit, its text, the factor and the decimals of a group of numbers of one unit with the digits of a precision tier (number_format::group) */
+    function groupFormat(numbers, unit, digits) {
         const max = numbers.reduce(function (m, n) {
             return Math.max(m, Math.abs(Number(n)));
         }, 0);
         const result = {unit: unit, text: unit === null ? null : (symbols.get(unit) || unit), factor: 1, decimals: 0};
         if (unit !== null && max > 0) {
-            let cnv = nextUnit(max, unit);
+            let cnv = nextUnit(max, unit, digits);
             while (cnv !== null) {
                 result.unit = cnv[1];
                 result.text = cnv[2];
                 result.factor = result.factor * cnv[3];
-                cnv = nextUnit(max * result.factor, result.unit);
+                cnv = nextUnit(max * result.factor, result.unit, digits);
             }
         }
         if (max > 0) {
-            result.decimals = Math.max(0, FMT.digits - magnitude(max * result.factor));
+            result.decimals = Math.max(0, digits - magnitude(max * result.factor));
         }
         return result;
     }
@@ -807,7 +848,7 @@
     }
 
     /* per unit the format of the numbers of one column, so that the numbers of a unit can be compared at a glance (ui_list::calculator_formats) */
-    function columnFormats(entries, withUnit) {
+    function columnFormats(entries, withUnit, digits) {
         const byUnit = new Map();
         entries.filter(function (e) {
             return e !== null;
@@ -823,7 +864,7 @@
             const nums = group.map(function (e) {
                 return e.number;
             });
-            result.set(unit, groupFormat(nums, withUnit ? measureOf(group[0]) : null));
+            result.set(unit, groupFormat(nums, withUnit ? measureOf(group[0]) : null, digits));
         });
         return result;
     }
@@ -929,7 +970,7 @@
             input += block('span', esc(unit), STYLE.unit);
         }
         const result = block('div', '<label for="' + field + '">' + text + '</label>' + block('div', input, STYLE.row)
-            + hintHtml(hintText, sourceRef(entry)), STYLE.field);
+            + hintHtml(hintText, fieldSourceRefs(name, entry)), STYLE.field);
         return result;
     }
 
@@ -1029,7 +1070,7 @@
         if (sub === '') {
             sub = sideResults(row).map(function (side) {
                 const entry = cellEntry(ctx.concat([side]));
-                return entry === null ? '' : phraseLabel(side) + ' ' + numberText(entry, columnFormats([entry], true), true);
+                return entry === null ? '' : phraseLabel(side) + ' ' + numberText(entry, columnFormats([entry], true, FMT.digits), true);
             }).filter(function (s) {
                 return s !== '';
             }).join(', ');
@@ -1038,10 +1079,13 @@
         return result;
     }
 
-    /* the number of the row phrase after the label of a row with a filter e.g. " (128 g/kWh)" (ui_list::calculator_row_number) */
+    /* the number of the row phrase after the label of a row with a filter e.g. " (128 g/kWh)" with the digits of the
+       rough tier, because the number in a label is only an indication (ui_list::calculator_row_number) */
     function rowNumber(row) {
         const entry = filterOf(row) === null ? null : fieldEntry(chosen(row.to));
-        const result = entry === null ? '' : ' (' + numberText(entry, columnFormats([entry], true), true) + ')';
+        const note = ownText(row.name, KW.number_note);
+        const txt = entry === null ? '' : numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
+        const result = entry === null ? '' : ' (' + txt + (note === null ? '' : ' ' + note) + ')';
         return result;
     }
 
@@ -1066,7 +1110,7 @@
             const formats = cols.map(function (c, i) {
                 return columnFormats(rows.map(function (r) {
                     return r.cells[i];
-                }), true);
+                }), true, FMT.digits);
             });
             let body = '';
             grps.forEach(function (g) {
@@ -1108,7 +1152,7 @@
             const formats = cols.map(function (c, i) {
                 return columnFormats(cells.map(function (row) {
                     return row[i];
-                }), false);
+                }), false, FMT.digits);
             });
             const body = rows.map(function (r, j) {
                 const tds = cells[j].map(function (e, i) {

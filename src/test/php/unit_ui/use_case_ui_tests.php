@@ -668,17 +668,17 @@ class use_case_ui_tests
         $test_name = '... and not the value of a phrase outside the page triple';
         $t->assert_text_not_contains($test_name, $foreign_html, 'value="' . values::SAMPLE_BIG . '"');
         // but the value that a result of the page uses comes first, so that a changed field changes the result
-        $frm_used = new formula_ui();
-        $frm_used->set_id(formula_names::CITY_POPULATION_ID);
-        $frm_used->set_name(formula_names::CITY_POPULATION);
-        $frm_used->set_usr_text('"' . formula_names::CITY_POPULATION . '" = "' . word_names::INHABITANTS . '"');
-        $frm_used_lst = new formula_list_ui();
-        $frm_used_lst->add($frm_used, $msg);
-        $res_used_lst = new result_list_ui();
-        $res_used_lst->add($t_res->result_zh_city_bern_inhabitants_ui(values::SAMPLE_BIG), $msg);
+        $frm = new formula_ui();
+        $frm->set_id(formula_names::CITY_POPULATION_ID);
+        $frm->set_name(formula_names::CITY_POPULATION);
+        $frm->set_usr_text('"' . formula_names::CITY_POPULATION . '" = "' . word_names::INHABITANTS . '"');
+        $frm_lst = new formula_list_ui();
+        $frm_lst->add($frm, $msg);
+        $res_lst = new result_list_ui();
+        $res_lst->add($t_res->result_zh_city_bern_inhabitants_ui(values::SAMPLE_BIG), $msg);
         $dto_used = clone $dto_foreign;
-        $dto_used->set_formula_list($frm_used_lst);
-        $dto_used->set_result_list($res_used_lst);
+        $dto_used->set_formula_list($frm_lst);
+        $dto_used->set_result_list($res_lst);
         $used_html = $page->calculator_input($zh_city, $msg, $dto_used, $form, views::CALCULATOR, []);
         $test_name = 'a field shows the value that a result of the page uses before the value with a part of the page triple';
         $t->assert_text_contains($test_name, $used_html, 'value="' . values::SAMPLE_BIG . '"');
@@ -774,6 +774,28 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $res_html, '<' . html_base::TR . ' class="' . styles::CALC_KEY . '">'
             . $html->block(html_base::TD, triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . $inh_txt . ')'
                 . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::CALC_SUB)));
+        // the number in the label is only an indication, so it shows the digits of the rough tier
+        $dto_rough = clone $dto_res;
+        $dto_rough->val_lst = $t_val->value_list_calculator_result_ui();
+        $dto_rough->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->number = values::SAMPLE_FLOAT;
+        $rough_html = $page->calculation_result($wrd, $msg, $dto_rough);
+        $test_name = '... with the digits of the rough tier';
+        $t->assert_text_contains($test_name, $rough_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . round(values::SAMPLE_FLOAT) . ')');
+        // negative: not with the decimals of the default tier
+        $test_name = '... and not with the decimals of the default tier';
+        $t->assert_text_not_contains($test_name, $rough_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . round(values::SAMPLE_FLOAT) . '.');
+        // a row with a number note shows the note behind the unit of its number e.g. PV-weighted
+        $dto_note = clone $dto_res;
+        $dto_note->phr_lst = $t_phr->list_calculator_number_note_ui();
+        $note_html = $page->calculation_result($wrd, $msg, $dto_note);
+        $test_name = '... and the number note of the row behind the number';
+        $t->assert_text_contains($test_name, $note_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . $inh_txt . ' ' . triple_names::CALC_INHABITANTS_NOTE_COM . ')');
+        // negative: a row without a number note shows only the number
+        $test_name = '... but no note without a number note triple';
+        $t->assert_text_not_contains($test_name, $res_html, triple_names::CALC_INHABITANTS_NOTE_COM);
         $test_name = '... and the number of a signed group with its sign';
         $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
         // the save compares the results of the page by their group id, so a cell names the number it shows
@@ -817,6 +839,21 @@ class use_case_ui_tests
         $test_name = '... and the hint of a field with a value of a source names its number';
         $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_res, $form, views::CALCULATOR, []),
             $html->span(triple_names::CALC_INHABITANTS_HINT_COM . ' [1]', styles::INPUT_HINT));
+        // an assumed field value is based on the measured values of its field phrase with the same unit,
+        // so its hint names their sources e.g. the literature values of a battery production emission
+        $dto_basis = clone $dto_res;
+        $dto_basis->val_lst = $t_val->value_list_calculator_result_ui();
+        $dto_basis->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019])->src = $src;
+        $test_name = 'the hint of an assumed field names the source of a measured value of its phrase and unit';
+        $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_basis, $form, views::CALCULATOR, []),
+            $html->span(triple_names::CALC_INHABITANTS_HINT_COM . ' [1]', styles::INPUT_HINT));
+        // negative: a property of the field e.g. its lower limit is no measured value that the field value is based on
+        $dto_prop = clone $dto_res;
+        $dto_prop->val_lst = $t_val->value_list_calculator_result_ui();
+        $dto_prop->val_lst->get_by_names([word_names::INHABITANTS, triple_names::FIELD_LIMIT_DOWN])->src = $src;
+        $test_name = '... but not the source of a property of the field';
+        $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_prop, $form, views::CALCULATOR, []),
+            $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::INPUT_HINT));
         // negative: the hint of a phrase selector names no source, also if the selected option
         // has one, because an option is chosen and not measured on the page
         $opt_val = $dto_res->val_lst->get_by_names([word_names::CANTON, word_names::YEAR_2020]);

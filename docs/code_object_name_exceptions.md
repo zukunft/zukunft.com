@@ -28,12 +28,12 @@ change_log: $chg, $log
 component: $cmp2, $cmp_added, $cmp_by_id, $cmp_filled, $cmp_frm, $cmp_imp, $cmp_lnk, $cmp_lnk_cmp, $cmp_map, $cmp_no_exc, $cmp_no_lnk, $cmp_no_ovr, $cmp_obj, $cmp_owned, $cmp_plain, $cmp_reloaded, $cmp_renamed, $cmp_renamed_reloaded, $cmp_tab, $cmp_usr2, $cmp_usr2_reloaded, $cmp_zero, $cmp_zero_imp, $dbo, $msk, $obj
 element: $elm_map, $elm_ui
 figure: $fig_ui
-formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_be, $frm_chk, $frm_empty, $frm_error, $frm_fn, $frm_has_next, $frm_hour, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_no_typ, $frm_order, $frm_other, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_scaled, $frm_std, $frm_tab, $frm_this, $frm_trm, $frm_typ, $frm_ui, $frm_unknown, $frm_upd, $frm_used, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
+formula: $db_rec, $dbo, $dbo_ui, $fop_ui, $frm_be, $frm_chk, $frm_empty, $frm_error, $frm_fn, $frm_has_next, $frm_hour, $frm_html, $frm_imp, $frm_imp_off, $frm_ltx, $frm_next, $frm_no_typ, $frm_order, $frm_other, $frm_page, $frm_plain, $frm_power, $frm_renamed, $frm_scaled, $frm_std, $frm_tab, $frm_this, $frm_trm, $frm_typ, $frm_ui, $frm_unknown, $frm_upd, $frm_usr2, $frm_usr2_reloaded, $lnk, $obj, $to_add, $trp
 group: $db_grp, $db_rec, $dbo, $dbo_ui, $grp1, $grp2, $grp_2019, $grp_add, $grp_big, $grp_canton, $grp_canton_pct, $grp_ch, $grp_check, $grp_chk, $grp_city, $grp_city_pct, $grp_lst, $grp_map, $grp_no_names, $grp_used, $grp_zh, $obj, $phr_grp, $phr_grp_reload, $result, $unnamed_grp, $val_grp
 import: $imp_cnt
 job: $calc_request, $dbo, $dbo_ui, $job_closed, $job_done, $job_future, $job_high, $job_low, $job_new, $job_newer, $job_older, $job_oldest, $job_upd
 language: $dbo, $dbo_ui, $lan_by_id, $lan_no_name, $obj, $src
-phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_dsp, $phr_loaded, $phr_map, $phr_msk, $phr_new, $phr_no_name, $phr_other, $phr_sym, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_unsaved, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
+phrase: $country, $dbo, $dbo_ui, $debug_phr, $e_sym, $from, $max_phr, $new_phrase, $phr2, $phr_add, $phr_by_id, $phr_canton_ui, $phr_ch_ui, $phr_city_ui, $phr_dsp, $phr_loaded, $phr_map, $phr_min, $phr_msk, $phr_new, $phr_no_name, $phr_other, $phr_sym, $phr_sys_cfg, $phr_to, $phr_to_add, $phr_ui, $phr_unsaved, $phr_zh, $pi, $result, $switzerland, $tier, $time_phr, $to, $to_add, $trp, $val_phr, $val_time_phr, $wrd, $zurich
 protection_type_list: $lst
 ref: $dbo, $dbo_ui, $obj, $ref2, $ref_dsp, $ref_empty, $ref_filled, $ref_map, $ref_new, $ref_no_key, $ref_obj, $ref_plain, $std_rec, $type
 result: $ch_increase, $dbo, $dbo_ui, $grp_res, $k_val, $obj, $res_canton, $res_city, $res_db, $res_map, $res_no_id, $res_plain, $res_tab, $res_ui, $res_upd, $res_zero, $result, $rst
@@ -138,10 +138,10 @@ expression: $exp, $exp_db, $exp_no_calc, $exp_pe, $exp_scale, $exp_sector
 figure_list: $add_lst, $fig_lst, $fig_lst_ui, $lst
 formula_calc: $calc
 formula_dsp: $frm_html
-formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $lnk, $lnk_fld_url, $lnk_id_only, $lnk_new, $lnk_plain, $lnk_row, $lnk_tab, $lnk_ui, $lnk_url, $obj
+formula_link: $dbo, $dbo_ui, $flk, $frm_lnk, $frm_lnk2, $lnk, $lnk_fld_url, $lnk_id_only, $lnk_new, $lnk_plain, $lnk_raw, $lnk_row, $lnk_tab, $lnk_ui, $lnk_url, $obj
 formula_link_list: $frm_lnk_lst, $lnk_lst, $lnk_lst_ui, $lst
 formula_link_type: $frm_lnk_typ
-formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_be_lst, $frm_fn_lst, $frm_lst, $frm_to_calc, $frm_used_lst, $lst, $result, $trp_lst
+formula_list: $add_lst, $db_lst, $db_lst_all, $frm, $frm_be_lst, $frm_fn_lst, $frm_lst, $frm_to_calc, $lst, $result, $trp_lst
 formula_type: $frm_typ
 formula_type_list: $lst
 group_id: $grp, $grp_id, $grp_id_helper, $grp_id_obj
@@ -183,7 +183,7 @@ ref_type: $ref_typ, $type_obj
 ref_type_list: $lst, $ref_type_list
 rest_call: $api, $ctrl, $rest
 result_id: $res_id
-result_list: $lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate, $res_used_lst
+result_list: $lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate
 sandbox_related: $rel
 share_type: $shr_typ
 share_type_list: $lst

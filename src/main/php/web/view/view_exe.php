@@ -721,7 +721,8 @@ class view_exe extends view_base
 
         foreach ($msk_lst as $msk) {
             $view_id = $msk->id();
-            $view_name = $html->esc($msk->name());
+            // the link escapes the name itself
+            $view_name = $msk->name();
             if ($view_id == $this->id()) {
                 $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {

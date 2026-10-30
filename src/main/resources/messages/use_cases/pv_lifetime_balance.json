@@ -359,6 +359,9 @@
       "name": "hint"
     },
     {
+      "name": "note"
+    },
+    {
       "name": "assumption"
     },
     {
@@ -957,6 +960,18 @@
       "from": "calculator (system)",
       "verb": "has a",
       "to": "sign"
+    },
+    {
+      "name": "number note",
+      "from": "note",
+      "verb": "of",
+      "to": "number"
+    },
+    {
+      "name": "calculator number note",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "number note"
     },
     {
       "name": "PV installation label",
@@ -1653,6 +1668,13 @@
       "from": "PV installation row saving PV-weighted mix",
       "verb": "has a",
       "to": "calculator label"
+    },
+    {
+      "name": "PV installation row saving PV-weighted mix number note",
+      "description": "PV-weighted",
+      "from": "PV installation row saving PV-weighted mix",
+      "verb": "has a",
+      "to": "calculator number note"
     },
     {
       "name": "PV installation row saving PV-weighted mix filter",

@@ -196,6 +196,7 @@ class system_page extends component
         'hint' => triples::CALCULATOR_HINT,
         'highlight' => triples::CALCULATOR_HIGHLIGHT,
         'signed' => triples::CALCULATOR_SIGNED,
+        'number_note' => triples::CALCULATOR_NUMBER_NOTE,
         'selector' => triples::FIELD_PHRASE_SELECTOR_TYPE,
         'limit_down' => triples::FIELD_LIMIT_DOWN,
         'limit_up' => triples::FIELD_LIMIT_UP,

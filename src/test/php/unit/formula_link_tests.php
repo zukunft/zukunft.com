@@ -43,7 +43,9 @@ include_once html_paths::FORMULA . 'formula_link_list.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
@@ -54,6 +56,7 @@ use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\formula_link_types;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link as formula_link_ui;
@@ -139,6 +142,27 @@ class formula_link_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+        // the delete log function is created once per name, so a link to a phrase that has been
+        // deleted before keeps the to text field in the insert of the log
+        $test_name = 'the delete log of a link without a phrase name keeps the to text field';
+        $lnk_no_name = $t_frm->formula_link();
+        $phr_no_name = new phrase($t->usr1);
+        $phr_no_name->set_obj_from_id($lnk_no_name->phrase_id());
+        $lnk_no_name->set_phrase($phr_no_name);
+        $del_sql = $lnk_no_name->sql_delete($sc, $msg, new sql_type_list([sql_type::LOG]))->sql;
+        $fld_link_to = change_link::FLD_OLD_LINK_TEXT . library::SEPARATOR . change_link::FLD_OLD_TO_TEXT;
+        $t->assert_text_contains($test_name, $del_sql, $fld_link_to);
+        $test_name = 'the delete log of a link without a phrase name does not skip the to text field';
+        $fld_link_from_id = change_link::FLD_OLD_LINK_TEXT . library::SEPARATOR . change_link::FLD_OLD_FROM_ID;
+        $t->assert_text_not_contains($test_name, $del_sql, $fld_link_from_id);
+        // the same for the log of a user that excludes the link
+        $test_name = 'the exclude log of a link without a phrase name keeps the to text field';
+        $lnk_no_name->exclude();
+        $excl_sql = $lnk_no_name->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG, sql_type::USER]))->sql;
+        $t->assert_text_contains($test_name, $excl_sql, $fld_link_to);
+        $test_name = 'the exclude log of a link without a phrase name does not skip the to text field';
+        $fld_link_new_from = change_link::FLD_OLD_LINK_TEXT . library::SEPARATOR . change_link::FLD_NEW_FROM_TEXT;
+        $t->assert_text_not_contains($test_name, $excl_sql, $fld_link_new_from);
 
         $t->subheader($ts . 'formula link base object handling');
         $lnk = $t_frm->formula_link();

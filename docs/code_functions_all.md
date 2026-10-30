@@ -6528,6 +6528,8 @@
             lator.php
     \-- hint - section for function hint not yet defined that it should be texts and flags in /component/execute/calcula
             tor.php
+    \-- number_note - section for function number_note not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
     \-- has_flag - section for function has_flag not yet defined that it should be texts and flags in /component/execute
             /calculator.php
     \-- side_results - section for function side_results not yet defined that it should be texts and flags in /component
@@ -9958,6 +9960,8 @@
         \-- calculator - the label of an item by rule 6: the label of the item, then of its phrase, then for a row
     \-- hint
         \-- calculator - @param phrase $item the item e.g. PV installation row battery discharge
+    \-- number_note
+        \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
     \-- has_flag
         \-- calculator - @param phrase $item the item e.g. a row or a row group
     \-- side_results

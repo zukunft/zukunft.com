@@ -85,6 +85,7 @@ use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use ReflectionClass;
 use ReflectionClassConstant;
 
@@ -260,6 +261,8 @@ class coding_rule_tests
         $t->name = 'code_rule->';
         $t->subheader('code rule html snapshots');
         $this->html_no_empty_link_tests($t);
+        $this->html_no_double_escape_tests($t);
+        $this->use_case_no_test_formula_tests($t);
         $this->html_form_balance_tests($t);
         $this->html_no_duplicate_id_tests($t);
     }
@@ -349,6 +352,98 @@ class coding_rule_tests
         // one summary assertion so that a clean tree also produces a visible pass
         $test_name = 'links without text checked in ' . $files_checked . ' html files';
         $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no html snapshot shows an escaped text escaped again, e.g. "Krebs &amp;amp;
+     * Frischknecht", which the reader sees as "Krebs &amp; Frischknecht"; the usual cause is a text
+     * escaped before html_base::ref, which escapes the name of a link itself
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function html_no_double_escape_tests(test_cleanup $t): void
+    {
+        $test_name = 'a text that is escaped twice is found';
+        $t->assert($test_name, $this->double_escapes('<a href="view.php?m=3">Krebs &amp;amp; Frischknecht</a>'),
+            ['Krebs &amp;amp;']);
+        $test_name = 'a text that is escaped once is no double escape';
+        $t->assert($test_name, $this->double_escapes('<a href="view.php?m=3">Krebs &amp; Frischknecht</a>'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $escapes = $this->double_escapes(file_get_contents($html_file));
+                if ($escapes != []) {
+                    $test_name = 'no text escaped twice in ' . $html_file;
+                    $t->assert($test_name, implode("\n", $escapes), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'texts escaped twice checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no generated use case page shows a formula of the tests, because the test rows get
+     * other ids depending on the tests that have run before, so the snapshot would change between
+     * two runs; the usual cause is a test formula linked to a seed phrase of the page e.g. year
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function use_case_no_test_formula_tests(test_cleanup $t): void
+    {
+        $test_name = 'a page with a test formula is found';
+        $t->assert($test_name, $this->test_formulas_of('{"name":"' . formula_names::SYSTEM_TEST_ADD . '"}'),
+            [formula_names::SYSTEM_TEST_ADD]);
+        $test_name = 'a page with only seed formulas has no test formula';
+        $t->assert($test_name, $this->test_formulas_of('{"name":"' . formula_names::INCREASE . '"}'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES) as $html_file) {
+            // a hand made sample is no page of the database
+            $is_page = (str_ends_with($html_file, test_files::HTML)
+                and !str_ends_with($html_file, test_files::SAMPLE_SUFFIX . test_files::HTML));
+            if ($is_page) {
+                $files_checked++;
+                $found = $this->test_formulas_of(file_get_contents($html_file));
+                if ($found != []) {
+                    $test_name = 'no test formula in ' . $html_file;
+                    $t->assert($test_name, implode(', ', $found), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'test formulas checked in ' . $files_checked . ' use case pages';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page with its json data
+     * @return array the names of the test formulas (formula_names::TEST_FORMULAS) that the page names as a json name
+     */
+    function test_formulas_of(string $html): array
+    {
+        $result = [];
+        foreach (formula_names::TEST_FORMULAS as $frm_name) {
+            if (str_contains($html, '"name":"' . $frm_name . '"')) {
+                $result[] = $frm_name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return array every entity of the html whose ampersand is escaped again, with the text before it in the same element
+     */
+    function double_escapes(string $html): array
+    {
+        preg_match_all('/[^<>]{0,40}&amp;(?:amp|lt|gt|quot|#0?39);/u', $this->without_script_code($html), $matches);
+        return $matches[0];
     }
 
     /**

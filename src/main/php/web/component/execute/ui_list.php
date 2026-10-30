@@ -161,6 +161,9 @@ class ui_list extends ui_base
     const string CALC_THOUSAND_SEP = 'thousand_sep';
     const string CALC_PERCENT_DECIMALS = 'percent_decimals';
     const string CALC_DIGITS = 'digits';
+    const string CALC_ROUGH_DIGITS = 'rough_digits';
+    // the phrases of a value that make it a property of a calculator field and not the number of the field
+    const array CALC_FIELD_PROPERTIES = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE];
     const string CALC_POSITIVE = 'positive';
     const string CALC_NEGATIVE = 'negative';
 
@@ -168,6 +171,8 @@ class ui_list extends ui_base
     private array $cell_counts = [];
     // per calculator cell id that this renderer has written the number and the format of the cell
     private array $cell_plan = [];
+    // per phrase id of a calculator page the request cache and the values and results that the results of the page use (see page_operands)
+    private array $operands_by_page = [];
 
     /**
      * HTML for a list of words or triples
@@ -2595,8 +2600,67 @@ class ui_list extends ui_base
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
         }
+        $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
         return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW)
-            . $this->calculator_hint($hint, $this->source_ref($val, $src_ids)), styles::INPUT_FIELD);
+            . $this->calculator_hint($hint, $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * @param phrase $phr the phrase of the field e.g. battery production emission
+     * @param sandbox_value|null $val the value that the field shows
+     * @param data_object $dto the request cache with the values
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the numbers of the source of the field value, else of the values it is based on, e.g. "[5][6]"
+     */
+    private function field_source_refs(phrase $phr, ?sandbox_value $val, data_object $dto, array $src_ids, user_message $msg): string
+    {
+        $refs = [$this->source_ref($val, $src_ids)];
+        foreach ($this->calculator_basis_values($phr, $val, $dto, $msg) as $basis) {
+            $refs[] = $this->source_ref($basis, $src_ids);
+        }
+        return implode('', array_unique($refs));
+    }
+
+    /**
+     * the measured values that an assumed field value is based on e.g. the literature values of a
+     * battery production emission: the values of the field phrase with the same unit and a source,
+     * but no property of the field; a measured field value names its own source and has none;
+     * ordered by their phrase names, which the calculator script has as well (calculator_json.js basisEntries)
+     *
+     * @param phrase $phr the phrase of the field e.g. battery production emission
+     * @param sandbox_value|null $val the value that the field shows
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the values with a source that the field value is based on
+     */
+    private function calculator_basis_values(phrase $phr, ?sandbox_value $val, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        if ($val instanceof value and $val->source_id() == null) {
+            $unit = $val->unit_key($msg);
+            foreach ($dto->val_lst->lst() as $other) {
+                if ($this->is_basis_value($other, $phr, $unit, $msg)) {
+                    $result[$other->name_key()] = $other;
+                }
+            }
+        }
+        ksort($result, SORT_STRING);
+        return array_values($result);
+    }
+
+    /**
+     * @param sandbox_value $val a value of the request cache
+     * @param phrase $phr the phrase of the field
+     * @param string $unit the unit key of the field value (sandbox_value::unit_key)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return bool true if the value has a source, the field phrase and the unit, but no property of the field
+     */
+    private function is_basis_value(sandbox_value $val, phrase $phr, string $unit, user_message $msg): bool
+    {
+        $is_measured = ($val instanceof value and $val->source_id() != null);
+        $no_property = array_intersect($val->phr_lst()->names(), self::CALC_FIELD_PROPERTIES) == [];
+        return $is_measured and $no_property and $val->has_phrase($phr, $msg) and $val->unit_key($msg) == $unit;
     }
 
     /**
@@ -2772,11 +2836,12 @@ class ui_list extends ui_base
                 $this->add_field_links($phr, $dto, $msg);
                 $this->add_field_values($phr, $dto, $msg);
                 if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
-                    $vals[] = $this->calculator_value($phr, $dbo, $dto, $msg);
+                    $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+                    $vals = [...$vals, $val, ...$this->calculator_basis_values($phr, $val, $dto, $msg)];
                 }
             }
         }
-        $vals = [...array_filter($vals), ...array_values($this->operand_values($dbo, $msg, $dto))];
+        $vals = [...array_filter($vals), ...array_values($this->page_operands($dbo, $dto, $msg))];
         $this->add_sources($vals, $dto, $msg);
         $result = [];
         foreach ($vals as $val) {
@@ -2818,11 +2883,11 @@ class ui_list extends ui_base
      */
     private function calculator_value(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
     {
-        $properties = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE];
+        $properties = self::CALC_FIELD_PROPERTIES;
         $page_phr = $dbo->phrase();
         $page_parts = array_filter([$page_phr->get_from(), $page_phr->get_to()]);
         // before the loop, because the operands may add the values of the result context to the cache
-        $operands = $this->operand_values($dbo, $msg, $dto);
+        $operands = $this->page_operands($dbo, $dto, $msg);
         $best_vals = [];
         $best = null;
         foreach ($dto->val_lst->lst() as $val) {
@@ -2851,6 +2916,40 @@ class ui_list extends ui_base
         // values that rank the same are picked by the preferred order of numbers and not by the
         // order of the list, which the backend returns in any order (docs/llm/frontend.md)
         return sandbox_value::sorted($best_vals, $msg)[0] ?? null;
+    }
+
+    /**
+     * the values and results that the results of the page use (operand_values), found once per
+     * page phrase and request cache, because every field, option, source and row of a calculator
+     * page asks for them; another request cache e.g. of another test finds them again
+     *
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page with the values, the results and the formulas
+     * @param user_message $msg to report a problem of the load
+     * @return array the values and results that the results of the page use, each once
+     */
+    private function page_operands(word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $key = $dbo->phrase()->id();
+        if (!$this->has_operands_of($key, $dto)) {
+            $this->operands_by_page[$key] = [$dto, $this->operand_values($dbo, $msg, $dto)];
+        }
+        return $this->operands_by_page[$key][1];
+    }
+
+    /**
+     * @param int $phr_id the id of the page phrase
+     * @param data_object $dto the request cache of the page
+     * @return bool true if the operands of this page are already found with this request cache
+     */
+    private function has_operands_of(int $phr_id, data_object $dto): bool
+    {
+        $result = false;
+        if (array_key_exists($phr_id, $this->operands_by_page)) {
+            // the same object and not another request cache of the same page
+            $result = $this->operands_by_page[$phr_id][0] === $dto;
+        }
+        return $result;
     }
 
     /**
@@ -2996,9 +3095,10 @@ class ui_list extends ui_base
             }
         }
         $result = [];
+        $digits = $this->calculator_digits(words::DEFAULT);
         foreach ($groups as $c => $units) {
             foreach ($units as $unit_name => $vals) {
-                $result[$c][$unit_name] = $this->calculator_group_format($vals, $with_unit, $msg);
+                $result[$c][$unit_name] = $this->calculator_group_format($vals, $with_unit, $digits, $msg);
             }
         }
         return $result;
@@ -3007,16 +3107,25 @@ class ui_list extends ui_base
     /**
      * @param array $vals the values or results of a column with the same unit
      * @param bool $with_unit true to convert the unit, false to keep it
+     * @param int $digits the number of digits shown, which decide the decimals and the unit conversion (calculator_digits)
      * @param user_message $msg to report a problem of the phrase types
      * @return number_format the unit and the decimals of the numbers
      */
-    private function calculator_group_format(array $vals, bool $with_unit, user_message $msg): number_format
+    private function calculator_group_format(array $vals, bool $with_unit, int $digits, user_message $msg): number_format
     {
-        global $ui_sys;
-        $digits = $ui_sys?->cfg?->digits() ?? shared_config::DEFAULT_DIGITS;
         $unit = $with_unit ? $this->unit_phrase($vals[0], $msg) : null;
         $nums = array_map(fn(sandbox_value $val) => $val->number(), $vals);
         return new number_format()->group($nums, $unit, $digits, $msg);
+    }
+
+    /**
+     * @param string $tier the config.yaml key of the precision tier e.g. words::ROUGH
+     * @return int the digits of the tier from the frontend config, without a loaded config its fallback
+     */
+    private function calculator_digits(string $tier): int
+    {
+        global $ui_sys;
+        return $ui_sys?->cfg?->digits($tier) ?? config::DIGITS_FALLBACK[$tier];
     }
 
     /**
@@ -3089,8 +3198,9 @@ class ui_list extends ui_base
         $html = new html_base();
         $items = '';
         foreach ($this->calculator_source_ids($calc, $dbo, $dto, $msg) as $src) {
-            $name = $html->esc($src->name());
-            $items .= $html->list_item($src->url() == null ? $name : $html->ref($src->url(), $name));
+            // the link escapes the name itself
+            $name = $src->name();
+            $items .= $html->list_item($src->url() == null ? $html->esc($name) : $html->ref($src->url(), $name));
         }
         $result = '';
         if ($items != '') {
@@ -3377,7 +3487,9 @@ class ui_list extends ui_base
             self::CALC_UNIT_SEP => sandbox_value::UNIT_SEPARATOR,
             self::CALC_PERCENT_DECIMALS => $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS,
             // the digits that a column of numbers shows, which decide its decimals (number_format)
-            self::CALC_DIGITS => $ui_sys?->cfg?->digits() ?? shared_config::DEFAULT_DIGITS,
+            self::CALC_DIGITS => $this->calculator_digits(words::DEFAULT),
+            // the digits of the number in the label of a row, which is only an indication (calculator_row_number)
+            self::CALC_ROUGH_DIGITS => $this->calculator_digits(words::ROUGH),
             self::CALC_POSITIVE => styles::CALC_POSITIVE,
             self::CALC_NEGATIVE => styles::CALC_NEGATIVE,
         ];
@@ -3638,7 +3750,8 @@ class ui_list extends ui_base
     /**
      * the number of the row phrase after the label of a row with a filter, because its cells show
      * the numbers of the filter e.g. the net avoided emission against the consumption mix and not
-     * the consumption mix itself; it is the value that a field of the row phrase would show
+     * the consumption mix itself; it is the value that a field of the row phrase would show, with
+     * the digits of the rough tier, because the number in a label is only an indication
      *
      * @param calculator $calc the calculator reader of the page
      * @param phrase $row a row of the main table e.g. PV installation row saving consumption mix
@@ -3655,7 +3768,13 @@ class ui_list extends ui_base
         if ($calc->filter($row) != null and $phr != null) {
             $val = $this->calculator_value($phr, $dbo, $dto, $msg);
             if ($val != null and !$val->is_null()) {
-                $result = ' (' . $this->calculator_number_text($val, $msg) . ')';
+                $fmt = $this->calculator_group_format([$val], true, $this->calculator_digits(words::ROUGH), $msg);
+                $txt = $this->calculator_cell_text($val, $fmt, true, $msg);
+                $note = $calc->number_note($row);
+                if ($note != '') {
+                    $txt .= ' ' . $note;
+                }
+                $result = ' (' . $txt . ')';
             }
         }
         return $result;
