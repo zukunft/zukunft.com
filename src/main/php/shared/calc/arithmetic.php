@@ -77,6 +77,23 @@ class arithmetic
     }
 
     /**
+     * the logarithm, also used by the backend calculation (service/math/calc_internal.php)
+     *
+     * @param array $nums the number and optional the base, which is 10 if it is not given
+     * @return float the logarithm, which is not finite for a base without a logarithm or a wrong number of arguments
+     */
+    static function log_number(array $nums): float
+    {
+        $result = NAN;
+        if (count($nums) == 1) {
+            $result = log10($nums[0]);
+        } elseif (count($nums) == 2 and $nums[1] > 0 and $nums[1] != 1) {
+            $result = log($nums[0]) / log($nums[1]);
+        }
+        return $result;
+    }
+
+    /**
      * the number of a list function, also used by the backend calculation (service/math/calc_internal.php)
      *
      * @param string $name the name of the function, one of chars::FUNC_LIST
@@ -232,6 +249,9 @@ class arithmetic
             $result = $this->pick_argument(max(...));
         } elseif ($this->take_function(chars::FUNC_IF)) {
             $result = $this->if_function();
+        } elseif ($this->next_function([chars::FUNC_LOG]) != '') {
+            $this->take_function(chars::FUNC_LOG);
+            $result = $this->finite(self::log_number($this->list_arguments()));
         } elseif ($this->next_function(chars::FUNC_ONE_NUMBER) != '') {
             $name = $this->next_function(chars::FUNC_ONE_NUMBER);
             $this->take_function($name);

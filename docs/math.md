@@ -8,7 +8,7 @@ that the saved result does not confirm.
 
 - functions missing in one of the calculations: 0
 - edge cases with a different result: 10
-- functions used in the data that no calculation has: 7
+- functions used in the data that no calculation has: 5
 
 ## Functions
 
@@ -31,6 +31,7 @@ that the saved result does not confirm.
 | `exp` | e to the power of the number | `exp( 0 )` | 1 |  |
 | `ln` | natural logarithm | `ln( 1 )` | 0 |  |
 | `log` | logarithm to the base 10 | `log( 100 )` | 2 |  |
+| `log( ; )` | logarithm to the base of the second argument | `log( 8 ; 2 )` | 3 |  |
 | `round` | the nearest whole number | `round( 2.6 )` | 3 |  |
 | `sec` | secant of an angle in radian: one divided by the cosine | `sec( 0 )` | 1 |  |
 | `sin` | sine of an angle in radian | `sin( 0 )` | 0 |  |
@@ -56,8 +57,6 @@ A formula may name such a function e.g. to document a law; calculating it shows 
 | `d` | 8 | `d/d"x" ("x"^"n") = "n" * "x"^("n" - 1)` |
 | `integral` | 8 | `integral("x"^"n", "x") = "x"^("n" + 1) / ("n" + 1) + "C"` |
 | `lim` | 1 | `"f"'("x") = lim(("f"("x" + "h") - "f"("x")) / "h", "h"->0)` |
-| `log_a` | 1 | `log_b("x") = log_a("x") / log_a("b")` |
-| `log_b` | 1 | `log_b("x") = log_a("x") / log_a("b")` |
 
 ## Edge cases
 
@@ -139,6 +138,9 @@ Each text is calculated by each calculation; a difference is marked with **diff*
 | `5 %` | no number | no number | no number | no number | no number |  |
 | `sqrt( -1 )` | no number | no number | no number | no number | no number |  |
 | `log( 0 )` | no number | no number | no number | no number | no number |  |
+| `log( 8 ; 1 )` | no number | no number | no number | no number | no number |  |
+| `log( 8 ; 0 )` | no number | no number | no number | no number | no number |  |
+| `log( 8 ; 2 ; 3 )` | no number | no number | no number | no number | no number |  |
 | `ln( -1 )` | no number | no number | no number | no number | no number |  |
 | `exp( 1000 )` | no number | no number | no number | no number | no number |  |
 | `sqrt( 4 ; 9 )` | no number | no number | no number | no number | no number |  |

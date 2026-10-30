@@ -2657,8 +2657,8 @@
     {
       "name": "change of base",
       "description": "a logarithm to any base can be calculated from the logarithms to another base, e.g. from the natural logarithm that a calculator offers",
-      "expression": "log_b(\"x\") = log_a(\"x\") / log_a(\"b\")",
-      "latex": "\\log_b x = \\frac{\\log_a x}{\\log_a b}",
+      "expression": "log(\"x\" ; \"b\") = ln(\"x\") / ln(\"b\")",
+      "latex": "\\log_b x = \\frac{\\ln x}{\\ln b}",
       "assigned_word": "logarithm"
     },
     {

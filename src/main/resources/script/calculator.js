@@ -53,6 +53,8 @@
     const FUNC_IF = 'if';
     const FUNC_ARG_SEPARATOR = ';';
     const POWER = '^';
+    // the logarithm like arithmetic::log_number, to the base 10 if no base is given
+    const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
     // the functions of a list like arithmetic::list_number; formula_calc::tokens has written all values of a list as the arguments
     const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
     // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
@@ -232,6 +234,10 @@
                 pos++;
                 expect(['(']);
                 result = ifFunction();
+            } else if (isOp(['log'])) {
+                pos++;
+                expect(['(']);
+                result = finite(LOG_NUMBER(listArguments()));
             } else if (isOp(Object.keys(ONE_NUMBER))) {
                 const calc = ONE_NUMBER[tokens[pos++][TOKEN_OP]];
                 expect(['(']);

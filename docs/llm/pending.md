@@ -1,14 +1,48 @@
 # pending - list of planned llm prompts with prio 1
 
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
 ## ID check
 
 include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
 
+## Calculator editor
+
+## use cases
+
+### Swiss NPP
+
+based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
+src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
+
+add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
+
+create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
+and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
+
+add costs of CO2-eq reduction to the npp
+
+add to the calculator a 'Share assumptions and vote' button
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
+### ahv vat 
+
+Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the 
+possibility to set the weight of the targets and combine them with the personal gain to one index rating 
+
+## pure HTML ans JavaScript views
+
+add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
+
+create a JavaScript version of the formula editor view
+
 ## calculator
-
-### saved result of a failed calculation
-
-a failed formula calculation overwrites the stored result with nothing (`docs/json_structure.md`); add a test that `formula::calc_result` and `result::save_if_updated` really write the empty number, and fix the save path if they do not
 
 ### differences between the evaluators
 
@@ -23,6 +57,21 @@ fix the edge cases that `docs/math.md` marks as a diff:
 - the unit_read test of `formula::fill_list_element_group` has no stored value with a variance or a confidence, so the exclusion of `words::LIST_FUNCTION_EXCLUDED` is only tested on the page (`use_case_ui_tests`)
 - the import calc validation (`data_object::expression_with_values`) replaces an operand by one number, so a list formula in a calc validation needs the same list selection
 
+### functions used in the data but not calculated
+
+`docs/math.md` lists `C`, `IRF`, `d`, `integral` and `lim`. Except `IRF` they are in laws of `math.json`, where the letters stand for any number, so most of them are no calculation at all.
+
+Recommended, in this order:
+1. **Mark a law as not calculated** for `d`, `integral` and `lim`: add a formula type e.g. "law" (`formula_type`), which is shown with its latex and never calculated, so no user gets an error for a formula that only documents a rule. `math_function_report::used_functions` skips this type, so that the report lists only real gaps. This needs a data change of the math.json formulas and possibly a raise of the minor version, if the json format changes.
+2. **`IRF`**: rewrite the formula in the data with what is already calculated, because `exp` exists and the coefficients are values: `"IRF" = "IRF coefficient a0" + "IRF coefficient a1" * exp( 0 - "time" / "IRF time scale tau1" ) + ...`. Then it is a real result and the name IRF is a phrase instead of a function.
+3. **`C`**: add it as a function of two numbers to all five evaluators, because a binomial coefficient is a plain calculation of numbers: reject a negative or a non-integer argument with a message and take care of the overflow of a big `n`. The law of the binomial theorem in math.json still gets the type of step 1, because its `sum` runs over an index, which the list functions do not have.
+
+Alternatives, only if a real calculation needs them:
+- `integral` and `d` as numbers: a numeric calculation over a table of values, e.g. the trapezoid rule over the values of a time row, under a new name such as `area( "y" ; "x" )`; a symbolic calculation would need a computer algebra system, which is not worth the dependency
+- `lim`: no numeric form that is reliable, so it stays a law
+
+Keep the error message for a formula without the law type, because a function that does not exist must never give a wrong number.
+
 ### formula editor
 
 - a function inserted by the "... more" buttons gives no number until its arguments are filled, and like a single open bracket such an expression can be saved: block the save of an expression that is no valid calculation
@@ -31,18 +80,19 @@ fix the edge cases that `docs/math.md` marks as a diff:
 ### PV calculator page compared with its sample
 
 the remaining differences of `pv_lifetime_balance_diff.md`:
-- the source numbers follow the first use and the sample has a fixed list, so the residual mix shows [3] and the sample [4]
 - the numbers in a row sub text are not updated by `calculator.js` of the server page when an input changes, like the number in a row label; `calculator_json.js` builds them again
-- the production mix option has no "~" and no range "midpoint of 350–440"
-- a number in a label below 100 shows a decimal with three digits e.g. 60.0 g/kWh, where the sample shows 60 g/kWh
 
 ### assert_contains names the wrong entry
 
 `test_base::assert_contains` compares by position, so one missing entry is reported as the last entry of the list e.g. "+zukunft.com" for a missing "modelled"; report the entries that are really missing
 
+### saved result of a failed calculation
+
+a failed formula calculation overwrites the stored result with nothing (`docs/json_structure.md`); add a test that `formula::calc_result` and `result::save_if_updated` really write the empty number, and fix the save path if they do not
+
 ### compare
 
-add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that 
+add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that
 all *_sample.html files are part of the compare and generation build
 
 ### base on json
@@ -105,44 +155,6 @@ places load per object:
 
 `phrase_list::get_by_ids` reads each id from the new empty list instead of `$this`, so it always returns
 an empty list; fix it and add a unit test before it is used to set the group phrase lists
-
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
-
-## Calculator editor
-
-## use cases
-
-### Swiss NPP
-
-based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
-src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
-
-add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
-
-create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
-and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
-
-add costs of CO2-eq reduction to the npp
-
-add to the calculator a 'Share assumptions and vote' button
-and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
-
-### ahv vat 
-
-Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the 
-possibility to set the weight of the targets and combine them with the personal gain to one index rating 
-
-## pure HTML ans JavaScript views
-
-add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
-
-create a JavaScript version of the formula editor view
 
 ## Calculator editor
 

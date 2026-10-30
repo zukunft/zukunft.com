@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1541 of 6300 public functions have at least 2 unit test calls; the 4555 functions below do not; the 204 functions of the last section are called nowhere
+1541 of 6301 public functions have at least 2 unit test calls; the 4556 functions below do not; the 204 functions of the last section are called nowhere
 
 ## 1999 functions of main backend have no test at all
 
@@ -2177,7 +2177,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- generate_valid_xml_from_obj - 0 unit test calls
 ```
 
-## 63 functions of shared have no test at all
+## 64 functions of shared have no test at all
 
 ```
 \-- IdObject
@@ -2216,6 +2216,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- calc - 0 unit test calls shared by 2 classes
     \-- list_args_are_plain - 0 unit test calls
     \-- list_number - 0 unit test calls
+    \-- log_number - 0 unit test calls
     \-- one_number - 0 unit test calls
     \-- power_of - 0 unit test calls
 \-- change_log_actions

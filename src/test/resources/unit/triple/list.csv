@@ -2915,7 +2915,7 @@ triple_id,from_phrase_id,verb_id,to_phrase_id,user_id,triple_name,name_given,nam
 2914,-2879,33,-2878,1,PV installation row saving replacement mix order,,,,,,,,,,,,,,
 2915,-2867,23,-2682,1,PV installation row PV production hint,,,{PV capacity} × {PV yield|number} kWh/kWp × factor {yield factor|number},,,,,,,,,,,
 2916,-2875,23,-2682,1,PV installation row PV embodied emission hint,,,{PV site intensity} at this site,,,,,,,,,,,
-2917,-2876,23,-2682,1,PV installation row battery embodied emission hint,,,{battery count|number} × {battery capacity|number} kWh × {battery production emission},,,,,,,,,,,
+2917,-2876,23,-2682,1,PV installation row battery embodied emission hint,,,{battery count|number} × {battery capacity|number} kWh × {battery production emission|number} kg/kWh,,,,,,,,,,,
 2918,-2880,23,-2682,1,PV installation row battery effect hint,,,"vs. same PV without battery, annual Swiss mix",,,,,,,,,,,
 2919,-2880,15,-2022,1,PV installation row battery effect filter,,,,,,,,,,,,,,
 2920,-2880,33,-2879,1,PV installation row battery effect order,,,,,,,,,,,,,,

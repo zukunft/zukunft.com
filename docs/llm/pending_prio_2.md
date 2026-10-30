@@ -239,7 +239,7 @@ the phrase type "measure type" (code id "measure") has been renamed to "measure 
 
 ## math functions of a symbol
 
-`integral`, `lim`, `d`, `C`, `log_a` and `log_b` describe a law with symbols; they stay missing in calc_internal, because a calculation with the numbers of a single value would give a wrong number
+`integral`, `lim`, `d` and `C` describe a law with symbols; they stay missing in calc_internal, because a calculation with the numbers of a single value would give a wrong number
 
 ## list functions
 
@@ -264,10 +264,42 @@ code:
 - the comments in `phrase_data.php`, `update_put.php`, `phrase_data_walks.php` and `url_var.php` use the example id -2757, whereas `pv` redirects to -2758: check them after the next id shift
 - the `use` line of `sql_db` in `formula.php` is out of order
 
+## slow diff of a large file
+
+a difference in a large csv file takes minutes: a test run needed 149 seconds (546 s to 695 s of the run) to report the difference of `unit/result/list.csv` with 152 KB. A matching file is fast, because the check itself is a plain string compare, so the delay only shows if there are differences. The time is booked as `test diff` in the time report.
+
+cause, in the path `test_base::assert` → `library::diff_msg` → `str_diff` → `str_diff_list`:
+- a csv is of the type `STR_TYPE_CODE`, so `str_split_for_humans` splits the file into one part per char, 152'297 parts for this file
+- for each char that differs, `str_diff_list_next_array_match` searches the next 8 matching chars (`STR_DIFF_MATCH_LEN`) up to the end of the text, so if the end has changed too, nothing matches and each char costs a full scan: the time grows with about the square of the size
+- the message stops at about 100 chars (`STR_DIFF_MSG_LEN`), so almost all of the diff is calculated and dropped, e.g. "and 243374 more" in the message
+
+measured without database by calling `diff_msg` with parts of the file, with the first 20 % matching and all digits of the rest changed:
+
+| text size | time |
+| ---: | ---: |
+| 2'500 chars | 3.05 s |
+| 5'000 chars | 8.40 s |
+| 10'000 chars | 28.21 s |
+| 20'000 chars | 62.87 s |
+| 40'000 chars | not finished in the about 20 s left of a 110 s limit |
+| 152'000 chars | not finished in a 280 s run over all sizes up to this one |
+
+the time depends on how much of the text no longer matches: the old and the new version of the file from git with 152 KB, which are mostly the same, needed 0.72 s
+
+possible fixes:
+1. `test_db_load::csv_check_of_class` compares a large csv line by line and reports the changed rows with `array_diff` like `csv_leftover_check`, which should need well under a second and is easier to read than e.g. `30407//+f4-//`; this is the recommended fix, but it covers only the csv files
+2. `str_diff_list` stops when the message has enough differences, for the large html and text snapshots; the count of "and N more" is then no longer available
+3. limit the search of `str_diff_list_next_array_match`: a small change, but the diff of moved text gets less exact
+
 ## use case
 
 the PV calculator page (pv_lifetime_balance.json) recalculates in the browser only what its formulas calculate, so the input cases of system_views_read_tests::run_pv_lifetime_balance_cases still differ from the sample (pv_lifetime_balance_diff_high.md, _low.md):
-- the PV system emission uses the result PV embodied intensity of the reference system, which has no page phrase and is therefore not part of the phrase data of the page, so a changed PV life-cycle emission does not change it; its formula also takes the same PV yield value as the PV production of the site, whereas the sample keeps the reference yield and lifetime of the LCA fixed
+- the reference yield of 976 and the reference lifetime of 30 years are also numbers in the formula "PV embodied intensity formula": give them their own phrases, so that they are values with a source
+
+differences of the PV calculator page to its sample that no `pv_lifetime_balance_diff*.md` report shows, because no input case reaches them:
+- the sample always shows the lifetime column in tonnes, whereas the generated page switches to tonnes only from 10'000 kg, so small values entered by hand can show different units
+- `calculator.js` of the server page does not update the numbers in a row sub text when an input changes, whereas `calculator_json.js` and the sample do
+- the sample no longer shows the midpoint of 350–440 in the option of the production mix, so the midpoint is only in the description of the value in `pv_lifetime_balance.json`
 
 PV in Switzerland
 

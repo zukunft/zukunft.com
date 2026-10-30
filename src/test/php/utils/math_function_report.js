@@ -15,9 +15,9 @@ const path = require('path');
 const NO_NUMBER = 'no number';
 const FATAL = 'fatal: ';
 
-const CALC_CONSTS = ['TOKEN_NUM', 'TOKEN_OP', 'TOKEN_REF', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'POWER', 'ONE_NUMBER', 'LIST_NUMBER'];
-const JSON_CONSTS = ['TOKEN_PATTERN', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'POWER', 'ONE_NUMBER', 'LIST_NUMBER'];
-const EDITOR_CONSTS = ['FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'ONE_NUMBER', 'LIST_NUMBER', 'POWER', 'T_PHR', 'T_NUM', 'T_OP', 'T_BR'];
+const CALC_CONSTS = ['TOKEN_NUM', 'TOKEN_OP', 'TOKEN_REF', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'POWER', 'ONE_NUMBER', 'LOG_NUMBER', 'LIST_NUMBER'];
+const JSON_CONSTS = ['TOKEN_PATTERN', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'POWER', 'ONE_NUMBER', 'LOG_NUMBER', 'LIST_NUMBER'];
+const EDITOR_CONSTS = ['FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'ONE_NUMBER', 'LOG_NUMBER', 'LIST_NUMBER', 'POWER', 'T_PHR', 'T_NUM', 'T_OP', 'T_BR'];
 // the texts of the formula editor are not needed, because only the number is compared
 const EDITOR_STUBS = 'const TXT = {}; const VAR = {}; function txt() { return ""; }';
 

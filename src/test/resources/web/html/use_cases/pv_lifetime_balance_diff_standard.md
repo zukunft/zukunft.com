@@ -4,11 +4,7 @@ Change the generated page pv_lifetime_balance_js.html#standard so that it shows 
 
 ## Missing in the generated page (0)
 
-## Different (3)
-
-- field: Orientation, hint: the sample shows "Yield factor 0.85 relative to south 30° [7]" and the generated page "Yield factor relative to south 30°"
-- row: Electricity / Self-consumption rate, cells: the sample shows " | 49 %" and the generated page " | 48.77 %"
-- row: Electricity / Autarky, cells: the sample shows " | 84 %" and the generated page " | 84.42 %"
+## Different (0)
 
 ## Only in the generated page (0)
 

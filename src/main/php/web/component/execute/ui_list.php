@@ -3098,15 +3098,19 @@ class ui_list extends ui_base
 
     /**
      * @param sandbox_value $val the value or result of a phrase of a hint
-     * @param bool $plain true for the number as a field shows it, false for the rough number with its unit
+     * @param bool $plain true for the number as a field shows it but with the thousands separator, false for the rough number with its unit
      * @param user_message $msg to report a problem of the phrase types
      * @return string the text of the number
      */
     private function calculator_hint_number(sandbox_value $val, bool $plain, user_message $msg): string
     {
-        $result = $this->calculator_rough_text($val, $msg);
+        $result = $this->calculator_rough_text($val, $msg, 1);
         if ($plain) {
-            $result = new html_base()->number_value($val->number(), $this->field_decimals($val, $msg));
+            global $ui_sys;
+            $thousand_sep = $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP;
+            $number = new html_base()->number_value($val->number(), $this->field_decimals($val, $msg));
+            $result = preg_replace_callback('/^\d+/',
+                fn(array $int) => preg_replace('/\B(?=(\d{3})+(?!\d))/', $thousand_sep, $int[0]), $number);
         }
         return $result;
     }
@@ -3901,7 +3905,7 @@ class ui_list extends ui_base
                 $val = $this->calculator_phrase_result($phr, $flt, $dbo, $dto, $msg);
             }
             if ($val != null and !$val->is_null()) {
-                $txt = $this->calculator_rough_text($val, $msg);
+                $txt = $this->calculator_rough_text($val, $msg, 0);
                 $note = $calc->number_note($row);
                 if ($note != '') {
                     $txt .= ' ' . $note;
@@ -3915,11 +3919,16 @@ class ui_list extends ui_base
     /**
      * @param sandbox_value $val a number in a label or a sub text, which is only an indication
      * @param user_message $msg to report a problem of the phrase types
+     * @param int|null $whole_decimals the most decimals of a whole number, because e.g. 60.0 suggests a precision that an input does not have
      * @return string the number with the digits of the rough tier and its unit e.g. "12.1 a"
      */
-    private function calculator_rough_text(sandbox_value $val, user_message $msg): string
+    private function calculator_rough_text(sandbox_value $val, user_message $msg, ?int $whole_decimals = null): string
     {
         $fmt = $this->calculator_group_format([$val], true, $this->calculator_digits(words::ROUGH), $msg);
+        $shown = (float)$val->number() * $fmt->factor;
+        if ($whole_decimals !== null and $shown == floor($shown)) {
+            $fmt->decimals = min($fmt->decimals, $whole_decimals);
+        }
         return $this->calculator_cell_text($val, $fmt, true, $msg);
     }
 

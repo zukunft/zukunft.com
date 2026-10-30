@@ -104,6 +104,7 @@ class math_function_report
         'exp' => ['e to the power of the number', 'exp( 0 )', '1'],
         'ln' => ['natural logarithm', 'ln( 1 )', '0'],
         'log' => ['logarithm to the base 10', 'log( 100 )', '2'],
+        'log( ; )' => ['logarithm to the base of the second argument', 'log( 8 ; 2 )', '3'],
         'round' => ['the nearest whole number', 'round( 2.6 )', '3'],
         'sec' => ['secant of an angle in radian: one divided by the cosine', 'sec( 0 )', '1'],
         'sin' => ['sine of an angle in radian', 'sin( 0 )', '0'],
@@ -136,7 +137,7 @@ class math_function_report
         // a function or an operator that is missing everywhere
         'tan( 1 )', '10 - tan( 1 )', 'median( 2.6 ) * 3', 'sum( ) * 3', 'sum( 1 ; abc )', '5 %',
         // the functions of one number and the power with a number that they cannot give
-        'sqrt( -1 )', 'log( 0 )', 'ln( -1 )', 'exp( 1000 )', 'sqrt( 4 ; 9 )', 'sqrt( abc )',
+        'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 0 )', 'log( 8 ; 2 ; 3 )', 'ln( -1 )', 'exp( 1000 )', 'sqrt( 4 ; 9 )', 'sqrt( abc )',
         '0 ^ -1', '( -8 ) ^ 0.5', '2 ^ 3 ^ 2', '-2 ^ 2', '( -3 ) ^ 2', '2 ^ -1', 'round( -2.5 )', 'round( 2.5 )',
         'if( 0 ; 5 / 0 + 1 ; 2 )', 'if( 1 ; 2 ; 5 / 0 + 1 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 = 1 & 2 = 3 ; 5 ; 6 )', 'if( 1 = 1 | 2 = 3 ; 5 ; 6 )',
     ];

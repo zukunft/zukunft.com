@@ -263,6 +263,7 @@ messages:
   formula_editor_err_comma_join: "Ein Komma verbindet zwei Phrasen eines Operanden, z.B. \"delivered electricity\",\"lifetime\"."
   formula_editor_err_comma_place: "Ein Komma ist nur zwischen zwei Phrasen eines Operanden erlaubt."
   formula_function_missing: "Die Rechenfunktion \"z$VarObjName$z\" in \"z$VarObjExpression$z\" gibt es nicht, daher wird keine Zahl berechnet: verwende + - * / ^, Klammern, min, max, if, abs, cos, exp, ln, log, round, sec, sin oder sqrt."
+  formula_no_number: "\"z$VarObjExpression$z\" kann nicht berechnet werden, weil ein Teil davon ein Text oder leer ist statt einer Zahl."
   formula_list_argument: "\"z$VarObjExpression$z\" kann nicht berechnet werden: sum, count und mean nehmen Phrasen oder Zahlen getrennt durch einen Strichpunkt, und eine solche Phrase wird in der Formel nicht anderswo verwendet."
   formula_list_too_long: "\"z$VarObjName$z\" hat zu viele Werte für eine Listenfunktion in \"z$VarObjExpression$z\", daher wird keine Zahl berechnet: benenne die Werte genauer."
   formula_function_no_number: "\"z$VarObjName$z\" in \"z$VarObjExpression$z\" ergibt keine Zahl, z.B. beim Logarithmus von null oder der Wurzel einer negativen Zahl: prüfe die Zahlen dieser Berechnung."

@@ -163,7 +163,8 @@ class calc_internal
             return (float)$result;
         } else {
             if ($result != self::NO_NUMBER) {
-                log_err_msg('cannot parse "' . $formula . '" to number', $msg);
+                // a text in an expression is a problem of the formula that the user can fix, no internal error
+                $msg->add(msg_id::FORMULA_NO_NUMBER, [msg_id::VAR_EXPRESSION => $formula]);
             }
             return null;
         }
@@ -937,7 +938,9 @@ class calc_internal
     private function one_number(string $name, array $nums, string $formula, user_message $msg): string
     {
         $num = NAN;
-        if (count($nums) == 1) {
+        if ($name == chars::FUNC_LOG) {
+            $num = arithmetic::log_number($nums);
+        } elseif (count($nums) == 1) {
             $num = arithmetic::one_number($name, $nums[0]);
         }
         return $this->number_or_report($num, $name, $formula, $msg);

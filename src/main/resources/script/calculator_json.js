@@ -643,6 +643,8 @@
     const FUNC_IF = 'if';
     const FUNC_ARG_SEPARATOR = ';';
     const POWER = '^';
+    // the logarithm like arithmetic::log_number, to the base 10 if no base is given
+    const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
     // the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
     const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
     const LIST_ARGUMENT_START = /\b(?:sum|count|mean)\s*\([^()]*$/;
@@ -933,6 +935,10 @@
             expectToken(tokens, state, FUNC_IF);
             expectToken(tokens, state, '(');
             result = ifFunction(tokens, state);
+        } else if (token === 'log') {
+            state.pos++;
+            expectToken(tokens, state, '(');
+            result = finiteNumber(LOG_NUMBER(listArguments(tokens, state)));
         } else if (token in ONE_NUMBER) {
             state.pos++;
             expectToken(tokens, state, '(');
@@ -1001,10 +1007,15 @@
 
     function formatNumber(num, decimals) {
         const fixed = Math.abs(Number(num)).toFixed(decimals).split('.');
-        const int = fixed[0].replace(/\B(?=(\d{3})+(?!\d))/g, FMT.thousand_sep || "'");
-        const sign = Number(num) < 0 ? '-' : '';
+        const int = thousands(fixed[0]);
+        // a number that rounds to zero has no sign
+        const sign = Number(num) < 0 && Number(fixed.join('.')) !== 0 ? '-' : '';
         const result = sign + int + (fixed.length > 1 ? (FMT.dec_point || '.') + fixed[1] : '');
         return result;
+    }
+
+    function thousands(int) {
+        return int.replace(/\B(?=(\d{3})+(?!\d))/g, FMT.thousand_sep || "'");
     }
 
     /* per unit the format of the numbers of one column, so that the numbers of a unit can be compared at a glance (ui_list::calculator_formats) */
@@ -1032,8 +1043,10 @@
     /* a share times 100 with the percent decimals and its symbol e.g. "49 %" (sandbox_value::val_formatted) */
     function percentText(entry) {
         const word = entry.words.find(isPercent);
-        const scale = Math.pow(10, FMT.percent_decimals);
-        const num = Math.round(Number(entry.number) * 100 * scale) / scale;
+        const percent = Number(entry.number) * 100;
+        // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares
+        const scale = Math.abs(percent) >= 10 ? 1 : Math.pow(10, FMT.percent_decimals);
+        const num = Math.round(percent * scale) / scale;
         const sym = isRatioUnit(word) ? '' : (symbols.get(word) || '');
         const result = String(num) + (sym === '' ? '' : FMT.unit_sep + sym);
         return result;
@@ -1089,6 +1102,16 @@
         return result;
     }
 
+    /* a number of a label or a sub text with the digits of the rough tier and at most the given decimals if it is whole (ui_list::calculator_rough_text) */
+    function roughText(entry, wholeDecimals) {
+        const formats = columnFormats([entry], true, FMT.rough_digits);
+        const fmt = formats.get(unitOf(entry));
+        if (Number.isInteger(Number(entry.number) * fmt.factor)) {
+            fmt.decimals = Math.min(fmt.decimals, wholeDecimals);
+        }
+        return numberText(entry, formats, true);
+    }
+
     /* the hint of a row with the number of each phrase in curly brackets or an empty text if a number is missing (ui_list::calculator_hint_numbers) */
     function hintNumbers(text) {
         let missing = false;
@@ -1097,7 +1120,7 @@
             missing = missing || entry === null;
             let num = '';
             if (entry !== null) {
-                num = plain ? fieldNumber(entry) : numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
+                num = plain ? fieldNumber(entry).replace(/^\d+/, thousands) : roughText(entry, 1);
             }
             return num;
         });
@@ -1302,7 +1325,7 @@
         const flt = filterOf(row);
         const entry = flt === null ? null : fieldEntry(phr) || phraseResult(phr, flt);
         const note = ownText(row.name, KW.number_note);
-        const txt = entry === null ? '' : numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
+        const txt = entry === null ? '' : roughText(entry, 0);
         const result = entry === null ? '' : ' (' + txt + (note === null ? '' : ' ' + note) + ')';
         return result;
     }

@@ -1405,6 +1405,7 @@ enum messages: string
     case FORMULA_FUNCTION_MISSING = 'formula_function_missing';
     case FORMULA_DIVISION_BY_ZERO = 'formula_division_by_zero';
     case FORMULA_FUNCTION_NO_NUMBER = 'formula_function_no_number';
+    case FORMULA_NO_NUMBER = 'formula_no_number';
     case FORMULA_LIST_ARGUMENT = 'formula_list_argument';
     case FORMULA_LIST_TOO_LONG = 'formula_list_too_long';
     case FORMULA_WORD_RENAME_FAILED = 'formula "'

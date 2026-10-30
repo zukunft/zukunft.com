@@ -283,6 +283,8 @@
         /* the functions of one number like chars::FUNC_ONE_NUMBER of the backend, so also round away from zero and an angle in radian */
         const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
         /* the functions and symbols that are offered after a press on more, because the basic ones are enough for most formulas */
+        /* the logarithm like arithmetic::log_number, to the base 10 if no base is given */
+        const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
         /* the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED) */
         const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
         const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
@@ -769,6 +771,16 @@
                     pos = pos + 1;
                     expect(['(']);
                     result = ifFunction();
+                } else if (isChar(['log'])) {
+                    pos = pos + 1;
+                    expect(['(']);
+                    const nums = [sum()];
+                    while (valid && isChar([FUNC_ARG_SEPARATOR])) {
+                        pos = pos + 1;
+                        nums.push(sum());
+                    }
+                    bracketClose();
+                    result = finite(LOG_NUMBER(nums));
                 } else if (isChar(Object.keys(ONE_NUMBER))) {
                     const calc = ONE_NUMBER[tokens[pos].c];
                     pos = pos + 1;

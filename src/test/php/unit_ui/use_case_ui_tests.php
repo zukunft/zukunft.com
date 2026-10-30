@@ -973,9 +973,10 @@ class use_case_ui_tests
         $list_hint = new ui_list();
         $lst_hint = $dto_res->val_lst;
         $inh_num = '{' . word_names::INHABITANTS . '|number}';
-        $test_name = 'a phrase of a row hint is shown as its plain number';
+        $test_name = 'a phrase of a row hint is shown as its number without a unit, but with the thousands separator';
         $hint_txt = $list_hint->calculator_hint_numbers('a ' . $inh_num . ' b', $wrd, $dto_res, $lst_hint, $msg);
-        $t->assert($test_name, $hint_txt, 'a ' . $html->number_value($dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->number(), null) . ' b');
+        $inh_txt = number_format($dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->number(), 0, '', shared_config::DEFAULT_THOUSAND_SEP);
+        $t->assert($test_name, $hint_txt, 'a ' . $inh_txt . ' b');
         $test_name = '... and a hint without a phrase stays as it is';
         $t->assert($test_name, $list_hint->calculator_hint_numbers('no number', $wrd, $dto_res, $lst_hint, $msg), 'no number');
         // negative: half a calculation is misleading, so a phrase without a number hides the hint

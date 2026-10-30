@@ -89,6 +89,7 @@ class math_tests
             ['abs( -2.5 )', 2.5],
             ['round( -2.5 )', -3.0],
             ['log( 100 ) + ln( 1 ) + exp( 0 )', 3.0],
+            ['log( 8 ; 2 ) * 2', 6.0],
             ['sin( 0 ) + cos( 0 ) + sec( 0 )', 2.0],
             ['if( 1 = 2 ; 3 ; 4 ) * 2', 8.0],
             ['if( 1 = 1 & 2 = 3 ; 5 ; 6 )', 6.0],
@@ -103,7 +104,7 @@ class math_tests
         // negative: a text that is no calculation gives no number instead of a wrong one
         $invalid = ['', '2 +', '2 x 3', '( 2 + 3', '1 / 0', '2 3',
             'min( 1 ; 2', 'min 1', 'min( ; 1 )', 'max( 1 ; 2', 'max 1', 'max( ; 1 )', 'round( 1 ; 2 )', '1 ; 2',
-            'tan( 1 )', 'sqrt( -1 )', 'log( 0 )', 'exp( 1000 )', '0 ^ -1', '( -8 ) ^ 0.5', 'sqrt( 4', 'sqrt 4',
+            'tan( 1 )', 'sqrt( -1 )', 'log( 0 )', 'log( 8 ; 1 )', 'log( 8 ; 2 ; 3 )','exp( 1000 )', '0 ^ -1', '( -8 ) ^ 0.5', 'sqrt( 4', 'sqrt 4',
             'if( 1 ; 2 )', 'if( 1 ; 2 ; 3 ; 4 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 / 0 ; 2 ; 3 )', '1 = 1', '1 & 1'];
         foreach ($invalid as $txt) {
             $t->assert_null($ts . '"' . $txt . '" is no calculation', $calc->calc($txt));
@@ -232,14 +233,14 @@ class math_tests
         $t->assert($ts . 'no min without closing bracket "' . $math_text . '"', $calc->math_min($math_text, $msg), $math_text);
         $math_text = "min 1";
         $t->assert($ts . 'no min without open bracket "' . $math_text . '"', $calc->math_min($math_text, $msg), $math_text);
-        // negative: an argument that is no number logs an expected error and informs the user
+        // negative: an argument that is no number informs the user
         $math_text = "min(1;abc)";
-        $num_txt = $this->without_error_count(fn() => $calc->math_min($math_text, $msg));
+        $num_txt = $calc->math_min($math_text, $msg);
         $t->assert($ts . 'no min of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
         $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
         $msg->reset();
         $math_text = "min(;1)";
-        $num_txt = $this->without_error_count(fn() => $calc->math_min($math_text, $msg));
+        $num_txt = $calc->math_min($math_text, $msg);
         $t->assert($ts . 'no min with an empty argument "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
         $msg->reset();
 
@@ -268,14 +269,14 @@ class math_tests
         $t->assert($ts . 'no max without closing bracket "' . $math_text . '"', $calc->math_max($math_text, $msg), $math_text);
         $math_text = "max 1";
         $t->assert($ts . 'no max without open bracket "' . $math_text . '"', $calc->math_max($math_text, $msg), $math_text);
-        // negative: an argument that is no number logs an expected error and informs the user
+        // negative: an argument that is no number informs the user
         $math_text = "max(1;abc)";
-        $num_txt = $this->without_error_count(fn() => $calc->math_max($math_text, $msg));
+        $num_txt = $calc->math_max($math_text, $msg);
         $t->assert($ts . 'no max of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
         $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
         $msg->reset();
         $math_text = "max(;1)";
-        $num_txt = $this->without_error_count(fn() => $calc->math_max($math_text, $msg));
+        $num_txt = $calc->math_max($math_text, $msg);
         $t->assert($ts . 'no max with an empty argument "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
         $msg->reset();
 
@@ -318,9 +319,9 @@ class math_tests
         foreach ($cases as [$math_text, $expected]) {
             $t->assert($ts . 'calc "' . $math_text . '"', (float)$calc->parse($math_text, $msg), (float)$expected);
         }
-        // negative: an argument that is no number logs an expected error and informs the user
+        // negative: an argument that is no number informs the user
         $math_text = "sum(1;abc)";
-        $num_txt = $this->without_error_count(fn() => $calc->math_list($math_text, $msg));
+        $num_txt = $calc->math_list($math_text, $msg);
         $t->assert($ts . 'no sum of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
         $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
         $msg->reset();
@@ -343,6 +344,8 @@ class math_tests
             ['10 - sqrt(4)', 8.0],
             ['round(2.6) * 3', 9.0],
             ['log(100)', 2.0],
+            ['log(8;2)', 3.0],
+            ['1 + log(100;10) * 2', 5.0],
             ['log(8) / log(2)', 3.0],
             ['ln(1) + 1', 1.0],
             ['exp(0)', 1.0],
@@ -383,6 +386,10 @@ class math_tests
         $cases = [
             ['sqrt(-1)', 'sqrt'],
             ['log(0)', 'log'],
+            ['log(8;1)', 'log'],
+            ['log(8;0)', 'log'],
+            ['log(8;-2)', 'log'],
+            ['log(8;2;3)', 'log'],
             ['ln(-1) + 1', 'ln'],
             ['exp(1000)', 'exp'],
             ['sqrt(4;9)', 'sqrt'],
@@ -394,27 +401,27 @@ class math_tests
             $t->assert_text_contains($ts . 'the user is told about "' . $math_text . '"', $msg->text(), $name);
             $msg->reset();
         }
-        // negative: a text is no number for a function either, this logs an expected error
+        // negative: a text is no number for a function either
         $math_text = "sqrt(abc) + 1";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text in a function "' . $math_text . '"', $num);
         $msg->reset();
         $math_text = "abc ^ 2";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text in a power "' . $math_text . '"', $num);
         $msg->reset();
-        // negative: a part that cannot be calculated is never counted as zero, each of these logs an expected error
+        // negative: a part that cannot be calculated is never counted as zero
         $math_text = "abc + 1";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text "' . $math_text . '"', $num);
-        $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
+        $t->assert_text_contains($ts . 'the user is told about the text in "' . $math_text . '"', $msg->text(), 'abc');
         $msg->reset();
         $math_text = "(abc + 1) + 3";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text in a bracket "' . $math_text . '"', $num);
         $msg->reset();
         $math_text = "min(1;abc) + 1";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text in an argument "' . $math_text . '"', $num);
         $msg->reset();
         // negative: a division by zero is no number and the user is told which part divides by zero
@@ -443,14 +450,14 @@ class math_tests
         $math_text = "if(0|0) 5";
         $t->assert_null($ts . 'no result for a false or "' . $math_text . '"', $calc->parse($math_text, $msg));
         $t->assert_true($ts . 'no message for a false condition "' . $math_text . '"', $msg->is_ok());
-        // negative: a text in the condition or behind it gives no number, each of these logs an expected error
+        // negative: a text in the condition or behind it gives no number
         $math_text = "if(abc&1) 5";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text in the condition "' . $math_text . '"', $num);
         $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
         $msg->reset();
         $math_text = "if(1&1) abc";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text behind the condition "' . $math_text . '"', $num);
         $msg->reset();
         // the if function with one condition and with the then and else part
@@ -471,9 +478,9 @@ class math_tests
         $math_text = "if(0) 5";
         $t->assert_null($ts . 'no result for a false condition "' . $math_text . '"', $calc->parse($math_text, $msg));
         $t->assert_true($ts . 'no message for a false condition "' . $math_text . '"', $msg->is_ok());
-        // negative: a text is neither true nor false, also not for or, this logs an expected error
+        // negative: a text is neither true nor false, also not for or
         $math_text = "if(abc|1) 5";
-        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $num = $calc->parse($math_text, $msg);
         $t->assert_null($ts . 'no number for a text in an or "' . $math_text . '"', $num);
         $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
         $msg->reset();
@@ -482,24 +489,6 @@ class math_tests
         $t->assert($ts . 'a number for "' . $math_text . '"', $calc->parse($math_text, $msg), 2);
         $t->assert_true($ts . 'no message for "' . $math_text . '"', $msg->is_ok());
 
-    }
-
-    /**
-     * a negative test that logs an error on purpose, which would else hide a real error in the
-     * number of internal errors of the test run; any other error of the test run is still counted
-     *
-     * @param callable $call the calculation that is expected to log an error
-     * @return mixed the result of the calculation
-     */
-    private function without_error_count(callable $call): mixed
-    {
-        global $sys;
-        $errors = $sys?->errors;
-        $result = $call();
-        if ($sys !== null) {
-            $sys->errors = $errors;
-        }
-        return $result;
     }
 
 }

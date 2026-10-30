@@ -1753,7 +1753,7 @@
     },
     {
       "name": "PV installation row battery embodied emission hint",
-      "description": "{battery count|number} × {battery capacity|number} kWh × {battery production emission}",
+      "description": "{battery count|number} × {battery capacity|number} kWh × {battery production emission|number} kg/kWh",
       "from": "PV installation row battery embodied emission",
       "verb": "has a",
       "to": "calculator hint"
@@ -2164,12 +2164,10 @@
     },
     {
       "name": "PV embodied intensity formula",
-      "description": "turns the life cycle emission per kWh of the reference system into a fixed amount per kWp: the emission per kWh is spread over the reference yield and lifetime, so a site with a lower yield has the same embodied emission and a higher emission per kWh; the division by 1000 converts gram to kg",
-      "expression": "\"PV embodied intensity\" = \"PV in Switzerland\" * \"PV yield\" * \"lifetime\" / 1000",
+      "description": "turns the life cycle emission per kWh of the reference system into a fixed amount per kWp: the emission per kWh is spread over the reference yield of 976 kWh/kWp and the reference lifetime of 30 years of the life cycle assessment, which stay fixed if the page changes the yield and the lifetime of the site, so a site with a lower yield has the same embodied emission and a higher emission per kWh; the division by 1000 converts gram to kg",
+      "expression": "\"PV embodied intensity\" = \"PV in Switzerland\" * 976 * 30 / 1000",
       "assigned": [
-        "PV in Switzerland",
-        "PV yield",
-        "lifetime"
+        "PV in Switzerland"
       ]
     },
     {
@@ -3620,15 +3618,11 @@
         "CO2-eq",
         "gram per kWh",
         "2023",
-        "PV yield",
-        "annual",
-        "kilowatthours per kilowatt peak and year",
-        "PV installation",
-        "lifetime",
-        "year (duration unit)"
+        "example PV installation"
       ],
       "formula": "PV embodied intensity formula",
       "words": [
+        "example PV installation",
         "PV embodied intensity",
         "kg per kWp",
         "CO2-eq",
