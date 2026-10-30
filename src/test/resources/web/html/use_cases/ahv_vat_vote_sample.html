@@ -17,7 +17,9 @@
     <!--
         Prototype of a zukunft.com "decision calculator" view for the Swiss vote of 29 November 2026
         on the federal decree on the additional financing of the AHV by an increase of the value added tax
-        (the partial financing of the 13th AHV pension). The header, the footer and the use case layout
+        (the partial financing of the 13th AHV pension), with four targets - the personal gain, money from the rich
+        to the poor, money from the old to the young and the stability of the AHV - that the reader weights in
+        percent to one overall target reach. The header, the footer and the use case layout
         are the standard ones of style_html.css; the stylesheet below only adds the parts that the use
         case style does not have yet (the arguments, the slider field and the verdict) and the script at
         the end replaces calculator.js. The numbers, the formulas and the sources are the ones of
@@ -306,9 +308,12 @@
                 National Council (108 to 85) and the Council of States (28 to 13), the SP, the Greens, the Centre, the
                 GLP, the EVP and the unions' federation SGB say yes; the FDP, the SVP, the employers, the trades and
                 the public service union VPOD say no; the first polls put the opponents slightly ahead [6][8][9][10].
-                Below are the arguments of both sides with their numbers, then a calculator: say what you spend and
+                        Below are the arguments of both sides with their numbers, then a calculator: say what you spend and
                 earn, say how a no would be paid for instead, and see whether the VAT or the alternative costs your
-                household more - and what that suggests for your vote.
+                household more. The cost is one target of four: next to the personal gain the page scores how far a
+                yes moves money from the rich to the poor, from the old to the young and how far it stabilises the
+                AHV; weight the four targets in percent, and the page combines them into one overall target reach
+                that says what your vote should be under your assumptions and your targets.
             </p>
             </details>
         </header>
@@ -476,6 +481,14 @@
                                 title="VPOD: a no leads to nothing, the fund can carry it and the missing francs do not count">
                             No = the fund pays
                         </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="self_interest"
+                                title="Only the personal gain counts: 100 % on the cost of the household, 0 % on the other targets">
+                            Targets: self-interest
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="solidarity"
+                                title="The redistribution targets count most: 20 % personal gain, 40 % rich to poor, 25 % old to young, 15 % stability">
+                            Targets: solidarity
+                        </button>
                     </div>
 
                     <div class="field">
@@ -574,6 +587,65 @@
                         </div>
                         <span class="hint">
                                     The ESTV assumes that firms pass the increase on in full; retailers under price pressure may absorb part of it [5]
+                                </span>
+                    </div>
+                    <h2>
+                        Your targets
+                    </h2>
+                    <div class="field">
+                        <label for="n-wpers">
+                            Weight: personal gain
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wpers" min="-100" max="100" step="5">
+                            <input type="number" id="n-wpers" value="50" min="-100" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The target: the financing costs my household as little as possible. The weights are normalised, so they need not add up to 100; a negative weight means you want the opposite of the target
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wrich">
+                            Weight: money from the rich to the poor
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wrich" min="-100" max="100" step="5">
+                            <input type="number" id="n-wrich" value="20" min="-100" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The target: the new revenue is raised more from high than from low incomes, relative to their income; measured by the burden ratio of the top to the bottom income class against their income ratio
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wgen">
+                            Weight: money from the old to the young
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wgen" min="-100" max="100" step="5">
+                            <input type="number" id="n-wgen" value="15" min="-100" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The target: the pensioners who receive the 13th pension carry a larger share of its financing, so the working generation a smaller one; measured by the pensioner households' share of the new revenue
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wfund">
+                            Weight: stability of the AHV
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wfund" min="-100" max="100" step="5">
+                            <input type="number" id="n-wfund" value="15" min="-100" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The target: the AHV fund of 2035 stays as high as possible; measured by the fund level in percent of a year's expenditure
                                 </span>
                     </div>
                 </div>
@@ -792,17 +864,143 @@
                                 </span>
                     </div>
                     <div class="field">
+                        <label for="n-bvat">
+                            Burden ratio of the VAT, top to bottom income class
+                            <span class="tag m">measured 4.0</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-bvat" min="1" max="8" step="0.1">
+                            <input type="number" id="n-bvat" value="4" min="1" max="8" step="0.1">
+                            <span class="unit">x</span>
+                        </div>
+                        <span class="hint">
+                                    ESTV: 28 CHF a month above 13'400 CHF of income against 7 CHF below 4'600 CHF, so four times [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-bpay">
+                            Burden ratio of payroll contributions, top to bottom
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-bpay" min="1" max="10" step="0.1">
+                            <input type="number" id="n-bpay" value="4.6" min="1" max="10" step="0.1">
+                            <span class="unit">x</span>
+                        </div>
+                        <span class="hint">
+                                    Contributions are proportional to the wage without a cap, and the bottom class holds many pensioner and part-time households with little wage; 16'000 against 3'500 CHF of wage a month
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-bfed">
+                            Burden ratio of federal savings, top to bottom
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-bfed" min="0.2" max="8" step="0.1">
+                            <input type="number" id="n-bfed" value="1" min="0.2" max="8" step="0.1">
+                            <span class="unit">x</span>
+                        </div>
+                        <span class="hint">
+                                    1: a cut hits every household alike, e.g. of premium subsidies or transport; above 1 if the cut hits the rich, e.g. a higher federal income tax
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-bnone">
+                            Burden ratio of the unfunded part, top to bottom
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-bnone" min="1" max="8" step="0.1">
+                            <input type="number" id="n-bnone" value="4" min="1" max="8" step="0.1">
+                            <span class="unit">x</span>
+                        </div>
+                        <span class="hint">
+                                    Who pays the gap later depends on the next reform; the AHV 2030 scenarios name more VAT first, so the VAT ratio
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-incr">
+                            Income ratio of the top to the bottom income class
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-incr" min="1" max="10" step="0.1">
+                            <input type="number" id="n-incr" value="4" min="1" max="10" step="0.1">
+                            <span class="unit">x</span>
+                        </div>
+                        <span class="hint">
+                                    The ESTV classes: above 13'400 against below 4'600 CHF a month, about 16'000 against 4'000; a burden ratio equal to the income ratio is proportional, above it progressive, below it regressive [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-scpers">
+                            Full reach of the personal gain
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-scpers" min="50" max="2000" step="50">
+                            <input type="number" id="n-scpers" value="400" min="50" max="2000" step="50">
+                            <span class="unit">CHF/a</span>
+                        </div>
+                        <span class="hint">
+                                    The cost difference that counts as the target fully reached (score +1) or fully missed (-1); the scale of the meter
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-scrich">
+                            Full reach of money from the rich to the poor
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-scrich" min="0.1" max="2" step="0.1">
+                            <input type="number" id="n-scrich" value="0.5" min="0.1" max="2" step="0.1">
+                            <span class="unit">index</span>
+                        </div>
+                        <span class="hint">
+                                    The difference of the progressivity index (burden ratio over income ratio minus one) between the yes and the no path that counts as fully reached
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-scgen">
+                            Full reach of money from the old to the young
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-scgen" min="5" max="50" step="5">
+                            <input type="number" id="n-scgen" value="25" min="5" max="50" step="5">
+                            <span class="unit">points</span>
+                        </div>
+                        <span class="hint">
+                                    The difference of the pensioner households' share of the new revenue between the yes and the no path that counts as fully reached
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-scfund">
+                            Full reach of the stability of the AHV
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-scfund" min="5" max="50" step="5">
+                            <input type="number" id="n-scfund" value="20" min="5" max="50" step="5">
+                            <span class="unit">points</span>
+                        </div>
+                        <span class="hint">
+                                    The difference of the fund level 2035 between the yes and the no path that counts as fully reached
+                                </span>
+                    </div>
+                    <div class="field">
                         <label for="n-thr">
                             Decision threshold
                             <span class="tag a">assumed</span>
                         </label>
                         <div class="row">
-                            <input type="range" id="r-thr" min="0" max="300" step="10">
-                            <input type="number" id="n-thr" value="50" min="0" max="300" step="10">
-                            <span class="unit">CHF/a</span>
+                            <input type="range" id="r-thr" min="0" max="50" step="5">
+                            <input type="number" id="n-thr" value="10" min="0" max="50" step="5">
+                            <span class="unit">%</span>
                         </div>
                         <span class="hint">
-                                    Below this difference the cost argument is called undecided and the vote should rest on the other arguments
+                                    Below this overall target reach, to either side, the page calls the vote undecided and the decision should rest on the arguments
                                 </span>
                     </div>
                 </details>
@@ -819,14 +1017,15 @@
                         <div class="needle" id="verdict-needle" style="left: 50%"></div>
                     </div>
                     <div class="scale">
-                        <span>VAT cheaper for you: vote yes</span>
-                        <span>-400 ... 0 ... +400 CHF/a</span>
-                        <span>VAT dearer for you: vote no</span>
+                        <span>your targets served by a no</span>
+                        <span>-100 ... 0 ... +100 % target reach</span>
+                        <span>your targets served by a yes</span>
                     </div>
                     <p class="sub" id="verdict-note">
-                        The vote decides how the 13th pension is paid for, not whether. A yes on cost grounds therefore
-                        means: of the ways to pay for it, the VAT is the one that costs your household least under
-                        your assumptions.
+                        The vote decides how the 13th pension is paid for, not whether. The target reach says how far
+                        a yes, against the no path you shaped, serves the four targets with the weights you gave
+                        them: +100 % if every weighted target is fully reached by the yes, -100 % if every one is
+                        fully reached by the no.
                     </p>
                 </div>
 
@@ -1037,6 +1236,88 @@
                             <td class="n" id="res-ps-without"></td>
                             <td class="n" id="res-ps-diff"></td>
                         </tr>
+                        <tr>
+                            <td>
+                                Burden ratio top to bottom income class
+                                <span class="sub">
+                                                what the top class pays per franc of the bottom class
+                                            </span>
+                            </td>
+                            <td class="n" id="res-br-with"></td>
+                            <td class="n" id="res-br-without"></td>
+                            <td class="n" id="res-br-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Progressivity index
+                                <span class="sub">
+                                                burden ratio over income ratio minus one: 0 proportional, above progressive, below regressive
+                                            </span>
+                            </td>
+                            <td class="n" id="res-pr-with"></td>
+                            <td class="n" id="res-pr-without"></td>
+                            <td class="n" id="res-pr-diff"></td>
+                        </tr>
+                        <tr class="sec">
+                            <td colspan="4">
+                                Your targets: score of a yes against the no path, from -100 % (fully missed) to +100 % (fully reached)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Personal gain
+                                <span class="sub" id="res-tpers-sub">
+                                                cost difference over the full reach
+                                            </span>
+                            </td>
+                            <td class="n" id="res-tpers-score"></td>
+                            <td class="n" id="res-tpers-weight"></td>
+                            <td class="n" id="res-tpers-contrib"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Money from the rich to the poor
+                                <span class="sub" id="res-trich-sub">
+                                                progressivity difference over the full reach
+                                            </span>
+                            </td>
+                            <td class="n" id="res-trich-score"></td>
+                            <td class="n" id="res-trich-weight"></td>
+                            <td class="n" id="res-trich-contrib"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Money from the old to the young
+                                <span class="sub" id="res-tgen-sub">
+                                                pensioner share difference over the full reach
+                                            </span>
+                            </td>
+                            <td class="n" id="res-tgen-score"></td>
+                            <td class="n" id="res-tgen-weight"></td>
+                            <td class="n" id="res-tgen-contrib"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Stability of the AHV
+                                <span class="sub" id="res-tfund-sub">
+                                                fund difference over the full reach
+                                            </span>
+                            </td>
+                            <td class="n" id="res-tfund-score"></td>
+                            <td class="n" id="res-tfund-weight"></td>
+                            <td class="n" id="res-tfund-contrib"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Overall target reach
+                                <span class="sub">
+                                                the sum of the contributions: score times weight, over the sum of the weights
+                                            </span>
+                            </td>
+                            <td class="n" id="res-reach"></td>
+                            <td class="n" id="res-reach-wsum"></td>
+                            <td class="n" id="res-reach-contrib"></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1069,9 +1350,10 @@
                     </table>
                 </div>
                 <p class="hint">
-                    Each cell: the extra VAT for your household in CHF a year and, in brackets, the cost difference
-                    against the no path with all other assumptions as set on the left (green: VAT cheaper for you,
-                    red: dearer, grey: within the threshold); the federal share stays as set, the rest is unfunded.
+                    Each cell: the cost difference against the no path in CHF a year and, in brackets, the overall
+                    target reach in percent with all other assumptions and weights as set on the left (green: a yes
+                    serves your targets, red: a no, grey: within the threshold); the federal share stays as set, the
+                    rest is unfunded.
                 </p>
                     </div>
                 </details>
@@ -1137,7 +1419,7 @@
                             </p>
                             <p>
                                 <b>
-                                    household cost difference formula
+                                    cost difference formula
                                 </b>
                                 the annual cost of the yes path (extra VAT plus indirect cost) minus the annual cost of
                                 the no path (payroll cost plus federal cost plus deferred cost); a negative difference
@@ -1185,16 +1467,57 @@
                             </p>
                             <p>
                                 <b>
+                                    burden ratio formula
+                                </b>
+                                what the top income class pays per franc of the bottom class: on the yes path the
+                                ratio of the VAT; on the no path the ratios of the payroll contributions, the federal
+                                savings and the unfunded part, each weighted by its share of the replaced revenue
+                            </p>
+                            <p>
+                                <b>
+                                    progressivity formula
+                                </b>
+                                the burden ratio divided by the income ratio of the two classes, minus one: zero means
+                                both classes pay the same share of their income, positive that the rich pay a larger
+                                share (money moves from the rich to the poor), negative a smaller one
+                            </p>
+                            <p>
+                                <b>
+                                    target score formulas
+                                </b>
+                                each target is scored from -1 to +1 for a yes against the no path: the personal gain
+                                is minus the cost difference over its full reach; the money from the rich to the poor
+                                is the progressivity of the yes path minus that of the no path, over the full reach;
+                                the money from the old to the young is the pensioner households' share of the new
+                                revenue on the yes path minus that on the no path (zero if the no path raises nothing),
+                                over the full reach; the stability is the fund of 2035 on the yes path minus that on
+                                the no path, over the full reach; a score beyond -1 or +1 is cut to that bound
+                            </p>
+                            <p>
+                                <b>
+                                    target reach formula
+                                </b>
+                                the overall target reach: the sum over the four targets of the score times the weight,
+                                divided by the sum of the absolute weights, in percent; a negative weight turns a
+                                target round, so a reader who wants money to move from the young to the old gives that
+                                target a negative weight
+                            </p>
+                            <p>
+                                <b>
                                     verdict formula
                                 </b>
-                                yes if the cost difference is below minus the threshold, no if it is above plus the
-                                threshold, undecided in between; the threshold is an assumption of the reader
+                                yes if the overall target reach is above the threshold, no if it is below minus the
+                                threshold, undecided in between; the threshold and the weights are assumptions of the
+                                reader, so the verdict is the reader's, not the page's
                             </p>
                             <p>
                                 <b>
                                     model limits
                                 </b>
-                                one year of operation around 2030 in prices of 2025, no growth of spending or wages,
+                                the burden ratios compare two income classes only, not the whole distribution, and
+                                treat the pensioners of the bottom class by the payroll ratio alone; the targets are
+                                scored linearly and cut at the full reach, so a very large effect counts no more than
+                                a full one; one year of operation around 2030 in prices of 2025, no growth of spending or wages,
                                 no hotel rate, no VAT paid indirectly through businesses that cannot deduct it (banks,
                                 insurers, hospitals, the public sector), no investment return of the fund, no
                                 behavioural change of consumers, no structural reform as a way of a no (a higher
@@ -1445,9 +1768,83 @@
                                 "quality": "assumed",
                                 "confidence": 0.4
                             },
-                            "thr": {
-                                "unit": "CHF/a",
+                            "wpers": {
+                                "unit": "percent",
                                 "default": 50,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wrich": {
+                                "unit": "percent",
+                                "default": 20,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wgen": {
+                                "unit": "percent",
+                                "default": 15,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wfund": {
+                                "unit": "percent",
+                                "default": 15,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "bvat": {
+                                "unit": "factor",
+                                "default": 4,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "bpay": {
+                                "unit": "factor",
+                                "default": 4.6,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "bfed": {
+                                "unit": "factor",
+                                "default": 1,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "bnone": {
+                                "unit": "factor",
+                                "default": 4,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "incr": {
+                                "unit": "factor",
+                                "default": 4,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "scpers": {
+                                "unit": "CHF/a",
+                                "default": 400,
+                                "quality": "assumed"
+                            },
+                            "scrich": {
+                                "unit": "index",
+                                "default": 0.5,
+                                "quality": "assumed"
+                            },
+                            "scgen": {
+                                "unit": "points",
+                                "default": 25,
+                                "quality": "assumed"
+                            },
+                            "scfund": {
+                                "unit": "points",
+                                "default": 20,
+                                "quality": "assumed"
+                            },
+                            "thr": {
+                                "unit": "percent",
+                                "default": 10,
                                 "quality": "assumed"
                             }
                         },
@@ -1476,6 +1873,18 @@
                                 "spay": 0,
                                 "sfed": 0,
                                 "wdef": 0
+                            },
+                            "self_interest": {
+                                "wpers": 100,
+                                "wrich": 0,
+                                "wgen": 0,
+                                "wfund": 0
+                            },
+                            "solidarity": {
+                                "wpers": 20,
+                                "wrich": 40,
+                                "wgen": 25,
+                                "wfund": 15
                             }
                         },
                         "format": {
@@ -1496,7 +1905,7 @@
                         var format = calc_data.format;
                         var current_rate = 8.1;
                         var start_of_increase = 2028;
-                        var meter_scale = 400;
+                        var meter_scale = 100;
 
                         function read_number(id) {
                             var field = document.getElementById("n-" + id);
@@ -1564,14 +1973,51 @@
                             if (factor > 0) {
                                 r.spend_even = (r.cost_no - r.cind) / (12 * factor);
                             }
-                            if (r.diff < -inp.thr) {
+                            // the burden ratios and the progressivity of both paths
+                            r.br_yes = inp.bvat;
+                            r.br_no = (r.spay * inp.bpay + r.sfed * inp.bfed + r.snone * inp.bnone) / 100;
+                            r.pr_yes = r.br_yes / inp.incr - 1;
+                            r.pr_no = r.br_no / inp.incr - 1;
+                            // the pensioner share of the no path counts as zero if the no path raises nothing
+                            var ps_no_score = r.ps_no;
+                            if (isNaN(ps_no_score)) {
+                                ps_no_score = 0;
+                            }
+                            // the four target scores from -1 to +1
+                            r.s_pers = clamp(0 - r.diff / inp.scpers);
+                            r.s_rich = clamp((r.pr_yes - r.pr_no) / inp.scrich);
+                            r.s_gen = clamp((r.ps_yes - ps_no_score) / inp.scgen);
+                            r.s_fund = clamp((r.f_yes - r.f_no) / inp.scfund);
+                            // the weighted target reach
+                            r.w_sum = Math.abs(inp.wpers) + Math.abs(inp.wrich) + Math.abs(inp.wgen) + Math.abs(inp.wfund);
+                            r.c_pers = r.s_pers * inp.wpers;
+                            r.c_rich = r.s_rich * inp.wrich;
+                            r.c_gen = r.s_gen * inp.wgen;
+                            r.c_fund = r.s_fund * inp.wfund;
+                            r.reach = NaN;
+                            if (r.w_sum > 0) {
+                                r.reach = (r.c_pers + r.c_rich + r.c_gen + r.c_fund) / r.w_sum * 100;
+                            }
+                            if (r.reach > inp.thr) {
                                 r.verdict = "yes";
-                            } else if (r.diff > inp.thr) {
+                            } else if (r.reach < -inp.thr) {
                                 r.verdict = "no";
                             } else {
                                 r.verdict = "open";
                             }
                             return r;
+                        }
+
+                        function clamp(score) {
+                            // a target score is cut to the range from -1 to +1
+                            var result = score;
+                            if (result > 1) {
+                                result = 1;
+                            }
+                            if (result < -1) {
+                                result = -1;
+                            }
+                            return result;
                         }
 
                         function fmt(number, decimals) {
@@ -1651,8 +2097,69 @@
                             set_text("res-ps-with", fmt_unit(r.ps_yes, 0, "%"));
                             set_text("res-ps-without", fmt_unit(r.ps_no, 0, "%"));
                             set_text("res-ps-diff", fmt_signed(r.ps_yes - r.ps_no, 0, "points"));
+                            set_text("res-br-with", fmt_unit(r.br_yes, 2, "x"));
+                            set_text("res-br-without", fmt_unit(r.br_no, 2, "x"));
+                            set_text("res-br-diff", fmt_signed(r.br_yes - r.br_no, 2, "x"));
+                            set_text("res-pr-with", fmt_unit(r.pr_yes, 2, ""));
+                            set_text("res-pr-without", fmt_unit(r.pr_no, 2, ""));
+                            set_text("res-pr-diff", fmt_signed(r.pr_yes - r.pr_no, 2, ""));
+                            render_target("tpers", r.s_pers, inp.wpers, r.c_pers, r.w_sum,
+                                fmt(0 - r.diff, 0) + " CHF/a over " + fmt(inp.scpers, 0) + " CHF/a");
+                            render_target("trich", r.s_rich, inp.wrich, r.c_rich, r.w_sum,
+                                fmt_signed_plain2(r.pr_yes - r.pr_no) + " progressivity over " + fmt(inp.scrich, 2));
+                            render_target("tgen", r.s_gen, inp.wgen, r.c_gen, r.w_sum,
+                                fmt_signed_plain2(r.ps_yes - (isNaN(r.ps_no) ? 0 : r.ps_no)) + " points of pensioner share over " + fmt(inp.scgen, 0));
+                            render_target("tfund", r.s_fund, inp.wfund, r.c_fund, r.w_sum,
+                                fmt_signed_plain2(r.f_yes - r.f_no) + " points of fund over " + fmt(inp.scfund, 0));
+                            set_text("res-reach", fmt_signed(r.reach, 0, "%"));
+                            set_text("res-reach-wsum", fmt_unit(r.w_sum, 0, "% of weight"));
+                            set_text("res-reach-contrib", fmt_signed(r.reach, 0, "%"));
                             render_verdict(inp, r);
                             render_sensitivity(inp);
+                        }
+
+                        function render_target(id, score, weight, contribution, w_sum, sub) {
+                            // one target row: the score, the weight and the contribution to the overall reach
+                            set_text("res-" + id + "-score", fmt_signed(score * 100, 0, "%"));
+                            set_text("res-" + id + "-weight", fmt_unit(weight, 0, "% weight"));
+                            var share = NaN;
+                            if (w_sum > 0) {
+                                share = contribution / w_sum * 100;
+                            }
+                            set_text("res-" + id + "-contrib", fmt_signed(share, 1, "% reach"));
+                            set_text("res-" + id + "-sub", sub);
+                        }
+
+                        function fmt_signed_plain2(number) {
+                            var result = fmt(number, 2);
+                            if (number > 0) {
+                                result = "+" + result;
+                            }
+                            return result;
+                        }
+
+                        function target_sentence(r) {
+                            // the four contributions in words, the largest first
+                            var items = [
+                                {name: "the personal gain", value: r.c_pers},
+                                {name: "money from the rich to the poor", value: r.c_rich},
+                                {name: "money from the old to the young", value: r.c_gen},
+                                {name: "the stability of the AHV", value: r.c_fund}
+                            ];
+                            items.sort(function (a, b) {
+                                return Math.abs(b.value) - Math.abs(a.value);
+                            });
+                            var parts = [];
+                            var i;
+                            for (i = 0; i < items.length; i++) {
+                                var share = 0;
+                                if (r.w_sum > 0) {
+                                    share = items[i].value / r.w_sum * 100;
+                                }
+                                parts.push(items[i].name + " " + fmt_signed_plain(share) + " %");
+                            }
+                            var result = parts.join(", ");
+                            return result;
                         }
 
                         function render_verdict(inp, r) {
@@ -1662,21 +2169,36 @@
                             var diff = fmt(Math.abs(r.diff), 0);
                             var cost_yes = fmt(r.cost_yes, 0);
                             var cost_no = fmt(r.cost_no, 0);
+                            var reach = fmt(Math.abs(r.reach), 0);
                             var shape = fmt(r.spay, 0) + " % payroll contributions, " + fmt(r.sfed, 0) + " % federal savings and " + fmt(r.snone, 0) + " % left unfunded";
-                            if (r.verdict === "yes") {
-                                headline = "Yes - under your assumptions the VAT is the cheaper way for your household";
-                                text = "The VAT increase costs your household " + cost_yes + " CHF a year; the way a no would be paid for instead (" + shape + ") costs " + cost_no + " CHF. The VAT path is " + diff + " CHF a year cheaper for you, and it covers " + fmt(r.cov_yes, 0) + " % of the 13th pension against " + fmt(r.cov_no, 0) + " % on the no path.";
-                            } else if (r.verdict === "no") {
-                                headline = "No - under your assumptions the VAT is the dearer way for your household";
-                                text = "The VAT increase costs your household " + cost_yes + " CHF a year; the way a no would be paid for instead (" + shape + ") costs " + cost_no + " CHF. The no path is " + diff + " CHF a year cheaper for you; it covers " + fmt(r.cov_no, 0) + " % of the 13th pension against " + fmt(r.cov_yes, 0) + " % with the VAT.";
+                            var cost_line;
+                            if (r.diff < 0) {
+                                cost_line = "The VAT costs your household " + cost_yes + " CHF a year, the no path (" + shape + ") " + cost_no + " CHF, so the VAT is " + diff + " CHF cheaper for you.";
                             } else {
-                                headline = "Undecided on cost - decide on the other arguments";
-                                text = "The difference of " + fmt(r.diff, 0) + " CHF a year is within your threshold of " + fmt(inp.thr, 0) + " CHF: the cost argument does not settle the vote; weigh the fairness between generations, the stability of the AHV, the purchasing power of other households and the chances of a reform instead. The break-even spending is " + fmt_unit(r.spend_even, 0, "CHF a month") + ".";
+                                cost_line = "The VAT costs your household " + cost_yes + " CHF a year, the no path (" + shape + ") " + cost_no + " CHF, so the no path is " + diff + " CHF cheaper for you.";
+                            }
+                            var contributions = " The contributions to the target reach: " + target_sentence(r) + ".";
+                            if (r.verdict === "yes") {
+                                headline = "Yes - under your assumptions and targets a yes reaches " + reach + " % of what you want";
+                                text = cost_line + " With your weights the yes serves your four targets better than the no by " + reach + " %, more than your threshold of " + fmt(inp.thr, 0) + " %." + contributions;
+                            } else if (r.verdict === "no") {
+                                headline = "No - under your assumptions and targets a no reaches " + reach + " % of what you want";
+                                text = cost_line + " With your weights the no serves your four targets better than the yes by " + reach + " %, more than your threshold of " + fmt(inp.thr, 0) + " %." + contributions;
+                            } else {
+                                headline = "Undecided - your targets are served almost alike by a yes and a no";
+                                text = cost_line + " The overall target reach of " + fmt_signed_plain(r.reach) + " % is within your threshold of " + fmt(inp.thr, 0) + " %: the targets pull in different directions or weigh little; decide on the arguments, change the weights, or change the assumptions that move the targets most. The break-even spending is " + fmt_unit(r.spend_even, 0, "CHF a month") + "." + contributions;
+                            }
+                            if (isNaN(r.reach)) {
+                                headline = "Undecided - give at least one target a weight";
+                                text = cost_line + " All four weights are zero, so there is no target to reach.";
                             }
                             box.className = "verdict " + r.verdict;
                             set_text("verdict-headline", headline);
                             set_text("verdict-text", text);
-                            var position = 50 + r.diff / meter_scale * 50;
+                            var position = 50 + r.reach / meter_scale * 50;
+                            if (isNaN(position)) {
+                                position = 50;
+                            }
                             position = Math.max(1, Math.min(99, position));
                             document.getElementById("verdict-needle").style.left = position + "%";
                         }
@@ -1700,7 +2222,7 @@
                                     } else if (res.verdict === "no") {
                                         cls = "neg";
                                     }
-                                    html = html + "<td class=\"n\"><span class=\"" + cls + "\">" + fmt(res.cvat, 0) + " (" + fmt_signed_plain(res.diff) + ")</span></td>";
+                                    html = html + "<td class=\"n\"><span class=\"" + cls + "\">" + fmt_signed_plain(res.diff) + " (" + fmt_signed_plain(res.reach) + " %)</span></td>";
                                 }
                                 html = html + "</tr>";
                             }
