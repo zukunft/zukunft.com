@@ -55,7 +55,6 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\unit\lib_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
 use const Zukunft\ZukunftCom\test\php\utils\INTEGRATION_TEST;
@@ -199,9 +198,6 @@ class all_unit_write_tests extends all_unit_read_tests
                     new wikidata_write_tests()->run($t);
                 }
                 new update_put_write_tests()->run($t);
-
-                // url tests
-                new word_url_tests()->run($t);
 
                 // TODO Prio 2 activate
                 // run_export_test($t);

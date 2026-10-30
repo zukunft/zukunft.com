@@ -1022,7 +1022,8 @@ the goal the view and its components grow towards. For the PV calculator a test 
 differences of the two as a markdown report next to the page (`html_page_diff`,
 `pv_lifetime_balance_diff.md` for the server page without javascript) and after the input cases
 standard, high and low for the page of the browser (`pv_lifetime_balance_diff_standard.md`,
-`_high.md` and `_low.md`). The folder is not
+`_high.md` and `_low.md`). The table in `docs/deployment.md` "use case pages and their samples" lists which sample has
+this setup and how to add it. The folder is not
 below `views_by_object`, because the view test deletes every snapshot there that it has
 not written, which would remove the sample.
 

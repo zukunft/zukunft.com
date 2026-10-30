@@ -23,6 +23,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO Release 0.0.4
 
+    TODO if in the calculator Editor an unknown word is typed use a local embadding model model to suggest a wikipedia link and a list of suggested triples, if the new word has spaces or other parts suggest using the parts and create a triple
     TODO add a Swiss NPP (AKW) sample
     TODO add translations for the pinned view e.g. NPP -> de: AKW
     TODO for CH AKW yes/no to top field is to vote yes or no based on the total price per kWh
@@ -31,6 +32,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO base on the location also adjust the pinned pages on the frontpage
     TODO list in the admin dashboard the top urls call within the last day, week, month, year ; use for this a round robin table
     TODO create a list of the most important gaps in research
+    TODO create a selector with input parameters and sliders to pick one or more options out of a list e.g. select an equity to invest in and create a selector editor for this
     TODO make the pinned views region specific
     TODO for ip users guess the region and show it in the user menu
     TODO create a carantane and archive database with the same structure as the main database

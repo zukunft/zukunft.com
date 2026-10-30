@@ -86,6 +86,8 @@ class files
     // the input cases that a headless browser types into the sample and into pv_lifetime_balance_js.html, selected
     // by the case name as the url hash; the differences of a case are written to PV_CASE_DIFF_PREFIX + case name
     CONST string PV_LIFETIME_BALANCE_CASES = test_paths::JS . 'pv_lifetime_balance_cases' . self::JS;
+    // the script of all use cases that types the CASES of a use case into a page
+    CONST string USE_CASE_CASES = test_paths::JS . 'use_case_cases' . self::JS;
     CONST string PV_CASE_DIFF_PREFIX = self::PV_LIFETIME_BALANCE_DIFF . '_';
     CONST string PV_CASE_STANDARD = 'standard';
     CONST string PV_CASE_HIGH = 'high';
@@ -94,6 +96,18 @@ class files
     CONST array PV_CASES = [self::PV_CASE_STANDARD, self::PV_CASE_HIGH, self::PV_CASE_LOW];
     // the calculator page of the example portfolio split that the server renders without javascript
     CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS = 'portfolio_split_calculator_no_js';
+    // the same page that the browser builds with javascript from the database
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_JS = 'portfolio_split_calculator_js';
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_SAMPLE = 'portfolio_split_calculator_sample';
+    // the differences of the page without javascript to the sample as a markdown prompt for an llm
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_DIFF = 'portfolio_split_calculator_diff';
+    // the input cases of the page that the browser builds, reported in PORTFOLIO_CASE_DIFF_PREFIX + case name
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_CASES = test_paths::JS . 'portfolio_split_calculator_cases' . self::JS;
+    CONST string PORTFOLIO_CASE_DIFF_PREFIX = self::PORTFOLIO_SPLIT_CALCULATOR_DIFF . '_';
+    CONST string PORTFOLIO_CASE_STANDARD = 'standard';
+    CONST string PORTFOLIO_CASE_HIGH = 'high';
+    CONST string PORTFOLIO_CASE_LOW = 'low';
+    CONST array PORTFOLIO_CASES = [self::PORTFOLIO_CASE_STANDARD, self::PORTFOLIO_CASE_HIGH, self::PORTFOLIO_CASE_LOW];
     // the formula editor of the example PV installation in the use case folder next to the hand made
     // formula_editor_sample.html, because the view test removes every file below views_by_object that it has not written
     CONST string FORMULA_EDITOR = 'formula_editor';

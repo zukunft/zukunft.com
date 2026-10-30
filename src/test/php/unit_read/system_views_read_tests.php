@@ -91,7 +91,7 @@ use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 class system_views_read_tests
 {
 
-    // the element of pv_lifetime_balance_cases.js with the result of a case as json and its two fields
+    // the element of use_case_cases.js with the result of a case as json and its two fields
     const string CASE_RESULT_ID = 'caseResult';
     const string CASE_MISSING = 'missing';
     const string CASE_PAGE = 'page';
@@ -139,6 +139,8 @@ class system_views_read_tests
         $this->run_formula_editor($t);
         $this->run_cbam_tree_calculator($t, $cfg);
         $this->run_portfolio_split_calculator($t);
+        $this->run_portfolio_split_calculator_diff($t);
+        $this->run_portfolio_split_calculator_cases($t);
 
         // remove test files not used any more e.g. the snapshot of an object id that has changed
         $t->delete_unused_files(test_paths::VIEWS);
@@ -626,23 +628,38 @@ class system_views_read_tests
      */
     function run_pv_lifetime_balance_diff(test_cleanup $t): void
     {
+        $this->assert_sample_diff($t, test_files::PV_LIFETIME_BALANCE_SAMPLE,
+            test_files::PV_LIFETIME_BALANCE_NO_JS, test_files::PV_LIFETIME_BALANCE_DIFF);
+    }
+
+    /**
+     * report the differences of a page that the server renders to its hand made sample
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $sample_name the file name of the sample without the extension
+     * @param string $page_name the file name of the generated page without the extension
+     * @param string $diff_name the file name of the markdown report without the extension
+     * @return void
+     */
+    private function assert_sample_diff(test_cleanup $t, string $sample_name, string $page_name, string $diff_name): void
+    {
         $hpd = new html_page_diff();
         $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
-        $sample_file = test_files::PV_LIFETIME_BALANCE_SAMPLE . test_files::HTML;
-        $page_file = test_files::PV_LIFETIME_BALANCE_NO_JS . test_files::HTML;
+        $sample_file = $sample_name . test_files::HTML;
+        $page_file = $page_name . test_files::HTML;
         $sample = $hpd->page_items($t->path_file($dir . $sample_file));
         $page = $hpd->page_items($t->path_file($dir . $page_file));
 
-        $test_name = 'the sample of the PV calculator page has items to compare';
+        $test_name = 'the sample ' . $sample_file . ' has items to compare';
         $t->assert_true($test_name, count($sample) > 0);
         // negative: a page compared with itself has no difference, so every finding comes from the pages
         $test_name = '... and a page compared with itself has no difference';
         $self_report = $hpd->report($sample, $sample, $sample_file, $sample_file);
         $t->assert_text_contains($test_name, $self_report, 'Missing in the generated page (0)');
         $t->assert_text_contains($test_name, $self_report, 'Different (0)');
-        $test_name = 'the differences of the generated PV calculator page to the sample are reported';
+        $test_name = 'the differences of ' . $page_file . ' to the sample are reported';
         $t->assert_file($test_name, $hpd->report($sample, $page, $sample_file, $page_file),
-            $dir . test_files::PV_LIFETIME_BALANCE_DIFF . test_files::MD, test_files::MD);
+            $dir . $diff_name . test_files::MD, test_files::MD);
     }
 
     /**
@@ -664,11 +681,13 @@ class system_views_read_tests
             $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
             $sample_html = $t->path_file($dir . test_files::PV_LIFETIME_BALANCE_SAMPLE . test_files::HTML);
             $page_html = $t->path_file($dir . test_files::PV_LIFETIME_BALANCE_JS . test_files::HTML);
-            $sample = $brw->page_copy($sample_html, test_files::PV_LIFETIME_BALANCE_CASES);
-            $page = $brw->page_copy($page_html, test_files::PV_LIFETIME_BALANCE_CASES);
+            $sample = $brw->page_copy($sample_html, test_files::PV_LIFETIME_BALANCE_CASES, test_files::USE_CASE_CASES);
+            $page = $brw->page_copy($page_html, test_files::PV_LIFETIME_BALANCE_CASES, test_files::USE_CASE_CASES);
             $std_cells = '';
             foreach (test_files::PV_CASES as $case) {
-                $cells = $this->assert_pv_case($t, $brw, $sample, $page, $dir, $case);
+                $page_items = $this->assert_sample_case($t, $brw, $sample, $page, test_files::PV_LIFETIME_BALANCE_SAMPLE,
+                    test_files::PV_LIFETIME_BALANCE_JS, test_files::PV_CASE_DIFF_PREFIX, $case, true);
+                $cells = ($page_items[self::PV_PRODUCTION_ROW] ?? [])[html_page_diff::PROP_CELLS] ?? '';
                 if ($case == test_files::PV_CASE_STANDARD) {
                     $std_cells = $cells;
                 } else {
@@ -694,37 +713,67 @@ class system_views_read_tests
      * @param headless_browser $brw the started headless browser
      * @param string $sample the path of the sample copy with the case script
      * @param string $page the path of the generated page copy with the case script
-     * @param string $dir the use case folder of the snapshots, to which the report of the case is written
+     * @param string $sample_name the file name of the sample without the extension
+     * @param string $page_name the file name of the generated page without the extension
+     * @param string $diff_prefix the start of the file name of the report, which ends with the name of the case
      * @param string $case the name of the case e.g. test_files::PV_CASE_HIGH
-     * @return string the numbers of the PV production row of the generated page after the case
+     * @param bool $all_fields true if both pages must have every field of the case, false to only report a missing one
+     * @return array the items of the generated page after the case
      */
-    private function assert_pv_case(
+    private function assert_sample_case(
         test_cleanup     $t,
         headless_browser $brw,
         string           $sample,
         string           $page,
-        string           $dir,
-        string           $case
-    ): string
+        string           $sample_name,
+        string           $page_name,
+        string           $diff_prefix,
+        string           $case,
+        bool             $all_fields
+    ): array
     {
         $hpd = new html_page_diff();
+        $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
         $sample_res = $this->pv_case($brw, $sample, $case);
         $page_res = $this->pv_case($brw, $page, $case);
-        $test_name = 'the ' . $case . ' case types every number into the sample';
         $sample_missing = $sample_res[self::CASE_MISSING];
-        $t->assert($test_name, $sample_missing, []);
-        $test_name = '... and into the generated page';
         $page_missing = $page_res[self::CASE_MISSING];
-        $t->assert($test_name, $page_missing, []);
+        $not_found = '';
+        if ($all_fields) {
+            $test_name = 'the ' . $case . ' case types every number into the sample';
+            $t->assert($test_name, $sample_missing, []);
+            $test_name = '... and into the generated page';
+            $t->assert($test_name, $page_missing, []);
+        } else {
+            $not_found = $this->case_fields_not_found($sample_missing, $page_missing);
+        }
         $sample_items = $hpd->page_items($sample_res[self::CASE_PAGE]);
         $page_items = $hpd->page_items($page_res[self::CASE_PAGE]);
-        $sample_name = test_files::PV_LIFETIME_BALANCE_SAMPLE . test_files::HTML . '#' . $case;
-        $page_name = test_files::PV_LIFETIME_BALANCE_JS . test_files::HTML . '#' . $case;
-        $test_name = '... and the differences of the two pages are reported';
-        $t->assert_file($test_name, $hpd->report($sample_items, $page_items, $sample_name, $page_name),
-            $dir . test_files::PV_CASE_DIFF_PREFIX . $case . test_files::MD, test_files::MD);
-        $row = $page_items[self::PV_PRODUCTION_ROW] ?? [];
-        return $row[html_page_diff::PROP_CELLS] ?? '';
+        $sample_file = $sample_name . test_files::HTML . '#' . $case;
+        $page_file = $page_name . test_files::HTML . '#' . $case;
+        $test_name = 'the differences of ' . $page_file . ' to the sample are reported';
+        $t->assert_file($test_name, $hpd->report($sample_items, $page_items, $sample_file, $page_file) . $not_found,
+            $dir . $diff_prefix . $case . test_files::MD, test_files::MD);
+        return $page_items;
+    }
+
+    /**
+     * @param array $sample_missing the labels of the case that the sample does not have
+     * @param array $page_missing the labels of the case that the generated page does not have
+     * @return string the part of the report that names the fields of the case that were not typed in, so that a
+     *                difference of a number can be explained by an input that one page has not got
+     */
+    private function case_fields_not_found(array $sample_missing, array $page_missing): string
+    {
+        $result = "\n## Case fields that the sample does not have (" . count($sample_missing) . ")\n\n";
+        foreach ($sample_missing as $label) {
+            $result .= '- ' . $label . "\n";
+        }
+        $result .= "\n## Case fields that the generated page does not have (" . count($page_missing) . ")\n\n";
+        foreach ($page_missing as $label) {
+            $result .= '- ' . $label . "\n";
+        }
+        return $result;
     }
 
     /**
@@ -813,6 +862,52 @@ class system_views_read_tests
             triple_names::EXAMPLE_PORTFOLIO_SPLIT, $t->view_context(),
             test_paths::HTML . test_paths::USE_CASES . test_files::PORTFOLIO_SPLIT_CALCULATOR_NO_JS,
             [url_var::JAVASCRIPT => url_var::FALSE]);
+        // by default the browser builds the same page from the json data of the page
+        $t->assert_view_by_name(views::CALCULATOR_NAME, $t->usr1, new triple($t->usr1),
+            triple_names::EXAMPLE_PORTFOLIO_SPLIT, $t->view_context(),
+            test_paths::HTML . test_paths::USE_CASES . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS);
+    }
+
+    /**
+     * the differences of the portfolio split page without javascript to the hand made sample
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_portfolio_split_calculator_diff(test_cleanup $t): void
+    {
+        $this->assert_sample_diff($t, test_files::PORTFOLIO_SPLIT_CALCULATOR_SAMPLE,
+            test_files::PORTFOLIO_SPLIT_CALCULATOR_NO_JS, test_files::PORTFOLIO_SPLIT_CALCULATOR_DIFF);
+    }
+
+    /**
+     * the portfolio split page that the browser builds and the hand made sample get the same input case typed in;
+     * a field that only one page has is listed in the report instead of failing the test, because the two pages
+     * do not have the same fields yet; the actions run in a headless browser, so without one they are skipped
+     *
+     * @param test_cleanup $t the test environment with the test users
+     * @return void
+     */
+    function run_portfolio_split_calculator_cases(test_cleanup $t): void
+    {
+        $brw = new headless_browser();
+        $browser_name = $brw->start();
+        if ($browser_name == '') {
+            $t->dsp_warning('no headless browser found, so the portfolio split input cases are skipped');
+        } else {
+            $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+            $sample_html = $t->path_file($dir . test_files::PORTFOLIO_SPLIT_CALCULATOR_SAMPLE . test_files::HTML);
+            $page_html = $t->path_file($dir . test_files::PORTFOLIO_SPLIT_CALCULATOR_JS . test_files::HTML);
+            $sample = $brw->page_copy($sample_html, test_files::PORTFOLIO_SPLIT_CALCULATOR_CASES, test_files::USE_CASE_CASES);
+            $page = $brw->page_copy($page_html, test_files::PORTFOLIO_SPLIT_CALCULATOR_CASES, test_files::USE_CASE_CASES);
+            foreach (test_files::PORTFOLIO_CASES as $case) {
+                $this->assert_sample_case($t, $brw, $sample, $page, test_files::PORTFOLIO_SPLIT_CALCULATOR_SAMPLE,
+                    test_files::PORTFOLIO_SPLIT_CALCULATOR_JS, test_files::PORTFOLIO_CASE_DIFF_PREFIX, $case, false);
+            }
+            unlink($sample);
+            unlink($page);
+        }
+        $brw->stop();
     }
 
     /**

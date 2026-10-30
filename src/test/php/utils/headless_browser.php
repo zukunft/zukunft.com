@@ -138,17 +138,18 @@ class headless_browser
     }
 
     /**
-     * a copy of a page snapshot that loads the scripts of this checkout instead of the ones of the pod and the test script
+     * a copy of a page snapshot that loads the scripts of this checkout instead of the ones of the pod and the test scripts
      *
      * @param string $html the html code of the page snapshot
-     * @param string $script the path of the script that acts like a user e.g. test_files::CALCULATOR_EDITOR_SCENARIOS
+     * @param string ...$scripts the paths of the scripts that act like a user in their order e.g. test_files::CALCULATOR_EDITOR_SCENARIOS
      * @return string the path of the copy in the temp folder, which the caller removes
      */
-    function page_copy(string $html, string $script): string
+    function page_copy(string $html, string ...$scripts): string
     {
         $local = preg_replace('#src="[^"]*' . preg_quote(files::SCRIPT_PATH, '#') . '#',
             'src="file://' . files::RESOURCE_PATH . 'script' . DIRECTORY_SEPARATOR, $html);
-        $acted = str_replace('</body>', '<script src="file://' . $script . '"></script></body>', $local);
+        $tags = array_map(fn(string $script) => '<script src="file://' . $script . '"></script>', $scripts);
+        $acted = str_replace('</body>', implode('', $tags) . '</body>', $local);
         $result = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('headless_browser_page_') . test_files::HTML;
         file_put_contents($result, $acted);
         return $result;
