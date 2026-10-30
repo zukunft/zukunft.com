@@ -182,11 +182,18 @@ Two proposed rules for the detail tables need no keyword:
 
 The formula engine calculates with `+ - * /`, brackets, `min( a ; b ; … )`, the smallest of
 its arguments, and `max( a ; b ; … )`, the largest; the arguments are separated by `;`, because
-a `,` joins the phrase names of one operand (`"delivered electricity","lifetime"`). The backend
-also calculates `if( condition ; then ; else )` with `=`, `&` and `|` in the condition and only
-the chosen part; a page keeps the stored result of such a formula. A calculator
-like the portfolio split also needs rounding to a multiple, a sum over a list, a sort by
+a `,` joins the phrase names of one operand (`"delivered electricity","lifetime"`). It also
+calculates `if( condition ; then ; else )` with `=`, `&` and `|` in the condition and only
+the chosen part, the power `^` and the functions of one number `abs`, `cos`, `exp`, `ln`, `log`
+(base 10), `round`, `sec`, `sin` and `sqrt`, with an angle in radian. `sum`, `count` and `mean`
+take a list: a phrase as their argument stands for every stored value that names the phrase and
+all phrases of the calculation, without calculated results and without a value that also names a
+variance or a confidence, and a calculation inside the argument like `sum( "a" * "b" )` gives an
+error. All functions are listed in `docs/math.md`. A calculator
+like the portfolio split also needs rounding to a multiple, a sort by
 a result and a walk that carries a number from one row into the next. Until the engine
 has them, such results are stored as values and an input change does not calculate
 them again. A formula may name a function that the engine does not have, e.g. to document a
 law, but calculating it shows the user an error that names the function and gives no number.
+If a calculation fails, the stored result is overwritten with nothing and never kept, so that
+the problem is obvious on every page instead of hidden behind an outdated number.

@@ -394,6 +394,24 @@ class test_results
     }
 
     /**
+     * a second stored result of the row phrase inhabitants with another number, so that its
+     * formula calculates more than one number for the row phrase
+     *
+     * @param float $number the stored number
+     * @return result_ui the frontend result with the formula id
+     */
+    function result_zh_year_ui(float $number): result_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $phr_lst = [$t_wrd->word_zh()->phrase(), $t_wrd->word_inhabitant()->phrase(), $t_wrd->word_2019()->phrase()];
+        $res = $this->result_for_phrases($phr_lst, $number);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $res->set_formula($frm);
+        return new result_ui($res->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
      * a stored result of the word Zurich whose calculation uses two values that Zurich does not
      * carry, the inhabitants and Bern (test_values::value_list_assumptions_ui), so that the page
      * shows them as its assumptions

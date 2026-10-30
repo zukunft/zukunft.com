@@ -193,6 +193,17 @@ class coding_rule_tests
         $test_name = '... and no number as no number';
         $t->assert($test_name, $mth->number_text(null), math_function_report::NO_NUMBER);
 
+        // each math operation has one symbol, so a formula of the data uses no second spelling
+        $test_name = 'no formula of the data uses a second symbol of a math operation';
+        $t->assert($test_name, $mth->symbols_to_replace($mth->data_expressions()), []);
+        $test_name = 'a second symbol of a math operation is reported with the symbol to use';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a" = 2 × 3']), ['× instead of *: "a" = 2 × 3']);
+        // negative: the symbol to use and a phrase name in quotes are not reported
+        $test_name = '... but not the symbol to use';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a" = 2 * 3']), []);
+        $test_name = '... and not a char of a phrase name';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a×b" = 2 * 3']), []);
+
         // the never called list of the coverage report counts the calls and the quoted names
         // of every function in the code, so that a function that nothing calls is listed
         $test_name = 'an object call and a static call are counted as a call of the function';

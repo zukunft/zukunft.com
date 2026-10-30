@@ -15,9 +15,9 @@ const path = require('path');
 const NO_NUMBER = 'no number';
 const FATAL = 'fatal: ';
 
-const CALC_CONSTS = ['TOKEN_NUM', 'TOKEN_OP', 'TOKEN_REF', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_ARG_SEPARATOR'];
-const JSON_CONSTS = ['TOKEN_PATTERN', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_ARG_SEPARATOR'];
-const EDITOR_CONSTS = ['FUNC_MIN', 'FUNC_MAX', 'FUNC_ARG_SEPARATOR', 'T_PHR', 'T_NUM', 'T_OP', 'T_BR'];
+const CALC_CONSTS = ['TOKEN_NUM', 'TOKEN_OP', 'TOKEN_REF', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'POWER', 'ONE_NUMBER', 'LIST_NUMBER'];
+const JSON_CONSTS = ['TOKEN_PATTERN', 'FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'POWER', 'ONE_NUMBER', 'LIST_NUMBER'];
+const EDITOR_CONSTS = ['FUNC_MIN', 'FUNC_MAX', 'FUNC_IF', 'FUNC_ARG_SEPARATOR', 'ONE_NUMBER', 'LIST_NUMBER', 'POWER', 'T_PHR', 'T_NUM', 'T_OP', 'T_BR'];
 // the texts of the formula editor are not needed, because only the number is compared
 const EDITOR_STUBS = 'const TXT = {}; const VAR = {}; function txt() { return ""; }';
 
@@ -78,10 +78,11 @@ const input = JSON.parse(fs.readFileSync(0, 'utf8'));
 const calculator = loadEvaluator('calculator.js', CALC_CONSTS, ['evaluate'], '',
     '(c) => c.tokens === null ? null : evaluate(c.tokens, () => null)');
 const calculatorJson = loadEvaluator('calculator_json.js', JSON_CONSTS,
-    ['evaluate', 'sum', 'product', 'pickArgument', 'signed'], '',
+    ['evaluate', 'sum', 'product', 'powerOf', 'finiteNumber', 'compareCondition', 'andCondition', 'orCondition',
+        'expectToken', 'ifFunction', 'pickArgument', 'listArguments', 'signed'], '',
     '(c) => evaluate(c.txt)');
 const formulaEditor = loadEvaluator('formula_editor.js', EDITOR_CONSTS, ['tokenize', 'evaluate'], EDITOR_STUBS,
-    '(c) => { const t = tokenize(c.txt); return t.ok ? evaluate(t.tokens, () => 1) : null; }');
+    '(c) => { const t = tokenize(c.txt); return t.ok ? evaluate(t.tokens, () => 1, () => [1]) : null; }');
 
 const output = input.cases.map(testCase => ({
     calculator: run(calculator, testCase),

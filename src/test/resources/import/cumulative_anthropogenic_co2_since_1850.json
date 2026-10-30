@@ -1219,7 +1219,7 @@
   "formulas": [
     {
       "name": "GtC to GtCO2",
-      "expression": "GtCO2 = GtC × 3.664"
+      "expression": "GtCO2 = GtC * 3.664"
     },
     {
       "name": "fossil plus land-use",
@@ -1227,28 +1227,28 @@
     },
     {
       "name": "extrapolation_to_2026_10",
-      "expression": "1850-2026-10 = 1850-2024 + 2025 + 42 × 0.81",
+      "expression": "1850-2026-10 = 1850-2024 + 2025 + 42 * 0.81",
       "words": [
         "assumed"
       ]
     },
     {
       "name": "years_gdp_cumulative",
-      "expression": "years = 2800 × 1000 ÷ 1000 ÷ 123.6",
+      "expression": "years = 2800 * 1000 / 1000 / 123.6",
       "words": [
         "assumed"
       ]
     },
     {
       "name": "years_gdp_atmosphere",
-      "expression": "years = 1100 × 1000 ÷ 1000 ÷ 123.6",
+      "expression": "years = 1100 * 1000 / 1000 / 123.6",
       "words": [
         "assumed"
       ]
     },
     {
       "name": "gdp_share_annual_emissions",
-      "expression": "share = 42.2 × 1000 ÷ 1000 ÷ 123.6",
+      "expression": "share = 42.2 * 1000 / 1000 / 123.6",
       "words": [
         "assumed"
       ]
@@ -1259,15 +1259,15 @@
     },
     {
       "name": "tcre_from_gcb",
-      "expression": "TCRE = 0.1 ÷ 180 × 1000"
+      "expression": "TCRE = 0.1 / 180 * 1000"
     },
     {
       "name": "tcre_gtc_to_gtco2",
-      "expression": "degree Celsius per 1000 GtCO2 = degree Celsius per 1000 GtC ÷ 3.664"
+      "expression": "degree Celsius per 1000 GtCO2 = degree Celsius per 1000 GtC / 3.664"
     },
     {
       "name": "irf_fit",
-      "expression": "IRF(t) = a0 + a1 × exp(−t ÷ tau1) + a2 × exp(−t ÷ tau2) + a3 × exp(−t ÷ tau3)",
+      "expression": "IRF(t) = a0 + a1 * exp(-t / tau1) + a2 * exp(-t / tau2) + a3 * exp(-t / tau3)",
       "words": [
         "assumed"
       ],
@@ -1275,35 +1275,35 @@
     },
     {
       "name": "rebound_from_irf",
-      "expression": "rebound share = 1 − airborne fraction of pulse",
+      "expression": "rebound share = 1 - airborne fraction of pulse",
       "words": [
         "assumed"
       ]
     },
     {
       "name": "removal_effectiveness",
-      "expression": "removal effectiveness = airborne fraction of pulse × (1 − emission removal asymmetry CO2 ÷ 100)",
+      "expression": "removal effectiveness = airborne fraction of pulse * (1 - emission removal asymmetry CO2 / 100)",
       "words": [
         "assumed"
       ]
     },
     {
       "name": "effective_stock",
-      "expression": "effective climate-relevant CO2 stock = atmospheric CO2 increase + absorbed anthropogenic CO2 × rebound share",
+      "expression": "effective climate-relevant CO2 stock = atmospheric CO2 increase + absorbed anthropogenic CO2 * rebound share",
       "words": [
         "assumed"
       ]
     },
     {
       "name": "years_gdp_effective",
-      "expression": "years = effective climate-relevant CO2 stock × 1000 ÷ 1000 ÷ 123.6",
+      "expression": "years = effective climate-relevant CO2 stock * 1000 / 1000 / 123.6",
       "words": [
         "assumed"
       ]
     },
     {
       "name": "perturbation_airborne_fraction",
-      "expression": "perturbation airborne fraction = atmospheric CO2 reduction ÷ negative emissions applied"
+      "expression": "perturbation airborne fraction = atmospheric CO2 reduction / negative emissions applied"
     }
   ],
   "sources": [

@@ -24,11 +24,11 @@
         "delete": [
             {
                 "class": "triple",
-                "id": 2901
+                "id": 2903
             },
             {
                 "class": "triple",
-                "id": 2902
+                "id": 2904
             }
         ]
     }

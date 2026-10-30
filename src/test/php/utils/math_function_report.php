@@ -98,6 +98,19 @@ class math_function_report
         '=' => ['a condition of `if`: true if both sides are the same', 'if( 2 = 2 ; 3 ; 4 )', '3'],
         '&' => ['a condition of `if`: true if both conditions are true', 'if( 1 & 0 ; 3 ; 4 )', '4'],
         '|' => ['a condition of `if`: true if one condition is true', 'if( 1 | 0 ; 3 ; 4 )', '3'],
+        '^' => ['power, before a multiplication and from right to left', '2 * 3 ^ 2', '18'],
+        'abs' => ['the number without its sign', 'abs( -2.5 )', '2.5'],
+        'cos' => ['cosine of an angle in radian', 'cos( 0 )', '1'],
+        'exp' => ['e to the power of the number', 'exp( 0 )', '1'],
+        'ln' => ['natural logarithm', 'ln( 1 )', '0'],
+        'log' => ['logarithm to the base 10', 'log( 100 )', '2'],
+        'round' => ['the nearest whole number', 'round( 2.6 )', '3'],
+        'sec' => ['secant of an angle in radian: one divided by the cosine', 'sec( 0 )', '1'],
+        'sin' => ['sine of an angle in radian', 'sin( 0 )', '0'],
+        'sqrt' => ['square root', 'sqrt( 9 )', '3'],
+        'sum' => ['the sum of a list: a phrase stands for all its stored values', 'sum( 1 ; 2 ; 3 )', '6'],
+        'count' => ['the number of values of a list', 'count( 1 ; 2 ; 3 )', '3'],
+        'mean' => ['the average of a list', 'mean( 1 ; 2 ; 3 )', '2'],
     ];
 
     // the texts on which the evaluators could differ: each gives one number or no number in all of them
@@ -121,15 +134,19 @@ class math_function_report
         // the if function in its two forms
         'if( 1 ) 5', 'if( 0 ) 5', 'if( 1 ; 2 )', 'if( 1 ; 2 ; 3 ; 4 )', 'if( 1 ; 2 ; 5 / 0 )', 'if( abc ; 1 ; 2 )',
         // a function or an operator that is missing everywhere
-        'sqrt( 4 )', '10 - sqrt( 4 )', 'round( 2.6 ) * 3', '2 ^ 3', '5 %',
+        'tan( 1 )', '10 - tan( 1 )', 'median( 2.6 ) * 3', 'sum( ) * 3', 'sum( 1 ; abc )', '5 %',
+        // the functions of one number and the power with a number that they cannot give
+        'sqrt( -1 )', 'log( 0 )', 'ln( -1 )', 'exp( 1000 )', 'sqrt( 4 ; 9 )', 'sqrt( abc )',
+        '0 ^ -1', '( -8 ) ^ 0.5', '2 ^ 3 ^ 2', '-2 ^ 2', '( -3 ) ^ 2', '2 ^ -1', 'round( -2.5 )', 'round( 2.5 )',
+        'if( 0 ; 5 / 0 + 1 ; 2 )', 'if( 1 ; 2 ; 5 / 0 + 1 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 = 1 & 2 = 3 ; 5 ; 6 )', 'if( 1 = 1 | 2 = 3 ; 5 ; 6 )',
     ];
 
     // the formula symbols that are no function name but a math operation that the data may use
     const array SYMBOLS = ['^', '×', '÷', '−', '√', '%', '∑', '∫'];
+    // the second spellings of a math operation with the one symbol that a formula has to use, because each operation has one symbol
+    const array SYMBOLS_TO_REPLACE = ['×' => '*', '÷' => '/', '−' => '-', 'Σ' => 'sum', '∑' => 'sum'];
     // the folders with the formulas of the data
     const array DATA_PATHS = [files::MESSAGE_PATH, test_paths::IMPORT];
-    // the folder of the javascript evaluators
-    const string SCRIPT_DIR = files::RESOURCE_PATH . 'script' . DIRECTORY_SEPARATOR;
 
     /**
      * build the markdown report
@@ -237,9 +254,29 @@ class math_function_report
     }
 
     /**
+     * @param array $expressions the formula expressions to check
+     * @return array per expression with a second spelling of a math operation the symbol and the symbol to use
+     *               e.g. "× instead of *: years = 2 × 3"; a phrase name in quotes may contain any char
+     */
+    function symbols_to_replace(array $expressions): array
+    {
+        $calc = new calc_internal();
+        $result = [];
+        foreach ($expressions as $exp) {
+            $without_text = $calc->without_text($exp);
+            foreach (self::SYMBOLS_TO_REPLACE as $symbol => $replacement) {
+                if (str_contains($without_text, $symbol)) {
+                    $result[] = $symbol . ' instead of ' . $replacement . ': ' . $exp;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return array the expressions of all formulas of the data in the order of the sorted files
      */
-    private function data_expressions(): array
+    function data_expressions(): array
     {
         $result = [];
         foreach ($this->data_files() as $file) {
@@ -357,7 +394,7 @@ class math_function_report
         foreach ($txts as $txt) {
             $cases[] = ['txt' => $txt, 'tokens' => $formula_calc->arithmetic_tokens($txt)];
         }
-        $input = json_encode(['dir' => self::SCRIPT_DIR, 'cases' => $cases]);
+        $input = json_encode(['dir' => paths::SCRIPT_RES, 'cases' => $cases]);
         $pipes = [];
         $spec = [['pipe', 'r'], ['pipe', 'w'], ['pipe', 'w']];
         $proc = @proc_open(['node', test_files::MATH_FUNCTION_REPORT_JS], $spec, $pipes);

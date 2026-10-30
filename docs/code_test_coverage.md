@@ -13,9 +13,9 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1538 of 6291 public functions have at least 2 unit test calls; the 4549 functions below do not; the 204 functions of the last section are called nowhere
+1541 of 6300 public functions have at least 2 unit test calls; the 4555 functions below do not; the 204 functions of the last section are called nowhere
 
-## 1997 functions of main backend have no test at all
+## 1999 functions of main backend have no test at all
 
 ```
 \-- application
@@ -406,12 +406,14 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- expression_may_match - 0 unit test calls
     \-- fill_element_group - 0 unit test calls
     \-- fill_first_figure - 0 unit test calls
+    \-- fill_list_element_group - 0 unit test calls
     \-- fill_next_figure - 0 unit test calls
     \-- fill_results_with_figures - 0 unit test calls
     \-- fill_results_with_one_figure - 0 unit test calls
     \-- generate_ref_text - 0 unit test calls shared by 2 classes
     \-- generate_usr_text - 0 unit test calls
     \-- get_res_lst - 0 unit test calls
+    \-- list_symbols - 0 unit test calls
     \-- load_data_for_calc - 0 unit test calls
     \-- load_phrases_related - 0 unit test calls shared by 2 classes
     \-- ref_exp_is_valid - 0 unit test calls
@@ -2175,7 +2177,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- generate_valid_xml_from_obj - 0 unit test calls
 ```
 
-## 59 functions of shared have no test at all
+## 63 functions of shared have no test at all
 
 ```
 \-- IdObject
@@ -2212,6 +2214,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- with_excluded_id - 0 unit test calls
 \-- arithmetic
     \-- calc - 0 unit test calls shared by 2 classes
+    \-- list_args_are_plain - 0 unit test calls
+    \-- list_number - 0 unit test calls
+    \-- one_number - 0 unit test calls
+    \-- power_of - 0 unit test calls
 \-- change_log_actions
     \-- is_action_column - 0 unit test calls
 \-- chart_types

@@ -1404,6 +1404,9 @@ enum messages: string
         . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END;
     case FORMULA_FUNCTION_MISSING = 'formula_function_missing';
     case FORMULA_DIVISION_BY_ZERO = 'formula_division_by_zero';
+    case FORMULA_FUNCTION_NO_NUMBER = 'formula_function_no_number';
+    case FORMULA_LIST_ARGUMENT = 'formula_list_argument';
+    case FORMULA_LIST_TOO_LONG = 'formula_list_too_long';
     case FORMULA_WORD_RENAME_FAILED = 'formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" cannot be renamed to '
@@ -2138,6 +2141,7 @@ enum messages: string
     case FORMULA_EDITOR_EDIT_EXPRESSION = 'formula_editor_edit_expression';
     case FORMULA_EDITOR_CLICK_TOKEN = 'formula_editor_click_token';
     case FORMULA_EDITOR_INSERT_AFTER = 'formula_editor_insert_after';
+    case FORMULA_EDITOR_MORE_SYMBOLS = 'formula_editor_more_symbols';
     case FORMULA_EDITOR_INS_PHRASE = 'formula_editor_ins_phrase';
     case FORMULA_EDITOR_INS_NUMBER = 'formula_editor_ins_number';
     case FORMULA_EDITOR_SELECTION = 'formula_editor_selection';

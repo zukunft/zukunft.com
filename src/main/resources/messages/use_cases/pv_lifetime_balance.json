@@ -1104,6 +1104,20 @@
       "to": "calculator label"
     },
     {
+      "name": "residual mix label",
+      "description": "European residual mix",
+      "from": "residual mix",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
+      "name": "production mix label",
+      "description": "ENTSO-E production mix 2022",
+      "from": "production mix",
+      "verb": "has a",
+      "to": "calculator label"
+    },
+    {
       "name": "battery effect label",
       "description": "Effect of the battery",
       "from": "battery effect",
@@ -1724,6 +1738,27 @@
       "to": "battery effect"
     },
     {
+      "name": "PV installation row PV production hint",
+      "description": "{PV capacity} × {PV yield|number} kWh/kWp × factor {yield factor|number}",
+      "from": "PV installation row PV production",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation row PV embodied emission hint",
+      "description": "{PV site intensity} at this site",
+      "from": "PV installation row PV embodied emission",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
+      "name": "PV installation row battery embodied emission hint",
+      "description": "{battery count|number} × {battery capacity|number} kWh × {battery production emission}",
+      "from": "PV installation row battery embodied emission",
+      "verb": "has a",
+      "to": "calculator hint"
+    },
+    {
       "name": "PV installation row battery effect hint",
       "description": "vs. same PV without battery, annual Swiss mix",
       "from": "PV installation row battery effect",
@@ -2030,7 +2065,7 @@
     },
     {
       "name": "PV installation assumption PV in Switzerland hint",
-      "description": "Swiss 3 kWp mono-Si pitched roof, 2023 update; converted to a fixed amount per kWp",
+      "description": "Swiss 3 kWp mono-Si pitched roof, 2023 update [n]; converted to a fixed amount per kWp",
       "from": "PV installation assumption PV in Switzerland",
       "verb": "has a",
       "to": "calculator hint"

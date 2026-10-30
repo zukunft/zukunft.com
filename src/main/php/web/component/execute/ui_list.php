@@ -139,6 +139,13 @@ class ui_list extends ui_base
     // put between the html id of a number and the count of a cell that shows the number again,
     // e.g. the year of a detail table, so that every cell id is unique on a page
     const string CALC_CELL_REPEAT = '-';
+    // between the label of a selector option and its number e.g. European residual mix — 523 g/kWh [3]
+    const string CALC_OPTION_SEP = ' — ';
+    // in the hint of a field where the number of its source is shown; without it the number follows the hint
+    const string CALC_HINT_SOURCE = '[n]';
+    // in the hint of a row a phrase in curly brackets is shown as its number with the unit e.g. {PV capacity}
+    // or as the plain number e.g. {yield factor|number}, so that a sub text shows the live numbers of the page
+    const string CALC_HINT_NUMBER_PATTERN = '/\{([^{}|]+)(\|number)?\}/';
     // the html id and the keys of the calculation data of a calculator page, which the browser
     // script reads to repeat the calculation (see calculator_script and calculator.js)
     const string CALC_DATA_ID = 'calc-data';
@@ -2554,7 +2561,7 @@ class ui_list extends ui_base
             $phr = $calc->item_phrase($item);
             if ($phr != null) {
                 if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
-                    $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $msg);
+                    $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
                 } else {
                     $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $src_ids, $msg);
                 }
@@ -2761,6 +2768,7 @@ class ui_list extends ui_base
      * @param data_object $dto the request cache with the values of the options
      * @param string $form_name the refresh form that the selector joins
      * @param array $url_arr the url parameters with the selected number
+     * @param array $src_ids the sources of the page in the order of their number
      * @param user_message $msg to report a problem of the cache
      * @return string the html code of the field
      */
@@ -2772,6 +2780,7 @@ class ui_list extends ui_base
         data_object  $dto,
         string       $form_name,
         array        $url_arr,
+        array        $src_ids,
         user_message $msg
     ): string
     {
@@ -2789,7 +2798,7 @@ class ui_list extends ui_base
             $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
             if ($val?->number() !== null) {
                 $key = $html->number_value($val->number(), $this->field_decimals($val, $msg));
-                $sel->lst[$key] = $opt_label;
+                $sel->lst[$key] = $this->calculator_option_text($opt_label, $val, $src_ids, $msg);
                 if ($used?->id() == $opt->id()) {
                     $sel->selected = $key;
                 }
@@ -2827,10 +2836,47 @@ class ui_list extends ui_base
     }
 
     /**
+     * @param string $label the label of the option
+     * @param sandbox_value $val the value of the option
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the label; for a number with a unit also the number and its source, so that the user sees what is
+     *                selected e.g. European residual mix — 523 g/kWh [3], but not for a plain factor or a count
+     */
+    function calculator_option_text(string $label, sandbox_value $val, array $src_ids, user_message $msg): string
+    {
+        $result = $label;
+        if ($this->unit_phrase($val, $msg) != null) {
+            $num_txt = $this->calculator_rough_text($val, $msg);
+            $result = trim($label . self::CALC_OPTION_SEP . $num_txt . ' ' . $this->source_ref($val, $src_ids));
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr a selector field e.g. replacement mix
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values of the options
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the values of the options that name their source (calculator_option_text)
+     */
+    private function calculator_option_values(calculator $calc, phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        foreach (array_column($calc->options($phr), 0) as $opt) {
+            $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+            if ($val != null and $this->unit_phrase($val, $msg) != null) {
+                $result[] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * the sources of a calculator page in the order of their first use on the page: the values
-     * of the number fields of the inputs and of the listed assumptions in their order, then the
-     * other values that the results of the page use; a selector names no source, so the source
-     * of its options is numbered by its next use
+     * of the number fields of the inputs, the options of a selector with a unit and the listed
+     * assumptions in their order, then the other values that the results of the page use
      *
      * @param calculator $calc the calculator reader of the page
      * @param word|triple $dbo the phrase of the page
@@ -2855,6 +2901,8 @@ class ui_list extends ui_base
                 if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
                     $val = $this->calculator_value($phr, $dbo, $dto, $msg);
                     $vals = [...$vals, $val, ...$this->calculator_basis_values($phr, $val, $dto, $msg)];
+                } else {
+                    $vals = [...$vals, ...$this->calculator_option_values($calc, $phr, $dbo, $dto, $msg)];
                 }
             }
         }
@@ -2993,11 +3041,74 @@ class ui_list extends ui_base
      * @param string $ref the number of the source of the shown value e.g. [1]
      * @return string the html code of the hint below the field or an empty string if there is none
      */
-    private function calculator_hint(string $hint, string $ref = ''): string
+    function calculator_hint(string $hint, string $ref = ''): string
     {
         $html = new html_base();
-        $txt = trim($html->esc($hint) . ' ' . $ref);
+        $txt = $html->esc($hint);
+        $ref_txt = $ref == '' ? '' : ' ' . $ref;
+        $mark = ' ' . self::CALC_HINT_SOURCE;
+        if (str_contains($txt, $mark)) {
+            $txt = str_replace($mark, $ref_txt, $txt);
+        } else {
+            $txt .= $ref_txt;
+        }
+        $txt = trim($txt);
         return $txt == '' ? '' : $html->span($txt, styles::INPUT_HINT);
+    }
+
+    /**
+     * @param string $hint the hint of a row, which may name phrases e.g. "{PV capacity} × factor {yield factor|number}"
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the hint with the numbers or an empty string if a number is missing, because half a calculation is misleading
+     */
+    function calculator_hint_numbers(string $hint, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): string
+    {
+        $missing = false;
+        $result = preg_replace_callback(self::CALC_HINT_NUMBER_PATTERN, function (array $found) use ($dbo, $dto, $lst, $msg, &$missing) {
+            $val = $this->calculator_hint_value($found[1], $dbo, $dto, $lst, $msg);
+            $missing = ($missing or $val == null);
+            return $val == null ? '' : $this->calculator_hint_number($val, count($found) > 2, $msg);
+        }, $hint);
+        return $missing ? '' : $result;
+    }
+
+    /**
+     * @param string $name the name of a phrase of the hint
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the value that a field of the phrase would show, else the result of the page, else null
+     */
+    private function calculator_hint_value(string $name, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): ?sandbox_value
+    {
+        $result = null;
+        $phr = $dto->phr_lst->get_by_name($name, $msg);
+        if ($phr != null) {
+            $result = $this->calculator_value($phr, $dbo, $dto, $msg);
+            if ($result == null) {
+                $result = $this->calculator_result([$dbo->phrase(), $phr], $lst, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value or result of a phrase of a hint
+     * @param bool $plain true for the number as a field shows it, false for the rough number with its unit
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the text of the number
+     */
+    private function calculator_hint_number(sandbox_value $val, bool $plain, user_message $msg): string
+    {
+        $result = $this->calculator_rough_text($val, $msg);
+        if ($plain) {
+            $result = new html_base()->number_value($val->number(), $this->field_decimals($val, $msg));
+        }
+        return $result;
     }
 
     /**
@@ -3042,7 +3153,7 @@ class ui_list extends ui_base
                         $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, true, $msg);
                     }
                     $first = $html->esc($calc->label($row, $grp) . $this->calculator_row_number($calc, $row, $dbo, $dto, $msg))
-                        . $this->calculator_sub($calc, $row, $this->calculation_side_context($calc, $dbo, $row), $lst, $msg);
+                        . $this->calculator_sub($calc, $row, $dbo, $dto, $lst, $msg);
                     $rows .= $this->calculator_row($first, $cells, $calc->has_flag($row, triples::CALCULATOR_HIGHLIGHT));
                 }
             }
@@ -3741,15 +3852,17 @@ class ui_list extends ui_base
     /**
      * @param calculator $calc the calculator reader of the page
      * @param phrase $row a row of the main table
-     * @param array $ctx the phrases of a side result of the row (calculation_side_context)
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
      * @param value_list $lst the values and results of the page
      * @param user_message $msg to report a problem of the phrase types
-     * @return string the html code of the sub text: the hint of the row, else its side results with their number
+     * @return string the html code of the sub text: the hint of the row with its numbers, else its side results with their number
      */
-    private function calculator_sub(calculator $calc, phrase $row, array $ctx, value_list $lst, user_message $msg): string
+    private function calculator_sub(calculator $calc, phrase $row, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): string
     {
         $html = new html_base();
-        $sub = $calc->hint($row);
+        $ctx = $this->calculation_side_context($calc, $dbo, $row);
+        $sub = $this->calculator_hint_numbers($calc->hint($row), $dbo, $dto, $lst, $msg);
         if ($sub == '') {
             $parts = [];
             foreach ($calc->side_results($row) as $side) {
@@ -3781,8 +3894,12 @@ class ui_list extends ui_base
     {
         $result = '';
         $phr = $calc->chosen($calc->item_phrase($row));
-        if ($calc->filter($row) != null and $phr != null) {
-            $val = $this->calculator_value($phr, $dbo, $dto, $msg) ?? $this->calculator_phrase_result($phr, $calc->filter($row), $dbo, $dto, $msg);
+        $flt = $calc->filter($row);
+        if ($flt != null and $phr != null) {
+            $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+            if ($val == null) {
+                $val = $this->calculator_phrase_result($phr, $flt, $dbo, $dto, $msg);
+            }
             if ($val != null and !$val->is_null()) {
                 $txt = $this->calculator_rough_text($val, $msg);
                 $note = $calc->number_note($row);
@@ -3814,20 +3931,26 @@ class ui_list extends ui_base
      * @param word|triple $dbo the phrase of the page
      * @param data_object $dto the request cache with the results and the formulas
      * @param user_message $msg to report a problem of the phrase types
-     * @return sandbox_value|null the result of the page that its formula calculates for the row phrase or null if there is none
+     * @return sandbox_value|null the one result of the page that its formula calculates for the row phrase; null if there is
+     *                            none or several e.g. one per month, because a label shows one number and never picks one
      */
     private function calculator_phrase_result(phrase $phr, phrase $flt, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
     {
         $calc = new formula_calc();
         $found = [];
         foreach ($dto->res_lst->lst() as $res) {
+            $of_page = $res->has_phrase($dbo->phrase(), $msg);
             $is_cell = $res->has_phrase($flt, $msg);
-            if (!$is_cell and $res->has_phrase($dbo->phrase(), $msg) and $calc->calculates_phrase($res, $phr->name(), $dto->formula_list())) {
+            $of_phrase = $calc->calculates_phrase($res, $phr->name(), $dto->formula_list());
+            if ($of_page and !$is_cell and $of_phrase) {
                 $found[] = $res;
             }
         }
-        // sorted, because the backend returns the results in any order
-        return sandbox_value::sorted($found, $msg)[0] ?? null;
+        $result = null;
+        if (count($found) == 1) {
+            $result = $found[0];
+        }
+        return $result;
     }
 
     /**
@@ -3860,7 +3983,39 @@ class ui_list extends ui_base
         $result = [];
         foreach ($cols as $c => $col) {
             // the filter of a column e.g. the unit gram per kWh selects its numbers like the filter of a row
-            $result[$c] = $this->calculator_result([...$ctx, $calc->item_phrase($col), $calc->filter($col)], $lst, $msg);
+            $cell_phr = [$calc->item_phrase($col), $calc->filter($col)];
+            $val = $this->calculator_result([...$ctx, ...$cell_phr], $lst, $msg);
+            if ($val == null) {
+                $row_phr = array_slice($ctx, 1);
+                $val = $this->calculator_general_value([...$row_phr, ...$cell_phr], $lst, $msg);
+            }
+            $result[$c] = $val;
+        }
+        return $result;
+    }
+
+    /**
+     * a fact that does not name the page e.g. the Swiss consumption mix of a month in the table of one PV installation;
+     * only a stored value, because a result belongs to its page, and only if one value qualifies, so that a value
+     * of another place is never picked by the order of the list
+     *
+     * @param array $phrases the phrases of the cell without the page phrase; null entries are ignored
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase compare
+     * @return sandbox_value|null the one value with all the phrases or null if there is none or several
+     */
+    private function calculator_general_value(array $phrases, value_list $lst, user_message $msg): ?sandbox_value
+    {
+        $phr_lst = array_filter($phrases);
+        $found = [];
+        foreach ($lst->lst() as $val) {
+            if ($val instanceof value and $this->has_all_phrases($val, $phr_lst, $msg)) {
+                $found[] = $val;
+            }
+        }
+        $result = null;
+        if (count($found) == 1) {
+            $result = $found[0];
         }
         return $result;
     }

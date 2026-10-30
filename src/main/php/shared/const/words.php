@@ -239,6 +239,12 @@ class words
     const string CONFIDENCE = 'confidence';
     // the qualifiers of a value that a table shows as the tooltip of the cell
     const array QUALIFIERS = [self::ASSUMED];
+    // a value with one of these phrases is a second number of the same fact, so a list function does not count it twice
+    const array LIST_FUNCTION_EXCLUDED = [
+        triples::SYSTEM_VARIANCE_LOW,
+        triples::SYSTEM_VARIANCE_HIGH,
+        self::CONFIDENCE
+    ];
     // the phrases that describe how a number is stated instead of what it is about
     const array VALUE_MARKERS = [
         triples::SYSTEM_VARIANCE_LOW,

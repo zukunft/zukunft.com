@@ -36,8 +36,10 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::SHARED_CALC . 'arithmetic.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
@@ -79,13 +81,30 @@ class math_tests
             ['max( min( 4 ; 9 ) ; 6 ) - 1', 5.0],
             ['( max( 1 ; 2 ) ) * 3', 6.0],
             ['max( 7 )', 7.0],
+            ['2 * 3 ^ 2', 18.0],
+            ['2 ^ 3 ^ 2', 512.0],
+            ['2 ^ -1', 0.5],
+            ['-2 ^ 2', 4.0],
+            ['sqrt( 3 ^ 2 + 4 ^ 2 )', 5.0],
+            ['abs( -2.5 )', 2.5],
+            ['round( -2.5 )', -3.0],
+            ['log( 100 ) + ln( 1 ) + exp( 0 )', 3.0],
+            ['sin( 0 ) + cos( 0 ) + sec( 0 )', 2.0],
+            ['if( 1 = 2 ; 3 ; 4 ) * 2', 8.0],
+            ['if( 1 = 1 & 2 = 3 ; 5 ; 6 )', 6.0],
+            ['if( 1 = 1 | 2 = 3 ; 5 ; 6 )', 5.0],
+            // only the chosen part counts, because the condition often guards the other part
+            ['if( 0 ; 5 / 0 + 1 ; 2 )', 2.0],
+            ['if( 1 ; 2 ; 5 / 0 + 1 )', 2.0],
         ];
         foreach ($cases as [$txt, $expected]) {
             $t->assert($ts . '"' . $txt . '"', round($calc->calc($txt) ?? 0, 10), round($expected, 10));
         }
         // negative: a text that is no calculation gives no number instead of a wrong one
         $invalid = ['', '2 +', '2 x 3', '( 2 + 3', '1 / 0', '2 3',
-            'min( 1 ; 2', 'min 1', 'min( ; 1 )', 'max( 1 ; 2', 'max 1', 'max( ; 1 )', 'round( 1 ; 2 )', '1 ; 2'];
+            'min( 1 ; 2', 'min 1', 'min( ; 1 )', 'max( 1 ; 2', 'max 1', 'max( ; 1 )', 'round( 1 ; 2 )', '1 ; 2',
+            'tan( 1 )', 'sqrt( -1 )', 'log( 0 )', 'exp( 1000 )', '0 ^ -1', '( -8 ) ^ 0.5', 'sqrt( 4', 'sqrt 4',
+            'if( 1 ; 2 )', 'if( 1 ; 2 ; 3 ; 4 )', 'if( 1 ; 5 / 0 ; 2 )', 'if( 1 / 0 ; 2 ; 3 )', '1 = 1', '1 & 1'];
         foreach ($invalid as $txt) {
             $t->assert_null($ts . '"' . $txt . '" is no calculation', $calc->calc($txt));
         }
@@ -261,12 +280,10 @@ class math_tests
         $msg->reset();
 
         // a function that the calculation does not have is named to report it to the user
-        $math_text = "round(2.6) * 3";
-        $t->assert($ts . 'missing function "' . $math_text . '"', $calc->missing_function($math_text), 'round');
-        $math_text = "10 - min(1;sqrt(4))";
-        $t->assert($ts . 'missing function in an argument "' . $math_text . '"', $calc->missing_function($math_text), 'sqrt');
-        $math_text = "sum(1;2)";
-        $t->assert($ts . 'sum is not calculated yet "' . $math_text . '"', $calc->missing_function($math_text), chars::FUNC_SUM);
+        $math_text = "tan(2.6) * 3";
+        $t->assert($ts . 'missing function "' . $math_text . '"', $calc->missing_function($math_text), 'tan');
+        $math_text = "10 - min(1;median(4))";
+        $t->assert($ts . 'missing function in an argument "' . $math_text . '"', $calc->missing_function($math_text), 'median');
         $math_text = 'min( sqrt( 4 ) ; "log(2)" ) * ( 1 + 2 )';
         $t->assert($ts . 'function names without a text and a bracket "' . $math_text . '"', $calc->function_names($math_text), ['min', 'sqrt']);
         $t->assert($ts . 'without the text "' . $math_text . '"', $calc->without_text($math_text), 'min( sqrt( 4 ) ;  ) * ( 1 + 2 )');
@@ -278,13 +295,113 @@ class math_tests
         $math_text = '"sqrt(4)" + 1';
         $t->assert($ts . 'no missing function in a text "' . $math_text . '"', $calc->missing_function($math_text), '');
         // negative: never a wrong number, and the user is told which function is missing
-        $math_text = "10 - sqrt(4)";
+        $math_text = "10 - median(4)";
         $t->assert_null($ts . 'no number for a missing function "' . $math_text . '"', $calc->parse($math_text, $msg));
-        $t->assert_text_contains($ts . 'the user is told about the function in "' . $math_text . '"', $msg->text(), 'sqrt');
+        $t->assert_text_contains($ts . 'the user is told about the function in "' . $math_text . '"', $msg->text(), 'median');
         $msg->reset();
-        $math_text = "round(2.6) * 3";
+        $math_text = "tan(2.6) * 3";
         $t->assert_null($ts . 'no number for a missing function "' . $math_text . '"', $calc->parse($math_text, $msg));
-        $t->assert_text_contains($ts . 'the user is told about the function in "' . $math_text . '"', $msg->text(), 'round');
+        $t->assert_text_contains($ts . 'the user is told about the function in "' . $math_text . '"', $msg->text(), 'tan');
+        $msg->reset();
+
+        // the functions of a list: the formula engine has written all numbers of the list as the arguments
+        $cases = [
+            ['sum(1;2;3)', 6],
+            ['count(1;2;3)', 3],
+            ['mean(1;2;3)', 2],
+            ['sum(-1;2.5)', 1.5],
+            ['sum(4)', 4],
+            ['count(4)', 1],
+            ['10 - mean(2;4) * 2', 4],
+            ['min(sum(1;2);count(1;2)) + 1', 3],
+        ];
+        foreach ($cases as [$math_text, $expected]) {
+            $t->assert($ts . 'calc "' . $math_text . '"', (float)$calc->parse($math_text, $msg), (float)$expected);
+        }
+        // negative: an argument that is no number logs an expected error and informs the user
+        $math_text = "sum(1;abc)";
+        $num_txt = $this->without_error_count(fn() => $calc->math_list($math_text, $msg));
+        $t->assert($ts . 'no sum of a text "' . $math_text . '"', $num_txt, calc_internal::NO_NUMBER);
+        $t->assert_false($ts . 'the user is told about the text in "' . $math_text . '"', $msg->is_ok());
+        $msg->reset();
+        // a list function takes plain operands only, because a calculated argument would need pairs of values
+        $t->assert_true($ts . 'plain list arguments', arithmetic::list_args_are_plain('sum( x ; 2 ) / count(x) + x * 3'));
+        $t->assert_false($ts . 'no calculation in a list argument', arithmetic::list_args_are_plain('sum( x * x )'));
+        $t->assert_false($ts . 'no bracket in a list argument', arithmetic::list_args_are_plain('mean( ( x ) )'));
+        $t->assert_false($ts . 'no empty list', arithmetic::list_args_are_plain('count( )'));
+        // the backend finds the symbols of the lists, and refuses a symbol that is also used outside a list
+        $frm = new formula($t->usr1);
+        $t->assert($ts . 'list symbols', $frm->list_symbols('=sum({w1};{w2})/{w3}'), ['{w1}', '{w2}']);
+        $t->assert($ts . 'no list symbols', $frm->list_symbols('={w1}+1'), []);
+        $t->assert_null($ts . 'a list symbol also used outside', $frm->list_symbols('=sum({w1})/{w1}'));
+        $t->assert_null($ts . 'a calculation in a list', $frm->list_symbols('=sum({w1}*{w2})'));
+
+        // the functions of one number
+        $cases = [
+            ['abs(-2.5)', 2.5],
+            ['sqrt(9) * 2', 6.0],
+            ['10 - sqrt(4)', 8.0],
+            ['round(2.6) * 3', 9.0],
+            ['log(100)', 2.0],
+            ['log(8) / log(2)', 3.0],
+            ['ln(1) + 1', 1.0],
+            ['exp(0)', 1.0],
+            ['sin(0)', 0.0],
+            ['cos(0)', 1.0],
+            ['sec(0)', 1.0],
+            ['(sqrt(4)) * 3', 6.0],
+            ['min(sqrt(9);abs(-5))', 3.0],
+            ['sqrt(sqrt(16))', 2.0],
+            ['sqrt(1 + 3) + sqrt(9)', 5.0],
+            // the brackets of a later call are never calculated like a normal bracket
+            ['sqrt(9) + sqrt(1 + 3)', 5.0],
+            ['min(1;2) + min(3 + 1;5)', 5.0],
+            ['max(1;2) * max(3 + 1;2)', 8.0],
+            ['if(1;2;3) + if(1 + 1;4;5)', 6.0],
+        ];
+        foreach ($cases as [$math_text, $expected]) {
+            $t->assert($ts . 'calc "' . $math_text . '"', round((float)$calc->parse($math_text, $msg), 10), $expected);
+        }
+        // the power binds stronger than a multiplication and from right to left
+        $cases = [
+            ['2 ^ 3', 8.0],
+            ['2 * 3 ^ 2', 18.0],
+            ['2 ^ 3 ^ 2', 512.0],
+            ['2 ^ -1', 0.5],
+            ['(1 + 1) ^ 3', 8.0],
+            ['(-3) ^ 2', 9.0],
+            ['9 ^ 0.5', 3.0],
+            ['0 ^ 0', 1.0],
+            ['sqrt(3 ^ 2 + 4 ^ 2)', 5.0],
+            ['(2) * 3', 6.0],
+        ];
+        foreach ($cases as [$math_text, $expected]) {
+            $t->assert($ts . 'calc "' . $math_text . '"', round((float)$calc->parse($math_text, $msg), 10), $expected);
+        }
+        $t->assert_true($ts . 'no message for a function with a number', $msg->is_ok());
+        // negative: a number that a function cannot give is no number and the user is told which function
+        $cases = [
+            ['sqrt(-1)', 'sqrt'],
+            ['log(0)', 'log'],
+            ['ln(-1) + 1', 'ln'],
+            ['exp(1000)', 'exp'],
+            ['sqrt(4;9)', 'sqrt'],
+            ['0 ^ -1', chars::POW],
+            ['(-8) ^ 0.5', chars::POW],
+        ];
+        foreach ($cases as [$math_text, $name]) {
+            $t->assert_null($ts . 'no number for "' . $math_text . '"', $calc->parse($math_text, $msg));
+            $t->assert_text_contains($ts . 'the user is told about "' . $math_text . '"', $msg->text(), $name);
+            $msg->reset();
+        }
+        // negative: a text is no number for a function either, this logs an expected error
+        $math_text = "sqrt(abc) + 1";
+        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $t->assert_null($ts . 'no number for a text in a function "' . $math_text . '"', $num);
+        $msg->reset();
+        $math_text = "abc ^ 2";
+        $num = $this->without_error_count(fn() => $calc->parse($math_text, $msg));
+        $t->assert_null($ts . 'no number for a text in a power "' . $math_text . '"', $num);
         $msg->reset();
         // negative: a part that cannot be calculated is never counted as zero, each of these logs an expected error
         $math_text = "abc + 1";

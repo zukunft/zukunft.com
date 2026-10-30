@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr_lst_all_p5 (bigint, bigint, bigint, bigint, bigint, text, text, text, text, text, bigint) AS
+PREPARE value_list_by_phr_lst_all_p5 (bigint, bigint, bigint, bigint, bigint, text, text, text, text, text, bigint, bigint, bigint) AS
     SELECT     '' AS group_id,
                '' AS user_group_id,
                phrase_id_1,
@@ -141,4 +141,4 @@ PREPARE value_list_by_phr_lst_all_p5 (bigint, bigint, bigint, bigint, bigint, te
             OR   s.group_id ~ $7
             OR   s.group_id ~ $8
             OR   s.group_id ~ $9
-            OR   s.group_id ~ $10 ) ;
+            OR   s.group_id ~ $10 )  LIMIT $12 OFFSET $13;

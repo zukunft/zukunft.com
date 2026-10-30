@@ -61,6 +61,11 @@
     };
     // the suffix of the html id of a selector, the same as html_selector builds it from its name
     const SELECT_ID_SUFFIX = '_form_select';
+    // between the label of a selector option and its number (ui_list::CALC_OPTION_SEP)
+    const OPTION_SEP = ' — ';
+    // in a hint the place of the source number and a phrase shown as its number (ui_list::CALC_HINT_SOURCE and CALC_HINT_NUMBER_PATTERN)
+    const HINT_SOURCE = '[n]';
+    const HINT_NUMBER_PATTERN = /\{([^{}|]+)(\|number)?\}/g;
     // the translated texts by their message id (system_page::CALC_PAGE_TEXT_IDS)
     const TXT = {
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
@@ -605,11 +610,15 @@
        the inputs and of the listed assumptions, then the operands of the results (ui_list::calculator_source_ids) */
     function sourceNames() {
         let fieldValues = [];
-        items(KW.input).concat(items(KW.assumption)).filter(function (item) {
-            return fieldType(item.to) !== KW.selector;
-        }).forEach(function (item) {
-            const entry = fieldEntry(item.to);
-            fieldValues = fieldValues.concat([entry], basisEntries(item.to, entry));
+        items(KW.input).concat(items(KW.assumption)).forEach(function (item) {
+            if (fieldType(item.to) === KW.selector) {
+                fieldValues = fieldValues.concat(options(item.to).map(function (o) {
+                    return optionEntry(item.to, o[0]);
+                }).filter(hasUnit));
+            } else {
+                const entry = fieldEntry(item.to);
+                fieldValues = fieldValues.concat([entry], basisEntries(item.to, entry));
+            }
         });
         const result = [];
         fieldValues.concat(operandValues()).forEach(function (e) {
@@ -626,12 +635,22 @@
 
     // the terms of an expression e.g. "PV capacity" or "battery charge", "January" (formula_calc::operand_pattern)
     const OPERAND_PATTERN = /"[^"]+"(?:\s*,\s*"[^"]+")*/g;
-    // one number, one char of the arithmetic or the min or max function between the operands (formula_calc::TOKEN_PATTERN)
-    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/();]|min|max)/y;
-    // the min and max function and the separator of their arguments (chars::FUNC_MIN, chars::FUNC_MAX and chars::FUNC_ARG_SEPARATOR)
+    // one number, one char of the arithmetic or of a condition or a math function between the operands (formula_calc::TOKEN_PATTERN)
+    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|ln|log|round|sec|sin|sqrt|sum|count|mean)/y;
+    // the math functions, the separator of their arguments and the power (the chars::FUNC_* and chars::POW)
     const FUNC_MIN = 'min';
     const FUNC_MAX = 'max';
+    const FUNC_IF = 'if';
     const FUNC_ARG_SEPARATOR = ';';
+    const POWER = '^';
+    // the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
+    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+    const LIST_ARGUMENT_START = /\b(?:sum|count|mean)\s*\([^()]*$/;
+    const LIST_ARGUMENTS_PLAIN = /\b(?:sum|count|mean)\s*\(\s*(?:x|-?\d+(?:\.\d+)?)\s*(?:;\s*(?:x|-?\d+(?:\.\d+)?)\s*)*\)/g;
+    const LIST_FUNCTION = /\b(?:sum|count|mean)\s*\(/;
+    const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
+    // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
     // the char between the result and the calculation of a formula (chars::CHAR_CALC)
     const CHAR_CALC = '=';
     // the decimals of a compare, the same as formula_calc::DECIMALS
@@ -662,16 +681,40 @@
         return result;
     }
 
+    /* the stored values with all names of the operand and the context of the result (formula_calc::list_values) */
+    function listEntries(names, res) {
+        const result = pool.filter(function (e) {
+            const isExcluded = e.words.some(function (w) {
+                return LIST_EXCLUDED.indexOf(w) >= 0;
+            });
+            return !e.result && !isExcluded && hasAll(e, [...names, ...res.context]);
+        });
+        return result;
+    }
+
+    /* each list function has only plain operands or numbers as arguments (arithmetic::list_args_are_plain) */
+    function listsArePlain(exp) {
+        const rest = exp.replace(OPERAND_PATTERN, 'x').replace(LIST_ARGUMENTS_PLAIN, '');
+        return !LIST_FUNCTION.test(rest);
+    }
+
     /* the values and results that the results of the page use, each once (formula_calc::operands) */
     function operandValues() {
         const result = [];
         pageResults.forEach(function (res) {
-            (calculation(res).match(OPERAND_PATTERN) || []).forEach(function (term) {
-                const entry = operandEntry(operandNames(term), res);
-                if (entry !== null && result.indexOf(entry) < 0) {
-                    result.push(entry);
-                }
-            });
+            const exp = calculation(res);
+            let found = OPERAND_PATTERN.exec(exp);
+            while (found !== null) {
+                const names = operandNames(found[0]);
+                const entry = operandEntry(names, res);
+                const entries = LIST_ARGUMENT_START.test(exp.slice(0, found.index)) ? listEntries(names, res) : (entry === null ? [] : [entry]);
+                entries.filter(function (e) {
+                    return result.indexOf(e) < 0;
+                }).forEach(function (e) {
+                    result.push(e);
+                });
+                found = OPERAND_PATTERN.exec(exp);
+            }
         });
         return result;
     }
@@ -685,12 +728,20 @@
         } else if (!open.has(res) && calculation(res) !== '') {
             open.add(res);
             let missing = false;
-            const text = calculation(res).replace(OPERAND_PATTERN, function (term) {
+            const text = calculation(res).replace(OPERAND_PATTERN, function (term, start, all) {
+                if (LIST_ARGUMENT_START.test(all.slice(0, start))) {
+                    const nums = listEntries(operandNames(term), res).map(function (e) {
+                        return Number(e.number).toFixed(12);
+                    });
+                    missing = missing || nums.length === 0;
+                    return nums.length === 0 ? '0' : nums.join(FUNC_ARG_SEPARATOR);
+                }
                 const entry = operandEntry(operandNames(term), res);
                 const num = entry === null ? null : operandNumber(entry, done, open);
                 missing = missing || num === null;
                 return num === null ? '0' : '(' + num.toFixed(12) + ')';
             });
+            missing = missing || !listsArePlain(calculation(res));
             result = missing ? null : evaluate(text);
             open.delete(res);
             if (done !== null) {
@@ -737,7 +788,8 @@
         });
     }
 
-    /* the arithmetic of shared/calc/arithmetic.php: a sum of products of signed numbers, brackets or the min or max function */
+    /* the arithmetic of shared/calc/arithmetic.php: a sum of products of powers of signed numbers, brackets or a math function;
+       a number that cannot be calculated is NaN, which an if function may leave out and which else makes the result no number */
     function evaluate(text) {
         const tokens = [];
         TOKEN_PATTERN.lastIndex = 0;
@@ -766,14 +818,88 @@
     }
 
     function product(tokens, state) {
-        let result = signed(tokens, state);
+        let result = powerOf(tokens, state);
         while (tokens[state.pos] === '*' || tokens[state.pos] === '/') {
             const op = tokens[state.pos];
             state.pos++;
-            const next = signed(tokens, state);
-            result = op === '*' ? result * next : result / next;
+            const next = powerOf(tokens, state);
+            result = op === '*' ? result * next : finiteNumber(result / next);
         }
         return result;
+    }
+
+    function listArguments(tokens, state) {
+        const result = [sum(tokens, state)];
+        while (state.ok && tokens[state.pos] === FUNC_ARG_SEPARATOR) {
+            state.pos++;
+            result.push(sum(tokens, state));
+        }
+        expectToken(tokens, state, ')');
+        return result;
+    }
+
+    /* from right to left and a number keeps its sign, the same as arithmetic::power */
+    function powerOf(tokens, state) {
+        let result = signed(tokens, state);
+        if (tokens[state.pos] === POWER) {
+            state.pos++;
+            result = finiteNumber(Math.pow(result, powerOf(tokens, state)));
+        }
+        return result;
+    }
+
+    /* NaN instead of an infinite number, because a later division would else make it a wrong zero */
+    function finiteNumber(num) {
+        return Number.isFinite(num) ? num : NaN;
+    }
+
+    /* two sums compared by = or a sum that is true if it is not zero; null for a part without a number */
+    function compareCondition(tokens, state) {
+        const left = sum(tokens, state);
+        let result = left !== 0;
+        let right = 0;
+        if (tokens[state.pos] === '=') {
+            state.pos++;
+            right = sum(tokens, state);
+            result = left === right;
+        }
+        return Number.isNaN(left) || Number.isNaN(right) ? null : result;
+    }
+
+    function andCondition(tokens, state) {
+        let result = compareCondition(tokens, state);
+        while (tokens[state.pos] === '&') {
+            state.pos++;
+            const right = compareCondition(tokens, state);
+            result = result === null || right === null ? null : result && right;
+        }
+        return result;
+    }
+
+    function orCondition(tokens, state) {
+        let result = andCondition(tokens, state);
+        while (tokens[state.pos] === '|') {
+            state.pos++;
+            const right = andCondition(tokens, state);
+            result = result === null || right === null ? null : result || right;
+        }
+        return result;
+    }
+
+    function expectToken(tokens, state, token) {
+        state.ok = state.ok && tokens[state.pos] === token;
+        state.pos++;
+    }
+
+    /* the then or the else part, only the chosen part counts like in arithmetic::if_function */
+    function ifFunction(tokens, state) {
+        const isTrue = orCondition(tokens, state);
+        expectToken(tokens, state, FUNC_ARG_SEPARATOR);
+        const thenNum = sum(tokens, state);
+        expectToken(tokens, state, FUNC_ARG_SEPARATOR);
+        const elseNum = sum(tokens, state);
+        expectToken(tokens, state, ')');
+        return isTrue === null ? NaN : (isTrue ? thenNum : elseNum);
     }
 
     /* the number that pick keeps of the sums separated by the argument separator up to the closing bracket */
@@ -803,6 +929,20 @@
             state.ok = state.ok && tokens[state.pos + 1] === '(';
             state.pos += 2;
             result = pickArgument(tokens, state, token === FUNC_MIN ? Math.min : Math.max);
+        } else if (token === FUNC_IF) {
+            expectToken(tokens, state, FUNC_IF);
+            expectToken(tokens, state, '(');
+            result = ifFunction(tokens, state);
+        } else if (token in ONE_NUMBER) {
+            state.pos++;
+            expectToken(tokens, state, '(');
+            const arg = sum(tokens, state);
+            expectToken(tokens, state, ')');
+            result = finiteNumber(ONE_NUMBER[token](arg));
+        } else if (token in LIST_NUMBER) {
+            state.pos++;
+            expectToken(tokens, state, '(');
+            result = finiteNumber(LIST_NUMBER[token](listArguments(tokens, state)));
         } else if (token !== undefined && !isNaN(Number(token))) {
             state.pos++;
             result = Number(token);
@@ -939,10 +1079,29 @@
         return result;
     }
 
+    /* the number of the source at the marker of the hint, else behind it (ui_list::calculator_hint) */
     function hintHtml(text, ref) {
-        const txt = (esc(text) + ' ' + ref).trim();
+        const refTxt = ref === '' ? '' : ' ' + ref;
+        const mark = ' ' + HINT_SOURCE;
+        const shown = esc(text);
+        const txt = (shown.includes(mark) ? shown.replace(mark, refTxt) : shown + refTxt).trim();
         const result = txt === '' ? '' : block('span', txt, STYLE.hint);
         return result;
+    }
+
+    /* the hint of a row with the number of each phrase in curly brackets or an empty text if a number is missing (ui_list::calculator_hint_numbers) */
+    function hintNumbers(text) {
+        let missing = false;
+        const result = text.replace(HINT_NUMBER_PATTERN, function (found, name, plain) {
+            const entry = fieldEntry(name) || cellEntry([page.name, name]);
+            missing = missing || entry === null;
+            let num = '';
+            if (entry !== null) {
+                num = plain ? fieldNumber(entry) : numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
+            }
+            return num;
+        });
+        return missing ? '' : result;
     }
 
     /* measured for a value with a source, else assumed with its confidence e.g. "assumed 0.6" (ui_list::assumption_tag) */
@@ -1035,6 +1194,25 @@
         return block('div', '<label for="' + field + '">' + text + '</label>' + input, STYLE.field);
     }
 
+    function optionEntry(name, option) {
+        return cellEntry([name, option]) || fieldEntry(option);
+    }
+
+    /* true for a number with a unit, which a selector option names with its source (ui_list::calculator_option_text) */
+    function hasUnit(entry) {
+        return entry !== null && entry.words.some(isMeasure);
+    }
+
+    /* the label; for a number with a unit also the number and its source e.g. European residual mix — 523 g/kWh [3] */
+    function optionText(text, entry) {
+        let result = text;
+        if (hasUnit(entry)) {
+            const num = numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
+            result = (text + OPTION_SEP + num + ' ' + sourceRef(entry)).trim();
+        }
+        return result;
+    }
+
     function selectorField(item, name) {
         const field = NUMBER_VAR + idOf(name);
         const domId = field + SELECT_ID_SUFFIX;
@@ -1043,13 +1221,13 @@
             return o[0];
         }));
         const html = opts.map(function (o) {
-            const entry = cellEntry([name, o[0]]) || fieldEntry(o[0]);
+            const entry = optionEntry(name, o[0]);
             const sel = o[0] === usedOpt ? ' selected' : '';
             // the selector sets the number of the option that the page uses, which the results read
             if (entry !== null && o[0] === usedOpt) {
                 inputEntries.set(field, entry);
             }
-            return entry === null ? '' : '<option value="' + esc(fieldNumber(entry)) + '"' + sel + '>' + esc(o[1]) + '</option>';
+            return entry === null ? '' : '<option value="' + esc(fieldNumber(entry)) + '"' + sel + '>' + esc(optionText(o[1], entry)) + '</option>';
         }).join('');
         const select = '<select class="' + STYLE.select + '" name="' + field + '" form="' + esc(FORM) + '" id="' + domId + '">' + html + '</select>';
         const result = block('div', '<label for="' + domId + '">' + esc(label(item)) + '</label>' + select
@@ -1090,7 +1268,7 @@
 
     /* the sub text of a row: its hint, else its side results with their number */
     function rowSub(row) {
-        let sub = hint(row);
+        let sub = hintNumbers(hint(row));
         if (sub === '') {
             sub = sideResults(row).map(function (side) {
                 // without the filter of the row, because a side result is a number of its own (ui_list::calculation_side_context)
@@ -1105,17 +1283,16 @@
     }
 
     /* the result of the page whose formula has the phrase alone left of the = (formula_calc::calculates_phrase);
-       a result that names the filter of the row is the number of the cells e.g. the battery effect (ui_list::calculator_phrase_result) */
+       a result that names the filter of the row is the number of the cells e.g. the battery effect, and with several
+       results e.g. one per month a label shows no number, because it never picks one (ui_list::calculator_phrase_result) */
     function phraseResult(name, filter) {
         const found = pool.filter(function (e) {
             const frm = formulas.get(e.formula);
             const left = frm === undefined ? '' : String(frm.expression || '').split(CHAR_CALC)[0];
             const isCell = e.words.indexOf(filter) >= 0;
             return !isCell && e.words.indexOf(page.name) >= 0 && left.replaceAll('"', '').trim() === name;
-        }).sort(function (a, b) {
-            return String(a.id).localeCompare(String(b.id));
         });
-        return found.length > 0 ? found[0] : null;
+        return found.length === 1 ? found[0] : null;
     }
 
     /* the number of the row phrase after the label of a row with a filter e.g. " (128 g/kWh)" with the digits of the
@@ -1172,6 +1349,18 @@
         return result;
     }
 
+    /* the one stored value with these names that does not name the page e.g. the Swiss consumption mix of a month,
+       never picked from several values (ui_list::calculator_general_value) */
+    function generalEntry(names) {
+        const wanted = names.filter(function (n) {
+            return n;
+        });
+        const found = pool.filter(function (e) {
+            return !e.result && hasAll(e, wanted);
+        });
+        return found.length === 1 ? found[0] : null;
+    }
+
     function detailTables() {
         let result = '';
         items(KW.detail).forEach(function (tbl) {
@@ -1186,7 +1375,8 @@
             }));
             const cells = rows.map(function (r) {
                 return cols.map(function (c) {
-                    return cellEntry(r[1].concat([c.to, filterOf(c)]));
+                    const cellNames = [c.to, filterOf(c)];
+                    return cellEntry(r[1].concat(cellNames)) || generalEntry(r[1].slice(1).concat(cellNames));
                 });
             });
             // the header names the unit, so a column of a detail table shares only the decimals, and a detail shows rough numbers

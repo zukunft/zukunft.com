@@ -106,6 +106,7 @@
             phraseCounts: 'formula_editor_phrase_counts',
             inContext: 'formula_editor_in_context',
             morePhrases: 'formula_editor_more_phrases',
+            moreSymbols: 'formula_editor_more_symbols',
             phrasesOfOperand: 'formula_editor_phrases_of_operand',
             addPhrase: 'formula_editor_add_phrase',
             pickerNote: 'formula_editor_picker_note',
@@ -277,7 +278,19 @@
         const SEPARATOR = ',';
         const FUNC_MIN = 'min';
         const FUNC_MAX = 'max';
+        const FUNC_IF = 'if';
         const FUNC_ARG_SEPARATOR = ';';
+        /* the functions of one number like chars::FUNC_ONE_NUMBER of the backend, so also round away from zero and an angle in radian */
+        const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
+        /* the functions and symbols that are offered after a press on more, because the basic ones are enough for most formulas */
+        /* the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED) */
+        const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+        const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
+        const MORE_FUNCTIONS = [FUNC_MIN, FUNC_MAX, FUNC_IF, ...Object.keys(ONE_NUMBER), ...Object.keys(LIST_NUMBER)];
+        const MORE_STRUCTURE = [FUNC_ARG_SEPARATOR, '=', '&', '|'];
+        const POWER = '^';
+        /* the number of separators that a function gets when it is inserted */
+        const FUNC_SEPARATORS = {[FUNC_MIN]: 1, [FUNC_MAX]: 1, [FUNC_IF]: 2};
         /* the decimals of a stored result, the same as formula_calc::DECIMALS */
         const DECIMALS = 2;
         /* the kinds of the tokens of an expression */
@@ -285,6 +298,8 @@
         const T_NUM = 'num';
         const T_OP = 'op';
         const T_BR = 'br';
+        /* a kind of a button, which inserts the function name with its brackets as T_BR tokens */
+        const T_FUNC = 'func';
         /* the max passes of the calculation chain, more than the longest chain of the page */
         const MAX_PASSES = 30;
         const API_UPDATE_PUT = '/api/updatePut/';
@@ -444,10 +459,10 @@
         /* ------------------------------------------------------------------ */
 
         /* the tokens of one side of an expression; a phrase joined to the next by the separator is one operand with several names;
-           the min and max function and the separator of their arguments are structure tokens like the brackets */
+           the functions, the separator of their arguments and the chars of a condition are structure tokens like the brackets */
         function tokenize(text) {
             const result = {ok: true, error: '', tokens: []};
-            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/])|([();]|(?:min|max)(?=\s*\())|(,)|(\S))/y;
+            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/^])|([();=&|]|(?:min|max|if|abs|cos|exp|ln|log|round|sec|sin|sqrt|sum|count|mean)(?=\s*\())|(,)|(\S))/y;
             let joinNext = false;
             let m = re.exec(text);
             while (result.ok && m !== null) {
@@ -523,6 +538,8 @@
                     result.right = right.tokens;
                     const check = evaluate(right.tokens, function () {
                         return 1;
+                    }, function () {
+                        return [1];
                     });
                     if (check === null) {
                         result.ok = false;
@@ -559,11 +576,14 @@
         /**
          * @param tokens the tokens right of the =
          * @param numberOf the function that returns the number of a phrase token or null
+         * @param numbersOf the function that returns all numbers of a phrase token in a list function
          * @returns the number or null if the tokens are no valid calculation, a number is missing or a division is by zero
          */
-        function evaluate(tokens, numberOf) {
+        function evaluate(tokens, numberOf, numbersOf) {
             let pos = 0;
             let valid = true;
+            /* a number that cannot be calculated e.g. a division by zero, which an if function may leave out */
+            let noNumber = false;
 
             function isChar(chars) {
                 let result = false;
@@ -592,20 +612,35 @@
             }
 
             function product() {
-                let result = signed();
+                let result = power();
                 while (valid && isChar(['*', '/'])) {
                     const op = tokens[pos].c;
                     pos = pos + 1;
-                    const right = signed();
+                    const right = power();
                     if (op === '*') {
                         result = result * right;
                     } else if (right === 0) {
-                        valid = false;
+                        noNumber = true;
                     } else {
                         result = result / right;
                     }
                 }
                 return result;
+            }
+
+            /* from right to left and a number keeps its sign, the same as calc_internal::math_pow */
+            function power() {
+                let result = signed();
+                if (valid && isChar([POWER])) {
+                    pos = pos + 1;
+                    result = finite(Math.pow(result, power()));
+                }
+                return result;
+            }
+
+            function finite(num) {
+                noNumber = noNumber || !Number.isFinite(num);
+                return num;
             }
 
             function signed() {
@@ -641,6 +676,84 @@
                 return result;
             }
 
+            function expect(chars) {
+                valid = valid && isChar(chars);
+                pos = pos + 1;
+            }
+
+            /* a phrase or a number with its sign up to the next separator or bracket (arithmetic::list_args_are_plain) */
+            function listArgument() {
+                const sign = isChar(['-']) ? -1 : 1;
+                pos = sign < 0 ? pos + 1 : pos;
+                const tok = tokens[pos];
+                let result = [];
+                if (tok !== undefined && tok.t === T_NUM) {
+                    result = [sign * tok.v];
+                } else if (tok !== undefined && tok.t === T_PHR && sign > 0) {
+                    result = numbersOf(tok);
+                } else {
+                    valid = false;
+                }
+                pos = pos + 1;
+                return result;
+            }
+
+            function listArguments() {
+                const result = [...listArgument()];
+                while (valid && isChar([FUNC_ARG_SEPARATOR])) {
+                    pos = pos + 1;
+                    result.push(...listArgument());
+                }
+                bracketClose();
+                return result;
+            }
+
+            /* two sums compared by = or a sum that is true if it is not zero */
+            function compare() {
+                const left = sum();
+                let result = left !== 0;
+                if (valid && isChar(['='])) {
+                    pos = pos + 1;
+                    result = left === sum();
+                }
+                return result;
+            }
+
+            function andCondition() {
+                let result = compare();
+                while (valid && isChar(['&'])) {
+                    pos = pos + 1;
+                    const right = compare();
+                    result = result && right;
+                }
+                return result;
+            }
+
+            function orCondition() {
+                let result = andCondition();
+                while (valid && isChar(['|'])) {
+                    pos = pos + 1;
+                    const right = andCondition();
+                    result = result || right;
+                }
+                return result;
+            }
+
+            /* the then or the else part, only a number of the chosen part counts like in calc_internal::if_number */
+            function ifFunction() {
+                const isTrue = orCondition();
+                expect([FUNC_ARG_SEPARATOR]);
+                const noNumberBefore = noNumber;
+                const thenNum = sum();
+                const noThen = noNumber;
+                noNumber = noNumberBefore;
+                expect([FUNC_ARG_SEPARATOR]);
+                const elseNum = sum();
+                noNumber = isTrue ? noThen : noNumber;
+                bracketClose();
+                return isTrue ? thenNum : elseNum;
+            }
+
             function atom() {
                 let result = 0;
                 if (isChar(['('])) {
@@ -650,9 +763,26 @@
                 } else if (isChar([FUNC_MIN, FUNC_MAX])) {
                     const pick = isChar([FUNC_MIN]) ? Math.min : Math.max;
                     pos = pos + 1;
-                    valid = valid && isChar(['(']);
-                    pos = pos + 1;
+                    expect(['(']);
                     result = pickArgument(pick);
+                } else if (isChar([FUNC_IF])) {
+                    pos = pos + 1;
+                    expect(['(']);
+                    result = ifFunction();
+                } else if (isChar(Object.keys(ONE_NUMBER))) {
+                    const calc = ONE_NUMBER[tokens[pos].c];
+                    pos = pos + 1;
+                    expect(['(']);
+                    const arg = sum();
+                    bracketClose();
+                    result = finite(calc(arg));
+                } else if (isChar(Object.keys(LIST_NUMBER))) {
+                    const calc = LIST_NUMBER[tokens[pos].c];
+                    pos = pos + 1;
+                    expect(['(']);
+                    const nums = listArguments();
+                    noNumber = noNumber || nums.length === 0;
+                    result = nums.length === 0 ? 0 : finite(calc(nums));
                 } else if (pos < tokens.length && tokens[pos].t === T_NUM) {
                     result = tokens[pos].v;
                     pos = pos + 1;
@@ -660,7 +790,7 @@
                     const num = numberOf(tokens[pos]);
                     pos = pos + 1;
                     if (num === null) {
-                        valid = false;
+                        noNumber = true;
                     } else {
                         result = num;
                     }
@@ -671,7 +801,7 @@
             }
 
             let result = sum();
-            if (!valid || pos !== tokens.length) {
+            if (!valid || noNumber || pos !== tokens.length) {
                 result = null;
             }
             return result;
@@ -683,6 +813,16 @@
          * values before the results; if none matches (e.g. after a phrase of the formula is replaced)
          * the entry that names the operand phrases and shares most phrases with the result
          */
+        function listEntries(names, res) {
+            const result = model.entries.filter(function (e) {
+                const isExcluded = LIST_EXCLUDED.some(function (name) {
+                    return e.wset.has(name);
+                });
+                return e.kind === 'value' && !isExcluded && isSubset(names, e.wset) && isSubset(Array.from(res.ctx), e.wset);
+            });
+            return result;
+        }
+
         function findEntry(names, res) {
             let result = null;
             let i = 0;
@@ -758,6 +898,14 @@
                             }
                             used.push({names: tok.names, hit: hit, number: result});
                             return result;
+                        }, function (tok) {
+                            const entries = listEntries(tok.names, res);
+                            entries.forEach(function (e) {
+                                used.push({names: tok.names, hit: {entry: e, strict: true}, number: e.number});
+                            });
+                            return entries.map(function (e) {
+                                return e.number;
+                            });
                         });
                     }
                     if (num !== null) {
@@ -788,6 +936,7 @@
         let selTok = null;
         let selName = 0;
         let pickerMode = 'replace';
+        let moreSymbols = false;
         let pickerFilter = '';
         let formulaFilter = '';
         let tab = 'compare';
@@ -1106,12 +1255,28 @@
             return result;
         }
 
+        /* the button more and after one press on it the math functions and symbols that are not basic */
+        function moreSymbolsHtml() {
+            let result = '<button type="button" class="btn small" data-act="moreSymbols">' + txtHtml(TXT.moreSymbols) + '</button>';
+            if (moreSymbols) {
+                const button = function (kind, c) {
+                    return '<button type="button" class="btn small" data-act="ins" data-kind="' + kind + '" data-c="' + esc(c) + '">' + esc(c) + '</button>';
+                };
+                result = button(T_OP, POWER) + MORE_FUNCTIONS.map(function (c) {
+                    return button(T_FUNC, c);
+                }).join('') + MORE_STRUCTURE.map(function (c) {
+                    return button(T_BR, c);
+                }).join('');
+            }
+            return result;
+        }
+
         function toolsHtml(parsed, tok) {
             let specific = '';
             if (tok !== null && tok.t === T_NUM) {
                 specific = '<label class="row">' + txtHtml(TXT.number) + ' <input class="inp" id="numIn" type="number" step="any" value="' + esc(tok.v) + '" style="width: 140px;"></label>';
             } else if (tok !== null && tok.t === T_OP) {
-                specific = '<div class="row"><span class="note">' + txtHtml(TXT.operator) + '</span>' + ['+', '-', '*', '/'].map(function (c) {
+                specific = '<div class="row"><span class="note">' + txtHtml(TXT.operator) + '</span>' + ['+', '-', '*', '/', POWER].map(function (c) {
                     const on = tok.c === c ? ' primary' : '';
                     const result = '<button type="button" class="btn small' + on + '" data-act="setOp" data-c="' + c + '">' + c + '</button>';
                     return result;
@@ -1129,7 +1294,8 @@
                 '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="*">×</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="op" data-c="/">÷</button>' +
                 '<button type="button" class="btn small" data-act="ins" data-kind="br" data-c="(">(</button>' +
-                '<button type="button" class="btn small" data-act="ins" data-kind="br" data-c=")">)</button></div>' +
+                '<button type="button" class="btn small" data-act="ins" data-kind="br" data-c=")">)</button>' +
+                moreSymbolsHtml() + '</div>' +
                 '<div class="row"><span class="note">' + txtHtml(TXT.selection) + '</span>' +
                 '<button type="button" class="btn small" data-act="move" data-d="-1"' + dis + '>' + txtHtml(TXT.moveLeft) + '</button>' +
                 '<button type="button" class="btn small" data-act="move" data-d="1"' + dis + '>' + txtHtml(TXT.moveRight) + '</button>' +
@@ -1520,22 +1686,37 @@
             }
         }
 
+        /* the tokens of a function with its brackets and separators e.g. min ( ; ), so that only its arguments are missing */
+        function functionTokens(name) {
+            const chars = [name, '('];
+            for (let i = 0; i < (FUNC_SEPARATORS[name] || 0); i++) {
+                chars.push(FUNC_ARG_SEPARATOR);
+            }
+            chars.push(')');
+            return chars.map(function (c) {
+                return {t: T_BR, c: c};
+            });
+        }
+
         function insertToken(kind, c, atEnd) {
             editTokens(function (parsed) {
-                let tok = {t: T_PHR, names: ['phrase']};
+                let toks = [{t: T_PHR, names: ['phrase']}];
                 if (kind === T_NUM) {
-                    tok = {t: T_NUM, v: 1};
+                    toks = [{t: T_NUM, v: 1}];
                 } else if (kind === T_OP) {
-                    tok = {t: T_OP, c: c};
+                    toks = [{t: T_OP, c: c}];
                 } else if (kind === T_BR) {
-                    tok = {t: T_BR, c: c};
+                    toks = [{t: T_BR, c: c}];
+                } else if (kind === T_FUNC) {
+                    toks = functionTokens(c);
                 }
                 let pos = parsed.right.length;
                 if (!atEnd && selTok !== null && selTok.side === 'right') {
                     pos = selTok.i + 1;
                 }
-                parsed.right.splice(pos, 0, tok);
-                selTok = {side: 'right', i: pos};
+                parsed.right.splice(pos, 0, ...toks);
+                // a function selects its open bracket, so that the next insert is its first argument
+                selTok = {side: 'right', i: pos + (kind === T_FUNC ? 1 : 0)};
                 selName = 0;
                 pickerMode = 'replace';
             });
@@ -1663,6 +1844,9 @@
                         openRows.add(i);
                     }
                     renderCompare();
+                } else if (act === 'moreSymbols') {
+                    moreSymbols = true;
+                    renderEditor();
                 } else if (act === 'ins') {
                     insertToken(t.dataset.kind, t.dataset.c || '', t.dataset.end === '1');
                 } else if (t.classList.contains('tok') && t.dataset.side !== undefined) {

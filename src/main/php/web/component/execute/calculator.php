@@ -384,6 +384,10 @@ class calculator
             foreach ($this->items($list) as $item) {
                 $phr = $this->item_phrase($item);
                 $result[] = $phr;
+                // the options of a selector, because an option may have a label of its own
+                if ($phr != null) {
+                    array_push($result, ...array_column($this->options($phr), 0));
+                }
                 foreach ([...$this->sub_items($item, verbs::HAS_ID), ...$this->sub_items($item, verbs::WITH_ID)] as $sub) {
                     $sub_phr = $this->item_phrase($sub);
                     array_push($result, $sub_phr, $this->filter($sub), $this->other_phrase($sub_phr, $phr));

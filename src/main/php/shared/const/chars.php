@@ -74,6 +74,7 @@ class chars
     const string SUB = '-';    //
     const string MUL = '*';    //
     const string DIV = '/';    //
+    const string POW = '^';    // binds stronger than a multiplication and from right to left e.g. 2 ^ 3 ^ 2 is 2 ^ 9
 
     const string AND = '&';   //
     const string OR = '|';    // probably not needed because can and should be solved by triples
@@ -86,8 +87,33 @@ class chars
     const string FUNC_MIN = 'min';
     // the largest of its arguments e.g. a lower limit as max( 0 ; "PV production" - "household consumption" )
     const string FUNC_MAX = 'max';
+    // the functions of one number; an angle is in radian and log is the logarithm to the base 10, ln the natural one
+    const string FUNC_ABS = 'abs';
+    const string FUNC_COS = 'cos';
+    const string FUNC_EXP = 'exp';
+    const string FUNC_LN = 'ln';
+    const string FUNC_LOG = 'log';
+    const string FUNC_ROUND = 'round';
+    const string FUNC_SEC = 'sec';
+    const string FUNC_SIN = 'sin';
+    const string FUNC_SQRT = 'sqrt';
+    const array FUNC_ONE_NUMBER = [
+        self::FUNC_ABS,
+        self::FUNC_COS,
+        self::FUNC_EXP,
+        self::FUNC_LN,
+        self::FUNC_LOG,
+        self::FUNC_ROUND,
+        self::FUNC_SEC,
+        self::FUNC_SIN,
+        self::FUNC_SQRT
+    ];
+    // the functions of a list: a plain operand stands for all its values (formula::fill_list_element_group)
+    const string FUNC_COUNT = 'count';
+    const string FUNC_MEAN = 'mean';
+    const array FUNC_LIST = [self::FUNC_SUM, self::FUNC_COUNT, self::FUNC_MEAN];
     // the functions that service/math/calc_internal.php can calculate; any other name before a bracket is reported as missing
-    const array FUNC_CALCULATED = [self::FUNC_IF, self::FUNC_MIN, self::FUNC_MAX];
+    const array FUNC_CALCULATED = [self::FUNC_IF, self::FUNC_MIN, self::FUNC_MAX, ...chars::FUNC_ONE_NUMBER, ...chars::FUNC_LIST];
     // between the arguments of a function, because the SEPARATOR joins the phrase names of one operand
     const string FUNC_ARG_SEPARATOR = ';';
 

@@ -210,7 +210,7 @@
                     <div class="field">
                         <label for="mixC">Replacement mix</label>
                         <select id="mixC">
-                            <option value="523" selected>European residual mix — 523 g/kWh [4]</option>
+                            <option value="523" selected>European residual mix — 523 g/kWh [3]</option>
                             <option value="395">ENTSO-E production mix 2022 — ~395 g/kWh (midpoint of 350–440) [3]
                             </option>
                         </select>
@@ -225,6 +225,7 @@
                         <label for="eta">Battery round-trip efficiency <span class="tag a">assumed 0.7</span></label>
                         <div class="row"><input id="eta" type="number" step="0.01" value="0.90"><span
                                 class="unit">share</span></div>
+                        <span class="hint">the usual system efficiency of a lithium-ion home storage incl. the inverter losses</span>
                     </div>
                     <div class="field">
                         <label for="bco2">Battery production emissions <span class="tag a">assumed 0.5</span></label>
@@ -236,6 +237,22 @@
                         <label for="blife">Battery lifetime <span class="tag a">assumed 0.6</span></label>
                         <div class="row"><input id="blife" type="number" step="1" value="15"><span class="unit">a</span>
                         </div>
+                        <span class="hint">a lithium-ion home storage with one cycle a day lasts 10 to 20 years</span>
+                    </div>
+                    <div class="field">
+                        <label for="prodMix">CO2-eq electricity Europe life cycle production mix <span class="tag m">measured</span></label>
+                        <div class="row"><input id="prodMix" type="number" value="395"><span class="unit">g/kWh</span></div>
+                        <span class="hint">Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)</span>
+                    </div>
+                    <div class="field">
+                        <label for="resMix">CO2-eq electricity Europe life cycle residual mix <span class="tag m">measured</span></label>
+                        <div class="row"><input id="resMix" type="number" value="523"><span class="unit">g/kWh</span></div>
+                        <span class="hint">Swissolar: Fiche d'information Photovoltaïque, Feb 2024 (European residual mix)</span>
+                    </div>
+                    <div class="field">
+                        <label for="ewFactor">east-west yield factor <span class="tag m">measured</span></label>
+                        <div class="row"><input id="ewFactor" type="number" value="0.85"><span class="unit">percent</span></div>
+                        <span class="hint">Orientation yield table, 30° tilt: S 100 %, SE/SW 95 %, E/W 82 %, N 59 %</span>
                     </div>
                 </details>
             </aside>
@@ -301,7 +318,7 @@
                             <td colspan="3">Production emissions</td>
                         </tr>
                         <tr>
-                            <td>PV system<span class="sub">1'048 kg CO₂-eq/kWp → 42.1 g/kWh at this site</span></td>
+                            <td>PV system<span class="sub">42.1 g/kWh at this site</span></td>
                             <td class="n">10.5 t</td>
                             <td class="n">349 kg</td>
                         </tr>
@@ -325,7 +342,7 @@
                             <td class="n"><span class="pos">436 kg</span></td>
                         </tr>
                         <tr class="key">
-                            <td>vs. replacement mix (523 g/kWh)<span class="sub">payback 3.0 a</span></td>
+                            <td>vs. replacement mix (523 g/kWh)<span class="sub">payback 2.97 a</span></td>
                             <td class="n"><span class="pos">113.8 t</span></td>
                             <td class="n"><span class="pos">3'794 kg</span></td>
                         </tr>
@@ -452,7 +469,7 @@
                                 <tr>
                                     <td>Oct</td>
                                     <td class="n">581</td>
-                                    <td class="n">382</td>
+                                    <td class="n">383</td>
                                     <td class="n">134</td>
                                     <td class="n">249</td>
                                     <td class="n">171</td>
@@ -711,7 +728,9 @@
             const perYear = gross / L;
             let text = "never";
             if (perYear > 0) {
-                text = fmt(emb / perYear, 1) + " a";
+                const years = emb / perYear;
+                // three digits like the rough numbers of the generated page
+                text = fmt(years, years < 10 ? 2 : (years < 100 ? 1 : 0)) + " a";
             }
             return text;
         };
@@ -734,7 +753,7 @@
         h += row("Autarky", "share of load covered by PV", "", fmt(autarky, 0) + " %", "key");
 
         h += section("Production emissions");
-        h += row("PV system", `${fmt(pvKgPerKwp, 0)} kg CO₂-eq/kWp → ${fmt(pvIntensity, 1)} g/kWh at this site`, tonnes(pvEmb), fmt(pvEmb / L, 0) + " kg");
+        h += row("PV system", `${fmt(pvIntensity, 1)} g/kWh at this site`, tonnes(pvEmb), fmt(pvEmb / L, 0) + " kg");
         h += row("Battery", battUnits ? `${battUnits} × ${fmt(p.batt, 0)} kWh × ${fmt(p.bco2, 0)} kg/kWh` : "no battery", tonnes(battEmb), fmt(battEmb / L, 0) + " kg");
 
         h += section("CO₂-eq saved, net of production emissions");

@@ -351,7 +351,7 @@ class url_var
     const string DEBUG = 'debug'; // to force the output of debug messages
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
-    const string JAVASCRIPT_HUMAN = 'javascript'; // the long form of self::JAVASCRIPT e.g. view.php?m=calculator&id=-2756&sc=0
+    const string JAVASCRIPT_HUMAN = 'javascript'; // the long form of self::JAVASCRIPT e.g. view.php?m=calculator&id=-2757&sc=0
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
     const int DEBUG_LEVEL_SWITCHED = 0; // a debug message switched on by a const in the code e.g. def::DEBUG_API_CACHE, so shown at every level
     const int DEBUG_LEVEL_EXTERNAL_CALLS = 1; // the first debug level is to show only the calls of external systems such as wikipedia

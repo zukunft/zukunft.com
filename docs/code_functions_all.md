@@ -54,6 +54,9 @@
     \-- load_data_for_calc - section for function load_data_for_calc is expected to be load in /formula/formula.php
     \-- calc_num - section for function calc_num not yet defined that it should be calc in /formula/formula.php
     \-- to_num_new - section for function to_num_new not yet defined that it should be calc in /formula/formula.php
+    \-- list_symbols - section for function list_symbols not yet defined that it should be calc in /formula/formula.php
+    \-- fill_list_element_group - section for function fill_list_element_group not yet defined that it should be calc in
+             /formula/formula.php
     \-- fill_element_group - section for function fill_element_group not yet defined that it should be calc in /formula/
             formula.php
     \-- fill_results_with_one_figure - section for function fill_results_with_one_figure not yet defined that it should 
@@ -1065,6 +1068,11 @@
     \-- to_num_new
         \-- formula - fill the formula in the reference format with numbers based on the data preloaded by load_data_for
                 _calc;
+    \-- list_symbols
+        \-- formula - @param string $num_text the expression with the element symbols e.g. "=sum({w12})/count({w13})"
+    \-- fill_list_element_group
+        \-- formula - replace the symbol of a list function by all numbers of the list e.g. "sum({w12})" by "sum(1;2;3)"
+                :
     \-- fill_element_group
         \-- formula - replace one element group's symbol with the matching figure number(s) in the result list
     \-- fill_results_with_one_figure
@@ -6961,6 +6969,9 @@
     \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
     \-- field_decimals - section for function field_decimals missing in /component/execute/ui_list.php
+    \-- calculator_option_text - section for function calculator_option_text missing in /component/execute/ui_list.php
+    \-- calculator_hint - section for function calculator_hint missing in /component/execute/ui_list.php
+    \-- calculator_hint_numbers - section for function calculator_hint_numbers missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
     \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
     \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
@@ -9715,6 +9726,13 @@
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
     \-- field_decimals
         \-- ui_list - @param sandbox_value $val the value that a field shows
+    \-- calculator_option_text
+        \-- ui_list - @param string $label the label of the option
+    \-- calculator_hint
+        \-- ui_list - @param string $hint the hint of a calculator field
+    \-- calculator_hint_numbers
+        \-- ui_list - @param string $hint the hint of a row,
+                 which may name phrases e.g. "{PV capacity} × factor {yield factor|number}"
     \-- calculation_table
         \-- ui_list - the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
     \-- calculation_row_context

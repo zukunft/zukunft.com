@@ -26,7 +26,7 @@ make this text translatable so that the frontend language shows the warning in t
 #### reach the formula editor from the page
 
 the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2756, because the calculator has one editor relation
+http://localhost/http/view.php?m=formula_editor&id=-2757, because the calculator has one editor relation
 (the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
 type, so that the edit menu offers both editors
 
@@ -132,7 +132,7 @@ comment that a result always has its group, so that the asymmetry is explained
 ## test of the page object of a phrase view
 
 frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
-of a negative phrase id, e.g. the calculator editor of example PV installation with id -2756;
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2757;
 it is private and only reached by url_to_html with the view in the cache, so add a unit test
 via url_to_html for a word view and a triple view, each called with a word and with a triple id
 
@@ -237,9 +237,32 @@ check the words that a later file uses with another meaning than their home file
 
 the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
 
-## if function on a page
+## math functions of a symbol
 
-calc_internal calculates `if( condition ; then ; else )`, but arithmetic.php, calculator.js, calculator_json.js and formula_editor.js do not have it, so an input change does not recalculate such a result in the browser and the formula editor rejects the text; add it to these four like min and max
+`integral`, `lim`, `d`, `C`, `log_a` and `log_b` describe a law with symbols; they stay missing in calc_internal, because a calculation with the numbers of a single value would give a wrong number
+
+## list functions
+
+wrong number:
+- `formula_calc::is_list_argument` and `LIST_ARGUMENT_START` in `calculator_json.js` also read the brackets inside a quoted phrase name, so in `sum("Bern (city)";"b")` the operand "b" is one value instead of its list: remove the quoted names before the check
+- `formula_calc::list_values` and `listEntries` in `calculator_json.js` and `formula_editor.js` keep a value without a number, which counts as 0, whereas `formula::fill_list_element_group` skips it: add the same check
+- the page calculates a list only with the values of the page and the backend with all values of the database, so a list that is not complete on the page gives another number, which replaces the stored one on the page
+- `sum` also adds a value without a year to the values of the years, e.g. the inhabitants of Switzerland: a total counts twice under the rule that a list has all matching values
+
+failed calculation:
+- the early return of `formula::to_num_new` for a list function with a calculated argument keeps the stored result, but a failed calculation should overwrite it with nothing (`docs/json_structure.md`)
+- `formula::fill_list_element_group` adds no message for a list without a value or with a formula as the operand, so the user is not told why there is no number
+
+limits of the phrase list load:
+- the limit of `load_by_phr_lst` cuts a list silently except in the list functions, also for the `phrase_data` export with 2000 and the related values with 1000 rows
+- the query has no `ORDER BY`, so a later page can repeat or miss a row
+- a list function refuses a list of exactly 2000 values as too long, because it looks the same as a cut list
+
+code:
+- `LIST_EXCLUDED` repeats the phrase names of `words::LIST_FUNCTION_EXCLUDED` in `calculator_json.js` and `formula_editor.js`, and no test compares them
+- `LIST_ARGUMENTS_PLAIN` in `calculator_json.js` repeats the pattern of `arithmetic::list_args_are_plain`, and no test compares them
+- the comments in `phrase_data.php`, `update_put.php`, `phrase_data_walks.php` and `url_var.php` use the example id -2757, whereas `pv` redirects to -2758: check them after the next id shift
+- the `use` line of `sql_db` in `formula.php` is out of order
 
 ## use case
 

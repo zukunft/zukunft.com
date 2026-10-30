@@ -47,10 +47,16 @@
     const TOKEN_NUM = 'n';
     const TOKEN_OP = 'o';
     const TOKEN_REF = 'r';
-    // the min and max function and the separator of their arguments, the same as chars::FUNC_MIN, chars::FUNC_MAX and chars::FUNC_ARG_SEPARATOR
+    // the math functions, the separator of their arguments and the power, the same as the chars::FUNC_* and chars::POW
     const FUNC_MIN = 'min';
     const FUNC_MAX = 'max';
+    const FUNC_IF = 'if';
     const FUNC_ARG_SEPARATOR = ';';
+    const POWER = '^';
+    // the functions of a list like arithmetic::list_number; formula_calc::tokens has written all values of a list as the arguments
+    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+    // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
 
     const element = document.getElementById(DATA_ID);
     if (element === null) {
@@ -60,7 +66,7 @@
 
     /**
      * evaluate the tokens of one calculation with the grammar of shared/calc/arithmetic.php:
-     * a sum of products of signed numbers, brackets or the min or max function
+     * a sum of products of powers of signed numbers, brackets or a math function
      *
      * @param tokens the tokens of the calculation
      * @param numberOf the function that returns the number of a referenced html id or null
@@ -69,6 +75,8 @@
     function evaluate(tokens, numberOf) {
         let pos = 0;
         let valid = true;
+        // a number that cannot be calculated e.g. a division by zero, which an if function may leave out
+        let noNumber = false;
 
         function isOp(chars) {
             return pos < tokens.length && TOKEN_OP in tokens[pos] && chars.includes(tokens[pos][TOKEN_OP]);
@@ -85,19 +93,34 @@
         }
 
         function product() {
-            let result = signed();
+            let result = power();
             while (valid && isOp(['*', '/'])) {
                 const op = tokens[pos++][TOKEN_OP];
-                const right = signed();
+                const right = power();
                 if (op === '*') {
                     result = result * right;
                 } else if (right === 0) {
-                    valid = false;
+                    noNumber = true;
                 } else {
                     result = result / right;
                 }
             }
             return result;
+        }
+
+        // from right to left and a number keeps its sign, the same as arithmetic::power
+        function power() {
+            let result = signed();
+            if (valid && isOp([POWER])) {
+                pos++;
+                result = finite(Math.pow(result, power()));
+            }
+            return result;
+        }
+
+        function finite(num) {
+            noNumber = noNumber || !Number.isFinite(num);
+            return num;
         }
 
         function signed() {
@@ -133,6 +156,67 @@
             return result;
         }
 
+        function listArguments() {
+            const result = [sum()];
+            while (valid && isOp([FUNC_ARG_SEPARATOR])) {
+                pos++;
+                result.push(sum());
+            }
+            bracketClose();
+            return result;
+        }
+
+        function expect(chars) {
+            valid = valid && isOp(chars);
+            pos++;
+        }
+
+        // two sums compared by = or a sum that is true if it is not zero
+        function compare() {
+            const left = sum();
+            let result = left !== 0;
+            if (valid && isOp(['='])) {
+                pos++;
+                result = left === sum();
+            }
+            return result;
+        }
+
+        function andCondition() {
+            let result = compare();
+            while (valid && isOp(['&'])) {
+                pos++;
+                const right = compare();
+                result = result && right;
+            }
+            return result;
+        }
+
+        function orCondition() {
+            let result = andCondition();
+            while (valid && isOp(['|'])) {
+                pos++;
+                const right = andCondition();
+                result = result || right;
+            }
+            return result;
+        }
+
+        // the then or the else part, only a number of the chosen part counts like in arithmetic::if_function
+        function ifFunction() {
+            const isTrue = orCondition();
+            expect([FUNC_ARG_SEPARATOR]);
+            const noNumberBefore = noNumber;
+            const thenNum = sum();
+            const noThen = noNumber;
+            noNumber = noNumberBefore;
+            expect([FUNC_ARG_SEPARATOR]);
+            const elseNum = sum();
+            noNumber = isTrue ? noThen : noNumber;
+            bracketClose();
+            return isTrue ? thenNum : elseNum;
+        }
+
         function atom() {
             let result = 0;
             if (isOp(['('])) {
@@ -142,15 +226,28 @@
             } else if (isOp([FUNC_MIN, FUNC_MAX])) {
                 const pick = isOp([FUNC_MIN]) ? Math.min : Math.max;
                 pos++;
-                valid = valid && isOp(['(']);
-                pos++;
+                expect(['(']);
                 result = pickArgument(pick);
+            } else if (isOp([FUNC_IF])) {
+                pos++;
+                expect(['(']);
+                result = ifFunction();
+            } else if (isOp(Object.keys(ONE_NUMBER))) {
+                const calc = ONE_NUMBER[tokens[pos++][TOKEN_OP]];
+                expect(['(']);
+                const arg = sum();
+                bracketClose();
+                result = finite(calc(arg));
+            } else if (isOp(Object.keys(LIST_NUMBER))) {
+                const calc = LIST_NUMBER[tokens[pos++][TOKEN_OP]];
+                expect(['(']);
+                result = finite(calc(listArguments()));
             } else if (pos < tokens.length && TOKEN_NUM in tokens[pos]) {
                 result = tokens[pos++][TOKEN_NUM];
             } else if (pos < tokens.length && TOKEN_REF in tokens[pos]) {
                 const num = numberOf(tokens[pos++][TOKEN_REF]);
                 if (num === null) {
-                    valid = false;
+                    noNumber = true;
                 } else {
                     result = num;
                 }
@@ -161,7 +258,7 @@
         }
 
         const result = sum();
-        return valid && pos === tokens.length ? result : null;
+        return valid && !noNumber && pos === tokens.length ? result : null;
     }
 
     /**

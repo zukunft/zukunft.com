@@ -277,8 +277,7 @@ class value_list extends sandbox_value_list
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
      *
-     *  TODO Prio 2 use order by in query
-     *  TODO Prio 2 use limit and page in query
+     *  TODO Prio 2 use order by in query, because without an order a page can repeat a row
      *
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param bool $or if true all values are returned that are linked to any phrase of the list
@@ -289,7 +288,7 @@ class value_list extends sandbox_value_list
     function load_by_phr_lst(
         phrase_list  $phr_lst,
         user_message $msg, bool $or = false,
-        int          $limit = sql_db::ROW_LIMIT,
+        int          $limit = sql_db::ROW_MAX,
         int          $page = 0
     ): bool
     {
@@ -478,7 +477,6 @@ class value_list extends sandbox_value_list
      * create an SQL statement to retrieve a list of values by a list of phrases from the database
      * return all values that match at least one phrase of the list
      * TODO Prio 2 add ORDER BY (relevance of value)
-     * TODO Prio 2 use LIMIT and PAGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded

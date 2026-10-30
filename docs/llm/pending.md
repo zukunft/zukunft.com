@@ -6,11 +6,39 @@ include files like phrase_data_pv_install.json in the re-pin id check and if  AU
 
 ## calculator
 
-### add missing math function to calc_internal.php
+### saved result of a failed calculation
 
-add the used math function like 'log' to the calc_internal.php that are missing there until now
+a failed formula calculation overwrites the stored result with nothing (`docs/json_structure.md`); add a test that `formula::calc_result` and `result::save_if_updated` really write the empty number, and fix the save path if they do not
 
-add all math functions missing in the formula editor math symbol selector if '... more' if pressed once
+### differences between the evaluators
+
+fix the edge cases that `docs/math.md` marks as a diff:
+- the backend loses precision, because it turns intermediate results into text with 14 digits: `( 1 / 3 ) * 3` gives 0.99999999999999 and the page 1
+- the page evaluators reject a number in scientific notation and a number without digits on both sides of the point (`5E3`, `1.5E-5 * 2`, `.5`, `2.`), so check if a page writes a small value in this form, which then gives no number
+- the backend rejects a double sign (`--3`), the page evaluators give 3
+- only the backend calculates the short if form `if( 1 ) 5`, all page evaluators and the formula editor give no number
+
+### list functions
+
+- the unit_read test of `formula::fill_list_element_group` has no stored value with a variance or a confidence, so the exclusion of `words::LIST_FUNCTION_EXCLUDED` is only tested on the page (`use_case_ui_tests`)
+- the import calc validation (`data_object::expression_with_values`) replaces an operand by one number, so a list formula in a calc validation needs the same list selection
+
+### formula editor
+
+- a function inserted by the "... more" buttons gives no number until its arguments are filled, and like a single open bracket such an expression can be saved: block the save of an expression that is no valid calculation
+- add a test of the "... more" buttons, which so far only the math report covers for the calculation
+
+### PV calculator page compared with its sample
+
+the remaining differences of `pv_lifetime_balance_diff.md`:
+- the source numbers follow the first use and the sample has a fixed list, so the residual mix shows [3] and the sample [4]
+- the numbers in a row sub text are not updated by `calculator.js` of the server page when an input changes, like the number in a row label; `calculator_json.js` builds them again
+- the production mix option has no "~" and no range "midpoint of 350–440"
+- a number in a label below 100 shows a decimal with three digits e.g. 60.0 g/kWh, where the sample shows 60 g/kWh
+
+### assert_contains names the wrong entry
+
+`test_base::assert_contains` compares by position, so one missing entry is reported as the last entry of the list e.g. "+zukunft.com" for a missing "modelled"; report the entries that are really missing
 
 ### compare
 
@@ -19,7 +47,7 @@ all *_sample.html files are part of the compare and generation build
 
 ### base on json
 
-the calculator page e.g. http://localhost/http/view.php?m=16&id=-2756 is built in the browser by
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2757 is built in the browser by
 `calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
 (`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
 `&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_js.html`

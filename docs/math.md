@@ -6,9 +6,9 @@ A formula calculates in up to five places. The backend calculates the result tha
 others repeat the calculation on the page, so a difference between them shows a user a number
 that the saved result does not confirm.
 
-- functions missing in one of the calculations: 4
-- edge cases with a different result: 15
-- functions used in the data that no calculation has: 24
+- functions missing in one of the calculations: 0
+- edge cases with a different result: 10
+- functions used in the data that no calculation has: 7
 
 ## Functions
 
@@ -21,19 +21,29 @@ that the saved result does not confirm.
 | `( )` | brackets are calculated first | `( 1 + 2 ) * 3` | 9 |  |
 | `min` | the smallest of its arguments, separated by `;` | `min( 3 ; 1 + 1 ; 5 )` | 2 |  |
 | `max` | the largest of its arguments, separated by `;` | `max( 3 ; 1 + 1 ; 5 )` | 5 |  |
-| `if` | the then or the else part, only the chosen part is calculated | `if( 1 = 2 ; 3 ; 4 )` | 4 | arithmetic, calculator, calculator_json, formula_editor |
-| `=` | a condition of `if`: true if both sides are the same | `if( 2 = 2 ; 3 ; 4 )` | 3 | arithmetic, calculator, calculator_json, formula_editor |
-| `&` | a condition of `if`: true if both conditions are true | `if( 1 & 0 ; 3 ; 4 )` | 4 | arithmetic, calculator, calculator_json, formula_editor |
-| `\|` | a condition of `if`: true if one condition is true | `if( 1 \| 0 ; 3 ; 4 )` | 3 | arithmetic, calculator, calculator_json, formula_editor |
+| `if` | the then or the else part, only the chosen part is calculated | `if( 1 = 2 ; 3 ; 4 )` | 4 |  |
+| `=` | a condition of `if`: true if both sides are the same | `if( 2 = 2 ; 3 ; 4 )` | 3 |  |
+| `&` | a condition of `if`: true if both conditions are true | `if( 1 & 0 ; 3 ; 4 )` | 4 |  |
+| `\|` | a condition of `if`: true if one condition is true | `if( 1 \| 0 ; 3 ; 4 )` | 3 |  |
+| `^` | power, before a multiplication and from right to left | `2 * 3 ^ 2` | 18 |  |
+| `abs` | the number without its sign | `abs( -2.5 )` | 2.5 |  |
+| `cos` | cosine of an angle in radian | `cos( 0 )` | 1 |  |
+| `exp` | e to the power of the number | `exp( 0 )` | 1 |  |
+| `ln` | natural logarithm | `ln( 1 )` | 0 |  |
+| `log` | logarithm to the base 10 | `log( 100 )` | 2 |  |
+| `round` | the nearest whole number | `round( 2.6 )` | 3 |  |
+| `sec` | secant of an angle in radian: one divided by the cosine | `sec( 0 )` | 1 |  |
+| `sin` | sine of an angle in radian | `sin( 0 )` | 0 |  |
+| `sqrt` | square root | `sqrt( 9 )` | 3 |  |
+| `sum` | the sum of a list: a phrase stands for all its stored values | `sum( 1 ; 2 ; 3 )` | 6 |  |
+| `count` | the number of values of a list | `count( 1 ; 2 ; 3 )` | 3 |  |
+| `mean` | the average of a list | `mean( 1 ; 2 ; 3 )` | 2 |  |
 
 ## Missing in a calculation
 
 A function that one calculation does not have gives no number there, so a page keeps the stored result.
 
-- `if`: arithmetic, calculator, calculator_json, formula_editor
-- `=`: arithmetic, calculator, calculator_json, formula_editor
-- `&`: arithmetic, calculator, calculator_json, formula_editor
-- `\|`: arithmetic, calculator, calculator_json, formula_editor
+Every function is in every calculation.
 
 ## Used in the data but not calculated
 
@@ -42,29 +52,12 @@ A formula may name such a function e.g. to document a law; calculating it shows 
 | function | formulas | example |
 | --- | ---: | --- |
 | `C` | 1 | `("a" + "b")^"n" = sum(C("n","k") * "a"^("n"-"k") * "b"^"k", "k"=0.."n")` |
-| `IRF` | 1 | `IRF(t) = a0 + a1 × exp(−t ÷ tau1) + a2 × exp(−t ÷ tau2) + a3 × exp(−t ÷ tau3)` |
-| `^` | 56 | `"sigma of f" = abs("f" / ("x" + "y")) * sqrt("y"^2 / "x"^2 * "variance of x" + "variance o …` |
-| `abs` | 10 | `"sigma of f" = abs("f" / ("x" + "y")) * sqrt("y"^2 / "x"^2 * "variance of x" + "variance o …` |
-| `cos` | 2 | `"sigma of f" = abs("a" * "b" * cos("b" * "x") * "sigma of x")` |
-| `count` | 1 | `"average impact weighted reach" = sum( "impact weighted reach" ) / count( "entity" )` |
+| `IRF` | 1 | `IRF(t) = a0 + a1 * exp(-t / tau1) + a2 * exp(-t / tau2) + a3 * exp(-t / tau3)` |
 | `d` | 8 | `d/d"x" ("x"^"n") = "n" * "x"^("n" - 1)` |
-| `exp` | 4 | `"saturation vapor pressure" = 6.112 * exp(17.67 * "temperature in celsius" / ( "temperatur …` |
 | `integral` | 8 | `integral("x"^"n", "x") = "x"^("n" + 1) / ("n" + 1) + "C"` |
 | `lim` | 1 | `"f"'("x") = lim(("f"("x" + "h") - "f"("x")) / "h", "h"->0)` |
-| `ln` | 6 | `"sigma of f" = abs("a" * "sigma of x" / ("x" * ln(10)))` |
-| `log` | 9 | `"pH" = - log("hydrogen ion concentration")` |
 | `log_a` | 1 | `log_b("x") = log_a("x") / log_a("b")` |
 | `log_b` | 1 | `log_b("x") = log_a("x") / log_a("b")` |
-| `mean` | 1 | `"Pearson correlation coefficient" = sum((x - mean(x)) * (y - mean(y))) / sqrt(sum((x - mea …` |
-| `round` | 1 | `"rounded shares" = round( "target shares" / "round lot" ) * "round lot"` |
-| `sec` | 1 | `"sigma of f" = abs("a" * "b" * sec("b" * "x")^2 * "sigma of x")` |
-| `sin` | 6 | `"sigma of f" = abs("a" * "b" * sin("b" * "x") * "sigma of x")` |
-| `sqrt` | 17 | `"sigma of f" = sqrt("variance of f")` |
-| `sum` | 8 | `"variance of f" = sum((d"f"/d"x"_"i")^2 * "variance of x"_"i", "i"=1.."n")` |
-| `×` | 13 | `"specific emissions" = ( "direct emissions" + "indirect emissions" + Σ ( "mass fraction" × …` |
-| `÷` | 9 | `years = 2800 × 1000 ÷ 1000 ÷ 123.6` |
-| `Σ` | 1 | `"specific emissions" = ( "direct emissions" + "indirect emissions" + Σ ( "mass fraction" × …` |
-| `−` | 3 | `IRF(t) = a0 + a1 × exp(−t ÷ tau1) + a2 × exp(−t ÷ tau2) + a3 × exp(−t ÷ tau3)` |
 
 ## Edge cases
 
@@ -136,10 +129,30 @@ Each text is calculated by each calculation; a difference is marked with **diff*
 | `if( 0 ) 5` | no number | no number | no number | no number | no number |  |
 | `if( 1 ; 2 )` | no number | no number | no number | no number | no number |  |
 | `if( 1 ; 2 ; 3 ; 4 )` | no number | no number | no number | no number | no number |  |
-| `if( 1 ; 2 ; 5 / 0 )` | 2 | no number | no number | no number | no number | **diff** |
+| `if( 1 ; 2 ; 5 / 0 )` | 2 | 2 | 2 | 2 | 2 |  |
 | `if( abc ; 1 ; 2 )` | no number | no number | no number | no number | no number |  |
-| `sqrt( 4 )` | no number | no number | no number | no number | no number |  |
-| `10 - sqrt( 4 )` | no number | no number | no number | no number | no number |  |
-| `round( 2.6 ) * 3` | no number | no number | no number | no number | no number |  |
-| `2 ^ 3` | no number | no number | no number | no number | no number |  |
+| `tan( 1 )` | no number | no number | no number | no number | no number |  |
+| `10 - tan( 1 )` | no number | no number | no number | no number | no number |  |
+| `median( 2.6 ) * 3` | no number | no number | no number | no number | no number |  |
+| `sum( ) * 3` | no number | no number | no number | no number | no number |  |
+| `sum( 1 ; abc )` | no number | no number | no number | no number | no number |  |
 | `5 %` | no number | no number | no number | no number | no number |  |
+| `sqrt( -1 )` | no number | no number | no number | no number | no number |  |
+| `log( 0 )` | no number | no number | no number | no number | no number |  |
+| `ln( -1 )` | no number | no number | no number | no number | no number |  |
+| `exp( 1000 )` | no number | no number | no number | no number | no number |  |
+| `sqrt( 4 ; 9 )` | no number | no number | no number | no number | no number |  |
+| `sqrt( abc )` | no number | no number | no number | no number | no number |  |
+| `0 ^ -1` | no number | no number | no number | no number | no number |  |
+| `( -8 ) ^ 0.5` | no number | no number | no number | no number | no number |  |
+| `2 ^ 3 ^ 2` | 512 | 512 | 512 | 512 | 512 |  |
+| `-2 ^ 2` | 4 | 4 | 4 | 4 | 4 |  |
+| `( -3 ) ^ 2` | 9 | 9 | 9 | 9 | 9 |  |
+| `2 ^ -1` | 0.5 | 0.5 | 0.5 | 0.5 | 0.5 |  |
+| `round( -2.5 )` | -3 | -3 | -3 | -3 | -3 |  |
+| `round( 2.5 )` | 3 | 3 | 3 | 3 | 3 |  |
+| `if( 0 ; 5 / 0 + 1 ; 2 )` | 2 | 2 | 2 | 2 | 2 |  |
+| `if( 1 ; 2 ; 5 / 0 + 1 )` | 2 | 2 | 2 | 2 | 2 |  |
+| `if( 1 ; 5 / 0 ; 2 )` | no number | no number | no number | no number | no number |  |
+| `if( 1 = 1 & 2 = 3 ; 5 ; 6 )` | 6 | 6 | 6 | 6 | 6 |  |
+| `if( 1 = 1 \| 2 = 3 ; 5 ; 6 )` | 5 | 5 | 5 | 5 | 5 |  |

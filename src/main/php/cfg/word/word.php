@@ -693,7 +693,7 @@ class word extends sandbox_code_id
      */
     function load_values_related(user_message $msg): void
     {
-        $this->values_related = $this->reload_value_list($msg, 1, value_list::read_limit());
+        $this->values_related = $this->reload_value_list($msg, 0, value_list::read_limit());
     }
 
     /**
@@ -1165,11 +1165,11 @@ class word extends sandbox_code_id
 
     /**
      * get a list of values related to this word
-     * @param int $page the offset / page
+     * @param int $page the page, starting with 0
      * @param int $size the number of values that should be returned
      * @return value_list a list object with the most relevant values related to this word
      */
-    function reload_value_list(user_message $msg, int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
+    function reload_value_list(user_message $msg, int $page = 0, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->get_user());
         // the values of a symbol or alias belong to the page too (see phrase::value_selection),

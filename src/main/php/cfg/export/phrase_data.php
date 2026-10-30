@@ -131,7 +131,7 @@ class phrase_data
     /**
      * all data of one phrase in the import format with the database id of each object
      *
-     * @param int $phr_id the id of the requested phrase e.g. -2756 for the triple example PV installation
+     * @param int $phr_id the id of the requested phrase e.g. -2757 for the triple example PV installation
      * @param phrase_data_walks $walk VALUE for the values of the phrase, FROM for the triples on its from side
      * @param bool $incl_res true to add the results of the phrase
      * @param user_message $msg with the requesting user, to report e.g. a phrase that does not exist

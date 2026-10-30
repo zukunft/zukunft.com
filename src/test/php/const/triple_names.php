@@ -303,6 +303,10 @@ class triple_names
     const int INHABITANTS_INPUT_YEAR_ID = 985;
     const string INHABITANTS_FIELD_VALUE_PHRASE = 'inhabitants field value phrase';
     const int INHABITANTS_FIELD_VALUE_PHRASE_ID = 984;
+    // the phrases of the turnover per currency (currencies.json), which no write test changes
+    const string DAILY_TURNOVER = 'daily average turnover';
+    const string NET_NET_BASIS = 'net-net basis';
+    const string APRIL_2022 = 'April 2022';
     // the calculator of the reader test (unit_ui/use_case_ui_tests.php), which exists in no
     // database, so its triples count down from this fixed id
     const int CALC_FIRST_ID = 983;
@@ -589,9 +593,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2752;
+    const int SHARE_RATIO_ID = 2753;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2803;
+    const int SHARE_SYMBOL_ID = 2805;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";
