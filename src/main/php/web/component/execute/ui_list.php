@@ -2469,7 +2469,7 @@ class ui_list extends ui_base
         $html = new html_base();
         $name = url_var::NUMERIC_VALUE . $val->id();
         $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val->number();
-        $text = $label . ' ' . $html->span($this->assumption_tag($val, $dto), styles::INPUT_TAG);
+        $text = $label . ' ' . $html->span($this->assumption_tag($val, $dto, $msg), styles::INPUT_TAG);
         $unit = $this->unit_name($val, $msg);
         $input = $html->input_number($name, $num, null, null, null, $form_name)
             . $this->calculator_save_vars((string)$val->id(), $val, $label, $unit, $form_name);
@@ -2486,17 +2486,34 @@ class ui_list extends ui_base
     /**
      * @param value $val the value used by a result of the page
      * @param data_object $dto the request cache with the confidence values
+     * @param user_message $msg to report a problem of the phrase types
      * @return string "measured" for a value with a source, else "assumed" with the confidence if one is stated
      */
-    private function assumption_tag(value $val, data_object $dto): string
+    function assumption_tag(value $val, data_object $dto, user_message $msg): string
     {
         global $mtr;
         $result = $mtr->txt(msg_id::FIELD_TAG_MEASURED);
         if ($val->source_id() == null) {
             $result = $mtr->txt(msg_id::FIELD_TAG_ASSUMED);
-            $conf = $dto->val_lst->get_by_names([...$val->phr_lst()->names(), words::CONFIDENCE]);
+            $conf = $dto->val_lst->get_by_names([...$this->names_without_unit($val, $msg), words::CONFIDENCE]);
             if ($conf != null) {
                 $result .= ' ' . $conf->number();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param value $val a value of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the phrase names of the value without its unit, because a confidence has its own unit e.g. percent for a value in kg per kWh
+     */
+    private function names_without_unit(value $val, user_message $msg): array
+    {
+        $result = [];
+        foreach ($val->phr_lst()->lst() as $phr) {
+            if (!$phr->is_measure($msg) and !$phr->is_ratio_unit($msg) and !$phr->is_percent($msg)) {
+                $result[] = $phr->name();
             }
         }
         return $result;
@@ -2583,7 +2600,7 @@ class ui_list extends ui_base
         $hint = $calc->hint($item);
         if ($assumption and $val instanceof value) {
             $tag_style = $val->source_id() == null ? styles::INPUT_TAG_ASSUMED : styles::INPUT_TAG_MEASURED;
-            $text .= ' ' . $html->span($this->assumption_tag($val, $dto), $tag_style);
+            $text .= ' ' . $html->span($this->assumption_tag($val, $dto, $msg), $tag_style);
             if ($hint == '') {
                 $hint = $val->get_description();
             }
@@ -3011,7 +3028,7 @@ class ui_list extends ui_base
                 $head .= $html->block(html_base::TH, $html->esc($calc->label($col)), styles::CALC_NUMBER);
             }
             $vals = $this->calculation_table_values($calc, $dbo, $cols, $grps, $lst, $msg);
-            $fmts = $this->calculator_formats(array_merge(...array_values($vals)), true, $msg);
+            $fmts = $this->calculator_formats(array_merge(...array_values($vals)), true, $this->calculator_digits(words::DEFAULT), $msg);
             $rows = '';
             foreach ($grps as $g => $grp) {
                 $sec = '<' . html_base::TD . ' colspan="' . (count($cols) + 1) . '">'
@@ -3025,7 +3042,7 @@ class ui_list extends ui_base
                         $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, true, $msg);
                     }
                     $first = $html->esc($calc->label($row, $grp) . $this->calculator_row_number($calc, $row, $dbo, $dto, $msg))
-                        . $this->calculator_sub($calc, $row, $ctx, $lst, $msg);
+                        . $this->calculator_sub($calc, $row, $this->calculation_side_context($calc, $dbo, $row), $lst, $msg);
                     $rows .= $this->calculator_row($first, $cells, $calc->has_flag($row, triples::CALCULATOR_HIGHLIGHT));
                 }
             }
@@ -3070,9 +3087,21 @@ class ui_list extends ui_base
      * @param phrase $row a row item of the calculation table
      * @return array the phrases that every cell of the row has: the page phrase, the chosen phrase of the row and its filter
      */
-    private function calculation_row_context(calculator $calc, word|triple $dbo, phrase $row): array
+    function calculation_row_context(calculator $calc, word|triple $dbo, phrase $row): array
     {
-        return [$dbo->phrase(), $calc->chosen($calc->item_phrase($row)), $calc->filter($row)];
+        return [...$this->calculation_side_context($calc, $dbo, $row), $calc->filter($row)];
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param phrase $row a row item of the calculation table
+     * @return array the page phrase and the chosen phrase of the row without the filter, because a side result is a
+     *               number of its own e.g. the emission payback of a mix does not name the net avoided emission
+     */
+    function calculation_side_context(calculator $calc, word|triple $dbo, phrase $row): array
+    {
+        return [$dbo->phrase(), $calc->chosen($calc->item_phrase($row))];
     }
 
     /**
@@ -3081,10 +3110,11 @@ class ui_list extends ui_base
      *
      * @param array $rows per row the number of each column or null for an empty cell
      * @param bool $with_unit true to convert the unit, false if the header names the unit, so that only the decimals are shared
+     * @param int $digits the number of digits shown (calculator_digits)
      * @param user_message $msg to report a problem of the phrase types
      * @return array per column and unit name the format of the cells
      */
-    private function calculator_formats(array $rows, bool $with_unit, user_message $msg): array
+    private function calculator_formats(array $rows, bool $with_unit, int $digits, user_message $msg): array
     {
         $groups = [];
         foreach ($rows as $cells) {
@@ -3095,7 +3125,6 @@ class ui_list extends ui_base
             }
         }
         $result = [];
-        $digits = $this->calculator_digits(words::DEFAULT);
         foreach ($groups as $c => $units) {
             foreach ($units as $unit_name => $vals) {
                 $result[$c][$unit_name] = $this->calculator_group_format($vals, $with_unit, $digits, $msg);
@@ -3168,8 +3197,8 @@ class ui_list extends ui_base
                     foreach ($rows as $row) {
                         $vals[] = $this->calculator_detail_values($calc, $row[1], $cols, $lst, $msg);
                     }
-                    // the header names the unit, so only the decimals are shared by a column
-                    $fmts = $this->calculator_formats($vals, false, $msg);
+                    // the header names the unit, so only the decimals are shared by a column, and a detail shows rough numbers
+                    $fmts = $this->calculator_formats($vals, false, $this->calculator_digits(words::ROUGH), $msg);
                     $body = '';
                     foreach ($rows as $i => $row) {
                         $body .= $this->calculator_detail_row($row[0], $vals[$i], $fmts, $row[2], $msg);
@@ -3285,19 +3314,6 @@ class ui_list extends ui_base
     {
         $numbers = array_map(fn($val) => $val->number(), $vals);
         return count(array_unique($numbers, SORT_REGULAR)) == 1;
-    }
-
-    /**
-     * @param sandbox_value $val a number of the page
-     * @param user_message $msg to report a problem of the phrase types
-     * @return string the formatted number with its unit e.g. 248'880 kWh
-     */
-    private function calculator_number_text(sandbox_value $val, user_message $msg): string
-    {
-        $txt = $val->val_formatted($msg);
-        // a percent is formatted with its symbol already
-        $unit = $val->is_percent($msg) ? '' : $this->unit_name($val, $msg);
-        return $unit == '' ? $txt : $txt . sandbox_value::UNIT_SEPARATOR . $unit;
     }
 
     /**
@@ -3725,7 +3741,7 @@ class ui_list extends ui_base
     /**
      * @param calculator $calc the calculator reader of the page
      * @param phrase $row a row of the main table
-     * @param array $ctx the phrases of the row: the page phrase, the row phrase and the filter phrase
+     * @param array $ctx the phrases of a side result of the row (calculation_side_context)
      * @param value_list $lst the values and results of the page
      * @param user_message $msg to report a problem of the phrase types
      * @return string the html code of the sub text: the hint of the row, else its side results with their number
@@ -3739,7 +3755,7 @@ class ui_list extends ui_base
             foreach ($calc->side_results($row) as $side) {
                 $val = $this->calculator_result([...$ctx, $side], $lst, $msg);
                 if ($val != null and !$val->is_null()) {
-                    $parts[] = $calc->phrase_label($side) . ' ' . $this->calculator_number_text($val, $msg);
+                    $parts[] = $calc->phrase_label($side) . ' ' . $this->calculator_rough_text($val, $msg);
                 }
             }
             $sub = implode(', ', $parts);
@@ -3766,10 +3782,9 @@ class ui_list extends ui_base
         $result = '';
         $phr = $calc->chosen($calc->item_phrase($row));
         if ($calc->filter($row) != null and $phr != null) {
-            $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+            $val = $this->calculator_value($phr, $dbo, $dto, $msg) ?? $this->calculator_phrase_result($phr, $calc->filter($row), $dbo, $dto, $msg);
             if ($val != null and !$val->is_null()) {
-                $fmt = $this->calculator_group_format([$val], true, $this->calculator_digits(words::ROUGH), $msg);
-                $txt = $this->calculator_cell_text($val, $fmt, true, $msg);
+                $txt = $this->calculator_rough_text($val, $msg);
                 $note = $calc->number_note($row);
                 if ($note != '') {
                     $txt .= ' ' . $note;
@@ -3778,6 +3793,41 @@ class ui_list extends ui_base
             }
         }
         return $result;
+    }
+
+    /**
+     * @param sandbox_value $val a number in a label or a sub text, which is only an indication
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the number with the digits of the rough tier and its unit e.g. "12.1 a"
+     */
+    private function calculator_rough_text(sandbox_value $val, user_message $msg): string
+    {
+        $fmt = $this->calculator_group_format([$val], true, $this->calculator_digits(words::ROUGH), $msg);
+        return $this->calculator_cell_text($val, $fmt, true, $msg);
+    }
+
+    /**
+     * the number of a row phrase that a formula calculates instead of a stored value e.g. the PV-weighted consumption mix
+     *
+     * @param phrase $phr the row phrase
+     * @param phrase $flt the filter of the row, because a result that names it is the number of the cells e.g. the battery effect
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the results and the formulas
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the result of the page that its formula calculates for the row phrase or null if there is none
+     */
+    private function calculator_phrase_result(phrase $phr, phrase $flt, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
+    {
+        $calc = new formula_calc();
+        $found = [];
+        foreach ($dto->res_lst->lst() as $res) {
+            $is_cell = $res->has_phrase($flt, $msg);
+            if (!$is_cell and $res->has_phrase($dbo->phrase(), $msg) and $calc->calculates_phrase($res, $phr->name(), $dto->formula_list())) {
+                $found[] = $res;
+            }
+        }
+        // sorted, because the backend returns the results in any order
+        return sandbox_value::sorted($found, $msg)[0] ?? null;
     }
 
     /**

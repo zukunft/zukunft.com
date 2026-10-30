@@ -1402,6 +1402,8 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . ' with the expression '
         . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END;
+    case FORMULA_FUNCTION_MISSING = 'formula_function_missing';
+    case FORMULA_DIVISION_BY_ZERO = 'formula_division_by_zero';
     case FORMULA_WORD_RENAME_FAILED = 'formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" cannot be renamed to '

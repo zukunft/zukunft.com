@@ -180,8 +180,13 @@ Two proposed rules for the detail tables need no keyword:
 
 ### Calculations
 
-The formula engine calculates with `+ - * /` only. A calculator like the portfolio split
-also needs rounding to a multiple, min and max, a sum over a list, a condition, a sort by
+The formula engine calculates with `+ - * /`, brackets, `min( a ; b ; … )`, the smallest of
+its arguments, and `max( a ; b ; … )`, the largest; the arguments are separated by `;`, because
+a `,` joins the phrase names of one operand (`"delivered electricity","lifetime"`). The backend
+also calculates `if( condition ; then ; else )` with `=`, `&` and `|` in the condition and only
+the chosen part; a page keeps the stored result of such a formula. A calculator
+like the portfolio split also needs rounding to a multiple, a sum over a list, a sort by
 a result and a walk that carries a number from one row into the next. Until the engine
 has them, such results are stored as values and an input change does not calculate
-them again.
+them again. A formula may name a function that the engine does not have, e.g. to document a
+law, but calculating it shows the user an error that names the function and gives no number.

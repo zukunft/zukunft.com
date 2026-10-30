@@ -5,7 +5,7 @@
     shared/enum/phrase_data_walks.php - how the phrase data api collects the data of a phrase
     ---------------------------------
 
-    asked for by the url of the api (url_var::PHRASE_DATA_WALK) e.g. /api/phraseData/?id=-2754&pw=pwf;
+    asked for by the url of the api (url_var::PHRASE_DATA_WALK) e.g. /api/phraseData/?id=-2756&pw=pwf;
     the value walk is the default, because it returns only data that names the phrase
 
 

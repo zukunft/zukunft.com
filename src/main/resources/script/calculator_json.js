@@ -626,8 +626,12 @@
 
     // the terms of an expression e.g. "PV capacity" or "battery charge", "January" (formula_calc::operand_pattern)
     const OPERAND_PATTERN = /"[^"]+"(?:\s*,\s*"[^"]+")*/g;
-    // one number or one char of the arithmetic between the operands (formula_calc::TOKEN_PATTERN)
-    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()])/y;
+    // one number, one char of the arithmetic or the min or max function between the operands (formula_calc::TOKEN_PATTERN)
+    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/();]|min|max)/y;
+    // the min and max function and the separator of their arguments (chars::FUNC_MIN, chars::FUNC_MAX and chars::FUNC_ARG_SEPARATOR)
+    const FUNC_MIN = 'min';
+    const FUNC_MAX = 'max';
+    const FUNC_ARG_SEPARATOR = ';';
     // the char between the result and the calculation of a formula (chars::CHAR_CALC)
     const CHAR_CALC = '=';
     // the decimals of a compare, the same as formula_calc::DECIMALS
@@ -733,7 +737,7 @@
         });
     }
 
-    /* the arithmetic of shared/calc/arithmetic.php: a sum of products of signed numbers or brackets */
+    /* the arithmetic of shared/calc/arithmetic.php: a sum of products of signed numbers, brackets or the min or max function */
     function evaluate(text) {
         const tokens = [];
         TOKEN_PATTERN.lastIndex = 0;
@@ -772,6 +776,18 @@
         return result;
     }
 
+    /* the number that pick keeps of the sums separated by the argument separator up to the closing bracket */
+    function pickArgument(tokens, state, pick) {
+        let result = sum(tokens, state);
+        while (tokens[state.pos] === FUNC_ARG_SEPARATOR) {
+            state.pos++;
+            result = pick(result, sum(tokens, state));
+        }
+        state.ok = state.ok && tokens[state.pos] === ')';
+        state.pos++;
+        return result;
+    }
+
     function signed(tokens, state) {
         const token = tokens[state.pos];
         let result = NaN;
@@ -783,6 +799,10 @@
             result = sum(tokens, state);
             state.ok = state.ok && tokens[state.pos] === ')';
             state.pos++;
+        } else if (token === FUNC_MIN || token === FUNC_MAX) {
+            state.ok = state.ok && tokens[state.pos + 1] === '(';
+            state.pos += 2;
+            result = pickArgument(tokens, state, token === FUNC_MIN ? Math.min : Math.max);
         } else if (token !== undefined && !isNaN(Number(token))) {
             state.pos++;
             result = Number(token);
@@ -928,7 +948,11 @@
     /* measured for a value with a source, else assumed with its confidence e.g. "assumed 0.6" (ui_list::assumption_tag) */
     function tagText(entry) {
         let result = entry.source ? TEXTS[TXT.measured] : TEXTS[TXT.assumed];
-        const conf = entry.source ? null : cellEntry(entry.words.concat([KW.confidence]));
+        // without the unit of the value, because a confidence has its own unit e.g. percent (ui_list::names_without_unit)
+        const names = entry.words.filter(function (w) {
+            return !isMeasure(w) && !isRatioUnit(w) && !isPercent(w);
+        });
+        const conf = entry.source ? null : cellEntry(names.concat([KW.confidence]));
         if (conf !== null) {
             result += ' ' + conf.number;
         }
@@ -1065,12 +1089,13 @@
     }
 
     /* the sub text of a row: its hint, else its side results with their number */
-    function rowSub(row, ctx) {
+    function rowSub(row) {
         let sub = hint(row);
         if (sub === '') {
             sub = sideResults(row).map(function (side) {
-                const entry = cellEntry(ctx.concat([side]));
-                return entry === null ? '' : phraseLabel(side) + ' ' + numberText(entry, columnFormats([entry], true, FMT.digits), true);
+                // without the filter of the row, because a side result is a number of its own (ui_list::calculation_side_context)
+                const entry = cellEntry([page.name, chosen(row.to), side]);
+                return entry === null ? '' : phraseLabel(side) + ' ' + numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
             }).filter(function (s) {
                 return s !== '';
             }).join(', ');
@@ -1079,10 +1104,26 @@
         return result;
     }
 
+    /* the result of the page whose formula has the phrase alone left of the = (formula_calc::calculates_phrase);
+       a result that names the filter of the row is the number of the cells e.g. the battery effect (ui_list::calculator_phrase_result) */
+    function phraseResult(name, filter) {
+        const found = pool.filter(function (e) {
+            const frm = formulas.get(e.formula);
+            const left = frm === undefined ? '' : String(frm.expression || '').split(CHAR_CALC)[0];
+            const isCell = e.words.indexOf(filter) >= 0;
+            return !isCell && e.words.indexOf(page.name) >= 0 && left.replaceAll('"', '').trim() === name;
+        }).sort(function (a, b) {
+            return String(a.id).localeCompare(String(b.id));
+        });
+        return found.length > 0 ? found[0] : null;
+    }
+
     /* the number of the row phrase after the label of a row with a filter e.g. " (128 g/kWh)" with the digits of the
        rough tier, because the number in a label is only an indication (ui_list::calculator_row_number) */
     function rowNumber(row) {
-        const entry = filterOf(row) === null ? null : fieldEntry(chosen(row.to));
+        const phr = chosen(row.to);
+        const flt = filterOf(row);
+        const entry = flt === null ? null : fieldEntry(phr) || phraseResult(phr, flt);
         const note = ownText(row.name, KW.number_note);
         const txt = entry === null ? '' : numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
         const result = entry === null ? '' : ' (' + txt + (note === null ? '' : ' ' + note) + ')';
@@ -1122,7 +1163,7 @@
                     const cells = r.cells.map(function (e, i) {
                         return cellHtml(e, formats[i], signed, true);
                     }).join('');
-                    const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row, r.ctx);
+                    const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row);
                     body += block('tr', block('td', first) + cells, hasFlag(r.row, KW.highlight) ? STYLE.key : '');
                 });
             });
@@ -1148,11 +1189,11 @@
                     return cellEntry(r[1].concat([c.to, filterOf(c)]));
                 });
             });
-            // the header names the unit, so a column of a detail table shares only the decimals
+            // the header names the unit, so a column of a detail table shares only the decimals, and a detail shows rough numbers
             const formats = cols.map(function (c, i) {
                 return columnFormats(cells.map(function (row) {
                     return row[i];
-                }), false, FMT.digits);
+                }), false, FMT.rough_digits);
             });
             const body = rows.map(function (r, j) {
                 const tds = cells[j].map(function (e, i) {

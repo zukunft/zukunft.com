@@ -195,6 +195,9 @@ class files
     CONST string DOCS_NAME_EXCEPTIONS = test_paths::DOCS . 'code_object_name_exceptions' . self::MD;
     CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
+    CONST string DOCS_MATH = test_paths::DOCS . 'math' . self::MD;
+    // the javascript evaluators of the math function report, started with node
+    CONST string MATH_FUNCTION_REPORT_JS = test_paths::UTILS . 'math_function_report.js';
     CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;
     CONST string DOCS_PINNED_ID_FINDINGS = test_paths::DOCS . 'pinned_id_findings' . self::MD;
 

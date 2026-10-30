@@ -1345,7 +1345,7 @@ class value_base extends sandbox_value
                 $wrd_symbol = chars::WORD_START . $src_phr->id() . chars::WORD_END;
                 $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
                 $calc = new calc_internal();
-                $result = $calc->parse($r_part);
+                $result = $calc->parse($r_part, $msg);
             }
         }
         return $result;
@@ -1471,7 +1471,7 @@ class value_base extends sandbox_value
                         $r_part = str_replace($wrd_symbol, $this->get_value(), $r_part);
                         // TODO Prio 2 separate time from value words
                         $calc = new calc_internal();
-                        $result = $calc->parse($r_part);
+                        $result = $calc->parse($r_part, $msg);
                     }
                 }
             }

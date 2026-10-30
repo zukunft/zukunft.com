@@ -88,7 +88,7 @@ the object structure is:
 ├── word_db - the database const for word tables
 ├── word_rdf - the mapping to the RDF format
 ├── apiShared - constants used for the backend to frontend api of zukunft.com
-├── arithmeticShared - calculate a text with numbers, the four basic operations and brackets
+├── arithmeticShared - calculate a text with numbers, the four basic operations, brackets, min and max
 ├── expressionShared - common parts of the formula expressing handling used in front- and backend
 ├── charsShared - const symbols used for the formula expressions
 ├── componentsShared - all component code id used in the code and some with name, id and comment used by the system

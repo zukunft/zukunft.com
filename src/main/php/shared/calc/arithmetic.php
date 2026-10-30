@@ -2,7 +2,7 @@
 
 /*
 
-    shared/calc/arithmetic.php - calculate a text with numbers, the four basic operations and brackets
+    shared/calc/arithmetic.php - calculate a text with numbers, the four basic operations, brackets, min and max
     --------------------------
 
     used by the frontend to repeat the calculation of a result with the values of a page
@@ -36,6 +36,12 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'chars.php';
+
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+
 class arithmetic
 {
 
@@ -46,7 +52,7 @@ class arithmetic
     private bool $valid = true;
 
     /**
-     * calculate a text with numbers, + - * / and brackets e.g. "( 1575 + 2223.77 ) * 30"
+     * calculate a text with numbers, + - * /, brackets and the min and max function e.g. "( 1575 + 2223.77 ) * 30" or "min( 207.4 ; 157.5 )"
      *
      * @param string $txt the text to calculate
      * @return float|null the number or null if the text is not a valid calculation or divides by zero
@@ -114,7 +120,7 @@ class arithmetic
     }
 
     /**
-     * @return float a bracket with a sum inside or a number, 0 and invalid for anything else
+     * @return float a bracket with a sum inside, the min or max function or a number, 0 and invalid for anything else
      */
     private function atom(): float
     {
@@ -122,11 +128,11 @@ class arithmetic
         if ($this->next_is(['('])) {
             $this->take();
             $result = $this->sum();
-            if ($this->next_is([')'])) {
-                $this->take();
-            } else {
-                $this->valid = false;
-            }
+            $this->take_bracket_close();
+        } elseif ($this->take_function(chars::FUNC_MIN)) {
+            $result = $this->pick_argument(min(...));
+        } elseif ($this->take_function(chars::FUNC_MAX)) {
+            $result = $this->pick_argument(max(...));
         } elseif (preg_match('/\G\s*(\d+(\.\d+)?)/', $this->txt, $found, 0, $this->pos)) {
             $this->pos += strlen($found[0]);
             $result = (float)$found[1];
@@ -134,6 +140,47 @@ class arithmetic
             $this->valid = false;
         }
         return $result;
+    }
+
+    /**
+     * @param callable $pick returns the one of two numbers that the function keeps e.g. the smaller for min
+     * @return float the number kept of the sums separated by the argument separator up to the closing bracket
+     */
+    private function pick_argument(callable $pick): float
+    {
+        $result = $this->sum();
+        while ($this->valid and $this->next_is([chars::FUNC_ARG_SEPARATOR])) {
+            $this->take();
+            $result = $pick($result, $this->sum());
+        }
+        $this->take_bracket_close();
+        return $result;
+    }
+
+    /**
+     * @param string $name the name of the function e.g. "min"
+     * @return bool true if the function name and its open bracket follow, which are then read
+     */
+    private function take_function(string $name): bool
+    {
+        $pattern = '/\G\s*' . preg_quote($name, '/') . '\s*\(/';
+        $result = (preg_match($pattern, $this->txt, $found, 0, $this->pos) === 1);
+        if ($result) {
+            $this->pos += strlen($found[0]);
+        }
+        return $result;
+    }
+
+    /**
+     * read the closing bracket or set the calculation invalid if it is missing
+     */
+    private function take_bracket_close(): void
+    {
+        if ($this->next_is([')'])) {
+            $this->take();
+        } else {
+            $this->valid = false;
+        }
     }
 
     /**

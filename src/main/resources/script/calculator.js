@@ -47,6 +47,10 @@
     const TOKEN_NUM = 'n';
     const TOKEN_OP = 'o';
     const TOKEN_REF = 'r';
+    // the min and max function and the separator of their arguments, the same as chars::FUNC_MIN, chars::FUNC_MAX and chars::FUNC_ARG_SEPARATOR
+    const FUNC_MIN = 'min';
+    const FUNC_MAX = 'max';
+    const FUNC_ARG_SEPARATOR = ';';
 
     const element = document.getElementById(DATA_ID);
     if (element === null) {
@@ -56,7 +60,7 @@
 
     /**
      * evaluate the tokens of one calculation with the grammar of shared/calc/arithmetic.php:
-     * a sum of products of signed numbers or brackets
+     * a sum of products of signed numbers, brackets or the min or max function
      *
      * @param tokens the tokens of the calculation
      * @param numberOf the function that returns the number of a referenced html id or null
@@ -110,16 +114,37 @@
             return result;
         }
 
+        function bracketClose() {
+            if (isOp([')'])) {
+                pos++;
+            } else {
+                valid = false;
+            }
+        }
+
+        /* the number that pick keeps of the sums separated by the argument separator (chars::FUNC_ARG_SEPARATOR) */
+        function pickArgument(pick) {
+            let result = sum();
+            while (valid && isOp([FUNC_ARG_SEPARATOR])) {
+                pos++;
+                result = pick(result, sum());
+            }
+            bracketClose();
+            return result;
+        }
+
         function atom() {
             let result = 0;
             if (isOp(['('])) {
                 pos++;
                 result = sum();
-                if (isOp([')'])) {
-                    pos++;
-                } else {
-                    valid = false;
-                }
+                bracketClose();
+            } else if (isOp([FUNC_MIN, FUNC_MAX])) {
+                const pick = isOp([FUNC_MIN]) ? Math.min : Math.max;
+                pos++;
+                valid = valid && isOp(['(']);
+                pos++;
+                result = pickArgument(pick);
             } else if (pos < tokens.length && TOKEN_NUM in tokens[pos]) {
                 result = tokens[pos++][TOKEN_NUM];
             } else if (pos < tokens.length && TOKEN_REF in tokens[pos]) {

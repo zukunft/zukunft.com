@@ -1117,7 +1117,7 @@ class formula extends formula_map
 
         // switch off incomplete results and calculate the final numbers
         $this->switch_off_incomplete_results($res_lst, $phr_lst, $all_elm_grp_filled);
-        $this->calc_results($res_lst, $phr_lst);
+        $this->calc_results($res_lst, $phr_lst, $msg);
 
         return $res_lst;
     }
@@ -1329,12 +1329,13 @@ class formula extends formula_map
      * calculate the final numeric result for each result in the list
      * @param result_list $res_lst the list of results that is calculated and updated in place
      * @param phrase_list $phr_lst the calculation context passed on to each single result calculation
+     * @param user_message $msg to report an expression that cannot be calculated e.g. a missing math function
      */
-    function calc_results(result_list $res_lst, phrase_list $phr_lst): void
+    function calc_results(result_list $res_lst, phrase_list $phr_lst, user_message $msg): void
     {
         if ($res_lst->lst() != null) {
             foreach ($res_lst->lst() as $res) {
-                $this->calc_result($res, $phr_lst);
+                $this->calc_result($res, $phr_lst, $msg);
             }
         }
     }
@@ -1343,21 +1344,22 @@ class formula extends formula_map
      * calculate the numeric result of a single result if it needs an update
      * @param result $res the result that is parsed and updated in place with the calculated number
      * @param phrase_list $phr_lst the calculation context, used only for the log messages
+     * @param user_message $msg to report an expression that cannot be calculated e.g. a missing math function
      */
-    function calc_result(result $res, phrase_list $phr_lst): void
+    function calc_result(result $res, phrase_list $phr_lst, user_message $msg): void
     {
         // at least the formula update should be used
         if ($res->last_val_update < $this->last_update) {
             $res->last_val_update = $this->last_update;
         }
         if ($res->num_text == '') {
-            log_err('num text is empty nothing needs to be done, but actually this should never happen');
+            log_err_msg('num text is empty nothing needs to be done, but actually this should never happen', $msg);
         } else {
             if ($res->last_val_update > $res->last_update()) {
                 if ($this->result_can_calc($res)) {
                     log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
                     $calc = new calc_internal();
-                    $res->set_number($calc->parse($res->num_text));
+                    $res->set_number($calc->parse($res->num_text, $msg));
                     $res->is_updated = true;
                     log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->number() . ' for ' . $res->grp()->phrase_list()->dsp_id());
                 }

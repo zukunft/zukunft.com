@@ -82,5 +82,13 @@ class chars
     const string FUNC_IF = 'if';    //
     const string FUNC_SUM = 'sum';    //
     const string FUNC_IS_NUM = 'is.numeric';    //
+    // the smallest of its arguments e.g. the direct use as min( "PV production" ; "day share" * "household consumption" )
+    const string FUNC_MIN = 'min';
+    // the largest of its arguments e.g. a lower limit as max( 0 ; "PV production" - "household consumption" )
+    const string FUNC_MAX = 'max';
+    // the functions that service/math/calc_internal.php can calculate; any other name before a bracket is reported as missing
+    const array FUNC_CALCULATED = [self::FUNC_IF, self::FUNC_MIN, self::FUNC_MAX];
+    // between the arguments of a function, because the SEPARATOR joins the phrase names of one operand
+    const string FUNC_ARG_SEPARATOR = ';';
 
 }

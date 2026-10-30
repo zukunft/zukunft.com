@@ -26,7 +26,7 @@ make this text translatable so that the frontend language shows the warning in t
 #### reach the formula editor from the page
 
 the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2754, because the calculator has one editor relation
+http://localhost/http/view.php?m=formula_editor&id=-2756, because the calculator has one editor relation
 (the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
 type, so that the edit menu offers both editors
 
@@ -132,7 +132,7 @@ comment that a result always has its group, so that the asymmetry is explained
 ## test of the page object of a phrase view
 
 frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
-of a negative phrase id, e.g. the calculator editor of example PV installation with id -2754;
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2756;
 it is private and only reached by url_to_html with the view in the cache, so add a unit test
 via url_to_html for a word view and a triple view, each called with a word and with a triple id
 
@@ -237,10 +237,13 @@ check the words that a later file uses with another meaning than their home file
 
 the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
 
+## if function on a page
+
+calc_internal calculates `if( condition ; then ; else )`, but arithmetic.php, calculator.js, calculator_json.js and formula_editor.js do not have it, so an input change does not recalculate such a result in the browser and the formula editor rejects the text; add it to these four like min and max
+
 ## use case
 
 the PV calculator page (pv_lifetime_balance.json) recalculates in the browser only what its formulas calculate, so the input cases of system_views_read_tests::run_pv_lifetime_balance_cases still differ from the sample (pv_lifetime_balance_diff_high.md, _low.md):
-- the direct use, the battery charge, the export and the grid import of each month are stored modelled values, because the sample dispatches the PV production with a minimum per month, which the arithmetic of the formulas (shared/calc/arithmetic.php and its twin in calculator_json.js) cannot express; a min function in both would let the json calculate them from the consumption, the day share, the battery capacity and the round-trip efficiency
 - the PV system emission uses the result PV embodied intensity of the reference system, which has no page phrase and is therefore not part of the phrase data of the page, so a changed PV life-cycle emission does not change it; its formula also takes the same PV yield value as the PV production of the site, whereas the sample keeps the reference yield and lifetime of the LCA fixed
 
 PV in Switzerland

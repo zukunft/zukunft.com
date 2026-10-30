@@ -64,8 +64,8 @@ class formula_calc
     const string TOKEN_NUM = 'n';
     const string TOKEN_OP = 'o';
     const string TOKEN_REF = 'r';
-    // one number or one char of the arithmetic between the operands
-    const string TOKEN_PATTERN = '/\G\s*(\d+(?:\.\d+)?|[-+*\/()])/';
+    // one number, one char of the arithmetic or the min or max function between the operands
+    const string TOKEN_PATTERN = '/\G\s*(\d+(?:\.\d+)?|[-+*\/()' . chars::FUNC_ARG_SEPARATOR . ']|' . chars::FUNC_MIN . '|' . chars::FUNC_MAX . ')/';
 
     // per value object the value itself and its phrase names, because each operand of each
     // result is searched in all values of the page, but the phrases of a value do not change;
@@ -92,6 +92,24 @@ class formula_calc
             if ($txt !== null) {
                 $result = new arithmetic()->calc($txt);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param result $res a result of the page
+     * @param string $phr_name the name of a phrase e.g. PV-weighted consumption mix
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return bool true if the phrase alone is left of the = of the formula, so the result is the number of the phrase
+     *              and not e.g. the emission payback, which only names the phrase as its context
+     */
+    function calculates_phrase(result $res, string $phr_name, formula_list $frm_lst): bool
+    {
+        $result = false;
+        $frm_id = $res->frm?->id() ?? 0;
+        if ($frm_id != 0 and $frm_lst->has_id($frm_id)) {
+            $left = new library()->str_left_of($frm_lst->get($frm_id)->get_usr_text(), chars::CHAR_CALC);
+            $result = (trim(str_replace(chars::TERM_DELIMITER, '', $left)) == $phr_name);
         }
         return $result;
     }
@@ -155,7 +173,7 @@ class formula_calc
      * @param string $txt a part of an expression between two operands e.g. " * 1000 / "
      * @return array|null the numbers and the chars of the arithmetic as tokens or null if the text has another char
      */
-    private function arithmetic_tokens(string $txt): ?array
+    function arithmetic_tokens(string $txt): ?array
     {
         $result = [];
         $pos = 0;

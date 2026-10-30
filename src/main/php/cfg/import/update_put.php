@@ -517,7 +517,7 @@ class update_put
     }
 
     /**
-     * @param int $id the phrase id, which is used if given e.g. -2754 for a triple
+     * @param int $id the phrase id, which is used if given e.g. -2756 for a triple
      * @param string $name the phrase name, which is used if the id is missing
      * @param user_message $msg with the requesting user, to report a phrase that does not exist
      * @return phrase the loaded phrase or an empty phrase if it does not exist

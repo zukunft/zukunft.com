@@ -1,18 +1,16 @@
 # pending - list of planned llm prompts with prio 1
 
+## ID check
+
+include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
+
 ## calculator
 
-### min function for the energy flows
+### add missing math function to calc_internal.php
 
-add a min function to the formulas, so that `pv_lifetime_balance.json` calculates the direct use, the
-battery charge, the export and the grid import of each month from the consumption, the day share,
-the battery capacity and the round-trip efficiency like `pv_lifetime_balance_sample.html` instead of
-storing them as modelled values, and the input cases of
-`system_views_read_tests::run_pv_lifetime_balance_cases` match the sample also in these rows
-(details in `docs/llm/pending_prio_2.md` under "use case"); the function is needed in all four
-evaluators of an expression: the backend `service/math/calc_internal.php` (next to `chars::FUNC_IF`
-and `FUNC_SUM`), the frontend `shared/calc/arithmetic.php` with `web/formula/formula_calc.php`, its
-twin `evaluate` in `calculator_json.js` and the expression parser `shared/calc/expression.php`
+add the used math function like 'log' to the calc_internal.php that are missing there until now
+
+add all math functions missing in the formula editor math symbol selector if '... more' if pressed once
 
 ### compare
 
@@ -21,7 +19,7 @@ all *_sample.html files are part of the compare and generation build
 
 ### base on json
 
-the calculator page e.g. http://localhost/http/view.php?m=16&id=-2754 is built in the browser by
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2756 is built in the browser by
 `calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
 (`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
 `&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_js.html`

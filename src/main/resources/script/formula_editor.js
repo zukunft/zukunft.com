@@ -275,6 +275,9 @@
         const CHAR_CALC = '=';
         const TERM_DELIMITER = '"';
         const SEPARATOR = ',';
+        const FUNC_MIN = 'min';
+        const FUNC_MAX = 'max';
+        const FUNC_ARG_SEPARATOR = ';';
         /* the decimals of a stored result, the same as formula_calc::DECIMALS */
         const DECIMALS = 2;
         /* the kinds of the tokens of an expression */
@@ -440,10 +443,11 @@
         /* the expression: text to tokens and back                              */
         /* ------------------------------------------------------------------ */
 
-        /* the tokens of one side of an expression; a phrase joined to the next by the separator is one operand with several names */
+        /* the tokens of one side of an expression; a phrase joined to the next by the separator is one operand with several names;
+           the min and max function and the separator of their arguments are structure tokens like the brackets */
         function tokenize(text) {
             const result = {ok: true, error: '', tokens: []};
-            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/])|([()])|(,)|(\S))/y;
+            const re = /\s*(?:"([^"]*)"|(\d+(?:\.\d+)?)|([-+*\/])|([();]|(?:min|max)(?=\s*\())|(,)|(\S))/y;
             let joinNext = false;
             let m = re.exec(text);
             while (result.ok && m !== null) {
@@ -618,16 +622,37 @@
                 return result;
             }
 
+            function bracketClose() {
+                if (isChar([')'])) {
+                    pos = pos + 1;
+                } else {
+                    valid = false;
+                }
+            }
+
+            /* the number that pick keeps of the sums separated by the argument separator */
+            function pickArgument(pick) {
+                let result = sum();
+                while (valid && isChar([FUNC_ARG_SEPARATOR])) {
+                    pos = pos + 1;
+                    result = pick(result, sum());
+                }
+                bracketClose();
+                return result;
+            }
+
             function atom() {
                 let result = 0;
                 if (isChar(['('])) {
                     pos = pos + 1;
                     result = sum();
-                    if (isChar([')'])) {
-                        pos = pos + 1;
-                    } else {
-                        valid = false;
-                    }
+                    bracketClose();
+                } else if (isChar([FUNC_MIN, FUNC_MAX])) {
+                    const pick = isChar([FUNC_MIN]) ? Math.min : Math.max;
+                    pos = pos + 1;
+                    valid = valid && isChar(['(']);
+                    pos = pos + 1;
+                    result = pickArgument(pick);
                 } else if (pos < tokens.length && tokens[pos].t === T_NUM) {
                     result = tokens[pos].v;
                     pos = pos + 1;

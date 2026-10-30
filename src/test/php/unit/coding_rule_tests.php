@@ -59,6 +59,7 @@ include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
 include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'json_validation.php';
+include_once test_paths::UTILS . 'math_function_report.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
@@ -83,6 +84,7 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
+use Zukunft\ZukunftCom\test\php\utils\math_function_report;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
@@ -158,6 +160,38 @@ class coding_rule_tests
         $test_name = 'check that the docs with the unit test coverage is updated';
         $md_txt = new code_test_coverage()->md();
         $t->assert_file($test_name, $md_txt, test_files::DOCS_TEST_COVERAGE, '', '', $t::TIMEOUT_LIMIT_LONG);
+
+        $test_name = 'check that the docs with the math functions is updated';
+        $mth = new math_function_report();
+        $md_txt = $mth->md();
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_MATH, '', '', $t::TIMEOUT_LIMIT_LONG);
+
+        // the report names the evaluator without a function and the text with a different result
+        $test_name = 'a function without the expected result in an evaluator is reported as missing there';
+        $fnc_lst = ['+' => ['addition', '2 + 3', '5']];
+        $gaps = $mth->function_gaps(['2 + 3' => ['a' => '5', 'b' => math_function_report::NO_NUMBER]], $fnc_lst);
+        $t->assert($test_name, $gaps, ['+' => ['b']]);
+        $test_name = '... but not if every evaluator gives the expected result';
+        $gaps = $mth->function_gaps(['2 + 3' => ['a' => '5', 'b' => '5']], $fnc_lst);
+        $t->assert($test_name, $gaps, []);
+        $test_name = 'an edge case with a different number is reported as a difference';
+        $diffs = $mth->edge_diffs(['1 / 0' => ['a' => '0', 'b' => math_function_report::NO_NUMBER]]);
+        $t->assert($test_name, $diffs, ['1 / 0']);
+        // negative: the same number in another notation of php and javascript is no difference
+        $test_name = '... but not the same number in another notation';
+        $diffs = $mth->edge_diffs(['big' => ['a' => '1e+22', 'b' => '1.0e+22'], 'small' => ['a' => '3e-5', 'b' => '0.00003']]);
+        $t->assert($test_name, $diffs, []);
+        $test_name = 'the functions of a formula are counted without the phrase names';
+        $used = $mth->used_functions(['"a" = sqrt( "log(b)" )', '"c" = sqrt( 2 ) ^ 2']);
+        $t->assert($test_name, $used, ['^' => [1, '"c" = sqrt( 2 ) ^ 2'], 'sqrt' => [2, '"a" = sqrt( "log(b)" )']]);
+        // negative: a formula without a function has nothing to count
+        $test_name = '... and a formula without a function is not counted';
+        $t->assert($test_name, $mth->used_functions(['"a" = ( "b" + 1 ) * 2']), []);
+        $test_name = 'a number is written without a zero fraction';
+        $t->assert($test_name, $mth->number_text(5.0), '5');
+        // negative: no number stays visible as no number and never becomes a zero
+        $test_name = '... and no number as no number';
+        $t->assert($test_name, $mth->number_text(null), math_function_report::NO_NUMBER);
 
         // the never called list of the coverage report counts the calls and the quoted names
         // of every function in the code, so that a function that nothing calls is listed

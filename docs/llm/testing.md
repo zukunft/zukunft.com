@@ -709,7 +709,7 @@ distinguishing word (`'category subtitle'` vs `'category subtitle (multi)'`).
 
 Every file that says `do not edit manually` — `docs/code_object_name_exceptions.md`,
 `docs/code_user_message_exceptions.md`, `docs/code_test_coverage.md`,
-`docs/json_findings.md`, `docs/code_functions_all.md` — and every regenerated
+`docs/json_findings.md`, `docs/code_functions_all.md`, `docs/math.md` — and every regenerated
 baseline (the `list.csv` of `src/test/resources/unit/<class>/`, the html snapshots,
 the api fixtures) is written by `test/test.php` with `AUTO_UPDATE_TEST_FILES` set to
 `true` and compared with the flag set to `false`. A test that reports such a file as

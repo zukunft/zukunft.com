@@ -29685,12 +29685,12 @@
                 "class": "triple"
             },
             {
-                "id": 3808,
+                "id": 3809,
                 "name": "ABBN (ticker)",
                 "description": "the ticker symbol under which the ABB share is traded on SIX",
-                "from_id": 2272,
+                "from_id": 2278,
                 "from_phrase": {
-                    "id": 2272,
+                    "id": 2278,
                     "name": "ABBN",
                     "description": "the SIX ticker of the share of ABB Ltd",
                     "type_id": 1,
@@ -29950,7 +29950,7 @@
                 "class": "triple"
             },
             {
-                "id": 2272,
+                "id": 2278,
                 "name": "ABBN",
                 "description": "the SIX ticker of the share of ABB Ltd",
                 "type_id": 1,
@@ -30038,7 +30038,7 @@
                 "class": "triple"
             },
             {
-                "id": 2843,
+                "id": 2844,
                 "name": "a is symbol for year (duration unit)",
                 "from_id": 1178,
                 "from_phrase": {
@@ -30062,9 +30062,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2801,
+                "to_id": -2802,
                 "to_phrase": {
-                    "id": 2801,
+                    "id": 2802,
                     "name": "year (duration unit)",
                     "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                     "type_id": 2,
@@ -30742,7 +30742,7 @@
                 "class": "word"
             },
             {
-                "id": 2801,
+                "id": 2802,
                 "name": "year (duration unit)",
                 "description": "the year as the unit of a duration e.g. the lifetime of a PV system or the payback time, in contrast to a year as a period of time",
                 "type_id": 2,
@@ -31316,7 +31316,7 @@
                 "class": "triple"
             },
             {
-                "id": 2752,
+                "id": 2753,
                 "name": "g\/kWh is symbol for gram per kWh",
                 "from_id": 2112,
                 "from_phrase": {
@@ -31985,7 +31985,7 @@
                 "class": "triple"
             },
             {
-                "id": 2803,
+                "id": 2804,
                 "name": "kg\/kWh is symbol for kg per kWh",
                 "from_id": 2113,
                 "from_phrase": {
@@ -32287,7 +32287,7 @@
                 "class": "triple"
             },
             {
-                "id": 2799,
+                "id": 2800,
                 "name": "kWh\/a is symbol for kilowatthours per year",
                 "from_id": 2110,
                 "from_phrase": {
@@ -32311,9 +32311,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2748,
+                "to_id": -2749,
                 "to_phrase": {
-                    "id": 2748,
+                    "id": 2749,
                     "name": "kilowatthours per year",
                     "description": "the unit of an annual electricity amount e.g. the household consumption",
                     "type_id": 2,
@@ -32324,7 +32324,7 @@
                 "class": "triple"
             },
             {
-                "id": 2800,
+                "id": 2801,
                 "name": "kWh\/kWp\u00b7a is symbol for kilowatthours per kilowatt peak and year",
                 "from_id": 2111,
                 "from_phrase": {
@@ -32348,9 +32348,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2749,
+                "to_id": -2750,
                 "to_phrase": {
-                    "id": 2749,
+                    "id": 2750,
                     "name": "kilowatthours per kilowatt peak and year",
                     "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                     "type_id": 2,
@@ -32764,7 +32764,7 @@
                 "class": "word"
             },
             {
-                "id": 2748,
+                "id": 2749,
                 "name": "kilowatthours per year",
                 "description": "the unit of an annual electricity amount e.g. the household consumption",
                 "type_id": 2,
@@ -32777,7 +32777,7 @@
                 "class": "word"
             },
             {
-                "id": 2749,
+                "id": 2750,
                 "name": "kilowatthours per kilowatt peak and year",
                 "description": "the unit of the specific yield of a PV system, the annual electricity per kWp of rated power",
                 "type_id": 2,
@@ -33855,7 +33855,7 @@
                 "class": "triple"
             },
             {
-                "id": 2802,
+                "id": 2803,
                 "name": "share is symbol for share (ratio)",
                 "from_id": 330,
                 "from_phrase": {
@@ -33879,9 +33879,9 @@
                     "impact": null,
                     "id": 18
                 },
-                "to_id": -2751,
+                "to_id": -2752,
                 "to_phrase": {
-                    "id": 2751,
+                    "id": 2752,
                     "name": "share (ratio)",
                     "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                     "type_id": 9,
@@ -34581,7 +34581,7 @@
                 "class": "word"
             },
             {
-                "id": 2751,
+                "id": 2752,
                 "name": "share (ratio)",
                 "description": "a part of a whole as the ratio from 0 to 1 e.g. the day share of the consumption or the efficiency of the battery, stored like a percent",
                 "type_id": 9,
@@ -36094,6 +36094,16 @@
                 "latex": "\\text{one} = \\text{thousand} \\cdot 1000"
             },
             {
+                "id": 16,
+                "protection": 3,
+                "name": "scale million to one",
+                "description": "convert numbers in millions to one and back",
+                "type_id": 1,
+                "user_text": "\"one\" = \"million\" * 1000000",
+                "ref_text": "{w4}={w158}*1000000",
+                "latex": "\\text{one} = \\text{m} \\cdot 1000000"
+            },
+            {
                 "id": 17,
                 "name": "scale billion to one",
                 "description": "convert numbers in billions (thousand millions) to one and back, so that a value given in billions can be compared and calculated with values given in ones",
@@ -36119,16 +36129,6 @@
                 "user_text": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
                 "ref_text": "{w297}={w297},{w160}*{w209},{w14},{w296}",
                 "latex": "\\text{htp} = \\text{htp},\\text{%} \\cdot \\text{global},\\text{human},\\text{population}"
-            },
-            {
-                "id": 16,
-                "protection": 3,
-                "name": "scale million to one",
-                "description": "convert numbers in millions to one and back",
-                "type_id": 1,
-                "user_text": "\"one\" = \"million\" * 1000000",
-                "ref_text": "{w4}={w158}*1000000",
-                "latex": "\\text{one} = \\text{m} \\cdot 1000000"
             },
             {
                 "id": 109,

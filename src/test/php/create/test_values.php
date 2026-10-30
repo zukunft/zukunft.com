@@ -1603,6 +1603,24 @@ class test_values extends test_objects
     }
 
     /**
+     * the values of the confidence test (ui_list::assumption_tag): an assumed value in kWh with its
+     * confidence in percent, and an assumed value of another phrase without a confidence
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_unit_confidence_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_kwh()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase()]));
+        $lst->add($this->value_for_phrases([$t_wrd->word_bern()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the values of the input field test (test_phrases::list_input_fields_ui): the inhabitants of
      * Zurich as the number of the page, the limit and the step of the inhabitants field, and the
      * values of the city with the cities that the city selector offers

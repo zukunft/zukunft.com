@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
@@ -235,11 +236,40 @@ class use_case_ui_tests
         // negative: without a value for an operand the browser cannot repeat the calculation
         $test_name = '... but no calculation if an operand has no value on the page';
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $t_val->value_list_assumptions_ui(), $frm_be_lst));
+        // the min function e.g. of the direct use of a month is given as tokens like the operators
+        $test_name = 'the min function of a calculation is given to the browser with its argument separator';
+        $frm_min = new formula_ui();
+        $frm_min->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_min->set_usr_text('"total" = min( "' . triple_names::CITY_ZH_NAME . '" ; "' . triple_names::COMPANY_ZURICH . '" )');
+        $frm_min_lst = new formula_list_ui();
+        $frm_min_lst->add($frm_min, $msg);
+        $tokens = new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_min_lst);
+        $t->assert($test_name, $tokens, [
+            [formula_calc::TOKEN_OP => chars::FUNC_MIN],
+            [formula_calc::TOKEN_OP => '('],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::CITY_ZH_NAME])->html_id()],
+            [formula_calc::TOKEN_OP => chars::FUNC_ARG_SEPARATOR],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::COMPANY_ZURICH])->html_id()],
+            [formula_calc::TOKEN_OP => ')']]);
+        $test_name = 'the max function of a calculation is given to the browser with its argument separator';
+        $frm_max = new formula_ui();
+        $frm_max->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_max->set_usr_text('"total" = max( "' . triple_names::CITY_ZH_NAME . '" ; "' . triple_names::COMPANY_ZURICH . '" )');
+        $frm_max_lst = new formula_list_ui();
+        $frm_max_lst->add($frm_max, $msg);
+        $tokens = new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_max_lst);
+        $t->assert($test_name, $tokens, [
+            [formula_calc::TOKEN_OP => chars::FUNC_MAX],
+            [formula_calc::TOKEN_OP => '('],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::CITY_ZH_NAME])->html_id()],
+            [formula_calc::TOKEN_OP => chars::FUNC_ARG_SEPARATOR],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::COMPANY_ZURICH])->html_id()],
+            [formula_calc::TOKEN_OP => ')']]);
         // negative: a char outside the arithmetic of the page is never given to the browser
-        $test_name = '... and no calculation for an expression with other chars than numbers, + - * / and brackets';
+        $test_name = '... and no calculation for an expression with other chars than numbers, + - * /, brackets, min and max';
         $frm_fn = new formula_ui();
         $frm_fn->set_id(formula_names::CITY_POPULATION_ID);
-        $frm_fn->set_usr_text('"total" = max("' . triple_names::CITY_ZH_NAME . '")');
+        $frm_fn->set_usr_text('"total" = round("' . triple_names::CITY_ZH_NAME . '")');
         $frm_fn_lst = new formula_list_ui();
         $frm_fn_lst->add($frm_fn, $msg);
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_fn_lst));
@@ -601,6 +631,15 @@ class use_case_ui_tests
         $t->assert($test_name, array_map(fn($phr) => $phr->name(), $calc->side_results($rows[1])), [word_names::YEAR_2020]);
         $test_name = '... and a row without such a phrase has none';
         $t->assert($test_name, $calc->side_results($rows[0]), []);
+        // a side result is a number of its own, so it is selected without the filter of the row
+        $list_ctx = new ui_list();
+        $test_name = 'a side result is selected by the page and the row phrase';
+        $side_ctx = $list_ctx->calculation_side_context($calc, $wrd, $rows[1]);
+        $t->assert($test_name, array_map(fn($phr) => $phr->name(), $side_ctx), [word_names::ZH, word_names::INHABITANTS]);
+        // negative: the cells of the row are selected with the filter
+        $test_name = '... but a cell also by the filter of the row';
+        $cell_ctx = $list_ctx->calculation_row_context($calc, $wrd, $rows[1]);
+        $t->assert($test_name, array_map(fn($phr) => $phr->name(), $cell_ctx), [word_names::ZH, word_names::INHABITANTS, word_names::CANTON]);
         // the view fills the request cache with the general triples of these phrases (view_exe::add_page_cache)
         $test_name = 'the phrases of the general triples are the item, row and filter phrases and the other phrase of a row, each once';
         $t->assert($test_name, array_map(fn($phr) => $phr->name(), $calc->phrases()), [
@@ -737,6 +776,17 @@ class use_case_ui_tests
         $test_name = '... and an assumption without a source is tagged as assumed';
         $t->assert_text_contains($test_name, $in_html,
             $html->span($mtr->txt(msg_id::FIELD_TAG_ASSUMED), styles::INPUT_TAG_ASSUMED));
+        // the confidence has its own unit, so the value in kWh finds its confidence in percent
+        $dto_conf = new data_object();
+        $dto_conf->val_lst = $t_val->value_list_unit_confidence_ui();
+        $val_conf = $dto_conf->val_lst->get_by_names([word_names::INHABITANTS, word_names::KWH]);
+        $test_name = '... with the confidence of a value in another unit';
+        $t->assert($test_name, new ui_list()->assumption_tag($val_conf, $dto_conf, $msg),
+            $mtr->txt(msg_id::FIELD_TAG_ASSUMED) . ' ' . values::SAMPLE_FLOAT);
+        // negative: the confidence of another phrase is not used
+        $val_other = $dto_conf->val_lst->get_by_names([word_names::BE]);
+        $test_name = '... but not the confidence of another phrase';
+        $t->assert($test_name, new ui_list()->assumption_tag($val_other, $dto_conf, $msg), $mtr->txt(msg_id::FIELD_TAG_ASSUMED));
         // negative: a phrase without calculator triples has no inputs
         $test_name = 'a phrase without calculator triples shows no calculator input';
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
@@ -796,6 +846,40 @@ class use_case_ui_tests
         // negative: a row without a number note shows only the number
         $test_name = '... but no note without a number note triple';
         $t->assert_text_not_contains($test_name, $res_html, triple_names::CALC_INHABITANTS_NOTE_COM);
+        // a row phrase that a formula calculates has no value, so its label shows the result of the formula
+        $frm_inh = new formula_ui();
+        $frm_inh->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_inh->set_usr_text('"' . word_names::INHABITANTS . '" = "' . triple_names::CITY_ZH_NAME . '"');
+        $frm_inh_lst = new formula_list_ui();
+        $frm_inh_lst->add($frm_inh, $msg);
+        $res_inh_lst = new result_list_ui();
+        $res_inh_lst->add($t_res->result_zh_sum_ui(values::SAMPLE_FLOAT), $msg);
+        $dto_frm = clone $dto_res;
+        $dto_frm->val_lst = new value_list_ui();
+        $dto_frm->set_result_list($res_inh_lst);
+        $dto_frm->set_formula_list($frm_inh_lst);
+        $frm_html = $page->calculation_result($wrd, $msg, $dto_frm);
+        $test_name = '... and the result of the formula of a row phrase without a value';
+        $t->assert_text_contains($test_name, $frm_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . round(values::SAMPLE_FLOAT) . ')');
+        // negative: a result that only names the row phrase is not its number e.g. the emission payback of a mix
+        $frm_other = new formula_ui();
+        $frm_other->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_other->set_usr_text('"total" = "' . triple_names::CITY_ZH_NAME . '"');
+        $frm_other_lst = new formula_list_ui();
+        $frm_other_lst->add($frm_other, $msg);
+        $dto_frm->set_formula_list($frm_other_lst);
+        $other_html = $page->calculation_result($wrd, $msg, $dto_frm);
+        $test_name = '... but not the result of a formula that only names the row phrase';
+        $t->assert_text_not_contains($test_name, $other_html, triple_names::CALC_INHABITANTS_LABEL_COM . ' (');
+        // negative: a result that names the filter of the row is the number of its cells e.g. the battery effect
+        $res_cell_lst = new result_list_ui();
+        $res_cell_lst->add($t_res->result_zh_canton_ui(values::SAMPLE_FLOAT), $msg);
+        $dto_frm->set_result_list($res_cell_lst);
+        $dto_frm->set_formula_list($frm_inh_lst);
+        $cell_html = $page->calculation_result($wrd, $msg, $dto_frm);
+        $test_name = '... and not the result that names the filter of the row';
+        $t->assert_text_not_contains($test_name, $cell_html, triple_names::CALC_INHABITANTS_LABEL_COM . ' (');
         $test_name = '... and the number of a signed group with its sign';
         $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
         // the save compares the results of the page by their group id, so a cell names the number it shows
@@ -832,6 +916,18 @@ class use_case_ui_tests
         // negative: the number without the filter phrase is not shown in the column
         $test_name = '... and not the number without it';
         $t->assert_text_not_contains($test_name, $res_html, $zh_cell . $city_val->html_id());
+        // a detail table shows the digits of the rough tier
+        $dto_det = clone $dto_res;
+        $dto_det->val_lst = $t_val->value_list_calculator_result_ui();
+        $det_val = $dto_det->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019]);
+        $det_val->number = values::SAMPLE_FLOAT;
+        $det_html = $page->calculation_result($wrd, $msg, $dto_det);
+        $det_cell = ui_list::CALC_CELL_REPEAT . '2">';
+        $test_name = 'a detail table shows the digits of the rough tier';
+        $t->assert_text_contains($test_name, $det_html, $det_cell . round(values::SAMPLE_FLOAT) . '</td>');
+        // negative: not with the decimals of the default tier
+        $test_name = '... and not the decimals of the default tier';
+        $t->assert_text_not_contains($test_name, $det_html, $det_cell . round(values::SAMPLE_FLOAT) . '.');
         $test_name = 'the sources are numbered in the order of the first use';
         $t->assert_text_contains($test_name, $res_html, '<div class="' . styles::CALC_SOURCES . '">'
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_SOURCES)) . '<' . html_base::OL . '>');

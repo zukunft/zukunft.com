@@ -78,7 +78,7 @@ calculator script, so that the results change as soon as an input changes:
   id (`sandbox_value::html_id`), only those that a result, an input or a cell reads
   (`ui_list::calculator_used_ids`), so that a value of the request cache that the page
   does not use never changes the page, the calculation of each result as tokens
-  (`formula_calc::tokens`: numbers, `+ - * /`, brackets and the html id of each
+  (`formula_calc::tokens`: numbers, `+ - * /`, brackets, `min` and `max` with their `;` and the html id of each
   operand, the same operands that the page calculation of PHP uses), the number that
   each input sets and the number and format of each cell. A formula text is never
   written into the page as script, so a formula cannot inject code.
@@ -121,7 +121,7 @@ formula notes and the sources of the server page, checks the stored results once
 `ui_list::check_results` and calculates every result again when an input changes.
 
 The formula editor view (`views::FORMULA_EDITOR` of `calculator_views.json`, e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2754) has three components side by side: the
+http://localhost/http/view.php?m=formula_editor&id=-2756) has three components side by side: the
 formula selector (`system_page::formula_editor_selector`, host `formulaSelector`), the formula editor
 (`system_page::formula_editor`, host `formulaEditor`) and the result compare
 (`system_page::formula_result_compare`, host `formulaCompare`). Only the formula editor component adds,
@@ -363,7 +363,7 @@ no `web/` file touches the database at all.
 
 Every api route is a directory with an `index.php` (e.g. `api/updatePut/index.php`),
 so every client writes the api url with the trailing slash, e.g. `/api/updatePut/`
-or `/api/phraseData/?id=-2754`: `html_base` and `rest_call` for the php frontend
+or `/api/phraseData/?id=-2756`: `html_base` and `rest_call` for the php frontend
 and `apiUrl` of `calculator_editor.js`. Without the slash the web server answers
 with a redirect to the directory (Apache `mod_dir`), and a browser repeats a
 redirected post as a get without its body, so a change is lost without a
@@ -1029,7 +1029,8 @@ itself.
 The numbers of a calculator table column with the same unit are formatted as one
 group (`web\helper\number_format`), so that they can be compared at a glance. The
 largest number decides, with the target digits of `config.yaml` number format >
-digits (default 4):
+digits (default 4; rough 3 for a detail table and for a number in a row label or
+sub text, because those are only an indication):
 
 - it has more integer digits than the target and a preloaded formula converts the
   unit to a larger one, e.g. `"kg" = "tonne" * 1000`: the group is shown in the

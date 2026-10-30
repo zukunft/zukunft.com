@@ -6958,9 +6958,13 @@
     \-- unit_name - section for function unit_name missing in /component/execute/ui_list.php
     \-- formula_notes - section for function formula_notes missing in /component/execute/ui_list.php
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
+    \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
     \-- field_decimals - section for function field_decimals missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
+    \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
+    \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
+            hp
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
     \-- calculator_sources - section for function calculator_sources missing in /component/execute/ui_list.php
@@ -7106,7 +7110,9 @@
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_calc
     \-- result - section for function result missing in /formula/formula_calc.php
+    \-- calculates_phrase - section for function calculates_phrase missing in /formula/formula_calc.php
     \-- tokens - section for function tokens missing in /formula/formula_calc.php
+    \-- arithmetic_tokens - section for function arithmetic_tokens missing in /formula/formula_calc.php
     \-- operands - section for function operands missing in /formula/formula_calc.php
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
@@ -9703,12 +9709,18 @@
         \-- ui_list - the notes of a page: the descriptions of the formulas that calculate the results of the
     \-- assumption_fields
         \-- ui_list - the assumptions of a page: the values that the calculation of the results of the page uses
+    \-- assumption_tag
+        \-- ui_list - @param value $val the value used by a result of the page
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
     \-- field_decimals
         \-- ui_list - @param sandbox_value $val the value that a field shows
     \-- calculation_table
         \-- ui_list - the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
+    \-- calculation_row_context
+        \-- ui_list - @param calculator $calc the calculator reader of the page
+    \-- calculation_side_context
+        \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_detail_tables
         \-- ui_list - the detail tables of a calculation result: per table its label as the heading, the table
     \-- calculator_sources
@@ -9813,8 +9825,12 @@
         \-- expression - get a list of all formula elements
     \-- result
         \-- formula_calc - repeat the calculation of a result with the values and results of the page, e.g. the
+    \-- calculates_phrase
+        \-- formula_calc - @param result $res a result of the page
     \-- tokens
         \-- formula_calc - the calculation of a result as tokens for the browser, which repeats it when an input of a
+    \-- arithmetic_tokens
+        \-- formula_calc - @param string $txt a part of an expression between two operands e.g. " * 1000 / "
     \-- operands
         \-- formula_calc - the values and results that the calculation of a result uses, found the same way as the
     \-- send

@@ -31,7 +31,7 @@
         "class": "triple"
     },
     {
-        "id": 3099,
+        "id": 3100,
         "name": "bond (finance)",
         "description": "the finance reading of the ambiguous word 'bond': a debt security under which the issuer owes the holders the face value and the interest",
         "class": "triple"
@@ -56,7 +56,7 @@
         "class": "triple"
     },
     {
-        "id": 3187,
+        "id": 3188,
         "name": "child portfolio",
         "description": "the part of the original portfolio that one child receives; every child portfolio is a child portfolio, so that the page shows one input and one column per child",
         "class": "triple"
@@ -171,14 +171,14 @@
         "class": "triple"
     },
     {
-        "id": 2145,
+        "id": 2151,
         "name": "EPR",
         "description": "European Pressurized Reactor of EDF\/Framatome, generation III+, 1.63 GW net in the BAK study",
         "type_id": 1,
         "class": "word"
     },
     {
-        "id": 2937,
+        "id": 2938,
         "name": "existing NPP",
         "description": "Beznau 1 and 2, G\u00f6sgen and Leibstadt",
         "class": "triple"
@@ -244,7 +244,7 @@
         "class": "triple"
     },
     {
-        "id": 2211,
+        "id": 2217,
         "name": "holding",
         "description": "the quantity of one security or currency in a portfolio, also called a position",
         "type_id": 1,
@@ -317,7 +317,7 @@
         "class": "triple"
     },
     {
-        "id": 2936,
+        "id": 2937,
         "name": "new NPP",
         "description": "a nuclear power plant built after the vote of 2027, in operation from about 2050",
         "class": "triple"
@@ -375,7 +375,7 @@
         "class": "word"
     },
     {
-        "id": 2741,
+        "id": 2742,
         "name": "replacement mix",
         "description": "the mix of the electricity that the PV electricity replaces at the margin, the second reference next to the Swiss consumption mix",
         "class": "triple"
