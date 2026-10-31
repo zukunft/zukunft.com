@@ -45,12 +45,21 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'phrase_data_walks.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::MODEL_CONST . 'files.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'triple_names.php';
+include_once test_paths::CONST . 'word_names.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -60,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_data_read_tests
@@ -182,6 +192,27 @@ class phrase_data_read_tests
         $test_name = '... but a page without the repeated input does not';
         $t->assert_contains_not($test_name, $trp_names, [triple_names::FIRST_CHILD_PORTFOLIO_INSTANCE]);
 
+        $t->subheader($ts . 'from walk of a page independent table');
+        $test_name = 'the phrase data of a page independent table contains the results of its rows';
+        $split_res_vars = $phd->export_json($phr_split->id(), phrase_data_walks::FROM, true, $msg);
+        $split_res = $split_res_vars[json_fields::RESULTS] ?? [];
+        $row_res = $this->values_by_phrase($split_res, triple_names::UNIT_VALUE, true);
+        $t->assert_true($test_name, count($row_res) > 0);
+        $msg->reset();
+        // negative: a page without such a table has only the results of its own phrase
+        $test_name = '... but a page without such a table does not';
+        $other_row_res = $this->values_by_phrase($res_objs, triple_names::UNIT_VALUE, true);
+        $t->assert($test_name, $this->value_keys($other_row_res), []);
+        // the count of a row is limited by its original quantity, a value of plain words only
+        $test_name = 'the phrase data of a page independent table contains the values of its rows';
+        $split_vals = $split_res_vars[json_fields::VALUES] ?? [];
+        $row_vals = $this->values_by_phrase($split_vals, word_names::LISP, true);
+        $t->assert($test_name, count($this->values_by_phrase($row_vals, word_names::ORIGINAL, true)), 1);
+        // negative: a page without such a table has no value of these rows
+        $test_name = '... but a page without such a table does not';
+        $other_row_vals = $this->values_by_phrase($vars[json_fields::VALUES] ?? [], word_names::LISP, true);
+        $t->assert($test_name, $this->value_keys($other_row_vals), []);
+
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';
         $val_vars = $phd->export_json($phr->id(), phrase_data_walks::VALUE, false, $msg);
@@ -220,6 +251,63 @@ class phrase_data_read_tests
         $test_name = '... and names the missing phrase id';
         $t->assert_msg_false($test_name, $msg, (string)triple_names::MISSING_PHRASE_ID);
         $msg->reset();
+
+        // the tooltip of a phrase is its description, so a description lost by a later import is
+        // reported here by its name and not only as one changed line of a page snapshot
+        $t->subheader($ts . 'descriptions of the imported phrases');
+        $test_name = 'each word with a description in an import file keeps a description';
+        $wrd_lst = new word_list($t->usr1);
+        $t->assert($test_name, $this->names_without_description($wrd_lst, json_fields::WORDS, $msg), []);
+        $test_name = 'each triple with a description in an import file keeps a description';
+        $trp_lst = new triple_list($t->usr1);
+        $t->assert($test_name, $this->names_without_description($trp_lst, json_fields::TRIPLES, $msg), []);
+        // negative: the check would find a name that has no description
+        $test_name = 'the check of the descriptions finds a word without a description';
+        $no_desc = new word($t->usr1);
+        $no_desc->set_name(word_names::LISP);
+        $no_lst = new word_list($t->usr1);
+        $no_lst->add($no_desc);
+        $t->assert($test_name, $this->without_description([word_names::LISP], $no_lst), [word_names::LISP]);
+    }
+
+    /**
+     * @param word_list|triple_list $lst an empty list to load the phrases of the import files
+     * @param string $field the json field of the phrases in an import file
+     * @param user_message $msg to report a problem of the load
+     * @return array the sorted names that an import file describes, but that have no description in the database
+     */
+    private function names_without_description(word_list|triple_list $lst, string $field, user_message $msg): array
+    {
+        $names = [];
+        // only the files of the db setup, because a word of a base data file that is not imported
+        // can be in the database by another file without a description
+        foreach (files::SAMPLE_VIEW_DATA_FILES as $filename) {
+            $json = json_decode(file_get_contents($filename), true);
+            foreach ($json[$field] ?? [] as $obj) {
+                if (($obj[json_fields::DESCRIPTION] ?? '') != '' and ($obj[json_fields::NAME] ?? '') != '') {
+                    $names[$obj[json_fields::NAME]] = $obj[json_fields::NAME];
+                }
+            }
+        }
+        $lst->load_by_names(array_values($names), $msg);
+        return $this->without_description(array_values($names), $lst);
+    }
+
+    /**
+     * @param array $names the names that should have a description
+     * @param word_list|triple_list $lst the phrases as loaded from the database
+     * @return array the sorted names that are in the list without a description; a name that the list does not have is reported by the import tests
+     */
+    private function without_description(array $names, word_list|triple_list $lst): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $phr) {
+            if (in_array($phr->name(), $names) and ($phr->get_description() ?? '') == '') {
+                $result[] = $phr->name();
+            }
+        }
+        sort($result);
+        return $result;
     }
 
     /**

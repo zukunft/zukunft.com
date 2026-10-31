@@ -1702,6 +1702,51 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_list_ui two different numbers of the option 2020 that rank the same, which are numbers of other phrases
+     */
+    function value_list_calculator_option_tie_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $opt = $t_wrd->word_2020()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$opt, $t_wrd->word_bern()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$opt, $t_wrd->word_ge()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param float|null $calculated the number with the same phrases as the expected number, null for none
+     * @return value_list_ui the expected number and the calculated number of the check table test
+     */
+    function value_list_calculator_check_ui(?float $calculated): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_expected()->phrase()]));
+        if ($calculated !== null) {
+            $lst->add($this->value_for_phrases([$inh], $calculated));
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param float $num the number of the warning phrase, above zero to show the warning
+     * @return value_list_ui the number of the page and the phrase of the warning test (test_triples::calculator_zh_warning)
+     */
+    function value_list_calculator_warning_ui(float $num): value_list_ui
+    {
+        $tl = new test_lib();
+        $inh = new test_words($this->env)->word_inhabitant()->phrase();
+        $page = new test_triples($this->env)->zh_city()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$page, $inh], $num));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * @return value_list_ui the number of the option 2020 of the phrase selector canton (test_triples::calculator_zh_input)
      */
     function value_list_calculator_option_ui(): value_list_ui

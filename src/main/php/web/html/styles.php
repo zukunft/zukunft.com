@@ -114,6 +114,8 @@ class styles
     const string CALC_BUTTON_SAVE = 'btn-outline-primary btn-space px-3';
     // the button that adds an instance of a repeated input of a calculator page
     const string CALC_BUTTON_ADD = 'btn-outline-primary btn-sm';
+    // a button of a list or a detail table of a calculator page e.g. download
+    const string CALC_BUTTON = 'btn-outline-primary';
     const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
     const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
 
@@ -161,6 +163,9 @@ class styles
     // a checkbox with its label and hint, and a number that a user cannot change, of a calculator
     const string INPUT_CHECK = 'check';
     const string INPUT_READ_ONLY = 'ro';
+    // the warnings below the input fields of a calculator and one warning
+    const string INPUT_WARNINGS = 'warnings';
+    const string INPUT_WARNING = 'warn';
     // the measured or assumed tag behind the label and the source hint below an assumption field
     const string INPUT_TAG = 'tag';
     const string INPUT_HINT = 'hint';
@@ -174,6 +179,13 @@ class styles
     // the parts of the calculation result (ui_list::calculation_table): the frame that scrolls a
     // wide table, a section row, a key row, the sub text of a row, a number cell, the sign of a
     // number, the content of the details, the formula notes and the source list
+    // the colours of the flagged columns of a calculator table: the first once, then the others cycling
+    const array CALC_COLUMN_COLOURS = ['col-first', 'col-1', 'col-2', 'col-3', 'col-4'];
+    // a diagram of a calculator page with its legend, and the status of a row of the check table
+    const string CALC_CHART = 'chart';
+    const string CALC_LEGEND = 'legend';
+    const string CALC_STATUS_OK = 'pill ok';
+    const string CALC_STATUS_FAIL = 'pill fail';
     const string CALC_SCROLL = 'scroll';
     const string CALC_SECTION = 'sec';
     const string CALC_KEY = 'key';

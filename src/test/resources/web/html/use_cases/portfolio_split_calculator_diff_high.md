@@ -2,150 +2,120 @@
 
 Change the generated page portfolio_split_calculator_js.html#high so that it shows what the hand made sample portfolio_split_calculator_sample.html#high shows: add what is missing, correct what differs and remove what only the generated page has, unless the sample lacks it by mistake. A number can differ for a good reason, because the sample calculates its numbers with its own script, so check the value or the formula before changing it. Fix a finding in the use case json or in the calculator renderer, never in the sample or in the generated snapshot.
 
-## Missing in the generated page (108)
+## Missing in the generated page (5)
 
-- heading: Check against the sample files
-- heading: Cumulative deviation of the children along the walk
-- heading: Notes
 - heading: Inputs from
-- table: CHF | Parent | First child | Second child | Total
-- row: Realised / Deviation from target
-- table: Value | Expected | Calculated | Status
 - row: Value / Portfolio value original
-- row: Value / LISP share, first child portfolio
-- row: Value / LISP share, second child portfolio
-- row: Value / LISP share, parent portfolio
-- row: Value / LISN share, first child portfolio
-- row: Value / LISN share, second child portfolio
-- row: Value / LISN share, parent portfolio
 - table: # | Position | Original | Lot value CHF | Target first | First | Second | Parent | Cum. dev. first CHF
-- row: # / 1
-- row: # / 2
-- row: # / 3
-- row: # / 4
-- row: # / 5
-- row: # / 6
-- row: # / 7
-- row: # / 8
-- row: # / 9
-- row: # / 10
-- row: # / 11
-- row: # / 12
-- row: # / 13
-- row: # / 14
-- row: # / 15
-- row: # / 16
-- row: # / 17
-- row: # / 18
-- row: # / 19
-- row: # / 20
-- row: # / 21
-- row: # / 22
-- row: # / 23
-- row: # / 24
-- row: # / 25
-- row: # / 26
-- row: # / 27
-- row: # / 28
-- row: # / 29
-- row: # / 30
-- row: # / 31
-- row: # / 32
-- row: # / 33
-- row: # / 34
-- row: # / 35
-- row: # / 36
-- row: # / 37
-- row: # / 38
-- row: # / 39
-- row: # / 40
-- row: # / 41
-- row: # / 42
-- table: Position | Ccy | Quantity | Price | Round lot
-- row: Position / LISP
-- row: Position / LISN
-- row: Position / GIVN
-- row: Position / PGHN
-- row: Position / GEBN
-- row: Position / LONN
-- row: Position / ZURN
-- row: Position / SCMN
-- row: Position / VACN
-- row: Position / ROG
-- row: Position / SOON
-- row: Position / SCHP
-- row: Position / SIKA
-- row: Position / KNIN
-- row: Position / UHR
-- row: Position / CFR
-- row: Position / SREN
-- row: Position / STMN
-- row: Position / LOGN
-- row: Position / NOVN
-- row: Position / SGSN
-- row: Position / HOLN
-- row: Position / NESN
-- row: Position / ALC
-- row: Position / BAER
-- row: Position / BANB
-- row: Position / ABBN
-- row: Position / SDZ
-- row: Position / ADEN
-- row: Position / UBSG
-- row: Position / ConfedBond30
-- row: Position / NestleBond27
-- row: Position / RocheBond28
-- row: Position / BundDE30
-- row: Position / TreasuryUS27
-- row: Position / cash CHF
-- row: Position / cash EUR
-- row: Position / cash USD
-- row: Position / cash GBP
-- row: Position / cash JPY
-- row: Position / cash DKK
-- row: Position / cash SEK
 - button: 
 - button:  (2)
-- button: Download
-- button: Report
-- button: Copy as zukunft.com JSON
-- button: Copy as CSV
-- button: Import portfolio
-- button: Import FX rates
 
-## Different (16)
+## Different (97)
 
 - field: Target weight first child, tag: the sample shows "split agreement" and the generated page ""
-- field: Target weight first child, unit: the sample shows "%" and the generated page "percent"
 - field: Target weight first child, hint: the sample shows "" and the generated page "[1]"
-- field: Target weight first child, value: the sample shows "45" and the generated page "0.45"
 - field: Target weight second child, tag: the sample shows "split agreement" and the generated page ""
-- field: Target weight second child, unit: the sample shows "%" and the generated page "percent"
 - field: Target weight second child, hint: the sample shows "" and the generated page "[1]"
-- field: Target weight second child, value: the sample shows "45" and the generated page "0.45"
 - field: Target weight parent, value: the sample shows "10.0 %" and the generated page "30 %"
-- row: Target / Target weight, cells: the sample shows "10.0 % | 45.0 % | 45.0 % | 100.0 %" and the generated page "30 % |  | 100 %"
-- row: Target / Target value, cells: the sample shows "1'961'090 | 8'824'905 | 8'824'905 | 19'610'900" and the generated page "5'883'270 CHF |  | "
-- row: Realised / Stocks, cells: the sample shows "976'876 | 4'395'812 | 4'395'812 | 9'768'500" and the generated page "2'920'474 CHF |  | 9'768'500 CHF"
-- row: Realised / Bonds, cells: the sample shows "600'450 | 2'702'025 | 2'702'025 | 6'004'500" and the generated page "1'811'400 CHF |  | 6'004'500 CHF"
-- row: Realised / Cash, cells: the sample shows "383'764 | 1'727'068 | 1'727'068 | 3'837'900" and the generated page "1'151'396 CHF |  | 3'837'900 CHF"
-- row: Realised / Portfolio value, cells: the sample shows "1'961'090 | 8'824'905 | 8'824'905 | 19'610'900" and the generated page "5'883'270 CHF |  | "
-- row: Realised / Realised weight, cells: the sample shows "10.000 % | 45.000 % | 45.000 % | " and the generated page "30 % |  | "
+- row: Target / Target weight, cells: the sample shows "10.0 % | 45.0 % | 45.0 % | 100.0 %" and the generated page "30.0 % | 45.0 % | 45.0 % | 100.0 %"
+- row: Target / Target value, cells: the sample shows "1'961'090 | 8'824'905 | 8'824'905 | 19'610'900" and the generated page "5'883'270 | 8'824'905 | 8'824'905 | 19'610'900"
+- row: Realised / Stocks, cells: the sample shows "976'876 | 4'395'812 | 4'395'812 | 9'768'500" and the generated page "2'920'474 | 3'424'013 | 3'424'013 | 9'768'500"
+- row: Realised / Bonds, cells: the sample shows "600'450 | 2'702'025 | 2'702'025 | 6'004'500" and the generated page "1'811'400 | 2'096'550 | 2'096'550 | 6'004'500"
+- row: Realised / Cash, cells: the sample shows "383'764 | 1'727'068 | 1'727'068 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"
+- row: Realised / Portfolio value, cells: the sample shows "1'961'090 | 8'824'905 | 8'824'905 | 19'610'900" and the generated page "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900"
+- row: Realised / Realised weight, cells: the sample shows "10.000 % | 45.000 % | 45.000 % | " and the generated page "30.000 % | 35.000 % | 35.000 % | "
+- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | -1'961'090.00 | -1'961'090.00 | 0.00"
+- row: # / 1, cells: the sample shows "LISPLindt & Sprüngli AG (PS) | 10shares | 117'000.00 | 4.500 | 5 | 5 | 0 | +58'500.00" and the generated page "LISP | 10 | 117'000 | 4.500 | 5 | 5 | 0 | 58'500"
+- row: # / 2, cells: the sample shows "LISNLindt & Sprüngli AG (registered) | 40shares | 11'000.00 | 12.682 | 13 | 13 | 14 | +3'500.00" and the generated page "LISN | 40 | 11'000 | 12.682 | 13 | 13 | 14 | 3'500"
+- row: # / 3, cells: the sample shows "GIVNGivaudan SA | 100shares | 3'700.00 | 44.054 | 44 | 44 | 12 | -200.00" and the generated page "ConfedBond30 | 1'500'000 | 5'025 | 671'517.413 | 670'000 | 670'000 | 160'000 | -1'525"
+- row: # / 4, cells: the sample shows "PGHNPartners Group Holding AG | 250shares | 1'200.00 | 112.667 | 113 | 113 | 24 | +400.00" and the generated page "NestleBond27 | 1'500'000 | 4'990 | 676'528.056 | 675'000 | 675'000 | 150'000 | -1'525"
+- row: # / 5, cells: the sample shows "GEBNGeberit AG | 500shares | 590.00 | 224.322 | 224 | 224 | 52 | -190.00" and the generated page "RocheBond28 | 1'000'000 | 4'950 | 451'540.404 | 450'000 | 450'000 | 100'000 | -1'525"
+- row: # / 6, cells: the sample shows "LONNLonza Group AG | 600shares | 530.00 | 270.358 | 270 | 270 | 60 | -190.00" and the generated page "GIVN | 100 | 3'700 | 45.412 | 45 | 45 | 10 | -1'525"
+- row: # / 7, cells: the sample shows "ZURNZurich Insurance Group AG | 600shares | 530.00 | 270.358 | 270 | 270 | 60 | -190.00" and the generated page "PGHN | 250 | 1'200 | 113.771 | 114 | 114 | 22 | 275"
+- row: # / 8, cells: the sample shows "SCMNSwisscom AG | 600shares | 530.00 | 270.358 | 270 | 270 | 60 | -190.00" and the generated page "BundDE30 | 1'000'000 | 941 | 449'707.696 | 450'000 | 450'000 | 100'000 | 275"
+- row: # / 9, cells: the sample shows "VACNVAT Group AG | 800shares | 380.00 | 360.500 | 361 | 361 | 78 | +190.00" and the generated page "TreasuryUS27 | 1'200'000 | 891 | 539'691.358 | 540'000 | 540'000 | 120'000 | 275"
+- row: # / 10, cells: the sample shows "ROGRoche Holding AG | 2'000shares | 240.00 | 899.208 | 899 | 899 | 202 | -50.00" and the generated page "GEBN | 500 | 590 | 224.534 | 225 | 225 | 50 | 275"
+- row: # / 11, cells: the sample shows "SOONSonova Holding AG | 1'200shares | 240.00 | 540.208 | 540 | 540 | 120 | -50.00" and the generated page "LONN | 600 | 530 | 269.481 | 269 | 269 | 62 | -255"
+- row: # / 12, cells: the sample shows "SCHPSchindler Holding AG (PS) | 1'200shares | 230.00 | 540.217 | 540 | 540 | 120 | -50.00" and the generated page "ZURN | 600 | 530 | 270.481 | 270 | 270 | 60 | -255"
+- row: # / 13, cells: the sample shows "SIKASika AG | 1'300shares | 220.00 | 585.227 | 585 | 585 | 130 | -50.00" and the generated page "SCMN | 600 | 530 | 270.481 | 270 | 270 | 60 | -255"
+- row: # / 14, cells: the sample shows "KNINKuehne + Nagel International AG | 1'300shares | 220.00 | 585.227 | 585 | 585 | 130 | -50.00" and the generated page "VACN | 800 | 380 | 360.671 | 361 | 361 | 78 | 125"
+- row: # / 15, cells: the sample shows "UHRThe Swatch Group AG | 1'500shares | 180.00 | 675.278 | 675 | 675 | 150 | -50.00" and the generated page "ROG | 2'000 | 240 | 899.479 | 899 | 899 | 202 | -115"
+- row: # / 16, cells: the sample shows "CFRCompagnie Financière Richemont SA | 2'000shares | 130.00 | 900.385 | 900 | 900 | 200 | -50.00" and the generated page "SOON | 1'200 | 240 | 540.479 | 540 | 540 | 120 | -115"
+- row: # / 17, cells: the sample shows "SRENSwiss Re AG | 2'000shares | 130.00 | 900.385 | 900 | 900 | 200 | -50.00" and the generated page "SCHP | 1'200 | 230 | 540.500 | 541 | 541 | 118 | 115"
+- row: # / 18, cells: the sample shows "STMNStraumann Holding AG | 2'500shares | 110.00 | 1'125.455 | 1'125 | 1'125 | 250 | -50.00" and the generated page "SIKA | 1'300 | 220 | 584.477 | 584 | 584 | 132 | -105"
+- row: # / 19, cells: the sample shows "LOGNLogitech International SA | 3'000shares | 90.00 | 1'350.556 | 1'351 | 1'351 | 298 | +40.00" and the generated page "KNIN | 1'300 | 220 | 585.477 | 585 | 585 | 130 | -105"
+- row: # / 20, cells: the sample shows "NOVNNovartis AG | 3'000shares | 90.00 | 1'349.556 | 1'350 | 1'350 | 300 | +40.00" and the generated page "UHR | 1'500 | 180 | 675.583 | 676 | 676 | 148 | 75"
+- row: # / 21, cells: the sample shows "SGSNSGS SA | 3'000shares | 87.00 | 1'349.540 | 1'350 | 1'350 | 300 | +40.00" and the generated page "CFR | 2'000 | 130 | 899.423 | 899 | 899 | 202 | -55"
+- row: # / 22, cells: the sample shows "HOLNHolcim AG | 3'500shares | 80.00 | 1'574.500 | 1'575 | 1'575 | 350 | +40.00" and the generated page "SREN | 2'000 | 130 | 900.423 | 900 | 900 | 200 | -55"
+- row: # / 23, cells: the sample shows "NESNNestlé S.A. | 3'500shares | 80.00 | 1'574.500 | 1'575 | 1'575 | 350 | +40.00" and the generated page "STMN | 2'500 | 110 | 1'125.500 | 1'126 | 1'126 | 248 | 55"
+- row: # / 24, cells: the sample shows "ALCAlcon AG | 3'500shares | 75.00 | 1'574.467 | 1'574 | 1'574 | 352 | -35.00" and the generated page "LOGN | 3'000 | 90 | 1'349.389 | 1'349 | 1'349 | 302 | -35"
+- row: # / 25, cells: the sample shows "BAERJulius Bär Group AG | 4'500shares | 60.00 | 2'025.583 | 2'026 | 2'026 | 448 | +25.00" and the generated page "NOVN | 3'000 | 90 | 1'350.389 | 1'350 | 1'350 | 300 | -35"
+- row: # / 26, cells: the sample shows "BANBBachem Holding AG | 4'500shares | 60.00 | 2'024.583 | 2'025 | 2'025 | 450 | +25.00" and the generated page "SGSN | 3'000 | 87 | 1'350.402 | 1'350 | 1'350 | 300 | -35"
+- row: # / 27, cells: the sample shows "ABBNABB Ltd | 5'500shares | 50.00 | 2'474.500 | 2'475 | 2'475 | 550 | +25.00" and the generated page "HOLN | 3'500 | 80 | 1'575.438 | 1'575 | 1'575 | 350 | -35"
+- row: # / 28, cells: the sample shows "SDZSandoz Group AG | 7'000shares | 38.00 | 3'149.342 | 3'149 | 3'149 | 702 | -13.00" and the generated page "NESN | 3'500 | 80 | 1'575.438 | 1'575 | 1'575 | 350 | -35"
+- row: # / 29, cells: the sample shows "ADENAdecco Group AG | 9'000shares | 30.00 | 4'050.433 | 4'050 | 4'050 | 900 | -13.00" and the generated page "ALC | 3'500 | 75 | 1'575.467 | 1'575 | 1'575 | 350 | -35"
+- row: # / 30, cells: the sample shows "UBSGUBS Group AG | 10'000shares | 28.00 | 4'500.464 | 4'500 | 4'500 | 1'000 | -13.00" and the generated page "BAER | 4'500 | 60 | 2'025.583 | 2'026 | 2'026 | 448 | 25"
+- row: # / 31, cells: the sample shows "ConfedBond30Swiss Confederation 1.25% 2030 | 1'500'000CHF | 5'025.00 | 675'012.935 | 675'000 | 675'000 | 150'000 | -13.00" and the generated page "BANB | 4'500 | 60 | 2'024.583 | 2'025 | 2'025 | 450 | 25"
+- row: # / 32, cells: the sample shows "NestleBond27Nestlé Holdings 0.875% 2027 | 1'500'000CHF | 4'990.00 | 675'013.026 | 675'000 | 675'000 | 150'000 | -13.00" and the generated page "ABBN | 5'500 | 50 | 2'474.500 | 2'475 | 2'475 | 550 | 25"
+- row: # / 33, cells: the sample shows "RocheBond28Roche Holdings 1.0% 2028 | 1'000'000CHF | 4'950.00 | 450'013.131 | 450'000 | 450'000 | 100'000 | -13.00" and the generated page "SDZ | 7'000 | 38 | 3'149.342 | 3'149 | 3'149 | 702 | -13"
+- row: # / 34, cells: the sample shows "BundDE30Bund 0% 2030 | 1'000'000EUR | 940.80 | 450'013.818 | 450'000 | 450'000 | 100'000 | -13.00" and the generated page "ADEN | 9'000 | 30 | 4'050.433 | 4'050 | 4'050 | 900 | -13"
+- row: # / 35, cells: the sample shows "TreasuryUS27US Treasury 2.5% 2027 | 1'200'000USD | 891.00 | 540'014.590 | 540'000 | 540'000 | 120'000 | -13.00" and the generated page "UBSG | 10'000 | 28 | 4'500.464 | 4'500 | 4'500 | 1'000 | -13"
+- row: # / 36, cells: the sample shows "cash CHFCash CHF | 1'000'000.00CHF | 0.0100 | 450'013.00 | 450'013.00 | 450'013.00 | 99'974.00 | 0.00" and the generated page "cash GBP | 200'000 | 0 | 90'011.504 | 90'012 | 90'012 | 19'977 | 0"
+- row: # / 37, cells: the sample shows "cash EURCash EUR | 1'800'000.00EUR | 0.0098 | 810'000.00 | 810'000.00 | 810'000.00 | 180'000.00 | 0.00" and the generated page "cash CHF | 1'000'000 | 0 | 450'000.005 | 450'000 | 450'000 | 100'000 | 0"
+- row: # / 38, cells: the sample shows "cash USDCash USD | 500'000.00USD | 0.0090 | 225'000.00 | 225'000.00 | 225'000.00 | 50'000.00 | 0.00" and the generated page "cash EUR | 1'800'000 | 0 | 809'999.995 | 810'000 | 810'000 | 180'000 | 0"
+- row: # / 39, cells: the sample shows "cash GBPCash GBP | 200'000.00GBP | 0.0113 | 90'000.00 | 90'000.00 | 90'000.00 | 20'000.00 | 0.00" and the generated page "cash USD | 500'000 | 0 | 225'000.005 | 225'000 | 225'000 | 50'000 | 0"
+- row: # / 40, cells: the sample shows "cash JPYCash JPY | 30'000'000.00JPY | 0.0001 | 13'500'000.00 | 13'500'000.00 | 13'500'000.00 | 3'000'000.00 | 0.00" and the generated page "cash DKK | 1'000'000 | 0 | 449'999.968 | 450'000 | 450'000 | 100'000 | 0"
+- row: # / 41, cells: the sample shows "cash DKKCash DKK | 1'000'000.00DKK | 0.0013 | 450'000.00 | 450'000.00 | 450'000.00 | 100'000.00 | 0.00" and the generated page "cash SEK | 1'000'000 | 0 | 449'999.997 | 450'000 | 450'000 | 100'000 | 0"
+- row: # / 42, cells: the sample shows "cash SEKCash SEK | 1'000'000.00SEK | 0.0009 | 450'000.00 | 450'000.00 | 450'000.00 | 100'000.00 | 0.00" and the generated page "cash JPY | 30'000'000 | 0 | 13'499'999.952 | 13'500'000 | 13'500'000 | 3'000'000 | 0"
+- row: Position / LISP, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 10 | 117'000 | 1.00"
+- row: Position / LISN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 40 | 11'000 | 1.00"
+- row: Position / GIVN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 100 | 3'700 | 1.00"
+- row: Position / PGHN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 250 | 1'200 | 1.00"
+- row: Position / GEBN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 500 | 590 | 1.00"
+- row: Position / LONN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 600 | 530 | 1.00"
+- row: Position / ZURN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 600 | 530 | 1.00"
+- row: Position / SCMN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 600 | 530 | 1.00"
+- row: Position / VACN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 800 | 380 | 1.00"
+- row: Position / ROG, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 2'000 | 240 | 1.00"
+- row: Position / SOON, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'200 | 240 | 1.00"
+- row: Position / SCHP, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'200 | 230 | 1.00"
+- row: Position / SIKA, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'300 | 220 | 1.00"
+- row: Position / KNIN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'300 | 220 | 1.00"
+- row: Position / UHR, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'500 | 180 | 1.00"
+- row: Position / CFR, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 2'000 | 130 | 1.00"
+- row: Position / SREN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 2'000 | 130 | 1.00"
+- row: Position / STMN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 2'500 | 110 | 1.00"
+- row: Position / LOGN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 3'000 | 90 | 1.00"
+- row: Position / NOVN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 3'000 | 90 | 1.00"
+- row: Position / SGSN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 3'000 | 87 | 1.00"
+- row: Position / HOLN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 3'500 | 80 | 1.00"
+- row: Position / NESN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 3'500 | 80 | 1.00"
+- row: Position / ALC, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 3'500 | 75 | 1.00"
+- row: Position / BAER, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 4'500 | 60 | 1.00"
+- row: Position / BANB, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 4'500 | 60 | 1.00"
+- row: Position / ABBN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 5'500 | 50 | 1.00"
+- row: Position / SDZ, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 7'000 | 38 | 1.00"
+- row: Position / ADEN, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 9'000 | 30 | 1.00"
+- row: Position / UBSG, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 10'000 | 28 | 1.00"
+- row: Position / ConfedBond30, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'500'000 | 100 % | 5'000"
+- row: Position / NestleBond27, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'500'000 | 100 % | 5'000"
+- row: Position / RocheBond28, cells: the sample shows "CHF |  |  | " and the generated page "CHF | 1'000'000 | 99 % | 5'000"
+- row: Position / BundDE30, cells: the sample shows "EUR |  |  | " and the generated page "EUR | 1'000'000 | 96 % | 1'000"
+- row: Position / TreasuryUS27, cells: the sample shows "USD |  |  | " and the generated page "USD | 1'200'000 | 99 % | 1'000"
+- row: Position / cash CHF, cells: the sample shows "CHF |  | — | 0.01" and the generated page "CHF | 1'000'000 |  | 0"
+- row: Position / cash EUR, cells: the sample shows "EUR |  | — | 0.01" and the generated page "EUR | 1'800'000 |  | 0"
+- row: Position / cash USD, cells: the sample shows "USD |  | — | 0.01" and the generated page "USD | 500'000 |  | 0"
+- row: Position / cash GBP, cells: the sample shows "GBP |  | — | 0.01" and the generated page "GBP | 200'000 |  | 0.01"
+- row: Position / cash JPY, cells: the sample shows "JPY |  | — | 0.01" and the generated page "JPY | 30'000'000 |  | 0.01"
+- row: Position / cash DKK, cells: the sample shows "DKK |  | — | 0.01" and the generated page "DKK | 1'000'000 |  | 0.01"
+- row: Position / cash SEK, cells: the sample shows "SEK |  | — | 0.01" and the generated page "SEK | 1'000'000 |  | 0.01"
 
-## Only in the generated page (13)
+## Only in the generated page (3)
 
-- heading: Details and sources
-- heading: Sources
 - field: Exchange rate
-- table: Result | Parent | Child portfolio | Total
-- table section: Deviation
-- row: Deviation / Deviation from target
-- table: Split walk | Original | Lot value CHF | Child portfolio | Parent | Cum. dev. first CHF
-- table: Holding | Ccy | Quantity | Share price | Bond price | Round lot
-- row: Holding / Bond (finance)
-- row: Holding / Cash
-- row: Holding / Stock
-- list item: split agreement
-- list item: bank reporting bank leu client xy
+- table: # | Position | Original | Lot value CHF | Target first | First child | Second child | Parent | Cum. dev. first CHF
+- button: Import
 
-## Different order (0)
+## Different order (1)
+
+- row: the sample shows "row: Target / Target weight", "row: Target / Target value", "row: Realised / Stocks", "row: Realised / Bonds", "row: Realised / Cash", "row: Realised / Portfolio value", "row: Realised / Realised weight", "row: Realised / Deviation from target", "row: Value / LISP share, first child portfolio", "row: Value / LISP share, second child portfolio", "row: Value / LISP share, parent portfolio", "row: Value / LISN share, first child portfolio", "row: Value / LISN share, second child portfolio", "row: Value / LISN share, parent portfolio", "row: # / 1", "row: # / 2", "row: # / 3", "row: # / 4", "row: # / 5", "row: # / 6", "row: # / 7", "row: # / 8", "row: # / 9", "row: # / 10", "row: # / 11", "row: # / 12", "row: # / 13", "row: # / 14", "row: # / 15", "row: # / 16", "row: # / 17", "row: # / 18", "row: # / 19", "row: # / 20", "row: # / 21", "row: # / 22", "row: # / 23", "row: # / 24", "row: # / 25", "row: # / 26", "row: # / 27", "row: # / 28", "row: # / 29", "row: # / 30", "row: # / 31", "row: # / 32", "row: # / 33", "row: # / 34", "row: # / 35", "row: # / 36", "row: # / 37", "row: # / 38", "row: # / 39", "row: # / 40", "row: # / 41", "row: # / 42", "row: Position / LISP", "row: Position / LISN", "row: Position / GIVN", "row: Position / PGHN", "row: Position / GEBN", "row: Position / LONN", "row: Position / ZURN", "row: Position / SCMN", "row: Position / VACN", "row: Position / ROG", "row: Position / SOON", "row: Position / SCHP", "row: Position / SIKA", "row: Position / KNIN", "row: Position / UHR", "row: Position / CFR", "row: Position / SREN", "row: Position / STMN", "row: Position / LOGN", "row: Position / NOVN", "row: Position / SGSN", "row: Position / HOLN", "row: Position / NESN", "row: Position / ALC", "row: Position / BAER", "row: Position / BANB", "row: Position / ABBN", "row: Position / SDZ", "row: Position / ADEN", "row: Position / UBSG", "row: Position / ConfedBond30", "row: Position / NestleBond27", "row: Position / RocheBond28", "row: Position / BundDE30", "row: Position / TreasuryUS27", "row: Position / cash CHF", "row: Position / cash EUR", "row: Position / cash USD", "row: Position / cash GBP", "row: Position / cash JPY", "row: Position / cash DKK", "row: Position / cash SEK" and the generated page "row: Target / Target weight", "row: Target / Target value", "row: Realised / Stocks", "row: Realised / Bonds", "row: Realised / Cash", "row: Realised / Portfolio value", "row: Realised / Realised weight", "row: Realised / Deviation from target", "row: Value / LISN share, first child portfolio", "row: Value / LISN share, parent portfolio", "row: Value / LISN share, second child portfolio", "row: Value / LISP share, first child portfolio", "row: Value / LISP share, parent portfolio", "row: Value / LISP share, second child portfolio", "row: # / 1", "row: # / 2", "row: # / 3", "row: # / 4", "row: # / 5", "row: # / 6", "row: # / 7", "row: # / 8", "row: # / 9", "row: # / 10", "row: # / 11", "row: # / 12", "row: # / 13", "row: # / 14", "row: # / 15", "row: # / 16", "row: # / 17", "row: # / 18", "row: # / 19", "row: # / 20", "row: # / 21", "row: # / 22", "row: # / 23", "row: # / 24", "row: # / 25", "row: # / 26", "row: # / 27", "row: # / 28", "row: # / 29", "row: # / 30", "row: # / 31", "row: # / 32", "row: # / 33", "row: # / 34", "row: # / 35", "row: # / 36", "row: # / 37", "row: # / 38", "row: # / 39", "row: # / 40", "row: # / 41", "row: # / 42", "row: Position / ConfedBond30", "row: Position / NestleBond27", "row: Position / RocheBond28", "row: Position / BundDE30", "row: Position / TreasuryUS27", "row: Position / cash GBP", "row: Position / cash CHF", "row: Position / cash EUR", "row: Position / cash USD", "row: Position / cash DKK", "row: Position / cash SEK", "row: Position / cash JPY", "row: Position / GEBN", "row: Position / LONN", "row: Position / ZURN", "row: Position / SCMN", "row: Position / VACN", "row: Position / ROG", "row: Position / SOON", "row: Position / SCHP", "row: Position / SIKA", "row: Position / KNIN", "row: Position / UHR", "row: Position / CFR", "row: Position / SREN", "row: Position / STMN", "row: Position / LOGN", "row: Position / NOVN", "row: Position / SGSN", "row: Position / HOLN", "row: Position / NESN", "row: Position / ALC", "row: Position / BAER", "row: Position / BANB", "row: Position / ABBN", "row: Position / SDZ", "row: Position / ADEN", "row: Position / UBSG", "row: Position / GIVN", "row: Position / LISN", "row: Position / LISP", "row: Position / PGHN"

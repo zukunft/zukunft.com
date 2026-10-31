@@ -6,41 +6,44 @@ The steps fix `portfolio_split_calculator_diff.md` and the three case reports, i
 
 ### step 3: the input fields (1), (2), (3), (4)
 
-The read only field, the checkbox and the fields per instance exist. Still open:
-- a result column and a walk column of the repeated phrase once per instance, which also gives the header `CHF | Parent | First child | Second child | Total`
-- the buttons "Add child" and remove per field with their function: a new instance needs its own phrase, and the remove buttons are still missing
-- the field of a child shows the ratio 0.35 with the unit percent, where the sample shows 35 with %
-- warning for the weight checks, which needs a result of the excess and of the difference of the target shares
-- the source number [1] in the hint of the target weight of the parent points to no source list of the sample until step 8
+- the formulas of the warnings name the first and the second child: a new child needs a sum over the instances, so update them with the add child task
+
+The buttons "Add child" and remove are a separate task after step 9, because a new child has no allocation before the walk is calculated: a new instance needs its own phrase, its "is a" triple and its target share through the logged save, and the page needs the remove button per field. The button stays without a function until then.
 
 ### step 4: the result table (9), (17)
 
-- the column colours and the total of the realised portfolio value
-- the row "Deviation from target" belongs to the section "Realised" in the sample: move it in the json and remove the group `deviation`
-- the numbers of the table have no unit in the sample, because the unit is in the header: decide if the header names CHF instead of each cell
-- the realised weight has three decimals in the sample: `calculator decimals`
+- the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
 
 ### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
-- one collapsed section per table with the summary of the sample
-- the holdings table with `Position | Ccy | Quantity | Price | Round lot`: a row per position instead of `Bond (finance)`, `Cash` and `Stock`, which needs the rows over several levels of (15), the currency column (7) and the number fields (6)
-- the walk table with `# | Position | Original | Lot value CHF | Target first | First | Second | Parent | Cum. dev. first CHF`: row number and order (8), the formula per kind of holding for the lot value and the target in units (16)
+- the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
+- the cash rows show too few decimals: `CHF cash` shows `350'000` where the sample has `349'999.99` and its lot value `0` where the sample has `0.0100`
+- the holdings table follows the walk chain within each kind of holding, where the sample has the bank order
+- the labels `First` and `Second` of the walk header, the colours of the walk cells and the hint below the holdings
 
 ### step 6: the notes, the check table and the diagram (10), (11), (12)
 
-Each is a separate block of the page: the notes list under the heading "Notes", the table `Value | Expected | Calculated | Status` under "Check against the sample files" and the line diagram under "Cumulative deviation of the children along the walk".
+- the diagram draws one line, the cumulative deviation of the first child by the filter of its column, although the results of both children are stored; the sample draws one line per child with a point and a tooltip per position
+- the rows of the check table are sorted by their label, where the sample starts with the portfolio value and keeps its order, and the hint below the table is missing
 
 ### step 7: the buttons (13)
 
-"Download", "Report", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV". The sample says "placement test only" for most of them, so first add them at their place without a function. The function of each button is a task of its own, and an import is a write that needs the usual permission and log rules.
+- the buttons "Download", "Report", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- the icons of the sample
 
 ### step 8: decide what the generated page keeps
 
-The headings "Details and sources" and "Sources" and the list items "split agreement" and "bank reporting bank leu client xy" exist only in the generated page, and "Inputs from" only in the sample. The sources are required for every number, so the sample most likely lacks them by mistake: add them to the sample as an exception, after the developer has confirmed it.
+- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", which the generated page shows at the assumptions and the holdings
 
 ### step 9: calculate the split again in the browser (18)
 
-`min`, `max`, `if` and `sum` exist now, so update (18) in the description of the use case. Still missing are the round to a multiple, the sort by a result and the walk that carries the deviation from one row into the next. Until then the walk stays modelled values and the numbers of the `high` and `low` case reports differ from the sample for a good reason, e.g. the target weight 30 % instead of 10 %. This is an engine task, so plan it on its own after the page structure is done.
+The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The summary rows stay modelled and the rounding of a tie differs, see part 3 and 5, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
+
+1. the previous row in the backend: `element_group::figures` reads it, but no test covers it with a database yet; add a write test with a follower chain, a first row and a row in the middle, and a negative test with two chains in the context. A figure selects its number by the exact phrase group of the context and the operand, so check with the formulas of part 3 that the context of a walk formula selects the stored numbers
+2. the walk order selector: the holdings have one follower chain, in the order of the largest lot value, and `is ranked by` also accepts a result; the option "Bank report order" needs its own order for the rows and for `prior`, because one phrase has one previous phrase per chain, so decide this with the formulas of part 3
+3. the formulas in `portfolio_split_calculator.json`: the unit value, the lot value, the target, the counts of the children and the parent and the cumulative deviation exist with a calc-validation of all 42 rows. Still open: the equal part of a position when the rounded counts exceed it, the second child without mirroring: `first child` and `second child` are named in the formulas, so a new child needs a formula by the instances, and a rounding rule for a tie: the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5 and the cent of `CHF cash` down, only because its carried deviation has floating point noise. The stored numbers of these rows are just below the tie (e.g. 420.499999) to keep the counts of the sample, so a calculation from exact numbers rounds them up and the walk differs from there on
+4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
+5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
 
 ## prime group id within 2^53
 

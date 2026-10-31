@@ -90,6 +90,8 @@ class sandbox_value extends sandbox
     const string JSON_DATETIME_DATE = 'date';
     // between a number and its unit symbol e.g. "49 %"
     const string UNIT_SEPARATOR = ' ';
+    // the unit of a number field that shows a stored ratio in percent e.g. 35 for 0.35
+    const string UNIT_PERCENT = '%';
     // the grey superscript behind a number that shows how the number has been found
     // TODO Prio 3 move the config.yaml
     const string QUALITY_MARK_ASSUMED = 'a';

@@ -43,12 +43,14 @@ use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config as config_ui;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\number_format;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source_list as source_list_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
@@ -339,6 +341,36 @@ class use_case_ui_tests
         $inh_val = $dto_in->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
         $t->assert($test_name, $html->number_value($inh_val->number(), $list->field_decimals($inh_val, $msg)),
             (string)values::CITY_ZH_INHABITANTS_2019);
+        // a number field shows a stored share in percent, also its limits, with the unit %
+        $test_name = 'a number field shows a share in percent';
+        $pct_shown = $list->field_shown(values::SAMPLE_FLOAT, $pct_val, $msg);
+        $t->assert($test_name, $pct_shown, values::SAMPLE_FLOAT * 100);
+        $test_name = '... with the unit %';
+        $pct_unit = $list->field_unit($pct_val, $msg);
+        $t->assert($test_name, $pct_unit, sandbox_value::UNIT_PERCENT);
+        $test_name = '... and a field without a number stays empty';
+        $no_num_shown = $list->field_shown(null, $pct_val, $msg);
+        $t->assert_null($test_name, $no_num_shown);
+        // negative: another number is shown as it is and keeps its unit
+        $test_name = '... but another number is shown as it is';
+        $inh_shown = $list->field_shown(values::SAMPLE_FLOAT, $inh_val, $msg);
+        $t->assert($test_name, $inh_shown, values::SAMPLE_FLOAT);
+        $test_name = '... without the unit %';
+        $inh_unit = $list->field_unit($inh_val, $msg);
+        $t->assert_text_not_contains($test_name, $inh_unit, sandbox_value::UNIT_PERCENT);
+        // negative: a ratio unit is a percent phrase, whose number is never shown times 100
+        $test_name = '... and a number with the ratio unit share is shown as it is';
+        $ratio_val = new test_lib()->ui_value($t_val->value_share());
+        $ratio_shown = $list->field_shown(values::SAMPLE_FLOAT, $ratio_val, $msg);
+        $t->assert($test_name, $ratio_shown, values::SAMPLE_FLOAT);
+        // a row can set the decimals of a share, which the row then always shows
+        $test_name = 'a share with the decimals of its row shows them';
+        $row_pct_txt = $list->calculator_cell_text($pct_val, new number_format(), false, $msg, 3);
+        $t->assert_text_contains($test_name, $row_pct_txt, '100.000');
+        // negative: without them the percent decimals of the user apply
+        $test_name = '... but without them not';
+        $user_pct_txt = $list->calculator_cell_text($pct_val, new number_format(), false, $msg);
+        $t->assert_text_not_contains($test_name, $user_pct_txt, '100.000');
         // a unit is shown by its symbol e.g. "kWh/a" for kilowatthours per year like behind a
         // number, so also the symbol "€" of Euro for the unit EUR that stands for Euro
         $test_name = 'a field shows the symbol of its unit';
@@ -363,13 +395,24 @@ class use_case_ui_tests
         $t->assert($test_name, $eur_phr?->symbol_owner()->name(), word_names::EUR);
         $test_name = '... and its name is the unit text';
         $t->assert($test_name, $eur_phr?->unit_text($msg), word_names::EUR);
-        // negative: a field shows the stored ratio e.g. 0.35, so "%" would read as 0.35 %
+        // negative: unit_name names the percent word, a field shows the symbol by field_unit
         $test_name = '... but the name and not the symbol of percent';
         $ui_sys->phr_lst = $t_phr->list_percent_symbol_cache_ui();
         $t->assert($test_name, $list->unit_name($pct_val, $msg), words::PCT);
         // the symbol of the percent word is shown behind the number times 100 instead
         $test_name = '... which is the percent symbol of the number';
         $t->assert($test_name, $pct_val->percent_symbol($msg), word_names::PERCENT_SYMBOL);
+        // one unit of all numbers is named by the first header, and a share does not count
+        $test_name = 'a result table with one unit names it';
+        $one_unit = $list->calculation_table_unit([[[$unit_val, $pct_val, null]]], $msg);
+        $t->assert($test_name, $one_unit, word_names::EUR);
+        // negative: two units or no unit stay in the cells
+        $test_name = '... but not with a second number without this unit';
+        $two_units = $list->calculation_table_unit([[[$unit_val, $inh_val]]], $msg);
+        $t->assert($test_name, $two_units, '');
+        $test_name = '... and not without a unit';
+        $no_unit = $list->calculation_table_unit([[[$inh_val]]], $msg);
+        $t->assert($test_name, $no_unit, '');
         // a qualified percent unit has a symbol that names the stored ratio
         $test_name = '... and the symbol of a qualified percent unit e.g. share (ratio)';
         $ui_sys->phr_lst = $t_phr->list_share_symbol_cache_ui();
@@ -730,6 +773,34 @@ class use_case_ui_tests
         $dto_opt_num->val_lst = $t_val->value_list_calculator_option_ui();
         $opt_num_html = $page->calculator_input($zh_city, $msg, $dto_opt_num, $form, views::CALCULATOR, []);
         $t->assert_text_not_contains($test_name, $opt_num_html, $opt_html);
+        // several different numbers of the option phrase belong to other phrases, so the option has no number
+        $test_name = '... and an option with several numbers of other phrases has no number';
+        $dto_opt_tie = clone $dto_in;
+        $dto_opt_tie->val_lst = $t_val->value_list_calculator_option_tie_ui();
+        $opt_tie_html = $page->calculator_input($zh_city, $msg, $dto_opt_tie, $form, views::CALCULATOR, []);
+        $t->assert_text_contains($test_name, $opt_tie_html, $opt_html);
+        $test_name = 'a row is ranked by its number of the phrase of the ranking';
+        $rank_bern = $dto_in->phr_lst->get_by_name(word_names::BE, $msg);
+        $rank_year = $dto_in->phr_lst->get_by_name(word_names::YEAR_2020, $msg);
+        $rank_zh = $dto_in->phr_lst->get_by_name(word_names::ZH, $msg);
+        $rank_num = $list->rank_number($rank_bern, $rank_year, $dto_opt_tie->val_lst, $msg);
+        $t->assert($test_name, $rank_num, (float)values::SAMPLE_INT);
+        // negative: a row without a number is the last row
+        $test_name = '... but a row without a number is the last row';
+        $no_rank_num = $list->rank_number($rank_zh, $rank_year, $dto_opt_tie->val_lst, $msg);
+        $t->assert($test_name, $no_rank_num, -INF);
+        $test_name = 'the buttons of a list show their label and only if the list has them';
+        $btn_calc = new calculator($zh_city->phrase(), $t_phr->list_calculator_button_ui());
+        $btn_html = $list->calculator_buttons($btn_calc, $btn_calc->group(triples::CALCULATOR_INPUT));
+        $t->assert_text_contains($test_name, $btn_html, '>' . triple_names::CALC_BUTTON_COM . '</button>');
+        // negative: a list without a button keyword has no button, also not without a list
+        $test_name = '... but a list without the keyword has none';
+        $no_btn_calc = new calculator($zh_city->phrase(), $dto_in->phr_lst);
+        $no_btn_html = $list->calculator_buttons($no_btn_calc, $no_btn_calc->group(triples::CALCULATOR_INPUT));
+        $t->assert($test_name, $no_btn_html, '');
+        $test_name = '... and no list has none';
+        $null_btn_html = $list->calculator_buttons($no_btn_calc, null);
+        $t->assert($test_name, $null_btn_html, '');
         // the other field types: the inhabitants read only, 2019 as a checkbox and the canton repeated with Bern
         $test_name = 'a read only field shows its number without an input';
         $dto_fld = clone $dto_in;
@@ -765,6 +836,99 @@ class use_case_ui_tests
         $test_name = 'a repeated field has a field per instance with the name of the instance';
         $rep_id = $dto_fld->phr_lst->get_by_name(word_names::BE, $msg)->id();
         $t->assert_text_contains($test_name, $fld_html, 'name="' . url_var::NUMERIC_VALUE . $rep_id . '"');
+        $test_name = 'a warning is shown while the result of the page phrase is above zero';
+        $wrn_html = '<div class="' . styles::INPUT_WARNING . '">' . triple_names::CALC_WARNING_COM;
+        $dto_wrn = clone $dto_in;
+        $dto_wrn->phr_lst = $t_phr->list_calculator_warning_ui();
+        $dto_wrn->val_lst = $t_val->value_list_calculator_warning_ui(values::SAMPLE_FLOAT);
+        $wrn_on_html = $page->calculator_input($zh_city, $msg, $dto_wrn, $form, views::CALCULATOR, []);
+        $t->assert_text_contains($test_name, $wrn_on_html, $wrn_html);
+        // negative: a result of zero or below shows no warning, only the empty block that the script fills after an input change
+        $test_name = '... but not at zero';
+        $dto_wrn->val_lst = $t_val->value_list_calculator_warning_ui(0);
+        $wrn_zero_html = $page->calculator_input($zh_city, $msg, $dto_wrn, $form, views::CALCULATOR, []);
+        $t->assert_text_not_contains($test_name, $wrn_zero_html, $wrn_html);
+        $test_name = '... with the block for the script';
+        $t->assert_text_contains($test_name, $wrn_zero_html, ui_list::CALC_WARNINGS_ID);
+        $test_name = '... and not below zero';
+        $dto_wrn->val_lst = $t_val->value_list_calculator_warning_ui(-values::SAMPLE_FLOAT);
+        $wrn_neg_html = $page->calculator_input($zh_city, $msg, $dto_wrn, $form, views::CALCULATOR, []);
+        $t->assert_text_not_contains($test_name, $wrn_neg_html, $wrn_html);
+        $test_name = 'the script gets the warnings of the page';
+        $wrn_calc = new calculator($zh_city->phrase(), $dto_wrn->phr_lst);
+        $wrn_script = new ui_list()->calculator_script($wrn_calc, $zh_city, $dto_wrn->val_lst, $dto_wrn, $msg);
+        $t->assert_text_contains($test_name, $wrn_script, '"' . ui_list::CALC_WARNINGS . '":');
+        $test_name = 'a check row with the same number matches';
+        $match_txt = $mtr->txt(msg_id::CALCULATOR_CHECK_MATCH);
+        $differs_txt = $mtr->txt(msg_id::CALCULATOR_CHECK_DIFFERS);
+        $chk_calc = new calculator($zh_city->phrase(), $t_phr->list_calculator_check_ui());
+        $chk_same = $list->calculator_check($chk_calc, $t_val->value_list_calculator_check_ui(values::SAMPLE_FLOAT), $dto_in, $msg);
+        $t->assert_text_contains($test_name, $chk_same, $match_txt);
+        // negative: another number and a missing number differ, because a missing number is never a match
+        $test_name = '... but another number differs';
+        $chk_other = $list->calculator_check($chk_calc, $t_val->value_list_calculator_check_ui(values::SAMPLE_INT), $dto_in, $msg);
+        $t->assert_text_contains($test_name, $chk_other, $differs_txt);
+        $test_name = '... and a missing number differs';
+        $chk_none = $list->calculator_check($chk_calc, $t_val->value_list_calculator_check_ui(null), $dto_in, $msg);
+        $t->assert_text_contains($test_name, $chk_none, $differs_txt);
+        $test_name = 'a check row ignores the float noise of a calculation';
+        $t->assert_true($test_name, $list->calculator_check_same(values::SAMPLE_FLOAT * (1 + 1e-12), values::SAMPLE_FLOAT));
+        // negative: a small real difference of a small number is no float noise
+        $test_name = '... but not a real difference of a small number';
+        $t->assert_false($test_name, $list->calculator_check_same(0.349, 0.35));
+        $test_name = 'the script gets the status of a check row';
+        $chk_list = new ui_list();
+        $chk_lst = $t_val->value_list_calculator_check_ui(values::SAMPLE_FLOAT);
+        $chk_list->calculator_check($chk_calc, $chk_lst, $dto_in, $msg);
+        $chk_script = $chk_list->calculator_script($chk_calc, $zh_city, $chk_lst, $dto_in, $msg);
+        $t->assert_text_contains($test_name, $chk_script, '"' . ui_list::CALC_CHECKS . '":');
+        $test_name = 'a cell takes the calculated number next to an expected number';
+        $exp_lst = $t_val->value_list_calculator_check_ui(values::SAMPLE_INT);
+        $exp_phr = $exp_lst->lst()[0]->phr_lst()->get_by_name(word_names::INHABITANTS, $msg);
+        $t->assert($test_name, $list->rank_number($exp_phr, $exp_phr, $exp_lst, $msg), (float)values::SAMPLE_INT);
+        // negative: an expected number alone is no number of the cell
+        $test_name = '... but never the expected number';
+        $exp_none = $t_val->value_list_calculator_check_ui(null);
+        $t->assert($test_name, $list->rank_number($exp_phr, $exp_phr, $exp_none, $msg), -INF);
+        $test_name = '... and a page without the check has no table';
+        $no_chk_calc = new calculator($zh_city->phrase(), $dto_in->phr_lst);
+        $no_chk = $list->calculator_check($no_chk_calc, $t_val->value_list_calculator_check_ui(values::SAMPLE_FLOAT), $dto_in, $msg);
+        $t->assert($test_name, $no_chk, '');
+        $test_name = 'a diagram draws a point per number and names the first and the last row';
+        $svg = $html->line_diagram([1.0, -2.0], word_names::BE, word_names::ZH, '2');
+        $t->assert_text_contains($test_name, $svg, '<polyline points="70.0,53.0 748.0,176.0"');
+        $t->assert_text_contains($test_name, $svg, word_names::BE);
+        $t->assert_text_contains($test_name, $svg, word_names::ZH);
+        // negative: a page without the flag has no diagram and without the list no notes
+        $test_name = '... but a page without the flag has none';
+        $no_diagram = $list->calculator_diagrams($no_chk_calc, $t_val->value_list_calculator_input_ui(), $msg);
+        $t->assert($test_name, $no_diagram, '');
+        $test_name = '... and a page without the list has no notes';
+        $no_notes = $list->calculator_notes($no_chk_calc);
+        $t->assert($test_name, $no_notes, '');
+        $test_name = 'a column of a repeated input is shown once per instance';
+        $fld_calc = new calculator($zh_city->phrase(), $dto_fld->phr_lst);
+        $fld_cols = $fld_calc->columns($fld_calc->items(triples::CALCULATOR_INPUT));
+        $t->assert_contains($test_name, array_column($fld_cols, 0), [mb_ucfirst(word_names::BE)]);
+        // negative: without the repeat the column stays one column with its label
+        $test_name = '... but another column stays one column';
+        $in_calc = new calculator($zh_city->phrase(), $dto_in->phr_lst);
+        $in_cols = $in_calc->columns($in_calc->items(triples::CALCULATOR_INPUT));
+        $t->assert_contains($test_name, array_column($in_cols, 0), [triple_names::CALC_ZH_INPUT_CANTON_LABEL_COM]);
+        $test_name = 'the rows of a detail table are the phrases at the end of the levels';
+        $level_names = array_map(fn($phr) => $phr->name(), $fld_calc->row_phrases($dto_fld->phr_lst->get_by_name(word_names::CANTON, $msg)));
+        $t->assert($test_name, $level_names, [word_names::ZH]);
+        // negative: without a level below the phrase has no rows
+        $test_name = '... and a phrase without a level has none';
+        $no_level = $fld_calc->row_phrases($dto_fld->phr_lst->get_by_name(word_names::ZH, $msg));
+        $t->assert($test_name, $no_level, []);
+        $test_name = 'the first column with the colour flag gets the first colour';
+        $fld_colours = array_column($fld_cols, 3);
+        $t->assert_contains($test_name, $fld_colours, [styles::CALC_COLUMN_COLOURS[0]]);
+        // negative: a column without the flag gets no colour
+        $test_name = '... but a column without the flag has none';
+        $in_colours = array_filter(array_column($in_cols, 3));
+        $t->assert($test_name, $in_colours, []);
         $test_name = '... and the button to add an instance';
         $t->assert_text_contains($test_name, $fld_html, '>' . triple_names::CALC_ADD_LABEL . '</button>');
         // negative: without the triples of the field types the fields stay number fields and a selector
@@ -896,6 +1060,16 @@ class use_case_ui_tests
         $src = new source_ui($t_src->source_reserved()->api_json());
         $dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->src = $src;
         $res_html = $page->calculation_result($wrd, $msg, $dto_res);
+        // a list with results, which have no match of the phrase names, still finds its value
+        $test_name = 'a list of values and results finds a value by its names';
+        $mix_lst = clone $dto_res->val_lst;
+        $mix_lst->add_results($t_res->result_list_zh_city_ui(), $msg);
+        $mix_val = $mix_lst->get_by_names([word_names::ZH, word_names::INHABITANTS]);
+        $t->assert_true($test_name, $mix_val != null);
+        // negative: names without a value find nothing, also if the list has results
+        $test_name = '... but no value for other names';
+        $mix_none = $mix_lst->get_by_names([word_names::GE, word_names::CANTON]);
+        $t->assert_null($test_name, $mix_none);
         $test_name = 'the result starts with the label of the result columns as the heading';
         $t->assert_text_contains($test_name, $res_html, $html->block(html_base::H2, triple_names::CALC_ZH_COLUMNS_LABEL_COM)
             . '<div class="' . styles::CALC_SCROLL . '"><' . html_base::TABLE . '>');
@@ -1379,6 +1553,20 @@ class use_case_ui_tests
         $test_name = '... with the entered number';
         $change_number = $changes[$changed]->number();
         $t->assert($test_name, $change_number, values::SAMPLE_FLOAT);
+        $test_name = 'a number entered in percent is saved as the stored ratio';
+        $pct_form = $form;
+        $pct_form[url_var::NUMERIC_VALUE . $changed] = '35';
+        $pct_form[url_var::PHRASE . $changed] = sandbox_value::UNIT_PERCENT;
+        $pct_changes = $ui->calculator_changes($pct_form, $msg);
+        $pct_number = $pct_changes[$changed]->number();
+        $t->assert($test_name, $pct_number, 0.35);
+        // negative: the number of a field with another unit is saved as it is
+        $test_name = '... but a number with another unit as it is';
+        $unit_form = $form;
+        $unit_form[url_var::NUMERIC_VALUE . $changed] = '35';
+        $unit_changes = $ui->calculator_changes($unit_form, $msg);
+        $unit_number = $unit_changes[$changed]->number();
+        $t->assert($test_name, $unit_number, 35.0);
 
         $lib = new library();
         $html = new html_base();

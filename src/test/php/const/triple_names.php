@@ -133,6 +133,7 @@ class triple_names
     const int SYSTEM_TEST_ADD_USAGE = 12;
     const float SYSTEM_TEST_ADD_IMPACT = 23.4;
     const string SYSTEM_TEST_RENAMED = 'System Test Triple renamed';
+    const string SYSTEM_TEST_USING_DESCRIBED = 'System Test Triple using a described triple';
     const string SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the city of Zurich';
     const string SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
 
@@ -327,6 +328,14 @@ class triple_names
     // the read only, checkbox and repeated field of the calculator input test
     const int CALC_FIELDS_FIRST_ID = 920;
     const string CALC_ADD_LABEL = 'Add canton';
+    // the warning of the calculator input test, which follows the triples of the field types
+    const int CALC_WARNING_FIRST_ID = 910;
+    const string CALC_WARNING_COM = 'Too many inhabitants.';
+    // the keyword and the group of the check table test, which follow the warning
+    const int CALC_CHECK_FIRST_ID = 908;
+    // the keyword, the button and its label of the button test, which follow the check
+    const int CALC_BUTTON_FIRST_ID = 906;
+    const string CALC_BUTTON_COM = 'Download the inhabitants';
     // the triples of the calculation result test, which follow the 5 triples of the input test
     const int CALC_RESULT_FIRST_ID = 954;
     const string CALC_ZH_COLUMNS_LABEL_COM = 'Main numbers';
@@ -516,6 +525,8 @@ class triple_names
     // the beneficiary whose allocation the use case portfolio_split_calculator.json models
     const string FIRST_CHILD_PORTFOLIO = 'first child portfolio';
     const string FIRST_CHILD_PORTFOLIO_INSTANCE = 'first child portfolio instance';
+    // a result phrase of the rows of the split walk, which names no page
+    const string UNIT_VALUE = 'unit value';
     // an input of the use case cbam_calculator.json that two results of its chain depend on
     const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
     // an input of the use case ahv_vat_vote.json that the extra VAT revenue and its chain depend on
@@ -619,6 +630,7 @@ class triple_names
         self::SYSTEM_TEST_ADD_GIVEN,
         self::SYSTEM_TEST_ADD_VIA_FUNC,
         self::SYSTEM_TEST_RENAMED,
+        self::SYSTEM_TEST_USING_DESCRIBED,
         self::SYSTEM_TEST_EXCLUDED,
     );
 

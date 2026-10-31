@@ -2214,6 +2214,16 @@ enum messages: string
     case CALCULATOR_RESULT = 'calculator_result';
     case CALCULATOR_DETAILS = 'calculator_details';
     case CALCULATOR_SOURCES = 'calculator_sources';
+    // the two copy buttons of a detail table of a calculator page
+    case CALCULATOR_COPY_JSON = 'calculator_copy_json';
+    case CALCULATOR_COPY_CSV = 'calculator_copy_csv';
+    // the header and the status texts of the check table of a calculator page
+    case CALCULATOR_CHECK_VALUE = 'calculator_check_value';
+    case CALCULATOR_CHECK_EXPECTED = 'calculator_check_expected';
+    case CALCULATOR_CHECK_CALCULATED = 'calculator_check_calculated';
+    case CALCULATOR_CHECK_STATUS = 'calculator_check_status';
+    case CALCULATOR_CHECK_MATCH = 'calculator_check_match';
+    case CALCULATOR_CHECK_DIFFERS = 'calculator_check_differs';
 
     // text to be shown in buttons
     case ADD = 'add';

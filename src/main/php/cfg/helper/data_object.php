@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 //include_once paths::MODEL_COMPONENT . 'component.php';
 //include_once paths::MODEL_COMPONENT . 'component_list.php';
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::SHARED_CALC . 'prior_operand.php';
 //include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_FORMULA . 'formula.php';
 //include_once paths::MODEL_FORMULA . 'formula_list.php';
@@ -145,6 +146,7 @@ use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -1383,9 +1385,11 @@ class data_object
         // chain like "target value, then its probability range" is checked step by step; only a
         // reproduced result is an operand, else a wrong number would confirm the next one
         $checked = [];
+        // the previous rows are created once for the same reason
+        $pri = new prior_operand($this->prior_names());
         foreach ($this->res_chk_lst->lst() as $res_chk) {
             $usr_msg = new user_message(); // a per item buffer to count the failures, merged below
-            $this->validate_result($res_chk, $val_names, $checked, $usr_msg);
+            $this->validate_result($res_chk, $val_names, $checked, $pri, $usr_msg);
             if (!$usr_msg->is_ok()) {
                 $failures++;
             } else {
@@ -1403,10 +1407,11 @@ class data_object
      * @param result $res_chk the imported result with the expected number
      * @param array $val_names the values of this file with their phrase names (see numbers_with_name_sets)
      * @param array $checked the results of this file that have already been reproduced with their phrase names
+     * @param prior_operand $pri the previous rows of the follower chains of this file
      * @param user_message $msg to collect the problems that the user should fix in the import file
      * @return void
      */
-    private function validate_result(result $res_chk, array $val_names, array $checked, user_message $msg): void
+    private function validate_result(result $res_chk, array $val_names, array $checked, prior_operand $pri, user_message $msg): void
     {
         // use the formula of this data object because the result may only know the formula name
         $frm = null;
@@ -1423,15 +1428,15 @@ class data_object
             // select the values by the context phrases e.g. "apple", "price", "quantity" and "CHF"
             $ctx_names = $res_chk->src_grp?->phrase_list()->names() ?? $res_chk->grp()->phrase_list()->names();
             // replace the phrase names in the source part of the expression with the imported values
-            $r_part = $this->expression_with_values($frm, $val_names, $checked, $ctx_names, $res_name, $msg);
+            $r_part = $this->expression_with_values($frm, $val_names, $checked, $ctx_names, $res_name, $pri, $msg);
             // calculate and compare the result if all values have been found
             if ($msg->is_ok()) {
                 $calc = new calc_internal();
                 $num_chk = $calc->parse($r_part, $msg);
-                $num_chk_rounded = round((float)$num_chk, self::CALC_VALIDATION_DECIMALS);
-                $num_imp_rounded = round((float)$res_chk->number(), self::CALC_VALIDATION_DECIMALS);
+                // compared by the difference, because rounding each number would report e.g. 0.004999 and 0.005001
+                $max_diff = pow(10, -self::CALC_VALIDATION_DECIMALS);
                 // an expression without a number is already reported, so a difference would only be its consequence
-                if ($msg->is_ok() and $num_chk_rounded != $num_imp_rounded) {
+                if ($msg->is_ok() and abs((float)$num_chk - (float)$res_chk->number()) >= $max_diff) {
                     $msg->add(msg_id::CALC_VALIDATION_FAILED, [
                         msg_id::VAR_VALUE => $res_chk->number(),
                         msg_id::VAR_NAME => $res_name,
@@ -1459,22 +1464,23 @@ class data_object
      * @param array $checked the results of this file that have already been reproduced with their phrase names
      * @param array $ctx_names the phrase names that limit the value selection
      * @param string $res_name the name of the checked result to report a missing value
+     * @param prior_operand $pri the previous rows of the follower chains of this file
      * @param user_message $msg to collect the values that the import file does not contain
      * @return string the source part of the expression with a number instead of each operand
      */
     private function expression_with_values(
-        formula      $frm,
-        array        $val_names,
-        array        $checked,
-        array        $ctx_names,
-        string       $res_name,
-        user_message $msg
+        formula       $frm,
+        array         $val_names,
+        array         $checked,
+        array         $ctx_names,
+        string        $res_name,
+        prior_operand $pri,
+        user_message  $msg
     ): string
     {
         $lib = new library();
         $result = $lib->str_right_of($frm->usr_text, chars::CHAR_CALC);
         $exp_part_lst = explode(chars::TERM_DELIMITER, $result);
-        $ctx_set = array_flip($ctx_names);
         // the phrase names are the odd entries between the term delimiters
         $i = 1;
         while ($i < count($exp_part_lst)) {
@@ -1485,11 +1491,15 @@ class data_object
                 $i = $i + 2;
                 $phr_names[] = $exp_part_lst[$i];
             }
-            $val = $this->number_by_names($val_names, $phr_names, $ctx_set);
+            [$sel_names, $sel_ctx] = $pri->select($phr_names, $ctx_names);
+            $sel_set = array_flip($sel_ctx);
+            $val = $this->number_by_names($val_names, $sel_names, $sel_set);
             if ($val == null) {
-                $val = $this->number_by_names($checked, $phr_names, $ctx_set);
+                $val = $this->number_by_names($checked, $sel_names, $sel_set);
             }
-            if ($val == null) {
+            // the first row has no previous row and the number 0
+            $num = $pri->is_first($phr_names, $ctx_names) ? 0 : $val?->number();
+            if ($num === null) {
                 $msg->add(msg_id::CALC_VALIDATION_VALUE_MISSING, [
                     msg_id::VAR_WORD_NAME => implode(chars::SEPARATOR, $phr_names),
                     msg_id::VAR_NAME => $res_name
@@ -1500,9 +1510,25 @@ class data_object
                 $grp_parts = array_slice($exp_part_lst, $first, $i - $first + 1);
                 $result = str_replace(
                     chars::TERM_DELIMITER . implode(chars::TERM_DELIMITER, $grp_parts) . chars::TERM_DELIMITER,
-                    $val->number(), $result);
+                    $num, $result);
             }
             $i = $i + 2;
+        }
+        return $result;
+    }
+
+    /**
+     * @return array per phrase name the name of the phrase before it in its "is follower of" chain of this import (shared\calc\prior_operand)
+     */
+    private function prior_names(): array
+    {
+        $result = [];
+        foreach ($this->triple_list()->lst() as $trp) {
+            $from = $trp->get_from()?->name();
+            $to = $trp->get_to()?->name();
+            if ($trp->get_verb_code_id() == verbs::FOLLOW and $from != null and $to != null) {
+                $result = prior_operand::with_link($result, $from, $to);
+            }
         }
         return $result;
     }

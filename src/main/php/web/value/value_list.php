@@ -248,7 +248,8 @@ class value_list extends ListBase
     {
         $result = null;
         foreach ($this->lst() as $val) {
-            if ($result == null) {
+            // only a value, because add_results can add results to this list, which return no value here
+            if ($result == null and $val instanceof value) {
                 if ($val->match_all($names)) {
                     $result = $val;
                 }

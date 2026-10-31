@@ -43,10 +43,8 @@ function typeNumber(field, value) {
     if (field.tagName === "SELECT") {
         result = selectOption(field, value);
     } else {
-        // the field of a share up to 1 gets a number in percent as the ratio, which it shows
-        const number = field.max === "1" && Number(value) > 1 ? String(Number(value) / 100) : value;
-        field.value = number;
-        field.setAttribute("value", number);
+        field.value = value;
+        field.setAttribute("value", value);
     }
     if (result) {
         field.dispatchEvent(new Event("input", {bubbles: true}));

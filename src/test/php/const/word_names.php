@@ -252,8 +252,13 @@ class word_names
     const string GE = 'Geneva';
     const int GE_ID = 207;
     const int INHABITANT_ID = 212;
+    // the id of the word expected in the check table test without a database, so it follows no seed row
+    const int EXPECTED_TEST_ID = 9901;
     // TODO Prio 2 add test to search for words in all language forms e.g. plural
     const string INHABITANTS = 'inhabitants';
+    // a row of the split walk of portfolio_split_calculator.json and the word of its quantity
+    const string LISP = 'LISP';
+    const string ORIGINAL = 'original';
     // the word of solution_prio.json whose values of populism have a variance range
     const string FIFTEEN_YEAR = '15-year';
     const int FIFTEEN_YEAR_ID = 270;

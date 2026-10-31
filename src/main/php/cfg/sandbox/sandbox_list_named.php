@@ -1341,6 +1341,9 @@ class sandbox_list_named extends sandbox_list
             $db_row = $db_lst->get_by_name($sbx->name(), $msg);
             // another validation check as a second line of defence
             if ($db_row !== false and $db_row !== null and $db_row !== []) {
+                // do not overwrite db values not set by the import e.g. the description of a phrase
+                // that another file only names, when the update is due to another field
+                $sbx->fill($db_row, $this->get_user());
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list();
                 $sc_par_lst->add(sql_type::LOG);

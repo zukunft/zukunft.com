@@ -103,9 +103,14 @@ editor shows the name of the phrase.
   `confidence` gives its confidence
 - **measured**: a value with a `source`; the page shows the number of the source
 - **field limits**: a value with the phrase of the field and a field keyword
+- **the previous row**: an operand with `prior` next to another phrase, e.g. `"cumulative deviation","prior"`,
+  reads the number of the phrase before the phrase of the result context in its `is follower of` chain; the
+  first phrase of the chain has the number 0, and a context with phrases of two chains selects no number
 - **units**: a triple with the type `measure unit`, e.g. `kWh per year`, or a
   symbol, e.g. `m²` · `is symbol for` · `square metre`; a share with the unit
   `percent` is shown in %
+- **the unit of the result table**: if all numbers of the table except the shares have one unit, the first header
+  names it and the cells show only the number, e.g. `CHF`; else each cell shows its unit
 - **side results**: a result shown below a row, e.g.
   `annual heat demand side result` = `annual heat demand` · `has a` · `heat demand per area`
 - **a row phrase built from the group phrase**: if the row phrase is a triple from the
@@ -129,7 +134,7 @@ repeated input.
 | checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
 | read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
 | repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field |
-| warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero |
+| warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero; the page calculates the result again when an input changes |
 
 A repeated input:
 
@@ -151,8 +156,8 @@ A repeated input:
 | phrase column | `house heating detail column billing unit` · `has a` · `calculator phrase column` | a cell shows the phrase that the numbers of the row have and that is a column phrase, e.g. `CHF per kWh` with `CHF per kWh` · `is a` · `billing unit` |
 | page independent | `house heating detail fuel` · `has a` · `calculator page independent` | the cells select their numbers without the page phrase, e.g. the energy prices that are the same for every house; also for an item or the check table |
 | diagram | `house heating detail column price` · `has a` · `calculator diagram` | the column is also drawn as a line along the rows, with a legend of the last numbers |
-| decimals | the value `price`, `calculator decimals` = 3 | every cell of the phrase shows this number of decimals |
-| colour | `house heating result columns` · `has a` · `calculator colour` | the columns get the colours of the page palette in their order |
+| decimals | the value `price`, `calculator decimals` = 3 | the cells of the row of the phrase in the result table show this number of decimals |
+| colour | `house heating column heat pump` · `has a` · `calculator colour` | the columns with this flag get the colours of the page palette in their order in the header |
 
 Two proposed rules for the detail tables need no keyword:
 

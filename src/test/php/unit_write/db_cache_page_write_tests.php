@@ -49,8 +49,10 @@ include_once test_paths::UNIT . 'db_cache_tests.php';
 include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
@@ -167,6 +169,18 @@ class db_cache_page_write_tests
         $t->assert($test_name, $cac_check->html_by_url($usr_url_other, $msg), self::TV_HTML);
         $test_name = '... like the standard page, which the change of a user does not touch';
         $t->assert($test_name, $cac_check->html_by_url($std_url, $msg), self::TV_HTML);
+
+        // an import changes the standard data, so the answers of the data apis are dropped
+        $test_name = 'an import removes the cached answer of a data api';
+        $data_key = db_cache_page::api_key(phrase_data::class, [url_var::ID => word_names::TEST_ADD_ID], users::SYSTEM_TEST_ID);
+        $other_key = db_cache_page::api_key(user::class, [url_var::ID => word_names::TEST_ADD_ID], users::SYSTEM_TEST_ID);
+        $cac_page->save_json($data_key, self::TV_API_JSON, new DateTime(), $msg);
+        $cac_page->save_json($other_key, self::TV_API_JSON, new DateTime(), $msg);
+        $cac_page->del_data_answers($msg);
+        $t->assert_true($test_name, $cac_check->json_by_key($data_key, $msg) === null);
+        // negative: the answer of an api without the imported data stays
+        $test_name = '... but keeps the answer of another api';
+        $t->assert($test_name, $cac_check->json_by_key($other_key, $msg), self::TV_API_JSON);
 
         // a change of the standard data can be shown by every page, so the complete cache is dropped
         $test_name = 'a change of the standard data removes every cached page';

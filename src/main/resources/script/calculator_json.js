@@ -50,6 +50,16 @@
     const NUMBER_VAR = 'n';
     // in front of the phrase id of a selector option without a number, the same as ui_list CALC_OPTION_PHRASE
     const OPTION_PHRASE = 'phrase';
+    // the header of the row number of a detail table, the same as ui_list CALC_ROW_NUMBER_HEAD
+    const ROW_NUMBER_HEAD = '#';
+    // the operand name that reads the number of the previous row, the same as phrase_types PRIOR_NAME
+    const PRIOR_NAME = 'prior';
+    // the word of a value of the check table, the same as words EXPECTED
+    const EXPECTED_WORD = 'expected';
+    // the size of a line diagram, the same as html_base DIAGRAM_*
+    const DIAGRAM = {width: 760, height: 200, left: 70, right: 12, top: 12, bottom: 24};
+    // the unit of a number field that shows a stored ratio in percent, the same as sandbox_value UNIT_PERCENT
+    const UNIT_PERCENT = '%';
     const GROUP_VAR = 'g';
     const PRE_VAR = '8';
     const NAME_VAR = 'k';
@@ -60,8 +70,15 @@
         row: 'row', unit: 'unit', hint: 'hint', tag: 'tag', tagMeasured: 'tag m', tagAssumed: 'tag a',
         scroll: 'scroll', section: 'sec', key: 'key', sub: 'sub', number: 'n', more: 'more',
         notes: 'notes', sources: 'src', select: 'form-control', check: 'check', readOnly: 'ro',
-        addButton: 'btn btn-outline-primary btn-sm'
+        addButton: 'btn btn-outline-primary btn-sm', warnings: 'warnings', warning: 'warn',
+        button: 'btn btn-outline-primary', chart: 'chart', legend: 'legend', statusOk: 'pill ok', statusFail: 'pill fail',
+        // the colours of the flagged columns, the first once, then the others cycling (styles::CALC_COLUMN_COLOURS)
+        colours: ['col-first', 'col-1', 'col-2', 'col-3', 'col-4']
     };
+    // a warning ignores only the float noise of a calculation, the same as ui_list CALC_WARNING_DECIMALS
+    const WARNING_DECIMALS = 12;
+    // a check row ignores only the float noise of a calculation, the same as ui_list CALC_CHECK_TOLERANCE
+    const CHECK_TOLERANCE = 1e-9;
     // the suffix of the html id of a selector, the same as html_selector builds it from its name
     const SELECT_ID_SUFFIX = '_form_select';
     // between the label of a selector option and its number (ui_list::CALC_OPTION_SEP)
@@ -73,6 +90,10 @@
     const TXT = {
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
         details: 'calculator_details', sources: 'calculator_sources',
+        copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv',
+        check_value: 'calculator_check_value', check_expected: 'calculator_check_expected',
+        check_calculated: 'calculator_check_calculated', check_status: 'calculator_check_status',
+        check_match: 'calculator_check_match', check_differs: 'calculator_check_differs',
         measured: 'field_tag_measured', assumed: 'field_tag_assumed'
     };
 
@@ -84,7 +105,7 @@
     }
     const KW = settings.keywords || {};
     // the phrases of a value that make it a property of a field and not the number of the field (ui_list::CALC_FIELD_PROPERTIES)
-    const FIELD_PROPERTIES = [KW.limit_down, KW.limit_up, KW.step, KW.confidence];
+    const FIELD_PROPERTIES = [KW.limit_down, KW.limit_up, KW.step, KW.confidence, KW.decimals];
     const VERB = settings.verbs || {};
     // the names of the phrase types that decide the unit and the format of a number
     const PT = settings.phrase_types || {};
@@ -565,6 +586,22 @@
         return result;
     }
 
+    /* the number as a number field shows it: a share in percent e.g. 35 for the stored ratio 0.35 (ui_list::field_shown) */
+    function fieldShown(num, entry) {
+        const result = showsPercent(entry) ? String(parseFloat((Number(num) * 100).toFixed(12))) : String(num);
+        return result;
+    }
+
+    /* true if a number field shows the number in percent, but not for a ratio unit e.g. share (ratio) (ui_list::shows_percent) */
+    function showsPercent(entry) {
+        return isPercentEntry(entry) && !entry.words.some(isRatioUnit);
+    }
+
+    /* the unit behind a number field (ui_list::field_unit) */
+    function fieldUnit(entry) {
+        return showsPercent(entry) ? UNIT_PERCENT : unitOf(entry);
+    }
+
     /* the number of the source of a value in the source list of the page e.g. [2] */
     function sourceRef(entry) {
         const pos = entry === null ? -1 : pageSources.indexOf(entry.source);
@@ -678,12 +715,73 @@
 
     /* the value or result with all names of the operand, all of whose phrases are in the context of the result (formula_calc::value_of) */
     function operandEntry(names, res) {
+        const selected = priorSelect(names, res.context);
         const result = pool.find(function (e) {
-            return e !== res && hasAll(e, names) && e.words.every(function (w) {
-                return res.context.indexOf(w) >= 0;
+            return e !== res && hasAll(e, selected.names) && e.words.every(function (w) {
+                return selected.context.indexOf(w) >= 0;
             });
         }) || null;
         return result;
+    }
+
+    /* the one phrase of the context in a follower chain for an operand with the name prior, else null (prior_operand::chain_phrase) */
+    function priorChainPhrase(names, context) {
+        let result = null;
+        if (names.length > 1 && names.indexOf(PRIOR_NAME) >= 0) {
+            const links = followerLinks();
+            const found = context.filter(function (w) {
+                return links.some(function (p) {
+                    return p.from === w || p.to === w;
+                });
+            });
+            const before = found.length !== 1 ? [] : links.filter(function (p) {
+                return p.from === found[0];
+            }).map(function (p) {
+                return p.to;
+            });
+            // two different previous phrases make the previous row not clear (prior_operand::UNCLEAR)
+            result = found.length === 1 && new Set(before).size < 2 ? found[0] : null;
+        }
+        return result;
+    }
+
+    /* the phrase before a phrase in its follower chain, null for the first phrase */
+    function priorOf(name) {
+        const trp = followerLinks().find(function (p) {
+            return p.from === name;
+        });
+        return trp === undefined ? null : trp.to;
+    }
+
+    /* the triples of the follower chains */
+    function followerLinks() {
+        return Array.from(phrases.values()).filter(function (p) {
+            return p.verb === VERB.follow;
+        });
+    }
+
+    /* the names and the context that select the number of an operand (prior_operand::select) */
+    function priorSelect(names, context) {
+        const phr = priorChainPhrase(names, context);
+        const before = phr === null ? null : priorOf(phr);
+        let result = {names: names, context: context};
+        if (before !== null) {
+            result = {
+                names: names.filter(function (n) {
+                    return n !== PRIOR_NAME;
+                }).concat([before]),
+                context: context.filter(function (w) {
+                    return w !== phr;
+                }).concat([before])
+            };
+        }
+        return result;
+    }
+
+    /* true if the operand reads the previous row of the first row, which is the number 0 (prior_operand::is_first) */
+    function priorIsFirst(names, context) {
+        const phr = priorChainPhrase(names, context);
+        return phr !== null && priorOf(phr) === null;
     }
 
     /* the stored values with all names of the operand and the context of the result (formula_calc::list_values) */
@@ -741,8 +839,11 @@
                     missing = missing || nums.length === 0;
                     return nums.length === 0 ? '0' : nums.join(FUNC_ARG_SEPARATOR);
                 }
-                const entry = operandEntry(operandNames(term), res);
-                const num = entry === null ? null : operandNumber(entry, done, open);
+                const names = operandNames(term);
+                const entry = operandEntry(names, res);
+                // the first row has no previous row and the number 0
+                const first = entry === null && priorIsFirst(names, res.context);
+                const num = first ? 0 : (entry === null ? null : operandNumber(entry, done, open));
                 missing = missing || num === null;
                 return num === null ? '0' : '(' + num.toFixed(12) + ')';
             });
@@ -1044,34 +1145,36 @@
     }
 
     /* a share times 100 with the percent decimals and its symbol e.g. "49 %" (sandbox_value::val_formatted) */
-    function percentText(entry) {
+    function percentText(entry, decimals) {
         const word = entry.words.find(isPercent);
         const percent = Number(entry.number) * 100;
         // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares
         const scale = Math.abs(percent) >= 10 ? 1 : Math.pow(10, FMT.percent_decimals);
-        const num = Math.round(percent * scale) / scale;
+        const num = decimals === null ? String(Math.round(percent * scale) / scale) : formatNumber(percent, decimals);
         const sym = isRatioUnit(word) ? '' : (symbols.get(word) || '');
-        const result = String(num) + (sym === '' ? '' : FMT.unit_sep + sym);
+        const result = num + (sym === '' ? '' : FMT.unit_sep + sym);
         return result;
     }
 
     /* the number in the format of its group with the unit text, which a converted group takes from the conversion */
-    function numberText(entry, formats, withUnit) {
+    /* decimals: what the row sets, null or undefined for the decimals of the column (ui_list::calculator_cell_text) */
+    function numberText(entry, formats, withUnit, decimals) {
+        const rowDecimals = decimals === undefined ? null : decimals;
         let result = '';
         if (isPercentEntry(entry)) {
-            result = percentText(entry);
+            result = percentText(entry, rowDecimals);
         } else {
             const fmt = formats.get(unitOf(entry));
             const unit = withUnit ? (fmt.text === null ? unitOf(entry) : fmt.text) : '';
-            result = formatNumber(Number(entry.number) * fmt.factor, fmt.decimals) + (unit === '' ? '' : FMT.unit_sep + unit);
+            result = formatNumber(Number(entry.number) * fmt.factor, rowDecimals === null ? fmt.decimals : rowDecimals) + (unit === '' ? '' : FMT.unit_sep + unit);
         }
         return result;
     }
 
-    function cellHtml(entry, formats, signed, withUnit) {
+    function cellHtml(entry, formats, signed, withUnit, decimals) {
         let text = '';
         if (entry !== null) {
-            text = esc(numberText(entry, formats, withUnit));
+            text = esc(numberText(entry, formats, withUnit, decimals));
             if (signed) {
                 text = block('span', text, Number(entry.number) < 0 ? FMT.negative : FMT.positive);
             }
@@ -1146,7 +1249,7 @@
 
     /* the hidden vars that the save needs for a number field, with the stored number as the shown one (ui_list::calculator_save_vars) */
     function saveVars(key, entry, lbl, unit) {
-        let result = hidden(GROUP_VAR + key, entry.id) + hidden(PRE_VAR + NUMBER_VAR + key, entry.number) + hidden(NAME_VAR + key, lbl);
+        let result = hidden(GROUP_VAR + key, entry.id) + hidden(PRE_VAR + NUMBER_VAR + key, unit === UNIT_PERCENT ? fieldShown(entry.number, entry) : entry.number) + hidden(NAME_VAR + key, lbl);
         if (unit !== '') {
             result += hidden(UNIT_VAR + key, unit);
         }
@@ -1167,11 +1270,12 @@
         }
         const limits = [['min', KW.limit_down], ['max', KW.limit_up], ['step', KW.step]].map(function (l) {
             const num = fieldProperty(name, l[1]);
-            return num === null ? '' : ' ' + l[0] + '="' + esc(num) + '"';
+            const limit = num === null || entry === null ? num : fieldShown(num, entry);
+            return num === null ? '' : ' ' + l[0] + '="' + esc(limit) + '"';
         }).join('');
-        const shown = entry === null ? '' : fieldNumber(entry);
+        const shown = entry === null ? '' : fieldShown(entry.number, entry);
         let input = '<input type="number" name="' + field + '" id="' + field + '" value="' + esc(shown) + '"' + limits + ' form="' + esc(FORM) + '">';
-        const unit = entry === null ? '' : unitOf(entry);
+        const unit = entry === null ? '' : fieldUnit(entry);
         if (entry !== null) {
             input += saveVars(key, entry, lbl, unit);
             inputEntries.set(field, entry);
@@ -1209,9 +1313,9 @@
     /* the field of an operand value with its source name as the hint (ui_list::assumption_field) */
     function operandField(entry, lbl) {
         const field = NUMBER_VAR + entry.id;
-        const unit = unitOf(entry);
+        const unit = fieldUnit(entry);
         const text = esc(lbl) + ' ' + block('span', esc(tagText(entry)), STYLE.tag);
-        let input = '<input type="number" name="' + field + '" id="' + field + '" value="' + esc(entry.number) + '" form="' + esc(FORM) + '">'
+        let input = '<input type="number" name="' + field + '" id="' + field + '" value="' + esc(fieldShown(entry.number, entry)) + '" form="' + esc(FORM) + '">'
             + saveVars(entry.id, entry, lbl, unit);
         if (unit !== '') {
             input += block('span', esc(unit), STYLE.unit);
@@ -1331,17 +1435,35 @@
         return result;
     }
 
+    /* the warnings whose result of the page phrase is above zero, sorted by their text (ui_list::calculator_warnings) */
+    function warningTexts() {
+        const texts = [];
+        phrases.forEach(function (p) {
+            if (p.to === KW.warning && p.from !== undefined) {
+                const entry = cellEntry([page.name, p.from]);
+                if (entry !== null && Number(Number(entry.number).toFixed(WARNING_DECIMALS)) > 0) {
+                    texts.push(p.description);
+                }
+            }
+        });
+        const result = Array.from(new Set(texts)).sort().map(function (text) {
+            return block('div', esc(text), STYLE.warning);
+        }).join('');
+        return result;
+    }
+
     function inputPanel() {
         const inputs = items(KW.input);
         const assumptions = items(KW.assumption);
         let result = '';
         if (inputs.length > 0 || assumptions.length > 0) {
             const heading = ownText((group(KW.input) || {}).name, KW.label) || TEXTS[TXT.inputs];
-            result = block('div', block('h2', esc(heading)) + fields(inputs, false) + (settings.save || ''), STYLE.inputs);
+            result = block('div', block('h2', esc(heading)) + fields(inputs, false)
+                + block('div', warningTexts(), STYLE.warnings) + (settings.save || '') + buttons(group(KW.input)), STYLE.inputs);
             const listed = assumptions.map(function (item) {
                 return item.to;
             });
-            const assumed = fields(assumptions, true) + operandFields(listed);
+            const assumed = fields(assumptions, true) + operandFields(listed) + buttons(group(KW.assumption));
             if (assumed !== '') {
                 const summary = ownText((group(KW.assumption) || {}).name, KW.label) || TEXTS[TXT.assumptions];
                 result += block('details', block('summary', esc(summary)) + assumed);
@@ -1396,14 +1518,48 @@
         return result;
     }
 
+    /* the columns of a table with their text, where the column of a repeated input is shown once per instance (calculator::columns) */
+    function columns(list) {
+        const result = [];
+        let colours = 0;
+        list.forEach(function (c) {
+            const repeated = items(KW.input).some(function (i) {
+                return i.to === c.to && hasFlag(i, KW.repeat);
+            });
+            const hasColour = hasFlag(c, KW.colour);
+            const isPhrase = hasFlag(c, KW.phrase_column);
+            (repeated ? kinds(c.to) : [c.to]).forEach(function (to) {
+                const text = repeated ? capital(phraseLabel(to)) : label(c);
+                result.push({name: c.name, to: to, text: text, colour: hasColour ? columnColour(colours++) : '', repeated: repeated, isPhrase: isPhrase});
+            });
+        });
+        return result;
+    }
+
+    /* the colour style of a column: the first colour once, then the others cycling (calculator::column_colour) */
+    function columnColour(pos) {
+        const cycle = STYLE.colours.length - 1;
+        return STYLE.colours[pos === 0 ? 0 : 1 + (pos - 1) % cycle];
+    }
+
+    /* the unit if all numbers except the shares have one unit, else an empty string (ui_list::calculation_table_unit) */
+    function tableUnit(rows) {
+        const units = new Set();
+        rows.forEach(function (r) {
+            r.cells.filter(function (e) {
+                return e !== null && !isPercentEntry(e);
+            }).forEach(function (e) {
+                units.add(unitOf(e));
+            });
+        });
+        return units.size === 1 ? Array.from(units)[0] : '';
+    }
+
     function resultTable() {
-        const cols = items(KW.column);
+        const cols = columns(items(KW.column));
         const grps = items(KW.rowgroup);
         let result = '';
         if (cols.length > 0 || grps.length > 0) {
-            const head = block('th', esc(TEXTS[TXT.result])) + cols.map(function (c) {
-                return block('th', esc(label(c)), STYLE.number);
-            }).join('');
             // the numbers first, so that the numbers of one column and unit share their decimals
             const rows = [];
             grps.forEach(function (g) {
@@ -1414,20 +1570,29 @@
                     })});
                 });
             });
+            // one unit of all numbers is named by the first header instead of each cell
+            const unit = tableUnit(rows);
+            const withUnit = unit === '';
+            const head = block('th', esc(withUnit ? TEXTS[TXT.result] : unit)) + cols.map(function (c) {
+                return block('th', esc(c.text), (STYLE.number + ' ' + c.colour).trim());
+            }).join('');
             const formats = cols.map(function (c, i) {
                 return columnFormats(rows.map(function (r) {
                     return r.cells[i];
-                }), true, FMT.digits);
+                }), withUnit, FMT.digits);
             });
             let body = '';
             grps.forEach(function (g) {
                 body += block('tr', '<td colspan="' + (cols.length + 1) + '">' + esc(label(g)) + '</td>', STYLE.section);
-                const signed = hasFlag(g, KW.signed);
+                const groupSigned = hasFlag(g, KW.signed);
                 rows.filter(function (r) {
                     return r.grp === g;
                 }).forEach(function (r) {
+                    const signed = groupSigned || hasFlag(r.row, KW.signed);
+                    const rowDecimals = fieldProperty(r.row.to, KW.decimals);
+                    const decimals = rowDecimals === null ? null : Number(rowDecimals);
                     const cells = r.cells.map(function (e, i) {
-                        return cellHtml(e, formats[i], signed, true);
+                        return cellHtml(e, formats[i], signed, withUnit, decimals);
                     }).join('');
                     const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row);
                     body += block('tr', block('td', first) + cells, hasFlag(r.row, KW.highlight) ? STYLE.key : '');
@@ -1440,32 +1605,226 @@
 
     /* the one stored value with these names that does not name the page e.g. the Swiss consumption mix of a month,
        never picked from several values (ui_list::calculator_general_value) */
-    function generalEntry(names) {
+    function generalEntry(names, skip, withResults) {
         const wanted = names.filter(function (n) {
             return n;
         });
-        const found = pool.filter(function (e) {
-            return !e.result && hasAll(e, wanted);
+        const all = pool.filter(function (e) {
+            return hasAll(e, wanted) && e.words.indexOf(EXPECTED_WORD) < 0 && !(skip || []).some(function (s) {
+                return e.words.indexOf(s) >= 0;
+            });
         });
-        return found.length === 1 ? found[0] : null;
+        const found = all.filter(function (e) {
+            return !e.result;
+        });
+        const results = all.filter(function (e) {
+            return e.result;
+        });
+        let result = null;
+        if (found.length === 1) {
+            result = found[0];
+        } else if (withResults === true && results.length === 1) {
+            result = results[0];
+        }
+        return result;
     }
 
-    function detailTables() {
+    /* the phrases at the end of the is a and is part of levels below the phrase e.g. LISP is a stock is a holding (calculator::row_phrases) */
+    function rowPhrases(name, seen) {
+        const below = [];
+        phrases.forEach(function (p) {
+            if ((p.verb === VERB.is || p.verb === VERB.part) && p.to === name && seen.indexOf(p.from) < 0) {
+                below.push(p.from);
+            }
+        });
+        let result = [];
+        sorted(below, false).forEach(function (kid) {
+            const leaves = rowPhrases(kid, seen.concat([name]));
+            result = result.concat(leaves.length === 0 ? [kid] : leaves);
+        });
+        return result;
+    }
+
+    /* the row phrases by the biggest number of the phrase that the table is ranked by, then by name (ui_list::ranked_rows) */
+    function rankedRows(tbl) {
+        const result = rowPhrases(tbl.to, []);
+        const rank = subItems(tbl.name, VERB.rank)[0];
+        if (rank !== undefined) {
+            // the one stored value of the row, else its one result; a row without one number is the last row (ui_list::rank_number)
+            const numberOf = function (row) {
+                const results = pool.filter(function (e) {
+                    return e.result && hasAll(e, [row, rank.to]);
+                });
+                const entry = generalEntry([row, rank.to]) || (results.length === 1 ? results[0] : null);
+                return entry === null ? -Infinity : Number(entry.number);
+            };
+            // sort keeps the order of a tie, which is the order of the follower chain
+            result.sort(function (a, b) {
+                return numberOf(b) - numberOf(a) || 0;
+            });
+        }
+        return result;
+    }
+
+    /* the phrase of a stored number with a source of the row that is a column phrase e.g. EUR (ui_list::calculator_phrase_cells) */
+    function phraseCell(row, col) {
+        const found = [];
+        const names = kinds(col.to);
+        pool.filter(function (e) {
+            return !e.result && e.source && e.words.indexOf(row) >= 0;
+        }).forEach(function (e) {
+            e.words.filter(function (w) {
+                return names.indexOf(w) >= 0;
+            }).forEach(function (w) {
+                found.push(w);
+            });
+        });
+        found.sort();
+        return found.length === 0 ? '' : found[0];
+    }
+
+    /* the number of a detail cell: also of the kinds of the column phrase, and without the numbers of the other single columns (ui_list::calculator_detail_values) */
+    function detailCell(rowNames, col, cols, withResults) {
+        const skip = cols.filter(function (c) {
+            return !c.repeated && c.to !== col.to;
+        }).map(function (c) {
+            return c.to;
+        });
+        let result = null;
+        (col.isPhrase ? [] : [col.to].concat(col.repeated ? [] : kinds(col.to))).forEach(function (phr) {
+            const cellNames = [phr, filterOf(col)];
+            result = result || cellEntry(rowNames.concat(cellNames)) || generalEntry(rowNames.slice(1).concat(cellNames), skip, withResults);
+        });
+        return result;
+    }
+
+    /* the buttons of a list or a detail table at their place, without a function so far (ui_list::calculator_buttons) */
+    function buttons(item) {
+        const labels = [];
+        if (item !== null && item !== undefined) {
+            [KW.file_import, KW.download, KW.report].forEach(function (keyword) {
+                const prop = property(item.name, keyword);
+                labels.push(prop === null ? null : ownText(prop.name, KW.label));
+            });
+            if (hasFlag(item, KW.copy)) {
+                labels.push(TEXTS[TXT.copy_json], TEXTS[TXT.copy_csv]);
+            }
+        }
+        return labels.filter(function (text) {
+            return text;
+        }).map(function (text) {
+            return '<button type="button" class="' + STYLE.button + '">' + esc(text) + '</button>';
+        }).join('');
+    }
+
+    /* true if the numbers differ only by the float noise of a calculation (ui_list::calculator_check_same) */
+    function checkSame(got, expected) {
+        return Math.abs(got - expected) <= CHECK_TOLERANCE * Math.max(1, Math.abs(got), Math.abs(expected));
+    }
+
+    /* the section with a row per value with the word expected, a missing number differs (ui_list::calculator_check) */
+    function checkTable() {
+        const grp = group(KW.check);
+        const rows = grp === null ? [] : pool.filter(function (e) {
+            return !e.result && e.words.indexOf(EXPECTED_WORD) >= 0;
+        }).map(function (e) {
+            return {label: e.description || e.words.join(', '), exp: e};
+        });
+        rows.sort(function (a, b) {
+            return a.label < b.label ? -1 : (a.label > b.label ? 1 : 0);
+        });
+        const body = rows.map(function (r) {
+            const names = r.exp.words.filter(function (w) {
+                return w !== EXPECTED_WORD;
+            });
+            const got = generalEntry(names, [], true);
+            const same = got !== null && checkSame(Number(got.number), Number(r.exp.number));
+            const status = block('span', esc(TEXTS[same ? TXT.check_match : TXT.check_differs]), same ? STYLE.statusOk : STYLE.statusFail);
+            const first = esc(r.label) + (r.exp.source ? block('span', esc(r.exp.source), STYLE.sub) : '');
+            return block('tr', block('td', first)
+                + block('td', esc(formatNumber(r.exp.number, 0)), STYLE.number)
+                + block('td', got === null ? '' : esc(formatNumber(got.number, 0)), STYLE.number)
+                + block('td', status, STYLE.number));
+        }).join('');
+        const head = block('th', esc(TEXTS[TXT.check_value])) + [TXT.check_expected, TXT.check_calculated, TXT.check_status].map(function (id) {
+            return block('th', esc(TEXTS[id]), STYLE.number);
+        }).join('');
+        return rows.length === 0 ? '' : block('details', block('summary', esc(ownText(grp.name, KW.label) || '')) + table(head, body));
+    }
+
+    /* the svg of a line along the numbers with a line at zero and at the biggest number (html_base::line_diagram) */
+    function lineDiagram(nums, first, last, maxText) {
+        const max = Math.max.apply(null, [1].concat(nums.map(Math.abs)));
+        const half = (DIAGRAM.height - DIAGRAM.top - DIAGRAM.bottom) / 2;
+        const yOf = function (num) {
+            return DIAGRAM.top + half * (1 - num / max);
+        };
+        const xEnd = DIAGRAM.width - DIAGRAM.right;
+        const points = nums.map(function (num, k) {
+            const x = DIAGRAM.left + k * (xEnd - DIAGRAM.left) / Math.max(1, nums.length - 1);
+            return x.toFixed(1) + ',' + yOf(num).toFixed(1);
+        }).join(' ');
+        const lines = [max, 0, -max].map(function (num) {
+            const y = yOf(num).toFixed(1);
+            return '<line x1="' + DIAGRAM.left + '" x2="' + xEnd + '" y1="' + y + '" y2="' + y + '"/>';
+        }).join('');
+        return '<svg viewBox="0 0 ' + DIAGRAM.width + ' ' + DIAGRAM.height + '" role="img">' + lines
+            + '<text x="0" y="' + (yOf(max) + 4).toFixed(1) + '">' + esc(maxText) + '</text>'
+            + '<polyline points="' + points + '"/>'
+            + '<text x="' + DIAGRAM.left + '" y="' + (DIAGRAM.height - 6) + '">' + esc(first) + '</text>'
+            + '<text x="' + xEnd + '" y="' + (DIAGRAM.height - 6) + '" text-anchor="end">' + esc(last) + '</text></svg>';
+    }
+
+    /* a section with a diagram per column with the flag diagram along the rows of its table (ui_list::calculator_diagrams) */
+    function diagrams() {
         let result = '';
         items(KW.detail).forEach(function (tbl) {
-            const cols = subItems(tbl.name, VERB.has);
-            const head = block('th', esc(phraseLabel(tbl.to))) + cols.map(function (c) {
-                return block('th', esc(label(c)), STYLE.number);
+            subItems(tbl.name, VERB.has).forEach(function (col) {
+                const title = ownText(col.name, KW.diagram);
+                const rows = title ? rankedRows(tbl).filter(function (row) {
+                    return generalEntry([row, col.to, filterOf(col)], [], true) !== null;
+                }) : [];
+                if (rows.length > 1) {
+                    const nums = rows.map(function (row) {
+                        return Number(generalEntry([row, col.to, filterOf(col)], [], true).number);
+                    });
+                    const maxText = formatNumber(Math.max.apply(null, [1].concat(nums.map(Math.abs))), 0);
+                    const svg = lineDiagram(nums, rows[0], rows[rows.length - 1], maxText);
+                    const legend = label(col) + ' ' + formatNumber(nums[nums.length - 1], 2);
+                    result += block('details', block('summary', esc(title)) + block('div', svg, STYLE.chart) + block('div', esc(legend), STYLE.legend));
+                }
+            });
+        });
+        return result;
+    }
+
+    /* the section with per item the label in bold in front of the description (ui_list::calculator_notes) */
+    function pageNotes() {
+        const html = items(KW.note).map(function (note) {
+            return block('p', block('b', esc(label(note))) + ' ' + esc(note.description));
+        }).join('');
+        return html === '' ? '' : block('details', block('summary', esc(ownText(group(KW.note).name, KW.label) || '')) + block('div', html, STYLE.notes));
+    }
+
+    /* sections: true for the tables with a collapsed section of their own, false for the other tables */
+    function detailTables(sections) {
+        let result = '';
+        items(KW.detail).filter(function (tbl) {
+            return hasFlag(tbl, KW.section) === sections;
+        }).forEach(function (tbl) {
+            const cols = columns(subItems(tbl.name, VERB.has));
+            const numbered = hasFlag(tbl, KW.row_number);
+            const head = (numbered ? block('th', ROW_NUMBER_HEAD, STYLE.number) : '') + block('th', esc(phraseLabel(tbl.to))) + cols.map(function (c) {
+                return block('th', esc(c.text), (STYLE.number + ' ' + c.colour).trim());
             }).join('');
-            const rows = kinds(tbl.to).map(function (k) {
+            const rows = rankedRows(tbl).map(function (k) {
                 return [phraseLabel(k), [page.name, k], false];
             }).concat(subItems(tbl.name, VERB.with).map(function (x) {
                 return [label(x), [page.name, x.to], hasFlag(x, KW.highlight)];
             }));
             const cells = rows.map(function (r) {
                 return cols.map(function (c) {
-                    const cellNames = [c.to, filterOf(c)];
-                    return cellEntry(r[1].concat(cellNames)) || generalEntry(r[1].slice(1).concat(cellNames));
+                    return detailCell(r[1], c, cols, hasFlag(tbl, KW.page_independent));
                 });
             });
             // the header names the unit, so a column of a detail table shares only the decimals, and a detail shows rough numbers
@@ -1476,11 +1835,18 @@
             });
             const body = rows.map(function (r, j) {
                 const tds = cells[j].map(function (e, i) {
-                    return cellHtml(e, formats[i], false, false);
+                    const colDecimals = fieldProperty(cols[i].to, KW.decimals);
+                    return cols[i].isPhrase
+                        ? block('td', esc(phraseCell(r[1][1], cols[i])))
+                        : cellHtml(e, formats[i], false, false, colDecimals === null ? null : Number(colDecimals));
                 }).join('');
-                return block('tr', block('td', esc(r[0])) + tds, r[2] ? STYLE.key : '');
+                const number = numbered ? block('td', String(j + 1)) : '';
+                return block('tr', number + block('td', esc(r[0])) + tds, r[2] ? STYLE.key : '');
             }).join('');
-            result += block('h2', esc(label(tbl))) + table(head, body);
+            const tableHtml = table(head, body) + buttons(tbl);
+            result += sections
+                ? block('details', block('summary', esc(label(tbl))) + tableHtml)
+                : block('h2', esc(label(tbl))) + tableHtml;
         });
         return result;
     }
@@ -1511,8 +1877,9 @@
     function resultPanel() {
         const heading = ownText((group(KW.column) || {}).name, KW.label) || '';
         let result = (heading === '' ? '' : block('h2', esc(heading))) + resultTable();
+        result += checkTable() + diagrams() + detailTables(true) + pageNotes();
         // the details after the main table, so that their notes and sources include the numbers of both
-        const more = detailTables();
+        const more = detailTables(false);
         const extra = more + notes() + sourceList();
         if (extra !== '') {
             const summary = ownText((group(KW.detail) || {}).name, KW.label) || TEXTS[TXT.details];
@@ -1521,13 +1888,22 @@
         return block('section', result, STYLE.panel);
     }
 
+    /* the number of an input for the calculation: the value of a checkbox stays 1 also if it is unchecked, and a number field of a share shows percent */
+    function enteredNumber(input, entry) {
+        let result = Number(input.value);
+        if (input.type === 'checkbox') {
+            result = Number(input.checked);
+        } else if (input.type === 'number' && entry !== undefined && showsPercent(entry)) {
+            result = result / 100;
+        }
+        return result;
+    }
+
     /* the result panel again with the numbers of the inputs, the open blocks staying open */
     function refreshResults(event) {
         const entry = inputEntries.get(event.target.name);
         const panel = host.querySelector('section.' + STYLE.panel);
-        // the value of a checkbox stays 1 also if it is unchecked
-        const isCheckbox = event.target.type === 'checkbox';
-        const value = isCheckbox ? Number(event.target.checked) : Number(event.target.value);
+        const value = enteredNumber(event.target, entry);
         if (entry !== undefined && panel !== null && event.target.value !== '' && isFinite(value)) {
             entry.number = value;
             recalculate();
@@ -1535,6 +1911,7 @@
                 return d.open;
             });
             panel.outerHTML = resultPanel();
+            host.querySelector('div.' + STYLE.warnings).innerHTML = warningTexts();
             host.querySelectorAll('section.' + STYLE.panel + ' details').forEach(function (d, i) {
                 d.open = open[i] === true;
             });

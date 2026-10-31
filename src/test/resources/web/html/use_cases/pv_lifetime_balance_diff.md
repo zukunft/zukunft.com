@@ -4,7 +4,10 @@ Change the generated page pv_lifetime_balance_no_js.html so that it shows what t
 
 ## Missing in the generated page (0)
 
-## Different (0)
+## Different (2)
+
+- field: east-west yield factor, unit: the sample shows "percent" and the generated page "%"
+- field: east-west yield factor, value: the sample shows "0.85" and the generated page "85"
 
 ## Only in the generated page (0)
 

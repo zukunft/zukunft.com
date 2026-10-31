@@ -90,6 +90,7 @@ the object structure is:
 ├── apiShared - constants used for the backend to frontend api of zukunft.com
 ├── arithmeticShared - calculate a text with numbers, the four basic operations, the power, brackets and the math functions
 ├── expressionShared - common parts of the formula expressing handling used in front- and backend
+├── prior_operandShared - the operand of a formula that reads the number of the previous row
 ├── charsShared - const symbols used for the formula expressions
 ├── componentsShared - all component code id used in the code and some with name, id and comment used by the system
 ├── defShared - general system definitions used in frontend and backend

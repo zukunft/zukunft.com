@@ -304,6 +304,9 @@
         const T_FUNC = 'func';
         /* the max passes of the calculation chain, more than the longest chain of the page */
         const MAX_PASSES = 30;
+        /* the operand name that reads the number of the previous row and the verb of its chain, the same as phrase_types PRIOR_NAME and verbs FOLLOW_NAME */
+        const PRIOR_NAME = 'prior';
+        const FOLLOW_VERB = 'is follower of';
         const API_UPDATE_PUT = '/api/updatePut/';
         const API_PHRASE_DATA = '/api/phraseData/';
 
@@ -408,8 +411,12 @@
             (doc.words || []).forEach(function (w) {
                 addPhrase(w.name, 'word', w.description);
             });
+            const prior = new Map();
             (doc.triples || []).forEach(function (t) {
                 addPhrase(t.name, 'triple', t.description);
+                if (t.verb === FOLLOW_VERB) {
+                    prior.set(t.from, t.to);
+                }
             });
             (doc.values || []).forEach(function (v, i) {
                 const num = Number(v.number);
@@ -451,7 +458,8 @@
                 phrases: phrases,
                 entries: entries,
                 results: results,
-                formulas: formulas
+                formulas: formulas,
+                prior: prior
             };
             return result;
         }
@@ -835,18 +843,57 @@
             return result;
         }
 
-        function findEntry(names, res) {
+        /* the one phrase of the context in a follower chain for an operand with the name prior, else null (prior_operand::chain_phrase) */
+        function priorChainPhrase(names, ctx) {
+            let result = null;
+            if (names.length > 1 && names.indexOf(PRIOR_NAME) >= 0) {
+                const before = Array.from(model.prior.values());
+                const found = Array.from(ctx).filter(function (w) {
+                    return model.prior.has(w) || before.indexOf(w) >= 0;
+                });
+                result = found.length === 1 ? found[0] : null;
+            }
+            return result;
+        }
+
+        /* the names and the context that select the number of an operand (prior_operand::select) */
+        function priorSelect(names, ctx) {
+            const phr = priorChainPhrase(names, ctx);
+            let result = {names: names, ctx: ctx};
+            if (phr !== null && model.prior.has(phr)) {
+                const before = model.prior.get(phr);
+                const selCtx = new Set(ctx);
+                selCtx.delete(phr);
+                selCtx.add(before);
+                result = {
+                    names: names.filter(function (n) {
+                        return n !== PRIOR_NAME;
+                    }).concat([before]),
+                    ctx: selCtx
+                };
+            }
+            return result;
+        }
+
+        /* true if the operand reads the previous row of the first row, which is the number 0 (prior_operand::is_first) */
+        function priorIsFirst(names, ctx) {
+            const phr = priorChainPhrase(names, ctx);
+            return phr !== null && !model.prior.has(phr);
+        }
+
+        function findEntry(names, res, ctx) {
+            const useCtx = ctx === undefined ? res.ctx : ctx;
             let result = null;
             let i = 0;
             while (result === null && i < model.entries.length) {
                 const e = model.entries[i];
-                if (e !== res && isSubset(names, e.wset) && isSubset(e.wset, res.ctx)) {
+                if (e !== res && isSubset(names, e.wset) && isSubset(e.wset, useCtx)) {
                     result = {entry: e, strict: true};
                 }
                 i = i + 1;
             }
             if (result === null) {
-                const near = new Set(res.ctx);
+                const near = new Set(useCtx);
                 res.wset.forEach(function (name) {
                     near.add(name);
                 });
@@ -899,8 +946,10 @@
                     let num = null;
                     if (parsed !== null && parsed.ok) {
                         num = evaluate(parsed.right, function (tok) {
-                            const hit = findEntry(tok.names, res);
-                            let result = null;
+                            const selected = priorSelect(tok.names, res.ctx);
+                            const hit = priorIsFirst(tok.names, res.ctx) ? null : findEntry(selected.names, res, selected.ctx);
+                            // the first row has no previous row and the number 0
+                            let result = priorIsFirst(tok.names, res.ctx) ? 0 : null;
                             if (hit !== null) {
                                 if (hit.entry.kind === 'value') {
                                     result = hit.entry.number;

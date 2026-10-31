@@ -227,6 +227,50 @@ class import_write_tests
             }
         }
 
+        $t->subheader($ts . 'triple description across imports');
+
+        // a first import creates the triple without a description, like solution_prio.json does it
+        // for a triple that a later file describes
+        $test_name = 'import a triple without a description';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_1 . test_files::JSON, $t->usr1, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $trp = new triple($t->usr1);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
+        $org_id = $trp->id();
+        $t->assert_greater_zero($test_name, $org_id, test_base::TIMEOUT_LIMIT_DB);
+        // negative: without this the next test would also pass if the first import has set the description
+        $test_name = '... has no description yet';
+        $t->assert($test_name, $trp->description ?? '', '', test_base::TIMEOUT_LIMIT_DB);
+
+        // the same from/verb/to link gets its id early, but the other fields must still be updated
+        $test_name = 'a later import of the same link adds the description';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_2 . test_files::JSON, $t->usr1, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $trp = new triple($t->usr1);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
+        $t->assert($test_name, $trp->description, triple_names::SYSTEM_TEST_ADD_COM, test_base::TIMEOUT_LIMIT_DB);
+        $test_name = '... of the existing triple without adding a duplicate';
+        $t->assert($test_name, $trp->id(), $org_id, test_base::TIMEOUT_LIMIT_DB);
+
+        // the weight forces an update of the triple, which must not remove the description
+        $test_name = 'an update due to another field keeps the description';
+        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLE_DESCRIPTION_3 . test_files::JSON, $t->usr1, false);
+        $t->assert_true($test_name . ' ' . $imp_msg->all_message_text(), $imp_msg->is_ok());
+        $trp = new triple($t->usr1);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_ADD, $msg);
+        $t->assert($test_name, $trp->description, triple_names::SYSTEM_TEST_ADD_COM, test_base::TIMEOUT_LIMIT_DB);
+        // confirms that the update has happened, because else the description is kept without any check
+        $test_name = '... and writes the other field';
+        $t->assert($test_name, $trp->weight, 0.5, test_base::TIMEOUT_LIMIT_DB);
+
+        // cleanup the triple that uses the described triple first, because it depends on it
+        $trp = new triple($t->usr1);
+        $trp->load_by_name(triple_names::SYSTEM_TEST_USING_DESCRIBED, $msg);
+        if ($trp->id() > 0) {
+            $trp->del($msg);
+        }
+        $this->del_types_cache_test_phrases($t, $msg);
+
         $t->subheader($ts . 'types cache clear');
 
         // a symbol triple is part of the system phrases of the cached types api message, so its

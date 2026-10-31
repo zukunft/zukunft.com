@@ -1,9 +1,25 @@
 # pending prio 2
 
+## test run speed
+
+Candidates from a full `test/test.php` run of 1347 s with `xdebug.mode=debug`; the savings are estimates from that log and none is measured yet. About 131 s of the run were the two stops of a breakpoint at the two test errors in `coding_rule_tests::use_case_no_test_formula_tests`, so that time is no candidate.
+
+1. Run without Xdebug if no breakpoint is needed: `php test/test.php`. This is the easiest step and speeds up all PHP of the test process. Measure the saving, because the factor depends on the mode.
+2. Start page after a write, about 60 to 80 s: an `_edit_back` step of the url workflows and write workflows returns to the start page, which takes 1 to 3 s with a filled cache and up to 11 s after a write. The `api list response` of 138 s is the biggest part of `api_wait`. Check which of these steps need the start page and let the others go back to a small view. The snapshots of these steps change.
+3. Phrase data calls in the tests, about 16 s: `phrase_data_read_tests` loads `example portfolio split` once without and once with results. Check if the assertions of the call without results can use the call with results.
+4. Config rebuild after a write, about 25 s: `write_config_cache` appears about 15 times, each with about 1.7 s of `db_map` and `db_read`, although `frontend.php` keeps the cached config on a write that cannot change it. Find out which of the writes still drop it, for example because the cache is per user.
+5. Use case imports in `import_tests`, about 9 s: portfolio split, AHV, ABB and CBAM are each imported a second time for the negative test. Check if the negative tests can change the values of the first data object and run only the calc validation.
+6. Cleanup of the test objects, about 10 s: `test_objects::cleanup_objects` loads and deletes each test name on its own. Load the existing names with one query first and loop only over these.
+7. Web login, about 6 s: `view.php?m=11` runs into the timeout of 1 s up to five times per run. Skip the following logins after the first timeout of a run. A faster login page would also activate the skipped user api tests.
+
 ## calculator js
 
 in src/main/resources/script/calculator_json.js are some fixed text warning messages like 'console.warn('the data selects several numbers for ' + what + ': ' + Array.from(numbers).join(', '));'
 make this text translatable so that the frontend language shows the warning in the correct language
+
+## import test of a renamed link below a triple
+
+`triple_list::save_with_cache` renames a triple whose from/verb/to link exists under another name also when its from side is a triple that gets its id only in a later level of the import. No test covers this yet: add a write test that saves a triple below a named triple, imports the same link under a new name and checks that the row is renamed and no second row is added, and a negative test with a new link that is inserted.
 
 ## calculator selector with and without numbers
 

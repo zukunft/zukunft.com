@@ -307,7 +307,8 @@ class formula_link_write_tests
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_ADD, word_names::TEST_THIS);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_K, word_names::TEST_IN_K);
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_TO_K, word_names::ONE);
-        $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_MIO, word_names::MIO);
+        // SYSTEM_TEST_SCALE_MIO has no link, because it is only calculated directly for a phrase list
+        // and a link to the seed word million would show it on a use case page with million
         $t_db->test_formula_link(formula_names::SYSTEM_TEST_SCALE_BIL, word_names::TEST_BIL);
         $t_db->test_formula_link(formula_names::INCREASE, words::YEAR_CAP);
 

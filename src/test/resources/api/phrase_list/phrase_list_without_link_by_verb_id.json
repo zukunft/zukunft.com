@@ -361,6 +361,13 @@
         "class": "triple"
     },
     {
+        "id": 433,
+        "name": "price",
+        "description": "amount of money required to buy something",
+        "type_id": 1,
+        "class": "word"
+    },
+    {
         "id": 392,
         "name": "reason",
         "description": "the cause of a problem, e.g. the climate gas emissions of global warming, linked with '<reason> is a reason'; the loss that a reason causes carries the problem, the word reason and the reason",

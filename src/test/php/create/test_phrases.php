@@ -1888,6 +1888,30 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the request cache of the button test: the calculator input test with a download button
+     */
+    function list_calculator_button_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_button());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the check table test: the calculator input test with the check group
+     */
+    function list_calculator_check_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_check());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the warning test: the calculator input test with a warning of the inhabitants
+     */
+    function list_calculator_warning_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_warning());
+    }
+
+    /**
      * @return phrase_list_ui the request cache of the field type test: the calculator input test
      *         with a read only, a checkbox and a repeated field
      */

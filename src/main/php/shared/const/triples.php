@@ -294,6 +294,7 @@ class triples
         self::FIELD_LIMIT_UP => self::FIELD_LIMIT_UP_CODE_ID,
         self::FIELD_LIMIT_DOWN => self::FIELD_LIMIT_DOWN_CODE_ID,
         self::FIELD_STEP => self::FIELD_STEP_CODE_ID,
+        self::CALCULATOR_DECIMALS => self::CALCULATOR_DECIMALS_CODE_ID,
     ];
     // the types of a process catch field by their code id
     const array FIELD_TYPES = [
@@ -391,6 +392,53 @@ class triples
     const string CALCULATOR_SIGNED_CODE_ID = 'system_calculator_signed';
     const string CALCULATOR_NUMBER_NOTE = 'calculator number note';
     const string CALCULATOR_NUMBER_NOTE_CODE_ID = 'system_calculator_number_note';
+    const string CALCULATOR_SECTION = 'calculator section';
+    const string CALCULATOR_SECTION_CODE_ID = 'system_calculator_section';
+    const string CALCULATOR_ROW_NUMBER = 'calculator row number';
+    const string CALCULATOR_ROW_NUMBER_CODE_ID = 'system_calculator_row_number';
+    const string CALCULATOR_PHRASE_COLUMN = 'calculator phrase column';
+    const string CALCULATOR_PHRASE_COLUMN_CODE_ID = 'system_calculator_phrase_column';
+    const string CALCULATOR_PAGE_INDEPENDENT = 'calculator page independent';
+    const string CALCULATOR_PAGE_INDEPENDENT_CODE_ID = 'system_calculator_page_independent';
+    // the flags of a detail table and of its columns by their code id
+    const array CALCULATOR_DETAIL_FLAGS = [
+        self::CALCULATOR_PAGE_INDEPENDENT => self::CALCULATOR_PAGE_INDEPENDENT_CODE_ID,
+        self::CALCULATOR_SECTION => self::CALCULATOR_SECTION_CODE_ID,
+        self::CALCULATOR_ROW_NUMBER => self::CALCULATOR_ROW_NUMBER_CODE_ID,
+        self::CALCULATOR_PHRASE_COLUMN => self::CALCULATOR_PHRASE_COLUMN_CODE_ID,
+    ];
+    const string CALCULATOR_FILE_IMPORT = 'calculator file import';
+    const string CALCULATOR_FILE_IMPORT_CODE_ID = 'system_calculator_file_import';
+    const string CALCULATOR_DOWNLOAD = 'calculator download';
+    const string CALCULATOR_DOWNLOAD_CODE_ID = 'system_calculator_download';
+    const string CALCULATOR_REPORT = 'calculator printable report';
+    const string CALCULATOR_REPORT_CODE_ID = 'system_calculator_printable_report';
+    const string CALCULATOR_COPY = 'calculator copy';
+    const string CALCULATOR_COPY_CODE_ID = 'system_calculator_copy';
+    // the buttons of a calculator list or table by their code id
+    const array CALCULATOR_BUTTONS = [
+        self::CALCULATOR_FILE_IMPORT => self::CALCULATOR_FILE_IMPORT_CODE_ID,
+        self::CALCULATOR_DOWNLOAD => self::CALCULATOR_DOWNLOAD_CODE_ID,
+        self::CALCULATOR_REPORT => self::CALCULATOR_REPORT_CODE_ID,
+        self::CALCULATOR_COPY => self::CALCULATOR_COPY_CODE_ID,
+    ];
+    const string CALCULATOR_NOTE = 'calculator note';
+    const string CALCULATOR_NOTE_CODE_ID = 'system_calculator_note';
+    const string CALCULATOR_CHECK = 'calculator check';
+    const string CALCULATOR_CHECK_CODE_ID = 'system_calculator_check';
+    const string CALCULATOR_DIAGRAM = 'calculator diagram';
+    const string CALCULATOR_DIAGRAM_CODE_ID = 'system_calculator_diagram';
+    // the blocks of a calculator page besides the tables by their code id
+    const array CALCULATOR_BLOCKS = [
+        self::CALCULATOR_NOTE => self::CALCULATOR_NOTE_CODE_ID,
+        self::CALCULATOR_CHECK => self::CALCULATOR_CHECK_CODE_ID,
+        self::CALCULATOR_DIAGRAM => self::CALCULATOR_DIAGRAM_CODE_ID,
+    ];
+    const string CALCULATOR_COLOUR = 'calculator colour';
+    const string CALCULATOR_DECIMALS = 'calculator decimals';
+    const string CALCULATOR_DECIMALS_CODE_ID = 'system_calculator_decimals';
+    const string CALCULATOR_WARNING = 'calculator warning';
+    const string CALCULATOR_WARNING_CODE_ID = 'system_calculator_warning';
     const string CALCULATOR_READ_ONLY = 'calculator read only';
     const string CALCULATOR_READ_ONLY_CODE_ID = 'system_calculator_read_only';
     const string CALCULATOR_CHECKBOX = 'calculator checkbox';
@@ -418,6 +466,7 @@ class triples
         self::CALCULATOR_HIGHLIGHT => self::CALCULATOR_HIGHLIGHT_CODE_ID,
         self::CALCULATOR_SIGNED => self::CALCULATOR_SIGNED_CODE_ID,
         self::CALCULATOR_NUMBER_NOTE => self::CALCULATOR_NUMBER_NOTE_CODE_ID,
+        self::CALCULATOR_WARNING => self::CALCULATOR_WARNING_CODE_ID,
     ];
     // the keywords of the calculator and of the input fields by their code id, which the data of a
     // phrase (see phrase_data) never walks through, because every page phrase links to them
@@ -427,6 +476,10 @@ class triples
         ...triples::FIELD_PROPERTIES,
         ...triples::FIELD_TYPES,
         ...triples::CALCULATOR_FIELD_KINDS,
+        ...triples::CALCULATOR_DETAIL_FLAGS,
+        ...triples::CALCULATOR_BLOCKS,
+        ...triples::CALCULATOR_BUTTONS,
+        self::CALCULATOR_DECIMALS => self::CALCULATOR_DECIMALS_CODE_ID,
     ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';

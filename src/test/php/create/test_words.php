@@ -1163,6 +1163,16 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "expected", the word of a value of the check table of a calculator page
+     */
+    function word_expected(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::EXPECTED_TEST_ID, words::EXPECTED);
+        return $wrd;
+    }
+
     function word_inhabitant(): word
     {
         $wrd = new word($this->env->usr1);

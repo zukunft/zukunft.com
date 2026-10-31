@@ -365,6 +365,27 @@ class word_list_tests
         $t->assert_false($test_name, $added);
         $msg->reset();
 
+        $t->subheader($ts . 'update of the database');
+        $test_name = 'an update due to another field keeps the description that the import does not name';
+        $wrd_db = $t_wrd->word();
+        $wrd_db->description = word_names::MATH_COM;
+        $db_lst = new word_list($t->usr1);
+        $db_lst->add($wrd_db);
+        $wrd_imp = $t_wrd->word();
+        $wrd_imp->description = null;
+        $imp_lst = new word_list($t->usr1);
+        $imp_lst->add($wrd_imp);
+        $imp_lst->sql_update($sc, $db_lst, $msg);
+        $t->assert($test_name, $wrd_imp->description, word_names::MATH_COM);
+        // negative: a description that the import names is still the update
+        $test_name = '... but the description of the import replaces the description of the database';
+        $wrd_new = $t_wrd->word();
+        $wrd_new->description = word_names::TEST_RENAMED;
+        $new_lst = new word_list($t->usr1);
+        $new_lst->add($wrd_new);
+        $new_lst->sql_update($sc, $db_lst, $msg);
+        $t->assert($test_name, $wrd_new->description, word_names::TEST_RENAMED);
+
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/word/word_list.json';
         $t->assert_json_file(new word_list($t->usr1), $json_file);

@@ -1,0 +1,26 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2024-06-14 12:00:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "re-declares the same from/verb/to link and name without a description, but with a weight so that the triple is updated"
+  ],
+  "words": [
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
+  "triples": [
+    {
+      "name": "System Test Triple",
+      "from": "System Test Word",
+      "verb": "is a",
+      "to": "System Test Word To",
+      "weight": 0.5
+    }
+  ]
+}

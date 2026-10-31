@@ -1,23 +1,25 @@
 phrase_id,phrase_name
--3247,second child portfolio instance
--3246,first child portfolio instance
--3226,SEK cash holding
--3225,DKK cash holding
--3224,JPY cash holding
--3223,GBP cash holding
--3222,USD cash holding
--3221,EUR cash holding
--3220,CHF cash holding
--3219,bond holding
--3215,TreasuryUS27 (bond (finance))
--3214,BundDE30 (bond (finance))
--3213,RocheBond28 (bond (finance))
--3212,NestleBond27 (bond (finance))
--3211,ConfedBond30 (bond (finance))
--3205,SEK (currency)
--3204,DKK (currency)
--3203,JPY (currency)
--3202,GBP (currency)
+-3334,bond price kind
+-3302,second child portfolio instance
+-3301,first child portfolio instance
+-3297,stock price kind
+-3264,SEK cash holding
+-3263,DKK cash holding
+-3262,JPY cash holding
+-3261,GBP cash holding
+-3260,USD cash holding
+-3259,EUR cash holding
+-3258,CHF cash holding
+-3257,bond holding
+-3253,TreasuryUS27 (bond (finance))
+-3252,BundDE30 (bond (finance))
+-3251,RocheBond28 (bond (finance))
+-3250,NestleBond27 (bond (finance))
+-3249,ConfedBond30 (bond (finance))
+-3239,SEK (currency)
+-3238,DKK (currency)
+-3237,JPY (currency)
+-3236,GBP (currency)
 -3201,cash (holding)
 -3200,stock (holding)
 -3162,UBSG (stock)

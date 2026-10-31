@@ -469,7 +469,7 @@ class verbs
 
     // the verbs of the calculator triples (docs/llm/new_view_sample_pv_balance.md rules 3, 6, 7 and 9),
     // the only triples that the from walk of the data of a phrase (see phrase_data) follows
-    const array CALCULATOR_VERBS = [self::HAS, self::WITH, self::FOLLOW, self::CAN_BE, self::USES];
+    const array CALCULATOR_VERBS = [self::HAS, self::WITH, self::FOLLOW, self::CAN_BE, self::USES, self::RANK];
 
     // ordered list of the verbs that connect an argument to the claim it is about;
     // ordering goes from the strongest backing to the weakest, so a renderer that

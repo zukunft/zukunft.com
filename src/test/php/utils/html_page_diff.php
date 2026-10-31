@@ -52,6 +52,7 @@ class html_page_diff
     const string CLASS_FIELD = 'field';
     const string CLASS_CHECK = 'check';
     const string CLASS_READ_ONLY = 'ro';
+    const string CLASS_WARNING = 'warn';
     const string VALUE_CHECKED = 'checked';
     const string CLASS_TAG = 'tag';
     const string CLASS_UNIT = 'unit';
@@ -68,6 +69,7 @@ class html_page_diff
     const string KIND_TABLE = 'table';
     const string KIND_SECTION = 'table section';
     const string KIND_ROW = 'row';
+    const string KIND_WARNING = 'warning';
     const string KIND_BUTTON = 'button';
     const string KIND_LIST_ITEM = 'list item';
     // the kinds whose order is compared, because the reader sees them in this order
@@ -100,6 +102,9 @@ class html_page_diff
             $this->add_header_items($xpath, $result);
             $this->add_text_items($xpath, '//main//h2 | //main//summary', self::KIND_HEADING, $result);
             $this->add_field_items($xpath, $result);
+            // only a warning that the reader sees, because the sample hides the others
+            $warnings = '//main//div[' . $this->has_class(self::CLASS_WARNING) . '][not(@hidden)]';
+            $this->add_text_items($xpath, $warnings, self::KIND_WARNING, $result);
             $this->add_table_items($xpath, $result);
             $this->add_text_items($xpath, '//main//button', self::KIND_BUTTON, $result);
             $this->add_text_items($xpath, '//main//li', self::KIND_LIST_ITEM, $result);
