@@ -1,5 +1,47 @@
 # pending - list of planned llm prompts with prio 1
 
+## portfolio split page compared with its sample
+
+The steps fix `portfolio_split_calculator_diff.md` and the three case reports, in this order, because each step makes the findings of the next one readable. Numbers like (5) are the open points in the description of `portfolio_split_calculator.json`, whose keywords are `PROPOSED NEW ELEMENT` in `calculator_keywords.json` and described in `docs/json_structure.md` "Proposed elements". Every renderer change goes into `ui_list.php` and `calculator_json.js` with a positive and a negative test. Run `test/test_part.php` after each step; it already renders only this page.
+
+### step 3: the input fields (1), (2), (3), (4)
+
+The read only field, the checkbox and the fields per instance exist. Still open:
+- a result column and a walk column of the repeated phrase once per instance, which also gives the header `CHF | Parent | First child | Second child | Total`
+- the buttons "Add child" and remove per field with their function: a new instance needs its own phrase, and the remove buttons are still missing
+- the field of a child shows the ratio 0.35 with the unit percent, where the sample shows 35 with %
+- warning for the weight checks, which needs a result of the excess and of the difference of the target shares
+- the source number [1] in the hint of the target weight of the parent points to no source list of the sample until step 8
+
+### step 4: the result table (9), (17)
+
+- the column colours and the total of the realised portfolio value
+- the row "Deviation from target" belongs to the section "Realised" in the sample: move it in the json and remove the group `deviation`
+- the numbers of the table have no unit in the sample, because the unit is in the header: decide if the header names CHF instead of each cell
+- the realised weight has three decimals in the sample: `calculator decimals`
+
+### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
+
+- one collapsed section per table with the summary of the sample
+- the holdings table with `Position | Ccy | Quantity | Price | Round lot`: a row per position instead of `Bond (finance)`, `Cash` and `Stock`, which needs the rows over several levels of (15), the currency column (7) and the number fields (6)
+- the walk table with `# | Position | Original | Lot value CHF | Target first | First | Second | Parent | Cum. dev. first CHF`: row number and order (8), the formula per kind of holding for the lot value and the target in units (16)
+
+### step 6: the notes, the check table and the diagram (10), (11), (12)
+
+Each is a separate block of the page: the notes list under the heading "Notes", the table `Value | Expected | Calculated | Status` under "Check against the sample files" and the line diagram under "Cumulative deviation of the children along the walk".
+
+### step 7: the buttons (13)
+
+"Download", "Report", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV". The sample says "placement test only" for most of them, so first add them at their place without a function. The function of each button is a task of its own, and an import is a write that needs the usual permission and log rules.
+
+### step 8: decide what the generated page keeps
+
+The headings "Details and sources" and "Sources" and the list items "split agreement" and "bank reporting bank leu client xy" exist only in the generated page, and "Inputs from" only in the sample. The sources are required for every number, so the sample most likely lacks them by mistake: add them to the sample as an exception, after the developer has confirmed it.
+
+### step 9: calculate the split again in the browser (18)
+
+`min`, `max`, `if` and `sum` exist now, so update (18) in the description of the use case. Still missing are the round to a multiple, the sort by a result and the walk that carries the deviation from one row into the next. Until then the walk stays modelled values and the numbers of the `high` and `low` case reports differ from the sample for a good reason, e.g. the target weight 30 % instead of 10 %. This is an engine task, so plan it on its own after the page structure is done.
+
 ## prime group id within 2^53
 
 limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)

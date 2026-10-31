@@ -5,6 +5,14 @@
 in src/main/resources/script/calculator_json.js are some fixed text warning messages like 'console.warn('the data selects several numbers for ' + what + ': ' + Array.from(numbers).join(', '));'
 make this text translatable so that the frontend language shows the warning in the correct language
 
+## calculator selector with and without numbers
+
+A selector that mixes options with and without a number keeps the last results while an option without a number is selected, because no number exists for it, and the page does not tell the user. Report this on the page, or refuse such a selector in the import, with a positive and a negative test. The selected option of such a selector is also not saved, because a phrase selector has no save vars.
+
+## calculator scripts without a browser test of a checkbox
+
+No use case has a formula that reads a checkbox, so no input case toggles one in `calculator.js` or `calculator_json.js`. Add the toggle to `use_case_cases.js` and a case when the first such formula exists, e.g. mirroring in the portfolio split walk.
+
 ## formula editor
 
 - the toast of a failed save in `src/main/resources/script/formula_editor.js` says "The message is shown

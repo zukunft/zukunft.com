@@ -95,6 +95,8 @@ class system_views_read_tests
     const string CASE_RESULT_ID = 'caseResult';
     const string CASE_MISSING = 'missing';
     const string CASE_PAGE = 'page';
+    // the case without an input, to read a page as a browser shows it after its script has run
+    const string CASE_UNCHANGED = 'unchanged';
     // the field of the case test_files::PV_CASE_MISSING_FIELD that no page has
     const string CASE_UNKNOWN_FIELD = 'Wind turbine size';
     // the missing field of a case that has not ended in the browser e.g. because the page script has failed
@@ -639,15 +641,69 @@ class system_views_read_tests
      * @param string $sample_name the file name of the sample without the extension
      * @param string $page_name the file name of the generated page without the extension
      * @param string $diff_name the file name of the markdown report without the extension
+     * @param string $cases_script the script with the CASES of a sample that fills its tables by its script,
+     *                             so that the sample is compared as a browser shows it; empty for a sample with its tables in the html
      * @return void
      */
-    private function assert_sample_diff(test_cleanup $t, string $sample_name, string $page_name, string $diff_name): void
+    private function assert_sample_diff(
+        test_cleanup $t,
+        string       $sample_name,
+        string       $page_name,
+        string       $diff_name,
+        string       $cases_script = ''
+    ): void
+    {
+        $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
+        $sample_file = $sample_name . test_files::HTML;
+        $sample_html = $t->path_file($dir . $sample_file);
+        if ($cases_script != '') {
+            $sample_html = $this->sample_in_browser($sample_html, $cases_script);
+        }
+        if ($sample_html === null) {
+            $t->dsp_warning('no headless browser found, so the differences of ' . $sample_file . ' are not reported');
+        } else {
+            $this->assert_sample_items($t, $sample_html, $sample_file, $page_name, $diff_name);
+        }
+    }
+
+    /**
+     * @param string $sample_html the html code of the sample
+     * @param string $cases_script the script with the CASES of the sample
+     * @return string|null the html code of the sample as a browser shows it after its script has run, null without a browser
+     */
+    private function sample_in_browser(string $sample_html, string $cases_script): ?string
+    {
+        $result = null;
+        $brw = new headless_browser();
+        if ($brw->start() != '') {
+            $sample_copy = $brw->page_copy($sample_html, $cases_script, test_files::USE_CASE_CASES);
+            $result = $this->pv_case($brw, $sample_copy, self::CASE_UNCHANGED)[self::CASE_PAGE];
+            unlink($sample_copy);
+        }
+        $brw->stop();
+        return $result;
+    }
+
+    /**
+     * @param test_cleanup $t the test environment with the test users
+     * @param string $sample_html the html code of the sample to compare
+     * @param string $sample_file the file name of the sample
+     * @param string $page_name the file name of the generated page without the extension
+     * @param string $diff_name the file name of the markdown report without the extension
+     * @return void
+     */
+    private function assert_sample_items(
+        test_cleanup $t,
+        string       $sample_html,
+        string       $sample_file,
+        string       $page_name,
+        string       $diff_name
+    ): void
     {
         $hpd = new html_page_diff();
         $dir = test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES;
-        $sample_file = $sample_name . test_files::HTML;
         $page_file = $page_name . test_files::HTML;
-        $sample = $hpd->page_items($t->path_file($dir . $sample_file));
+        $sample = $hpd->page_items($sample_html);
         $page = $hpd->page_items($t->path_file($dir . $page_file));
 
         $test_name = 'the sample ' . $sample_file . ' has items to compare';
@@ -877,7 +933,8 @@ class system_views_read_tests
     function run_portfolio_split_calculator_diff(test_cleanup $t): void
     {
         $this->assert_sample_diff($t, test_files::PORTFOLIO_SPLIT_CALCULATOR_SAMPLE,
-            test_files::PORTFOLIO_SPLIT_CALCULATOR_NO_JS, test_files::PORTFOLIO_SPLIT_CALCULATOR_DIFF);
+            test_files::PORTFOLIO_SPLIT_CALCULATOR_NO_JS, test_files::PORTFOLIO_SPLIT_CALCULATOR_DIFF,
+            test_files::PORTFOLIO_SPLIT_CALCULATOR_CASES);
     }
 
     /**
@@ -902,7 +959,7 @@ class system_views_read_tests
             $page = $brw->page_copy($page_html, test_files::PORTFOLIO_SPLIT_CALCULATOR_CASES, test_files::USE_CASE_CASES);
             foreach (test_files::PORTFOLIO_CASES as $case) {
                 $this->assert_sample_case($t, $brw, $sample, $page, test_files::PORTFOLIO_SPLIT_CALCULATOR_SAMPLE,
-                    test_files::PORTFOLIO_SPLIT_CALCULATOR_JS, test_files::PORTFOLIO_CASE_DIFF_PREFIX, $case, false);
+                    test_files::PORTFOLIO_SPLIT_CALCULATOR_JS, test_files::PORTFOLIO_CASE_DIFF_PREFIX, $case, true);
             }
             unlink($sample);
             unlink($page);

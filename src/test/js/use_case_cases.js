@@ -21,10 +21,11 @@ function fieldOf(label) {
     return lab === undefined ? null : document.getElementById(lab.htmlFor);
 }
 
-/* select the option with the value, also by its attribute, which the test reads from the page */
+/* select the option with the value or the text, because the value of an option without a number is page specific,
+   also by its attribute, which the test reads from the page */
 function selectOption(field, value) {
     const opt = Array.from(field.options).find(function (o) {
-        return o.value === value;
+        return o.value === value || o.textContent.trim() === value;
     });
     if (opt !== undefined) {
         Array.from(field.options).forEach(function (o) {
@@ -42,8 +43,10 @@ function typeNumber(field, value) {
     if (field.tagName === "SELECT") {
         result = selectOption(field, value);
     } else {
-        field.value = value;
-        field.setAttribute("value", value);
+        // the field of a share up to 1 gets a number in percent as the ratio, which it shows
+        const number = field.max === "1" && Number(value) > 1 ? String(Number(value) / 100) : value;
+        field.value = number;
+        field.setAttribute("value", number);
     }
     if (result) {
         field.dispatchEvent(new Event("input", {bubbles: true}));

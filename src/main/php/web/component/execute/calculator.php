@@ -232,6 +232,15 @@ class calculator
     }
 
     /**
+     * @param phrase $item a repeated input item e.g. portfolio split input child portfolio
+     * @return string the text of the button that adds an instance e.g. Add child
+     */
+    function repeat_label(phrase $item): string
+    {
+        return $this->own_text($item, triples::CALCULATOR_REPEAT) ?? '';
+    }
+
+    /**
      * @param phrase $item the item e.g. a row or a row group
      * @param string $flag the name of the flag keyword e.g. triples::CALCULATOR_HIGHLIGHT
      * @return bool true if the item, its phrase or the filter phrase of the item has the flag

@@ -324,6 +324,9 @@ class triple_names
     const string CALC_ZH_INPUT_CANTON_LABEL_COM = 'Region';
     // the triples of the calculator input test, which follow the 24 triples of the reader test
     const int CALC_INPUT_FIRST_ID = 959;
+    // the read only, checkbox and repeated field of the calculator input test
+    const int CALC_FIELDS_FIRST_ID = 920;
+    const string CALC_ADD_LABEL = 'Add canton';
     // the triples of the calculation result test, which follow the 5 triples of the input test
     const int CALC_RESULT_FIRST_ID = 954;
     const string CALC_ZH_COLUMNS_LABEL_COM = 'Main numbers';
@@ -512,6 +515,7 @@ class triple_names
     const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
     // the beneficiary whose allocation the use case portfolio_split_calculator.json models
     const string FIRST_CHILD_PORTFOLIO = 'first child portfolio';
+    const string FIRST_CHILD_PORTFOLIO_INSTANCE = 'first child portfolio instance';
     // an input of the use case cbam_calculator.json that two results of its chain depend on
     const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
     // an input of the use case ahv_vat_vote.json that the extra VAT revenue and its chain depend on

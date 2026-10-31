@@ -89,6 +89,8 @@ editor shows the name of the phrase.
 - **phrase selector**: `heating system` · `can be` · `phrase selector`. Its options are:
   - triples named `heating system option …`, each with an optional label and order
   - phrases that `is a` heating system, with an optional order
+  - an option without a value only selects its phrase and has no number, so the
+    results keep their numbers while it is selected
   - with `can be` · `field phrase selector value based`: the phrases of the values
     of the field, if no option is listed
 - **the selected option**: the page phrase `uses` it, e.g. `sample house` · `uses` · `heat pump`
@@ -113,18 +115,20 @@ editor shows the name of the phrase.
 ## Proposed elements
 
 These keywords are defined in
-[calculator_keywords.json](../src/main/resources/messages/calculator_keywords.json),
-each with a description that starts with `PROPOSED NEW ELEMENT`. The editor does not
-read them yet. The sample uses each of them once, so that the page structure that
-they need is clear before the code is written.
+[calculator_keywords.json](../src/main/resources/messages/calculator_keywords.json).
+A description that starts with `PROPOSED NEW ELEMENT` marks a keyword that the code does
+not fully read yet. The editor does not read any of them. The sample uses each of them
+once, so that the page structure that they need is clear before the code is written.
+The calculator page already shows the checkbox, the read only field and the fields of a
+repeated input.
 
 ### Input fields
 
 | element | triple in the sample | effect |
 |---|---|---|
 | checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
-| read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the result of the item phrase instead of a field |
-| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button |
+| read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
+| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field |
 | warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero |
 
 A repeated input:

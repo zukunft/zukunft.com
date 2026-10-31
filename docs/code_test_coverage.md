@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1542 of 6302 public functions have at least 2 unit test calls; the 4556 functions below do not; the 204 functions of the last section are called nowhere
+1542 of 6305 public functions have at least 2 unit test calls; the 4559 functions below do not; the 204 functions of the last section are called nowhere
 
 ## 1999 functions of main backend have no test at all
 
@@ -2266,7 +2266,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 885 functions of frontend have no test at all
+## 887 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2295,6 +2295,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- own_label - 0 unit test calls
     \-- page_label - 0 unit test calls
     \-- phrase_label - 0 unit test calls
+    \-- repeat_label - 0 unit test calls
     \-- used - 0 unit test calls shared by 2 classes
 \-- change_log
     \-- field_code_id - 0 unit test calls
@@ -2552,6 +2553,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- img - 0 unit test calls
     \-- input_password - 0 unit test calls
     \-- label_lan - 0 unit test calls
+    \-- label_no_for - 0 unit test calls
     \-- lf - 0 unit test calls
     \-- list_sort - 0 unit test calls shared by 3 classes
     \-- list_unsorted - 0 unit test calls
@@ -4524,7 +4526,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 519 functions of frontend have incomplete tests
+## 520 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4702,6 +4704,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- about_body - 1 unit test calls shared by 2 classes
     \-- form_end - 2 unit test calls shared by 2 classes
     \-- header - 2 unit test calls shared by 7 classes
+    \-- input_checkbox - 1 unit test calls
     \-- link_style - 1 unit test calls
     \-- list - 8 unit test calls shared by 7 classes
     \-- list_item - 1 unit test calls

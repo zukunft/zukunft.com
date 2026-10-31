@@ -54,7 +54,7 @@ which the table of the PV lifetime balance below explains.
 To add the sample setup for a use case, in system_views_read_tests and test_files:
 
 1. write the page without javascript and the page of the browser with assert_view_by_name, like run_portfolio_split_calculator
-2. report the differences of the server page to the sample with assert_sample_diff, like run_portfolio_split_calculator_diff
+2. report the differences of the server page to the sample with assert_sample_diff, like run_portfolio_split_calculator_diff; a sample whose script fills its tables gets its cases script, so that it is compared as a browser shows it, and a case `unchanged` without an input
 3. add the input cases in src/test/js/`<name>_cases.js`, which use_case_cases.js types into the sample and the page of the browser, and report them with assert_sample_case, like run_portfolio_split_calculator_cases
 4. add the run functions to system_views_read_tests::run and this table
 

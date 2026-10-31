@@ -716,6 +716,64 @@ class use_case_ui_tests
         $test_name = '... but a phrase selector sends no group id';
         $canton_id = $dto_in->phr_lst->get_by_name(word_names::CANTON, $msg)->id();
         $t->assert_text_not_contains($test_name, $in_html, 'name="' . url_var::GROUP . $canton_id . '"');
+        // an option without a number selects only its phrase e.g. the walk order, so its value is no number that a result could read
+        $test_name = 'a selector option without a number is offered and selected by its phrase';
+        $opt_id = $dto_in->phr_lst->get_by_name(word_names::YEAR_2020, $msg)->id();
+        $opt_html = '<option value="' . ui_list::CALC_OPTION_PHRASE . $opt_id . '"';
+        $dto_no_num = clone $dto_in;
+        $dto_no_num->val_lst = new value_list_ui();
+        $no_num_html = $page->calculator_input($zh_city, $msg, $dto_no_num, $form, views::CALCULATOR, []);
+        $t->assert_text_contains($test_name, $no_num_html, $opt_html . '  selected');
+        // negative: an option with a number keeps the number as its value, which a result of the page reads
+        $test_name = '... but an option with a number is selected by its number';
+        $dto_opt_num = clone $dto_in;
+        $dto_opt_num->val_lst = $t_val->value_list_calculator_option_ui();
+        $opt_num_html = $page->calculator_input($zh_city, $msg, $dto_opt_num, $form, views::CALCULATOR, []);
+        $t->assert_text_not_contains($test_name, $opt_num_html, $opt_html);
+        // the other field types: the inhabitants read only, 2019 as a checkbox and the canton repeated with Bern
+        $test_name = 'a read only field shows its number without an input';
+        $dto_fld = clone $dto_in;
+        $dto_fld->phr_lst = $t_phr->list_calculator_fields_ui();
+        $fld_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, []);
+        $t->assert_text_contains($test_name, $fld_html, '<div class="' . styles::INPUT_READ_ONLY . '">');
+        $test_name = '... and its label points to no field';
+        $ro_label = '<label>' . triple_names::CALC_INHABITANTS_LABEL_COM . '</label>';
+        $t->assert_text_contains($test_name, $fld_html, $ro_label);
+        $test_name = '... but the label of a number field does';
+        $t->assert_text_not_contains($test_name, $in_html, $ro_label);
+        // negative: a user cannot change a read only number, also not by the url, which the assumption field of the same phrase may use
+        $test_name = '... and a number in the url does not change a read only field';
+        $ro_id = $dto_fld->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
+        $ro_url = [url_var::NUMERIC_VALUE . $ro_id => values::SAMPLE_INT];
+        $ro_url_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, $ro_url);
+        $ro_number = $this->read_only_number($fld_html);
+        $ro_url_number = $this->read_only_number($ro_url_html);
+        $t->assert($test_name, $ro_url_number, $ro_number);
+        $test_name = 'a checkbox sends 0 by its hidden field if it is unchecked';
+        $chk_name = url_var::NUMERIC_VALUE . $dto_fld->phr_lst->get_by_name(word_names::YEAR_2019, $msg)->id();
+        $chk_html = $html->input_checkbox($chk_name, true, $form);
+        $t->assert_text_contains($test_name, $fld_html, $html->form_hidden($chk_name, '0', $form)
+            . '<input type="checkbox" name="' . $chk_name . '"');
+        $test_name = '... but is not checked without a number';
+        $t->assert_text_not_contains($test_name, $fld_html, $chk_html);
+        $test_name = 'a checkbox is checked by the number 1 in the url';
+        $chk_on_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, [$chk_name => '1']);
+        $t->assert_text_contains($test_name, $chk_on_html, $chk_html);
+        $test_name = '... and not by the number 0 of its hidden field';
+        $chk_off_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, [$chk_name => '0']);
+        $t->assert_text_not_contains($test_name, $chk_off_html, $chk_html);
+        $test_name = 'a repeated field has a field per instance with the name of the instance';
+        $rep_id = $dto_fld->phr_lst->get_by_name(word_names::BE, $msg)->id();
+        $t->assert_text_contains($test_name, $fld_html, 'name="' . url_var::NUMERIC_VALUE . $rep_id . '"');
+        $test_name = '... and the button to add an instance';
+        $t->assert_text_contains($test_name, $fld_html, '>' . triple_names::CALC_ADD_LABEL . '</button>');
+        // negative: without the triples of the field types the fields stay number fields and a selector
+        $test_name = 'a field without a field type has no checkbox';
+        $t->assert_text_not_contains($test_name, $in_html, 'type="checkbox"');
+        $test_name = '... and no read only number';
+        $t->assert_text_not_contains($test_name, $in_html, '<div class="' . styles::INPUT_READ_ONLY . '">');
+        $test_name = '... and no button to add an instance';
+        $t->assert_text_not_contains($test_name, $in_html, triple_names::CALC_ADD_LABEL);
         // the value of another use case with the same field phrase is not shown e.g. the lifetime
         // of a new NPP on the page of a PV installation, even if the preferred order of numbers would pick it
         $dto_foreign = clone $dto_in;
@@ -1483,6 +1541,17 @@ class use_case_ui_tests
     {
         $calc = new calculator($cac_kwd->get_by_name(triple_names::CITY_ZH_NAME, $msg), $cac_kwd);
         return array_map(fn($item) => $item->name(), $calc->items(triples::CALCULATOR_INPUT));
+    }
+
+    /**
+     * @param string $html the html code of the input fields
+     * @return string the text of the first read only number
+     */
+    private function read_only_number(string $html): string
+    {
+        $lib = new library();
+        $start = '<div class="' . styles::INPUT_READ_ONLY . '">';
+        return $lib->str_left_of($lib->str_right_of($html, $start), '</div>');
     }
 
     /**

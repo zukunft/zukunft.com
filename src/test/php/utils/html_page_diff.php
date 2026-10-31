@@ -50,6 +50,9 @@ class html_page_diff
 
     // the html classes that the generated page and the sample use for the same parts
     const string CLASS_FIELD = 'field';
+    const string CLASS_CHECK = 'check';
+    const string CLASS_READ_ONLY = 'ro';
+    const string VALUE_CHECKED = 'checked';
     const string CLASS_TAG = 'tag';
     const string CLASS_UNIT = 'unit';
     const string CLASS_HINT = 'hint';
@@ -168,6 +171,14 @@ class html_page_diff
                 self::PROP_VALUE => $this->field_value($xpath, $field),
             ]);
         }
+        // a checkbox has its label around the input and its hint inside the label
+        foreach ($xpath->query('//main//label[' . $this->has_class(self::CLASS_CHECK) . ']') as $label) {
+            $checked = $xpath->query('.//input[@type="checkbox"][@checked]', $label)->length > 0;
+            $this->add_item($items, self::KIND_FIELD . ': ' . $this->text_without($xpath, $label, self::CLASS_HINT), [
+                self::PROP_HINT => $this->first_text($xpath, './/span[' . $this->has_class(self::CLASS_HINT) . ']', $label),
+                self::PROP_VALUE => $checked ? self::VALUE_CHECKED : '',
+            ]);
+        }
     }
 
     /**
@@ -183,6 +194,9 @@ class html_page_diff
             $result = $this->attribute($input, 'value');
         } else {
             $result = $this->first_text($xpath, './/select/option[@selected]', $field);
+            if ($result == '') {
+                $result = $this->first_text($xpath, './/div[' . $this->has_class(self::CLASS_READ_ONLY) . ']', $field);
+            }
         }
         return $result;
     }

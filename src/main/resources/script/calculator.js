@@ -363,13 +363,33 @@
     }
 
     /**
+     * @param {string} name the url var of the input
+     * @returns {Element|undefined} the input, which is the last element, because the hidden field of a checkbox is in front of it
+     */
+    function inputOf(name) {
+        const all = document.getElementsByName(name);
+        return all[all.length - 1];
+    }
+
+    /**
+     * @param {Element|undefined} input the input of a field
+     * @returns {number} the number of the input, NaN if it has none; the value of a checkbox stays 1 also if it is unchecked
+     */
+    function inputNumber(input) {
+        let result = NaN;
+        if (input !== undefined) {
+            result = input.type === 'checkbox' ? Number(input.checked) : parseFloat(input.value);
+        }
+        return result;
+    }
+
+    /**
      * calculate the page again with the numbers of all inputs and show the results
      */
     function update() {
         const numbers = Object.assign({}, data.numbers);
         Object.entries(data.inputs).forEach(([name, key]) => {
-            const input = document.getElementsByName(name)[0];
-            const num = input === undefined ? NaN : parseFloat(input.value);
+            const num = inputNumber(inputOf(name));
             if (!Number.isNaN(num)) {
                 numbers[key] = num;
             }
@@ -378,7 +398,7 @@
     }
 
     Object.keys(data.inputs).forEach((name) => {
-        const input = document.getElementsByName(name)[0];
+        const input = inputOf(name);
         if (input !== undefined) {
             input.addEventListener('input', update);
             input.addEventListener('change', update);

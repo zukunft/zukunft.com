@@ -141,6 +141,8 @@ class ui_list extends ui_base
     const string CALC_CELL_REPEAT = '-';
     // between the label of a selector option and its number e.g. European residual mix — 523 g/kWh [3]
     const string CALC_OPTION_SEP = ' — ';
+    // in front of the phrase id of a selector option without a number, so that the option value can never be read as a number
+    const string CALC_OPTION_PHRASE = 'phrase';
     // in the hint of a field where the number of its source is shown; without it the number follows the hint
     const string CALC_HINT_SOURCE = '[n]';
     // in the hint of a row a phrase in curly brackets is shown as its number with the unit e.g. {PV capacity}
@@ -2043,7 +2045,7 @@ class ui_list extends ui_base
     private function field_type(phrase $phr, data_object $dto, user_message $msg): string
     {
         $result = '';
-        $types = [triples::FIELD_NUMBER_WITH_LIMITS, triples::FIELD_PHRASE_SELECTOR_TYPE];
+        $types = [triples::FIELD_NUMBER_WITH_LIMITS, triples::FIELD_PHRASE_SELECTOR_TYPE, triples::CALCULATOR_CHECKBOX];
         foreach ($dto->phr_lst->children($phr, $msg)->lst() as $trp) {
             $to_name = $trp->obj()?->get_to()?->name() ?? '';
             if (in_array($to_name, $types)) {
@@ -2560,7 +2562,14 @@ class ui_list extends ui_base
         foreach ($items as $item) {
             $phr = $calc->item_phrase($item);
             if ($phr != null) {
-                if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
+                $type = $this->field_type($phr, $dto, $msg);
+                if ($calc->has_flag($item, triples::CALCULATOR_READ_ONLY)) {
+                    $result .= $this->calculator_read_only($calc, $item, $phr, $dbo, $dto, $src_ids, $msg);
+                } elseif ($calc->has_flag($item, triples::CALCULATOR_REPEAT)) {
+                    $result .= $this->calculator_repeat($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
+                } elseif ($type == triples::CALCULATOR_CHECKBOX) {
+                    $result .= $this->calculator_checkbox($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $msg);
+                } elseif ($type == triples::FIELD_PHRASE_SELECTOR_TYPE) {
                     $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
                 } else {
                     $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $src_ids, $msg);
@@ -2583,6 +2592,7 @@ class ui_list extends ui_base
      * @param bool $assumption true to add the measured or assumed tag and the description of the value as the hint
      * @param array $src_ids the sources of the page in the order of their number
      * @param user_message $msg to report a problem of the phrase types
+     * @param phrase|null $instance the instance of a repeated field, which gets its own number and name behind the label
      * @return string the html code of the field
      */
     private function calculator_number(
@@ -2595,14 +2605,21 @@ class ui_list extends ui_base
         array        $url_arr,
         bool         $assumption,
         array        $src_ids,
-        user_message $msg
+        user_message $msg,
+        ?phrase      $instance = null
     ): string
     {
         $html = new html_base();
-        $name = url_var::NUMERIC_VALUE . $phr->id();
-        $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        $field_phr = $instance ?? $phr;
+        $name = url_var::NUMERIC_VALUE . $field_phr->id();
+        $val = $instance == null
+            ? $this->calculator_value($phr, $dbo, $dto, $msg)
+            : $this->calculator_repeat_value($calc, $phr, $instance, $dbo, $dto, $msg);
         $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val?->number();
         $label = $calc->label($item);
+        if ($instance != null) {
+            $label .= ' ' . $calc->phrase_label($instance);
+        }
         $text = $html->esc($label);
         $hint = $calc->hint($item);
         if ($assumption and $val instanceof value) {
@@ -2619,7 +2636,7 @@ class ui_list extends ui_base
             $val == null ? null : $this->field_decimals($val, $msg));
         $unit = $val == null ? '' : $this->unit_name($val, $msg);
         if ($val != null) {
-            $input .= $this->calculator_save_vars((string)$phr->id(), $val, $label, $unit, $form_name);
+            $input .= $this->calculator_save_vars((string)$field_phr->id(), $val, $label, $unit, $form_name);
         }
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
@@ -2627,6 +2644,135 @@ class ui_list extends ui_base
         $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
         return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW)
             . $this->calculator_hint($hint, $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * a number of a calculator that a user cannot change e.g. the target weight of the parent
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split input parent portfolio
+     * @param phrase $phr the phrase of the item e.g. parent portfolio
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field
+     */
+    private function calculator_read_only(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        $number = $val == null ? '' : $this->calculator_rough_text($val, $msg, 1);
+        $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
+        return $html->div($html->label_no_for($html->esc($calc->label($item)))
+            . $html->div($html->esc($number), styles::INPUT_READ_ONLY)
+            . $this->calculator_hint($calc->hint($item), $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * a checkbox of a calculator: checked is the number 1 and unchecked the number 0, which the
+     * hidden field in front of the checkbox sends, because a browser sends no unchecked checkbox
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split input mirror
+     * @param phrase $phr the phrase of the item e.g. mirror
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the input joins
+     * @param array $url_arr the url parameters with the entered number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field
+     */
+    private function calculator_checkbox(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $name = url_var::NUMERIC_VALUE . $phr->id();
+        $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val?->number();
+        $label = $calc->label($item);
+        $input = $html->form_hidden($name, '0', $form_name) . $html->input_checkbox($name, $num == 1, $form_name);
+        $vars = $val == null ? '' : $this->calculator_save_vars((string)$phr->id(), $val, $label, '', $form_name);
+        $text = $html->esc($label) . $this->calculator_hint($calc->hint($item));
+        return $html->label_no_for($input . $html->span($text), styles::INPUT_CHECK) . $vars;
+    }
+
+    /**
+     * a field per instance of a repeated input e.g. the target weight of each child and the button to add an instance
+     * the button has no function yet, because a new instance needs its own phrase
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split input child portfolio
+     * @param phrase $phr the phrase of the item e.g. child portfolio
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the inputs join
+     * @param array $url_arr the url parameters with the entered numbers
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the fields and the button
+     */
+    private function calculator_repeat(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($calc->kinds($phr) as $instance) {
+            $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, false, $src_ids, $msg, $instance);
+        }
+        $add = $calc->repeat_label($item);
+        if ($add != '') {
+            $result .= $html->button($html->esc($add), html_base::BUTTON, styles::CALC_BUTTON_ADD);
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr the phrase of a repeated field e.g. child portfolio
+     * @param phrase $instance an instance of the field e.g. first child portfolio
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the cache
+     * @return sandbox_value|null the value of the instance and the phrase that the repeated phrase has e.g. target share
+     */
+    private function calculator_repeat_value(
+        calculator   $calc,
+        phrase       $phr,
+        phrase       $instance,
+        word|triple  $dbo,
+        data_object  $dto,
+        user_message $msg
+    ): ?sandbox_value
+    {
+        $has = $calc->sub_items($phr, verbs::HAS_ID)[0] ?? null;
+        $has_phr = $calc->item_phrase($has) ?? $phr;
+        return $this->calculator_option_value($has_phr, $instance, $dbo, $dto, $msg);
     }
 
     /**
@@ -2796,12 +2942,16 @@ class ui_list extends ui_base
         $sel->lst = [];
         foreach ($opts as [$opt, $opt_label]) {
             $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+            // an option without a number selects only the phrase e.g. the walk order bank statement
+            $key = self::CALC_OPTION_PHRASE . $opt->id();
+            $opt_text = $opt_label;
             if ($val?->number() !== null) {
                 $key = $html->number_value($val->number(), $this->field_decimals($val, $msg));
-                $sel->lst[$key] = $this->calculator_option_text($opt_label, $val, $src_ids, $msg);
-                if ($used?->id() == $opt->id()) {
-                    $sel->selected = $key;
-                }
+                $opt_text = $this->calculator_option_text($opt_label, $val, $src_ids, $msg);
+            }
+            $sel->lst[$key] = $opt_text;
+            if ($used?->id() == $opt->id()) {
+                $sel->selected = $key;
             }
         }
         $sel->selected = $url_arr[$sel->name] ?? $sel->selected;
@@ -3846,6 +3996,10 @@ class ui_list extends ui_base
             $used = $calc->used(array_column($calc->options($phr), 0));
             if ($used != null) {
                 $result = $this->calculator_option_value($phr, $used, $dbo, $dto, $msg);
+                // a used option without a number: the first option with a number takes the number of the selected option
+                foreach (array_column($calc->options($phr), 0) as $opt) {
+                    $result ??= $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+                }
             }
         } else {
             $result = $this->calculator_value($phr, $dbo, $dto, $msg);

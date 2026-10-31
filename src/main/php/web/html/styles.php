@@ -112,6 +112,8 @@ class styles
     // the save of a calculator page like the refresh, with the 1rem side padding of bootstrap, so that
     // the space left and right of the text is about the 10px padding and the half leading above and below
     const string CALC_BUTTON_SAVE = 'btn-outline-primary btn-space px-3';
+    // the button that adds an instance of a repeated input of a calculator page
+    const string CALC_BUTTON_ADD = 'btn-outline-primary btn-sm';
     const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
     const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
 
@@ -156,6 +158,9 @@ class styles
     // an input field of a use case page with its label and the unit behind the input (ui_list::input_fields)
     const string INPUT_FIELD = 'field';
     const string INPUT_UNIT = 'unit';
+    // a checkbox with its label and hint, and a number that a user cannot change, of a calculator
+    const string INPUT_CHECK = 'check';
+    const string INPUT_READ_ONLY = 'ro';
     // the measured or assumed tag behind the label and the source hint below an assumption field
     const string INPUT_TAG = 'tag';
     const string INPUT_HINT = 'hint';

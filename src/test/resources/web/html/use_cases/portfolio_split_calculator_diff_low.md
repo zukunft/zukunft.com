@@ -2,14 +2,12 @@
 
 Change the generated page portfolio_split_calculator_js.html#low so that it shows what the hand made sample portfolio_split_calculator_sample.html#low shows: add what is missing, correct what differs and remove what only the generated page has, unless the sample lacks it by mistake. A number can differ for a good reason, because the sample calculates its numbers with its own script, so check the value or the formula before changing it. Fix a finding in the use case json or in the calculator renderer, never in the sample or in the generated snapshot.
 
-## Missing in the generated page (111)
+## Missing in the generated page (108)
 
 - heading: Check against the sample files
 - heading: Cumulative deviation of the children along the walk
 - heading: Notes
 - heading: Inputs from
-- field: Target weight first child
-- field: Target weight second child
 - table: CHF | Parent | First child | Second child | Total
 - row: Realised / Deviation from target
 - table: Value | Expected | Calculated | Status
@@ -108,7 +106,6 @@ Change the generated page portfolio_split_calculator_js.html#low so that it show
 - row: Position / cash SEK
 - button: 
 - button:  (2)
-- button: Add child
 - button: Download
 - button: Report
 - button: Copy as zukunft.com JSON
@@ -116,12 +113,17 @@ Change the generated page portfolio_split_calculator_js.html#low so that it show
 - button: Import portfolio
 - button: Import FX rates
 
-## Different (11)
+## Different (16)
 
-- field: Target weight parent, unit: the sample shows "" and the generated page "percent"
-- field: Target weight parent, hint: the sample shows "The parent keeps the remainder of every position" and the generated page "The parent keeps the remainder of every position [1]"
-- field: Target weight parent, value: the sample shows "" and the generated page "0.30"
-- field: Walk order, value: the sample shows "Unit value × round lot, descending" and the generated page ""
+- field: Target weight first child, tag: the sample shows "split agreement" and the generated page ""
+- field: Target weight first child, unit: the sample shows "%" and the generated page "percent"
+- field: Target weight first child, hint: the sample shows "" and the generated page "[1]"
+- field: Target weight first child, value: the sample shows "20" and the generated page "0.2"
+- field: Target weight second child, tag: the sample shows "split agreement" and the generated page ""
+- field: Target weight second child, unit: the sample shows "%" and the generated page "percent"
+- field: Target weight second child, hint: the sample shows "" and the generated page "[1]"
+- field: Target weight second child, value: the sample shows "20" and the generated page "0.2"
+- field: Target weight parent, value: the sample shows "60.0 %" and the generated page "30 %"
 - row: Target / Target weight, cells: the sample shows "60.0 % | 20.0 % | 20.0 % | 100.0 %" and the generated page "30 % |  | 100 %"
 - row: Target / Target value, cells: the sample shows "11'766'540 | 3'922'180 | 3'922'180 | 19'610'900" and the generated page "5'883'270 CHF |  | "
 - row: Realised / Stocks, cells: the sample shows "5'861'100 | 1'953'700 | 1'953'700 | 9'768'500" and the generated page "2'920'474 CHF |  | 9'768'500 CHF"
@@ -130,13 +132,10 @@ Change the generated page portfolio_split_calculator_js.html#low so that it show
 - row: Realised / Portfolio value, cells: the sample shows "11'766'540 | 3'922'180 | 3'922'180 | 19'610'900" and the generated page "5'883'270 CHF |  | "
 - row: Realised / Realised weight, cells: the sample shows "60.000 % | 20.000 % | 20.000 % | " and the generated page "30 % |  | "
 
-## Only in the generated page (16)
+## Only in the generated page (13)
 
 - heading: Details and sources
 - heading: Sources
-- field: Target weight
-- field: Mirror the children
-- field: Split cash
 - field: Exchange rate
 - table: Result | Parent | Child portfolio | Total
 - table section: Deviation
@@ -150,13 +149,3 @@ Change the generated page portfolio_split_calculator_js.html#low so that it show
 - list item: bank reporting bank leu client xy
 
 ## Different order (0)
-
-## Case fields that the sample does not have (1)
-
-- Target weight
-
-## Case fields that the generated page does not have (3)
-
-- Target weight first child
-- Target weight second child
-- Walk order

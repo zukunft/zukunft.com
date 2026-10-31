@@ -48,6 +48,8 @@
     const SETTINGS_ID = 'calcPageSettings';
     // the url var of a number field and of its save vars, the same as url_var NUMERIC_VALUE, GROUP, PRE, NAME and PHRASE
     const NUMBER_VAR = 'n';
+    // in front of the phrase id of a selector option without a number, the same as ui_list CALC_OPTION_PHRASE
+    const OPTION_PHRASE = 'phrase';
     const GROUP_VAR = 'g';
     const PRE_VAR = '8';
     const NAME_VAR = 'k';
@@ -57,7 +59,8 @@
         grid: 'grid', panel: 'panel', inputs: 'inputs', field: 'field',
         row: 'row', unit: 'unit', hint: 'hint', tag: 'tag', tagMeasured: 'tag m', tagAssumed: 'tag a',
         scroll: 'scroll', section: 'sec', key: 'key', sub: 'sub', number: 'n', more: 'more',
-        notes: 'notes', sources: 'src', select: 'form-control'
+        notes: 'notes', sources: 'src', select: 'form-control', check: 'check', readOnly: 'ro',
+        addButton: 'btn btn-outline-primary btn-sm'
     };
     // the suffix of the html id of a selector, the same as html_selector builds it from its name
     const SELECT_ID_SUFFIX = '_form_select';
@@ -1150,11 +1153,12 @@
         return result;
     }
 
-    function numberField(item, name, assumption) {
-        const entry = fieldEntry(name);
-        const key = idOf(name);
+    /* instance and its entry only for a repeated field, which gets its own number and name behind the label */
+    function numberField(item, name, assumption, instance, instanceEntry) {
+        const entry = instance === undefined ? fieldEntry(name) : instanceEntry;
+        const key = idOf(instance === undefined ? name : instance);
         const field = NUMBER_VAR + key;
-        const lbl = label(item);
+        const lbl = instance === undefined ? label(item) : label(item) + ' ' + phraseLabel(instance);
         let text = esc(lbl);
         let hintText = hint(item);
         if (assumption && entry !== null) {
@@ -1250,17 +1254,79 @@
             if (entry !== null && o[0] === usedOpt) {
                 inputEntries.set(field, entry);
             }
-            return entry === null ? '' : '<option value="' + esc(fieldNumber(entry)) + '"' + sel + '>' + esc(optionText(o[1], entry)) + '</option>';
+            // an option without a number selects only the phrase e.g. the walk order bank statement (ui_list::calculator_selector)
+            return entry === null
+                ? '<option value="' + OPTION_PHRASE + esc(idOf(o[0])) + '"' + sel + '>' + esc(o[1]) + '</option>'
+                : '<option value="' + esc(fieldNumber(entry)) + '"' + sel + '>' + esc(optionText(o[1], entry)) + '</option>';
         }).join('');
+        // a used option without a number: the first option with a number takes the number of the selected option (ui_list::calculator_field_value)
+        const first = opts.map(function (o) {
+            return optionEntry(name, o[0]);
+        }).find(function (e) {
+            return e !== null;
+        });
+        if (usedOpt && !inputEntries.has(field) && first !== undefined) {
+            inputEntries.set(field, first);
+        }
         const select = '<select class="' + STYLE.select + '" name="' + field + '" form="' + esc(FORM) + '" id="' + domId + '">' + html + '</select>';
         const result = block('div', '<label for="' + domId + '">' + esc(label(item)) + '</label>' + select
             + hintHtml(hint(item), ''), STYLE.field);
         return result;
     }
 
+    /* a number that a user cannot change e.g. the target weight of the parent (ui_list::calculator_read_only) */
+    function readOnlyField(item, name) {
+        const entry = fieldEntry(name);
+        const number = entry === null ? '' : roughText(entry, 1);
+        const result = block('div', '<label>' + esc(label(item)) + '</label>' + block('div', esc(number), STYLE.readOnly)
+            + hintHtml(hint(item), fieldSourceRefs(name, entry)), STYLE.field);
+        return result;
+    }
+
+    /* checked is the number 1 and unchecked 0, which the hidden field sends, because a browser sends no unchecked checkbox (ui_list::calculator_checkbox) */
+    function checkboxField(item, name) {
+        const entry = fieldEntry(name);
+        const key = idOf(name);
+        const field = NUMBER_VAR + key;
+        const lbl = label(item);
+        const checked = entry !== null && Number(entry.number) === 1 ? ' checked' : '';
+        const input = hidden(field, 0) + '<input type="checkbox" name="' + field + '" id="' + field + '" value="1" form="' + esc(FORM) + '"' + checked + '>';
+        const vars = entry === null ? '' : saveVars(key, entry, lbl, '');
+        if (entry !== null) {
+            inputEntries.set(field, entry);
+        }
+        const result = '<label class="' + STYLE.check + '">' + input + '<span>' + esc(lbl) + hintHtml(hint(item), '') + '</span></label>' + vars;
+        return result;
+    }
+
+    /* a field per instance of a repeated input and the button to add one, which has no function yet, because a new instance needs its own phrase (ui_list::calculator_repeat) */
+    function repeatFields(item, name) {
+        const has = subItems(name, VERB.has)[0];
+        const valuePhrase = has === undefined ? name : has.to;
+        const add = ownText(item.name, KW.repeat);
+        const result = kinds(name).map(function (instance) {
+            return numberField(item, name, false, instance, optionEntry(valuePhrase, instance));
+        }).join('');
+        return result + (add ? '<button type="button" class="' + STYLE.addButton + '">' + esc(add) + '</button>' : '');
+    }
+
     function fields(list, assumption) {
         const result = list.map(function (item) {
-            return fieldType(item.to) === KW.selector ? selectorField(item, item.to) : numberField(item, item.to, assumption);
+            let html = '';
+            if (hasFlag(item, KW.read_only)) {
+                html = readOnlyField(item, item.to);
+            } else if (hasFlag(item, KW.repeat)) {
+                html = repeatFields(item, item.to);
+            } else if (triplesFrom(item.to).some(function (t) {
+                return t.to === KW.checkbox;
+            })) {
+                html = checkboxField(item, item.to);
+            } else if (fieldType(item.to) === KW.selector) {
+                html = selectorField(item, item.to);
+            } else {
+                html = numberField(item, item.to, assumption);
+            }
+            return html;
         }).join('');
         return result;
     }
@@ -1459,7 +1525,9 @@
     function refreshResults(event) {
         const entry = inputEntries.get(event.target.name);
         const panel = host.querySelector('section.' + STYLE.panel);
-        const value = Number(event.target.value);
+        // the value of a checkbox stays 1 also if it is unchecked
+        const isCheckbox = event.target.type === 'checkbox';
+        const value = isCheckbox ? Number(event.target.checked) : Number(event.target.value);
         if (entry !== undefined && panel !== null && event.target.value !== '' && isFinite(value)) {
             entry.number = value;
             recalculate();

@@ -1690,6 +1690,38 @@ class test_triples extends test_objects
     }
 
     /**
+     * the triples that the field type test adds to the calculator input test: the inhabitants are
+     * read only, 2019 is a checkbox and the canton is repeated with the instance Bern
+     *
+     * @return triple[] the keywords and the triples of the field types
+     */
+    function calculator_zh_fields(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $id = triple_names::CALC_FIELDS_FIRST_ID;
+        $kw = [];
+        foreach ([triples::CALCULATOR_READ_ONLY, triples::CALCULATOR_CHECKBOX, triples::CALCULATOR_REPEAT] as $name) {
+            $kw[$name] = new triple($this->env->usr1);
+            $kw[$name]->set($id--, $name);
+        }
+        $calc = [];
+        foreach ($this->calculator_zh() as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        return [
+            ...array_values($kw),
+            $this->calc_triple($id, 'Zurich input inhabitants read only', $calc[triple_names::CALC_ZH_INPUT_INHABITANTS]->phrase(),
+                $has, $kw[triples::CALCULATOR_READ_ONLY]),
+            $this->calc_triple($id, 'Zurich input canton repeat', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(),
+                $has, $kw[triples::CALCULATOR_REPEAT], triple_names::CALC_ADD_LABEL),
+            $this->calc_triple($id, 'Bern canton instance', $t_wrd->word_bern()->phrase(), $t_vrb->verb_is(), $t_wrd->word_canton()->phrase()),
+            $this->calc_triple($id, 'field 2019', $t_wrd->word_2019()->phrase(), $t_vrb->verb_can_be(), $kw[triples::CALCULATOR_CHECKBOX]),
+        ];
+    }
+
+    /**
      * the triples that the calculation result test adds to the reader test (calculator_zh): the
      * result column 2019 with a label of the column group, the row group city signed, and the
      * detail table city with the column inhabitants filtered by canton and the extra row 2019

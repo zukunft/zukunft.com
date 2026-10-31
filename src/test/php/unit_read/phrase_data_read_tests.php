@@ -169,6 +169,19 @@ class phrase_data_read_tests
         $other_res = $this->values_by_phrase($res_objs, triple_names::EXAMPLE_PV_INSTALLATION, false);
         $t->assert($test_name, $this->value_keys($other_res), []);
 
+        $t->subheader($ts . 'from walk of a repeated input');
+        $test_name = 'the phrase data of a repeated input contains its instances';
+        $phr_split = new phrase($t->usr1);
+        $phr_split->load_by_name(triple_names::EXAMPLE_PORTFOLIO_SPLIT, $msg);
+        $split_vars = $phd->export_json($phr_split->id(), phrase_data_walks::FROM, false, $msg);
+        $split_names = $this->names($split_vars[json_fields::TRIPLES] ?? []);
+        $t->assert_contains($test_name, $split_names, [triple_names::FIRST_CHILD_PORTFOLIO_INSTANCE], $t::TIMEOUT_LIMIT_IMPORT);
+        $t->assert_msg($test_name, $msg);
+        $msg->reset();
+        // negative: the instances are only added for the page that has the repeated input
+        $test_name = '... but a page without the repeated input does not';
+        $t->assert_contains_not($test_name, $trp_names, [triple_names::FIRST_CHILD_PORTFOLIO_INSTANCE]);
+
         $t->subheader($ts . 'value walk of the example PV installation');
         $test_name = 'the value walk contains every value of the sample that names the phrase';
         $val_vars = $phd->export_json($phr->id(), phrase_data_walks::VALUE, false, $msg);

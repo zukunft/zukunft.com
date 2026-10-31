@@ -6538,6 +6538,8 @@
             tor.php
     \-- number_note - section for function number_note not yet defined that it should be texts and flags in /component/e
             xecute/calculator.php
+    \-- repeat_label - section for function repeat_label not yet defined that it should be texts and flags in /component
+            /execute/calculator.php
     \-- has_flag - section for function has_flag not yet defined that it should be texts and flags in /component/execute
             /calculator.php
     \-- side_results - section for function side_results not yet defined that it should be texts and flags in /component
@@ -7597,6 +7599,10 @@
             / replace in /html/html_base.php
     \-- dsp_form_file_select - section for function dsp_form_file_select not yet defined that it should be to dismiss / 
             replace in /html/html_base.php
+    \-- label_no_for - section for function label_no_for not yet defined that it should be base elements - functions for
+             all html elements used in zukunft.com in /html/html_base.php
+    \-- input_checkbox - section for function input_checkbox not yet defined that it should be base elements - functions
+             for all html elements used in zukunft.com in /html/html_base.php
     \-- label - section for function label not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
     \-- button_refresh_text - section for function button_refresh_text not yet defined that it should be base elements -
@@ -9996,6 +10002,8 @@
         \-- calculator - @param phrase $item the item e.g. PV installation row battery discharge
     \-- number_note
         \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
+    \-- repeat_label
+        \-- calculator - @param phrase $item a repeated input item e.g. portfolio split input child portfolio
     \-- has_flag
         \-- calculator - @param phrase $item the item e.g. a row or a row group
     \-- side_results
@@ -10821,6 +10829,12 @@
     \-- dsp_form_file_select
         \-- html_base - display a file selector form
 \-- base elements - functions for all html elements used in zukunft.com
+    \-- label_no_for
+        \-- html_base - @param string $text the html code of the label: a text that has no form field e.g. of a read onl
+                y number, or the text with the input that it wraps
+    \-- input_checkbox
+        \-- html_base - a checkbox that sends the number 1 if it is checked; the id equals the name,
+                 so a label can point to it
     \-- label
         \-- html_base - create the html code for a label
     \-- button_refresh_text
