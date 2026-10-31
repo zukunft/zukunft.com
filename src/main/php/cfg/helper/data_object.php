@@ -1427,10 +1427,11 @@ class data_object
             // calculate and compare the result if all values have been found
             if ($msg->is_ok()) {
                 $calc = new calc_internal();
-                $num_chk = $calc->parse($r_part);
+                $num_chk = $calc->parse($r_part, $msg);
                 $num_chk_rounded = round((float)$num_chk, self::CALC_VALIDATION_DECIMALS);
                 $num_imp_rounded = round((float)$res_chk->number(), self::CALC_VALIDATION_DECIMALS);
-                if ($num_chk_rounded != $num_imp_rounded) {
+                // an expression without a number is already reported, so a difference would only be its consequence
+                if ($msg->is_ok() and $num_chk_rounded != $num_imp_rounded) {
                     $msg->add(msg_id::CALC_VALIDATION_FAILED, [
                         msg_id::VAR_VALUE => $res_chk->number(),
                         msg_id::VAR_NAME => $res_name,

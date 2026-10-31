@@ -45,6 +45,7 @@ include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SHARED_CALC . 'arithmetic.php';
 include_once html_paths::SHARED_CONST . 'chars.php';
+include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\result\result;
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_calc
@@ -64,8 +66,11 @@ class formula_calc
     const string TOKEN_NUM = 'n';
     const string TOKEN_OP = 'o';
     const string TOKEN_REF = 'r';
-    // one number or one char of the arithmetic between the operands
-    const string TOKEN_PATTERN = '/\G\s*(\d+(?:\.\d+)?|[-+*\/()])/';
+    // one number, one char of the arithmetic or of a condition or a math function between the operands
+    const string TOKEN_PATTERN = '/\G\s*(\d+(?:\.\d+)?|[-+*\/()^=&|' . chars::FUNC_ARG_SEPARATOR . ']|'
+        . chars::FUNC_MIN . '|' . chars::FUNC_MAX . '|' . chars::FUNC_IF . '|' . chars::FUNC_ABS . '|' . chars::FUNC_COS . '|'
+        . chars::FUNC_EXP . '|' . chars::FUNC_LN . '|' . chars::FUNC_LOG . '|' . chars::FUNC_ROUND . '|' . chars::FUNC_SEC . '|'
+        . chars::FUNC_SIN . '|' . chars::FUNC_SQRT . '|' . chars::FUNC_SUM . '|' . chars::FUNC_COUNT . '|' . chars::FUNC_MEAN . ')/';
 
     // per value object the value itself and its phrase names, because each operand of each
     // result is searched in all values of the page, but the phrases of a value do not change;
@@ -92,6 +97,24 @@ class formula_calc
             if ($txt !== null) {
                 $result = new arithmetic()->calc($txt);
             }
+        }
+        return $result;
+    }
+
+    /**
+     * @param result $res a result of the page
+     * @param string $phr_name the name of a phrase e.g. PV-weighted consumption mix
+     * @param formula_list $frm_lst the formulas of the page with their user text
+     * @return bool true if the phrase alone is left of the = of the formula, so the result is the number of the phrase
+     *              and not e.g. the emission payback, which only names the phrase as its context
+     */
+    function calculates_phrase(result $res, string $phr_name, formula_list $frm_lst): bool
+    {
+        $result = false;
+        $frm_id = $res->frm?->id() ?? 0;
+        if ($frm_id != 0 and $frm_lst->has_id($frm_id)) {
+            $left = new library()->str_left_of($frm_lst->get($frm_id)->get_usr_text(), chars::CHAR_CALC);
+            $result = (trim(str_replace(chars::TERM_DELIMITER, '', $left)) == $phr_name);
         }
         return $result;
     }
@@ -129,14 +152,20 @@ class formula_calc
     {
         $ctx = $res->src_grp->phr_lst()->names();
         preg_match_all($this->operand_pattern(), $exp, $found, PREG_OFFSET_CAPTURE);
-        $result = [];
+        $result = $this->lists_are_plain($exp) ? [] : null;
         $pos = 0;
         foreach ($found[0] as [$operand, $start]) {
             $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $operand)));
-            $val = $this->value_of($names, $ctx, $res, $val_lst);
+            $vals = $this->values_of($names, $ctx, $res, $val_lst, $this->is_list_argument($exp, $start));
             $between = $this->arithmetic_tokens(substr($exp, $pos, $start - $pos));
-            if ($result !== null and $val != null and $between !== null) {
-                $result = [...$result, ...$between, [self::TOKEN_REF => $val->html_id()]];
+            if ($result !== null and $vals != [] and $between !== null) {
+                $result = [...$result, ...$between];
+                foreach ($vals as $key => $val) {
+                    if ($key > 0) {
+                        $result[] = [self::TOKEN_OP => chars::FUNC_ARG_SEPARATOR];
+                    }
+                    $result[] = [self::TOKEN_REF => $val->html_id()];
+                }
             } else {
                 $result = null;
             }
@@ -155,7 +184,7 @@ class formula_calc
      * @param string $txt a part of an expression between two operands e.g. " * 1000 / "
      * @return array|null the numbers and the chars of the arithmetic as tokens or null if the text has another char
      */
-    private function arithmetic_tokens(string $txt): ?array
+    function arithmetic_tokens(string $txt): ?array
     {
         $result = [];
         $pos = 0;
@@ -185,18 +214,82 @@ class formula_calc
     private function with_numbers(string $exp, result $res, value_list $val_lst): ?string
     {
         $ctx = $res->src_grp->phr_lst()->names();
-        $missing = false;
+        $missing = !$this->lists_are_plain($exp);
         $txt = preg_replace_callback($this->operand_pattern(),
-            function (array $found) use ($res, $val_lst, $ctx, &$missing): string {
-                $names = explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $found[0]));
-                $num = $this->number_of(array_map('trim', $names), $ctx, $res, $val_lst);
-                if ($num === null) {
+            function (array $found) use ($exp, $res, $val_lst, $ctx, &$missing): string {
+                $names = explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $found[0][0]));
+                $is_list = $this->is_list_argument($exp, $found[0][1]);
+                $vals = $this->values_of(array_map('trim', $names), $ctx, $res, $val_lst, $is_list);
+                if ($vals == []) {
                     $missing = true;
                     return '0';
                 }
-                return sprintf('%.12F', $num);
-            }, $exp);
+                $nums = array_map(fn($val) => sprintf('%.12F', $val->number()), $vals);
+                return implode(chars::FUNC_ARG_SEPARATOR, $nums);
+            }, $exp, -1, $count, PREG_OFFSET_CAPTURE);
         return $missing ? null : $txt;
+    }
+
+    /**
+     * @param string $exp the right part of the formula expression with the phrase names
+     * @return bool true if each list function has only plain operands or numbers as arguments, the same rule as the backend
+     */
+    private function lists_are_plain(string $exp): bool
+    {
+        return arithmetic::list_args_are_plain(preg_replace($this->operand_pattern(), 'x', $exp));
+    }
+
+    /**
+     * @param string $exp the right part of the formula expression with the phrase names
+     * @param int $start the position of the operand in the expression
+     * @return bool true if the operand is an argument of a list function and stands for all its values
+     */
+    private function is_list_argument(string $exp, int $start): bool
+    {
+        $names = implode('|', chars::FUNC_LIST);
+        return preg_match('/\b(?:' . $names . ')\s*\([^()]*$/', substr($exp, 0, $start)) === 1;
+    }
+
+    /**
+     * @param array $names the phrase names of one operand
+     * @param array $ctx the phrase names of the context of the result
+     * @param result $res the result that is calculated
+     * @param value_list $val_lst the values and results of the page
+     * @param bool $is_list true for an argument of a list function
+     * @return array the one value or result of the operand or, in a list function, all values of it
+     */
+    private function values_of(array $names, array $ctx, result $res, value_list $val_lst, bool $is_list): array
+    {
+        if ($is_list) {
+            $result = $this->list_values($names, $ctx, $val_lst);
+        } else {
+            $val = $this->value_of($names, $ctx, $res, $val_lst);
+            $result = $val == null ? [] : [$val];
+        }
+        return $result;
+    }
+
+    /**
+     * the same selection as the backend (formula::fill_list_element_group): all stored values that
+     * name the operand and the context, without a second number of the same fact
+     *
+     * @param array $names the phrase names of one operand
+     * @param array $ctx the phrase names of the context of the result
+     * @param value_list $val_lst the values and results of the page
+     * @return array the values of the list
+     */
+    private function list_values(array $names, array $ctx, value_list $val_lst): array
+    {
+        $result = [];
+        foreach ($val_lst->lst() as $val) {
+            $phr_names = $this->phrase_names($val);
+            $has_all = array_diff([...$names, ...$ctx], $phr_names) == [];
+            $is_excluded = array_intersect($phr_names, words::LIST_FUNCTION_EXCLUDED) != [];
+            if ($val instanceof value and $has_all and !$is_excluded) {
+                $result[] = $val;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -208,22 +301,6 @@ class formula_calc
         $name = preg_quote(chars::TERM_DELIMITER, '/') . '[^' . preg_quote(chars::TERM_DELIMITER, '/') . ']+'
             . preg_quote(chars::TERM_DELIMITER, '/');
         return '/' . $name . '(?:\s*' . preg_quote(chars::SEPARATOR, '/') . '\s*' . $name . ')*/';
-    }
-
-    /**
-     * the first value or result of the page that names all given phrases and only phrases of
-     * the context, the values before the results like in the import validation; the result that
-     * is calculated is never its own operand
-     *
-     * @param array $names the phrase names of one operand
-     * @param array $ctx the phrase names of the context of the result
-     * @param result $res the result that is calculated
-     * @param value_list $val_lst the values and results of the page
-     * @return float|null the number of the matching value or null if none matches
-     */
-    private function number_of(array $names, array $ctx, result $res, value_list $val_lst): ?float
-    {
-        return $this->value_of($names, $ctx, $res, $val_lst)?->number();
     }
 
     /**
@@ -242,11 +319,10 @@ class formula_calc
         if ($res->src_grp != null and $frm_id != 0 and $frm_lst->has_id($frm_id)) {
             $exp = new library()->str_right_of($frm_lst->get($frm_id)->get_usr_text(), chars::CHAR_CALC);
             $ctx = $res->src_grp->phr_lst()->names();
-            preg_match_all($this->operand_pattern(), $exp, $found);
-            foreach ($found[0] as $operand) {
+            preg_match_all($this->operand_pattern(), $exp, $found, PREG_OFFSET_CAPTURE);
+            foreach ($found[0] as [$operand, $start]) {
                 $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $operand)));
-                $val = $this->value_of($names, $ctx, $res, $val_lst);
-                if ($val != null) {
+                foreach ($this->values_of($names, $ctx, $res, $val_lst, $this->is_list_argument($exp, $start)) as $val) {
                     $result[$val->id()] = $val;
                 }
             }
@@ -255,6 +331,9 @@ class formula_calc
     }
 
     /**
+     * the first value or result of the page that names all given phrases and only phrases of
+     * the context; the result that is calculated is never its own operand
+     *
      * @param array $names the phrase names of one operand
      * @param array $ctx the phrase names of the context of the result
      * @param result $res the result that is calculated

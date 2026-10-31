@@ -2230,7 +2230,7 @@ class sql_creator
             $log->old_text_from = $dbo->from_name();
             if ($dbo->is_link_type_obj()) {
                 $log->old_link_id = $dbo->predicate_id();
-                $log->old_text_link = $dbo->predicate_name();
+                $log->old_text_link = $dbo->predicate_name() ?? '';
             }
             if (is_int($dbo->to_id())) {
                 $log->old_to_id = $dbo->to_id();
@@ -2239,13 +2239,17 @@ class sql_creator
                 // for external links the id is a string
                 $log->old_text_to = $dbo->to_id();
             }
+            // the log function always has the text parameters and is created once per name,
+            // so a missing name e.g. of a phrase deleted before the link is passed as an empty text
+            $log->old_text_from ??= '';
+            $log->old_text_to ??= '';
         }
         if ($sc_par_lst->is_insert_part() or $sc_par_lst->is_update_part()) {
             $log->new_from_id = $sbx->from_id();
             $log->new_text_from = $sbx->from_name();
             if ($sbx->is_link_type_obj()) {
                 $log->new_link_id = $sbx->predicate_id();
-                $log->new_text_link = $sbx->predicate_name();
+                $log->new_text_link = $sbx->predicate_name() ?? '';
             }
             if (is_int($sbx->to_id())) {
                 $log->new_to_id = $sbx->to_id();
@@ -2254,6 +2258,8 @@ class sql_creator
                 // for external links the id is a string
                 $log->new_text_to = $sbx->to_id();
             }
+            $log->new_text_from ??= '';
+            $log->new_text_to ??= '';
         }
 
         // set the parameters for the log sql statement creation
@@ -2295,29 +2301,31 @@ class sql_creator
         // set the vars of the log link object
         $log = new change_link($usr);
         $log->set_class($sbx::class, $msg);
+        // like in sql_func_log_link a missing name is passed as an empty text,
+        // because the log function always has the text parameters and is created once per name
         $log->old_from_id = $sbx->from_id();
         $log->new_from_id = 0;
-        $log->old_text_from = $sbx->from_name();
+        $log->old_text_from = $sbx->from_name() ?? '';
         $log->new_text_from = '';
         if ($sbx::class == triple::class) {
             // triples have a verb as type
             $log->old_link_id = $sbx->get_verb_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->get_verb_name();
+            $log->old_text_link = $sbx->get_verb_name() ?? '';
             $log->new_text_link = '';
         } elseif ($sbx->is_link_type_obj()) {
             // other links can have a type
             $log->old_link_id = $sbx->predicate_id();
             $log->new_link_id = 0;
-            $log->old_text_link = $sbx->predicate_name();
+            $log->old_text_link = $sbx->predicate_name() ?? '';
             $log->new_text_link = '';
         }
         if (is_int($sbx->to_id())) {
             $log->old_to_id = $sbx->to_id();
-            $log->old_text_to = $sbx->to_name();
+            $log->old_text_to = $sbx->to_name() ?? '';
         } else {
             // for external links the "to_id" is a string
-            $log->old_text_to = $sbx->to_id();
+            $log->old_text_to = $sbx->to_id() ?? '';
         }
         $log->new_to_id = 0;
         $log->new_text_to = '';

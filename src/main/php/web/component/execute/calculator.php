@@ -223,6 +223,24 @@ class calculator
     }
 
     /**
+     * @param phrase $item a row e.g. PV installation row saving PV-weighted mix
+     * @return string the note behind the unit of the number in the label of the row e.g. PV-weighted, else an empty string
+     */
+    function number_note(phrase $item): string
+    {
+        return $this->own_text($item, triples::CALCULATOR_NUMBER_NOTE) ?? '';
+    }
+
+    /**
+     * @param phrase $item a repeated input item e.g. portfolio split input child portfolio
+     * @return string the text of the button that adds an instance e.g. Add child
+     */
+    function repeat_label(phrase $item): string
+    {
+        return $this->own_text($item, triples::CALCULATOR_REPEAT) ?? '';
+    }
+
+    /**
      * @param phrase $item the item e.g. a row or a row group
      * @param string $flag the name of the flag keyword e.g. triples::CALCULATOR_HIGHLIGHT
      * @return bool true if the item, its phrase or the filter phrase of the item has the flag
@@ -375,6 +393,10 @@ class calculator
             foreach ($this->items($list) as $item) {
                 $phr = $this->item_phrase($item);
                 $result[] = $phr;
+                // the options of a selector, because an option may have a label of its own
+                if ($phr != null) {
+                    array_push($result, ...array_column($this->options($phr), 0));
+                }
                 foreach ([...$this->sub_items($item, verbs::HAS_ID), ...$this->sub_items($item, verbs::WITH_ID)] as $sub) {
                     $sub_phr = $this->item_phrase($sub);
                     array_push($result, $sub_phr, $this->filter($sub), $this->other_phrase($sub_phr, $phr));

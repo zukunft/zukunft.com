@@ -23,7 +23,8 @@
       triple is a category e.g. "climate solution", which links to the data of other phrases
     - the keywords of the calculator and of the input fields (triples::CALCULATOR_KEYWORDS) are
       never walked, because every page phrase links to them; a phrase selector field follows its
-      calculator rule instead and adds its options, the phrases that "is a" the field phrase
+      calculator rule instead and adds its options, the phrases that "is a" the field phrase,
+      and a repeated input adds its instances, the phrases that "is a" the item phrase
     - the values of the phrase resp. of the walked triples with all their phrases, the formulas of the phrases with
       the phrases they use, the labels, hints and flags (triples::CALCULATOR_PROPERTIES) and the
       symbols, acronyms and aliases (verbs::NAME_VERBS) of the phrases, the phrases that every
@@ -131,7 +132,7 @@ class phrase_data
     /**
      * all data of one phrase in the import format with the database id of each object
      *
-     * @param int $phr_id the id of the requested phrase e.g. -2746 for the triple example PV installation
+     * @param int $phr_id the id of the requested phrase e.g. -2757 for the triple example PV installation
      * @param phrase_data_walks $walk VALUE for the values of the phrase, FROM for the triples on its from side
      * @param bool $incl_res true to add the results of the phrase
      * @param user_message $msg with the requesting user, to report e.g. a phrase that does not exist
@@ -395,7 +396,7 @@ class phrase_data
     ): phrase_list
     {
         $next = new phrase_list($msg->usr);
-        // the field phrases of the phrase selectors and the phrases of the detail tables, whose kinds are added
+        // the field phrases of the phrase selectors, the phrases of the repeated inputs and of the detail tables, whose kinds are added
         $src_phr_lst = new phrase_list($msg->usr);
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_phr_lst($step, $msg, null, foaf_direction::UP);
@@ -408,6 +409,9 @@ class phrase_data
             }
             if ($this->is_selector_field($trp, $kwd_ids)) {
                 $this->add_new($src_phr_lst, new phrase_list($msg->usr), [], $trp->get_from(), $msg);
+            }
+            if ($this->is_repeat_item($trp, $kwd_ids)) {
+                $this->add_new($src_phr_lst, new phrase_list($msg->usr), [], $this->item_phrase($trp->get_from(), $msg), $msg);
             }
             if ($this->is_detail_table_group($trp, $kwd_ids)) {
                 $this->add_new($tbl_lst, new phrase_list($msg->usr), [], $trp->phrase(), $msg);
@@ -486,6 +490,36 @@ class phrase_data
     /**
      * @param triple $trp a triple whose from side has been walked
      * @param array $kwd_ids the phrase ids of the keywords by their code id
+     * @return bool true if the from side is a repeated input item e.g. portfolio split input child portfolio has a calculator repeat
+     */
+    private function is_repeat_item(triple $trp, array $kwd_ids): bool
+    {
+        $repeat_id = $kwd_ids[triples::CALCULATOR_REPEAT_CODE_ID] ?? 0;
+        return ($repeat_id != 0 and $trp->to_id() == $repeat_id);
+    }
+
+    /**
+     * the triple is read again, because a phrase load maps a triple without its from and to
+     * (see phrase::row_mapper_sandbox)
+     *
+     * @param phrase $itm the phrase of a list item e.g. portfolio split input child portfolio
+     * @param user_message $msg with the requesting user
+     * @return phrase|sandbox_named|combine_named|null the phrase of the item e.g. child portfolio or null for a word
+     */
+    private function item_phrase(phrase $itm, user_message $msg): phrase|sandbox_named|combine_named|null
+    {
+        $result = null;
+        if ($itm->is_triple()) {
+            $trp = new triple($msg->usr);
+            $trp->load_by_id($itm->obj_id(), $msg);
+            $result = $trp->get_to();
+        }
+        return $result;
+    }
+
+    /**
+     * @param triple $trp a triple whose from side has been walked
+     * @param array $kwd_ids the phrase ids of the keywords by their code id
      * @return bool true if the triple is the group of the detail tables e.g. PV installation has a calculator detail table
      */
     private function is_detail_table_group(triple $trp, array $kwd_ids): bool
@@ -496,13 +530,14 @@ class phrase_data
 
     /**
      * add the phrases that "is a" phrase of the list: the options of a phrase selector field e.g.
-     * residual mix and production mix for the replacement mix and the rows of a detail table e.g.
-     * January to December for the month
+     * residual mix and production mix for the replacement mix, the instances of a repeated input e.g.
+     * first child portfolio for the child portfolio and the rows of a detail table e.g. January to
+     * December for the month
      *
      * @param phrase_list $next the phrases to walk in the next step
      * @param phrase_list $walked all phrases walked so far
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
-     * @param phrase_list $selector_lst the field phrases of the phrase selectors and the phrases of the detail tables
+     * @param phrase_list $selector_lst the field phrases of the phrase selectors, the phrases of the repeated inputs and of the detail tables
      * @param user_message $msg with the requesting user
      * @return void
      */

@@ -179,6 +179,18 @@ class expression_tests
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
+            'including the min function',
+            formula_names::MIN_CIRCUMFERENCE_PI,
+            formula_names::MIN_CIRCUMFERENCE_PI_DB,
+            $trm_lst
+        );
+        $this->frm_exp_convert($t, $msg,
+            'including the max function',
+            formula_names::MAX_CIRCUMFERENCE_PI,
+            formula_names::MAX_CIRCUMFERENCE_PI_DB,
+            $trm_lst
+        );
+        $this->frm_exp_convert($t, $msg,
             'including fixed formulas',
             formula_names::INCREASE_EXP,
             formula_names::INCREASE_DB,

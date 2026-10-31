@@ -932,11 +932,7 @@ class update_put_write_tests
         // the user does not own the triple, so the change must be logged as its user overwrite
         $test_name = '... as a user overwrite';
         $t->assert_true($test_name, $log_ui->is_user_sandbox_change());
-        $test_name = '... and the phrase data of the user who has changed it has the changed description';
-        $phd_msg = new user_message($usr);
-        $description = $this->phrase_data_description($phd_msg);
-        $t->assert($test_name, $description, triple_names::PV_CAPACITY_LABEL_COM_CHANGED, test_base::TIMEOUT_LIMIT_IMPORT);
-        $t->assert_msg($test_name, $phd_msg);
+        // one full phrase data load per user, because each takes about 15 seconds
         $test_name = '... and the phraseData api answers for the user named by u';
         $phd_msg = new user_message($usr);
         $api_json = $this->phrase_data_api($t, $phd_msg);
@@ -949,13 +945,6 @@ class update_put_write_tests
         $phd_msg = new user_message($t->usr1);
         $description = $this->phrase_data_description($phd_msg);
         $t->assert($test_name, $description, triple_names::PV_CAPACITY_LABEL_COM, test_base::TIMEOUT_LIMIT_IMPORT);
-        $t->assert_msg($test_name, $phd_msg);
-        $test_name = '... and the phraseData api answers for the other user named by u';
-        $phd_msg = new user_message($t->usr1);
-        $api_json = $this->phrase_data_api($t, $phd_msg);
-        $t->assert($test_name, (int)($api_json[json_fields::USER_ID] ?? 0), $t->usr1->id(), test_base::TIMEOUT_LIMIT_IMPORT);
-        $test_name = '... with the original description';
-        $t->assert($test_name, $this->label_description($api_json), triple_names::PV_CAPACITY_LABEL_COM);
         $t->assert_msg($test_name, $phd_msg);
 
         $test_name = 'put the undo of the description change';

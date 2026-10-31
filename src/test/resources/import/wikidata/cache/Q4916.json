@@ -4,8 +4,8 @@
             "pageid": 5867,
             "ns": 0,
             "title": "Q4916",
-            "lastrevid": 2561088104,
-            "modified": "2026-10-26T14:20:24Z",
+            "lastrevid": 2562478881,
+            "modified": "2026-10-30T07:46:45Z",
             "type": "item",
             "id": "Q4916",
             "labels": {
@@ -848,6 +848,10 @@
                 "en": {
                     "language": "en",
                     "value": "euro"
+                },
+                "es": {
+                    "language": "es",
+                    "value": "Euro"
                 }
             },
             "descriptions": {
@@ -1467,6 +1471,20 @@
                     {
                         "language": "sh",
                         "value": "evro"
+                    }
+                ],
+                "es": [
+                    {
+                        "language": "es",
+                        "value": "Euro (moneda)"
+                    },
+                    {
+                        "language": "es",
+                        "value": "Euros"
+                    },
+                    {
+                        "language": "es",
+                        "value": "€"
                     }
                 ]
             },
@@ -10305,6 +10323,49 @@
                                                     "entity-type": "item",
                                                     "numeric-id": 1126918,
                                                     "id": "Q1126918"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "P4854": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P4854",
+                            "hash": "eae0aba9502e759c280c042a2a58c26e8740c98d",
+                            "datavalue": {
+                                "value": "Euro",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "Q4916$B7046173-1B83-4D3B-9308-D739F2B07702",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "3e974dc1f3178640083d72e3e94718c8f4df31c1",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "3c7d9717bf545bb641328c7b35cca3225747b440",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 3503516,
+                                                    "id": "Q3503516"
                                                 },
                                                 "type": "wikibase-entityid"
                                             },

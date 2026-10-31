@@ -303,6 +303,10 @@ class triple_names
     const int INHABITANTS_INPUT_YEAR_ID = 985;
     const string INHABITANTS_FIELD_VALUE_PHRASE = 'inhabitants field value phrase';
     const int INHABITANTS_FIELD_VALUE_PHRASE_ID = 984;
+    // the phrases of the turnover per currency (currencies.json), which no write test changes
+    const string DAILY_TURNOVER = 'daily average turnover';
+    const string NET_NET_BASIS = 'net-net basis';
+    const string APRIL_2022 = 'April 2022';
     // the calculator of the reader test (unit_ui/use_case_ui_tests.php), which exists in no
     // database, so its triples count down from this fixed id
     const int CALC_FIRST_ID = 983;
@@ -320,6 +324,9 @@ class triple_names
     const string CALC_ZH_INPUT_CANTON_LABEL_COM = 'Region';
     // the triples of the calculator input test, which follow the 24 triples of the reader test
     const int CALC_INPUT_FIRST_ID = 959;
+    // the read only, checkbox and repeated field of the calculator input test
+    const int CALC_FIELDS_FIRST_ID = 920;
+    const string CALC_ADD_LABEL = 'Add canton';
     // the triples of the calculation result test, which follow the 5 triples of the input test
     const int CALC_RESULT_FIRST_ID = 954;
     const string CALC_ZH_COLUMNS_LABEL_COM = 'Main numbers';
@@ -330,6 +337,9 @@ class triple_names
     // a proposed keyword, which the calculator does not show yet, but is a triple from the calculator keyword
     const string CALC_PROPOSED_KEYWORD = 'calculator download';
     const string CALC_ZH_INPUTS_DOWNLOAD = 'Zurich inputs download';
+    // the triples of the number note test, which follow the 2 other triples of the proposed keyword test
+    const int CALC_NOTE_FIRST_ID = 939;
+    const string CALC_INHABITANTS_NOTE_COM = 'by census';
     const string INITIAL_EFFORT = 'initial effort';
     const int INITIAL_EFFORT_ID = 201;
     // the minor and marginal columns of the ranking and the unit of the initial effort
@@ -505,6 +515,7 @@ class triple_names
     const string EXAMPLE_PORTFOLIO_SPLIT = 'example portfolio split';
     // the beneficiary whose allocation the use case portfolio_split_calculator.json models
     const string FIRST_CHILD_PORTFOLIO = 'first child portfolio';
+    const string FIRST_CHILD_PORTFOLIO_INSTANCE = 'first child portfolio instance';
     // an input of the use case cbam_calculator.json that two results of its chain depend on
     const string CBAM_CERTIFICATE_PRICE = 'CBAM certificate price';
     // an input of the use case ahv_vat_vote.json that the extra VAT revenue and its chain depend on
@@ -586,9 +597,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2749;
+    const int SHARE_RATIO_ID = 2753;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2800;
+    const int SHARE_SYMBOL_ID = 2805;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

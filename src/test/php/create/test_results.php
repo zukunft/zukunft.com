@@ -376,6 +376,42 @@ class test_results
     }
 
     /**
+     * a stored result that names the row phrase inhabitants and the canton filter of its row, so
+     * it is the number of the cells of the row and not the number of the row phrase
+     *
+     * @param float $number the stored number
+     * @return result_ui the frontend result with the formula id
+     */
+    function result_zh_canton_ui(float $number): result_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $phr_lst = [$t_wrd->word_zh()->phrase(), $t_wrd->word_inhabitant()->phrase(), $t_wrd->word_canton()->phrase()];
+        $res = $this->result_for_phrases($phr_lst, $number);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $res->set_formula($frm);
+        return new result_ui($res->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
+     * a second stored result of the row phrase inhabitants with another number, so that its
+     * formula calculates more than one number for the row phrase
+     *
+     * @param float $number the stored number
+     * @return result_ui the frontend result with the formula id
+     */
+    function result_zh_year_ui(float $number): result_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $phr_lst = [$t_wrd->word_zh()->phrase(), $t_wrd->word_inhabitant()->phrase(), $t_wrd->word_2019()->phrase()];
+        $res = $this->result_for_phrases($phr_lst, $number);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $res->set_formula($frm);
+        return new result_ui($res->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
      * a stored result of the word Zurich whose calculation uses two values that Zurich does not
      * carry, the inhabitants and Bern (test_values::value_list_assumptions_ui), so that the page
      * shows them as its assumptions
@@ -396,6 +432,30 @@ class test_results
         $ctx_lst->add($zh);
         $ctx_lst->add($t_trp->zh_city_low_impact()->phrase());
         $ctx_lst->add($t_wrd->word_inhabitant()->phrase());
+        $ctx_lst->add($t_wrd->word_bern()->phrase());
+        $res->set_src_grp($ctx_lst->get_grp_id(false));
+        return new result_ui($res->api_json([api_types::INCL_PHRASES]));
+    }
+
+    /**
+     * a stored result of the page Zurich (city) whose calculation uses the inhabitants of Bern
+     * (test_values::value_list_calculator_input_foreign_ui), so that the inhabitants field shows
+     * the value that the result uses and not the value with a part of the page triple
+     *
+     * @param float $number the stored number
+     * @return result_ui the frontend result with the formula id and the context phrases
+     */
+    function result_zh_city_bern_inhabitants_ui(float $number): result_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $res = $this->result_for_phrases([$t_trp->zh_city()->phrase(), $inhab], $number);
+        $frm = new formula($this->env->usr1);
+        $frm->set(formula_names::CITY_POPULATION_ID, formula_names::CITY_POPULATION);
+        $res->set_formula($frm);
+        $ctx_lst = new phrase_list($this->env->usr1);
+        $ctx_lst->add($inhab);
         $ctx_lst->add($t_wrd->word_bern()->phrase());
         $res->set_src_grp($ctx_lst->get_grp_id(false));
         return new result_ui($res->api_json([api_types::INCL_PHRASES]));

@@ -68,12 +68,14 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\web\frontend;
@@ -81,11 +83,13 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
 use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use DateTime;
 use DateTimeInterface;
@@ -391,6 +395,25 @@ class db_cache_tests
         // negative: the cached lists name no view, so a changed view keeps them
         $test_name = 'a changed view keeps all cached api answers';
         $t->assert($test_name, frontend::api_lists_outdated_by(view_ui::class), []);
+
+        // the cached config holds the values of the system configuration with their phrase names
+        $t_val = new test_values($t);
+        $test_name = 'a renamed word can outdate the cached config';
+        $t->assert_true($test_name, frontend::config_outdated_by(new word_ui()));
+        $test_name = 'a value of the system configuration outdates the cached config';
+        $cfg_trp = new triple($t->usr1);
+        $cfg_trp->set(triples::SYSTEM_CONFIG_ID, triples::SYSTEM_CONFIG);
+        $cfg_val = $t_val->value_for_phrases([$cfg_trp->phrase()]);
+        $t->assert_true($test_name, frontend::config_outdated_by(new value_ui($cfg_val->api_json([api_types::INCL_PHRASES]))));
+        $test_name = 'a value with unknown phrases outdates the cached config';
+        $t->assert_true($test_name, frontend::config_outdated_by(new value_ui()));
+        // negative: other objects are not part of the cached config, so that their write keeps it
+        $test_name = 'a value of another phrase keeps the cached config';
+        $t->assert_false($test_name, frontend::config_outdated_by($t_val->value_list_assumptions_ui()->lst()[0]));
+        $test_name = 'a changed view keeps the cached config';
+        $t->assert_false($test_name, frontend::config_outdated_by(new view_ui()));
+        $test_name = 'a changed source keeps the cached config';
+        $t->assert_false($test_name, frontend::config_outdated_by(new source_ui()));
 
 
         $t->subheader($ts . 'types message');

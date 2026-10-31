@@ -209,8 +209,7 @@ class sandbox_value_list extends sandbox_list
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
      *
-     *  TODO Prio 2 use order by in query
-     *  TODO Prio 2 use limit and page in query
+     *  TODO Prio 2 use order by in query, because without an order a page can repeat a row
      *  TODO Prio 2 replace return bool with user message e.g. to be able to return to the user
      *       "no values found, click here to search for values linked to any word of the list"
      *       or "... click here for related words"
@@ -226,7 +225,7 @@ class sandbox_value_list extends sandbox_list
         phrase_list $phr_lst,
         user_message $msg, string      $class = value::class,
         bool        $or = false,
-        int         $limit = sql_db::ROW_LIMIT,
+        int         $limit = sql_db::ROW_MAX,
         int         $page = 0
     ): bool
     {
@@ -246,7 +245,6 @@ class sandbox_value_list extends sandbox_list
      * create an SQL statement to retrieve a list of values by a list of phrases from the database
      * return all values that match at least one phrase of the list
      * TODO Prio 2 add ORDER BY (relevance of value)
-     * TODO Prio 2 use LIMIT and PAGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -336,6 +334,11 @@ class sandbox_value_list extends sandbox_list
                 $pos_phr_lst, $pos_grp_lst, $pos_usr);
             $qp->merge($qp_tbl);
         }
+        // the limit belongs to the union and not to one of its branches, so it is added after the
+        // loop and its two parameters are the last ones, which is what get_page() assumes
+        $sc->set_page($limit, $page);
+        $qp->par = array_merge($qp->par, array_slice($sc->get_par(), -2));
+        $qp->sql .= $sc->get_page();
 
         foreach ($qp->par as $par) {
             if (is_numeric($par)) {

@@ -1171,7 +1171,7 @@ class triple extends sandbox_code_id
             if ($title == '') {
                 $title = $this->name();
             }
-            $result = $html->ref($url, $html->esc($lnk_phr->name()), $title);
+            $result = $html->ref($url, $lnk_phr->name(), $title);
         }
         return $result;
     }
@@ -1238,7 +1238,7 @@ class triple extends sandbox_code_id
     function display_linked(): string
     {
         $html = new html_base();
-        return $html->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $html->esc($this->name()));
+        return $html->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $this->name());
     }
 
 }

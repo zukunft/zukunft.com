@@ -210,18 +210,34 @@
       "code_id": "system_calculator_signed"
     },
     {
+      "name": "number note",
+      "from": "note",
+      "verb": "of",
+      "to": "number"
+    },
+    {
+      "name": "calculator number note",
+      "description": "text property: the description of a triple from a row to this keyword is a short note that the page shows behind the unit of the number in the label of the row e.g. PV-weighted",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "number note",
+      "code_id": "system_calculator_number_note"
+    },
+    {
       "name": "calculator repeat",
       "description": "PROPOSED NEW ELEMENT: field type: an input item with a triple to this keyword is shown once per instance with an add and a remove button e.g. the target weight of every child; the minimum and the maximum count are the values field limit down and field limit up of the triple to this keyword, the instances are the phrases that is a the item phrase e.g. first child portfolio, a new instance is named by the next ordinal word, and the result columns and the detail table columns of the repeated phrase follow the count; needs a repeat field and a dynamic column list in the frontend code",
       "from": "calculator (system)",
       "verb": "has a",
-      "to": "repeat"
+      "to": "repeat",
+      "code_id": "system_calculator_repeat"
     },
     {
       "name": "calculator checkbox",
-      "description": "PROPOSED NEW ELEMENT: field type: an input phrase with a triple to this keyword is shown as a checkbox with its label and hint e.g. mirror the children or split cash; checked is the value 1, unchecked the value 0, so a formula can use it as a factor; needs a new field type in the frontend code",
+      "description": "field type: an input phrase with a triple to this keyword is shown as a checkbox with its label and hint e.g. mirror the children or split cash; checked is the value 1, unchecked the value 0, so a formula can use it as a factor",
       "from": "calculator (system)",
       "verb": "has a",
-      "to": "checkbox"
+      "to": "checkbox",
+      "code_id": "system_calculator_checkbox"
     },
     {
       "name": "read only",
@@ -255,10 +271,11 @@
     },
     {
       "name": "calculator read only",
-      "description": "PROPOSED NEW ELEMENT: flag: an input item with a triple to this keyword shows a result instead of a field e.g. the target weight of the parent as 100 % minus the weights of the children, and is calculated again when an input changes; needs a read only field in calculator_fields",
+      "description": "flag: an input item with a triple to this keyword shows the number of its phrase instead of a field e.g. the target weight of the parent",
       "from": "calculator (system)",
       "verb": "has a",
-      "to": "read only"
+      "to": "read only",
+      "code_id": "system_calculator_read_only"
     },
     {
       "name": "calculator warning",

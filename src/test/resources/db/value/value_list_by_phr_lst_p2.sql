@@ -1,4 +1,4 @@
-PREPARE value_list_by_phr_lst_p2 (bigint, bigint, text, text, bigint) AS
+PREPARE value_list_by_phr_lst_p2 (bigint, bigint, text, text, bigint, bigint, bigint) AS
     SELECT     '' AS group_id,
                '' AS user_group_id,
                phrase_id_1,
@@ -108,4 +108,4 @@ PREPARE value_list_by_phr_lst_p2 (bigint, bigint, text, text, bigint) AS
      LEFT JOIN user_values_big u ON s.group_id = u.group_id
                                 AND u.user_id = $5
          WHERE s.group_id ~ $3
-           AND s.group_id ~ $4;
+           AND s.group_id ~ $4 LIMIT $6 OFFSET $7;

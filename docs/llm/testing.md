@@ -709,7 +709,7 @@ distinguishing word (`'category subtitle'` vs `'category subtitle (multi)'`).
 
 Every file that says `do not edit manually` — `docs/code_object_name_exceptions.md`,
 `docs/code_user_message_exceptions.md`, `docs/code_test_coverage.md`,
-`docs/json_findings.md`, `docs/code_functions_all.md` — and every regenerated
+`docs/json_findings.md`, `docs/code_functions_all.md`, `docs/math.md` — and every regenerated
 baseline (the `list.csv` of `src/test/resources/unit/<class>/`, the html snapshots,
 the api fixtures) is written by `test/test.php` with `AUTO_UPDATE_TEST_FILES` set to
 `true` and compared with the flag set to `false`. A test that reports such a file as
@@ -1017,8 +1017,13 @@ two pages with the same name: `<name>_sample.html` is the hand made target layou
 `<name>.html` is the page that the view of the use case json renders, written by
 `assert_view_by_name` with the snapshot path given (e.g. `pv_lifetime_balance` from
 `files::PV_LIFETIME_BALANCE` in `system_views_read_tests`). The two are compared by the
-developer, not by a test: the generated page is the regression snapshot of the use case
-view, the sample is the goal the view and its components grow towards. The folder is not
+developer: the generated page is the regression snapshot of the use case view, the sample is
+the goal the view and its components grow towards. For the PV calculator a test writes the
+differences of the two as a markdown report next to the page (`html_page_diff`,
+`pv_lifetime_balance_diff.md` for the server page without javascript) and after the input cases
+standard, high and low for the page of the browser (`pv_lifetime_balance_diff_standard.md`,
+`_high.md` and `_low.md`). The table in `docs/deployment.md` "use case pages and their samples" lists which sample has
+this setup and how to add it. The folder is not
 below `views_by_object`, because the view test deletes every snapshot there that it has
 not written, which would remove the sample.
 

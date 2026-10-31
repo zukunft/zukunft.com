@@ -1,19 +1,152 @@
 # pending - list of planned llm prompts with prio 1
 
+## portfolio split page compared with its sample
+
+The steps fix `portfolio_split_calculator_diff.md` and the three case reports, in this order, because each step makes the findings of the next one readable. Numbers like (5) are the open points in the description of `portfolio_split_calculator.json`, whose keywords are `PROPOSED NEW ELEMENT` in `calculator_keywords.json` and described in `docs/json_structure.md` "Proposed elements". Every renderer change goes into `ui_list.php` and `calculator_json.js` with a positive and a negative test. Run `test/test_part.php` after each step; it already renders only this page.
+
+### step 3: the input fields (1), (2), (3), (4)
+
+The read only field, the checkbox and the fields per instance exist. Still open:
+- a result column and a walk column of the repeated phrase once per instance, which also gives the header `CHF | Parent | First child | Second child | Total`
+- the buttons "Add child" and remove per field with their function: a new instance needs its own phrase, and the remove buttons are still missing
+- the field of a child shows the ratio 0.35 with the unit percent, where the sample shows 35 with %
+- warning for the weight checks, which needs a result of the excess and of the difference of the target shares
+- the source number [1] in the hint of the target weight of the parent points to no source list of the sample until step 8
+
+### step 4: the result table (9), (17)
+
+- the column colours and the total of the realised portfolio value
+- the row "Deviation from target" belongs to the section "Realised" in the sample: move it in the json and remove the group `deviation`
+- the numbers of the table have no unit in the sample, because the unit is in the header: decide if the header names CHF instead of each cell
+- the realised weight has three decimals in the sample: `calculator decimals`
+
+### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
+
+- one collapsed section per table with the summary of the sample
+- the holdings table with `Position | Ccy | Quantity | Price | Round lot`: a row per position instead of `Bond (finance)`, `Cash` and `Stock`, which needs the rows over several levels of (15), the currency column (7) and the number fields (6)
+- the walk table with `# | Position | Original | Lot value CHF | Target first | First | Second | Parent | Cum. dev. first CHF`: row number and order (8), the formula per kind of holding for the lot value and the target in units (16)
+
+### step 6: the notes, the check table and the diagram (10), (11), (12)
+
+Each is a separate block of the page: the notes list under the heading "Notes", the table `Value | Expected | Calculated | Status` under "Check against the sample files" and the line diagram under "Cumulative deviation of the children along the walk".
+
+### step 7: the buttons (13)
+
+"Download", "Report", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV". The sample says "placement test only" for most of them, so first add them at their place without a function. The function of each button is a task of its own, and an import is a write that needs the usual permission and log rules.
+
+### step 8: decide what the generated page keeps
+
+The headings "Details and sources" and "Sources" and the list items "split agreement" and "bank reporting bank leu client xy" exist only in the generated page, and "Inputs from" only in the sample. The sources are required for every number, so the sample most likely lacks them by mistake: add them to the sample as an exception, after the developer has confirmed it.
+
+### step 9: calculate the split again in the browser (18)
+
+`min`, `max`, `if` and `sum` exist now, so update (18) in the description of the use case. Still missing are the round to a multiple, the sort by a result and the walk that carries the deviation from one row into the next. Until then the walk stays modelled values and the numbers of the `high` and `low` case reports differ from the sample for a good reason, e.g. the target weight 30 % instead of 10 %. This is an engine task, so plan it on its own after the page structure is done.
+
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
+## ID check
+
+include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
+
+## Calculator editor
+
+## use cases
+
+### portfolio split calculator
+
+the files and the diff check exist (`docs/deployment.md` "use case pages and their samples"); next steps:
+- bring `portfolio_split_calculator_no_js.html` and `_js.html` closer to the sample with `portfolio_split_calculator_diff.md` and `_diff_high.md`
+- give both pages the same fields, then add more input cases and set `$all_fields` of `assert_sample_case` to true
+- add the same setup for the other samples of the table in `docs/deployment.md`
+
+### Swiss NPP
+
+based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
+src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
+
+add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
+
+create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
+and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
+
+add costs of CO2-eq reduction to the npp
+
+add to the calculator a 'Share assumptions and vote' button
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
+### ahv vat 
+
+Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the 
+possibility to set the weight of the targets and combine them with the personal gain to one index rating 
+
+## pure HTML ans JavaScript views
+
+add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
+
+create a JavaScript version of the formula editor view
+
 ## calculator
+
+### differences between the evaluators
+
+fix the edge cases that `docs/math.md` marks as a diff:
+- the backend loses precision, because it turns intermediate results into text with 14 digits: `( 1 / 3 ) * 3` gives 0.99999999999999 and the page 1
+- the page evaluators reject a number in scientific notation and a number without digits on both sides of the point (`5E3`, `1.5E-5 * 2`, `.5`, `2.`), so check if a page writes a small value in this form, which then gives no number
+- the backend rejects a double sign (`--3`), the page evaluators give 3
+- only the backend calculates the short if form `if( 1 ) 5`, all page evaluators and the formula editor give no number
+
+### list functions
+
+- the unit_read test of `formula::fill_list_element_group` has no stored value with a variance or a confidence, so the exclusion of `words::LIST_FUNCTION_EXCLUDED` is only tested on the page (`use_case_ui_tests`)
+- the import calc validation (`data_object::expression_with_values`) replaces an operand by one number, so a list formula in a calc validation needs the same list selection
+
+### functions used in the data but not calculated
+
+`docs/math.md` lists `C`, `IRF`, `d`, `integral` and `lim`. Except `IRF` they are in laws of `math.json`, where the letters stand for any number, so most of them are no calculation at all.
+
+Recommended, in this order:
+1. **Mark a law as not calculated** for `d`, `integral` and `lim`: add a formula type e.g. "law" (`formula_type`), which is shown with its latex and never calculated, so no user gets an error for a formula that only documents a rule. `math_function_report::used_functions` skips this type, so that the report lists only real gaps. This needs a data change of the math.json formulas and possibly a raise of the minor version, if the json format changes.
+2. **`IRF`**: rewrite the formula in the data with what is already calculated, because `exp` exists and the coefficients are values: `"IRF" = "IRF coefficient a0" + "IRF coefficient a1" * exp( 0 - "time" / "IRF time scale tau1" ) + ...`. Then it is a real result and the name IRF is a phrase instead of a function.
+3. **`C`**: add it as a function of two numbers to all five evaluators, because a binomial coefficient is a plain calculation of numbers: reject a negative or a non-integer argument with a message and take care of the overflow of a big `n`. The law of the binomial theorem in math.json still gets the type of step 1, because its `sum` runs over an index, which the list functions do not have.
+
+Alternatives, only if a real calculation needs them:
+- `integral` and `d` as numbers: a numeric calculation over a table of values, e.g. the trapezoid rule over the values of a time row, under a new name such as `area( "y" ; "x" )`; a symbolic calculation would need a computer algebra system, which is not worth the dependency
+- `lim`: no numeric form that is reliable, so it stays a law
+
+Keep the error message for a formula without the law type, because a function that does not exist must never give a wrong number.
+
+### formula editor
+
+- a function inserted by the "... more" buttons gives no number until its arguments are filled, and like a single open bracket such an expression can be saved: block the save of an expression that is no valid calculation
+- add a test of the "... more" buttons, which so far only the math report covers for the calculation
+
+### PV calculator page compared with its sample
+
+the remaining differences of `pv_lifetime_balance_diff.md`:
+- the numbers in a row sub text are not updated by `calculator.js` of the server page when an input changes, like the number in a row label; `calculator_json.js` builds them again
+
+### assert_contains names the wrong entry
+
+`test_base::assert_contains` compares by position, so one missing entry is reported as the last entry of the list e.g. "+zukunft.com" for a missing "modelled"; report the entries that are really missing
+
+### saved result of a failed calculation
+
+a failed formula calculation overwrites the stored result with nothing (`docs/json_structure.md`); add a test that `formula::calc_result` and `result::save_if_updated` really write the empty number, and fix the save path if they do not
 
 ### compare
 
-for the compare test of e.g. src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html
-with pv_lifetime_balance_sample.html use also different input values and assumptions to check the js formula usage. 
-Create at least three test cases: standard, high and low where all input values and assumptions are changed. 
-
-add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that 
+add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that
 all *_sample.html files are part of the compare and generation build
 
 ### base on json
 
-the calculator page e.g. http://localhost/http/view.php?m=16&id=-2746 is built in the browser by
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2757 is built in the browser by
 `calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
 (`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
 `&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_js.html`
@@ -28,9 +161,10 @@ open points of the review:
 2. the open differences of the two snapshots: the server numbers the operand sources by the results
    in the preferred order of numbers (`sandbox_value::sorted`, first by the `impact`), which the
    phraseData answer does not carry, so the script numbers e.g. the monthly mixes of treeze 2025
-   before the Swissolar fact sheet 2024; and the option "production mix" of the replacement
-   mix selector has two equal values (395 g/kWh of Europe 2022 and 32.4 g/kWh of Switzerland 2018),
-   so the script leaves it out, which `pv_lifetime_balance.json` fixes by naming the option value
+   before the Swissolar fact sheet 2024; for the same reason a field whose value no result uses
+   and that two values fit equally shows the first value of the preferred order on the server,
+   while the script leaves the field empty with a warning (`onlyOne`), until the ranking of
+   point 5 is replaced; the use case fixes such a tie by naming the field value
 3. `system_page::CALC_EDITOR_SEED_ID` and `CALC_EDITOR_TYPES_ID` are also the ids of the calculator
    page, so a name without "editor" fits better (a rename is the developer's decision)
 4. the page object: the calculator view loads its phrase with the related objects
@@ -41,8 +175,9 @@ open points of the review:
 5. `calculator_json.js` repeats code: `evaluate` the arithmetic of `calculator.js`, `readJson` the
    big id handling of `calculator_editor.js`, the reader of the calculator triples and the layout
    the editor preview (`calculator_editor.js::previewPage`), and `fieldEntry` the ranking of
-   `ui_list::calculator_value`; share the script code in one file, and replace the ranking by a
-   plain match of the data: where two values fit a field equally, the use case gets the missing
+   `ui_list::calculator_value`; share the script code in one file, and replace the ranking after
+   the first rank, the value that a result of the page uses, which the formulas of the data decide,
+   by a plain match of the data: where two values fit a field equally, the use case gets the missing
    qualifier phrase or a calculator triple that names the used value, and a tie is reported by the
    calc validation of the use case
 6. `calculator_json.js` has no test, because the repository has no javascript runtime; one json
@@ -69,39 +204,6 @@ places load per object:
 
 `phrase_list::get_by_ids` reads each id from the new empty list instead of `$this`, so it always returns
 an empty list; fix it and add a unit test before it is used to set the group phrase lists
-
-## prime group id within 2^53
-
-limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
-if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
-and the use of the values table instead of values_prime
-
-## Calculator editor
-
-## use cases
-
-### Swiss NPP
-
-based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
-src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
-
-add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
-
-create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
-and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
-similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
-
-add costs of CO2-eq reduction to the npp
-
-add to the calculator a 'Share assumptions and vote' button
-and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
-
-## pure HTML ans JavaScript views
-
-add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
-
-create a JavaScript version of the formula editor view
 
 ## Calculator editor
 

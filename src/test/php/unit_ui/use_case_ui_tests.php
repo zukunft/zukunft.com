@@ -54,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\impacts;
@@ -235,14 +236,62 @@ class use_case_ui_tests
         // negative: without a value for an operand the browser cannot repeat the calculation
         $test_name = '... but no calculation if an operand has no value on the page';
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $t_val->value_list_assumptions_ui(), $frm_be_lst));
+        // the min function e.g. of the direct use of a month is given as tokens like the operators
+        $test_name = 'the min function of a calculation is given to the browser with its argument separator';
+        $frm_min = new formula_ui();
+        $frm_min->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_min->set_usr_text('"total" = min( "' . triple_names::CITY_ZH_NAME . '" ; "' . triple_names::COMPANY_ZURICH . '" )');
+        $frm_min_lst = new formula_list_ui();
+        $frm_min_lst->add($frm_min, $msg);
+        $tokens = new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_min_lst);
+        $t->assert($test_name, $tokens, [
+            [formula_calc::TOKEN_OP => chars::FUNC_MIN],
+            [formula_calc::TOKEN_OP => '('],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::CITY_ZH_NAME])->html_id()],
+            [formula_calc::TOKEN_OP => chars::FUNC_ARG_SEPARATOR],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::COMPANY_ZURICH])->html_id()],
+            [formula_calc::TOKEN_OP => ')']]);
+        $test_name = 'the max function of a calculation is given to the browser with its argument separator';
+        $frm_max = new formula_ui();
+        $frm_max->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_max->set_usr_text('"total" = max( "' . triple_names::CITY_ZH_NAME . '" ; "' . triple_names::COMPANY_ZURICH . '" )');
+        $frm_max_lst = new formula_list_ui();
+        $frm_max_lst->add($frm_max, $msg);
+        $tokens = new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_max_lst);
+        $t->assert($test_name, $tokens, [
+            [formula_calc::TOKEN_OP => chars::FUNC_MAX],
+            [formula_calc::TOKEN_OP => '('],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::CITY_ZH_NAME])->html_id()],
+            [formula_calc::TOKEN_OP => chars::FUNC_ARG_SEPARATOR],
+            [formula_calc::TOKEN_REF => $dto->val_lst->get_by_names([triple_names::COMPANY_ZURICH])->html_id()],
+            [formula_calc::TOKEN_OP => ')']]);
         // negative: a char outside the arithmetic of the page is never given to the browser
-        $test_name = '... and no calculation for an expression with other chars than numbers, + - * / and brackets';
+        $test_name = '... and no calculation for an expression with a function that the page does not have';
         $frm_fn = new formula_ui();
         $frm_fn->set_id(formula_names::CITY_POPULATION_ID);
-        $frm_fn->set_usr_text('"total" = max("' . triple_names::CITY_ZH_NAME . '")');
+        $frm_fn->set_usr_text('"total" = tan("' . triple_names::CITY_ZH_NAME . '")');
         $frm_fn_lst = new formula_list_ui();
         $frm_fn_lst->add($frm_fn, $msg);
         $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $dto->val_lst, $frm_fn_lst));
+        // a list function takes all values of the operand and the context, without a second number of the same fact
+        $test_name = 'a list function calculates with all values of its operand';
+        $list_val_lst = $t_val->value_list_list_function_ui();
+        $frm_list = new formula_ui();
+        $frm_list->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" ) / count( "' . word_names::INHABITANTS . '" )');
+        $frm_list_lst = new formula_list_ui();
+        $frm_list_lst->add($frm_list, $msg);
+        $t->assert($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst), 15.0);
+        $test_name = '... which the browser repeats with the html id of each value';
+        $list_ids = array_column(array_filter(
+            new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst),
+            fn(array $token) => array_key_exists(formula_calc::TOKEN_REF, $token)), formula_calc::TOKEN_REF);
+        $t->assert($test_name, count($list_ids), 4);
+        // negative: a calculation inside a list would need pairs of values, so it never gives a number
+        $test_name = '... but no number for a calculation inside a list function';
+        $frm_list->set_usr_text('"total" = sum( "' . word_names::INHABITANTS . '" * 2 )');
+        $t->assert_null($test_name, new formula_calc()->result($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
+        $t->assert_null($test_name, new formula_calc()->tokens($t_res->result_zh_sum_ui($sum), $list_val_lst, $frm_list_lst));
 
         $t->subheader($ts . 'input fields');
         // a phrase of the values of the page that is assigned a field type is an input of the page:
@@ -601,11 +650,21 @@ class use_case_ui_tests
         $t->assert($test_name, array_map(fn($phr) => $phr->name(), $calc->side_results($rows[1])), [word_names::YEAR_2020]);
         $test_name = '... and a row without such a phrase has none';
         $t->assert($test_name, $calc->side_results($rows[0]), []);
+        // a side result is a number of its own, so it is selected without the filter of the row
+        $list_ctx = new ui_list();
+        $test_name = 'a side result is selected by the page and the row phrase';
+        $side_ctx = $list_ctx->calculation_side_context($calc, $wrd, $rows[1]);
+        $t->assert($test_name, array_map(fn($phr) => $phr->name(), $side_ctx), [word_names::ZH, word_names::INHABITANTS]);
+        // negative: the cells of the row are selected with the filter
+        $test_name = '... but a cell also by the filter of the row';
+        $cell_ctx = $list_ctx->calculation_row_context($calc, $wrd, $rows[1]);
+        $t->assert($test_name, array_map(fn($phr) => $phr->name(), $cell_ctx), [word_names::ZH, word_names::INHABITANTS, word_names::CANTON]);
         // the view fills the request cache with the general triples of these phrases (view_exe::add_page_cache)
-        $test_name = 'the phrases of the general triples are the item, row and filter phrases and the other phrase of a row, each once';
+        $test_name = 'the phrases of the general triples are the item, option, row and filter phrases and the other phrase of a row, each once';
+        // an option may have a label of its own, so the side result of the canton and the kinds of the city are included
         $t->assert($test_name, array_map(fn($phr) => $phr->name(), $calc->phrases()), [
-            word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019, word_names::CITY,
-            triple_names::CITY_BE, word_names::BE]);
+            word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2020, word_names::YEAR_2019, word_names::CITY,
+            word_names::BE, word_names::ZH, triple_names::CITY_BE]);
         // negative: a phrase without calculator triples is no calculator and shows its name
         $calc_be = new calculator($cac->get_by_name(triple_names::CITY_BE, $msg), $cac);
         $test_name = 'a phrase without calculator triples is no calculator';
@@ -657,6 +716,64 @@ class use_case_ui_tests
         $test_name = '... but a phrase selector sends no group id';
         $canton_id = $dto_in->phr_lst->get_by_name(word_names::CANTON, $msg)->id();
         $t->assert_text_not_contains($test_name, $in_html, 'name="' . url_var::GROUP . $canton_id . '"');
+        // an option without a number selects only its phrase e.g. the walk order, so its value is no number that a result could read
+        $test_name = 'a selector option without a number is offered and selected by its phrase';
+        $opt_id = $dto_in->phr_lst->get_by_name(word_names::YEAR_2020, $msg)->id();
+        $opt_html = '<option value="' . ui_list::CALC_OPTION_PHRASE . $opt_id . '"';
+        $dto_no_num = clone $dto_in;
+        $dto_no_num->val_lst = new value_list_ui();
+        $no_num_html = $page->calculator_input($zh_city, $msg, $dto_no_num, $form, views::CALCULATOR, []);
+        $t->assert_text_contains($test_name, $no_num_html, $opt_html . '  selected');
+        // negative: an option with a number keeps the number as its value, which a result of the page reads
+        $test_name = '... but an option with a number is selected by its number';
+        $dto_opt_num = clone $dto_in;
+        $dto_opt_num->val_lst = $t_val->value_list_calculator_option_ui();
+        $opt_num_html = $page->calculator_input($zh_city, $msg, $dto_opt_num, $form, views::CALCULATOR, []);
+        $t->assert_text_not_contains($test_name, $opt_num_html, $opt_html);
+        // the other field types: the inhabitants read only, 2019 as a checkbox and the canton repeated with Bern
+        $test_name = 'a read only field shows its number without an input';
+        $dto_fld = clone $dto_in;
+        $dto_fld->phr_lst = $t_phr->list_calculator_fields_ui();
+        $fld_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, []);
+        $t->assert_text_contains($test_name, $fld_html, '<div class="' . styles::INPUT_READ_ONLY . '">');
+        $test_name = '... and its label points to no field';
+        $ro_label = '<label>' . triple_names::CALC_INHABITANTS_LABEL_COM . '</label>';
+        $t->assert_text_contains($test_name, $fld_html, $ro_label);
+        $test_name = '... but the label of a number field does';
+        $t->assert_text_not_contains($test_name, $in_html, $ro_label);
+        // negative: a user cannot change a read only number, also not by the url, which the assumption field of the same phrase may use
+        $test_name = '... and a number in the url does not change a read only field';
+        $ro_id = $dto_fld->phr_lst->get_by_name(word_names::INHABITANTS, $msg)->id();
+        $ro_url = [url_var::NUMERIC_VALUE . $ro_id => values::SAMPLE_INT];
+        $ro_url_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, $ro_url);
+        $ro_number = $this->read_only_number($fld_html);
+        $ro_url_number = $this->read_only_number($ro_url_html);
+        $t->assert($test_name, $ro_url_number, $ro_number);
+        $test_name = 'a checkbox sends 0 by its hidden field if it is unchecked';
+        $chk_name = url_var::NUMERIC_VALUE . $dto_fld->phr_lst->get_by_name(word_names::YEAR_2019, $msg)->id();
+        $chk_html = $html->input_checkbox($chk_name, true, $form);
+        $t->assert_text_contains($test_name, $fld_html, $html->form_hidden($chk_name, '0', $form)
+            . '<input type="checkbox" name="' . $chk_name . '"');
+        $test_name = '... but is not checked without a number';
+        $t->assert_text_not_contains($test_name, $fld_html, $chk_html);
+        $test_name = 'a checkbox is checked by the number 1 in the url';
+        $chk_on_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, [$chk_name => '1']);
+        $t->assert_text_contains($test_name, $chk_on_html, $chk_html);
+        $test_name = '... and not by the number 0 of its hidden field';
+        $chk_off_html = $page->calculator_input($zh_city, $msg, $dto_fld, $form, views::CALCULATOR, [$chk_name => '0']);
+        $t->assert_text_not_contains($test_name, $chk_off_html, $chk_html);
+        $test_name = 'a repeated field has a field per instance with the name of the instance';
+        $rep_id = $dto_fld->phr_lst->get_by_name(word_names::BE, $msg)->id();
+        $t->assert_text_contains($test_name, $fld_html, 'name="' . url_var::NUMERIC_VALUE . $rep_id . '"');
+        $test_name = '... and the button to add an instance';
+        $t->assert_text_contains($test_name, $fld_html, '>' . triple_names::CALC_ADD_LABEL . '</button>');
+        // negative: without the triples of the field types the fields stay number fields and a selector
+        $test_name = 'a field without a field type has no checkbox';
+        $t->assert_text_not_contains($test_name, $in_html, 'type="checkbox"');
+        $test_name = '... and no read only number';
+        $t->assert_text_not_contains($test_name, $in_html, '<div class="' . styles::INPUT_READ_ONLY . '">');
+        $test_name = '... and no button to add an instance';
+        $t->assert_text_not_contains($test_name, $in_html, triple_names::CALC_ADD_LABEL);
         // the value of another use case with the same field phrase is not shown e.g. the lifetime
         // of a new NPP on the page of a PV installation, even if the preferred order of numbers would pick it
         $dto_foreign = clone $dto_in;
@@ -667,6 +784,24 @@ class use_case_ui_tests
         // negative: the bigger value of Bern, which is no part of Zurich (city), is not shown
         $test_name = '... and not the value of a phrase outside the page triple';
         $t->assert_text_not_contains($test_name, $foreign_html, 'value="' . values::SAMPLE_BIG . '"');
+        // but the value that a result of the page uses comes first, so that a changed field changes the result
+        $frm = new formula_ui();
+        $frm->set_id(formula_names::CITY_POPULATION_ID);
+        $frm->set_name(formula_names::CITY_POPULATION);
+        $frm->set_usr_text('"' . formula_names::CITY_POPULATION . '" = "' . word_names::INHABITANTS . '"');
+        $frm_lst = new formula_list_ui();
+        $frm_lst->add($frm, $msg);
+        $res_lst = new result_list_ui();
+        $res_lst->add($t_res->result_zh_city_bern_inhabitants_ui(values::SAMPLE_BIG), $msg);
+        $dto_used = clone $dto_foreign;
+        $dto_used->set_formula_list($frm_lst);
+        $dto_used->set_result_list($res_lst);
+        $used_html = $page->calculator_input($zh_city, $msg, $dto_used, $form, views::CALCULATOR, []);
+        $test_name = 'a field shows the value that a result of the page uses before the value with a part of the page triple';
+        $t->assert_text_contains($test_name, $used_html, 'value="' . values::SAMPLE_BIG . '"');
+        // negative: the value with a part of the page triple, which no result uses, is not shown
+        $test_name = '... and not the value that no result uses';
+        $t->assert_text_not_contains($test_name, $used_html, 'value="' . values::CITY_ZH_INHABITANTS_2019 . '"');
         // two values that fit a field equally e.g. the inhabitants of Zurich and of a city are picked
         // by the preferred order of numbers and not by the order of the list, which the backend
         // returns in any order; here the bigger number of the same unit
@@ -719,6 +854,30 @@ class use_case_ui_tests
         $test_name = '... and an assumption without a source is tagged as assumed';
         $t->assert_text_contains($test_name, $in_html,
             $html->span($mtr->txt(msg_id::FIELD_TAG_ASSUMED), styles::INPUT_TAG_ASSUMED));
+        // the confidence has its own unit, so the value in kWh finds its confidence in percent
+        $dto_conf = new data_object();
+        $dto_conf->val_lst = $t_val->value_list_unit_confidence_ui();
+        $val_conf = $dto_conf->val_lst->get_by_names([word_names::INHABITANTS, word_names::KWH]);
+        $test_name = '... with the confidence of a value in another unit';
+        $t->assert($test_name, new ui_list()->assumption_tag($val_conf, $dto_conf, $msg),
+            $mtr->txt(msg_id::FIELD_TAG_ASSUMED) . ' ' . values::SAMPLE_FLOAT);
+        // a selector option with a unit names its number and its source
+        $val_conf->src = new source_ui($t_src->source_reserved()->api_json());
+        $src_ids = [$val_conf->src->id() => $val_conf->src];
+        $opt_txt = new ui_list()->calculator_option_text(word_names::ZH, $val_conf, $src_ids, $msg);
+        $test_name = 'a selector option with a unit shows its number';
+        $t->assert_text_contains($test_name, $opt_txt, word_names::ZH . ui_list::CALC_OPTION_SEP);
+        $test_name = '... and the number of its source';
+        $t->assert_text_contains($test_name, $opt_txt, ' [1]');
+        // negative: an option without a unit e.g. a factor shows only its label
+        $opt_plain = $dto_conf->val_lst->get_by_names([word_names::BE]);
+        $test_name = '... but an option without a unit shows only its label';
+        $t->assert($test_name, new ui_list()->calculator_option_text(word_names::ZH, $opt_plain, $src_ids, $msg), word_names::ZH);
+        $val_conf->src = null;
+        // negative: the confidence of another phrase is not used
+        $val_other = $dto_conf->val_lst->get_by_names([word_names::BE]);
+        $test_name = '... but not the confidence of another phrase';
+        $t->assert($test_name, new ui_list()->assumption_tag($val_other, $dto_conf, $msg), $mtr->txt(msg_id::FIELD_TAG_ASSUMED));
         // negative: a phrase without calculator triples has no inputs
         $test_name = 'a phrase without calculator triples shows no calculator input';
         $t->assert($test_name, $page->calculator_input(new test_triples($t)->triple_bern_ui(), $msg, $dto_in, $form, views::CALCULATOR, []), '');
@@ -756,6 +915,70 @@ class use_case_ui_tests
         $t->assert_text_contains($test_name, $res_html, '<' . html_base::TR . ' class="' . styles::CALC_KEY . '">'
             . $html->block(html_base::TD, triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . $inh_txt . ')'
                 . $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::CALC_SUB)));
+        // the number in the label is only an indication, so it shows the digits of the rough tier
+        $dto_rough = clone $dto_res;
+        $dto_rough->val_lst = $t_val->value_list_calculator_result_ui();
+        $dto_rough->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->number = values::SAMPLE_FLOAT;
+        $rough_html = $page->calculation_result($wrd, $msg, $dto_rough);
+        $test_name = '... with the digits of the rough tier';
+        $t->assert_text_contains($test_name, $rough_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . round(values::SAMPLE_FLOAT) . ')');
+        // negative: not with the decimals of the default tier
+        $test_name = '... and not with the decimals of the default tier';
+        $t->assert_text_not_contains($test_name, $rough_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . round(values::SAMPLE_FLOAT) . '.');
+        // a row with a number note shows the note behind the unit of its number e.g. PV-weighted
+        $dto_note = clone $dto_res;
+        $dto_note->phr_lst = $t_phr->list_calculator_number_note_ui();
+        $note_html = $page->calculation_result($wrd, $msg, $dto_note);
+        $test_name = '... and the number note of the row behind the number';
+        $t->assert_text_contains($test_name, $note_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . $inh_txt . ' ' . triple_names::CALC_INHABITANTS_NOTE_COM . ')');
+        // negative: a row without a number note shows only the number
+        $test_name = '... but no note without a number note triple';
+        $t->assert_text_not_contains($test_name, $res_html, triple_names::CALC_INHABITANTS_NOTE_COM);
+        // a row phrase that a formula calculates has no value, so its label shows the result of the formula
+        $frm_inh = new formula_ui();
+        $frm_inh->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_inh->set_usr_text('"' . word_names::INHABITANTS . '" = "' . triple_names::CITY_ZH_NAME . '"');
+        $frm_inh_lst = new formula_list_ui();
+        $frm_inh_lst->add($frm_inh, $msg);
+        $res_inh_lst = new result_list_ui();
+        $res_inh_lst->add($t_res->result_zh_sum_ui(values::SAMPLE_FLOAT), $msg);
+        $dto_frm = clone $dto_res;
+        $dto_frm->val_lst = new value_list_ui();
+        $dto_frm->set_result_list($res_inh_lst);
+        $dto_frm->set_formula_list($frm_inh_lst);
+        $frm_html = $page->calculation_result($wrd, $msg, $dto_frm);
+        $test_name = '... and the result of the formula of a row phrase without a value';
+        $t->assert_text_contains($test_name, $frm_html,
+            triple_names::CALC_INHABITANTS_LABEL_COM . ' (' . round(values::SAMPLE_FLOAT) . ')');
+        // negative: a result that only names the row phrase is not its number e.g. the emission payback of a mix
+        $frm_other = new formula_ui();
+        $frm_other->set_id(formula_names::CITY_POPULATION_ID);
+        $frm_other->set_usr_text('"total" = "' . triple_names::CITY_ZH_NAME . '"');
+        $frm_other_lst = new formula_list_ui();
+        $frm_other_lst->add($frm_other, $msg);
+        $dto_frm->set_formula_list($frm_other_lst);
+        $other_html = $page->calculation_result($wrd, $msg, $dto_frm);
+        $test_name = '... but not the result of a formula that only names the row phrase';
+        $t->assert_text_not_contains($test_name, $other_html, triple_names::CALC_INHABITANTS_LABEL_COM . ' (');
+        // negative: a result that names the filter of the row is the number of its cells e.g. the battery effect
+        $res_cell_lst = new result_list_ui();
+        $res_cell_lst->add($t_res->result_zh_canton_ui(values::SAMPLE_FLOAT), $msg);
+        $dto_frm->set_result_list($res_cell_lst);
+        $dto_frm->set_formula_list($frm_inh_lst);
+        $cell_html = $page->calculation_result($wrd, $msg, $dto_frm);
+        $test_name = '... and not the result that names the filter of the row';
+        $t->assert_text_not_contains($test_name, $cell_html, triple_names::CALC_INHABITANTS_LABEL_COM . ' (');
+        // negative: of several results of the row phrase none is picked, because the number would depend on the sort
+        $res_two_lst = new result_list_ui();
+        $res_two_lst->add($t_res->result_zh_sum_ui(values::SAMPLE_FLOAT), $msg);
+        $res_two_lst->add($t_res->result_zh_year_ui(values::SAMPLE_INT), $msg);
+        $dto_frm->set_result_list($res_two_lst);
+        $two_html = $page->calculation_result($wrd, $msg, $dto_frm);
+        $test_name = '... and no number if the formula has several results of the row phrase';
+        $t->assert_text_not_contains($test_name, $two_html, triple_names::CALC_INHABITANTS_LABEL_COM . ' (');
         $test_name = '... and the number of a signed group with its sign';
         $t->assert_text_contains($test_name, $res_html, '<span class="' . styles::CALC_POSITIVE . '">');
         // the save compares the results of the page by their group id, so a cell names the number it shows
@@ -792,6 +1015,53 @@ class use_case_ui_tests
         // negative: the number without the filter phrase is not shown in the column
         $test_name = '... and not the number without it';
         $t->assert_text_not_contains($test_name, $res_html, $zh_cell . $city_val->html_id());
+        // a detail table shows the digits of the rough tier
+        $dto_det = clone $dto_res;
+        $dto_det->val_lst = $t_val->value_list_calculator_result_ui();
+        $det_val = $dto_det->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019]);
+        $det_val->number = values::SAMPLE_FLOAT;
+        $det_html = $page->calculation_result($wrd, $msg, $dto_det);
+        $det_cell = ui_list::CALC_CELL_REPEAT . '2">';
+        $test_name = 'a detail table shows the digits of the rough tier';
+        $t->assert_text_contains($test_name, $det_html, $det_cell . round(values::SAMPLE_FLOAT) . '</td>');
+        // negative: not with the decimals of the default tier
+        $test_name = '... and not the decimals of the default tier';
+        $t->assert_text_not_contains($test_name, $det_html, $det_cell . round(values::SAMPLE_FLOAT) . '.');
+        // a hint of a row names phrases, which are shown with the live numbers of the page
+        $list_hint = new ui_list();
+        $lst_hint = $dto_res->val_lst;
+        $inh_num = '{' . word_names::INHABITANTS . '|number}';
+        $test_name = 'a phrase of a row hint is shown as its number without a unit, but with the thousands separator';
+        $hint_txt = $list_hint->calculator_hint_numbers('a ' . $inh_num . ' b', $wrd, $dto_res, $lst_hint, $msg);
+        $inh_txt = number_format($dto_res->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS])->number(), 0, '', shared_config::DEFAULT_THOUSAND_SEP);
+        $t->assert($test_name, $hint_txt, 'a ' . $inh_txt . ' b');
+        $test_name = '... and a hint without a phrase stays as it is';
+        $t->assert($test_name, $list_hint->calculator_hint_numbers('no number', $wrd, $dto_res, $lst_hint, $msg), 'no number');
+        // negative: half a calculation is misleading, so a phrase without a number hides the hint
+        $test_name = '... but a hint with a phrase without a number is empty';
+        $missing_hint = '{' . word_names::INHABITANTS . '} {System Test Phrase Without A Number}';
+        $t->assert($test_name, $list_hint->calculator_hint_numbers($missing_hint, $wrd, $dto_res, $lst_hint, $msg), '');
+        $msg->reset();
+        // the source number of a field is at the marker of its hint and else behind the hint
+        $test_name = 'the source number is shown at the marker of a hint';
+        $t->assert($test_name, $list_hint->calculator_hint('a ' . ui_list::CALC_HINT_SOURCE . '; b', '[1]'), $html->span('a [1]; b', styles::INPUT_HINT));
+        $test_name = '... and behind a hint without a marker';
+        $t->assert($test_name, $list_hint->calculator_hint('a; b', '[1]'), $html->span('a; b [1]', styles::INPUT_HINT));
+        // negative: without a source the marker is not shown
+        $test_name = '... but the marker is removed without a source';
+        $t->assert($test_name, $list_hint->calculator_hint('a ' . ui_list::CALC_HINT_SOURCE . '; b'), $html->span('a; b', styles::INPUT_HINT));
+        // a fact that does not name the page e.g. the Swiss consumption mix of a month is shown in its detail cell
+        $bern_cell = $html->block(html_base::TD, word_names::BE) . '<' . html_base::TD . ' class="' . styles::CALC_NUMBER . '" id="';
+        $dto_gen = clone $dto_res;
+        $dto_gen->val_lst = $t_val->value_list_bern_canton_ui(false);
+        $gen_html = $page->calculation_result($wrd, $msg, $dto_gen);
+        $test_name = 'a detail cell shows the one value that does not name the page';
+        $t->assert_text_contains($test_name, $gen_html, $bern_cell);
+        // negative: of several values none is picked, because the number would depend on the list
+        $dto_gen->val_lst = $t_val->value_list_bern_canton_ui(true);
+        $two_gen_html = $page->calculation_result($wrd, $msg, $dto_gen);
+        $test_name = '... but not one of several values';
+        $t->assert_text_not_contains($test_name, $two_gen_html, $bern_cell);
         $test_name = 'the sources are numbered in the order of the first use';
         $t->assert_text_contains($test_name, $res_html, '<div class="' . styles::CALC_SOURCES . '">'
             . $html->block(html_base::H2, $mtr->txt(msg_id::CALCULATOR_SOURCES)) . '<' . html_base::OL . '>');
@@ -799,6 +1069,21 @@ class use_case_ui_tests
         $test_name = '... and the hint of a field with a value of a source names its number';
         $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_res, $form, views::CALCULATOR, []),
             $html->span(triple_names::CALC_INHABITANTS_HINT_COM . ' [1]', styles::INPUT_HINT));
+        // an assumed field value is based on the measured values of its field phrase with the same unit,
+        // so its hint names their sources e.g. the literature values of a battery production emission
+        $dto_basis = clone $dto_res;
+        $dto_basis->val_lst = $t_val->value_list_calculator_result_ui();
+        $dto_basis->val_lst->get_by_names([word_names::ZH, word_names::INHABITANTS, word_names::CANTON, word_names::YEAR_2019])->src = $src;
+        $test_name = 'the hint of an assumed field names the source of a measured value of its phrase and unit';
+        $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_basis, $form, views::CALCULATOR, []),
+            $html->span(triple_names::CALC_INHABITANTS_HINT_COM . ' [1]', styles::INPUT_HINT));
+        // negative: a property of the field e.g. its lower limit is no measured value that the field value is based on
+        $dto_prop = clone $dto_res;
+        $dto_prop->val_lst = $t_val->value_list_calculator_result_ui();
+        $dto_prop->val_lst->get_by_names([word_names::INHABITANTS, triple_names::FIELD_LIMIT_DOWN])->src = $src;
+        $test_name = '... but not the source of a property of the field';
+        $t->assert_text_contains($test_name, $page->calculator_input($wrd, $msg, $dto_prop, $form, views::CALCULATOR, []),
+            $html->span(triple_names::CALC_INHABITANTS_HINT_COM, styles::INPUT_HINT));
         // negative: the hint of a phrase selector names no source, also if the selected option
         // has one, because an option is chosen and not measured on the page
         $opt_val = $dto_res->val_lst->get_by_names([word_names::CANTON, word_names::YEAR_2020]);
@@ -1174,7 +1459,7 @@ class use_case_ui_tests
         if ($browser_name == '') {
             $t->dsp_warning('no headless browser found, so the calculator editor scenario tests are skipped');
         } else {
-            $page = $this->scenario_page();
+            $page = $this->scenario_page($brw);
             // the scenarios that save a change by the description of the test
             $saved = [
                 test_files::SCENARIO_AUTARKY_FORMULA => 'the changed expression of a formula is sent as its user text',
@@ -1215,19 +1500,14 @@ class use_case_ui_tests
     /**
      * a copy of the calculator editor snapshot that loads the scripts of this checkout and the scenarios
      *
+     * @param headless_browser $brw the started headless browser
      * @return string the path of the copy in the temp folder, which the caller removes
      */
-    private function scenario_page(): string
+    private function scenario_page(headless_browser $brw): string
     {
         $html = file_get_contents(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES
             . test_files::CALCULATOR_EDITOR . test_files::HTML);
-        $html = preg_replace('#src="[^"]*' . preg_quote(files::SCRIPT_PATH, '#') . '#',
-            'src="file://' . files::RESOURCE_PATH . 'script' . DIRECTORY_SEPARATOR, $html);
-        $html = str_replace('</body>',
-            '<script src="file://' . test_files::CALCULATOR_EDITOR_SCENARIOS . '"></script></body>', $html);
-        $page = sys_get_temp_dir() . DIRECTORY_SEPARATOR . uniqid('calculator_editor_') . test_files::HTML;
-        file_put_contents($page, $html);
-        return $page;
+        return $brw->page_copy($html, test_files::CALCULATOR_EDITOR_SCENARIOS);
     }
 
     /**
@@ -1261,6 +1541,17 @@ class use_case_ui_tests
     {
         $calc = new calculator($cac_kwd->get_by_name(triple_names::CITY_ZH_NAME, $msg), $cac_kwd);
         return array_map(fn($item) => $item->name(), $calc->items(triples::CALCULATOR_INPUT));
+    }
+
+    /**
+     * @param string $html the html code of the input fields
+     * @return string the text of the first read only number
+     */
+    private function read_only_number(string $html): string
+    {
+        $lib = new library();
+        $start = '<div class="' . styles::INPUT_READ_ONLY . '">';
+        return $lib->str_left_of($lib->str_right_of($html, $start), '</div>');
     }
 
     /**

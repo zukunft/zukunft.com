@@ -79,6 +79,11 @@ class formula_names
     const string SCALE_HOUR_EXP = '{w24}={w105}*3600';
     const string DIAMETER = '= "circumference" / "Pi"';
     const string DIAMETER_DB = '={w' . word_names::CIRCUMFERENCE_ID . '}/{w' . word_names::PI_ID . '}';
+    // the min and max function and their argument separator are kept as they are by the conversion
+    const string MIN_CIRCUMFERENCE_PI = '= min( "circumference" ; "Pi" * 2 )';
+    const string MIN_CIRCUMFERENCE_PI_DB = '=min({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
+    const string MAX_CIRCUMFERENCE_PI = '= max( "circumference" ; "Pi" * 2 )';
+    const string MAX_CIRCUMFERENCE_PI_DB = '=max({w' . word_names::CIRCUMFERENCE_ID . '};{w' . word_names::PI_ID . '}*2)';
     const string THIS_NAME = 'this';
     const int THIS_ID = 18;
     const string THIS_EXP = '="Now"';

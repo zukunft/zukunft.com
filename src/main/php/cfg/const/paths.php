@@ -119,6 +119,7 @@ class paths
 
     // resource paths
     const string RES = self::MAIN . 'resources' . DIRECTORY_SEPARATOR;
+    const string SCRIPT_RES = self::RES . 'script' . DIRECTORY_SEPARATOR;
     const string DB_RES_SUB = 'db' . DIRECTORY_SEPARATOR;
     const string DB_SETUP_SUB = 'setup' . DIRECTORY_SEPARATOR;
 

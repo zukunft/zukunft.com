@@ -376,6 +376,12 @@ class import_tests
                     triples::SYSTEM_CALCULATOR);
             }
         }
+        // the from walk of a page finds these keywords by their code id
+        foreach (triples::CALCULATOR_FIELD_KINDS as $name => $code_id) {
+            $test_name = 'the import sets the code id of the calculator keyword ' . $name;
+            $kwd_code_id = $trp_lst->get_by_name($name, $msg)?->get_code_id();
+            $t->assert($test_name, $kwd_code_id, $code_id);
+        }
         // negative: only a system, system test or developer user may set a code id
         $test_name = 'a normal user cannot import the code id of a calculator keyword';
         $msg = new user_message($t->usr_normal);

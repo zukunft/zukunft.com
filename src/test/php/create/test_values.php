@@ -1603,6 +1603,68 @@ class test_values extends test_objects
     }
 
     /**
+     * the values of the list function test (formula_calc::list_values): two values of the inhabitants of
+     * the context of result_zh_sum_ui, the same fact with a confidence and another value without the context
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_list_function_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $ctx = [
+            $t_wrd->word_zh()->phrase(),
+            $t_trp->zh_city_low_impact()->phrase(),
+            $t_trp->company_zurich_high_impact()->phrase()
+        ];
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([...$ctx, $inh], 10));
+        $lst->add($this->value_for_phrases([...$ctx, $inh, $t_wrd->word_kwh()->phrase()], 20));
+        $lst->add($this->value_for_phrases([...$ctx, $inh, $t_wrd->word_confidence()->phrase()], 30));
+        $lst->add($this->value_for_phrases([$inh], 40));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the confidence test (ui_list::assumption_tag): an assumedvalue in kWh with its
+     * confidence in percent, and an assumed value of another phrase without a confidence
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_unit_confidence_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_kwh()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase()]));
+        $lst->add($this->value_for_phrases([$t_wrd->word_bern()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the detail table test: the inhabitants of the canton of Bern, which do not name the page Zurich
+     *
+     * @param bool $with_year true to add a second value that also has the phrases of the cell
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_bern_canton_ui(bool $with_year): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $phr_lst = [$t_wrd->word_bern()->phrase(), $t_wrd->word_inhabitant()->phrase(), $t_wrd->word_canton()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($phr_lst, values::SAMPLE_INT));
+        if ($with_year) {
+            $lst->add($this->value_for_phrases([...$phr_lst, $t_wrd->word_2019()->phrase()], values::SAMPLE_FLOAT));
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * the values of the input field test (test_phrases::list_input_fields_ui): the inhabitants of
      * Zurich as the number of the page, the limit and the step of the inhabitants field, and the
      * values of the city with the cities that the city selector offers
@@ -1637,6 +1699,18 @@ class test_values extends test_objects
     function value_list_calculator_input_ui(): value_list_ui
     {
         return $this->calculator_values_ui(false);
+    }
+
+    /**
+     * @return value_list_ui the number of the option 2020 of the phrase selector canton (test_triples::calculator_zh_input)
+     */
+    function value_list_calculator_option_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $t_wrd->word_2020()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 
     /**

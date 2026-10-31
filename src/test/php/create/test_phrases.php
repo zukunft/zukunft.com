@@ -1888,12 +1888,31 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the request cache of the field type test: the calculator input test
+     *         with a read only, a checkbox and a repeated field
+     */
+    function list_calculator_fields_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_fields());
+    }
+
+    /**
      * @return phrase_list_ui the request cache of the calculation result test: the calculator
      *         input test with the result column, the signed row group and the detail table
      */
     function list_calculator_result_ui(): phrase_list_ui
     {
         return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_result());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the number note test: the calculation result test
+     *         with a note behind the unit of the number of the row inhabitants
+     */
+    function list_calculator_number_note_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        return $this->calculator_input_ui([...$t_trp->calculator_zh_result(), ...$t_trp->calculator_zh_number_note()]);
     }
 
     /**

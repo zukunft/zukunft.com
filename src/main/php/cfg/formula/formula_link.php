@@ -852,17 +852,17 @@ class formula_link extends sandbox_link
                 ]);
             }
         }
-        if ($msg->is_ok()) {
-            if ($this->phrase_id() <> 0) {
-                $phr = new phrase($this->get_user());
-                $phr->load_by_id($this->phrase_id(), $msg);
-                if ($phr->id() != 0) {
-                    $this->set_phrase($phr);
-                } else {
-                    $msg->add(msg_id::LOAD_PHRASE_BY_ID_FAILED, [
-                        msg_id::VAR_PHRASE => $this->phrase()->dsp_id()
-                    ]);
-                }
+        // the phrase is loaded even if the message already reports a problem, because e.g. the
+        // delete log names the phrase and its sql function is created only once per name
+        if ($this->phrase_id() <> 0) {
+            $phr = new phrase($this->get_user());
+            $phr->load_by_id($this->phrase_id(), $msg);
+            if ($phr->id() != 0) {
+                $this->set_phrase($phr);
+            } else {
+                $msg->add(msg_id::LOAD_PHRASE_BY_ID_FAILED, [
+                    msg_id::VAR_PHRASE => $this->phrase()->dsp_id()
+                ]);
             }
         }
         return parent::reload_objects($msg);

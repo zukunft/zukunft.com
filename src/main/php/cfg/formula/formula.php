@@ -63,6 +63,7 @@ include_once paths::MODEL_FORMULA . 'formula_map.php';
 include_once paths::MODEL_ELEMENT . 'element_group.php';
 include_once paths::MODEL_FORMULA . 'figure.php';
 include_once paths::MODEL_FORMULA . 'figure_list.php';
+include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
@@ -86,8 +87,10 @@ include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_CALC . 'arithmetic.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -117,8 +120,11 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\views as views_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -1102,6 +1108,13 @@ class formula extends formula_map
         $res_lst = new result_list($this->get_user());
         $res_init = $this->create_result($phr_lst);
 
+        // never a wrong number: a list function that cannot take all values of its operand gives no result
+        $list_symbols = $this->list_symbols($res_init->num_text);
+        if ($list_symbols === null) {
+            $msg->add(msg_id::FORMULA_LIST_ARGUMENT, [msg_id::VAR_EXPRESSION => $this->usr_text]);
+            return $res_lst;
+        }
+
         // load the formula element groups e.g. "sales differentiator sector" and "Total sales"
         $exp = $this->expression($msg, $trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($msg, $trm_lst);
@@ -1110,16 +1123,113 @@ class formula extends formula_map
         // replace each element group symbol with the matching number(s)
         $all_elm_grp_filled = true;
         foreach ($elm_grp_lst->lst() as $elm_grp) {
-            if (!$this->fill_element_group($res_lst, $elm_grp, $trm_lst, $phr_lst, $res_init, $msg)) {
+            if (in_array($elm_grp->build_symbol(), $list_symbols)) {
+                $filled = $this->fill_list_element_group($res_lst, $elm_grp, $phr_lst, $res_init, $msg);
+            } else {
+                $filled = $this->fill_element_group($res_lst, $elm_grp, $trm_lst, $phr_lst, $res_init, $msg);
+            }
+            if (!$filled) {
                 $all_elm_grp_filled = false;
             }
         }
 
         // switch off incomplete results and calculate the final numbers
         $this->switch_off_incomplete_results($res_lst, $phr_lst, $all_elm_grp_filled);
-        $this->calc_results($res_lst, $phr_lst);
+        $this->calc_results($res_lst, $phr_lst, $msg);
 
         return $res_lst;
+    }
+
+    /**
+     * @param string $num_text the expression with the element symbols e.g. "=sum({w12})/count({w13})"
+     * @return array|null the symbols that stand for a list; null if a list function has an argument that is no
+     *                    plain operand or a symbol is also used outside, because then a list would be replaced into a calculation
+     */
+    function list_symbols(string $num_text): ?array
+    {
+        $symbol_pattern = '/\\' . chars::TERM_START . '[^' . chars::TERM_START . chars::TERM_END . ']+' . chars::TERM_END . '/';
+        $is_plain = arithmetic::list_args_are_plain(preg_replace($symbol_pattern, 'x', $num_text));
+        $result = null;
+        if ($is_plain) {
+            $names = implode('|', chars::FUNC_LIST);
+            preg_match_all('/\b(?:' . $names . ')\s*\(([^()]*)\)/', $num_text, $calls);
+            preg_match_all($symbol_pattern, implode(chars::FUNC_ARG_SEPARATOR, $calls[1]), $found);
+            $result = $found[0];
+            foreach ($result as $symbol) {
+                $in_list = count(array_keys($result, $symbol));
+                if (substr_count($num_text, $symbol) != $in_list) {
+                    $result = null;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * replace the symbol of a list function by all numbers of the list e.g. "sum({w12})" by "sum(1;2;3)":
+     * the stored values that name the operand and all phrases of the calculation context, without a
+     * second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
+     * @param result_list $res_lst the list of results that is updated in place with the numbers
+     * @param element_group $elm_grp the element group of the operand
+     * @param phrase_list $ctx_lst the calculation context used to select the values e.g. "ABB"
+     * @param result $res_init the master result added as a placeholder when the result list is still empty
+     * @param user_message $msg to report a list that is too long, because a cut list would be a wrong number
+     * @return bool false if the operand is no phrase or the list has no number or is too long
+     */
+    function fill_list_element_group(
+        result_list   $res_lst,
+        element_group $elm_grp,
+        phrase_list   $ctx_lst,
+        result        $res_init,
+        user_message  $msg
+    ): bool
+    {
+        $phr_lst = clone $ctx_lst;
+        $all_phrases = true;
+        foreach ($elm_grp->lst() as $elm) {
+            if (method_exists($elm->obj, 'phrase')) {
+                $phr_lst->add($elm->obj->phrase());
+            } else {
+                $all_phrases = false;
+            }
+        }
+        $val_lst = new value_list($this->get_user());
+        if ($all_phrases) {
+            $val_lst->load_by_phr_lst($phr_lst, $msg, false, sql_db::ROW_MAX);
+            // the exclusion needs the names of the phrases of each value
+            $val_lst->load_phrases($msg);
+        }
+        $nums = [];
+        $updates = [];
+        foreach ($val_lst->lst() as $val) {
+            $is_excluded = array_intersect($val->phr_lst()->names(), words::LIST_FUNCTION_EXCLUDED) != [];
+            if (!$is_excluded and is_numeric($val->number())) {
+                $nums[] = $val->number();
+                $updates[] = $val->last_update();
+            }
+        }
+        $is_cut = count($val_lst->lst()) >= sql_db::ROW_MAX;
+        if ($is_cut) {
+            $msg->add(msg_id::FORMULA_LIST_TOO_LONG, [
+                msg_id::VAR_NAME => $phr_lst->dsp_name(),
+                msg_id::VAR_EXPRESSION => $this->usr_text
+            ]);
+        }
+        $filled = ($nums != [] and !$is_cut);
+        if ($filled) {
+            if (count($res_lst->lst()) == 0) {
+                $res_lst->add_obj($res_init);
+            }
+            foreach ($res_lst->lst() as $res) {
+                $res->num_text = str_replace($elm_grp->symbol, implode(chars::FUNC_ARG_SEPARATOR, $nums), $res->num_text);
+                foreach ($updates as $update) {
+                    if ($res->last_val_update < $update) {
+                        $res->last_val_update = $update;
+                    }
+                }
+            }
+        }
+        return $filled;
     }
 
     /**
@@ -1329,12 +1439,13 @@ class formula extends formula_map
      * calculate the final numeric result for each result in the list
      * @param result_list $res_lst the list of results that is calculated and updated in place
      * @param phrase_list $phr_lst the calculation context passed on to each single result calculation
+     * @param user_message $msg to report an expression that cannot be calculated e.g. a missing math function
      */
-    function calc_results(result_list $res_lst, phrase_list $phr_lst): void
+    function calc_results(result_list $res_lst, phrase_list $phr_lst, user_message $msg): void
     {
         if ($res_lst->lst() != null) {
             foreach ($res_lst->lst() as $res) {
-                $this->calc_result($res, $phr_lst);
+                $this->calc_result($res, $phr_lst, $msg);
             }
         }
     }
@@ -1343,21 +1454,22 @@ class formula extends formula_map
      * calculate the numeric result of a single result if it needs an update
      * @param result $res the result that is parsed and updated in place with the calculated number
      * @param phrase_list $phr_lst the calculation context, used only for the log messages
+     * @param user_message $msg to report an expression that cannot be calculated e.g. a missing math function
      */
-    function calc_result(result $res, phrase_list $phr_lst): void
+    function calc_result(result $res, phrase_list $phr_lst, user_message $msg): void
     {
         // at least the formula update should be used
         if ($res->last_val_update < $this->last_update) {
             $res->last_val_update = $this->last_update;
         }
         if ($res->num_text == '') {
-            log_err('num text is empty nothing needs to be done, but actually this should never happen');
+            log_err_msg('num text is empty nothing needs to be done, but actually this should never happen', $msg);
         } else {
             if ($res->last_val_update > $res->last_update()) {
                 if ($this->result_can_calc($res)) {
                     log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
                     $calc = new calc_internal();
-                    $res->set_number($calc->parse($res->num_text));
+                    $res->set_number($calc->parse($res->num_text, $msg));
                     $res->is_updated = true;
                     log_debug('the calculated ' . $this->dsp_id() . ' is ' . $res->number() . ' for ' . $res->grp()->phrase_list()->dsp_id());
                 }

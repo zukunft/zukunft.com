@@ -283,6 +283,19 @@ class frontend
         user_ui::class,
         language_ui::class,
     ];
+    // the objects that are not part of the cached config values and their phrase names, so their write keeps the cached config
+    const array CONFIG_KEPT_BY = [
+        formula_ui::class,
+        formula_link_ui::class,
+        source_ui::class,
+        ref_ui::class,
+        result_ui::class,
+        term_view_ui::class,
+        view_ui::class,
+        view_relation_ui::class,
+        component_ui::class,
+        component_link_ui::class,
+    ];
 
 
     /*
@@ -1855,9 +1868,10 @@ class frontend
      * @param user_message_ui $msg_ui with the user that has done the change
      * @param bool $is_default true if an admin has changed the default of all users e.g. of a setting
      * @param string $class the class of the changed object e.g. word
+     * @param bool $cfg_outdated true if the change can be part of the cached config values (see config_outdated_by)
      * @return void
      */
-    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default, string $class): void
+    private function drop_cached_pages(user_message_ui $msg_ui, bool $is_default, string $class, bool $cfg_outdated): void
     {
         $cac_page = new db_cache_page();
         // the cached config values include the overwrites of the user e.g. of the settings page
@@ -1872,15 +1886,40 @@ class frontend
         foreach (self::api_lists_outdated_by($class) as $lst_class) {
             $cac_page->del_api($lst_class, $del_msg, $del_usr_id);
         }
-        if ($own_only) {
+        if ($cfg_outdated and $own_only) {
             $cac_cfg->del_by_user($usr_id, $del_msg);
-        } else {
+        } elseif ($cfg_outdated) {
             $cac_cfg->del_by_types(config_numbers::CACHE_TYPES, $del_msg);
         }
         if (!$del_msg->is_ok()) {
             log_warning('removing the cached pages after a change of user ' . $usr_id
                 . ' failed because ' . $del_msg->get_message());
         }
+    }
+
+    /**
+     * the cached config holds the values that name the system configuration with their phrase
+     * names, so a value without this phrase and e.g. a formula keep it; if the phrases of a value
+     * are not known or the object type is not listed the cache is dropped, so that a config
+     * change never stays hidden behind an outdated cache
+     *
+     * @param object $changed the changed object e.g. a value
+     * @return bool true if the write can change the cached config
+     */
+    static function config_outdated_by(object $changed): bool
+    {
+        $result = true;
+        foreach (self::CONFIG_KEPT_BY as $kept_class) {
+            if ($changed instanceof $kept_class) {
+                $result = false;
+            }
+        }
+        if ($changed instanceof value_ui) {
+            $names = $changed->phr_lst()->names();
+            $all_named = ($names != [] and !in_array('', $names));
+            $result = (!$all_named or in_array(triples::SYSTEM_CONFIG, $names));
+        }
+        return $result;
     }
 
     /**
@@ -2672,7 +2711,8 @@ class frontend
             // every page that shows the written data is now outdated, so the cached pages are
             // removed and rendered again on the next request
             $is_default = ($dbo instanceof value_ui and $dbo->set_default);
-            $this->drop_cached_pages($msg_ui, $is_default, $dbo::class);
+            $cfg_outdated = ($this->is_setting_save($url_array, $crud) or self::config_outdated_by($dbo));
+            $this->drop_cached_pages($msg_ui, $is_default, $dbo::class, $cfg_outdated);
             // the settings page shows many numbers, so it confirms which one has changed and how
             if ($this->is_setting_save($url_array, $crud)) {
                 $msg_ui->add_info($this->setting_saved_text($url_array));
@@ -2737,7 +2777,8 @@ class frontend
             }
             // the pages that show the saved numbers are outdated
             if ($saved != []) {
-                $this->drop_cached_pages($msg_ui, false, value_ui::class);
+                $cfg_outdated = array_any($changes, fn(value_ui $val) => self::config_outdated_by($val));
+                $this->drop_cached_pages($msg_ui, false, value_ui::class, $cfg_outdated);
             }
         }
         $url = [url_var::MASK => $url_array[url_var::MASK], url_var::ID => $url_array[url_var::ID] ?? 0];

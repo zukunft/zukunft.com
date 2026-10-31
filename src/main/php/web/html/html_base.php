@@ -2500,7 +2500,7 @@ class html_base
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
                 $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), $url_arr);
-                $result .= $this->ref($url, $this->esc($item->name()));
+                $result .= $this->ref($url, $item->name());
                 $result .= '<' . self::BR . '>';
             }
         }
@@ -2979,6 +2979,33 @@ class html_base
     /*
      * base elements - functions for all html elements used in zukunft.com
      */
+
+    /**
+     * @param string $text the html code of the label: a text that has no form field e.g. of a read only number, or the text with the input that it wraps
+     * @param string $style the html class of the label, '' for none
+     * @return string the html code of a label without a for attribute
+     */
+    function label_no_for(string $text, string $style = ''): string
+    {
+        $class = $style == '' ? '' : ' ' . self::CLASS_HTML . '="' . $style . '"';
+        return '<' . self::LABEL . $class . '>' . $text . '</' . self::LABEL . '>';
+    }
+
+    /**
+     * a checkbox that sends the number 1 if it is checked; the id equals the name, so a label can point to it
+     *
+     * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
+     * @param bool $checked true to show the checkbox checked
+     * @param string $form_name the form that the input joins by its form attribute
+     * @return string the html code of the checkbox
+     */
+    function input_checkbox(string $name, bool $checked, string $form_name): string
+    {
+        $attr = ' ' . self::TYPE . '="' . self::INPUT_CHECKBOX . '" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
+        $form = ' ' . html_names::VALUE . '="1" ' . self::FORM . '="' . $this->esc($form_name) . '"';
+        $state = $checked ? ' checked' : '';
+        return '<' . self::INPUT . $attr . $form . $state . '>';
+    }
 
     /**
      * create the html code for a label

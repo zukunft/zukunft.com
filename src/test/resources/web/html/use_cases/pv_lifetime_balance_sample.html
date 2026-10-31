@@ -210,9 +210,8 @@
                     <div class="field">
                         <label for="mixC">Replacement mix</label>
                         <select id="mixC">
-                            <option value="523" selected>European residual mix — 523 g/kWh [4]</option>
-                            <option value="395">ENTSO-E production mix 2022 — ~395 g/kWh (midpoint of 350–440) [3]
-                            </option>
+                            <option value="523" selected>European residual mix — 523 g/kWh [3]</option>
+                            <option value="395">ENTSO-E production mix 2022 — 395 g/kWh [4]</option>
                         </select>
                     </div>
                     <div class="field">
@@ -225,6 +224,7 @@
                         <label for="eta">Battery round-trip efficiency <span class="tag a">assumed 0.7</span></label>
                         <div class="row"><input id="eta" type="number" step="0.01" value="0.90"><span
                                 class="unit">share</span></div>
+                        <span class="hint">the usual system efficiency of a lithium-ion home storage incl. the inverter losses</span>
                     </div>
                     <div class="field">
                         <label for="bco2">Battery production emissions <span class="tag a">assumed 0.5</span></label>
@@ -236,6 +236,22 @@
                         <label for="blife">Battery lifetime <span class="tag a">assumed 0.6</span></label>
                         <div class="row"><input id="blife" type="number" step="1" value="15"><span class="unit">a</span>
                         </div>
+                        <span class="hint">a lithium-ion home storage with one cycle a day lasts 10 to 20 years</span>
+                    </div>
+                    <div class="field">
+                        <label for="prodMix">CO2-eq electricity Europe life cycle production mix <span class="tag m">measured</span></label>
+                        <div class="row"><input id="prodMix" type="number" value="395"><span class="unit">g/kWh</span></div>
+                        <span class="hint">Frischknecht (treeze): Ökobilanz der monatlichen Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means 2018–2022)</span>
+                    </div>
+                    <div class="field">
+                        <label for="resMix">CO2-eq electricity Europe life cycle residual mix <span class="tag m">measured</span></label>
+                        <div class="row"><input id="resMix" type="number" value="523"><span class="unit">g/kWh</span></div>
+                        <span class="hint">Swissolar: Fiche d'information Photovoltaïque, Feb 2024 (European residual mix)</span>
+                    </div>
+                    <div class="field">
+                        <label for="ewFactor">east-west yield factor <span class="tag m">measured</span></label>
+                        <div class="row"><input id="ewFactor" type="number" value="0.85"><span class="unit">percent</span></div>
+                        <span class="hint">Orientation yield table, 30° tilt: S 100 %, SE/SW 95 %, E/W 82 %, N 59 %</span>
                     </div>
                 </details>
             </aside>
@@ -301,7 +317,7 @@
                             <td colspan="3">Production emissions</td>
                         </tr>
                         <tr>
-                            <td>PV system<span class="sub">1'048 kg CO₂-eq/kWp → 42.1 g/kWh at this site</span></td>
+                            <td>PV system<span class="sub">42.1 g/kWh at this site</span></td>
                             <td class="n">10.5 t</td>
                             <td class="n">349 kg</td>
                         </tr>
@@ -325,7 +341,7 @@
                             <td class="n"><span class="pos">436 kg</span></td>
                         </tr>
                         <tr class="key">
-                            <td>vs. replacement mix (523 g/kWh)<span class="sub">payback 3.0 a</span></td>
+                            <td>vs. replacement mix (523 g/kWh)<span class="sub">payback 2.97 a</span></td>
                             <td class="n"><span class="pos">113.8 t</span></td>
                             <td class="n"><span class="pos">3'794 kg</span></td>
                         </tr>
@@ -452,7 +468,7 @@
                                 <tr>
                                     <td>Oct</td>
                                     <td class="n">581</td>
-                                    <td class="n">382</td>
+                                    <td class="n">383</td>
                                     <td class="n">134</td>
                                     <td class="n">249</td>
                                     <td class="n">171</td>
@@ -499,7 +515,7 @@
                                 electricity. Production emissions of the modules and the battery are subtracted. Battery
                                 losses reduce the delivered energy.</p>
                             <p><strong>Seasonal Swiss mix.</strong> PV produces mostly in summer, when the Swiss
-                                consumer mix is cleanest (about 70–90 g/kWh in May–August, 140–165 g/kWh in winter) [3].
+                                consumer mix is cleanest (about 70–90 g/kWh in May–August, 140–165 g/kWh in winter) [4].
                                 Weighting each month's PV output by that month's mix gives a lower saving than the
                                 annual average.</p>
                             <p><strong>Self-consumption model.</strong> Monthly resolution: direct use is capped at the
@@ -521,14 +537,14 @@
                                        target="_blank" rel="noopener">Krebs &amp; Frischknecht (treeze): Umweltbilanz
                                         Strommixe Schweiz 2018, for BAFU</a></li>
                                 <li>
+                                    <a href="https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf"
+                                       target="_blank" rel="noopener">Swissolar: Fiche d'information Photovoltaïque, Feb
+                                        2024 (European residual mix)</a></li>
+                                <li>
                                     <a href="https://www.stadt-zuerich.ch/content/dam/web/de/aktuell/publikationen/2025/studien-netto-null/oekobilanz-monatliche-strombereitstellung-studie.pdf"
                                        target="_blank" rel="noopener">Frischknecht (treeze): Ökobilanz der monatlichen
                                         Strombereitstellung Schweiz und Europa, Stadt Zürich 2025 (monthly means
                                         2018–2022)</a></li>
-                                <li>
-                                    <a href="https://www.swissolar.ch/01_wissen/swissolar-publikationen/branchen-faktenblatt_pv_ch_f.pdf"
-                                       target="_blank" rel="noopener">Swissolar: Fiche d'information Photovoltaïque, Feb
-                                        2024 (European residual mix)</a></li>
                                 <li><a href="https://ideas.repec.org/a/bla/inecol/v29y2025i1p113-128.html"
                                        target="_blank" rel="noopener">Comparative LCA of Li-ion, Na-ion and solid-state
                                     cells, J. Industrial Ecology 29 (2025): 58–92 kg CO₂-eq/kWh cell, LFP down to
@@ -582,7 +598,7 @@
     const PV_SHARE = [2.5, 4.5, 8, 11, 12.5, 13, 13.5, 12, 10, 7, 3.5, 2.5];
     // Share of annual household load per month (assumed, confidence 0.6)
     const LOAD_SHARE = [10, 9, 9, 8, 7.5, 7, 7, 7, 7.5, 8.5, 9.5, 10];
-    // Swiss consumer mix, 5-year monthly means 2018–2022, g CO2-eq/kWh [3]
+    // Swiss consumer mix, 5-year monthly means 2018–2022, g CO2-eq/kWh [4]
     const CH_MONTH = [150.8, 146.9, 141.4, 100.0, 69.1, 79.5, 87.7, 88.8, 129.6, 134.6, 163.7, 152.8];
     // Reference LCA yield and lifetime used to convert g/kWh into kg per kWp [1]
     const REF_YIELD = 976;
@@ -600,14 +616,22 @@
 
     function fmt(value, digits) {
         const options = {minimumFractionDigits: digits, maximumFractionDigits: digits};
-        const result = value.toLocaleString("de-CH", options);
+        // a number that rounds to zero has no sign
+        const shown = Number(value.toFixed(digits)) === 0 ? 0 : value;
+        const result = shown.toLocaleString("de-CH", options);
         return result;
     }
 
-    function tonnes(kg) {
+    function tonnes(kg, digits) {
         const t = kg / 1000;
-        const result = fmt(t, 1) + " t";
+        const result = fmt(t, digits) + " t";
         return result;
+    }
+
+    // the decimals of a column like the generated page: four digits of its largest number
+    function columnDecimals(values) {
+        const max = Math.max(...values.map(Math.abs));
+        return max > 0 ? Math.max(0, 3 - Math.floor(Math.log10(max))) : 0;
     }
 
     function simulate(p, battKwh) {
@@ -674,9 +698,9 @@
         return html;
     }
 
-    function signed(kg, perYear) {
+    function signed(kg, perYear, digits) {
         const cls = kg >= 0 ? "pos" : "neg";
-        const text = perYear ? fmt(kg, 0) + " kg" : tonnes(kg);
+        const text = perYear ? fmt(kg, digits) + " kg" : tonnes(kg, digits);
         const html = `<span class="${cls}">${text}</span>`;
         return html;
     }
@@ -711,7 +735,9 @@
             const perYear = gross / L;
             let text = "never";
             if (perYear > 0) {
-                text = fmt(emb / perYear, 1) + " a";
+                const years = emb / perYear;
+                // three digits like the rough numbers of the generated page
+                text = fmt(years, years < 10 ? 2 : (years < 100 ? 1 : 0)) + " a";
             }
             return text;
         };
@@ -734,14 +760,17 @@
         h += row("Autarky", "share of load covered by PV", "", fmt(autarky, 0) + " %", "key");
 
         h += section("Production emissions");
-        h += row("PV system", `${fmt(pvKgPerKwp, 0)} kg CO₂-eq/kWp → ${fmt(pvIntensity, 1)} g/kWh at this site`, tonnes(pvEmb), fmt(pvEmb / L, 0) + " kg");
-        h += row("Battery", battUnits ? `${battUnits} × ${fmt(p.batt, 0)} kWh × ${fmt(p.bco2, 0)} kg/kWh` : "no battery", tonnes(battEmb), fmt(battEmb / L, 0) + " kg");
+        const massValues = [pvEmb, battEmb, netA, netB, netC, battEffect];
+        const lifeDigits = columnDecimals(massValues.map((kg) => kg / 1000));
+        const yearDigits = columnDecimals(massValues.map((kg) => kg / L));
+        h += row("PV system", `${fmt(pvIntensity, 1)} g/kWh at this site`, tonnes(pvEmb, lifeDigits), fmt(pvEmb / L, yearDigits) + " kg");
+        h += row("Battery", battUnits ? `${battUnits} × ${fmt(p.batt, 0)} kWh × ${fmt(p.bco2, 0)} kg/kWh` : "no battery", tonnes(battEmb, lifeDigits), fmt(battEmb / L, yearDigits) + " kg");
 
         h += section("CO₂-eq saved, net of production emissions");
-        h += row(`vs. Swiss consumer mix, annual (${fmt(p.mixA, 0)} g/kWh)`, `payback ${payback(grossA)}`, signed(netA, false), signed(netA / L, true), "key");
-        h += row(`vs. Swiss consumer mix, monthly (${fmt(mixBeff, 0)} g/kWh PV-weighted)`, `payback ${payback(grossB)}`, signed(netB, false), signed(netB / L, true), "key");
-        h += row(`vs. replacement mix (${fmt(p.mixC, 0)} g/kWh)`, `payback ${payback(grossC)}`, signed(netC, false), signed(netC / L, true), "key");
-        h += row("Effect of the battery", "vs. same PV without battery, annual Swiss mix", signed(battEffect, false), signed(battEffect / L, true));
+        h += row(`vs. Swiss consumer mix, annual (${fmt(p.mixA, 0)} g/kWh)`, `payback ${payback(grossA)}`, signed(netA, false, lifeDigits), signed(netA / L, true, yearDigits), "key");
+        h += row(`vs. Swiss consumer mix, monthly (${fmt(mixBeff, 0)} g/kWh PV-weighted)`, `payback ${payback(grossB)}`, signed(netB, false, lifeDigits), signed(netB / L, true, yearDigits), "key");
+        h += row(`vs. replacement mix (${fmt(p.mixC, 0)} g/kWh)`, `payback ${payback(grossC)}`, signed(netC, false, lifeDigits), signed(netC / L, true, yearDigits), "key");
+        h += row("Effect of the battery", "vs. same PV without battery, annual Swiss mix", signed(battEffect, false, lifeDigits), signed(battEffect / L, true, yearDigits));
 
         document.querySelector("#res tbody").innerHTML = h;
 
@@ -753,7 +782,6 @@
         document.querySelector("#mon tbody").innerHTML = mh;
 
         const sel = document.getElementById("orient");
-        document.getElementById("orientHint").textContent = `Yield factor ${fmt(p.factor, 2)} relative to south 30° [7]`;
         return sel;
     }
 

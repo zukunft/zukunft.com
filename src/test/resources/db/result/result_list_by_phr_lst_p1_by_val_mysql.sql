@@ -187,4 +187,4 @@ PREPARE result_list_by_phr_lst_p1 FROM
           FROM results_big s
      LEFT JOIN user_results_big u ON s.group_id = u.group_id
                                  AND u.user_id = ?
-         WHERE REGEXP_LIKE(s.group_id, ?, 'c')';
+         WHERE REGEXP_LIKE(s.group_id, ?, 'c') LIMIT ? OFFSET ?';

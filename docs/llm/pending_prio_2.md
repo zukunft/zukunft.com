@@ -5,6 +5,14 @@
 in src/main/resources/script/calculator_json.js are some fixed text warning messages like 'console.warn('the data selects several numbers for ' + what + ': ' + Array.from(numbers).join(', '));'
 make this text translatable so that the frontend language shows the warning in the correct language
 
+## calculator selector with and without numbers
+
+A selector that mixes options with and without a number keeps the last results while an option without a number is selected, because no number exists for it, and the page does not tell the user. Report this on the page, or refuse such a selector in the import, with a positive and a negative test. The selected option of such a selector is also not saved, because a phrase selector has no save vars.
+
+## calculator scripts without a browser test of a checkbox
+
+No use case has a formula that reads a checkbox, so no input case toggles one in `calculator.js` or `calculator_json.js`. Add the toggle to `use_case_cases.js` and a case when the first such formula exists, e.g. mirroring in the portfolio split walk.
+
 ## formula editor
 
 - the toast of a failed save in `src/main/resources/script/formula_editor.js` says "The message is shown
@@ -26,7 +34,7 @@ make this text translatable so that the frontend language shows the warning in t
 #### reach the formula editor from the page
 
 the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
-http://localhost/http/view.php?m=formula_editor&id=-2746, because the calculator has one editor relation
+http://localhost/http/view.php?m=formula_editor&id=-2757, because the calculator has one editor relation
 (the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
 type, so that the edit menu offers both editors
 
@@ -93,17 +101,16 @@ with a fixed value in the test snapshots, so that the browser reads the changed 
 
 ## calculator field value of the page triple
 
-`ui_list::calculator_value` ranks a value that has a part of the page triple directly after a value
-with the page phrase, and takes both sides of the triple as parts; the `to` side is a class or a
-qualifier that many unrelated values share, e.g. "example" of "example PV installation" (PV
-installation kind of example), so the PV yield field of the PV lifetime balance page shows the
-assumed 1000 kWh per kWp of `pv_yield.json` with the word "example" instead of the measured 976
-kWh/kWp·a with its source (snapshot `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html`,
-field n-1997)
+`ui_list::calculator_value` and its twin `fieldEntry` in `calculator_json.js` rank a value that a
+result of the page uses first; for a field whose value no result uses, a value that has a part of
+the page triple ranks directly after a value with the page phrase, and both sides of the triple
+count as parts; the `to` side is a class or a qualifier that many unrelated values share, e.g.
+"example" of "example PV installation" (PV installation kind of example), so such a field would
+show e.g. the assumed 1000 kWh per kWp of `pv_yield.json` with the word "example"
 
 count only the `from` side of the page triple, the phrase the page is about e.g. PV installation or
 Zurich of Zurich (city), so that the lifetime of a new NPP still ranks below the lifetime of the PV
-installation and the PV yield shows 976 again; then:
+installation; then:
 - change the tie fixture `test_values::value_list_calculator_input_tie_ui`, whose second value uses
   city (the `to` side of Zurich (city)) to rank the same as Zurich, to two values that rank the same
   without a part of the page triple
@@ -133,7 +140,7 @@ comment that a result always has its group, so that the asymmetry is explained
 ## test of the page object of a phrase view
 
 frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
-of a negative phrase id, e.g. the calculator editor of example PV installation with id -2746;
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2757;
 it is private and only reached by url_to_html with the view in the cache, so add a unit test
 via url_to_html for a word view and a triple view, each called with a word and with a triple id
 
@@ -238,7 +245,69 @@ check the words that a later file uses with another meaning than their home file
 
 the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
 
+## math functions of a symbol
+
+`integral`, `lim`, `d` and `C` describe a law with symbols; they stay missing in calc_internal, because a calculation with the numbers of a single value would give a wrong number
+
+## list functions
+
+wrong number:
+- `formula_calc::is_list_argument` and `LIST_ARGUMENT_START` in `calculator_json.js` also read the brackets inside a quoted phrase name, so in `sum("Bern (city)";"b")` the operand "b" is one value instead of its list: remove the quoted names before the check
+- `formula_calc::list_values` and `listEntries` in `calculator_json.js` and `formula_editor.js` keep a value without a number, which counts as 0, whereas `formula::fill_list_element_group` skips it: add the same check
+- the page calculates a list only with the values of the page and the backend with all values of the database, so a list that is not complete on the page gives another number, which replaces the stored one on the page
+- `sum` also adds a value without a year to the values of the years, e.g. the inhabitants of Switzerland: a total counts twice under the rule that a list has all matching values
+
+failed calculation:
+- the early return of `formula::to_num_new` for a list function with a calculated argument keeps the stored result, but a failed calculation should overwrite it with nothing (`docs/json_structure.md`)
+- `formula::fill_list_element_group` adds no message for a list without a value or with a formula as the operand, so the user is not told why there is no number
+
+limits of the phrase list load:
+- the limit of `load_by_phr_lst` cuts a list silently except in the list functions, also for the `phrase_data` export with 2000 and the related values with 1000 rows
+- the query has no `ORDER BY`, so a later page can repeat or miss a row
+- a list function refuses a list of exactly 2000 values as too long, because it looks the same as a cut list
+
+code:
+- `LIST_EXCLUDED` repeats the phrase names of `words::LIST_FUNCTION_EXCLUDED` in `calculator_json.js` and `formula_editor.js`, and no test compares them
+- `LIST_ARGUMENTS_PLAIN` in `calculator_json.js` repeats the pattern of `arithmetic::list_args_are_plain`, and no test compares them
+- the comments in `phrase_data.php`, `update_put.php`, `phrase_data_walks.php` and `url_var.php` use the example id -2757, whereas `pv` redirects to -2758: check them after the next id shift
+- the `use` line of `sql_db` in `formula.php` is out of order
+
+## slow diff of a large file
+
+a difference in a large csv file takes minutes: a test run needed 149 seconds (546 s to 695 s of the run) to report the difference of `unit/result/list.csv` with 152 KB. A matching file is fast, because the check itself is a plain string compare, so the delay only shows if there are differences. The time is booked as `test diff` in the time report.
+
+cause, in the path `test_base::assert` → `library::diff_msg` → `str_diff` → `str_diff_list`:
+- a csv is of the type `STR_TYPE_CODE`, so `str_split_for_humans` splits the file into one part per char, 152'297 parts for this file
+- for each char that differs, `str_diff_list_next_array_match` searches the next 8 matching chars (`STR_DIFF_MATCH_LEN`) up to the end of the text, so if the end has changed too, nothing matches and each char costs a full scan: the time grows with about the square of the size
+- the message stops at about 100 chars (`STR_DIFF_MSG_LEN`), so almost all of the diff is calculated and dropped, e.g. "and 243374 more" in the message
+
+measured without database by calling `diff_msg` with parts of the file, with the first 20 % matching and all digits of the rest changed:
+
+| text size | time |
+| ---: | ---: |
+| 2'500 chars | 3.05 s |
+| 5'000 chars | 8.40 s |
+| 10'000 chars | 28.21 s |
+| 20'000 chars | 62.87 s |
+| 40'000 chars | not finished in the about 20 s left of a 110 s limit |
+| 152'000 chars | not finished in a 280 s run over all sizes up to this one |
+
+the time depends on how much of the text no longer matches: the old and the new version of the file from git with 152 KB, which are mostly the same, needed 0.72 s
+
+possible fixes:
+1. `test_db_load::csv_check_of_class` compares a large csv line by line and reports the changed rows with `array_diff` like `csv_leftover_check`, which should need well under a second and is easier to read than e.g. `30407//+f4-//`; this is the recommended fix, but it covers only the csv files
+2. `str_diff_list` stops when the message has enough differences, for the large html and text snapshots; the count of "and N more" is then no longer available
+3. limit the search of `str_diff_list_next_array_match`: a small change, but the diff of moved text gets less exact
+
 ## use case
+
+the PV calculator page (pv_lifetime_balance.json) recalculates in the browser only what its formulas calculate, so the input cases of system_views_read_tests::run_pv_lifetime_balance_cases still differ from the sample (pv_lifetime_balance_diff_high.md, _low.md):
+- the reference yield of 976 and the reference lifetime of 30 years are also numbers in the formula "PV embodied intensity formula": give them their own phrases, so that they are values with a source
+
+differences of the PV calculator page to its sample that no `pv_lifetime_balance_diff*.md` report shows, because no input case reaches them:
+- the sample always shows the lifetime column in tonnes, whereas the generated page switches to tonnes only from 10'000 kg, so small values entered by hand can show different units
+- `calculator.js` of the server page does not update the numbers in a row sub text when an input changes, whereas `calculator_json.js` and the sample do
+- the sample no longer shows the midpoint of 350–440 in the option of the production mix, so the midpoint is only in the description of the value in `pv_lifetime_balance.json`
 
 PV in Switzerland
 

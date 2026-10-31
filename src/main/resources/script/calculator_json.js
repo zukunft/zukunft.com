@@ -48,6 +48,8 @@
     const SETTINGS_ID = 'calcPageSettings';
     // the url var of a number field and of its save vars, the same as url_var NUMERIC_VALUE, GROUP, PRE, NAME and PHRASE
     const NUMBER_VAR = 'n';
+    // in front of the phrase id of a selector option without a number, the same as ui_list CALC_OPTION_PHRASE
+    const OPTION_PHRASE = 'phrase';
     const GROUP_VAR = 'g';
     const PRE_VAR = '8';
     const NAME_VAR = 'k';
@@ -57,10 +59,16 @@
         grid: 'grid', panel: 'panel', inputs: 'inputs', field: 'field',
         row: 'row', unit: 'unit', hint: 'hint', tag: 'tag', tagMeasured: 'tag m', tagAssumed: 'tag a',
         scroll: 'scroll', section: 'sec', key: 'key', sub: 'sub', number: 'n', more: 'more',
-        notes: 'notes', sources: 'src', select: 'form-control'
+        notes: 'notes', sources: 'src', select: 'form-control', check: 'check', readOnly: 'ro',
+        addButton: 'btn btn-outline-primary btn-sm'
     };
     // the suffix of the html id of a selector, the same as html_selector builds it from its name
     const SELECT_ID_SUFFIX = '_form_select';
+    // between the label of a selector option and its number (ui_list::CALC_OPTION_SEP)
+    const OPTION_SEP = ' — ';
+    // in a hint the place of the source number and a phrase shown as its number (ui_list::CALC_HINT_SOURCE and CALC_HINT_NUMBER_PATTERN)
+    const HINT_SOURCE = '[n]';
+    const HINT_NUMBER_PATTERN = /\{([^{}|]+)(\|number)?\}/g;
     // the translated texts by their message id (system_page::CALC_PAGE_TEXT_IDS)
     const TXT = {
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
@@ -75,6 +83,8 @@
         return;
     }
     const KW = settings.keywords || {};
+    // the phrases of a value that make it a property of a field and not the number of the field (ui_list::CALC_FIELD_PROPERTIES)
+    const FIELD_PROPERTIES = [KW.limit_down, KW.limit_up, KW.step, KW.confidence];
     const VERB = settings.verbs || {};
     // the names of the phrase types that decide the unit and the format of a number
     const PT = settings.phrase_types || {};
@@ -138,6 +148,8 @@
     const inputEntries = new Map();
     // the names of the sources of the page in the order of their number (see sourceNames)
     let pageSources = [];
+    // the values and results that the results of the page use (see operandValues)
+    let pageOperands = new Set();
     // the results of the page phrase, whose operands are the assumptions and whose formulas are the notes of the page
     const pageResults = pool.filter(function (e) {
         return e.result && e.words.indexOf(page.name) >= 0;
@@ -455,9 +467,10 @@
         return onlyOne(best, wanted.join(', '));
     }
 
-    /* the value of a field: with the page phrase before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value) */
+    /* the value of a field: the operand of a result of the page first, so that a changed field changes the results, then with the page phrase
+       before a part of the page triple, then with the fewest other phrases (ui_list::calculator_value) */
     function fieldEntry(name) {
-        const props = [KW.limit_down, KW.limit_up, KW.step, KW.confidence];
+        const props = FIELD_PROPERTIES;
         const parts = [page.from, page.to].filter(function (p) {
             return p;
         });
@@ -475,7 +488,8 @@
                 const context = e.words.filter(function (w) {
                     return w !== name && !isMarker(w);
                 }).length;
-                const rank = [pageRank, context, e.words.length];
+                const operandRank = pageOperands.has(e) ? 0 : 1;
+                const rank = [operandRank, pageRank, context, e.words.length];
                 const cmp = bestRank === null ? -1 : compareRank(rank, bestRank);
                 if (cmp < 0) {
                     best = [e];
@@ -558,13 +572,56 @@
         return result;
     }
 
+    /* the numbers of the source of a field value, else of the values it is based on e.g. [5][6] (ui_list::field_source_refs) */
+    function fieldSourceRefs(name, entry) {
+        const refs = [sourceRef(entry)].concat(basisEntries(name, entry).map(sourceRef));
+        const result = refs.filter(function (r, i) {
+            return refs.indexOf(r) === i;
+        }).join('');
+        return result;
+    }
+
+    /* the names of the unit, scaling and percent phrases of a number in alphabetic order (sandbox_value::unit_key) */
+    function unitKey(entry) {
+        const result = entry.words.filter(function (w) {
+            return isMeasure(w) || isPercent(w) || hasType(w, PT.scaling) || hasType(w, PT.scaling_hidden);
+        }).sort().join(', ');
+        return result;
+    }
+
+    /* the measured values that an assumed field value is based on: the values of the field phrase with the same unit and a
+       source, but no property of the field, ordered by their phrase names (ui_list::calculator_basis_values) */
+    function basisEntries(name, entry) {
+        let result = [];
+        if (entry !== null && !entry.result && !entry.source) {
+            const unit = unitKey(entry);
+            result = pool.filter(function (e) {
+                const noProperty = !FIELD_PROPERTIES.some(function (p) {
+                    return e.words.indexOf(p) >= 0;
+                });
+                return !e.result && e.source && noProperty && e.words.indexOf(name) >= 0 && unitKey(e) === unit;
+            }).sort(function (a, b) {
+                const keyA = a.words.slice().sort().join(', ');
+                const keyB = b.words.slice().sort().join(', ');
+                return keyA < keyB ? -1 : (keyA > keyB ? 1 : 0);
+            });
+        }
+        return result;
+    }
+
     /* the sources of the page in the order of their first use: the values of the number fields of
        the inputs and of the listed assumptions, then the operands of the results (ui_list::calculator_source_ids) */
     function sourceNames() {
-        const fieldValues = items(KW.input).concat(items(KW.assumption)).filter(function (item) {
-            return fieldType(item.to) !== KW.selector;
-        }).map(function (item) {
-            return fieldEntry(item.to);
+        let fieldValues = [];
+        items(KW.input).concat(items(KW.assumption)).forEach(function (item) {
+            if (fieldType(item.to) === KW.selector) {
+                fieldValues = fieldValues.concat(options(item.to).map(function (o) {
+                    return optionEntry(item.to, o[0]);
+                }).filter(hasUnit));
+            } else {
+                const entry = fieldEntry(item.to);
+                fieldValues = fieldValues.concat([entry], basisEntries(item.to, entry));
+            }
         });
         const result = [];
         fieldValues.concat(operandValues()).forEach(function (e) {
@@ -581,8 +638,24 @@
 
     // the terms of an expression e.g. "PV capacity" or "battery charge", "January" (formula_calc::operand_pattern)
     const OPERAND_PATTERN = /"[^"]+"(?:\s*,\s*"[^"]+")*/g;
-    // one number or one char of the arithmetic between the operands (formula_calc::TOKEN_PATTERN)
-    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()])/y;
+    // one number, one char of the arithmetic or of a condition or a math function between the operands (formula_calc::TOKEN_PATTERN)
+    const TOKEN_PATTERN = /\s*(\d+(?:\.\d+)?|[-+*\/()^=&|;]|min|max|if|abs|cos|exp|ln|log|round|sec|sin|sqrt|sum|count|mean)/y;
+    // the math functions, the separator of their arguments and the power (the chars::FUNC_* and chars::POW)
+    const FUNC_MIN = 'min';
+    const FUNC_MAX = 'max';
+    const FUNC_IF = 'if';
+    const FUNC_ARG_SEPARATOR = ';';
+    const POWER = '^';
+    // the logarithm like arithmetic::log_number, to the base 10 if no base is given
+    const LOG_NUMBER = (nums) => nums.length === 1 ? Math.log10(nums[0]) : (nums.length === 2 && nums[1] > 0 && nums[1] !== 1 ? Math.log(nums[0]) / Math.log(nums[1]) : NaN);
+    // the functions of a list like arithmetic::list_number, a plain operand stands for all its values, except a second number of the same fact (words::LIST_FUNCTION_EXCLUDED)
+    const LIST_NUMBER = {sum: (nums) => nums.reduce((a, b) => a + b, 0), count: (nums) => nums.length, mean: (nums) => nums.reduce((a, b) => a + b, 0) / nums.length};
+    const LIST_ARGUMENT_START = /\b(?:sum|count|mean)\s*\([^()]*$/;
+    const LIST_ARGUMENTS_PLAIN = /\b(?:sum|count|mean)\s*\(\s*(?:x|-?\d+(?:\.\d+)?)\s*(?:;\s*(?:x|-?\d+(?:\.\d+)?)\s*)*\)/g;
+    const LIST_FUNCTION = /\b(?:sum|count|mean)\s*\(/;
+    const LIST_EXCLUDED = ['variance low (system)', 'variance high (system)', 'confidence'];
+    // the functions of one number like arithmetic::one_number, so also round away from zero and an angle in radian
+    const ONE_NUMBER = {abs: Math.abs, cos: Math.cos, exp: Math.exp, ln: Math.log, log: Math.log10, round: (x) => Math.sign(x) * Math.round(Math.abs(x)), sec: (x) => 1 / Math.cos(x), sin: Math.sin, sqrt: Math.sqrt};
     // the char between the result and the calculation of a formula (chars::CHAR_CALC)
     const CHAR_CALC = '=';
     // the decimals of a compare, the same as formula_calc::DECIMALS
@@ -613,16 +686,40 @@
         return result;
     }
 
+    /* the stored values with all names of the operand and the context of the result (formula_calc::list_values) */
+    function listEntries(names, res) {
+        const result = pool.filter(function (e) {
+            const isExcluded = e.words.some(function (w) {
+                return LIST_EXCLUDED.indexOf(w) >= 0;
+            });
+            return !e.result && !isExcluded && hasAll(e, [...names, ...res.context]);
+        });
+        return result;
+    }
+
+    /* each list function has only plain operands or numbers as arguments (arithmetic::list_args_are_plain) */
+    function listsArePlain(exp) {
+        const rest = exp.replace(OPERAND_PATTERN, 'x').replace(LIST_ARGUMENTS_PLAIN, '');
+        return !LIST_FUNCTION.test(rest);
+    }
+
     /* the values and results that the results of the page use, each once (formula_calc::operands) */
     function operandValues() {
         const result = [];
         pageResults.forEach(function (res) {
-            (calculation(res).match(OPERAND_PATTERN) || []).forEach(function (term) {
-                const entry = operandEntry(operandNames(term), res);
-                if (entry !== null && result.indexOf(entry) < 0) {
-                    result.push(entry);
-                }
-            });
+            const exp = calculation(res);
+            let found = OPERAND_PATTERN.exec(exp);
+            while (found !== null) {
+                const names = operandNames(found[0]);
+                const entry = operandEntry(names, res);
+                const entries = LIST_ARGUMENT_START.test(exp.slice(0, found.index)) ? listEntries(names, res) : (entry === null ? [] : [entry]);
+                entries.filter(function (e) {
+                    return result.indexOf(e) < 0;
+                }).forEach(function (e) {
+                    result.push(e);
+                });
+                found = OPERAND_PATTERN.exec(exp);
+            }
         });
         return result;
     }
@@ -636,12 +733,20 @@
         } else if (!open.has(res) && calculation(res) !== '') {
             open.add(res);
             let missing = false;
-            const text = calculation(res).replace(OPERAND_PATTERN, function (term) {
+            const text = calculation(res).replace(OPERAND_PATTERN, function (term, start, all) {
+                if (LIST_ARGUMENT_START.test(all.slice(0, start))) {
+                    const nums = listEntries(operandNames(term), res).map(function (e) {
+                        return Number(e.number).toFixed(12);
+                    });
+                    missing = missing || nums.length === 0;
+                    return nums.length === 0 ? '0' : nums.join(FUNC_ARG_SEPARATOR);
+                }
                 const entry = operandEntry(operandNames(term), res);
                 const num = entry === null ? null : operandNumber(entry, done, open);
                 missing = missing || num === null;
                 return num === null ? '0' : '(' + num.toFixed(12) + ')';
             });
+            missing = missing || !listsArePlain(calculation(res));
             result = missing ? null : evaluate(text);
             open.delete(res);
             if (done !== null) {
@@ -688,7 +793,8 @@
         });
     }
 
-    /* the arithmetic of shared/calc/arithmetic.php: a sum of products of signed numbers or brackets */
+    /* the arithmetic of shared/calc/arithmetic.php: a sum of products of powers of signed numbers, brackets or a math function;
+       a number that cannot be calculated is NaN, which an if function may leave out and which else makes the result no number */
     function evaluate(text) {
         const tokens = [];
         TOKEN_PATTERN.lastIndex = 0;
@@ -717,13 +823,99 @@
     }
 
     function product(tokens, state) {
-        let result = signed(tokens, state);
+        let result = powerOf(tokens, state);
         while (tokens[state.pos] === '*' || tokens[state.pos] === '/') {
             const op = tokens[state.pos];
             state.pos++;
-            const next = signed(tokens, state);
-            result = op === '*' ? result * next : result / next;
+            const next = powerOf(tokens, state);
+            result = op === '*' ? result * next : finiteNumber(result / next);
         }
+        return result;
+    }
+
+    function listArguments(tokens, state) {
+        const result = [sum(tokens, state)];
+        while (state.ok && tokens[state.pos] === FUNC_ARG_SEPARATOR) {
+            state.pos++;
+            result.push(sum(tokens, state));
+        }
+        expectToken(tokens, state, ')');
+        return result;
+    }
+
+    /* from right to left and a number keeps its sign, the same as arithmetic::power */
+    function powerOf(tokens, state) {
+        let result = signed(tokens, state);
+        if (tokens[state.pos] === POWER) {
+            state.pos++;
+            result = finiteNumber(Math.pow(result, powerOf(tokens, state)));
+        }
+        return result;
+    }
+
+    /* NaN instead of an infinite number, because a later division would else make it a wrong zero */
+    function finiteNumber(num) {
+        return Number.isFinite(num) ? num : NaN;
+    }
+
+    /* two sums compared by = or a sum that is true if it is not zero; null for a part without a number */
+    function compareCondition(tokens, state) {
+        const left = sum(tokens, state);
+        let result = left !== 0;
+        let right = 0;
+        if (tokens[state.pos] === '=') {
+            state.pos++;
+            right = sum(tokens, state);
+            result = left === right;
+        }
+        return Number.isNaN(left) || Number.isNaN(right) ? null : result;
+    }
+
+    function andCondition(tokens, state) {
+        let result = compareCondition(tokens, state);
+        while (tokens[state.pos] === '&') {
+            state.pos++;
+            const right = compareCondition(tokens, state);
+            result = result === null || right === null ? null : result && right;
+        }
+        return result;
+    }
+
+    function orCondition(tokens, state) {
+        let result = andCondition(tokens, state);
+        while (tokens[state.pos] === '|') {
+            state.pos++;
+            const right = andCondition(tokens, state);
+            result = result === null || right === null ? null : result || right;
+        }
+        return result;
+    }
+
+    function expectToken(tokens, state, token) {
+        state.ok = state.ok && tokens[state.pos] === token;
+        state.pos++;
+    }
+
+    /* the then or the else part, only the chosen part counts like in arithmetic::if_function */
+    function ifFunction(tokens, state) {
+        const isTrue = orCondition(tokens, state);
+        expectToken(tokens, state, FUNC_ARG_SEPARATOR);
+        const thenNum = sum(tokens, state);
+        expectToken(tokens, state, FUNC_ARG_SEPARATOR);
+        const elseNum = sum(tokens, state);
+        expectToken(tokens, state, ')');
+        return isTrue === null ? NaN : (isTrue ? thenNum : elseNum);
+    }
+
+    /* the number that pick keeps of the sums separated by the argument separator up to the closing bracket */
+    function pickArgument(tokens, state, pick) {
+        let result = sum(tokens, state);
+        while (tokens[state.pos] === FUNC_ARG_SEPARATOR) {
+            state.pos++;
+            result = pick(result, sum(tokens, state));
+        }
+        state.ok = state.ok && tokens[state.pos] === ')';
+        state.pos++;
         return result;
     }
 
@@ -738,6 +930,28 @@
             result = sum(tokens, state);
             state.ok = state.ok && tokens[state.pos] === ')';
             state.pos++;
+        } else if (token === FUNC_MIN || token === FUNC_MAX) {
+            state.ok = state.ok && tokens[state.pos + 1] === '(';
+            state.pos += 2;
+            result = pickArgument(tokens, state, token === FUNC_MIN ? Math.min : Math.max);
+        } else if (token === FUNC_IF) {
+            expectToken(tokens, state, FUNC_IF);
+            expectToken(tokens, state, '(');
+            result = ifFunction(tokens, state);
+        } else if (token === 'log') {
+            state.pos++;
+            expectToken(tokens, state, '(');
+            result = finiteNumber(LOG_NUMBER(listArguments(tokens, state)));
+        } else if (token in ONE_NUMBER) {
+            state.pos++;
+            expectToken(tokens, state, '(');
+            const arg = sum(tokens, state);
+            expectToken(tokens, state, ')');
+            result = finiteNumber(ONE_NUMBER[token](arg));
+        } else if (token in LIST_NUMBER) {
+            state.pos++;
+            expectToken(tokens, state, '(');
+            result = finiteNumber(LIST_NUMBER[token](listArguments(tokens, state)));
         } else if (token !== undefined && !isNaN(Number(token))) {
             state.pos++;
             result = Number(token);
@@ -756,15 +970,15 @@
     }
 
     /* the nearest conversion of the unit if the largest number of a group has too many or too few digits (number_format::next_unit) */
-    function nextUnit(num, unit) {
-        const tooBig = magnitude(num) > FMT.digits;
+    function nextUnit(num, unit, digits) {
+        const tooBig = magnitude(num) > digits;
         const tooSmall = num < 1;
         let result = null;
         CONVERSIONS.forEach(function (cnv) {
             const isUnit = cnv[0] === unit || cnv[0] === owners.get(unit);
             const shown = num * cnv[3];
             const toLarger = tooBig && cnv[3] < 1 && shown >= 1;
-            const toSmaller = tooSmall && cnv[3] > 1 && magnitude(shown) <= FMT.digits;
+            const toSmaller = tooSmall && cnv[3] > 1 && magnitude(shown) <= digits;
             const nearer = result === null || Math.abs(Math.log(cnv[3])) < Math.abs(Math.log(result[3]));
             if (isUnit && (toLarger || toSmaller) && nearer) {
                 result = cnv;
@@ -773,37 +987,42 @@
         return result;
     }
 
-    /* the unit, its text, the factor and the decimals of a group of numbers of one unit (number_format::group) */
-    function groupFormat(numbers, unit) {
+    /* the unit, its text, the factor and the decimals of a group of numbers of one unit with the digits of a precision tier (number_format::group) */
+    function groupFormat(numbers, unit, digits) {
         const max = numbers.reduce(function (m, n) {
             return Math.max(m, Math.abs(Number(n)));
         }, 0);
         const result = {unit: unit, text: unit === null ? null : (symbols.get(unit) || unit), factor: 1, decimals: 0};
         if (unit !== null && max > 0) {
-            let cnv = nextUnit(max, unit);
+            let cnv = nextUnit(max, unit, digits);
             while (cnv !== null) {
                 result.unit = cnv[1];
                 result.text = cnv[2];
                 result.factor = result.factor * cnv[3];
-                cnv = nextUnit(max * result.factor, result.unit);
+                cnv = nextUnit(max * result.factor, result.unit, digits);
             }
         }
         if (max > 0) {
-            result.decimals = Math.max(0, FMT.digits - magnitude(max * result.factor));
+            result.decimals = Math.max(0, digits - magnitude(max * result.factor));
         }
         return result;
     }
 
     function formatNumber(num, decimals) {
         const fixed = Math.abs(Number(num)).toFixed(decimals).split('.');
-        const int = fixed[0].replace(/\B(?=(\d{3})+(?!\d))/g, FMT.thousand_sep || "'");
-        const sign = Number(num) < 0 ? '-' : '';
+        const int = thousands(fixed[0]);
+        // a number that rounds to zero has no sign
+        const sign = Number(num) < 0 && Number(fixed.join('.')) !== 0 ? '-' : '';
         const result = sign + int + (fixed.length > 1 ? (FMT.dec_point || '.') + fixed[1] : '');
         return result;
     }
 
+    function thousands(int) {
+        return int.replace(/\B(?=(\d{3})+(?!\d))/g, FMT.thousand_sep || "'");
+    }
+
     /* per unit the format of the numbers of one column, so that the numbers of a unit can be compared at a glance (ui_list::calculator_formats) */
-    function columnFormats(entries, withUnit) {
+    function columnFormats(entries, withUnit, digits) {
         const byUnit = new Map();
         entries.filter(function (e) {
             return e !== null;
@@ -819,7 +1038,7 @@
             const nums = group.map(function (e) {
                 return e.number;
             });
-            result.set(unit, groupFormat(nums, withUnit ? measureOf(group[0]) : null));
+            result.set(unit, groupFormat(nums, withUnit ? measureOf(group[0]) : null, digits));
         });
         return result;
     }
@@ -827,8 +1046,10 @@
     /* a share times 100 with the percent decimals and its symbol e.g. "49 %" (sandbox_value::val_formatted) */
     function percentText(entry) {
         const word = entry.words.find(isPercent);
-        const scale = Math.pow(10, FMT.percent_decimals);
-        const num = Math.round(Number(entry.number) * 100 * scale) / scale;
+        const percent = Number(entry.number) * 100;
+        // a recalculated share has all its digits, and from 10 % on the whole percent is what a reader compares
+        const scale = Math.abs(percent) >= 10 ? 1 : Math.pow(10, FMT.percent_decimals);
+        const num = Math.round(percent * scale) / scale;
         const sym = isRatioUnit(word) ? '' : (symbols.get(word) || '');
         const result = String(num) + (sym === '' ? '' : FMT.unit_sep + sym);
         return result;
@@ -874,16 +1095,49 @@
         return result;
     }
 
+    /* the number of the source at the marker of the hint, else behind it (ui_list::calculator_hint) */
     function hintHtml(text, ref) {
-        const txt = (esc(text) + ' ' + ref).trim();
+        const refTxt = ref === '' ? '' : ' ' + ref;
+        const mark = ' ' + HINT_SOURCE;
+        const shown = esc(text);
+        const txt = (shown.includes(mark) ? shown.replace(mark, refTxt) : shown + refTxt).trim();
         const result = txt === '' ? '' : block('span', txt, STYLE.hint);
         return result;
+    }
+
+    /* a number of a label or a sub text with the digits of the rough tier and at most the given decimals if it is whole (ui_list::calculator_rough_text) */
+    function roughText(entry, wholeDecimals) {
+        const formats = columnFormats([entry], true, FMT.rough_digits);
+        const fmt = formats.get(unitOf(entry));
+        if (Number.isInteger(Number(entry.number) * fmt.factor)) {
+            fmt.decimals = Math.min(fmt.decimals, wholeDecimals);
+        }
+        return numberText(entry, formats, true);
+    }
+
+    /* the hint of a row with the number of each phrase in curly brackets or an empty text if a number is missing (ui_list::calculator_hint_numbers) */
+    function hintNumbers(text) {
+        let missing = false;
+        const result = text.replace(HINT_NUMBER_PATTERN, function (found, name, plain) {
+            const entry = fieldEntry(name) || cellEntry([page.name, name]);
+            missing = missing || entry === null;
+            let num = '';
+            if (entry !== null) {
+                num = plain ? fieldNumber(entry).replace(/^\d+/, thousands) : roughText(entry, 1);
+            }
+            return num;
+        });
+        return missing ? '' : result;
     }
 
     /* measured for a value with a source, else assumed with its confidence e.g. "assumed 0.6" (ui_list::assumption_tag) */
     function tagText(entry) {
         let result = entry.source ? TEXTS[TXT.measured] : TEXTS[TXT.assumed];
-        const conf = entry.source ? null : cellEntry(entry.words.concat([KW.confidence]));
+        // without the unit of the value, because a confidence has its own unit e.g. percent (ui_list::names_without_unit)
+        const names = entry.words.filter(function (w) {
+            return !isMeasure(w) && !isRatioUnit(w) && !isPercent(w);
+        });
+        const conf = entry.source ? null : cellEntry(names.concat([KW.confidence]));
         if (conf !== null) {
             result += ' ' + conf.number;
         }
@@ -899,11 +1153,12 @@
         return result;
     }
 
-    function numberField(item, name, assumption) {
-        const entry = fieldEntry(name);
-        const key = idOf(name);
+    /* instance and its entry only for a repeated field, which gets its own number and name behind the label */
+    function numberField(item, name, assumption, instance, instanceEntry) {
+        const entry = instance === undefined ? fieldEntry(name) : instanceEntry;
+        const key = idOf(instance === undefined ? name : instance);
         const field = NUMBER_VAR + key;
-        const lbl = label(item);
+        const lbl = instance === undefined ? label(item) : label(item) + ' ' + phraseLabel(instance);
         let text = esc(lbl);
         let hintText = hint(item);
         if (assumption && entry !== null) {
@@ -925,7 +1180,7 @@
             input += block('span', esc(unit), STYLE.unit);
         }
         const result = block('div', '<label for="' + field + '">' + text + '</label>' + block('div', input, STYLE.row)
-            + hintHtml(hintText, sourceRef(entry)), STYLE.field);
+            + hintHtml(hintText, fieldSourceRefs(name, entry)), STYLE.field);
         return result;
     }
 
@@ -966,6 +1221,25 @@
         return block('div', '<label for="' + field + '">' + text + '</label>' + input, STYLE.field);
     }
 
+    function optionEntry(name, option) {
+        return cellEntry([name, option]) || fieldEntry(option);
+    }
+
+    /* true for a number with a unit, which a selector option names with its source (ui_list::calculator_option_text) */
+    function hasUnit(entry) {
+        return entry !== null && entry.words.some(isMeasure);
+    }
+
+    /* the label; for a number with a unit also the number and its source e.g. European residual mix — 523 g/kWh [3] */
+    function optionText(text, entry) {
+        let result = text;
+        if (hasUnit(entry)) {
+            const num = numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
+            result = (text + OPTION_SEP + num + ' ' + sourceRef(entry)).trim();
+        }
+        return result;
+    }
+
     function selectorField(item, name) {
         const field = NUMBER_VAR + idOf(name);
         const domId = field + SELECT_ID_SUFFIX;
@@ -974,23 +1248,85 @@
             return o[0];
         }));
         const html = opts.map(function (o) {
-            const entry = cellEntry([name, o[0]]) || fieldEntry(o[0]);
+            const entry = optionEntry(name, o[0]);
             const sel = o[0] === usedOpt ? ' selected' : '';
             // the selector sets the number of the option that the page uses, which the results read
             if (entry !== null && o[0] === usedOpt) {
                 inputEntries.set(field, entry);
             }
-            return entry === null ? '' : '<option value="' + esc(fieldNumber(entry)) + '"' + sel + '>' + esc(o[1]) + '</option>';
+            // an option without a number selects only the phrase e.g. the walk order bank statement (ui_list::calculator_selector)
+            return entry === null
+                ? '<option value="' + OPTION_PHRASE + esc(idOf(o[0])) + '"' + sel + '>' + esc(o[1]) + '</option>'
+                : '<option value="' + esc(fieldNumber(entry)) + '"' + sel + '>' + esc(optionText(o[1], entry)) + '</option>';
         }).join('');
+        // a used option without a number: the first option with a number takes the number of the selected option (ui_list::calculator_field_value)
+        const first = opts.map(function (o) {
+            return optionEntry(name, o[0]);
+        }).find(function (e) {
+            return e !== null;
+        });
+        if (usedOpt && !inputEntries.has(field) && first !== undefined) {
+            inputEntries.set(field, first);
+        }
         const select = '<select class="' + STYLE.select + '" name="' + field + '" form="' + esc(FORM) + '" id="' + domId + '">' + html + '</select>';
         const result = block('div', '<label for="' + domId + '">' + esc(label(item)) + '</label>' + select
             + hintHtml(hint(item), ''), STYLE.field);
         return result;
     }
 
+    /* a number that a user cannot change e.g. the target weight of the parent (ui_list::calculator_read_only) */
+    function readOnlyField(item, name) {
+        const entry = fieldEntry(name);
+        const number = entry === null ? '' : roughText(entry, 1);
+        const result = block('div', '<label>' + esc(label(item)) + '</label>' + block('div', esc(number), STYLE.readOnly)
+            + hintHtml(hint(item), fieldSourceRefs(name, entry)), STYLE.field);
+        return result;
+    }
+
+    /* checked is the number 1 and unchecked 0, which the hidden field sends, because a browser sends no unchecked checkbox (ui_list::calculator_checkbox) */
+    function checkboxField(item, name) {
+        const entry = fieldEntry(name);
+        const key = idOf(name);
+        const field = NUMBER_VAR + key;
+        const lbl = label(item);
+        const checked = entry !== null && Number(entry.number) === 1 ? ' checked' : '';
+        const input = hidden(field, 0) + '<input type="checkbox" name="' + field + '" id="' + field + '" value="1" form="' + esc(FORM) + '"' + checked + '>';
+        const vars = entry === null ? '' : saveVars(key, entry, lbl, '');
+        if (entry !== null) {
+            inputEntries.set(field, entry);
+        }
+        const result = '<label class="' + STYLE.check + '">' + input + '<span>' + esc(lbl) + hintHtml(hint(item), '') + '</span></label>' + vars;
+        return result;
+    }
+
+    /* a field per instance of a repeated input and the button to add one, which has no function yet, because a new instance needs its own phrase (ui_list::calculator_repeat) */
+    function repeatFields(item, name) {
+        const has = subItems(name, VERB.has)[0];
+        const valuePhrase = has === undefined ? name : has.to;
+        const add = ownText(item.name, KW.repeat);
+        const result = kinds(name).map(function (instance) {
+            return numberField(item, name, false, instance, optionEntry(valuePhrase, instance));
+        }).join('');
+        return result + (add ? '<button type="button" class="' + STYLE.addButton + '">' + esc(add) + '</button>' : '');
+    }
+
     function fields(list, assumption) {
         const result = list.map(function (item) {
-            return fieldType(item.to) === KW.selector ? selectorField(item, item.to) : numberField(item, item.to, assumption);
+            let html = '';
+            if (hasFlag(item, KW.read_only)) {
+                html = readOnlyField(item, item.to);
+            } else if (hasFlag(item, KW.repeat)) {
+                html = repeatFields(item, item.to);
+            } else if (triplesFrom(item.to).some(function (t) {
+                return t.to === KW.checkbox;
+            })) {
+                html = checkboxField(item, item.to);
+            } else if (fieldType(item.to) === KW.selector) {
+                html = selectorField(item, item.to);
+            } else {
+                html = numberField(item, item.to, assumption);
+            }
+            return html;
         }).join('');
         return result;
     }
@@ -1020,12 +1356,13 @@
     }
 
     /* the sub text of a row: its hint, else its side results with their number */
-    function rowSub(row, ctx) {
-        let sub = hint(row);
+    function rowSub(row) {
+        let sub = hintNumbers(hint(row));
         if (sub === '') {
             sub = sideResults(row).map(function (side) {
-                const entry = cellEntry(ctx.concat([side]));
-                return entry === null ? '' : phraseLabel(side) + ' ' + numberText(entry, columnFormats([entry], true), true);
+                // without the filter of the row, because a side result is a number of its own (ui_list::calculation_side_context)
+                const entry = cellEntry([page.name, chosen(row.to), side]);
+                return entry === null ? '' : phraseLabel(side) + ' ' + numberText(entry, columnFormats([entry], true, FMT.rough_digits), true);
             }).filter(function (s) {
                 return s !== '';
             }).join(', ');
@@ -1034,10 +1371,28 @@
         return result;
     }
 
-    /* the number of the row phrase after the label of a row with a filter e.g. " (128 g/kWh)" (ui_list::calculator_row_number) */
+    /* the result of the page whose formula has the phrase alone left of the = (formula_calc::calculates_phrase);
+       a result that names the filter of the row is the number of the cells e.g. the battery effect, and with several
+       results e.g. one per month a label shows no number, because it never picks one (ui_list::calculator_phrase_result) */
+    function phraseResult(name, filter) {
+        const found = pool.filter(function (e) {
+            const frm = formulas.get(e.formula);
+            const left = frm === undefined ? '' : String(frm.expression || '').split(CHAR_CALC)[0];
+            const isCell = e.words.indexOf(filter) >= 0;
+            return !isCell && e.words.indexOf(page.name) >= 0 && left.replaceAll('"', '').trim() === name;
+        });
+        return found.length === 1 ? found[0] : null;
+    }
+
+    /* the number of the row phrase after the label of a row with a filter e.g. " (128 g/kWh)" with the digits of the
+       rough tier, because the number in a label is only an indication (ui_list::calculator_row_number) */
     function rowNumber(row) {
-        const entry = filterOf(row) === null ? null : fieldEntry(chosen(row.to));
-        const result = entry === null ? '' : ' (' + numberText(entry, columnFormats([entry], true), true) + ')';
+        const phr = chosen(row.to);
+        const flt = filterOf(row);
+        const entry = flt === null ? null : fieldEntry(phr) || phraseResult(phr, flt);
+        const note = ownText(row.name, KW.number_note);
+        const txt = entry === null ? '' : roughText(entry, 0);
+        const result = entry === null ? '' : ' (' + txt + (note === null ? '' : ' ' + note) + ')';
         return result;
     }
 
@@ -1062,7 +1417,7 @@
             const formats = cols.map(function (c, i) {
                 return columnFormats(rows.map(function (r) {
                     return r.cells[i];
-                }), true);
+                }), true, FMT.digits);
             });
             let body = '';
             grps.forEach(function (g) {
@@ -1074,13 +1429,25 @@
                     const cells = r.cells.map(function (e, i) {
                         return cellHtml(e, formats[i], signed, true);
                     }).join('');
-                    const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row, r.ctx);
+                    const first = esc(label(r.row, g) + rowNumber(r.row)) + rowSub(r.row);
                     body += block('tr', block('td', first) + cells, hasFlag(r.row, KW.highlight) ? STYLE.key : '');
                 });
             });
             result = table(head, body);
         }
         return result;
+    }
+
+    /* the one stored value with these names that does not name the page e.g. the Swiss consumption mix of a month,
+       never picked from several values (ui_list::calculator_general_value) */
+    function generalEntry(names) {
+        const wanted = names.filter(function (n) {
+            return n;
+        });
+        const found = pool.filter(function (e) {
+            return !e.result && hasAll(e, wanted);
+        });
+        return found.length === 1 ? found[0] : null;
     }
 
     function detailTables() {
@@ -1097,14 +1464,15 @@
             }));
             const cells = rows.map(function (r) {
                 return cols.map(function (c) {
-                    return cellEntry(r[1].concat([c.to, filterOf(c)]));
+                    const cellNames = [c.to, filterOf(c)];
+                    return cellEntry(r[1].concat(cellNames)) || generalEntry(r[1].slice(1).concat(cellNames));
                 });
             });
-            // the header names the unit, so a column of a detail table shares only the decimals
+            // the header names the unit, so a column of a detail table shares only the decimals, and a detail shows rough numbers
             const formats = cols.map(function (c, i) {
                 return columnFormats(cells.map(function (row) {
                     return row[i];
-                }), false);
+                }), false, FMT.rough_digits);
             });
             const body = rows.map(function (r, j) {
                 const tds = cells[j].map(function (e, i) {
@@ -1157,7 +1525,9 @@
     function refreshResults(event) {
         const entry = inputEntries.get(event.target.name);
         const panel = host.querySelector('section.' + STYLE.panel);
-        const value = Number(event.target.value);
+        // the value of a checkbox stays 1 also if it is unchecked
+        const isCheckbox = event.target.type === 'checkbox';
+        const value = isCheckbox ? Number(event.target.checked) : Number(event.target.value);
         if (entry !== undefined && panel !== null && event.target.value !== '' && isFinite(value)) {
             entry.number = value;
             recalculate();
@@ -1173,6 +1543,7 @@
 
     // the stored results are checked once, after an input change the page shows the numbers that it calculates
     checkResults();
+    pageOperands = new Set(operandValues());
     pageSources = sourceNames();
     // the host has the style of the use case page (system_page::calculator_json), so it gets only its content
     host.innerHTML = title() + block('div', inputPanel() + resultPanel(), STYLE.grid);

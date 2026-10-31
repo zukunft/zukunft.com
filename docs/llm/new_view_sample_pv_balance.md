@@ -195,6 +195,7 @@ and all field keywords of `process catch field (system)`
 - `calculator detail table` = calculator (system) *has a* table [system_calculator_detail_table]
 - `calculator highlight` = calculator (system) *has a* highlight [system_calculator_highlight]
 - `calculator signed` = calculator (system) *has a* sign [system_calculator_signed]
+- `calculator number note` = calculator (system) *has a* number note [system_calculator_number_note]
 
 **Field keywords** (`process_catch_fields.json`, reused)
 
@@ -585,6 +586,7 @@ Home: a new system file `calculator_keywords.json` in
 | `calculator detail table` | calculator (system) | has a | table | `system_calculator_detail_table` | list of detail tables, each with columns and extra rows |
 | `calculator highlight` | calculator (system) | has a | highlight | `system_calculator_highlight` | flag of an item or of a phrase: the row is shown as a key row (`class="key"`) |
 | `calculator signed` | calculator (system) | has a | sign | `system_calculator_signed` | flag of a row group: the cells show the sign as `pos` / `neg` |
+| `calculator number note` | calculator (system) | has a | number note | `system_calculator_number_note` | text of a row: shown behind the unit of the number in the row label e.g. "(106 g/kWh PV-weighted)" |
 
 New words: `calculator`, `hint`, `highlight`, `sign`. All other words are already defined
 elsewhere and are repeated by name only.

@@ -59,6 +59,7 @@ include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once test_paths::UTILS . 'code_test_coverage.php';
 include_once test_paths::UTILS . 'code_user_message_exceptions.php';
 include_once test_paths::UTILS . 'json_validation.php';
+include_once test_paths::UTILS . 'math_function_report.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::CONST . 'files.php';
 
@@ -83,8 +84,10 @@ use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value as sandbox_value_ui;
 use Zukunft\ZukunftCom\test\php\utils\code_test_coverage;
 use Zukunft\ZukunftCom\test\php\utils\code_user_message_exceptions;
 use Zukunft\ZukunftCom\test\php\utils\json_validation;
+use Zukunft\ZukunftCom\test\php\utils\math_function_report;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
 use ReflectionClass;
 use ReflectionClassConstant;
 
@@ -157,6 +160,49 @@ class coding_rule_tests
         $test_name = 'check that the docs with the unit test coverage is updated';
         $md_txt = new code_test_coverage()->md();
         $t->assert_file($test_name, $md_txt, test_files::DOCS_TEST_COVERAGE, '', '', $t::TIMEOUT_LIMIT_LONG);
+
+        $test_name = 'check that the docs with the math functions is updated';
+        $mth = new math_function_report();
+        $md_txt = $mth->md();
+        $t->assert_file($test_name, $md_txt, test_files::DOCS_MATH, '', '', $t::TIMEOUT_LIMIT_LONG);
+
+        // the report names the evaluator without a function and the text with a different result
+        $test_name = 'a function without the expected result in an evaluator is reported as missing there';
+        $fnc_lst = ['+' => ['addition', '2 + 3', '5']];
+        $gaps = $mth->function_gaps(['2 + 3' => ['a' => '5', 'b' => math_function_report::NO_NUMBER]], $fnc_lst);
+        $t->assert($test_name, $gaps, ['+' => ['b']]);
+        $test_name = '... but not if every evaluator gives the expected result';
+        $gaps = $mth->function_gaps(['2 + 3' => ['a' => '5', 'b' => '5']], $fnc_lst);
+        $t->assert($test_name, $gaps, []);
+        $test_name = 'an edge case with a different number is reported as a difference';
+        $diffs = $mth->edge_diffs(['1 / 0' => ['a' => '0', 'b' => math_function_report::NO_NUMBER]]);
+        $t->assert($test_name, $diffs, ['1 / 0']);
+        // negative: the same number in another notation of php and javascript is no difference
+        $test_name = '... but not the same number in another notation';
+        $diffs = $mth->edge_diffs(['big' => ['a' => '1e+22', 'b' => '1.0e+22'], 'small' => ['a' => '3e-5', 'b' => '0.00003']]);
+        $t->assert($test_name, $diffs, []);
+        $test_name = 'the functions of a formula are counted without the phrase names';
+        $used = $mth->used_functions(['"a" = sqrt( "log(b)" )', '"c" = sqrt( 2 ) ^ 2']);
+        $t->assert($test_name, $used, ['^' => [1, '"c" = sqrt( 2 ) ^ 2'], 'sqrt' => [2, '"a" = sqrt( "log(b)" )']]);
+        // negative: a formula without a function has nothing to count
+        $test_name = '... and a formula without a function is not counted';
+        $t->assert($test_name, $mth->used_functions(['"a" = ( "b" + 1 ) * 2']), []);
+        $test_name = 'a number is written without a zero fraction';
+        $t->assert($test_name, $mth->number_text(5.0), '5');
+        // negative: no number stays visible as no number and never becomes a zero
+        $test_name = '... and no number as no number';
+        $t->assert($test_name, $mth->number_text(null), math_function_report::NO_NUMBER);
+
+        // each math operation has one symbol, so a formula of the data uses no second spelling
+        $test_name = 'no formula of the data uses a second symbol of a math operation';
+        $t->assert($test_name, $mth->symbols_to_replace($mth->data_expressions()), []);
+        $test_name = 'a second symbol of a math operation is reported with the symbol to use';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a" = 2 × 3']), ['× instead of *: "a" = 2 × 3']);
+        // negative: the symbol to use and a phrase name in quotes are not reported
+        $test_name = '... but not the symbol to use';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a" = 2 * 3']), []);
+        $test_name = '... and not a char of a phrase name';
+        $t->assert($test_name, $mth->symbols_to_replace(['"a×b" = 2 * 3']), []);
 
         // the never called list of the coverage report counts the calls and the quoted names
         // of every function in the code, so that a function that nothing calls is listed
@@ -260,6 +306,8 @@ class coding_rule_tests
         $t->name = 'code_rule->';
         $t->subheader('code rule html snapshots');
         $this->html_no_empty_link_tests($t);
+        $this->html_no_double_escape_tests($t);
+        $this->use_case_no_test_formula_tests($t);
         $this->html_form_balance_tests($t);
         $this->html_no_duplicate_id_tests($t);
     }
@@ -349,6 +397,98 @@ class coding_rule_tests
         // one summary assertion so that a clean tree also produces a visible pass
         $test_name = 'links without text checked in ' . $files_checked . ' html files';
         $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no html snapshot shows an escaped text escaped again, e.g. "Krebs &amp;amp;
+     * Frischknecht", which the reader sees as "Krebs &amp; Frischknecht"; the usual cause is a text
+     * escaped before html_base::ref, which escapes the name of a link itself
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function html_no_double_escape_tests(test_cleanup $t): void
+    {
+        $test_name = 'a text that is escaped twice is found';
+        $t->assert($test_name, $this->double_escapes('<a href="view.php?m=3">Krebs &amp;amp; Frischknecht</a>'),
+            ['Krebs &amp;amp;']);
+        $test_name = 'a text that is escaped once is no double escape';
+        $t->assert($test_name, $this->double_escapes('<a href="view.php?m=3">Krebs &amp; Frischknecht</a>'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::WEB_RES) as $html_file) {
+            if (str_ends_with($html_file, test_files::HTML)) {
+                $files_checked++;
+                $escapes = $this->double_escapes(file_get_contents($html_file));
+                if ($escapes != []) {
+                    $test_name = 'no text escaped twice in ' . $html_file;
+                    $t->assert($test_name, implode("\n", $escapes), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'texts escaped twice checked in ' . $files_checked . ' html files';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * check that no generated use case page shows a formula of the tests, because the test rows get
+     * other ids depending on the tests that have run before, so the snapshot would change between
+     * two runs; the usual cause is a test formula linked to a seed phrase of the page e.g. year
+     *
+     * @param test_cleanup $t the test harness used for the assertion
+     */
+    function use_case_no_test_formula_tests(test_cleanup $t): void
+    {
+        $test_name = 'a page with a test formula is found';
+        $t->assert($test_name, $this->test_formulas_of('{"name":"' . formula_names::SYSTEM_TEST_ADD . '"}'),
+            [formula_names::SYSTEM_TEST_ADD]);
+        $test_name = 'a page with only seed formulas has no test formula';
+        $t->assert($test_name, $this->test_formulas_of('{"name":"' . formula_names::INCREASE . '"}'), []);
+
+        $lib = new library();
+        $files_checked = 0;
+        foreach ($lib->dir_files(test_paths::RESOURCE . test_paths::HTML . test_paths::USE_CASES) as $html_file) {
+            // a hand made sample is no page of the database
+            $is_page = (str_ends_with($html_file, test_files::HTML)
+                and !str_ends_with($html_file, test_files::SAMPLE_SUFFIX . test_files::HTML));
+            if ($is_page) {
+                $files_checked++;
+                $found = $this->test_formulas_of(file_get_contents($html_file));
+                if ($found != []) {
+                    $test_name = 'no test formula in ' . $html_file;
+                    $t->assert($test_name, implode(', ', $found), '');
+                }
+            }
+        }
+        // one summary assertion so that a clean tree also produces a visible pass
+        $test_name = 'test formulas checked in ' . $files_checked . ' use case pages';
+        $t->assert_greater($test_name, 0, $files_checked);
+    }
+
+    /**
+     * @param string $html the html code of a page with its json data
+     * @return array the names of the test formulas (formula_names::TEST_FORMULAS) that the page names as a json name
+     */
+    function test_formulas_of(string $html): array
+    {
+        $result = [];
+        foreach (formula_names::TEST_FORMULAS as $frm_name) {
+            if (str_contains($html, '"name":"' . $frm_name . '"')) {
+                $result[] = $frm_name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $html the html code of a page or a part of it
+     * @return array every entity of the html whose ampersand is escaped again, with the text before it in the same element
+     */
+    function double_escapes(string $html): array
+    {
+        preg_match_all('/[^<>]{0,40}&amp;(?:amp|lt|gt|quot|#0?39);/u', $this->without_script_code($html), $matches);
+        return $matches[0];
     }
 
     /**
@@ -588,9 +728,10 @@ class coding_rule_tests
 
     /**
      * verify that the source check of json_validation lists a measured value without a source
-     * and a source that the file does not define, but neither an assumed, modelled or calculated value, a
-     * setting of an input field nor a value with a defined source; the main data is only listed in docs/json_findings.md and not asserted,
-     * because many values still wait for their source
+     * and a source that the file does not define, but neither an assumed, modelled or calculated
+     * value, a setting of an input field nor a value with a defined source; the main data is only
+     * listed in docs/json_findings.md and not asserted, because many values still wait for their
+     * source
      *
      * @param test_cleanup $t the test environment
      * @return void
@@ -630,8 +771,8 @@ class coding_rule_tests
         $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
         $t->assert($test_name, array_keys($hits), []);
 
-        $test_name = 'a limit or a step of an input field without a source is not listed';
         foreach ([triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP] as $fld_phr) {
+            $test_name = 'a ' . $fld_phr . ' of an input field without a source is not listed';
             $val[json_fields::WORDS] = [words::YEAR, $fld_phr];
             $hits = $chk->value_source_hits([json_fields::VALUES => [$val]]);
             $t->assert($test_name, array_keys($hits), []);

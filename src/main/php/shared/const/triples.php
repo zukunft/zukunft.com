@@ -389,6 +389,20 @@ class triples
     const string CALCULATOR_HIGHLIGHT_CODE_ID = 'system_calculator_highlight';
     const string CALCULATOR_SIGNED = 'calculator signed';
     const string CALCULATOR_SIGNED_CODE_ID = 'system_calculator_signed';
+    const string CALCULATOR_NUMBER_NOTE = 'calculator number note';
+    const string CALCULATOR_NUMBER_NOTE_CODE_ID = 'system_calculator_number_note';
+    const string CALCULATOR_READ_ONLY = 'calculator read only';
+    const string CALCULATOR_READ_ONLY_CODE_ID = 'system_calculator_read_only';
+    const string CALCULATOR_CHECKBOX = 'calculator checkbox';
+    const string CALCULATOR_CHECKBOX_CODE_ID = 'system_calculator_checkbox';
+    const string CALCULATOR_REPEAT = 'calculator repeat';
+    const string CALCULATOR_REPEAT_CODE_ID = 'system_calculator_repeat';
+    // the kinds of an input field of a calculator page by their code id
+    const array CALCULATOR_FIELD_KINDS = [
+        self::CALCULATOR_READ_ONLY => self::CALCULATOR_READ_ONLY_CODE_ID,
+        self::CALCULATOR_CHECKBOX => self::CALCULATOR_CHECKBOX_CODE_ID,
+        self::CALCULATOR_REPEAT => self::CALCULATOR_REPEAT_CODE_ID,
+    ];
     // the lists of a calculator page by their code id
     const array CALCULATOR_LISTS = [
         self::CALCULATOR_INPUT => self::CALCULATOR_INPUT_CODE_ID,
@@ -403,6 +417,7 @@ class triples
         self::CALCULATOR_HINT => self::CALCULATOR_HINT_CODE_ID,
         self::CALCULATOR_HIGHLIGHT => self::CALCULATOR_HIGHLIGHT_CODE_ID,
         self::CALCULATOR_SIGNED => self::CALCULATOR_SIGNED_CODE_ID,
+        self::CALCULATOR_NUMBER_NOTE => self::CALCULATOR_NUMBER_NOTE_CODE_ID,
     ];
     // the keywords of the calculator and of the input fields by their code id, which the data of a
     // phrase (see phrase_data) never walks through, because every page phrase links to them
@@ -411,6 +426,7 @@ class triples
         ...triples::CALCULATOR_PROPERTIES,
         ...triples::FIELD_PROPERTIES,
         ...triples::FIELD_TYPES,
+        ...triples::CALCULATOR_FIELD_KINDS,
     ];
     const string SYSTEM_ERRORS = 'system errors';
     const string TABLE_NAME = 'table name';

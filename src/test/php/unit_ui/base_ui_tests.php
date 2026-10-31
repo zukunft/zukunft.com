@@ -288,7 +288,7 @@ class base_ui_tests
         $t->assert($test_name, $url_std[url_var::NO_CACHE] ?? '', url_var::NO_CACHE_ON);
         $t->assert($test_name . ' and bypasses the cache', $ui->url_cache_key($url_std), '');
 
-        // the page of the server is asked for by sc=0 (e.g. view.php?m=calculator&id=-2746&sc=0) and is
+        // the page of the server is asked for by sc=0 (e.g. view.php?m=calculator&id=-2757&sc=0) and is
         // rendered live, because the cached page of the bare url is the page that the browser builds
         $test_name = 'sc=0 is not cached';
         $url_array = [url_var::MASK => views::CALCULATOR_ID, url_var::ID => -triple_names::CITY_ZH_ID,

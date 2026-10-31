@@ -34,16 +34,47 @@ A use case page, e.g. src/test/resources/web/html/use_cases/calculator_editor.ht
 written by the test run and checked only against its own last version: if the page has
 changed, the test fails and you decide if the new page is right. The hand made target
 next to it, e.g. calculator_editor_sample.html, is never checked by a test; compare the
-two pages yourself in a browser.
+two pages yourself in a browser, unless the page has the sample setup of the table below.
 
-The PV lifetime balance has four files in src/test/resources/web/html/use_cases/:
+| sample | generated pages | generated from | diff report | input cases | diff report of the cases |
+|---|---|---|---|---|---|
+| pv_lifetime_balance_sample.html | pv_lifetime_balance_no_js.html, pv_lifetime_balance_js.html | use_cases/pv_lifetime_balance.json, calculator files | pv_lifetime_balance_diff.md | standard, high, low | pv_lifetime_balance_diff_standard.md, _high.md, _low.md |
+| portfolio_split_calculator_sample.html | portfolio_split_calculator_no_js.html, portfolio_split_calculator_js.html | use_cases/portfolio_split_calculator.json, calculator files | portfolio_split_calculator_diff.md | standard, high, low | portfolio_split_calculator_diff_standard.md, _high.md, _low.md |
+| CBAM_tree_calculator_sample.html | CBAM_tree_calculator.html | use_cases/cbam_calculator.json with its view CBAM Part Tree Calculator | none yet | none yet | none yet |
+| ahv_vat_vote_sample.html | ahv_vat_vote.html, ahv_vat_vote_single.html (no test writes them yet) | use_cases/ahv_vat_vote.json, calculator files | none yet | none yet | none yet |
+| npp_ch_vote_sample.html | npp_ch_vote.html (no test writes it yet) | use_cases/npp_ch_vote.json, calculator files | none yet | none yet | none yet |
+| share_buy_sell_abb_sample.html | share_buy_sell_abb.html (no test writes it yet) | use_cases/share_buy_sell_abb.json, calculator files | none yet | none yet | none yet |
+| calculator_editor_sample.html | calculator_editor.html | use_cases/pv_lifetime_balance.json, editor_views.json, calculator_views.json | none yet | none yet | none yet |
+| formula_editor_sample.html | formula_editor.html | use_cases/pv_lifetime_balance.json, calculator_views.json | none yet | none yet | none yet |
+
+The json files are in src/main/resources/messages/. The calculator files are calculator_keywords.json,
+calculator_views.json and the setting "use javascript" "for calculator" of src/main/resources/config.yaml,
+which the table of the PV lifetime balance below explains.
+
+To add the sample setup for a use case, in system_views_read_tests and test_files:
+
+1. write the page without javascript and the page of the browser with assert_view_by_name, like run_portfolio_split_calculator
+2. report the differences of the server page to the sample with assert_sample_diff, like run_portfolio_split_calculator_diff; a sample whose script fills its tables gets its cases script, so that it is compared as a browser shows it, and a case `unchanged` without an input
+3. add the input cases in src/test/js/`<name>_cases.js`, which use_case_cases.js types into the sample and the page of the browser, and report them with assert_sample_case, like run_portfolio_split_calculator_cases
+4. add the run functions to system_views_read_tests::run and this table
+
+assert_sample_case with $all_fields false lists a field that only one page has in the report; set it to true when both pages have the same fields, so that a lost field fails the test.
+A new diff report starts with the text of the first run, which the developer accepts as the baseline.
+
+The PV lifetime balance has these files in src/test/resources/web/html/use_cases/ and, with their
+full path, the files with the data and the configuration that the html pages are generated from:
 
 | file | made by | used for |
 |---|---|---|
 | pv_lifetime_balance_sample.html | hand | the target layout of the calculator page: a stand-alone mock up with its own script, which the generated pages should come close to |
 | pv_lifetime_balance_no_js.html | test run | the calculator page as the server renders it without javascript (`sc=0`), which every browser shows and which the save of the inputs uses |
-| pv_lifetime_balance_diff.html | test run | what pv_lifetime_balance_no_js.html misses, shows differently, has in addition or shows in another order compared with the sample, as a page whose text can be given to an llm as the prompt to bring the generated page closer to the sample |
+| pv_lifetime_balance_diff.md | test run | what pv_lifetime_balance_no_js.html misses, shows differently, has in addition or shows in another order compared with the sample, as a markdown text that can be given to an llm as the prompt to bring the generated page closer to the sample |
 | pv_lifetime_balance_js.html | test run | the same page as the browser builds it by default from the phraseData answer with calculator_json.js, which recalculates the results while an input changes |
+| pv_lifetime_balance_diff_standard.md, pv_lifetime_balance_diff_high.md, pv_lifetime_balance_diff_low.md | test run | what pv_lifetime_balance_js.html shows differently from the sample after the input case of the file name is entered in both pages in a headless browser, so it also compares the recalculated numbers |
+| src/main/resources/messages/use_cases/pv_lifetime_balance.json | hand | the data and the configuration of the page: the words, triples, values and formulas of the example PV installation, the inputs, assumptions, labels and hints as calculator triples and the expected results; a change reaches the pages after an import of the file |
+| src/main/resources/messages/calculator_keywords.json | hand | the system phrases that define the parts of a calculator page e.g. calculator input and calculator hint, which the triples of the use case link to |
+| src/main/resources/messages/calculator_views.json | hand | the calculator view with its three components for the title, the inputs and the results, the same for every phrase |
+| src/main/resources/config.yaml | hand | the setting "use javascript" "for calculator", which makes the page of the browser the default |
 
 The two generated pages are written by system_views_read_tests::run_pv_lifetime_balance from
 the system view Calculator for the phrase example PV installation and checked against their
@@ -56,6 +87,12 @@ The diff report is written by system_views_read_tests::run_pv_lifetime_balance_d
 after the page (src/test/php/utils/html_page_diff.php): it compares what a reader sees, the
 title, the headings, the fields with their unit, hint and value, the table rows with their
 cells, the buttons and the notes and sources, and never the markup of the two files.
+The reports of the input cases are written by system_views_read_tests::run_pv_lifetime_balance_cases
+with the same comparison: pv_lifetime_balance_diff.md is about the server page with the stored
+numbers, whereas pv_lifetime_balance_diff_standard.md is about the page of the browser, also
+with the default inputs, so a finding that is only in one of them points to the page it names.
+Both load the generated page from its snapshot, so a changed use case json shows in the reports
+only after the snapshot has been written again.
 
 Compare the sample with pv_lifetime_balance_no_js.html, because only that page has the
 inputs, the labels, the units and the result rows as html like the sample;

@@ -116,10 +116,10 @@ class value_list_read_tests
         $phr_lst = $t_phr->ch_inhabitant_phrase_list();
         $val_lst->load_by_phr_lst($phr_lst, $msg);
         $result = $val_lst->dsp_id();
-        // TODO Prio 1 check why not all years are loaded
-        //$target = values::TV_CH_INHABITANTS_2019_IN_MIO;
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert_text_contains($test_name, $result, $target);
+        $test_name = '... with all years, not only the latest';
+        $t->assert_text_contains($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         // load values related to any phrase of a list
         // use the phrases that carry the values in the seeded database

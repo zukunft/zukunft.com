@@ -100,7 +100,7 @@ class a_selected_test extends all_unit_tests
     // comment out the entries that are not needed to import just one file at a time
     const array SELECTED_IMPORT_FILES = [
         // the use case is user data, so it is imported as the normal test user usr1 like the db setup does
-        cfg_files::PV_LIFETIME_BALANCE_FILE,
+        //cfg_files::PV_LIFETIME_BALANCE_FILE,
         cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH,
         //test_files::IMPORT_PRO_CONTRA_NPP_CH_REPUBLIC,
@@ -311,7 +311,7 @@ class a_selected_test extends all_unit_tests
             // rendered into resources/web/html/use_cases/pv_lifetime_balance_no_js.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
             // the data of a phrase for api/phraseData, checked against the hand made sample
-            new phrase_data_read_tests()->run($this);
+            //new phrase_data_read_tests()->run($this);
             $msk_tests = new system_views_read_tests();
             //$cfg = $msk_tests->context($this);
             //$msk_tests->run_start($this);
@@ -329,10 +329,15 @@ class a_selected_test extends all_unit_tests
             //$msk_tests->run_system_pages($this);
             //$msk_tests->run_use_cases($this, $cfg);
             // the PV page without javascript and its differences to the hand made sample as a prompt for an llm
-            $msk_tests->run_pv_lifetime_balance($this);
-            $msk_tests->run_pv_lifetime_balance_diff($this);
-            // the portfolio split page next to the hand made portfolio_split_calculator_sample.html
+            //$msk_tests->run_pv_lifetime_balance($this);
+            //$msk_tests->run_pv_lifetime_balance_diff($this);
+            // the sample and the page built by javascript with the standard, high and low input numbers
+            //$msk_tests->run_pv_lifetime_balance_cases($this);
+            // the portfolio split pages without and with javascript next to the hand made
+            // portfolio_split_calculator_sample.html, their differences and the input cases standard, high and low
             $msk_tests->run_portfolio_split_calculator($this);
+            $msk_tests->run_portfolio_split_calculator_diff($this);
+            $msk_tests->run_portfolio_split_calculator_cases($this);
             //$msk_tests->run_web_frontend($this);
             //new api_tests()->run($this);
             //new word_read_tests()->run($this);
@@ -357,13 +362,13 @@ class a_selected_test extends all_unit_tests
              */
 
             // cleanup - fallback delete
-            $this->cleanup_objects_ex_user();
+            //$this->cleanup_objects_ex_user();
 
             // run the selected db write tests
             // the change and delete of a value given only by its id, as the update put does it
-            new value_by_id_write_tests()->run($this);
+            //new value_by_id_write_tests()->run($this);
             // the triple description change of the calculator editor and its undo
-            new update_put_write_tests()->run_use_case($this);
+            //new update_put_write_tests()->run_use_case($this);
             //run_system_test($this);
             //$t_db->create_test_db_entries($this);
             //new user_write_tests()->run($this);
@@ -423,7 +428,7 @@ class a_selected_test extends all_unit_tests
             //new formula_write_url_tests()->run($this);
 
             // cleanup - fallback delete
-            $this->cleanup_objects();
+            //$this->cleanup_objects();
 
         }
 

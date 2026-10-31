@@ -1047,6 +1047,24 @@ textarea.inp {
     margin-top: 10px;
 }
 
+.use-case .check {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: .88rem;
+}
+
+.use-case .check span {
+    display: grid;
+}
+
+.use-case .ro {
+    padding: 7px 9px;
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    width: 100%;
+}
+
 .use-case details .more {
     display: grid;
     gap: 18px;

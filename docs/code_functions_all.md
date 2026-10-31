@@ -54,6 +54,9 @@
     \-- load_data_for_calc - section for function load_data_for_calc is expected to be load in /formula/formula.php
     \-- calc_num - section for function calc_num not yet defined that it should be calc in /formula/formula.php
     \-- to_num_new - section for function to_num_new not yet defined that it should be calc in /formula/formula.php
+    \-- list_symbols - section for function list_symbols not yet defined that it should be calc in /formula/formula.php
+    \-- fill_list_element_group - section for function fill_list_element_group not yet defined that it should be calc in
+             /formula/formula.php
     \-- fill_element_group - section for function fill_element_group not yet defined that it should be calc in /formula/
             formula.php
     \-- fill_results_with_one_figure - section for function fill_results_with_one_figure not yet defined that it should 
@@ -1065,6 +1068,11 @@
     \-- to_num_new
         \-- formula - fill the formula in the reference format with numbers based on the data preloaded by load_data_for
                 _calc;
+    \-- list_symbols
+        \-- formula - @param string $num_text the expression with the element symbols e.g. "=sum({w12})/count({w13})"
+    \-- fill_list_element_group
+        \-- formula - replace the symbol of a list function by all numbers of the list e.g. "sum({w12})" by "sum(1;2;3)"
+                :
     \-- fill_element_group
         \-- formula - replace one element group's symbol with the matching figure number(s) in the result list
     \-- fill_results_with_one_figure
@@ -6528,6 +6536,10 @@
             lator.php
     \-- hint - section for function hint not yet defined that it should be texts and flags in /component/execute/calcula
             tor.php
+    \-- number_note - section for function number_note not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
+    \-- repeat_label - section for function repeat_label not yet defined that it should be texts and flags in /component
+            /execute/calculator.php
     \-- has_flag - section for function has_flag not yet defined that it should be texts and flags in /component/execute
             /calculator.php
     \-- side_results - section for function side_results not yet defined that it should be texts and flags in /component
@@ -6956,9 +6968,16 @@
     \-- unit_name - section for function unit_name missing in /component/execute/ui_list.php
     \-- formula_notes - section for function formula_notes missing in /component/execute/ui_list.php
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
+    \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
     \-- field_decimals - section for function field_decimals missing in /component/execute/ui_list.php
+    \-- calculator_option_text - section for function calculator_option_text missing in /component/execute/ui_list.php
+    \-- calculator_hint - section for function calculator_hint missing in /component/execute/ui_list.php
+    \-- calculator_hint_numbers - section for function calculator_hint_numbers missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
+    \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
+    \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
+            hp
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
     \-- calculator_sources - section for function calculator_sources missing in /component/execute/ui_list.php
@@ -7104,7 +7123,9 @@
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_calc
     \-- result - section for function result missing in /formula/formula_calc.php
+    \-- calculates_phrase - section for function calculates_phrase missing in /formula/formula_calc.php
     \-- tokens - section for function tokens missing in /formula/formula_calc.php
+    \-- arithmetic_tokens - section for function arithmetic_tokens missing in /formula/formula_calc.php
     \-- operands - section for function operands missing in /formula/formula_calc.php
 \-- formula_link
     \-- name - section for function name is expected to be debug in /formula/formula_link.php
@@ -7578,6 +7599,10 @@
             / replace in /html/html_base.php
     \-- dsp_form_file_select - section for function dsp_form_file_select not yet defined that it should be to dismiss / 
             replace in /html/html_base.php
+    \-- label_no_for - section for function label_no_for not yet defined that it should be base elements - functions for
+             all html elements used in zukunft.com in /html/html_base.php
+    \-- input_checkbox - section for function input_checkbox not yet defined that it should be base elements - functions
+             for all html elements used in zukunft.com in /html/html_base.php
     \-- label - section for function label not yet defined that it should be base elements - functions for all html elem
             ents used in zukunft.com in /html/html_base.php
     \-- button_refresh_text - section for function button_refresh_text not yet defined that it should be base elements -
@@ -9701,12 +9726,25 @@
         \-- ui_list - the notes of a page: the descriptions of the formulas that calculate the results of the
     \-- assumption_fields
         \-- ui_list - the assumptions of a page: the values that the calculation of the results of the page uses
+    \-- assumption_tag
+        \-- ui_list - @param value $val the value used by a result of the page
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
     \-- field_decimals
         \-- ui_list - @param sandbox_value $val the value that a field shows
+    \-- calculator_option_text
+        \-- ui_list - @param string $label the label of the option
+    \-- calculator_hint
+        \-- ui_list - @param string $hint the hint of a calculator field
+    \-- calculator_hint_numbers
+        \-- ui_list - @param string $hint the hint of a row,
+                 which may name phrases e.g. "{PV capacity} × factor {yield factor|number}"
     \-- calculation_table
         \-- ui_list - the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
+    \-- calculation_row_context
+        \-- ui_list - @param calculator $calc the calculator reader of the page
+    \-- calculation_side_context
+        \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_detail_tables
         \-- ui_list - the detail tables of a calculation result: per table its label as the heading, the table
     \-- calculator_sources
@@ -9811,8 +9849,12 @@
         \-- expression - get a list of all formula elements
     \-- result
         \-- formula_calc - repeat the calculation of a result with the values and results of the page, e.g. the
+    \-- calculates_phrase
+        \-- formula_calc - @param result $res a result of the page
     \-- tokens
         \-- formula_calc - the calculation of a result as tokens for the browser, which repeats it when an input of a
+    \-- arithmetic_tokens
+        \-- formula_calc - @param string $txt a part of an expression between two operands e.g. " * 1000 / "
     \-- operands
         \-- formula_calc - the values and results that the calculation of a result uses, found the same way as the
     \-- send
@@ -9958,6 +10000,10 @@
         \-- calculator - the label of an item by rule 6: the label of the item, then of its phrase, then for a row
     \-- hint
         \-- calculator - @param phrase $item the item e.g. PV installation row battery discharge
+    \-- number_note
+        \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
+    \-- repeat_label
+        \-- calculator - @param phrase $item a repeated input item e.g. portfolio split input child portfolio
     \-- has_flag
         \-- calculator - @param phrase $item the item e.g. a row or a row group
     \-- side_results
@@ -10783,6 +10829,12 @@
     \-- dsp_form_file_select
         \-- html_base - display a file selector form
 \-- base elements - functions for all html elements used in zukunft.com
+    \-- label_no_for
+        \-- html_base - @param string $text the html code of the label: a text that has no form field e.g. of a read onl
+                y number, or the text with the input that it wraps
+    \-- input_checkbox
+        \-- html_base - a checkbox that sends the number 1 if it is checked; the id equals the name,
+                 so a label can point to it
     \-- label
         \-- html_base - create the html code for a label
     \-- button_refresh_text

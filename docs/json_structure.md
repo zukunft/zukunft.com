@@ -76,6 +76,7 @@ is the `description` of that triple.
 | `calculator hint`      | the help text, e.g. the lead text or the text below a field |
 | `calculator highlight` | shows a row in bold as a key figure             |
 | `calculator signed`    | colours the positive and negative numbers of a row group |
+| `calculator number note` | a short note behind the unit of the number in a row label, e.g. PV-weighted |
 
 A text of an item is used on this page only. A text of a phrase is used on every
 page that shows the phrase, and the text of the item wins. Without any text, the
@@ -88,6 +89,8 @@ editor shows the name of the phrase.
 - **phrase selector**: `heating system` · `can be` · `phrase selector`. Its options are:
   - triples named `heating system option …`, each with an optional label and order
   - phrases that `is a` heating system, with an optional order
+  - an option without a value only selects its phrase and has no number, so the
+    results keep their numbers while it is selected
   - with `can be` · `field phrase selector value based`: the phrases of the values
     of the field, if no option is listed
 - **the selected option**: the page phrase `uses` it, e.g. `sample house` · `uses` · `heat pump`
@@ -112,18 +115,20 @@ editor shows the name of the phrase.
 ## Proposed elements
 
 These keywords are defined in
-[calculator_keywords.json](../src/main/resources/messages/calculator_keywords.json),
-each with a description that starts with `PROPOSED NEW ELEMENT`. The editor does not
-read them yet. The sample uses each of them once, so that the page structure that
-they need is clear before the code is written.
+[calculator_keywords.json](../src/main/resources/messages/calculator_keywords.json).
+A description that starts with `PROPOSED NEW ELEMENT` marks a keyword that the code does
+not fully read yet. The editor does not read any of them. The sample uses each of them
+once, so that the page structure that they need is clear before the code is written.
+The calculator page already shows the checkbox, the read only field and the fields of a
+repeated input.
 
 ### Input fields
 
 | element | triple in the sample | effect |
 |---|---|---|
 | checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
-| read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the result of the item phrase instead of a field |
-| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button |
+| read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
+| repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field |
 | warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero |
 
 A repeated input:
@@ -179,8 +184,20 @@ Two proposed rules for the detail tables need no keyword:
 
 ### Calculations
 
-The formula engine calculates with `+ - * /` only. A calculator like the portfolio split
-also needs rounding to a multiple, min and max, a sum over a list, a condition, a sort by
+The formula engine calculates with `+ - * /`, brackets, `min( a ; b ; … )`, the smallest of
+its arguments, and `max( a ; b ; … )`, the largest; the arguments are separated by `;`, because
+a `,` joins the phrase names of one operand (`"delivered electricity","lifetime"`). It also
+calculates `if( condition ; then ; else )` with `=`, `&` and `|` in the condition and only
+the chosen part, the power `^` and the functions of one number `abs`, `cos`, `exp`, `ln`, `log`
+(base 10, or `log( x ; base )`), `round`, `sec`, `sin` and `sqrt`, with an angle in radian. `sum`, `count` and `mean`
+take a list: a phrase as their argument stands for every stored value that names the phrase and
+all phrases of the calculation, without calculated results and without a value that also names a
+variance or a confidence, and a calculation inside the argument like `sum( "a" * "b" )` gives an
+error. All functions are listed in `docs/math.md`. A calculator
+like the portfolio split also needs rounding to a multiple, a sort by
 a result and a walk that carries a number from one row into the next. Until the engine
 has them, such results are stored as values and an input change does not calculate
-them again.
+them again. A formula may name a function that the engine does not have, e.g. to document a
+law, but calculating it shows the user an error that names the function and gives no number.
+If a calculation fails, the stored result is overwritten with nothing and never kept, so that
+the problem is obvious on every page instead of hidden behind an outdated number.

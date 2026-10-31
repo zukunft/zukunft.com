@@ -1,4 +1,4 @@
-PREPARE result_list_by_phr_lst_p1 (bigint, text, bigint) AS
+PREPARE result_list_by_phr_lst_p1 (bigint, text, bigint, bigint, bigint) AS
     SELECT     '' AS group_id,
                '' AS user_group_id,
                phrase_id_1,
@@ -187,4 +187,4 @@ PREPARE result_list_by_phr_lst_p1 (bigint, text, bigint) AS
           FROM results_big s
      LEFT JOIN user_results_big u ON s.group_id = u.group_id
                                  AND u.user_id = $3
-         WHERE s.group_id ~ $2;
+         WHERE s.group_id ~ $2 LIMIT $4 OFFSET $5;
