@@ -2848,7 +2848,9 @@ class frontend
                 } elseif ((float)$number != (float)$shown) {
                     $val = new value_ui();
                     $val->set_id(is_numeric($grp_id) ? (int)$grp_id : $grp_id);
-                    $val->number = (float)$number;
+                    $is_percent = ($url_array[url_var::PHRASE . $field] ?? '') == sandbox_value_ui::UNIT_PERCENT;
+                    // a share is entered in percent and stored as the ratio
+                    $val->number = $is_percent ? (float)$number / 100 : (float)$number;
                     $result[$field] = $val;
                 }
             }

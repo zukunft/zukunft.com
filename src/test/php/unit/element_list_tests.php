@@ -147,6 +147,13 @@ class element_list_tests
         $t->assert_key_not_exists($test_name, json_fields::PHRASES, $vars);
         $msg->reset();
 
+        $t->subheader($ts . 'group prior row');
+
+        // negative: an operand without prior next to another phrase stays a normal operand or the time jump
+        $test_name = 'an element group without prior next to another phrase reads no previous row';
+        $elm_grp = $t_frm->element_group();
+        $t->assert($test_name, $elm_grp->reads_prior_row(), false);
+
         $t->subheader($ts . 'group debug id');
 
         // the debug id of an element group names its elements

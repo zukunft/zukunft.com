@@ -19,5 +19,15 @@ const CASES = {
         "Target weight first child": "45",
         "Target weight second child": "45",
         "Walk order": "Bank report order"
+    },
+    /* the weights of the children exceed 100 %, which shows the warning of the excess */
+    over: {
+        "Target weight first child": "60",
+        "Target weight second child": "60"
+    },
+    /* different weights while mirroring is asked, which shows the warning of the difference */
+    differ: {
+        "Target weight first child": "30",
+        "Target weight second child": "40"
     }
 };

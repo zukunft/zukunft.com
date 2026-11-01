@@ -813,18 +813,23 @@ class triple_list extends sandbox_list_named
      * (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
      * the id of a renamed triple is set from the original so it is excluded from the insert step
      * @param user_message $msg to collect the messages of the triggered rename
+     * @param triple_list $db_lst filled with the found database triples, because a triple with an id is not loaded again, but the other fields of the import e.g. the description must still be updated
      * @return void
      */
-    function rename_link_conflicts(user_message $msg): void
+    function rename_link_conflicts(user_message $msg, triple_list $db_lst): void
     {
         foreach ($this->lst() as $trp) {
             if ($trp->id() == 0 and $trp->from_id() != 0 and $trp->to_id() != 0) {
                 $db_trp = new triple($this->get_user());
                 $db_trp->load_by_link_id( $trp->from_id(), $msg, $trp->predicate_id(), $trp->to_id() );
-                if ($db_trp->id() > 0 and $db_trp->name() != $trp->name()) {
-                    $db_trp->set_name($trp->name());
-                    $db_trp->save($msg);
+                if ($db_trp->id() > 0) {
+                    if ($db_trp->name() != $trp->name()) {
+                        $db_trp->set_name($trp->name());
+                        $db_trp->save($msg);
+                    }
+                    // also with the same name, because then a load by name has missed the row and an insert would fail
                     $trp->id = $db_trp->id();
+                    $db_lst->add($db_trp);
                 }
             }
         }
@@ -862,15 +867,15 @@ class triple_list extends sandbox_list_named
             // rename any triple that re-declares an existing from/verb/to link under a different
             // name so the original triple is updated instead of dropping a duplicate-link insert
             // (see docs/llm/json_structure.md - a from/verb/to key is unique within the graph)
+            $db_lst_all = new triple_list($this->get_user());
             $this->fill_by_name($cache, $msg, true, false);
-            $this->rename_link_conflicts($msg);
+            $this->rename_link_conflicts($msg, $db_lst_all);
 
             // repeat filling the database id to the triple list
             // and adding missing triples to the database
             // until it is clear that a triple is missing
             $trp_added = true;
             $level = 0;
-            $db_lst_all = new triple_list($this->get_user());
             $add_lst = new triple_list($this->get_user());
 
             // only for the case that there is no try create the message lists once that are recreated on each try
@@ -931,7 +936,16 @@ class triple_list extends sandbox_list_named
 
                 // get the triples that still needs to be added
                 // TODO Prio 2 check if other list save function are using the cache instead of this here
-                $add_lst = $load_lst->missing_ids($msg_chk);
+                $new_lst = $load_lst->missing_ids($msg_chk);
+
+                // the from side of a triple can be a triple whose id is known only since this level,
+                // so a link that exists under another name is renamed here instead of a failing insert
+                $new_lst->rename_link_conflicts($msg_ins, $db_lst_all);
+                $add_lst = $new_lst->missing_ids($msg_chk);
+                if ($add_lst->count() < $new_lst->count()) {
+                    // the triples that use a renamed triple are ready for the next level
+                    $trp_added = true;
+                }
 
                 // create any missing sql insert functions and insert the missing triples
                 if (!$add_lst->is_empty()) {
@@ -949,8 +963,8 @@ class triple_list extends sandbox_list_named
                 // TODO Prio 2 use the insert message instead to increase speed
                 // use a fresh message here too so the reloaded triples keep their name (see above)
                 $db_lst = new triple_list($this->get_user());
-                if (!$add_lst->is_empty()) {
-                    $db_lst->load_by_names( $add_lst->names(true), $msg_reload, true );
+                if (!$new_lst->is_empty()) {
+                    $db_lst->load_by_names( $new_lst->names(true), $msg_reload, true );
                 }
 
                 // fill up the cache to prevent loading the same triple again in the next level

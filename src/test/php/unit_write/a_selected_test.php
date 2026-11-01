@@ -311,7 +311,7 @@ class a_selected_test extends all_unit_tests
             // rendered into resources/web/html/use_cases/pv_lifetime_balance_no_js.html next to the
             // hand made sample, the other sections are listed to be switched on when needed
             // the data of a phrase for api/phraseData, checked against the hand made sample
-            //new phrase_data_read_tests()->run($this);
+            new phrase_data_read_tests()->run($this);
             $msk_tests = new system_views_read_tests();
             //$cfg = $msk_tests->context($this);
             //$msk_tests->run_start($this);

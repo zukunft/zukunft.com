@@ -103,9 +103,14 @@ editor shows the name of the phrase.
   `confidence` gives its confidence
 - **measured**: a value with a `source`; the page shows the number of the source
 - **field limits**: a value with the phrase of the field and a field keyword
+- **the previous row**: an operand with `prior` next to another phrase, e.g. `"cumulative deviation","prior"`,
+  reads the number of the phrase before the phrase of the result context in its `is follower of` chain; the
+  first phrase of the chain has the number 0, and a context with phrases of two chains selects no number
 - **units**: a triple with the type `measure unit`, e.g. `kWh per year`, or a
   symbol, e.g. `m²` · `is symbol for` · `square metre`; a share with the unit
   `percent` is shown in %
+- **the unit of the result table**: if all numbers of the table except the shares have one unit, the first header
+  names it and the cells show only the number, e.g. `CHF`; else each cell shows its unit
 - **side results**: a result shown below a row, e.g.
   `annual heat demand side result` = `annual heat demand` · `has a` · `heat demand per area`
 - **a row phrase built from the group phrase**: if the row phrase is a triple from the
@@ -129,7 +134,7 @@ repeated input.
 | checkbox | `solar thermal` · `can be` · `calculator checkbox` | a checkbox; checked is the value 1, unchecked 0, so a formula can use it as a factor |
 | read only | `house heating input heat demand per area` · `has a` · `calculator read only` | the input list shows the number of the item phrase instead of a field |
 | repeat | `house heating input occupant` · `has a` · `calculator repeat` | one field per instance with an add and a remove button; the description of the triple is the text of the add button, and a calculator label of an instance is the name behind the label of the field |
-| warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero |
+| warning | `heat pump capacity gap` · `has a` · `calculator warning` | the description is shown below the input fields while the result of the page phrase is above zero; the page calculates the result again when an input changes |
 
 A repeated input:
 
@@ -145,14 +150,16 @@ A repeated input:
 | element | triple in the sample | effect |
 |---|---|---|
 | section | `house heating detail fuel` · `has a` · `calculator section` | the detail table gets a collapsed section of its own with its label as the summary |
-| row number | `house heating detail fuel` · `has a` · `calculator row number` | the first column is the position of the row |
+| row number | `house heating detail fuel` · `has a` · `calculator row number` | the first column is the position of the row, and the row shows the `calculator hint` of its phrase as sub text |
+| column unit | `house heating detail column fuel` · `has a` · `calculator column unit` | each cell of the column shows the unit of its number as sub text e.g. shares |
+| signed column | `house heating detail column saving` · `has a` · `calculator signed` | a number of the column shows its sign in the style of the sign, also the plus sign |
 | order | `house heating detail fuel` · `is ranked by` · `price` | the rows are ordered by the number of the phrase, the highest first |
 | editable column | `house heating detail column price` · `has a` · `calculator editable` | the cells are number fields that join the save form |
 | phrase column | `house heating detail column billing unit` · `has a` · `calculator phrase column` | a cell shows the phrase that the numbers of the row have and that is a column phrase, e.g. `CHF per kWh` with `CHF per kWh` · `is a` · `billing unit` |
 | page independent | `house heating detail fuel` · `has a` · `calculator page independent` | the cells select their numbers without the page phrase, e.g. the energy prices that are the same for every house; also for an item or the check table |
 | diagram | `house heating detail column price` · `has a` · `calculator diagram` | the column is also drawn as a line along the rows, with a legend of the last numbers |
-| decimals | the value `price`, `calculator decimals` = 3 | every cell of the phrase shows this number of decimals |
-| colour | `house heating result columns` · `has a` · `calculator colour` | the columns get the colours of the page palette in their order |
+| decimals | the value `price`, `calculator decimals` = 3 | the cells of the row of the phrase in the result table show this number of decimals |
+| colour | `house heating column heat pump` · `has a` · `calculator colour` | the columns with this flag get the colours of the page palette in their order in the header |
 
 Two proposed rules for the detail tables need no keyword:
 
@@ -177,7 +184,7 @@ Two proposed rules for the detail tables need no keyword:
 
 | element | triple in the sample | effect |
 |---|---|---|
-| file import | `house heating detail fuel` · `has a` · `calculator file import` | an import button with the label of the triple; the file fills the values of its phrase |
+| file import | `house heating detail fuel` · `has a` · `calculator file import` | an import button with the label of the triple; the file fills the values of its phrase; on the page or its base phrase the triple is a list: a collapsed section with its label and an import button per item |
 | download | `house heating inputs` · `has a` · `calculator download` | exports the tables of the page as a spreadsheet |
 | printable report | `house heating inputs` · `has a` · `calculator printable report` | shows the page as a printable pdf |
 | copy | `house heating detail fuel` · `has a` · `calculator copy` | copies the rows of the table as zukunft.com json or as csv |

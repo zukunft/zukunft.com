@@ -377,7 +377,14 @@ class import_tests
             }
         }
         // the from walk of a page finds these keywords by their code id
-        foreach (triples::CALCULATOR_FIELD_KINDS as $name => $code_id) {
+        $by_code_id = [
+            ...triples::CALCULATOR_FIELD_KINDS,
+            ...triples::CALCULATOR_DETAIL_FLAGS,
+            ...triples::CALCULATOR_BLOCKS,
+            ...triples::CALCULATOR_BUTTONS,
+            triples::CALCULATOR_DECIMALS => triples::CALCULATOR_DECIMALS_CODE_ID
+        ];
+        foreach ($by_code_id as $name => $code_id) {
             $test_name = 'the import sets the code id of the calculator keyword ' . $name;
             $kwd_code_id = $trp_lst->get_by_name($name, $msg)?->get_code_id();
             $t->assert($test_name, $kwd_code_id, $code_id);
@@ -717,10 +724,15 @@ class import_tests
         }
         $t->assert($test_name, $lists, array_keys(triples::CALCULATOR_LISTS));
         // the import of a normal user finds a phrase only by the names of the file, so the file repeats the keywords
-        $test_name = '... and repeats every calculator keyword without its code id';
+        // a keyword that the page does not use e.g. the calculator warning is not needed in the file
+        $test_name = '... and repeats every calculator keyword that it uses without its code id';
         $keywords = [...array_keys(triples::CALCULATOR_LISTS), ...array_keys(triples::CALCULATOR_PROPERTIES)];
-        $repeated = array_values(array_intersect($keywords, array_column($json_array[json_fields::TRIPLES], json_fields::NAME)));
-        $t->assert($test_name, $repeated, $keywords);
+        $used = array_values(array_intersect($keywords, array_column($json_array[json_fields::TRIPLES], json_fields::EX_TO)));
+        $repeated = array_values(array_intersect($used, array_column($json_array[json_fields::TRIPLES], json_fields::NAME)));
+        $t->assert($test_name, $repeated, $used);
+        // negative: without a used keyword the comparison above would be empty and pass without a check
+        $test_name = '... and uses the keywords of the page';
+        $t->assert_true($test_name, in_array(triples::CALCULATOR_LABEL, $used));
         // negative: a triple that the file does not define is not in the import
         $test_name = '... but has no triple of another use case';
         $trp_none = $dto->get_triple_by_name(triple_names::PI, $msg);
@@ -760,9 +772,9 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
 
-        // the portfolio split use case stores the allocation of the split walk as modelled values,
-        // so the calc validation must reproduce the holding values, the remainder of the parent
-        // in every holding, the target values and the final split deviation
+        // the calc validation of the portfolio split use case must reproduce the holding values, the
+        // target, the count and the deviation of every row of the split walk, the remainder of the
+        // parent in every holding, the target values and the final split deviation
         $test_name = 'the import of the portfolio split use case reports no problem';
         $msg = new user_message($t->usr1);
         $json_str = file_get_contents(cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE);
@@ -771,8 +783,8 @@ class import_tests
         $t->assert($test_name, $msg->all_message_text(), '');
         $test_name = '... and its calc validation reproduces every result';
         $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
-        // negative: an allocation of the first child that breaks the conservation of a holding
-        $test_name = '... and an allocation that does not conserve the holding is reported';
+        // negative: another target share of the first child that does not fit the calculated walk
+        $test_name = '... and a target share that does not fit the walk is reported';
         $msg = new user_message($t->usr1);
         foreach ($json_array[json_fields::VALUES] as $i => $val) {
             if (in_array(triple_names::FIRST_CHILD_PORTFOLIO, $val[json_fields::WORDS])) {

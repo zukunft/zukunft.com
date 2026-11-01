@@ -66,6 +66,7 @@ include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_cache.php';
+include_once paths::MODEL_HELPER . 'db_cache_page.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -486,6 +488,8 @@ class import
             $dto->save($msg, $this);
             $this->step_main_end();
 
+            // also after a problem, because the objects before the problem are saved
+            $this->drop_cached_answers();
         }
 
         // show the import result
@@ -493,6 +497,27 @@ class import
 
         $sys->times->switch();
         return $msg->is_ok();
+    }
+
+    /**
+     * remove the cached pages and api answers of all users, because an import changes the standard
+     * data that every user sees; a failure is only logged, because a page that is cleared too late
+     * is a stale page, not a lost import
+     *
+     * @return void
+     */
+    private function drop_cached_answers(): void
+    {
+        global $db_con;
+
+        // the unit tests check the import messages without a database, so there is no cache to remove
+        if ($db_con->is_open()) {
+            $del_msg = new user_message(user::system()); // not reported, see above
+            new db_cache_page()->del_data_answers($del_msg);
+            if (!$del_msg->is_ok()) {
+                log_warning('removing the cached pages after an import failed because ' . $del_msg->get_message());
+            }
+        }
     }
 
     /**
@@ -520,6 +545,7 @@ class import
             }
         } else {
             $this->put($json_array, $msg);
+            $this->drop_cached_answers();
         }
         $sys->times->switch();
         return $msg->is_ok();

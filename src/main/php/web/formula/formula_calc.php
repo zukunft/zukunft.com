@@ -44,6 +44,7 @@ include_once html_paths::RESULT . 'result.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::SHARED_CALC . 'arithmetic.php';
+include_once html_paths::SHARED_CALC . 'prior_operand.php';
 include_once html_paths::SHARED_CONST . 'chars.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED . 'library.php';
@@ -52,6 +53,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\value\value;
 use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\shared\calc\arithmetic;
+use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -76,6 +78,16 @@ class formula_calc
     // result is searched in all values of the page, but the phrases of a value do not change;
     // the value is kept with its names, so a new object with a reused object id is not mixed up
     private array $names_by_val = [];
+    // reads the number of the previous row for an operand with the name prior
+    private prior_operand $pri;
+
+    /**
+     * @param array $prior per phrase name of the page the phrase before it in its "is follower of" chain
+     */
+    function __construct(array $prior = [])
+    {
+        $this->pri = new prior_operand($prior);
+    }
 
     /**
      * repeat the calculation of a result with the values and results of the page, e.g. the
@@ -158,7 +170,11 @@ class formula_calc
             $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $operand)));
             $vals = $this->values_of($names, $ctx, $res, $val_lst, $this->is_list_argument($exp, $start));
             $between = $this->arithmetic_tokens(substr($exp, $pos, $start - $pos));
-            if ($result !== null and $vals != [] and $between !== null) {
+            $is_first = $this->pri->is_first($names, $ctx);
+            if ($result !== null and $is_first and $between !== null) {
+                // the first row has no previous row and the number 0
+                $result = [...$result, ...$between, ...$this->arithmetic_tokens('0')];
+            } elseif ($result !== null and $vals != [] and $between !== null) {
                 $result = [...$result, ...$between];
                 foreach ($vals as $key => $val) {
                     if ($key > 0) {
@@ -217,11 +233,12 @@ class formula_calc
         $missing = !$this->lists_are_plain($exp);
         $txt = preg_replace_callback($this->operand_pattern(),
             function (array $found) use ($exp, $res, $val_lst, $ctx, &$missing): string {
-                $names = explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $found[0][0]));
+                $names = array_map('trim', explode(chars::SEPARATOR, str_replace(chars::TERM_DELIMITER, '', $found[0][0])));
                 $is_list = $this->is_list_argument($exp, $found[0][1]);
-                $vals = $this->values_of(array_map('trim', $names), $ctx, $res, $val_lst, $is_list);
+                $vals = $this->values_of($names, $ctx, $res, $val_lst, $is_list);
                 if ($vals == []) {
-                    $missing = true;
+                    // the first row has no previous row and the number 0, which is no missing value
+                    $missing = ($missing or !$this->pri->is_first($names, $ctx));
                     return '0';
                 }
                 $nums = array_map(fn($val) => sprintf('%.12F', $val->number()), $vals);
@@ -260,10 +277,11 @@ class formula_calc
      */
     private function values_of(array $names, array $ctx, result $res, value_list $val_lst, bool $is_list): array
     {
+        [$sel_names, $sel_ctx] = $this->pri->select($names, $ctx);
         if ($is_list) {
-            $result = $this->list_values($names, $ctx, $val_lst);
+            $result = $this->list_values($sel_names, $sel_ctx, $val_lst);
         } else {
-            $val = $this->value_of($names, $ctx, $res, $val_lst);
+            $val = $this->value_of($sel_names, $sel_ctx, $res, $val_lst);
             $result = $val == null ? [] : [$val];
         }
         return $result;

@@ -44,7 +44,7 @@ system_time: $long_tim, $new, $short_tim, $sys_exe, $sys_tim_ui
 system_time_list: $answer_times, $lst, $refused_times, $result, $tim_lst, $times
 system_time_type_list: $sys_tim_typ_csv
 term: $frm, $msk, $result, $term, $trm_by_obj_id, $trm_case, $trm_dsp, $trm_map, $trm_other, $trm_start, $trm_wrd, $trm_zero, $trp, $vrb, $wrd
-triple: $bare_trp_ui, $base, $cfg_trp, $db_trp, $dbo, $dbo_ui, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $ord, $par_trp, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $trp_back, $trp_by_id, $trp_by_name, $trp_chk, $trp_del, $trp_err, $trp_franc, $trp_gone, $trp_in, $trp_ins, $trp_kw, $trp_load, $trp_map, $trp_math, $trp_missing, $trp_no_verb, $trp_old, $trp_owner, $trp_owner_load, $trp_pr, $trp_problem, $trp_ren, $trp_req, $trp_sec, $trp_tab, $trp_ui, $trp_undo_chk, $trp_unit, $trp_upd, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
+triple: $bare_trp_ui, $base, $cfg_trp, $db_trp, $dbo, $dbo_ui, $kw, $lbl, $lnk, $lnk2, $lnk_canton, $lnk_company, $lnk_test, $lnk_ui, $obj, $ord, $par_trp, $phr_canton_ui, $phr_city_ui, $result, $similar_trp, $trp_back, $trp_by_id, $trp_by_name, $trp_chk, $trp_del, $trp_err, $trp_franc, $trp_gone, $trp_in, $trp_ins, $trp_kw, $trp_load, $trp_map, $trp_math, $trp_missing, $trp_no_verb, $trp_old, $trp_owner, $trp_owner_load, $trp_pr, $trp_problem, $trp_ren, $trp_req, $trp_sec, $trp_tab, $trp_ui, $trp_undo_chk, $trp_unit, $trp_upd, $trp_zh, $wrd, $wrd_lnk, $wrd_or_trp
 user: $adm_usr_ui, $cfm_usr, $changer, $changer_ui, $check_usr, $chk_usr, $db_usr, $dbo, $dbo_ui, $dev_ui, $edit_usr, $existing, $fail_usr, $init_usr, $ip_ui, $json_usr, $local_usr, $new_owner, $new_usr, $new_usr_ui, $obj, $other, $owner, $owner_ui, $req_usr, $result, $row_usr, $session, $sgn_usr, $sim, $solver, $sys_test_ui, $sys_ui, $sys_usr, $sys_usr_prof_ui, $sys_usr_ui, $test_usr, $test_usr2, $test_usr_normal, $unknown, $unprivileged, $upd_usr, $usr1_ui, $usr_admin, $usr_attacker, $usr_backend, $usr_by_id, $usr_by_ip, $usr_by_name, $usr_check, $usr_chk, $usr_db, $usr_key, $usr_load, $usr_reload, $usr_sgn_key, $usr_sys, $usr_sys_ui, $usr_test, $usr_ui, $web_usr
 user_log_sum: $new, $sum, $sum_ui
 user_log_sum_list: $lst, $result, $sum_lst
@@ -58,7 +58,7 @@ view: $cld, $dbo, $dbo_ui, $msk_alone, $msk_calc, $msk_cols, $msk_db, $msk_empty
 view_link_type_list: $lst
 view_relation: $dbo, $dbo_ui, $mrl_del_ui, $mrl_map, $mrl_new, $mrl_tab, $mrl_url, $obj
 view_type_list: $lst
-word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $inh, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
+word: $ZH, $add_from, $add_to, $country, $dbo, $dbo_ui, $from, $inh, $is_wrd, $max_wrd, $measure_word, $name_wrd, $new_word, $no_desc, $obj, $par_wrd, $result, $switzerland, $time_wrd, $to, $wrd1, $wrd2, $wrd3, $wrd_2014, $wrd_2020, $wrd_2020_ui, $wrd_2021, $wrd_ZH, $wrd_ZH_ui, $wrd_add, $wrd_admin, $wrd_asm, $wrd_auto, $wrd_back, $wrd_canton, $wrd_changer, $wrd_chf, $wrd_chg, $wrd_chk, $wrd_city, $wrd_col, $wrd_col2, $wrd_company, $wrd_crud, $wrd_db, $wrd_del, $wrd_del_ui, $wrd_dsp, $wrd_empty, $wrd_err, $wrd_excluded, $wrd_fill, $wrd_from, $wrd_hand, $wrd_high, $wrd_ip, $wrd_load_ui, $wrd_low, $wrd_map, $wrd_measure, $wrd_minute, $wrd_missing, $wrd_new, $wrd_no_id, $wrd_or_trp, $wrd_other, $wrd_owner, $wrd_percent, $wrd_pi, $wrd_plain, $wrd_power, $wrd_read_ui, $wrd_renamed, $wrd_ret, $wrd_scale, $wrd_sec, $wrd_share_deleted, $wrd_tab, $wrd_time, $wrd_time2, $wrd_to, $wrd_to_add, $wrd_ui, $wrd_undo, $wrd_undo_chk, $wrd_usr1_deleted, $wrd_usr2, $wrd_usr2_reloaded, $wrd_xss, $wrd_year, $wrd_zh, $wrd_zh_rel
 
 ## Classes without a suggested var name
 
@@ -84,7 +84,7 @@ api_type_list: $api_typ_lst, $typ_lst, $with_related, $without_related
 arithmetic: $calc
 button_dsp: $btn
 calc_internal: $calc
-calculator: $calc, $calc_be, $calc_empty, $calc_in, $js_calc
+calculator: $btn_calc, $calc, $calc_be, $calc_empty, $calc_in, $chk_calc, $fld_calc, $in_calc, $ins_calc, $js_calc, $no_btn_calc, $no_chk_calc, $one_calc, $wrn_calc
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
@@ -167,10 +167,10 @@ list_sort: $lst
 log: $log_ui
 math_function_report: $mth
 message: $ui_msg
-number_format: $fmt, $no_cnv
+number_format: $fmt, $no_cnv, $noise_fmt
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
-phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_parts, $self, $sort_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
+phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $below, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $ind_lst, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $lvl_lst, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_lst, $row_parts, $seen, $self, $sort_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
 phrase_table: $phr_tbl
 phrase_table_status: $phr_tbl_sta
 phrase_type: $phr_typ, $phr_typ_map
@@ -178,13 +178,14 @@ phrase_types: $lst
 pod_status: $pod_sta
 pod_type: $pod_typ
 position_type: $cmp_pos_typ
+prior_operand: $pri, $pri_two
 protection_type: $prt_typ
 ref_list: $db_lst, $lst, $ref_lst
 ref_type: $ref_typ, $type_obj
 ref_type_list: $lst, $ref_type_list
 rest_call: $api, $ctrl, $rest
 result_id: $res_id
-result_list: $lst, $res_cell_lst, $res_inh_lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate, $res_two_lst
+result_list: $lst, $res_cell_lst, $res_inh_lst, $res_lst, $res_lst_a, $res_lst_b, $res_lst_c, $res_lst_ui, $res_to_validate, $res_two_lst, $row_res_lst
 sandbox_related: $rel
 share_type: $shr_typ
 share_type_list: $lst
@@ -259,7 +260,7 @@ ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port
 ui_link: $link
-ui_list: $js_list, $list, $list_ctx, $list_hint, $lst_ui
+ui_list: $chk_list, $js_list, $list, $list_ctx, $list_hint, $lst_ui, $no_exp_list
 ui_preview: $preview
 ui_rank: $rank
 ui_select: $select
@@ -291,5 +292,5 @@ view_sys_list: $lst, $sys_msk_cac, $sys_msk_lst
 view_type: $msk_typ
 views: $msk, $msk_c, $msk_const, $views
 word_dsp: $wrd, $wrd_pi
-word_list: $added_wrd_lst, $additional_added, $common_phr_lst, $common_phr_lst_new, $del_wrd_lst, $dest_wrd_lst, $lst, $lst_long, $parents, $result, $sector_lst, $time_lst, $wrd_lst, $wrd_lst2, $wrd_lst_filter, $wrd_lst_map, $wrd_lst_percent, $wrd_lst_scale, $wrd_lst_time
+word_list: $added_wrd_lst, $additional_added, $common_phr_lst, $common_phr_lst_new, $db_lst, $del_wrd_lst, $dest_wrd_lst, $imp_lst, $lst, $lst_long, $new_lst, $no_lst, $parents, $result, $sector_lst, $time_lst, $wrd_lst, $wrd_lst2, $wrd_lst_filter, $wrd_lst_map, $wrd_lst_percent, $wrd_lst_scale, $wrd_lst_time
 xml: $xml_exp, $xml_export

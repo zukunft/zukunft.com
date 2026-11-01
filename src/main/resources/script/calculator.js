@@ -43,6 +43,23 @@
 
     // the html id and the keys of the data, the same as the CALC_* consts of ui_list
     const DATA_ID = 'calc-data';
+    // the url var of a number field and of its unit, the same as url_var NUMERIC_VALUE and PHRASE, and the unit of a field in percent, the same as sandbox_value UNIT_PERCENT
+    const NUMBER_VAR = 'n';
+    const UNIT_VAR = 'p';
+    const UNIT_PERCENT = '%';
+    // the id and the style of the warnings and the float noise that a warning ignores, the same as ui_list CALC_WARNINGS_ID, styles INPUT_WARNING and ui_list CALC_WARNING_DECIMALS
+    const WARNINGS_ID = 'calc-warnings';
+    const WARNING_STYLE = 'warn';
+    // a shown number is first rounded to these decimals, the same as number_format NOISE_DECIMALS
+    const NOISE_DECIMALS = 8;
+    // the style of the sub text of a cell, the same as styles CALC_SUB
+    const SUB_STYLE = 'sub';
+    const WARNING_DECIMALS = 12;
+    // the float noise that a check row ignores, the same as ui_list CALC_CHECK_TOLERANCE
+    const CHECK_TOLERANCE = 1e-9;
+    // the size of a line diagram and the suffix of its legend, the same as html_base DIAGRAM_* and ui_list CALC_DIAGRAM_LEGEND_SUFFIX
+    const DIAGRAM = {width: 760, height: 200, left: 70, right: 12, top: 12, bottom: 24};
+    const LEGEND_SUFFIX = '-legend';
     // the kinds of the tokens, the same as the TOKEN_* consts of formula_calc
     const TOKEN_NUM = 'n';
     const TOKEN_OP = 'o';
@@ -311,7 +328,7 @@
      * @returns the number with the decimals, the decimal point and the thousand separator of the user like the php number_format
      */
     function fixed(num, decimals) {
-        const rounded = round(num, decimals);
+        const rounded = round(round(num, NOISE_DECIMALS), decimals);
         const parts = Math.abs(rounded).toFixed(decimals).split('.');
         const digits = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, data.format.thousand_sep);
         const sign = rounded < 0 ? '-' : '';
@@ -326,7 +343,10 @@
     function text(num, cell) {
         let result;
         if (cell.percent !== null) {
-            result = String(round(num * 100, data.format.percent_decimals));
+            // the decimals that the row sets are always shown, else the percent decimals of the user at most
+            result = cell.percent_decimals === null
+                ? String(round(num * 100, data.format.percent_decimals))
+                : fixed(num * 100, cell.percent_decimals);
             if (cell.percent !== '') {
                 result += data.format.unit_sep + cell.percent;
             }
@@ -350,14 +370,87 @@
             if (td !== null && cell.number in numbers) {
                 const num = numbers[cell.number];
                 const txt = text(num, cell);
-                if (cell.signed) {
+                const shown = cell.plus ? round(round(num * cell.factor, NOISE_DECIMALS), cell.decimals) : num;
+                if (cell.signed || cell.plus) {
                     const span = document.createElement('span');
-                    span.className = num < 0 ? data.format.negative : data.format.positive;
-                    span.textContent = txt;
+                    span.className = shown < 0 ? data.format.negative : (shown > 0 || !cell.plus ? data.format.positive : '');
+                    span.textContent = (cell.plus && shown > 0 ? '+' : '') + txt;
                     td.replaceChildren(span);
                 } else {
                     td.textContent = txt;
                 }
+                if (cell.sub) {
+                    const sub = document.createElement('span');
+                    sub.className = SUB_STYLE;
+                    sub.textContent = cell.sub;
+                    td.appendChild(sub);
+                }
+            }
+        });
+    }
+
+    /**
+     * show the warnings whose number is above zero like ui_list::calculator_warnings
+     *
+     * @param numbers the numbers of the page by their html id
+     */
+    function showWarnings(numbers) {
+        const host = document.getElementById(WARNINGS_ID);
+        if (host !== null) {
+            const shown = new Set((data.warnings || []).filter((warning) => {
+                return round(numbers[warning.number] ?? 0, WARNING_DECIMALS) > 0;
+            }).map((warning) => warning.text));
+            host.replaceChildren(...Array.from(shown).map((warningText) => {
+                const div = document.createElement('div');
+                div.className = WARNING_STYLE;
+                div.textContent = warningText;
+                return div;
+            }));
+        }
+    }
+
+    /**
+     * show the status of the rows of the check table like ui_list::calculator_check_row
+     *
+     * @param numbers the numbers of the page by their html id
+     */
+    function showChecks(numbers) {
+        (data.checks || []).forEach((check) => {
+            const td = document.getElementById(check.id);
+            if (td !== null) {
+                const got = numbers[check.number] ?? null;
+                const noise = CHECK_TOLERANCE * Math.max(1, Math.abs(got), Math.abs(check.expected));
+                const status = got !== null && Math.abs(got - check.expected) <= noise ? check.match : check.differs;
+                const span = document.createElement('span');
+                span.className = status[1];
+                span.textContent = status[0];
+                td.replaceChildren(span);
+            }
+        });
+    }
+
+    /**
+     * draw the lines of the diagrams with the new numbers like html_base::line_diagram;
+     * the lines at zero and at the biggest number stay, because the numbers are scaled to them
+     *
+     * @param numbers the numbers of the page by their html id
+     */
+    function showDiagrams(numbers) {
+        (data.diagrams || []).forEach((diagram) => {
+            const host = document.getElementById(diagram.id);
+            const nums = diagram.numbers.map((key) => numbers[key] ?? null);
+            if (host !== null && !nums.includes(null)) {
+                const max = Math.max(1, ...nums.map(Math.abs));
+                const half = (DIAGRAM.height - DIAGRAM.top - DIAGRAM.bottom) / 2;
+                const wid = DIAGRAM.width - DIAGRAM.left - DIAGRAM.right;
+                const points = nums.map((num, k) => {
+                    const x = DIAGRAM.left + k * wid / Math.max(1, nums.length - 1);
+                    return x.toFixed(1) + ',' + (DIAGRAM.top + half * (1 - num / max)).toFixed(1);
+                });
+                host.querySelector('polyline').setAttribute('points', points.join(' '));
+                host.querySelector('text').textContent = fixed(max, 0);
+                const legend = document.getElementById(diagram.id + LEGEND_SUFFIX);
+                legend.textContent = diagram.label + ' ' + fixed(nums[nums.length - 1], 2);
             }
         });
     }
@@ -372,13 +465,24 @@
     }
 
     /**
-     * @param {Element|undefined} input the input of a field
-     * @returns {number} the number of the input, NaN if it has none; the value of a checkbox stays 1 also if it is unchecked
+     * @param {string} name the url var of the input
+     * @returns {boolean} true if the field shows a stored ratio in percent, which its unit var says (ui_list::calculator_save_map)
      */
-    function inputNumber(input) {
+    function isPercentField(name) {
+        const unit = document.getElementsByName(UNIT_VAR + name.slice(NUMBER_VAR.length))[0];
+        return unit !== undefined && unit.value === UNIT_PERCENT;
+    }
+
+    /**
+     * @param {string} name the url var of the input
+     * @returns {number} the number of the input for the calculation, NaN if it has none; the value of a checkbox stays 1 also if it is unchecked
+     */
+    function inputNumber(name) {
+        const input = inputOf(name);
         let result = NaN;
         if (input !== undefined) {
             result = input.type === 'checkbox' ? Number(input.checked) : parseFloat(input.value);
+            result = isPercentField(name) ? result / 100 : result;
         }
         return result;
     }
@@ -389,12 +493,16 @@
     function update() {
         const numbers = Object.assign({}, data.numbers);
         Object.entries(data.inputs).forEach(([name, key]) => {
-            const num = inputNumber(inputOf(name));
+            const num = inputNumber(name);
             if (!Number.isNaN(num)) {
                 numbers[key] = num;
             }
         });
-        show(calculate(numbers));
+        const calculated = calculate(numbers);
+        show(calculated);
+        showWarnings(calculated);
+        showChecks(calculated);
+        showDiagrams(calculated);
     }
 
     Object.keys(data.inputs).forEach((name) => {

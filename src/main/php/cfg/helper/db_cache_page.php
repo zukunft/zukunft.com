@@ -60,8 +60,12 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type_list.php';
+include_once paths::EXPORT . 'phrase_data.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'api.php';
@@ -94,9 +98,21 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use DateTime;
 use DateTimeInterface;
+use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 
 class db_cache_page extends db_object_seq_id
 {
+
+    // the apis whose cached answers show the saved objects e.g. the phrase data of a calculator page
+    const array CACHED_APIS = [
+        phrase_data::class,
+        phrase_list::class,
+        value_list::class,
+        result_list::class,
+    ];
 
     /*
      * db const
@@ -472,6 +488,22 @@ class db_cache_page extends db_object_seq_id
         $qp = $db_con->sql_creator()->del_sql_list_by_text(
             self::class, self::FLD_URL, self::api_key_pattern($class, $usr_id), sql_par_type::LIKE_R);
         return $db_con->delete($qp, 'cached api answers', $msg);
+    }
+
+    /**
+     * remove the cached html pages and the cached answers of the data apis of all users,
+     * because e.g. an import or an update put changes the standard data that every user sees;
+     * the other cached answers are kept
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return void
+     */
+    function del_data_answers(user_message $msg): void
+    {
+        $this->del_html($msg);
+        foreach (self::CACHED_APIS as $class) {
+            $this->del_api($class, $msg);
+        }
     }
 
     /**

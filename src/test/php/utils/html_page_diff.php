@@ -49,9 +49,12 @@ class html_page_diff
 {
 
     // the html classes that the generated page and the sample use for the same parts
+    // the separator of the numbers of the generated pages, which a number input of a sample cannot hold
+    const string THOUSAND_SEP = "'";
     const string CLASS_FIELD = 'field';
     const string CLASS_CHECK = 'check';
     const string CLASS_READ_ONLY = 'ro';
+    const string CLASS_WARNING = 'warn';
     const string VALUE_CHECKED = 'checked';
     const string CLASS_TAG = 'tag';
     const string CLASS_UNIT = 'unit';
@@ -68,6 +71,7 @@ class html_page_diff
     const string KIND_TABLE = 'table';
     const string KIND_SECTION = 'table section';
     const string KIND_ROW = 'row';
+    const string KIND_WARNING = 'warning';
     const string KIND_BUTTON = 'button';
     const string KIND_LIST_ITEM = 'list item';
     // the kinds whose order is compared, because the reader sees them in this order
@@ -100,6 +104,9 @@ class html_page_diff
             $this->add_header_items($xpath, $result);
             $this->add_text_items($xpath, '//main//h2 | //main//summary', self::KIND_HEADING, $result);
             $this->add_field_items($xpath, $result);
+            // only a warning that the reader sees, because the sample hides the others
+            $warnings = '//main//div[' . $this->has_class(self::CLASS_WARNING) . '][not(@hidden)]';
+            $this->add_text_items($xpath, $warnings, self::KIND_WARNING, $result);
             $this->add_table_items($xpath, $result);
             $this->add_text_items($xpath, '//main//button', self::KIND_BUTTON, $result);
             $this->add_text_items($xpath, '//main//li', self::KIND_LIST_ITEM, $result);
@@ -239,7 +246,7 @@ class html_page_diff
         } elseif ($first != null) {
             $numbers = [];
             for ($i = 1; $i < $cells->length; $i++) {
-                $numbers[] = $this->text($cells->item($i));
+                $numbers[] = $this->cell_text($xpath, $cells->item($i));
             }
             $label = $this->text_without($xpath, $first, self::CLASS_SUB);
             $this->add_item($items, self::KIND_ROW . ': ' . $section . ' / ' . $label, [
@@ -282,6 +289,25 @@ class html_page_diff
     private function text(DOMNode $node): string
     {
         return trim(preg_replace('/\s+/u', ' ', $node->textContent));
+    }
+
+    /**
+     * @param DOMXPath $xpath the query of the page
+     * @param DOMNode $cell a table cell, whose inner elements a reader sees as separate parts e.g. a number with its unit below it
+     * @return string the parts of the cell with one space between them, also if the html has no white space there;
+     *                a number input counts with its value and the thousand separator that a number field cannot hold
+     */
+    private function cell_text(DOMXPath $xpath, DOMNode $cell): string
+    {
+        $parts = [];
+        foreach ($xpath->query('.//text() | .//input[@type="number"]', $cell) as $part) {
+            $parts[] = $part->nodeName == 'input'
+                ? preg_replace_callback('/^-?\d+/',
+                    fn(array $int) => preg_replace('/\B(?=(\d{3})+(?!\d))/', self::THOUSAND_SEP, $int[0]),
+                    $this->attribute($part, 'value'))
+                : $this->text($part);
+        }
+        return implode(' ', array_filter($parts, fn(string $part) => $part != ''));
     }
 
     /**

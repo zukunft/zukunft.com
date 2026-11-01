@@ -1,10 +1,11 @@
 [
     {
-        "name": "not set",
-        "code_id": "not_set",
-        "description": "no verb / predicate selected",
         "id": 1,
-        "class": "verb"
+        "protection": 3,
+        "name": "mathematics",
+        "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+        "type_id": 1,
+        "class": "word"
     },
     {
         "id": 1,
@@ -22,19 +23,18 @@
     },
     {
         "id": 1,
-        "protection": 3,
-        "name": "mathematics",
-        "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
-        "type_id": 1,
-        "class": "word"
-    },
-    {
-        "id": 1,
         "name": "scale minute to sec",
         "description": "to convert times in minutes to seconds and the other way round",
         "type_id": 1,
         "user_text": "\"second (time)\" = \"minute\" * 60",
         "latex": "\\text{s} = 60 \\cdot \\text{min}",
         "class": "formula"
+    },
+    {
+        "name": "not set",
+        "code_id": "not_set",
+        "description": "no verb / predicate selected",
+        "id": 1,
+        "class": "verb"
     }
 ]

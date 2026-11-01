@@ -189,6 +189,14 @@ class html_base
     const string ENCTYPE = 'enctype';
     const string INPUT = 'input';
     const string LABEL = 'label';
+    // the size of a line diagram (line_diagram), the same in calculator_json.js
+    // TODO Prio 1 size the diagram relative to the column size and make the column width a parameter
+    const int DIAGRAM_WIDTH = 760;
+    const int DIAGRAM_HEIGHT = 200;
+    const int DIAGRAM_PAD_LEFT = 70;
+    const int DIAGRAM_PAD_RIGHT = 12;
+    const int DIAGRAM_PAD_TOP = 12;
+    const int DIAGRAM_PAD_BOTTOM = 24;
     const string FOR = 'for';
     const string VALUE = 'value';
     const string ID = 'id';
@@ -2981,6 +2989,39 @@ class html_base
      */
 
     /**
+     * a line diagram of a number per row without javascript, with a line at zero and at the biggest number
+     *
+     * @param array $nums the numbers of the line in the order of the rows
+     * @param string $first the text below the first number
+     * @param string $last the text below the last number
+     * @param string $max_text the biggest absolute number as a text
+     * @return string the html code of the svg image
+     */
+    function line_diagram(array $nums, string $first, string $last, string $max_text): string
+    {
+        $max = max(1, ...array_map('abs', $nums));
+        $wid = self::DIAGRAM_WIDTH - self::DIAGRAM_PAD_LEFT - self::DIAGRAM_PAD_RIGHT;
+        $right = self::DIAGRAM_WIDTH - self::DIAGRAM_PAD_RIGHT;
+        $half = (self::DIAGRAM_HEIGHT - self::DIAGRAM_PAD_TOP - self::DIAGRAM_PAD_BOTTOM) / 2;
+        $y_of = fn(float $num) => self::DIAGRAM_PAD_TOP + $half * (1 - $num / $max);
+        $points = [];
+        foreach (array_values($nums) as $k => $num) {
+            $x = self::DIAGRAM_PAD_LEFT + $k * $wid / max(1, count($nums) - 1);
+            $points[] = number_format($x, 1, '.', '') . ',' . number_format($y_of($num), 1, '.', '');
+        }
+        $body = '';
+        foreach ([$max, 0, -$max] as $num) {
+            $y = number_format($y_of($num), 1, '.', '');
+            $body .= '<line x1="' . self::DIAGRAM_PAD_LEFT . '" x2="' . $right . '" y1="' . $y . '" y2="' . $y . '"/>';
+        }
+        $body .= '<text x="0" y="' . number_format($y_of($max) + 4, 1, '.', '') . '">' . $this->esc($max_text) . '</text>'
+            . '<polyline points="' . implode(' ', $points) . '"/>'
+            . '<text x="' . self::DIAGRAM_PAD_LEFT . '" y="' . (self::DIAGRAM_HEIGHT - 6) . '">' . $this->esc($first) . '</text>'
+            . '<text x="' . $right . '" y="' . (self::DIAGRAM_HEIGHT - 6) . '" text-anchor="end">' . $this->esc($last) . '</text>';
+        return '<svg viewBox="0 0 ' . self::DIAGRAM_WIDTH . ' ' . self::DIAGRAM_HEIGHT . '" role="img">' . $body . '</svg>';
+    }
+
+    /**
      * @param string $text the html code of the label: a text that has no form field e.g. of a read only number, or the text with the input that it wraps
      * @param string $style the html class of the label, '' for none
      * @return string the html code of a label without a for attribute
@@ -3826,6 +3867,19 @@ class html_base
     public function p(string $txt): string
     {
         return '<' . self::P . '>' . $txt . '</' . self::P . '>';
+    }
+
+    /**
+     * @param string $icon the html code of the icon
+     * @param string $title the text that names what the button does, as its tooltip and for a screen reader
+     * @param string $class additional CSS classes for the button
+     * @return string the html code of a button that shows only an icon
+     */
+    function button_icon(string $icon, string $title, string $class): string
+    {
+        $esc_title = $this->esc($title);
+        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . self::BUTTON . '" ' . self::CLASS_HTML . '="' . self::CLASS_BUTTON . ' ' . $class . '"'
+            . ' title="' . $esc_title . '" aria-label="' . $esc_title . '">' . $icon . '</' . self::BUTTON . '>';
     }
 
     /**

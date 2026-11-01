@@ -140,8 +140,8 @@
     <aside class="panel">
       <div class="inputs" style="display:grid;gap:14px">
         <h2>Inputs</h2>
-        <!-- placement test only: the label opens the file selection of the browser, but the selected file is not read yet -->
-        <label class="btn btn-outline-primary" title="Import the portfolio of the Spot rates"><i class="fas fa-file-import"></i> Import<input type="file" hidden></label>
+        <!-- placement test only: the import does nothing yet -->
+        <button class="btn btn-outline-primary" type="button" title="Import the portfolio of the Spot rates"><i class="fas fa-file-import"></i> Import</button>
         <!-- one target weight per child, rendered from CHILDREN by renderChildren -->
         <div id="children"></div>
         <button id="addChild" class="btn btn-outline-primary btn-sm" type="button"><i class="fas fa-plus"></i> Add child</button>
@@ -170,6 +170,11 @@
 
       <details>
         <summary>Exchange rates</summary>
+        <div class="field">
+          <label for="fxRate">Exchange rate <span class="tag m">measured</span></label>
+          <div class="row"><input id="fxRate" type="number" value="0.1304"><span class="unit">CHF per DKK</span></div>
+          <span class="hint">CHF per unit of currency, bank report [2]</span>
+        </div>
         <div class="fx" id="fxBox"></div>
         <p class="hint" style="font-size:.76rem;color:var(--muted);margin:8px 0 0">CHF per unit of currency, bank report <span class="tag m">measured</span></p>
       </details>
@@ -248,6 +253,19 @@
           <button class="btn btn-outline-primary" type="button"><i class="fas fa-file-import"></i> Import FX rates</button>
         </div>
       </details>
+
+      <details>
+        <summary>Details and sources</summary>
+        <div class="more">
+          <div class="src">
+            <h2>Sources</h2>
+            <ol>
+              <li>split agreement</li>
+              <li><a href="https://bankleu.com/api/client_xy/portfolio_reporting.json">bank reporting bank leu client xy</a></li>
+            </ol>
+          </div>
+        </div>
+      </details>
     </section>
   </div>
 </div>
@@ -313,7 +331,7 @@ const BONDS = [
   ["BundDE30","Bund 0% 2030","EUR",1000000,96.0,1000],
   ["TreasuryUS27","US Treasury 2.5% 2027","USD",1200000,99.0,1000]
 ];
-const CASH = [["CHF",1000000],["EUR",1800000],["USD",500000],["GBP",200000],["JPY",30000000],["DKK",1000000],["SEK",1000000]];
+const CASH = [["GBP",200000],["CHF",1000000],["EUR",1800000],["USD",500000],["DKK",1000000],["SEK",1000000],["JPY",30000000]];
 
 function buildPositions() {
   const list = [];
@@ -341,9 +359,12 @@ function num(id) {
   return result;
 }
 
+// without the float noise of the calculation, so that e.g. 1224.5625 rounds up and a number that rounds to zero has no sign
 function fmt(value, digits) {
   const options = { minimumFractionDigits: digits, maximumFractionDigits: digits };
-  const result = value.toLocaleString("de-CH", options);
+  const clean = Number(value.toFixed(8));
+  const shown = Number(clean.toFixed(digits)) === 0 ? 0 : clean;
+  const result = shown.toLocaleString("de-CH", options);
   return result;
 }
 
@@ -542,9 +563,9 @@ function checkRow(label, expected, got) {
 }
 
 function renderCheck(rows, t) {
-  const html = [];
+  const shares = [];
   const totalOk = Math.abs(t.total - BANK_TOTAL) < 1;
-  html.push("<tr><td>Portfolio value original<span class=sub>bank report</span></td><td class=n>" + fmt(BANK_TOTAL, 0) + "</td><td class=n>" + fmt(t.total, 0) + "</td><td class=n>" + statusCell(totalOk) + "</td></tr>");
+  const total = "<tr><td>Portfolio value original<span class=sub>bank reporting bank leu client xy</span></td><td class=n>" + fmt(BANK_TOTAL, 0) + "</td><td class=n>" + fmt(t.total, 0) + "</td><td class=n>" + statusCell(totalOk) + "</td></tr>";
   for (const e of EXPECTED) {
     const r = rows.find(x => x.pos.id === e.id);
     e.children.forEach((expected, k) => {
@@ -552,14 +573,17 @@ function renderCheck(rows, t) {
       if (r && k < r.counts.length) {
         got = r.counts[k];
       }
-      html.push(checkRow(e.id + " share, " + childName(k) + " portfolio", expected, got));
+      shares.push([e.id + " share, " + childName(k) + " portfolio", expected, got]);
     });
     let gotParent = NaN;
     if (r) {
       gotParent = r.parent;
     }
-    html.push(checkRow(e.id + " share, parent portfolio", e.parent, gotParent));
+    shares.push([e.id + " share, parent portfolio", e.parent, gotParent]);
   }
+  // sorted by the label like the check table of the generated page, where the portfolio value comes after the shares
+  shares.sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  const html = shares.map(s => checkRow(s[0], s[1], s[2])).concat([total]);
   document.querySelector("#chk tbody").innerHTML = html.join("");
 }
 
@@ -581,7 +605,7 @@ function renderWalk(p, rows) {
     html.push("<tr><td class=n>" + i + "</td><td>" + pos.id + '<span class="sub">' + pos.name + "</span></td>"
       + "<td class=n>" + fmtQty(pos, pos.qty) + '<span class="sub">' + unit + "</span></td>"
       + "<td class=n>" + fmt(lotValue, lotValue < 1 ? 4 : 2) + "</td>"
-      + "<td class=n>" + fmt(r.targets[0], pos.type === "cash" ? 2 : 3) + "</td>"
+      + "<td class=n>" + fmt(r.targets[0], 3) + "</td>"
       + counts
       + '<td class="n b-parent">' + fmtQty(pos, r.parent) + "</td>"
       + "<td class=n>" + signed(r.cum[0], 2) + "</td></tr>");
@@ -723,8 +747,8 @@ function renderChildren() {
     if (CHILDREN.length > MIN_CHILDREN) {
       remove = '<button class="btn btn-outline-secondary btn-sm" type="button" data-remove="' + k + '" title="Remove the ' + name + '" aria-label="Remove the ' + name + '"><i class="fas fa-times"></i></button>';
     }
-    html.push('<div class="field"><label for="w' + k + '">Target weight ' + name + ' <span class="tag m">split agreement</span></label>'
-      + '<div class="row"><input id="w' + k + '" type="number" min="0" max="100" step="0.5" value="' + c.w + '"><span class="unit">%</span>' + remove + "</div></div>");
+    html.push('<div class="field"><label for="w' + k + '">Target weight ' + name + '</label>'
+      + '<div class="row"><input id="w' + k + '" type="number" min="0" max="100" step="0.5" value="' + c.w + '"><span class="unit">%</span>' + remove + '</div><span class="hint">[1]</span></div>');
   });
   document.getElementById("children").innerHTML = html.join("");
   document.getElementById("addChild").disabled = CHILDREN.length >= ORDINALS.length;
@@ -751,8 +775,12 @@ function renderHoldings() {
   const html = [];
   POS.forEach((p, k) => {
     const lotCell = p.type === "cash" ? '<td class=n>0.01</td>' : '<td class=n><input id="lot' + k + '" type="number" step="any" value="' + p.lot + '"></td>';
-    const priceCell = p.type === "cash" ? '<td class=n>—</td>' : '<td class=n><input id="price' + k + '" type="number" step="any" value="' + p.price + '"></td>';
-    html.push("<tr><td>" + p.id + "</td><td>" + p.ccy + '</td><td class=n><input id="qty' + k + '" type="number" step="any" value="' + p.qty + '"></td>' + priceCell + lotCell + "</tr>");
+    // the price of a bond is in percent of its face value
+    const priceUnit = p.type === "bond" ? '<span class="unit">%</span>' : "";
+    const priceCell = p.type === "cash" ? '<td class=n></td>' : '<td class=n><input id="price' + k + '" type="number" step="any" value="' + p.price + '">' + priceUnit + "</td>";
+    // the amount of cash with its decimals like the other numbers of the cash
+    const qtyValue = p.type === "cash" ? p.qty.toFixed(2) : p.qty;
+    html.push("<tr><td>" + p.id + "</td><td>" + p.ccy + '</td><td class=n><input id="qty' + k + '" type="number" step="any" value="' + qtyValue + '"></td>' + priceCell + lotCell + "</tr>");
   });
   document.querySelector("#hold tbody").innerHTML = html.join("");
   const fx = [];
@@ -786,7 +814,9 @@ function syncInputs() {
 function update() {
   syncInputs();
   const p = readParams();
-  document.getElementById("wp").textContent = pct(p.wp, 1);
+  // the decimal only if the weight has one, like the weights of the children
+  const wpPercent = Number((p.wp * PERCENT).toFixed(1));
+  document.getElementById("wp").textContent = pct(p.wp, Number.isInteger(wpPercent) ? 0 : 1);
   document.getElementById("sumWarn").hidden = p.wp >= -SAME_WEIGHT_TOLERANCE;
   document.getElementById("mirrorWarn").hidden = !(p.mirrorAsked && !p.mirror);
   const rows = split(p);

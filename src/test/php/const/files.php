@@ -107,7 +107,10 @@ class files
     CONST string PORTFOLIO_CASE_STANDARD = 'standard';
     CONST string PORTFOLIO_CASE_HIGH = 'high';
     CONST string PORTFOLIO_CASE_LOW = 'low';
-    CONST array PORTFOLIO_CASES = [self::PORTFOLIO_CASE_STANDARD, self::PORTFOLIO_CASE_HIGH, self::PORTFOLIO_CASE_LOW];
+    CONST string PORTFOLIO_CASE_OVER = 'over';
+    CONST string PORTFOLIO_CASE_DIFFER = 'differ';
+    CONST array PORTFOLIO_CASES = [self::PORTFOLIO_CASE_STANDARD, self::PORTFOLIO_CASE_HIGH, self::PORTFOLIO_CASE_LOW,
+        self::PORTFOLIO_CASE_OVER, self::PORTFOLIO_CASE_DIFFER];
     // the formula editor of the example PV installation in the use case folder next to the hand made
     // formula_editor_sample.html, because the view test removes every file below views_by_object that it has not written
     CONST string FORMULA_EDITOR = 'formula_editor';
@@ -284,6 +287,9 @@ class files
     CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT_INCONSISTENCY . 'version_newer_test' . self::JSON;
     CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
     CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
+    CONST string IMPORT_TRIPLE_DESCRIPTION_1 = test_paths::IMPORT . 'triple_description_1';
+    CONST string IMPORT_TRIPLE_DESCRIPTION_2 = test_paths::IMPORT . 'triple_description_2';
+    CONST string IMPORT_TRIPLE_DESCRIPTION_3 = test_paths::IMPORT . 'triple_description_3';
     CONST string IMPORT_TYPES_CACHE_SYMBOL = test_paths::IMPORT . 'types_cache_symbol';
     CONST string IMPORT_TYPES_CACHE_UNIT = test_paths::IMPORT . 'types_cache_unit';
     CONST string IMPORT_NO_UPDATE = test_paths::IMPORT . 'no_update';

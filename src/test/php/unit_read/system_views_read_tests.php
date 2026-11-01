@@ -706,6 +706,25 @@ class system_views_read_tests
         $sample = $hpd->page_items($sample_html);
         $page = $hpd->page_items($t->path_file($dir . $page_file));
 
+        // a sub text is a separate part of a cell, also if the html has no white space in front of it
+        $test_name = 'the compare reads the parts of a cell the same with and without white space';
+        $row_html = '<main><table><tbody><tr><td>row</td><td>10%s<span>shares</span></td></tr></tbody></table></main>';
+        $no_space_row = $hpd->page_items(sprintf($row_html, ''));
+        $space_row = $hpd->page_items(sprintf($row_html, "\n "));
+        $t->assert($test_name, $no_space_row, $space_row);
+        // negative: different parts of a cell stay a difference
+        $test_name = '... but another part is a difference';
+        $other_row = $hpd->page_items(str_replace('shares', 'CHF', sprintf($row_html, '')));
+        $t->assert_false($test_name, $no_space_row == $other_row);
+        // a number input of a sample cannot hold the thousand separator of the generated page
+        $test_name = 'the compare reads a number input like the text of the same number';
+        $num_html = '<main><table><tbody><tr><td>row</td><td>%s</td></tr></tbody></table></main>';
+        $input_row = $hpd->page_items(sprintf($num_html, '<input type="number" value="30000000.00">'));
+        $t->assert($test_name, $input_row, $hpd->page_items(sprintf($num_html, "30'000'000.00")));
+        // negative: other decimals stay a difference, also of a number input
+        $test_name = '... but other decimals are a difference';
+        $t->assert_false($test_name, $input_row == $hpd->page_items(sprintf($num_html, "30'000'000")));
+
         $test_name = 'the sample ' . $sample_file . ' has items to compare';
         $t->assert_true($test_name, count($sample) > 0);
         // negative: a page compared with itself has no difference, so every finding comes from the pages

@@ -1047,6 +1047,73 @@ textarea.inp {
     margin-top: 10px;
 }
 
+.use-case th.col-first {
+    color: #274b8f;
+}
+
+.use-case th.col-1 {
+    color: #385eb7;
+}
+
+.use-case th.col-2 {
+    color: #6b86c2;
+}
+
+.use-case th.col-3 {
+    color: #5476c8;
+}
+
+.use-case th.col-4 {
+    color: #8ea3d3;
+}
+
+.use-case .pill {
+    font-size: .72rem;
+    padding: 1px 7px;
+    border: 1px solid currentColor;
+    border-radius: 10px;
+}
+
+.use-case .pill.ok {
+    color: var(--ok);
+}
+
+.use-case .pill.fail {
+    color: var(--danger);
+}
+
+.use-case .chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.use-case .chart line {
+    stroke: var(--line);
+}
+
+.use-case .chart polyline {
+    fill: none;
+    stroke: #385eb7;
+    stroke-width: 2;
+}
+
+.use-case .chart text {
+    font-size: 11px;
+    fill: var(--muted);
+}
+
+.use-case .legend {
+    margin-top: 6px;
+    font-size: .8rem;
+    color: var(--muted);
+}
+
+.use-case .warn {
+    font-size: .8rem;
+    color: var(--danger);
+}
+
 .use-case .check {
     display: flex;
     gap: 8px;

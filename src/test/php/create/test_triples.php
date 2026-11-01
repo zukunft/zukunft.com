@@ -1690,6 +1690,52 @@ class test_triples extends test_objects
     }
 
     /**
+     * @return triple[] the keyword, the download button of the inputs and its label that the button test adds to the calculator input test
+     */
+    function calculator_zh_button(): array
+    {
+        $has = new test_verbs($this->env)->verb_has();
+        $id = triple_names::CALC_BUTTON_FIRST_ID;
+        $kw = new triple($this->env->usr1);
+        $kw->set($id--, triples::CALCULATOR_DOWNLOAD);
+        $lbl = new triple($this->env->usr1);
+        $lbl->set($id--, triples::CALCULATOR_LABEL);
+        $grp = null;
+        foreach ($this->calculator_zh() as $trp) {
+            if ($trp->get_to()?->name() == triples::CALCULATOR_INPUT) {
+                $grp = $trp;
+            }
+        }
+        $btn = $this->calc_triple($id, 'Zurich inputs download', $grp->phrase(), $has, $kw);
+        return [$kw, $btn, $this->calc_triple($id, 'Zurich inputs download label', $btn->phrase(), $has, $lbl, triple_names::CALC_BUTTON_COM)];
+    }
+
+    /**
+     * @return triple[] the keyword and the group of the check table that the check test adds to the calculator input test
+     */
+    function calculator_zh_check(): array
+    {
+        $id = triple_names::CALC_CHECK_FIRST_ID;
+        $kw = new triple($this->env->usr1);
+        $kw->set($id--, triples::CALCULATOR_CHECK);
+        $grp = $this->calc_triple($id, 'Zurich check', $this->zh_city()->phrase(), new test_verbs($this->env)->verb_has(), $kw);
+        return [$kw, $grp];
+    }
+
+    /**
+     * @return triple[] the keyword and the warning of the inhabitants that the warning test adds to the calculator input test
+     */
+    function calculator_zh_warning(): array
+    {
+        $id = triple_names::CALC_WARNING_FIRST_ID;
+        $kw = new triple($this->env->usr1);
+        $kw->set($id--, triples::CALCULATOR_WARNING);
+        $wrn = $this->calc_triple($id, 'inhabitants warning', new test_words($this->env)->word_inhabitant()->phrase(),
+            new test_verbs($this->env)->verb_has(), $kw, triple_names::CALC_WARNING_COM);
+        return [$kw, $wrn];
+    }
+
+    /**
      * the triples that the field type test adds to the calculator input test: the inhabitants are
      * read only, 2019 is a checkbox and the canton is repeated with the instance Bern
      *
@@ -1702,7 +1748,7 @@ class test_triples extends test_objects
         $has = $t_vrb->verb_has();
         $id = triple_names::CALC_FIELDS_FIRST_ID;
         $kw = [];
-        foreach ([triples::CALCULATOR_READ_ONLY, triples::CALCULATOR_CHECKBOX, triples::CALCULATOR_REPEAT] as $name) {
+        foreach ([triples::CALCULATOR_READ_ONLY, triples::CALCULATOR_CHECKBOX, triples::CALCULATOR_REPEAT, triples::CALCULATOR_COLOUR] as $name) {
             $kw[$name] = new triple($this->env->usr1);
             $kw[$name]->set($id--, $name);
         }
@@ -1714,10 +1760,59 @@ class test_triples extends test_objects
             ...array_values($kw),
             $this->calc_triple($id, 'Zurich input inhabitants read only', $calc[triple_names::CALC_ZH_INPUT_INHABITANTS]->phrase(),
                 $has, $kw[triples::CALCULATOR_READ_ONLY]),
+            $this->calc_triple($id, 'Zurich input inhabitants colour', $calc[triple_names::CALC_ZH_INPUT_INHABITANTS]->phrase(),
+                $has, $kw[triples::CALCULATOR_COLOUR]),
             $this->calc_triple($id, 'Zurich input canton repeat', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(),
                 $has, $kw[triples::CALCULATOR_REPEAT], triple_names::CALC_ADD_LABEL),
             $this->calc_triple($id, 'Bern canton instance', $t_wrd->word_bern()->phrase(), $t_vrb->verb_is(), $t_wrd->word_canton()->phrase()),
+            $this->calc_triple($id, 'Zurich below Bern', $t_wrd->word_zh()->phrase(), $t_vrb->verb_is(), $t_wrd->word_bern()->phrase()),
             $this->calc_triple($id, 'field 2019', $t_wrd->word_2019()->phrase(), $t_vrb->verb_can_be(), $kw[triples::CALCULATOR_CHECKBOX]),
+        ];
+    }
+
+    /**
+     * the field type test with Zurich as a second instance of the canton, a shorter name of Bern
+     * by the repeated item and the list of the imports
+     *
+     * @return triple[] the triples of the field types and the added keywords and triples
+     */
+    function calculator_zh_instances(): array
+    {
+        $t_wrd = new test_words($this->env);
+        $t_vrb = new test_verbs($this->env);
+        $has = $t_vrb->verb_has();
+        $id = triple_names::CALC_INSTANCES_FIRST_ID;
+        $lbl = new triple($this->env->usr1);
+        $lbl->set($id--, triples::CALCULATOR_LABEL);
+        $kw = new triple($this->env->usr1);
+        $kw->set($id--, triples::CALCULATOR_FILE_IMPORT);
+        $kw_flags = [];
+        foreach ([triples::CALCULATOR_SIGNED, triples::CALCULATOR_COLUMN_UNIT, triples::CALCULATOR_HINT] as $name) {
+            $kw_flags[$name] = new triple($this->env->usr1);
+            $kw_flags[$name]->set($id--, $name);
+        }
+        $calc = [];
+        foreach ($this->calculator_zh() as $trp) {
+            $calc[$trp->name()] = $trp;
+        }
+        $short = $this->calc_triple($id, 'Zurich input canton Bern', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(), $has, $t_wrd->word_bern()->phrase());
+        $imports = $this->calc_triple($id, 'Zurich imports', $this->zh_city()->phrase(), $has, $kw);
+        $import = $this->calc_triple($id, 'Zurich import inhabitants', $imports->phrase(), $has, $t_wrd->word_inhabitant()->phrase());
+        return [
+            ...$this->calculator_zh_fields(),
+            $lbl,
+            $kw,
+            ...array_values($kw_flags),
+            $short,
+            $imports,
+            $import,
+            $this->calc_triple($id, 'Zurich input canton signed', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(), $has, $kw_flags[triples::CALCULATOR_SIGNED]),
+            $this->calc_triple($id, 'Zurich input canton unit', $calc[triple_names::CALC_ZH_INPUT_CANTON]->phrase(), $has, $kw_flags[triples::CALCULATOR_COLUMN_UNIT]),
+            $this->calc_triple($id, 'Bern hint', $t_wrd->word_bern()->phrase(), $has, $kw_flags[triples::CALCULATOR_HINT], triple_names::CALC_ROW_HINT),
+            $this->calc_triple($id, 'Zurich canton instance', $t_wrd->word_zh()->phrase(), $t_vrb->verb_is(), $t_wrd->word_canton()->phrase()),
+            $this->calc_triple($id, 'Zurich input canton Bern label', $short->phrase(), $has, $lbl, triple_names::CALC_SHORT_LABEL),
+            $this->calc_triple($id, 'Zurich imports label', $imports->phrase(), $has, $lbl, triple_names::CALC_IMPORTS_LABEL),
+            $this->calc_triple($id, 'Zurich import inhabitants label', $import->phrase(), $has, $lbl, triple_names::CALC_IMPORT_LABEL),
         ];
     }
 

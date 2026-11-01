@@ -39,12 +39,14 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
 
+use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -61,6 +63,11 @@ class calculator
     // the phrase that the page phrase is built from e.g. PV installation or null for a word
     // TODO Prio 1 create a sample for a calculator with a word as base phrase
     private ?phrase $base;
+    // per phrase id what has been read once from the request cache, because a page with many rows
+    // asks for the same phrases per cell, but the request cache does not change during a page
+    private array $cached_by_id = [];
+    private array $triples_by_id = [];
+    private array $kinds_by_id = [];
 
     /**
      * @param phrase $phr the phrase of the page e.g. example PV installation
@@ -232,6 +239,43 @@ class calculator
     }
 
     /**
+     * @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+     * @param string $keyword the name of the button keyword e.g. triples::CALCULATOR_DOWNLOAD
+     * @return string the label of the triple from the item to the keyword e.g. Download, '' if the item has no such button
+     */
+    function button_label(?phrase $item, string $keyword): string
+    {
+        return $this->own_label($this->property($item, $keyword));
+    }
+
+    /**
+     * @param phrase $col a column of a detail table e.g. portfolio split walk column cumulative deviation
+     * @return string the title of the diagram of the column, '' for a column without a diagram
+     */
+    function diagram_title(phrase $col): string
+    {
+        return $this->own_text($col, triples::CALCULATOR_DIAGRAM) ?? '';
+    }
+
+    /**
+     * @param phrase $phr a phrase that is no item e.g. a row of a detail table
+     * @return string the hint of the phrase e.g. the full name of a ticker, an empty string if it has none
+     */
+    function phrase_hint(phrase $phr): string
+    {
+        return $this->own_text($this->cached($phr), triples::CALCULATOR_HINT) ?? '';
+    }
+
+    /**
+     * @param phrase $row a row of a detail table e.g. CHF cash
+     * @return phrase[] the phrases that the row is e.g. cash
+     */
+    function row_kinds(phrase $row): array
+    {
+        return array_filter(array_map(fn(phrase $trp) => $this->item_phrase($trp), $this->sub_items($this->cached($row), verbs::IS_ID)));
+    }
+
+    /**
      * @param phrase $item a repeated input item e.g. portfolio split input child portfolio
      * @return string the text of the button that adds an instance e.g. Add child
      */
@@ -335,20 +379,125 @@ class calculator
     }
 
     /**
+     * @return array per warning of the page its phrase e.g. target share excess and its text, sorted by the text
+     */
+    function warnings(): array
+    {
+        $result = [];
+        foreach ($this->cac->lst() as $trp) {
+            $is_warning = ($trp->is_triple() and $trp->get_to()?->name() == triples::CALCULATOR_WARNING);
+            if ($is_warning and $trp->get_from() != null) {
+                $result[$trp->get_description()] = [$this->cached($trp->get_from()), $trp->get_description()];
+            }
+        }
+        ksort($result);
+        return array_values($result);
+    }
+
+    /**
+     * the columns of a table, where the column of a repeated input is shown once per instance
+     * e.g. first child and second child for the child portfolio
+     *
+     * @param phrase[] $cols the column items of the table
+     * @return array per column its label, its phrase, its filter phrase, its colour style ('' without the colour flag),
+     *               if it is an instance of a repeated phrase, if it shows a phrase instead of a number,
+     *               if it shows the plus sign and if it shows the unit of each number
+     */
+    function columns(array $cols): array
+    {
+        $result = [];
+        $colours = 0;
+        foreach ($cols as $col) {
+            $phr = $this->item_phrase($col);
+            $flt = $this->filter($col);
+            $has_colour = $this->has_flag($col, triples::CALCULATOR_COLOUR);
+            $repeated = $this->is_repeated($phr);
+            $is_phrase = $this->has_flag($col, triples::CALCULATOR_PHRASE_COLUMN);
+            // a column can name an instance shorter e.g. First for the first child
+            $short = [];
+            foreach ($repeated ? $this->sub_items($col, verbs::HAS_ID) : [] as $sub) {
+                $short[$this->item_phrase($sub)?->id()] = $this->label($sub);
+            }
+            foreach ($repeated ? $this->kinds($phr) : [$phr] as $col_phr) {
+                $label = $repeated ? ($short[$col_phr->id()] ?? mb_ucfirst($this->phrase_label($col_phr))) : $this->label($col);
+                $result[] = [$label, $col_phr, $flt, $has_colour ? $this->column_colour($colours++) : '', $repeated, $is_phrase,
+                    $this->has_flag($col, triples::CALCULATOR_SIGNED), $this->has_flag($col, triples::CALCULATOR_COLUMN_UNIT)];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the rows of a detail table: the phrases at the end of the is a and is part of levels below
+     * the table phrase e.g. LISP is a stock is a holding is part of split walk
+     *
+     * @param phrase $phr the phrase of the table or of a level
+     * @param array $seen the ids of the phrases above, so that a loop in the data ends
+     * @return phrase[] the phrases without a level below, in the order of their levels
+     */
+    function row_phrases(phrase $phr, array $seen = []): array
+    {
+        $below = [];
+        foreach ($this->cac->lst() as $trp) {
+            $vrb_id = $trp->is_triple() ? $trp->get_verb()?->id() : null;
+            $from = $trp->is_triple() ? $trp->get_from() : null;
+            $is_level = ($vrb_id == verbs::IS_ID or $vrb_id == verbs::PART_ID);
+            if ($is_level and $from != null and $trp->get_to()?->id() == $phr->id() and !in_array($from->id(), $seen)) {
+                $below[] = $this->cached($from);
+            }
+        }
+        $result = [];
+        foreach ($this->sorted($below, false) as $kid) {
+            $leaves = $this->row_phrases($kid, [...$seen, $phr->id()]);
+            $result = [...$result, ...($leaves == [] ? [$kid] : $leaves)];
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $pos the position of the column under the columns with a colour
+     * @return string the colour style of the column: the first colour once, then the others cycling
+     */
+    private function column_colour(int $pos): string
+    {
+        $cycle = count(styles::CALC_COLUMN_COLOURS) - 1;
+        return styles::CALC_COLUMN_COLOURS[$pos == 0 ? 0 : 1 + ($pos - 1) % $cycle];
+    }
+
+    /**
+     * @param phrase|null $phr the phrase of a column e.g. child portfolio
+     * @return bool true if an input item of the page repeats the phrase
+     */
+    private function is_repeated(?phrase $phr): bool
+    {
+        $result = false;
+        foreach ($this->items(triples::CALCULATOR_INPUT) as $item) {
+            $same = ($phr != null and $this->item_phrase($item)?->id() == $phr->id());
+            if ($same and $this->has_flag($item, triples::CALCULATOR_REPEAT)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param phrase $phr e.g. month or replacement mix
      * @return phrase[] the phrases that are a phrase e.g. January to December, in the order of
      *                  the follower chain and the others sorted by label
      */
     function kinds(phrase $phr): array
     {
-        $result = [];
-        foreach ($this->cac->lst() as $trp) {
-            if ($trp->is_triple() and $trp->get_verb()?->id() == verbs::IS_ID
-                and $trp->get_to()?->id() == $phr->id() and $trp->get_from() != null) {
-                $result[] = $this->cached($trp->get_from());
+        if (!array_key_exists($phr->id(), $this->kinds_by_id)) {
+            $result = [];
+            foreach ($this->cac->lst() as $trp) {
+                if ($trp->is_triple() and $trp->get_verb()?->id() == verbs::IS_ID
+                    and $trp->get_to()?->id() == $phr->id() and $trp->get_from() != null) {
+                    $result[] = $this->cached($trp->get_from());
+                }
             }
+            $this->kinds_by_id[$phr->id()] = $this->sorted($result, false);
         }
-        return $this->sorted($result, false);
+        return $this->kinds_by_id[$phr->id()];
     }
 
     /**
@@ -520,7 +669,10 @@ class calculator
      */
     private function triples_from(phrase $phr): array
     {
-        return $this->cac->children($phr, new user_message())->lst(); // not reported: the triples are only read from the request cache
+        if (!array_key_exists($phr->id(), $this->triples_by_id)) {
+            $this->triples_by_id[$phr->id()] = $this->cac->children($phr, new user_message())->lst(); // not reported: the triples are only read from the request cache
+        }
+        return $this->triples_by_id[$phr->id()];
     }
 
     /**
@@ -542,6 +694,13 @@ class calculator
             foreach ($this->triples_from($item) as $trp) {
                 $prev_id = $trp->get_to()?->id();
                 if ($trp->get_verb()?->id() == verbs::FOLLOW_ID and in_array($prev_id, $ids)) {
+                    $next[$prev_id] = $item->id();
+                }
+            }
+            // a row can follow a row of another kind e.g. a stock after a bond, which keeps the order of the stocks
+            if (!$as_items and !in_array($item->id(), $next)) {
+                $prev_id = $this->previous_in_list($item, $ids);
+                if ($prev_id !== null) {
                     $next[$prev_id] = $item->id();
                 }
             }
@@ -572,12 +731,43 @@ class calculator
     }
 
     /**
+     * @param phrase $item a phrase e.g. GIVN
+     * @param array $ids the ids of the phrases of the list
+     * @return int|null the id of the nearest phrase of the list before the item in its follower chain, also over phrases of other lists, null if there is none
+     */
+    private function previous_in_list(phrase $item, array $ids): ?int
+    {
+        $result = null;
+        $seen = [$item->id()];
+        $cur = $item;
+        while ($cur != null and $result === null) {
+            $prev = null;
+            foreach ($this->triples_from($cur) as $trp) {
+                if ($trp->get_verb()?->id() == verbs::FOLLOW_ID and !in_array($trp->get_to()?->id(), $seen)) {
+                    $prev = $trp->get_to();
+                }
+            }
+            if ($prev != null and in_array($prev->id(), $ids)) {
+                $result = $prev->id();
+            }
+            $seen[] = $prev?->id();
+            $cur = $prev == null ? null : $this->cached($prev);
+        }
+        return $result;
+    }
+
+    /**
      * @param phrase $phr a phrase that a triple names e.g. only by its id and name
      * @return phrase the phrase of the request cache with its description, else the given phrase
      */
     private function cached(phrase $phr): phrase
     {
-        return $this->cac->cached_phrase($phr);
+        $result = $this->cached_by_id[$phr->id()] ?? $this->cac->cached_phrase($phr);
+        // a phrase that the request cache does not have stays itself, so it is not kept for another phrase without an id
+        if ($result !== $phr) {
+            $this->cached_by_id[$phr->id()] = $result;
+        }
+        return $result;
     }
 
     /**

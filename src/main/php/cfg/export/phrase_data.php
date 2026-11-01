@@ -167,13 +167,18 @@ class phrase_data
         $this->debug_step('start ' . $walk->name . ' walk of ' . $phr->dsp_id(), 1);
         $kwd_ids = $this->keyword_ids($msg);
         $this->debug_step('keywords loaded', count($kwd_ids));
-        $phr_lst = $this->start_phrases($phr, $walk, $kwd_ids, $msg);
+        $row_lst = new phrase_list($usr);
+        $phr_lst = $this->start_phrases($phr, $walk, $kwd_ids, $row_lst, $msg);
         $this->debug_step('start phrases', $phr_lst->count());
         $val_phr_lst = $this->value_phrases($phr, $phr_lst, $walk, $msg);
+        // a row is often a word with values of plain words only e.g. LISP, shares and original
+        $val_phr_lst->merge($row_lst);
         $val_lst = new value_list($usr);
         $val_lst->load_by_phr_lst($val_phr_lst, $msg, true);
         $val_lst->filter_readable_by($usr);
-        $this->add_field_values($val_lst, $phr_lst, $kwd_ids, $msg);
+        // the value walk has only the values that name the phrase, so no field value of another phrase of these values
+        $val_ids = $walk == phrase_data_walks::FROM ? $this->value_phrase_ids($val_lst, $msg) : [];
+        $this->add_field_values($val_lst, $phr_lst, $val_ids, $kwd_ids, $msg);
         $this->debug_step('values loaded for ' . $val_phr_lst->count() . ' phrases', $val_lst->count());
         // the results before the phrases are completed, because the data must also name the
         // phrases of a result and of its context; only the results of the requested phrase,
@@ -184,6 +189,12 @@ class phrase_data
             $res_phr_lst = new phrase_list($usr);
             $res_phr_lst->add($phr, false, $msg);
             $res_lst->load_by_phrase_list($res_phr_lst, $msg);
+            // and the results of the rows of a page independent table, which name no page
+            if (!$row_lst->is_empty()) {
+                $row_res_lst = new result_list($usr);
+                $row_res_lst->load_by_phrase_list($row_lst, $msg, true);
+                $res_lst->merge($row_res_lst);
+            }
             $res_lst->filter_readable_by($usr);
             $this->debug_step('results loaded', $res_lst->count());
         }
@@ -236,11 +247,11 @@ class phrase_data
      * @param user_message $msg with the requesting user
      * @return phrase_list the phrase alone for the value walk or the walked phrases for the from walk
      */
-    private function start_phrases(phrase $phr, phrase_data_walks $walk, array $kwd_ids, user_message $msg): phrase_list
+    private function start_phrases(phrase $phr, phrase_data_walks $walk, array $kwd_ids, phrase_list $row_lst, user_message $msg): phrase_list
     {
         $result = new phrase_list($msg->usr);
         if ($walk == phrase_data_walks::FROM) {
-            $result = $this->walked_phrases($phr, $kwd_ids, $msg);
+            $result = $this->walked_phrases($phr, $kwd_ids, $row_lst, $msg);
         } else {
             $result->add($phr, false, $msg);
         }
@@ -302,10 +313,11 @@ class phrase_data
      *
      * @param phrase $phr the requested phrase
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
+     * @param phrase_list $row_lst the rows of the page independent detail tables, extended by the walk
      * @param user_message $msg with the requesting user
      * @return phrase_list the walked phrases and the leaves
      */
-    private function walked_phrases(phrase $phr, array $kwd_ids, user_message $msg): phrase_list
+    private function walked_phrases(phrase $phr, array $kwd_ids, phrase_list $row_lst, user_message $msg): phrase_list
     {
         $found_lst = new phrase_list($msg->usr);
         $itm_lst = new phrase_list($msg->usr);
@@ -315,7 +327,7 @@ class phrase_data
         $loops = 0;
         while (!$next->is_empty() and $loops < def::MAX_LOOP) {
             $found_lst->merge($next);
-            $next = $this->next_phrases($next, $found_lst, $itm_lst, $leaf_lst, $tbl_lst, $kwd_ids, $msg);
+            $next = $this->next_phrases($next, $found_lst, $itm_lst, $leaf_lst, $tbl_lst, $kwd_ids, $row_lst, $msg);
             $loops++;
             $this->debug_step('walk step ' . $loops . ' of ' . $found_lst->count() . ' walked, next', $next->count());
         }
@@ -382,6 +394,7 @@ class phrase_data
      * @param phrase_list $leaf_lst the leaves so far, extended by this step
      * @param phrase_list $tbl_lst the detail table groups so far e.g. PV installation detail tables, extended by this step
      * @param array $kwd_ids the phrase ids of the keywords that are never walked
+     * @param phrase_list $row_lst the rows of the page independent detail tables, extended by this step
      * @param user_message $msg with the requesting user
      * @return phrase_list the phrases to walk in the next step
      */
@@ -392,12 +405,15 @@ class phrase_data
         phrase_list  $leaf_lst,
         phrase_list  $tbl_lst,
         array        $kwd_ids,
+        phrase_list  $row_lst,
         user_message $msg
     ): phrase_list
     {
         $next = new phrase_list($msg->usr);
         // the field phrases of the phrase selectors, the phrases of the repeated inputs and of the detail tables, whose kinds are added
         $src_phr_lst = new phrase_list($msg->usr);
+        $lvl_lst = new phrase_list($msg->usr);
+        $ind_lst = new phrase_list($msg->usr);
         $trp_lst = new triple_list($msg->usr);
         $trp_lst->load_by_phr_lst($step, $msg, null, foaf_direction::UP);
         foreach ($trp_lst->lst() as $trp) {
@@ -416,12 +432,74 @@ class phrase_data
             if ($this->is_detail_table_group($trp, $kwd_ids)) {
                 $this->add_new($tbl_lst, new phrase_list($msg->usr), [], $trp->phrase(), $msg);
             }
+            if ($this->is_page_independent_table($trp, $tbl_lst, $kwd_ids)) {
+                $this->add_new($ind_lst, new phrase_list($msg->usr), [], $this->item_phrase($trp->get_from(), $msg), $msg);
+            }
+            // the tables of the group and the columns of a table: a table has its rows and a column its kinds below it
             if ($this->is_item_link($trp, $kwd_ids) and $tbl_lst->has_id($trp->from_id())) {
-                $this->add_new($src_phr_lst, new phrase_list($msg->usr), [], $trp->get_to(), $msg);
+                $this->add_new($lvl_lst, new phrase_list($msg->usr), [], $trp->get_to(), $msg);
+                $this->add_new($tbl_lst, new phrase_list($msg->usr), [], $trp->phrase(), $msg);
             }
         }
         $this->add_kinds($next, $walked, $kwd_ids, $src_phr_lst, $msg);
+        $this->add_levels($next, $walked, $kwd_ids, $lvl_lst, $msg);
+        $row_lst->merge($this->add_levels($next, $walked, $kwd_ids, $ind_lst, $msg));
         return $next;
+    }
+
+    /**
+     * @param triple $trp a triple whose from side has been walked
+     * @param phrase_list $tbl_lst the detail table groups and the tables so far
+     * @param array $kwd_ids the phrase ids of the keywords by their code id
+     * @return bool true if a detail table selects its numbers without the page phrase
+     */
+    private function is_page_independent_table(triple $trp, phrase_list $tbl_lst, array $kwd_ids): bool
+    {
+        $flag_id = $kwd_ids[triples::CALCULATOR_PAGE_INDEPENDENT_CODE_ID] ?? 0;
+        return ($flag_id != 0 and $trp->to_id() == $flag_id and $tbl_lst->has_id($trp->from_id()));
+    }
+
+    /**
+     * add the phrases of all is a and is part of levels below the phrases of a detail table
+     * e.g. LISP is a stock is a holding is part of split walk
+     *
+     * @param phrase_list $next the phrases to walk in the next step
+     * @param phrase_list $walked all phrases walked so far
+     * @param array $kwd_ids the phrase ids of the keywords that are never walked
+     * @param phrase_list $lvl_lst the tables and the columns of the detail tables
+     * @param user_message $msg with the requesting user
+     * @return phrase_list the phrases at the end of the levels, which are the rows e.g. LISP, but not stock,
+     *                     because a kind like stock has the values and results of every use case
+     */
+    private function add_levels(phrase_list $next, phrase_list $walked, array $kwd_ids, phrase_list $lvl_lst, user_message $msg): phrase_list
+    {
+        global $sys;
+        $level = $lvl_lst;
+        $seen = new phrase_list($msg->usr);
+        $kind_ids = [];
+        while (!$level->is_empty()) {
+            $below = new phrase_list($msg->usr);
+            foreach ([verbs::IS, verbs::PART] as $vrb_code_id) {
+                $rel_trp_lst = new triple_list($msg->usr);
+                $rel_trp_lst->load_by_phr_lst($level, $msg, $sys->verb($vrb_code_id), foaf_direction::DOWN);
+                foreach ($rel_trp_lst->lst() as $rel) {
+                    $this->add_new($next, $walked, $kwd_ids, $rel->phrase(), $msg);
+                    $this->add_new($next, $walked, $kwd_ids, $rel->get_from(), $msg);
+                    $kind_ids[] = $rel->to_id();
+                    // only a phrase that has not been seen, so that a loop in the data ends
+                    $this->add_new($below, $seen, [], $rel->get_from(), $msg);
+                    $this->add_new($seen, new phrase_list($msg->usr), [], $rel->get_from(), $msg);
+                }
+            }
+            $level = $below;
+        }
+        $result = new phrase_list($msg->usr);
+        foreach ($seen->lst() as $phr) {
+            if (!in_array($phr->id(), $kind_ids)) {
+                $result->add($phr, false, $msg);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -625,11 +703,12 @@ class phrase_data
      *
      * @param value_list $val_lst the values of the data, extended by the field values
      * @param phrase_list $phr_lst the start phrases of the walk e.g. with the input and assumption phrases
+     * @param array $val_ids the phrase ids of the values that also count as part of the data e.g. the filter split count of a column, which is not walked
      * @param array $kwd_ids the phrase ids of the keywords by their code id
      * @param user_message $msg with the requesting user
      * @return void
      */
-    private function add_field_values(value_list $val_lst, phrase_list $phr_lst, array $kwd_ids, user_message $msg): void
+    private function add_field_values(value_list $val_lst, phrase_list $phr_lst, array $val_ids, array $kwd_ids, user_message $msg): void
     {
         $fld_ids = array_values(array_intersect_key($kwd_ids, array_flip(triples::FIELD_VALUE_PROPERTIES)));
         $fld_val_lst = new value_list($msg->usr);
@@ -638,7 +717,7 @@ class phrase_data
             $fld_val_lst->load_by_phr_lst($this->phrases_by_ids($fld_ids, $msg), $msg, true);
         }
         $fld_val_lst->filter_readable_by($msg->usr);
-        $ids = array_merge($phr_lst->id_lst(), $fld_ids);
+        $ids = array_merge($phr_lst->id_lst(), $fld_ids, $val_ids);
         foreach ($fld_val_lst->lst() as $val) {
             $val->load_phrases($msg);
             if ($this->is_within($val->phrase_list()->id_lst(), $ids)) {

@@ -62,6 +62,9 @@ use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 class number_format
 {
 
+    // a shown number is first rounded to these decimals, which remove the float noise of a calculation
+    const int NOISE_DECIMALS = 8;
+
     // a formula that converts a unit by a constant factor e.g. "kg" = "tonne" * 1000
     const string CONVERSION_PATTERN = '/^\s*"([^"]+)"\s*=\s*"([^"]+)"\s*([*\/])\s*([0-9]+(?:\.[0-9]+)?)\s*$/';
 
@@ -131,7 +134,8 @@ class number_format
         string $thousand_sep = shared_config::DEFAULT_THOUSAND_SEP
     ): string
     {
-        return number_format($num * $this->factor, $this->decimals, $dec_point, $thousand_sep);
+        // without the float noise of a calculation, so that e.g. 0.00499999999 is the 0.005 that it should be
+        return number_format(round($num * $this->factor, self::NOISE_DECIMALS), $this->decimals, $dec_point, $thousand_sep);
     }
 
     /**

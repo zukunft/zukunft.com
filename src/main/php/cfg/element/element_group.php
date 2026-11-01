@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
@@ -54,7 +55,11 @@ include_once paths::MODEL_SYSTEM . 'list_db_write.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CALC . 'prior_operand.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -69,7 +74,12 @@ use Zukunft\ZukunftCom\main\php\cfg\system\list_db_write;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -220,6 +230,13 @@ class element_group extends list_db_write
         log_debug('figures ' . $this->dsp_id());
         $lib = new library();
 
+        if ($this->reads_prior_row()) {
+            if ($this->symbol == '') {
+                $this->build_symbol();
+            }
+            return $this->prior_row_figures($msg);
+        }
+
         // init the resulting figure list
         $fig_lst = new figure_list($this->usr);
 
@@ -227,8 +244,6 @@ class element_group extends list_db_write
         // e.g. 1: for the formula "this" and the phrases "Switzerland" and "inhabitants" the Swiss inhabitants are requested
         // e.g. for the formula "= sales - cost" and the phrases "ABB" the ABB sales is requested
         foreach ($this->lst() as $frm_elm) {
-
-            $lead_wrd_id = 0;
 
             // init the word list for the figure selection because
             // the word list for the figure selection ($val_phr_lst) may differ from the requesting word list ($this->phr_lst) because
@@ -284,57 +299,130 @@ class element_group extends list_db_write
             usort($val_phr_lst_sort, array(phrase::class, "cmp"));
             $val_phr_lst->set_lst($val_phr_lst_sort);
 
-            //asort($val_phr_lst);
-            $val_phr_grp = $val_phr_lst->get_grp_id();
-            log_debug('words group for "' . $val_phr_lst->dsp_name() . '" = ' . $val_phr_grp->id());
-
-            // try to get a normal value set by the user directly for the phrase list
-            // display the word group value and offer the user to change it
-            // e.g. if the user has overwritten a result use the user overwrite
-            log_debug('load word value for ' . $val_phr_lst->dsp_id());
-            $wrd_val = new value($this->usr);
-            // TODO Prio 2 create $wrd_val->load_best();
-            // the load result and not isset(), because load_by_grp sets the group also if no
-            // value is found, which would add a figure without a number
-            if ($wrd_val->load_by_grp($val_phr_grp, $msg)) {
-                // save the value to the result
-                $fig = $wrd_val->figure();
-                $fig->set_symbol($frm_elm->symbol);
-                $fig_lst->add($fig, $msg);
-                log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
-            } else {
-                // if there is no number that the user has entered for the word list, try to get the most useful formula result
-
-                // temp solution only for the link
-                if ($lead_wrd_id <= 0) {
-                    $lead_wrd = $val_phr_lst->lst()[0];
-                    $lead_wrd_id = 1;
-                }
-
-                // get the word group result, which means a formula result
-                log_debug('load result for ' . $val_phr_lst->dsp_name());
-                $grp_res = new result($this->usr);
-                /* TODO Prio 2 review
-                $grp_res->load_by_grp($val_phr_grp);
-                */
-                // save the value to the result; never compare the id with a number, because php
-                // reports e.g. the text key '/x-' > 0 as false (see db_object_multi::is_id_set)
-                if ($grp_res->load_by_grp($val_phr_grp, $msg, true)) {
-                    $fig = $grp_res->figure();
-                    $fig->set_symbol($this->symbol);
-                    $fig_lst->add($fig, $msg);
-
-                    log_debug('result for ' . $val_phr_lst->dsp_name() . ', time ' . $val_time_phr->name() . '" (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_res->number());
-                } else {
-                    // if there is also not a formula result at least one number of the formula is not valid
-                    $fig_lst->fig_missing = True;
-                    log_debug('figure missing');
-                }
-            }
+            $this->add_figure($fig_lst, $val_phr_lst, $frm_elm->symbol, $msg);
         }
 
         log_debug($lib->dsp_count($fig_lst->lst()) . ' found');
         return $fig_lst;
+    }
+
+    /**
+     * add the number of a phrase list to the figures: a value that a user has entered, else a formula result
+     *
+     * @param figure_list $fig_lst the figures of this element group, marked as incomplete if no number is found
+     * @param phrase_list $val_phr_lst the phrases that select the number
+     * @param string|null $val_symbol the symbol of the figure of a value
+     * @param user_message $msg to report a problem of the load
+     * @return void
+     */
+    private function add_figure(figure_list $fig_lst, phrase_list $val_phr_lst, ?string $val_symbol, user_message $msg): void
+    {
+        $val_phr_grp = $val_phr_lst->get_grp_id();
+        // try to get a normal value set by the user directly for the phrase list
+        // display the word group value and offer the user to change it
+        // e.g. if the user has overwritten a result use the user overwrite
+        log_debug('load word value for ' . $val_phr_lst->dsp_id());
+        $wrd_val = new value($this->usr);
+        // TODO Prio 2 create $wrd_val->load_best();
+        // the load result and not isset(), because load_by_grp sets the group also if no
+        // value is found, which would add a figure without a number
+        if ($wrd_val->load_by_grp($val_phr_grp, $msg)) {
+            // save the value to the result
+            $fig = $wrd_val->figure();
+            $fig->set_symbol($val_symbol);
+            $fig_lst->add($fig, $msg);
+            log_debug('value result for ' . $val_phr_lst->dsp_id() . ' = ' . $wrd_val->number() . ' (symbol ' . $fig->get_symbol() . ')');
+        } else {
+            // if there is no number that the user has entered for the word list, try to get the most useful formula result
+            log_debug('load result for ' . $val_phr_lst->dsp_name());
+            $grp_res = new result($this->usr);
+            // save the value to the result; never compare the id with a number, because php
+            // reports e.g. the text key '/x-' > 0 as false (see db_object_multi::is_id_set)
+            if ($grp_res->load_by_grp($val_phr_grp, $msg, true)) {
+                $fig = $grp_res->figure();
+                $fig->set_symbol($this->symbol);
+                $fig_lst->add($fig, $msg);
+                log_debug('result for ' . $val_phr_lst->dsp_name() . ' (word group ' . $val_phr_grp->id() . ', user ' . $this->usr->id() . ') = ' . $grp_res->number());
+            } else {
+                // if there is also not a formula result at least one number of the formula is not valid
+                $fig_lst->fig_missing = True;
+                log_debug('figure missing');
+            }
+        }
+    }
+
+    /**
+     * @return bool true if the group is an operand with prior next to another phrase e.g. "cumulative deviation","prior",
+     *              which reads the previous row (shared\calc\prior_operand), and not the time jump of a plain "prior"
+     */
+    function reads_prior_row(): bool
+    {
+        $has_prior = false;
+        foreach ($this->lst() as $elm) {
+            if ($elm->type() == formula::class and $elm->obj?->type_cl == formula_type::PREV) {
+                $has_prior = true;
+            }
+        }
+        return ($has_prior and count($this->lst()) > 1);
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the load
+     * @return figure_list the number of the previous row of the context, the number 0 for the first row
+     *                     and no figure, marked as incomplete, if the previous row is not clear
+     */
+    private function prior_row_figures(user_message $msg): figure_list
+    {
+        $fig_lst = new figure_list($this->usr);
+        $names = array_map(fn($elm) => $elm->obj->name(), $this->lst());
+        $ctx = $this->phr_lst->names();
+        $pri = new prior_operand($this->prior_names($msg));
+        [$sel_names, $sel_ctx] = $pri->select($names, $ctx);
+        if ($pri->is_first($names, $ctx)) {
+            $val = new value($this->usr);
+            $val->set_number(0);
+            $fig = $val->figure();
+            $fig->set_symbol($this->symbol);
+            $fig_lst->add($fig, $msg);
+        } elseif ($sel_names == $names) {
+            $fig_lst->fig_missing = true;
+        } else {
+            $this->add_figure($fig_lst, $this->prior_phrases($sel_names, $sel_ctx, $msg), $this->symbol, $msg);
+        }
+        return $fig_lst;
+    }
+
+    /**
+     * @param array $names the phrase names of the operand with the previous phrase
+     * @param array $ctx the phrase names of the context with the previous phrase
+     * @param user_message $msg to report a problem of the load
+     * @return phrase_list the phrases that select the number of the previous row
+     */
+    private function prior_phrases(array $names, array $ctx, user_message $msg): phrase_list
+    {
+        $result = new phrase_list($this->usr);
+        foreach (array_unique([...$ctx, ...$names]) as $name) {
+            $phr = new phrase($this->usr);
+            $phr->load_by_name($name, $msg);
+            $result->add($phr, false, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the load
+     * @return array per phrase name the name of the phrase before it, for the chains of the phrases of the context
+     */
+    private function prior_names(user_message $msg): array
+    {
+        global $sys;
+        $trp_lst = new triple_list($this->usr);
+        $trp_lst->load_by_phr_lst($this->phr_lst, $msg, $sys->verb(verbs::FOLLOW), foaf_direction::BOTH);
+        $result = [];
+        foreach ($trp_lst->lst() as $trp) {
+            $result = prior_operand::with_link($result, $trp->get_from()->name(), $trp->get_to()->name());
+        }
+        return $result;
     }
 
 

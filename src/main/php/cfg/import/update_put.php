@@ -76,16 +76,12 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\main\php\cfg\export\phrase_data;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
-use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -118,14 +114,6 @@ class update_put
     const array PHRASE_NAME_FIELDS = [
         json_fields::FROM => json_fields::EX_FROM,
         json_fields::TO => json_fields::EX_TO,
-    ];
-
-    // the apis whose cached answers show the saved objects e.g. the phrase data that the editor reads after the save
-    const array CACHED_APIS = [
-        phrase_data::class,
-        phrase_list::class,
-        value_list::class,
-        result_list::class,
     ];
 
     // what the save has done with an object of the message, confirmed by the reload of the saved row
@@ -442,10 +430,7 @@ class update_put
     {
         $cac_page = new db_cache_page();
         $del_msg = new user_message(user::system()); // not reported, see above
-        $cac_page->del_html($del_msg);
-        foreach (self::CACHED_APIS as $class) {
-            $cac_page->del_api($class, $del_msg);
-        }
+        $cac_page->del_data_answers($del_msg);
         if (!$del_msg->is_ok()) {
             log_warning('removing the cached pages after an update put failed because ' . $del_msg->get_message());
         }

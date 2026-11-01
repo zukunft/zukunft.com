@@ -1832,6 +1832,8 @@
     \-- build_symbol - section for function build_symbol not yet defined that it should be display in /element/element_g
             roup.php
     \-- figures - section for function figures not yet defined that it should be display in /element/element_group.php
+    \-- reads_prior_row - section for function reads_prior_row not yet defined that it should be display in /element/ele
+            ment_group.php
     \-- ids - section for function ids not yet defined that it should be debug in /element/element_group.php
 \-- element_list
     \-- term_list - section for function term_list not yet defined that it should be set and get in /element/element_lis
@@ -2220,6 +2222,7 @@
     \-- del_all - section for function del_all is expected to be del in /helper/db_cache_page.php
     \-- del_html - section for function del_html is expected to be del in /helper/db_cache_page.php
     \-- del_api - section for function del_api is expected to be del in /helper/db_cache_page.php
+    \-- del_data_answers - section for function del_data_answers is expected to be del in /helper/db_cache_page.php
 \-- db_id_object_non_sandbox
     \-- unique_value - section for function unique_value not yet defined that it should be set and get in /helper/db_id_
             object_non_sandbox.php
@@ -5026,6 +5029,8 @@
         \-- db_cache_page - remove the cached html pages of all users or of one user, but not the cached api answers,
     \-- del_api
         \-- db_cache_page - remove the cached answers of one api e.g. of the result list, of all users or of one user
+    \-- del_data_answers
+        \-- db_cache_page - remove the cached html pages and the cached answers of the data apis of all users,
     \-- add
         \-- change_log - log a user change of a word, value or formula
     \-- filter_readable_by
@@ -5896,6 +5901,9 @@
     \-- figures
         \-- element_group - get a list of figures related to the formula element group and a context defined by a list o
                 f words
+    \-- reads_prior_row
+        \-- element_group - @return bool true if the group is an operand with prior next to another phrase e.g. "cumulat
+                ive deviation","prior",
     \-- echo_text_log
         \-- text_log - write a test result text or a log entry text to the standard io
     \-- echo_log
@@ -6538,6 +6546,14 @@
             tor.php
     \-- number_note - section for function number_note not yet defined that it should be texts and flags in /component/e
             xecute/calculator.php
+    \-- button_label - section for function button_label not yet defined that it should be texts and flags in /component
+            /execute/calculator.php
+    \-- diagram_title - section for function diagram_title not yet defined that it should be texts and flags in /compone
+            nt/execute/calculator.php
+    \-- phrase_hint - section for function phrase_hint not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
+    \-- row_kinds - section for function row_kinds not yet defined that it should be texts and flags in /component/execu
+            te/calculator.php
     \-- repeat_label - section for function repeat_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
     \-- has_flag - section for function has_flag not yet defined that it should be texts and flags in /component/execute
@@ -6552,6 +6568,12 @@
             /execute/calculator.php
     \-- options - section for function options not yet defined that it should be texts and flags in /component/execute/c
             alculator.php
+    \-- warnings - section for function warnings not yet defined that it should be texts and flags in /component/execute
+            /calculator.php
+    \-- columns - section for function columns not yet defined that it should be texts and flags in /component/execute/c
+            alculator.php
+    \-- row_phrases - section for function row_phrases not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
     \-- kinds - section for function kinds not yet defined that it should be texts and flags in /component/execute/calcu
             lator.php
     \-- used - section for function used not yet defined that it should be texts and flags in /component/execute/calcula
@@ -6963,6 +6985,7 @@
     \-- values_in_columns - section for function values_in_columns missing in /component/execute/ui_list.php
     \-- table_with_related_columns - section for function table_with_related_columns missing in /component/execute/ui_li
             st.php
+    \-- prior_names - section for function prior_names missing in /component/execute/ui_list.php
     \-- value_input_fields - section for function value_input_fields missing in /component/execute/ui_list.php
     \-- input_fields - section for function input_fields missing in /component/execute/ui_list.php
     \-- unit_name - section for function unit_name missing in /component/execute/ui_list.php
@@ -6970,19 +6993,33 @@
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
+    \-- calculator_remove_button - section for function calculator_remove_button missing in /component/execute/ui_list.p
+            hp
+    \-- calculator_imports - section for function calculator_imports missing in /component/execute/ui_list.php
+    \-- calculator_warnings - section for function calculator_warnings missing in /component/execute/ui_list.php
     \-- field_decimals - section for function field_decimals missing in /component/execute/ui_list.php
+    \-- field_shown - section for function field_shown missing in /component/execute/ui_list.php
+    \-- field_unit - section for function field_unit missing in /component/execute/ui_list.php
     \-- calculator_option_text - section for function calculator_option_text missing in /component/execute/ui_list.php
     \-- calculator_hint - section for function calculator_hint missing in /component/execute/ui_list.php
     \-- calculator_hint_numbers - section for function calculator_hint_numbers missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
+    \-- calculation_table_unit - section for function calculation_table_unit missing in /component/execute/ui_list.php
     \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
     \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
             hp
     \-- calculation_detail_tables - section for function calculation_detail_tables missing in /component/execute/ui_list
             .php
+    \-- calculator_buttons - section for function calculator_buttons missing in /component/execute/ui_list.php
+    \-- calculator_check - section for function calculator_check missing in /component/execute/ui_list.php
+    \-- calculator_check_same - section for function calculator_check_same missing in /component/execute/ui_list.php
+    \-- calculator_diagrams - section for function calculator_diagrams missing in /component/execute/ui_list.php
+    \-- calculator_notes - section for function calculator_notes missing in /component/execute/ui_list.php
+    \-- rank_number - section for function rank_number missing in /component/execute/ui_list.php
     \-- calculator_sources - section for function calculator_sources missing in /component/execute/ui_list.php
     \-- calculator_numbers - section for function calculator_numbers missing in /component/execute/ui_list.php
     \-- calculator_result - section for function calculator_result missing in /component/execute/ui_list.php
+    \-- calculator_cell_text - section for function calculator_cell_text missing in /component/execute/ui_list.php
     \-- calculator_script - section for function calculator_script missing in /component/execute/ui_list.php
     \-- calculator_number_format - section for function calculator_number_format missing in /component/execute/ui_list.p
             hp
@@ -7122,6 +7159,7 @@
             mula.php
     \-- order error - order of section construct and map has difference at db_fld_to_url should be before url_mapper
 \-- formula_calc
+    \-- __construct - section for function __construct is expected to be construct and map in /formula/formula_calc.php
     \-- result - section for function result missing in /formula/formula_calc.php
     \-- calculates_phrase - section for function calculates_phrase missing in /formula/formula_calc.php
     \-- tokens - section for function tokens missing in /formula/formula_calc.php
@@ -7599,6 +7637,8 @@
             / replace in /html/html_base.php
     \-- dsp_form_file_select - section for function dsp_form_file_select not yet defined that it should be to dismiss / 
             replace in /html/html_base.php
+    \-- line_diagram - section for function line_diagram not yet defined that it should be base elements - functions for
+             all html elements used in zukunft.com in /html/html_base.php
     \-- label_no_for - section for function label_no_for not yet defined that it should be base elements - functions for
              all html elements used in zukunft.com in /html/html_base.php
     \-- input_checkbox - section for function input_checkbox not yet defined that it should be base elements - functions
@@ -7673,6 +7713,7 @@
             tml_base.php
     \-- nav - section for function nav not yet defined that it should be internal in /html/html_base.php
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
+    \-- button_icon - section for function button_icon not yet defined that it should be internal in /html/html_base.php
     \-- button - section for function button not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
@@ -9509,6 +9550,8 @@
 \-- 
     \-- __construct
         \-- calculator - @param phrase $phr the phrase of the page e.g. example PV installation
+        \-- formula_calc - @param array $prior per phrase name of the page the phrase before it in its "is follower of" 
+                chain
         \-- number_format - @param formula_list|null $frm_lst the formulas that convert the units; null for the preloade
                 d ones
         \-- table - 
@@ -9716,6 +9759,8 @@
         \-- ui_list - show the values related to the given phrase in up to four columns that are shown side by side
     \-- table_with_related_columns
         \-- ui_list - show the values related to the given phrase as a table with one column per phrase used most
+    \-- prior_names
+        \-- ui_list - @param data_object|null $dto the request cache with the triples of the page
     \-- value_input_fields
         \-- ui_list - the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
     \-- input_fields
@@ -9730,8 +9775,21 @@
         \-- ui_list - @param value $val the value used by a result of the page
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+    \-- calculator_remove_button
+        \-- ui_list - the button to remove an instance of a repeated field at its place,
+                 without a function so far (docs/llm/pending.md)
+    \-- calculator_imports
+        \-- ui_list - the section with the import buttons of the page at their place,
+                 without a function so far (docs/llm/pending.md)
+    \-- calculator_warnings
+        \-- ui_list - the warnings of a calculator whose result of the page phrase is above zero e.g. the excess of the 
+                target shares
     \-- field_decimals
         \-- ui_list - @param sandbox_value $val the value that a field shows
+    \-- field_shown
+        \-- ui_list - @param float|null $num a number of the field e.g. its value or a limit
+    \-- field_unit
+        \-- ui_list - @param sandbox_value $val the value that a number field shows
     \-- calculator_option_text
         \-- ui_list - @param string $label the label of the option
     \-- calculator_hint
@@ -9741,18 +9799,38 @@
                  which may name phrases e.g. "{PV capacity} × factor {yield factor|number}"
     \-- calculation_table
         \-- ui_list - the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
+    \-- calculation_table_unit
+        \-- ui_list - @param array $vals per row group,
+                 row and column the number of the cell or null (calculation_table_values)
     \-- calculation_row_context
         \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_side_context
         \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_detail_tables
         \-- ui_list - the detail tables of a calculation result: per table its label as the heading, the table
+    \-- calculator_buttons
+        \-- ui_list - the buttons of a list or a detail table at their place,
+                 without a function so far (docs/llm/pending.md)
+    \-- calculator_check
+        \-- ui_list - the check table of a calculator: a row per value with the word expected with the expected number,
+                 the number
+    \-- calculator_check_same
+        \-- ui_list - @param float $got the calculated number of a check row
+    \-- calculator_diagrams
+        \-- ui_list - a section with a diagram per detail table column with the flag calculator diagram: the numbers of 
+                the column along the rows of its table
+    \-- calculator_notes
+        \-- ui_list - the notes of a calculator: per item of the list the label in bold in front of the description
+    \-- rank_number
+        \-- ui_list - @param phrase $row the phrase of a row e.g. LISP
     \-- calculator_sources
         \-- ui_list - the sources of a calculator page as a numbered list in the order of their first use, so
     \-- calculator_numbers
         \-- ui_list - @param word|triple $dbo the phrase of the page
     \-- calculator_result
         \-- ui_list - the number of a calculator cell: the value or result with all the phrases of the cell and
+    \-- calculator_cell_text
+        \-- ui_list - @param sandbox_value $val the number of the cell
     \-- calculator_script
         \-- ui_list - the calculation of a calculator page as data and the script that repeats it in the browser
     \-- calculator_number_format
@@ -10002,6 +10080,15 @@
         \-- calculator - @param phrase $item the item e.g. PV installation row battery discharge
     \-- number_note
         \-- calculator - @param phrase $item a row e.g. PV installation row saving PV-weighted mix
+    \-- button_label
+        \-- calculator - @param phrase|null $item a list or a detail table e.g. portfolio split inputs
+    \-- diagram_title
+        \-- calculator - @param phrase $col a column of a detail table e.g. portfolio split walk column cumulative devia
+                tion
+    \-- phrase_hint
+        \-- calculator - @param phrase $phr a phrase that is no item e.g. a row of a detail table
+    \-- row_kinds
+        \-- calculator - @param phrase $row a row of a detail table e.g. CHF cash
     \-- repeat_label
         \-- calculator - @param phrase $item a repeated input item e.g. portfolio split input child portfolio
     \-- has_flag
@@ -10017,6 +10104,13 @@
                 able
     \-- options
         \-- calculator - the options of a phrase selector (rule 6): the "has a" triples of the field phrase in their
+    \-- warnings
+        \-- calculator - @return array per warning of the page its phrase e.g. target share excess and its text,
+                 sorted by the text
+    \-- columns
+        \-- calculator - the columns of a table, where the column of a repeated input is shown once per instance
+    \-- row_phrases
+        \-- calculator - the rows of a detail table: the phrases at the end of the is a and is part of levels below
     \-- kinds
         \-- calculator - @param phrase $phr e.g. month or replacement mix
     \-- used
@@ -10829,6 +10923,9 @@
     \-- dsp_form_file_select
         \-- html_base - display a file selector form
 \-- base elements - functions for all html elements used in zukunft.com
+    \-- line_diagram
+        \-- html_base - a line diagram of a number per row without javascript,
+                 with a line at zero and at the biggest number
     \-- label_no_for
         \-- html_base - @param string $text the html code of the label: a text that has no form field e.g. of a read onl
                 y number, or the text with the input that it wraps
@@ -10913,6 +11010,8 @@
         \-- html_base - wrap the nav tag around html code
     \-- div_bs
         \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
+    \-- button_icon
+        \-- html_base - @param string $icon the html code of the icon
     \-- button
         \-- html_base - wrap the button tag around html code
     \-- button_bs

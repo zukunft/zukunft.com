@@ -197,6 +197,21 @@ class system_page extends component
         'highlight' => triples::CALCULATOR_HIGHLIGHT,
         'signed' => triples::CALCULATOR_SIGNED,
         'number_note' => triples::CALCULATOR_NUMBER_NOTE,
+        'warning' => triples::CALCULATOR_WARNING,
+        'colour' => triples::CALCULATOR_COLOUR,
+        'file_import' => triples::CALCULATOR_FILE_IMPORT,
+        'download' => triples::CALCULATOR_DOWNLOAD,
+        'report' => triples::CALCULATOR_REPORT,
+        'copy' => triples::CALCULATOR_COPY,
+        'note' => triples::CALCULATOR_NOTE,
+        'check' => triples::CALCULATOR_CHECK,
+        'diagram' => triples::CALCULATOR_DIAGRAM,
+        'section' => triples::CALCULATOR_SECTION,
+        'page_independent' => triples::CALCULATOR_PAGE_INDEPENDENT,
+        'row_number' => triples::CALCULATOR_ROW_NUMBER,
+        'phrase_column' => triples::CALCULATOR_PHRASE_COLUMN,
+        'column_unit' => triples::CALCULATOR_COLUMN_UNIT,
+        'decimals' => triples::CALCULATOR_DECIMALS,
         'read_only' => triples::CALCULATOR_READ_ONLY,
         'checkbox' => triples::CALCULATOR_CHECKBOX,
         'repeat' => triples::CALCULATOR_REPEAT,
@@ -214,6 +229,8 @@ class system_page extends component
         'with' => verbs::WITH,
         'uses' => verbs::USES,
         'follow' => verbs::FOLLOW,
+        'part' => verbs::PART,
+        'rank' => verbs::RANK,
         'symbol' => verbs::SYMBOL,
         'acronym' => verbs::ACRONYM,
     ];
@@ -224,6 +241,15 @@ class system_page extends component
         msg_id::CALCULATOR_RESULT,
         msg_id::CALCULATOR_DETAILS,
         msg_id::CALCULATOR_SOURCES,
+        msg_id::CALCULATOR_COPY_JSON,
+        msg_id::CALCULATOR_COPY_CSV,
+        msg_id::CALCULATOR_REMOVE,
+        msg_id::CALCULATOR_CHECK_VALUE,
+        msg_id::CALCULATOR_CHECK_EXPECTED,
+        msg_id::CALCULATOR_CHECK_CALCULATED,
+        msg_id::CALCULATOR_CHECK_STATUS,
+        msg_id::CALCULATOR_CHECK_MATCH,
+        msg_id::CALCULATOR_CHECK_DIFFERS,
         msg_id::FIELD_TAG_MEASURED,
         msg_id::FIELD_TAG_ASSUMED,
     ];
@@ -1292,11 +1318,14 @@ class system_page extends component
                     ?: $mtr->txt(msg_id::CALCULATOR_INPUTS);
                 $result = $html->div($html->block(html_base::H2, $html->esc($heading))
                     . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
-                    . $this->calculator_button_save($form_name, $msk_key, $dbo),
+                    . $list->calculator_warnings($calc, $dbo, $cfg, $msg)
+                    . $this->calculator_button_save($form_name, $msk_key, $dbo)
+                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT)),
                     styles::INPUTS);
                 $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
                 $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
-                    . $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr, $listed);
+                    . $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr, $listed)
+                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_ASSUMPTION));
                 if ($fields != '') {
                     $summary = $calc->own_label($calc->group(triples::CALCULATOR_ASSUMPTION))
                         ?: $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS);
@@ -1543,6 +1572,11 @@ class system_page extends component
                 $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
                 $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
             }
+            $result .= $list->calculator_check($calc, $lst, $cfg, $msg)
+                . $list->calculator_diagrams($calc, $lst, $msg)
+                . $list->calculation_detail_tables($calc, $dbo, $lst, $msg, true)
+                . $list->calculator_notes($calc)
+                . $list->calculator_imports($calc);
             $notes = $list->formula_notes($dbo, $msg, $cfg);
             $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
                 . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))
