@@ -75,6 +75,13 @@ class number_format_ui_tests
         $t->assert($test_name, $fmt->decimals, 1);
         $test_name = '... so that a round number shows the decimals of the column';
         $t->assert($test_name, $fmt->text(2000), '2.0');
+        $test_name = '... and the float noise of a calculation does not change the rounding';
+        $noise_fmt = new number_format();
+        $noise_fmt->decimals = 2;
+        $t->assert($test_name, $noise_fmt->text(0.00499999999), '0.01');
+        // negative: a number that is really below the half is rounded down
+        $test_name = '... but a real smaller number is rounded down';
+        $t->assert($test_name, $noise_fmt->text(0.004999), '0.00');
         $test_name = '... and a negative number keeps its sign';
         $t->assert($test_name, $fmt->text(-2948.83), '-2.9');
 

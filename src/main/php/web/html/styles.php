@@ -116,6 +116,9 @@ class styles
     const string CALC_BUTTON_ADD = 'btn-outline-primary btn-sm';
     // a button of a list or a detail table of a calculator page e.g. download
     const string CALC_BUTTON = 'btn-outline-primary';
+    // the button to remove an instance of a repeated input and the block of the import buttons of a calculator page
+    const string CALC_BUTTON_REMOVE = 'btn-outline-secondary btn-sm';
+    const string CALC_IMPORTS = 'imports';
     const string PROCESS_CATCH_TAB = 'nav-link d-inline-block';
     const string PROCESS_CATCH_TAB_SELECTED = 'nav-link d-inline-block active fw-bold';
 

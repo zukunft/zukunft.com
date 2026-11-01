@@ -2217,6 +2217,8 @@ enum messages: string
     // the two copy buttons of a detail table of a calculator page
     case CALCULATOR_COPY_JSON = 'calculator_copy_json';
     case CALCULATOR_COPY_CSV = 'calculator_copy_csv';
+    // in front of the name of an instance on the button that removes it from a repeated input
+    case CALCULATOR_REMOVE = 'calculator_remove';
     // the header and the status texts of the check table of a calculator page
     case CALCULATOR_CHECK_VALUE = 'calculator_check_value';
     case CALCULATOR_CHECK_EXPECTED = 'calculator_check_expected';

@@ -52,6 +52,9 @@
     const OPTION_PHRASE = 'phrase';
     // the header of the row number of a detail table, the same as ui_list CALC_ROW_NUMBER_HEAD
     const ROW_NUMBER_HEAD = '#';
+    // the icon of the button to remove an instance and the instances that a field keeps, the same as ui_list CALC_REMOVE_ICON and CALC_MIN_INSTANCES
+    const REMOVE_ICON = 'fas fa-times';
+    const MIN_INSTANCES = 1;
     // the operand name that reads the number of the previous row, the same as phrase_types PRIOR_NAME
     const PRIOR_NAME = 'prior';
     // the word of a value of the check table, the same as words EXPECTED
@@ -70,7 +73,8 @@
         row: 'row', unit: 'unit', hint: 'hint', tag: 'tag', tagMeasured: 'tag m', tagAssumed: 'tag a',
         scroll: 'scroll', section: 'sec', key: 'key', sub: 'sub', number: 'n', more: 'more',
         notes: 'notes', sources: 'src', select: 'form-control', check: 'check', readOnly: 'ro',
-        addButton: 'btn btn-outline-primary btn-sm', warnings: 'warnings', warning: 'warn',
+        addButton: 'btn btn-outline-primary btn-sm', removeButton: 'btn btn-outline-secondary btn-sm', imports: 'imports',
+        warnings: 'warnings', warning: 'warn',
         button: 'btn btn-outline-primary', chart: 'chart', legend: 'legend', statusOk: 'pill ok', statusFail: 'pill fail',
         // the colours of the flagged columns, the first once, then the others cycling (styles::CALC_COLUMN_COLOURS)
         colours: ['col-first', 'col-1', 'col-2', 'col-3', 'col-4']
@@ -79,6 +83,8 @@
     const WARNING_DECIMALS = 12;
     // a check row ignores only the float noise of a calculation, the same as ui_list CALC_CHECK_TOLERANCE
     const CHECK_TOLERANCE = 1e-9;
+    // a shown number is first rounded to these decimals, the same as number_format NOISE_DECIMALS
+    const NOISE_DECIMALS = 8;
     // the suffix of the html id of a selector, the same as html_selector builds it from its name
     const SELECT_ID_SUFFIX = '_form_select';
     // between the label of a selector option and its number (ui_list::CALC_OPTION_SEP)
@@ -90,7 +96,7 @@
     const TXT = {
         inputs: 'calculator_inputs', assumptions: 'calculator_assumptions', result: 'calculator_result',
         details: 'calculator_details', sources: 'calculator_sources',
-        copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv',
+        copy_json: 'calculator_copy_json', copy_csv: 'calculator_copy_csv', remove: 'calculator_remove',
         check_value: 'calculator_check_value', check_expected: 'calculator_check_expected',
         check_calculated: 'calculator_check_calculated', check_status: 'calculator_check_status',
         check_match: 'calculator_check_match', check_differs: 'calculator_check_differs',
@@ -404,6 +410,24 @@
     }
 
     /* the longest follower chain first, then the other items by their label (calculator::sorted) */
+    /* the nearest phrase of the list before the phrase in its follower chain, also over phrases of other lists, null if there is none (calculator::previous_in_list) */
+    function previousInList(name, keys) {
+        const seen = [name];
+        let cur = name;
+        let result = null;
+        while (cur !== null && result === null) {
+            const trp = triplesFrom(cur).filter(function (t) {
+                return t.verb === VERB.follow && seen.indexOf(t.to) < 0;
+            }).pop();
+            cur = trp === undefined ? null : trp.to;
+            if (cur !== null && keys.indexOf(cur) >= 0) {
+                result = cur;
+            }
+            seen.push(cur);
+        }
+        return result;
+    }
+
     function sorted(list, asItems) {
         const keyOf = function (x) {
             return asItems ? x.name : x;
@@ -416,6 +440,13 @@
                     next.set(t.to, keyOf(x));
                 }
             });
+            // a row can follow a row of another kind e.g. a stock after a bond, which keeps the order of the stocks
+            if (!asItems && Array.from(next.values()).indexOf(keyOf(x)) < 0) {
+                const prev = previousInList(keyOf(x), keys);
+                if (prev !== null) {
+                    next.set(prev, keyOf(x));
+                }
+            }
         });
         const followers = Array.from(next.values());
         let chain = [];
@@ -1109,8 +1140,15 @@
         return result;
     }
 
+    /* the number rounded half away from zero without the float noise of a calculation (number_format::text) */
+    function roundedNumber(num, decimals) {
+        const factor = Math.pow(10, decimals);
+        const clean = Number(num.toFixed(NOISE_DECIMALS));
+        return Math.sign(clean) * Math.round(Math.abs(clean) * factor) / factor;
+    }
+
     function formatNumber(num, decimals) {
-        const fixed = Math.abs(Number(num)).toFixed(decimals).split('.');
+        const fixed = roundedNumber(Math.abs(Number(num)), decimals).toFixed(decimals).split('.');
         const int = thousands(fixed[0]);
         // a number that rounds to zero has no sign
         const sign = Number(num) < 0 && Number(fixed.join('.')) !== 0 ? '-' : '';
@@ -1171,15 +1209,66 @@
         return result;
     }
 
-    function cellHtml(entry, formats, signed, withUnit, decimals) {
+    /* plus: true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero; sub: the sub text behind the number (ui_list::calculator_cell) */
+    function cellHtml(entry, formats, signed, withUnit, decimals, plus, sub) {
         let text = '';
         if (entry !== null) {
             text = esc(numberText(entry, formats, withUnit, decimals));
             if (signed) {
                 text = block('span', text, Number(entry.number) < 0 ? FMT.negative : FMT.positive);
+            } else if (plus) {
+                const fmt = formats.get(unitOf(entry));
+                const shown = roundedNumber(Number(entry.number) * fmt.factor, decimals === null || decimals === undefined ? fmt.decimals : decimals);
+                text = block('span', (shown > 0 ? '+' : '') + text, shown > 0 ? FMT.positive : (shown < 0 ? FMT.negative : ''));
+            }
+            if (sub) {
+                text += block('span', esc(sub), STYLE.sub);
             }
         }
         return block('td', text, STYLE.number);
+    }
+
+    /* the decimals of the value with exactly these names and the keyword calculator decimals, null if there is none (ui_list::decimals_of) */
+    function decimalsOf(names) {
+        const wanted = names.concat([KW.decimals]);
+        const entry = pool.find(function (e) {
+            return !e.result && e.words.length === wanted.length && hasAll(e, wanted);
+        });
+        return entry === undefined ? null : Number(entry.number);
+    }
+
+    /* the decimals that the column phrase or its filter set for a kind of the row, else for all rows (ui_list::cell_decimals) */
+    function cellDecimals(row, col) {
+        const colNames = [col.to, filterOf(col)].filter(function (n) {
+            return n;
+        });
+        let result = null;
+        triplesFrom(row).filter(function (t) {
+            return t.verb === VERB.is;
+        }).forEach(function (t) {
+            colNames.forEach(function (n) {
+                result = result === null ? decimalsOf([n, t.to]) : result;
+            });
+        });
+        colNames.forEach(function (n) {
+            result = result === null ? decimalsOf([n]) : result;
+        });
+        return result;
+    }
+
+    /* the unit for the sub text of a column with the flag: the name of the measure and not its symbol, else the one phrase besides the row and the column (ui_list::calculator_column_unit) */
+    function columnUnit(entry, row, col) {
+        let result = '';
+        if (col.hasUnit && entry !== null) {
+            result = entry.words.find(isMeasure) || '';
+            const others = entry.words.filter(function (w) {
+                return w !== row && w !== col.to && w !== filterOf(col);
+            });
+            if (result === '' && others.length === 1) {
+                result = others[0];
+            }
+        }
+        return result;
     }
 
     /* ------------------------------------------------------------------ */
@@ -1283,6 +1372,7 @@
         if (unit !== '') {
             input += block('span', esc(unit), STYLE.unit);
         }
+        input += removeButton(name, instance);
         const result = block('div', '<label for="' + field + '">' + text + '</label>' + block('div', input, STYLE.row)
             + hintHtml(hintText, fieldSourceRefs(name, entry)), STYLE.field);
         return result;
@@ -1400,6 +1490,16 @@
             inputEntries.set(field, entry);
         }
         const result = '<label class="' + STYLE.check + '">' + input + '<span>' + esc(lbl) + hintHtml(hint(item), '') + '</span></label>' + vars;
+        return result;
+    }
+
+    /* the button to remove an instance, without a function so far (ui_list::calculator_remove_button) */
+    function removeButton(name, instance) {
+        let result = '';
+        if (instance !== undefined && kinds(name).length > MIN_INSTANCES) {
+            const title = esc(TEXTS[TXT.remove] + ' ' + phraseLabel(instance));
+            result = '<button type="button" class="' + STYLE.removeButton + '" title="' + title + '" aria-label="' + title + '"><i class="' + REMOVE_ICON + '"></i></button>';
+        }
         return result;
     }
 
@@ -1529,8 +1629,12 @@
             const hasColour = hasFlag(c, KW.colour);
             const isPhrase = hasFlag(c, KW.phrase_column);
             (repeated ? kinds(c.to) : [c.to]).forEach(function (to) {
-                const text = repeated ? capital(phraseLabel(to)) : label(c);
-                result.push({name: c.name, to: to, text: text, colour: hasColour ? columnColour(colours++) : '', repeated: repeated, isPhrase: isPhrase});
+                // a column can name an instance shorter e.g. First for the first child
+                const short = repeated ? subItems(c.name, VERB.has).find(function (sub) {
+                    return sub.to === to;
+                }) : undefined;
+                const text = repeated ? (short === undefined ? capital(phraseLabel(to)) : label(short)) : label(c);
+                result.push({name: c.name, to: to, text: text, colour: hasColour ? columnColour(colours++) : '', repeated: repeated, isPhrase: isPhrase, plus: hasFlag(c, KW.signed), hasUnit: hasFlag(c, KW.column_unit)});
             });
         });
         return result;
@@ -1589,8 +1693,7 @@
                     return r.grp === g;
                 }).forEach(function (r) {
                     const signed = groupSigned || hasFlag(r.row, KW.signed);
-                    const rowDecimals = fieldProperty(r.row.to, KW.decimals);
-                    const decimals = rowDecimals === null ? null : Number(rowDecimals);
+                    const decimals = decimalsOf([r.row.to]);
                     const cells = r.cells.map(function (e, i) {
                         return cellHtml(e, formats[i], signed, withUnit, decimals);
                     }).join('');
@@ -1738,12 +1841,15 @@
                 return w !== EXPECTED_WORD;
             });
             const got = generalEntry(names, [], true);
-            const same = got !== null && checkSame(Number(got.number), Number(r.exp.number));
+            // a number that is missing differs and has no text, also an expected value without a number
+            const hasExp = r.exp.number !== null;
+            const hasGot = got !== null && got.number !== null;
+            const same = hasGot && hasExp && checkSame(Number(got.number), Number(r.exp.number));
             const status = block('span', esc(TEXTS[same ? TXT.check_match : TXT.check_differs]), same ? STYLE.statusOk : STYLE.statusFail);
             const first = esc(r.label) + (r.exp.source ? block('span', esc(r.exp.source), STYLE.sub) : '');
             return block('tr', block('td', first)
-                + block('td', esc(formatNumber(r.exp.number, 0)), STYLE.number)
-                + block('td', got === null ? '' : esc(formatNumber(got.number, 0)), STYLE.number)
+                + block('td', hasExp ? esc(formatNumber(r.exp.number, 0)) : '', STYLE.number)
+                + block('td', hasGot ? esc(formatNumber(got.number, 0)) : '', STYLE.number)
                 + block('td', status, STYLE.number));
         }).join('');
         const head = block('th', esc(TEXTS[TXT.check_value])) + [TXT.check_expected, TXT.check_calculated, TXT.check_status].map(function (id) {
@@ -1806,6 +1912,14 @@
         return html === '' ? '' : block('details', block('summary', esc(ownText(group(KW.note).name, KW.label) || '')) + block('div', html, STYLE.notes));
     }
 
+    /* the section with the import buttons of the page, without a function so far (ui_list::calculator_imports) */
+    function importSection() {
+        const html = items(KW.file_import).map(function (item) {
+            return '<button type="button" class="' + STYLE.button + '">' + esc(label(item)) + '</button>';
+        }).join('');
+        return html === '' ? '' : block('details', block('summary', esc(ownText(group(KW.file_import).name, KW.label) || '')) + block('div', html, STYLE.imports));
+    }
+
     /* sections: true for the tables with a collapsed section of their own, false for the other tables */
     function detailTables(sections) {
         let result = '';
@@ -1835,13 +1949,14 @@
             });
             const body = rows.map(function (r, j) {
                 const tds = cells[j].map(function (e, i) {
-                    const colDecimals = fieldProperty(cols[i].to, KW.decimals);
                     return cols[i].isPhrase
                         ? block('td', esc(phraseCell(r[1][1], cols[i])))
-                        : cellHtml(e, formats[i], false, false, colDecimals === null ? null : Number(colDecimals));
+                        : cellHtml(e, formats[i], false, false, cellDecimals(r[1][1], cols[i]), cols[i].plus, columnUnit(e, r[1][1], cols[i]));
                 }).join('');
                 const number = numbered ? block('td', String(j + 1)) : '';
-                return block('tr', number + block('td', esc(r[0])) + tds, r[2] ? STYLE.key : '');
+                // a numbered table shows the hint of the row phrase e.g. the full name of a ticker (calculator::phrase_hint)
+                const sub = numbered ? ownText(r[1][1], KW.hint) : '';
+                return block('tr', number + block('td', esc(r[0]) + (sub ? block('span', esc(sub), STYLE.sub) : '')) + tds, r[2] ? STYLE.key : '');
             }).join('');
             const tableHtml = table(head, body) + buttons(tbl);
             result += sections
@@ -1877,7 +1992,7 @@
     function resultPanel() {
         const heading = ownText((group(KW.column) || {}).name, KW.label) || '';
         let result = (heading === '' ? '' : block('h2', esc(heading))) + resultTable();
-        result += checkTable() + diagrams() + detailTables(true) + pageNotes();
+        result += checkTable() + diagrams() + detailTables(true) + pageNotes() + importSection();
         // the details after the main table, so that their notes and sources include the numbers of both
         const more = detailTables(false);
         const extra = more + notes() + sourceList();

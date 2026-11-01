@@ -1921,6 +1921,14 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the request cache of the test with two instances of a repeated field and the imports
+     */
+    function list_calculator_instances_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_instances());
+    }
+
+    /**
      * @return phrase_list_ui the request cache of the calculation result test: the calculator
      *         input test with the result column, the signed row group and the detail table
      */

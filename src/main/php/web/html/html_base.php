@@ -3870,6 +3870,19 @@ class html_base
     }
 
     /**
+     * @param string $icon the html code of the icon
+     * @param string $title the text that names what the button does, as its tooltip and for a screen reader
+     * @param string $class additional CSS classes for the button
+     * @return string the html code of a button that shows only an icon
+     */
+    function button_icon(string $icon, string $title, string $class): string
+    {
+        $esc_title = $this->esc($title);
+        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . self::BUTTON . '" ' . self::CLASS_HTML . '="' . self::CLASS_BUTTON . ' ' . $class . '"'
+            . ' title="' . $esc_title . '" aria-label="' . $esc_title . '">' . $icon . '</' . self::BUTTON . '>';
+    }
+
+    /**
      * wrap the button tag around html code
      * @param string $txt the button label html code
      * @param string $typ the button type e.g. submit

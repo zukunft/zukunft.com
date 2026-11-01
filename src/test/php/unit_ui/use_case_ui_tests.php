@@ -871,6 +871,16 @@ class use_case_ui_tests
         $test_name = '... and a missing number differs';
         $chk_none = $list->calculator_check($chk_calc, $t_val->value_list_calculator_check_ui(null), $dto_in, $msg);
         $t->assert_text_contains($test_name, $chk_none, $differs_txt);
+        $test_name = '... and an expected value without a number differs';
+        $chk_no_exp_lst = $t_val->value_list_calculator_check_ui(values::SAMPLE_FLOAT, false);
+        $chk_no_exp = $list->calculator_check($chk_calc, $chk_no_exp_lst, $dto_in, $msg);
+        $t->assert_text_contains($test_name, $chk_no_exp, $differs_txt);
+        // negative: without an expected number the status cannot change, so the script does not get it
+        $test_name = '... whose status the script does not update';
+        $no_exp_list = new ui_list();
+        $no_exp_list->calculator_check($chk_calc, $chk_no_exp_lst, $dto_in, $msg);
+        $no_exp_script = $no_exp_list->calculator_script($chk_calc, $zh_city, $chk_no_exp_lst, $dto_in, $msg);
+        $t->assert_text_not_contains($test_name, $no_exp_script, '"' . ui_list::CALC_CHECKS . '":');
         $test_name = 'a check row ignores the float noise of a calculation';
         $t->assert_true($test_name, $list->calculator_check_same(values::SAMPLE_FLOAT * (1 + 1e-12), values::SAMPLE_FLOAT));
         // negative: a small real difference of a small number is no float noise
@@ -906,6 +916,41 @@ class use_case_ui_tests
         $test_name = '... and a page without the list has no notes';
         $no_notes = $list->calculator_notes($no_chk_calc);
         $t->assert($test_name, $no_notes, '');
+        $test_name = 'a repeated field with several instances has a button per instance to remove it';
+        $ins_calc = new calculator($zh_city->phrase(), $t_phr->list_calculator_instances_ui());
+        $ins_item = array_values(array_filter($ins_calc->items(triples::CALCULATOR_INPUT),
+            fn($item) => $item->name() == triple_names::CALC_ZH_INPUT_CANTON))[0];
+        $ins_canton = $ins_calc->item_phrase($ins_item);
+        $ins_first = $ins_calc->kinds($ins_canton)[0];
+        $t->assert_text_contains($test_name, $list->calculator_remove_button($ins_calc, $ins_canton, $ins_first), ui_list::CALC_REMOVE_ICON);
+        // negative: the last instance stays and a field that is not repeated has no button
+        $test_name = '... but one instance has none';
+        $one_calc = new calculator($zh_city->phrase(), $dto_fld->phr_lst);
+        $t->assert($test_name, $list->calculator_remove_button($one_calc, $ins_canton, $ins_first), '');
+        $test_name = '... and no instance has none';
+        $t->assert($test_name, $list->calculator_remove_button($ins_calc, $ins_canton, null), '');
+        $test_name = 'a column shows the plus sign and the unit if it has the flags';
+        $t->assert_true($test_name, $ins_calc->columns([$ins_item])[0][6] and $ins_calc->columns([$ins_item])[0][7]);
+        // negative: without the flags a column has neither
+        $test_name = '... but not without the flags';
+        $t->assert_false($test_name, $one_calc->columns([$ins_item])[0][6] or $one_calc->columns([$ins_item])[0][7]);
+        $test_name = 'the hint of a row phrase is its sub text';
+        $t->assert($test_name, $ins_calc->phrase_hint($ins_first), triple_names::CALC_ROW_HINT);
+        // negative: another phrase has no hint
+        $test_name = '... but a phrase without a hint has none';
+        $t->assert($test_name, $ins_calc->phrase_hint($ins_canton), '');
+        $test_name = 'the kinds of a row are the phrases that it is';
+        $t->assert_contains($test_name, array_map(fn($phr) => $phr->name(), $ins_calc->row_kinds($ins_first)), [word_names::CANTON]);
+        $test_name = 'a column can name an instance shorter';
+        $ins_cols = $ins_calc->columns([$ins_item]);
+        $t->assert_contains($test_name, array_column($ins_cols, 0), [triple_names::CALC_SHORT_LABEL]);
+        $test_name = 'the imports of a page are a section with a button per item';
+        $imports_html = $list->calculator_imports($ins_calc);
+        $t->assert_text_contains($test_name, $imports_html, triple_names::CALC_IMPORTS_LABEL);
+        $t->assert_text_contains($test_name, $imports_html, '>' . triple_names::CALC_IMPORT_LABEL . '</button>');
+        // negative: a page without the list has no section
+        $test_name = '... but a page without the list has none';
+        $t->assert($test_name, $list->calculator_imports($one_calc), '');
         $test_name = 'a column of a repeated input is shown once per instance';
         $fld_calc = new calculator($zh_city->phrase(), $dto_fld->phr_lst);
         $fld_cols = $fld_calc->columns($fld_calc->items(triples::CALCULATOR_INPUT));

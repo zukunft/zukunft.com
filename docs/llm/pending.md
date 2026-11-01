@@ -2,13 +2,39 @@
 
 ## portfolio split page compared with its sample
 
-The steps fix `portfolio_split_calculator_diff.md` and the three case reports, in this order, because each step makes the findings of the next one readable. Numbers like (5) are the open points in the description of `portfolio_split_calculator.json`, whose keywords are `PROPOSED NEW ELEMENT` in `calculator_keywords.json` and described in `docs/json_structure.md` "Proposed elements". Every renderer change goes into `ui_list.php` and `calculator_json.js` with a positive and a negative test. Run `test/test_part.php` after each step; it already renders only this page.
+The steps fix `portfolio_split_calculator_diff.md` and the three case reports, 
+in this order, because each step makes the findings of the next one readable. 
+Numbers like (5) are the open points in the description of `portfolio_split_calculator.json`, 
+whose keywords are `PROPOSED NEW ELEMENT` in `calculator_keywords.json` and described 
+in `docs/json_structure.md` "Proposed elements". Every renderer change goes into `ui_list.php` 
+and `calculator_json.js` with a positive and a negative test. Run `test/test_part.php` 
+after each step; it already renders only this page.
+
+### step 1: increase column width
+
+adjust the column width of 'Result per beneficiary' in src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
+so that in matches src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html
+and all number of the portfolio_split_calculator_js are within the border
+
+because the column width of 'Main results over the lifetime' src/test/resources/web/html/use_cases/pv_lifetime_balance_js.html
+should not be changes the width must be a parameter that can be adjusted for each Calculator editor 
+which probably implies that a 'system triple' for that must be created where the other Calculator related system triples are added
+which implies that the ids are shifted, which is fine
+
+### step 2: add a "Add child" and remove
+
+Add an add two children and remove one child test case similar to the high and low test cases 
+so that all main test cases are covered
 
 ### step 3: the input fields (1), (2), (3), (4)
 
-- the formulas of the warnings name the first and the second child: a new child needs a sum over the instances, so update them with the add child task
+- the formulas of the warnings name the first and the second child: 
+  a new child needs a sum over the instances, so update them with the add child task
 
-The buttons "Add child" and remove are a separate task after step 9, because a new child has no allocation before the walk is calculated: a new instance needs its own phrase, its "is a" triple and its target share through the logged save, and the page needs the remove button per field. The button stays without a function until then.
+The buttons "Add child" and remove are a separate task after step 9, 
+because a new child has no allocation before the walk is calculated: 
+a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
+and the page needs the remove button per field. The button stays without a function until then.
 
 ### step 4: the result table (9), (17)
 
@@ -17,14 +43,12 @@ The buttons "Add child" and remove are a separate task after step 9, because a n
 ### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
 
 - the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
-- the cash rows show too few decimals: `CHF cash` shows `350'000` where the sample has `349'999.99` and its lot value `0` where the sample has `0.0100`
-- the holdings table follows the walk chain within each kind of holding, where the sample has the bank order
-- the labels `First` and `Second` of the walk header, the colours of the walk cells and the hint below the holdings
+- the colours of the walk cells and the hint below the holdings
 
 ### step 6: the notes, the check table and the diagram (10), (11), (12)
 
 - the diagram draws one line, the cumulative deviation of the first child by the filter of its column, although the results of both children are stored; the sample draws one line per child with a point and a tooltip per position
-- the rows of the check table are sorted by their label, where the sample starts with the portfolio value and keeps its order, and the hint below the table is missing
+- the hint below the check table is missing
 
 ### step 7: the buttons (13)
 

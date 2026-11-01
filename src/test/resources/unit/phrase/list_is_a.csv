@@ -1,66 +1,66 @@
 phrase_id,phrase_name
--3334,bond price kind
--3302,second child portfolio instance
--3301,first child portfolio instance
--3297,stock price kind
--3264,SEK cash holding
--3263,DKK cash holding
--3262,JPY cash holding
--3261,GBP cash holding
--3260,USD cash holding
--3259,EUR cash holding
--3258,CHF cash holding
--3257,bond holding
--3253,TreasuryUS27 (bond (finance))
--3252,BundDE30 (bond (finance))
--3251,RocheBond28 (bond (finance))
--3250,NestleBond27 (bond (finance))
--3249,ConfedBond30 (bond (finance))
--3239,SEK (currency)
--3238,DKK (currency)
--3237,JPY (currency)
--3236,GBP (currency)
--3201,cash (holding)
--3200,stock (holding)
--3162,UBSG (stock)
--3161,ADEN (stock)
--3160,SDZ (stock)
--3159,ABBN (stock)
--3158,BANB (stock)
--3157,BAER (stock)
--3156,ALC (stock)
--3155,NESN (stock)
--3154,HOLN (stock)
--3153,SGSN (stock)
--3152,NOVN (stock)
--3151,LOGN (stock)
--3150,STMN (stock)
--3149,SREN (stock)
--3148,CFR (stock)
--3147,UHR (stock)
--3146,KNIN (stock)
--3145,SIKA (stock)
--3144,SCHP (stock)
--3143,SOON (stock)
--3142,ROG (stock)
--3141,VACN (stock)
--3140,SCMN (stock)
--3139,ZURN (stock)
--3138,LONN (stock)
--3137,GEBN (stock)
--3136,PGHN (stock)
--3135,GIVN (stock)
--3134,LISN (stock)
--3133,LISP (stock)
--2999,Gösgen (existing NPP)
--2998,Leibstadt (existing NPP)
--2997,AP1000 (new NPP)
--2996,EPR (new NPP)
--2945,Flamanville 3 (EPR)
--2944,Olkiluoto 3 (EPR)
--2941,2050 (year)
--2769,production mix (replacement mix)
--2768,residual mix (replacement mix)
+-3380,bond price kind
+-3349,second child portfolio instance
+-3348,first child portfolio instance
+-3336,stock price kind
+-3303,SEK cash holding
+-3302,DKK cash holding
+-3301,JPY cash holding
+-3300,GBP cash holding
+-3299,USD cash holding
+-3298,EUR cash holding
+-3297,CHF cash holding
+-3294,bond holding
+-3290,TreasuryUS27 (bond (finance))
+-3289,BundDE30 (bond (finance))
+-3288,RocheBond28 (bond (finance))
+-3287,NestleBond27 (bond (finance))
+-3286,ConfedBond30 (bond (finance))
+-3241,SEK (currency)
+-3240,DKK (currency)
+-3239,JPY (currency)
+-3238,GBP (currency)
+-3203,cash (holding)
+-3202,stock (holding)
+-3164,UBSG (stock)
+-3163,ADEN (stock)
+-3162,SDZ (stock)
+-3161,ABBN (stock)
+-3160,BANB (stock)
+-3159,BAER (stock)
+-3158,ALC (stock)
+-3157,NESN (stock)
+-3156,HOLN (stock)
+-3155,SGSN (stock)
+-3154,NOVN (stock)
+-3153,LOGN (stock)
+-3152,STMN (stock)
+-3151,SREN (stock)
+-3150,CFR (stock)
+-3149,UHR (stock)
+-3148,KNIN (stock)
+-3147,SIKA (stock)
+-3146,SCHP (stock)
+-3145,SOON (stock)
+-3144,ROG (stock)
+-3143,VACN (stock)
+-3142,SCMN (stock)
+-3141,ZURN (stock)
+-3140,LONN (stock)
+-3139,GEBN (stock)
+-3138,PGHN (stock)
+-3137,GIVN (stock)
+-3136,LISN (stock)
+-3135,LISP (stock)
+-3001,Gösgen (existing NPP)
+-3000,Leibstadt (existing NPP)
+-2999,AP1000 (new NPP)
+-2998,EPR (new NPP)
+-2947,Flamanville 3 (EPR)
+-2946,Olkiluoto 3 (EPR)
+-2943,2050 (year)
+-2771,production mix (replacement mix)
+-2770,residual mix (replacement mix)
 -2600,7604 (CN code)
 -2599,7208 (CN code)
 -2582,hydrogen (CBAM good)

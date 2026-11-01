@@ -6550,6 +6550,10 @@
             /execute/calculator.php
     \-- diagram_title - section for function diagram_title not yet defined that it should be texts and flags in /compone
             nt/execute/calculator.php
+    \-- phrase_hint - section for function phrase_hint not yet defined that it should be texts and flags in /component/e
+            xecute/calculator.php
+    \-- row_kinds - section for function row_kinds not yet defined that it should be texts and flags in /component/execu
+            te/calculator.php
     \-- repeat_label - section for function repeat_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
     \-- has_flag - section for function has_flag not yet defined that it should be texts and flags in /component/execute
@@ -6989,6 +6993,9 @@
     \-- assumption_fields - section for function assumption_fields missing in /component/execute/ui_list.php
     \-- assumption_tag - section for function assumption_tag missing in /component/execute/ui_list.php
     \-- calculator_fields - section for function calculator_fields missing in /component/execute/ui_list.php
+    \-- calculator_remove_button - section for function calculator_remove_button missing in /component/execute/ui_list.p
+            hp
+    \-- calculator_imports - section for function calculator_imports missing in /component/execute/ui_list.php
     \-- calculator_warnings - section for function calculator_warnings missing in /component/execute/ui_list.php
     \-- field_decimals - section for function field_decimals missing in /component/execute/ui_list.php
     \-- field_shown - section for function field_shown missing in /component/execute/ui_list.php
@@ -7706,6 +7713,7 @@
             tml_base.php
     \-- nav - section for function nav not yet defined that it should be internal in /html/html_base.php
     \-- div_bs - section for function div_bs not yet defined that it should be internal in /html/html_base.php
+    \-- button_icon - section for function button_icon not yet defined that it should be internal in /html/html_base.php
     \-- button - section for function button not yet defined that it should be internal in /html/html_base.php
     \-- button_bs - section for function button_bs not yet defined that it should be internal in /html/html_base.php
     \-- list_item - section for function list_item not yet defined that it should be internal in /html/html_base.php
@@ -9767,6 +9775,12 @@
         \-- ui_list - @param value $val the value used by a result of the page
     \-- calculator_fields
         \-- ui_list - the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+    \-- calculator_remove_button
+        \-- ui_list - the button to remove an instance of a repeated field at its place,
+                 without a function so far (docs/llm/pending.md)
+    \-- calculator_imports
+        \-- ui_list - the section with the import buttons of the page at their place,
+                 without a function so far (docs/llm/pending.md)
     \-- calculator_warnings
         \-- ui_list - the warnings of a calculator whose result of the page phrase is above zero e.g. the excess of the 
                 target shares
@@ -10071,6 +10085,10 @@
     \-- diagram_title
         \-- calculator - @param phrase $col a column of a detail table e.g. portfolio split walk column cumulative devia
                 tion
+    \-- phrase_hint
+        \-- calculator - @param phrase $phr a phrase that is no item e.g. a row of a detail table
+    \-- row_kinds
+        \-- calculator - @param phrase $row a row of a detail table e.g. CHF cash
     \-- repeat_label
         \-- calculator - @param phrase $item a repeated input item e.g. portfolio split input child portfolio
     \-- has_flag
@@ -10992,6 +11010,8 @@
         \-- html_base - wrap the nav tag around html code
     \-- div_bs
         \-- html_base - wrap the div tag around html code using the bootstrap default class if no style is given
+    \-- button_icon
+        \-- html_base - @param string $icon the html code of the icon
     \-- button
         \-- html_base - wrap the button tag around html code
     \-- button_bs

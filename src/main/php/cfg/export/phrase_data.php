@@ -176,7 +176,9 @@ class phrase_data
         $val_lst = new value_list($usr);
         $val_lst->load_by_phr_lst($val_phr_lst, $msg, true);
         $val_lst->filter_readable_by($usr);
-        $this->add_field_values($val_lst, $phr_lst, $kwd_ids, $msg);
+        // the value walk has only the values that name the phrase, so no field value of another phrase of these values
+        $val_ids = $walk == phrase_data_walks::FROM ? $this->value_phrase_ids($val_lst, $msg) : [];
+        $this->add_field_values($val_lst, $phr_lst, $val_ids, $kwd_ids, $msg);
         $this->debug_step('values loaded for ' . $val_phr_lst->count() . ' phrases', $val_lst->count());
         // the results before the phrases are completed, because the data must also name the
         // phrases of a result and of its context; only the results of the requested phrase,
@@ -701,11 +703,12 @@ class phrase_data
      *
      * @param value_list $val_lst the values of the data, extended by the field values
      * @param phrase_list $phr_lst the start phrases of the walk e.g. with the input and assumption phrases
+     * @param array $val_ids the phrase ids of the values that also count as part of the data e.g. the filter split count of a column, which is not walked
      * @param array $kwd_ids the phrase ids of the keywords by their code id
      * @param user_message $msg with the requesting user
      * @return void
      */
-    private function add_field_values(value_list $val_lst, phrase_list $phr_lst, array $kwd_ids, user_message $msg): void
+    private function add_field_values(value_list $val_lst, phrase_list $phr_lst, array $val_ids, array $kwd_ids, user_message $msg): void
     {
         $fld_ids = array_values(array_intersect_key($kwd_ids, array_flip(triples::FIELD_VALUE_PROPERTIES)));
         $fld_val_lst = new value_list($msg->usr);
@@ -714,7 +717,7 @@ class phrase_data
             $fld_val_lst->load_by_phr_lst($this->phrases_by_ids($fld_ids, $msg), $msg, true);
         }
         $fld_val_lst->filter_readable_by($msg->usr);
-        $ids = array_merge($phr_lst->id_lst(), $fld_ids);
+        $ids = array_merge($phr_lst->id_lst(), $fld_ids, $val_ids);
         foreach ($fld_val_lst->lst() as $val) {
             $val->load_phrases($msg);
             if ($this->is_within($val->phrase_list()->id_lst(), $ids)) {

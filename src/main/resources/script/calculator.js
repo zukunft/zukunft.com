@@ -50,6 +50,10 @@
     // the id and the style of the warnings and the float noise that a warning ignores, the same as ui_list CALC_WARNINGS_ID, styles INPUT_WARNING and ui_list CALC_WARNING_DECIMALS
     const WARNINGS_ID = 'calc-warnings';
     const WARNING_STYLE = 'warn';
+    // a shown number is first rounded to these decimals, the same as number_format NOISE_DECIMALS
+    const NOISE_DECIMALS = 8;
+    // the style of the sub text of a cell, the same as styles CALC_SUB
+    const SUB_STYLE = 'sub';
     const WARNING_DECIMALS = 12;
     // the float noise that a check row ignores, the same as ui_list CALC_CHECK_TOLERANCE
     const CHECK_TOLERANCE = 1e-9;
@@ -324,7 +328,7 @@
      * @returns the number with the decimals, the decimal point and the thousand separator of the user like the php number_format
      */
     function fixed(num, decimals) {
-        const rounded = round(num, decimals);
+        const rounded = round(round(num, NOISE_DECIMALS), decimals);
         const parts = Math.abs(rounded).toFixed(decimals).split('.');
         const digits = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, data.format.thousand_sep);
         const sign = rounded < 0 ? '-' : '';
@@ -366,13 +370,20 @@
             if (td !== null && cell.number in numbers) {
                 const num = numbers[cell.number];
                 const txt = text(num, cell);
-                if (cell.signed) {
+                const shown = cell.plus ? round(round(num * cell.factor, NOISE_DECIMALS), cell.decimals) : num;
+                if (cell.signed || cell.plus) {
                     const span = document.createElement('span');
-                    span.className = num < 0 ? data.format.negative : data.format.positive;
-                    span.textContent = txt;
+                    span.className = shown < 0 ? data.format.negative : (shown > 0 || !cell.plus ? data.format.positive : '');
+                    span.textContent = (cell.plus && shown > 0 ? '+' : '') + txt;
                     td.replaceChildren(span);
                 } else {
                     td.textContent = txt;
+                }
+                if (cell.sub) {
+                    const sub = document.createElement('span');
+                    sub.className = SUB_STYLE;
+                    sub.textContent = cell.sub;
+                    td.appendChild(sub);
                 }
             }
         });

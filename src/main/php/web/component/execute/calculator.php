@@ -258,6 +258,24 @@ class calculator
     }
 
     /**
+     * @param phrase $phr a phrase that is no item e.g. a row of a detail table
+     * @return string the hint of the phrase e.g. the full name of a ticker, an empty string if it has none
+     */
+    function phrase_hint(phrase $phr): string
+    {
+        return $this->own_text($this->cached($phr), triples::CALCULATOR_HINT) ?? '';
+    }
+
+    /**
+     * @param phrase $row a row of a detail table e.g. CHF cash
+     * @return phrase[] the phrases that the row is e.g. cash
+     */
+    function row_kinds(phrase $row): array
+    {
+        return array_filter(array_map(fn(phrase $trp) => $this->item_phrase($trp), $this->sub_items($this->cached($row), verbs::IS_ID)));
+    }
+
+    /**
      * @param phrase $item a repeated input item e.g. portfolio split input child portfolio
      * @return string the text of the button that adds an instance e.g. Add child
      */
@@ -382,7 +400,8 @@ class calculator
      *
      * @param phrase[] $cols the column items of the table
      * @return array per column its label, its phrase, its filter phrase, its colour style ('' without the colour flag),
-     *               if it is an instance of a repeated phrase and if it shows a phrase instead of a number
+     *               if it is an instance of a repeated phrase, if it shows a phrase instead of a number,
+     *               if it shows the plus sign and if it shows the unit of each number
      */
     function columns(array $cols): array
     {
@@ -394,9 +413,15 @@ class calculator
             $has_colour = $this->has_flag($col, triples::CALCULATOR_COLOUR);
             $repeated = $this->is_repeated($phr);
             $is_phrase = $this->has_flag($col, triples::CALCULATOR_PHRASE_COLUMN);
+            // a column can name an instance shorter e.g. First for the first child
+            $short = [];
+            foreach ($repeated ? $this->sub_items($col, verbs::HAS_ID) : [] as $sub) {
+                $short[$this->item_phrase($sub)?->id()] = $this->label($sub);
+            }
             foreach ($repeated ? $this->kinds($phr) : [$phr] as $col_phr) {
-                $label = $repeated ? mb_ucfirst($this->phrase_label($col_phr)) : $this->label($col);
-                $result[] = [$label, $col_phr, $flt, $has_colour ? $this->column_colour($colours++) : '', $repeated, $is_phrase];
+                $label = $repeated ? ($short[$col_phr->id()] ?? mb_ucfirst($this->phrase_label($col_phr))) : $this->label($col);
+                $result[] = [$label, $col_phr, $flt, $has_colour ? $this->column_colour($colours++) : '', $repeated, $is_phrase,
+                    $this->has_flag($col, triples::CALCULATOR_SIGNED), $this->has_flag($col, triples::CALCULATOR_COLUMN_UNIT)];
             }
         }
         return $result;
@@ -672,6 +697,13 @@ class calculator
                     $next[$prev_id] = $item->id();
                 }
             }
+            // a row can follow a row of another kind e.g. a stock after a bond, which keeps the order of the stocks
+            if (!$as_items and !in_array($item->id(), $next)) {
+                $prev_id = $this->previous_in_list($item, $ids);
+                if ($prev_id !== null) {
+                    $next[$prev_id] = $item->id();
+                }
+            }
         }
         // the longest chain from an item that follows no other item
         $chain = [];
@@ -696,6 +728,32 @@ class calculator
         }
         ksort($rest);
         return array_merge(array_map(fn(int $id) => $by_id[$id], $chain), array_values($rest));
+    }
+
+    /**
+     * @param phrase $item a phrase e.g. GIVN
+     * @param array $ids the ids of the phrases of the list
+     * @return int|null the id of the nearest phrase of the list before the item in its follower chain, also over phrases of other lists, null if there is none
+     */
+    private function previous_in_list(phrase $item, array $ids): ?int
+    {
+        $result = null;
+        $seen = [$item->id()];
+        $cur = $item;
+        while ($cur != null and $result === null) {
+            $prev = null;
+            foreach ($this->triples_from($cur) as $trp) {
+                if ($trp->get_verb()?->id() == verbs::FOLLOW_ID and !in_array($trp->get_to()?->id(), $seen)) {
+                    $prev = $trp->get_to();
+                }
+            }
+            if ($prev != null and in_array($prev->id(), $ids)) {
+                $result = $prev->id();
+            }
+            $seen[] = $prev?->id();
+            $cur = $prev == null ? null : $this->cached($prev);
+        }
+        return $result;
     }
 
     /**

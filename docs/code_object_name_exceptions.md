@@ -84,7 +84,7 @@ api_type_list: $api_typ_lst, $typ_lst, $with_related, $without_related
 arithmetic: $calc
 button_dsp: $btn
 calc_internal: $calc
-calculator: $btn_calc, $calc, $calc_be, $calc_empty, $calc_in, $chk_calc, $fld_calc, $in_calc, $js_calc, $no_btn_calc, $no_chk_calc, $wrn_calc
+calculator: $btn_calc, $calc, $calc_be, $calc_empty, $calc_in, $chk_calc, $fld_calc, $in_calc, $ins_calc, $js_calc, $no_btn_calc, $no_chk_calc, $one_calc, $wrn_calc
 change_action: $act, $typ
 change_field: $fld, $typ
 change_field_list: $cng_fld_cac
@@ -167,7 +167,7 @@ list_sort: $lst
 log: $log_ui
 math_function_report: $mth
 message: $ui_msg
-number_format: $fmt, $no_cnv
+number_format: $fmt, $no_cnv, $noise_fmt
 phr_ids: $ids_to_load, $phr_ids, $phr_ids_obj
 phrase_dsp: $phr_ui
 phrase_list: $add_lst, $added_phr_lst, $additional_added, $additional_added_phrases, $additional_added_triples, $all_phr, $below, $chart_lst, $child_lst, $col_lst, $common_phr_lst, $context_phr_lst, $ctx_lst, $db_phr_lst, $dbo, $dbo_ui, $dest_phr_lst, $exclude, $found, $found_lst, $full_lst, $gw_parts, $ind_lst, $itm_lst, $kept, $leaf_lst, $lnk_lst, $load_lst, $lst, $lst_imp, $lst_sym, $lvl_lst, $matches, $next, $page_lst, $phr, $phr_ch_19, $phr_ch_20, $phr_lst, $phr_lst1, $phr_lst_added, $phr_lst_context, $phr_lst_context_ui, $phr_lst_ex, $phr_lst_map, $phr_lst_ui, $phr_lst_used, $related, $remain_lst, $res_phr_lst, $result, $rm_lst, $row_lst, $row_parts, $seen, $self, $sort_lst, $src_phr_lst, $target, $tbl_lst, $time_lst, $typ_lst, $unit_lst, $wrd_only_lst, $zh_lst, $zh_part, $zh_reversed
@@ -260,7 +260,7 @@ ui_config: $ui_cfg
 ui_foaf: $foaf
 ui_im_export: $port
 ui_link: $link
-ui_list: $chk_list, $js_list, $list, $list_ctx, $list_hint, $lst_ui
+ui_list: $chk_list, $js_list, $list, $list_ctx, $list_hint, $lst_ui, $no_exp_list
 ui_preview: $preview
 ui_rank: $rank
 ui_select: $select

@@ -150,7 +150,9 @@ A repeated input:
 | element | triple in the sample | effect |
 |---|---|---|
 | section | `house heating detail fuel` · `has a` · `calculator section` | the detail table gets a collapsed section of its own with its label as the summary |
-| row number | `house heating detail fuel` · `has a` · `calculator row number` | the first column is the position of the row |
+| row number | `house heating detail fuel` · `has a` · `calculator row number` | the first column is the position of the row, and the row shows the `calculator hint` of its phrase as sub text |
+| column unit | `house heating detail column fuel` · `has a` · `calculator column unit` | each cell of the column shows the unit of its number as sub text e.g. shares |
+| signed column | `house heating detail column saving` · `has a` · `calculator signed` | a number of the column shows its sign in the style of the sign, also the plus sign |
 | order | `house heating detail fuel` · `is ranked by` · `price` | the rows are ordered by the number of the phrase, the highest first |
 | editable column | `house heating detail column price` · `has a` · `calculator editable` | the cells are number fields that join the save form |
 | phrase column | `house heating detail column billing unit` · `has a` · `calculator phrase column` | a cell shows the phrase that the numbers of the row have and that is a column phrase, e.g. `CHF per kWh` with `CHF per kWh` · `is a` · `billing unit` |
@@ -182,7 +184,7 @@ Two proposed rules for the detail tables need no keyword:
 
 | element | triple in the sample | effect |
 |---|---|---|
-| file import | `house heating detail fuel` · `has a` · `calculator file import` | an import button with the label of the triple; the file fills the values of its phrase |
+| file import | `house heating detail fuel` · `has a` · `calculator file import` | an import button with the label of the triple; the file fills the values of its phrase; on the page or its base phrase the triple is a list: a collapsed section with its label and an import button per item |
 | download | `house heating inputs` · `has a` · `calculator download` | exports the tables of the page as a spreadsheet |
 | printable report | `house heating inputs` · `has a` · `calculator printable report` | shows the page as a printable pdf |
 | copy | `house heating detail fuel` · `has a` · `calculator copy` | copies the rows of the table as zukunft.com json or as csv |

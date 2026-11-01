@@ -43,6 +43,9 @@
       "name": "column"
     },
     {
+      "name": "unit"
+    },
+    {
       "name": "group"
     },
     {
@@ -264,6 +267,12 @@
       "to": "printable"
     },
     {
+      "name": "column unit",
+      "from": "unit",
+      "verb": "of",
+      "to": "column"
+    },
+    {
       "name": "page independent",
       "from": "independent",
       "verb": "of",
@@ -394,6 +403,14 @@
       "verb": "has a",
       "to": "page independent",
       "code_id": "system_calculator_page_independent"
+    },
+    {
+      "name": "calculator column unit",
+      "description": "flag: a detail table column with a triple to this keyword shows the unit of each number as the sub text of the cell e.g. shares or CHF",
+      "from": "calculator (system)",
+      "verb": "has a",
+      "to": "column unit",
+      "code_id": "system_calculator_column_unit"
     }
   ]
 }

@@ -145,6 +145,9 @@ class ui_list extends ui_base
     const string CALC_OPTION_SEP = ' — ';
     // the header of the row number of a detail table
     const string CALC_ROW_NUMBER_HEAD = '#';
+    // the icon of the button to remove an instance of a repeated field and the instances that a field keeps
+    const string CALC_REMOVE_ICON = 'fas fa-times';
+    const int CALC_MIN_INSTANCES = 1;
     // a warning ignores only the float noise of a calculation e.g. 0.7 + 0.3 - 1, but no real excess
     const int CALC_WARNING_DECIMALS = 12;
     // a check row ignores only the float noise of a calculation, relative to the size of the numbers
@@ -189,6 +192,8 @@ class ui_list extends ui_base
     const string CALC_CELL_FACTOR = 'factor';
     const string CALC_CELL_DECIMALS = 'decimals';
     const string CALC_CELL_PERCENT_DECIMALS = 'percent_decimals';
+    const string CALC_CELL_PLUS = 'plus';
+    const string CALC_CELL_SUB = 'sub';
     const string CALC_DEC_POINT = 'dec_point';
     const string CALC_UNIT_SEP = 'unit_sep';
     const string CALC_THOUSAND_SEP = 'thousand_sep';
@@ -2687,9 +2692,47 @@ class ui_list extends ui_base
         if ($unit != '') {
             $input .= $html->span($unit, styles::INPUT_UNIT);
         }
+        $input .= $this->calculator_remove_button($calc, $phr, $instance);
         $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
         return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW)
             . $this->calculator_hint($hint, $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * the button to remove an instance of a repeated field at its place, without a function so far (docs/llm/pending.md)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr the phrase of the field e.g. child portfolio
+     * @param phrase|null $instance the instance of the field e.g. first child portfolio, null for a field that is not repeated
+     * @return string the html code of the button or an empty string if the field needs at least this instance
+     */
+    function calculator_remove_button(calculator $calc, phrase $phr, ?phrase $instance): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        if ($instance != null and count($calc->kinds($phr)) > self::CALC_MIN_INSTANCES) {
+            $title = $mtr->txt(msg_id::CALCULATOR_REMOVE) . ' ' . $calc->phrase_label($instance);
+            $result = $html->button_icon($html->icon(self::CALC_REMOVE_ICON), $title, styles::CALC_BUTTON_REMOVE);
+        }
+        return $result;
+    }
+
+    /**
+     * the section with the import buttons of the page at their place, without a function so far (docs/llm/pending.md)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @return string the html code of the section or an empty string if the page has no such list
+     */
+    function calculator_imports(calculator $calc): string
+    {
+        $html = new html_base();
+        $buttons = '';
+        foreach ($calc->items(triples::CALCULATOR_FILE_IMPORT) as $item) {
+            $buttons .= $html->button($html->esc($calc->label($item)), html_base::BUTTON, styles::CALC_BUTTON);
+        }
+        $summary = $calc->own_label($calc->group(triples::CALCULATOR_FILE_IMPORT));
+        return $buttons == '' ? '' : $html->details($html->esc($summary), $html->div($buttons, styles::CALC_IMPORTS));
     }
 
     /**
@@ -3484,8 +3527,71 @@ class ui_list extends ui_base
      */
     private function row_decimals(?phrase $phr, value_list $lst): ?int
     {
-        $num = $phr == null ? null : $lst->get_by_names([$phr->name(), triples::CALCULATOR_DECIMALS])?->number();
-        return $num === null ? null : (int)$num;
+        return $phr == null ? null : $this->decimals_of([$phr], $lst);
+    }
+
+    /**
+     * @param array $phrases the phrases that set the decimals e.g. lot value in CHF and cash
+     * @param value_list $lst the values with the property values
+     * @return int|null the decimals of the value with exactly these phrases and the keyword calculator decimals, null if there is none
+     */
+    private function decimals_of(array $phrases, value_list $lst): ?int
+    {
+        $names = [...array_map(fn(phrase $phr) => $phr->name(), $phrases), triples::CALCULATOR_DECIMALS];
+        $result = null;
+        foreach ($lst->lst() as $val) {
+            $is_exact = ($val instanceof value and count($val->phr_lst()->names()) == count($names) and $val->match_all($names));
+            if ($result === null and $is_exact) {
+                $result = (int)$val->number();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $row_phr the phrase of the row e.g. CHF cash
+     * @param array $col the column (calculator::columns)
+     * @param value_list $lst the values with the property values
+     * @return int|null the decimals that the column phrase or its filter set for a kind of the row e.g. for cash, else for all rows, null for the decimals of the column
+     */
+    private function cell_decimals(calculator $calc, ?phrase $row_phr, array $col, value_list $lst): ?int
+    {
+        $col_phrases = array_filter([$col[1], $col[2]]);
+        $result = null;
+        foreach ($row_phr == null ? [] : $calc->row_kinds($row_phr) as $kind) {
+            foreach ($col_phrases as $phr) {
+                $result ??= $this->decimals_of([$phr, $kind], $lst);
+            }
+        }
+        foreach ($col_phrases as $phr) {
+            $result ??= $this->decimals_of([$phr], $lst);
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value|null $val the number of a cell
+     * @param phrase|null $row_phr the phrase of the row
+     * @param array $col the column (calculator::columns)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the unit of the number for the sub text of a column with the flag: the name of the measure e.g. EUR and not its symbol, else the one phrase besides the row and the column e.g. shares
+     */
+    private function calculator_column_unit(?sandbox_value $val, ?phrase $row_phr, array $col, user_message $msg): string
+    {
+        $result = '';
+        if ($col[7] and $val != null) {
+            foreach ($val->phr_lst()->lst() as $phr) {
+                if ($result == '' and $phr->is_measure($msg)) {
+                    $result = $phr->name();
+                }
+            }
+            $others = array_diff($val->phr_lst()->names(), [$row_phr?->name(), $col[1]?->name(), $col[2]?->name()]);
+            if ($result == '' and count($others) == 1) {
+                $result = reset($others);
+            }
+        }
+        return $result;
     }
 
     /**
@@ -3665,13 +3771,19 @@ class ui_list extends ui_base
         }
         // the header names the unit, so only the decimals are shared by a column, and a detail shows rough numbers
         $fmts = $this->calculator_formats($vals, false, $this->calculator_digits(words::ROUGH), $msg);
-        // a column can show more than the rough digits e.g. the target 3.5, which is rounded to the count 4 next to it
-        $col_decimals = array_map(fn($col) => $this->row_decimals($col[1], $lst), $cols);
         $body = '';
         foreach ($rows as $i => $row) {
             $texts = $this->calculator_phrase_cells($calc, $row[1][1], $cols, $lst, $msg);
             $number = $numbered ? (string)($i + 1) : '';
-            $body .= $this->calculator_detail_row($row[0], $vals[$i], $fmts, $row[2], $msg, $texts, $number, $col_decimals);
+            // a column can show more than the rough digits e.g. the target 3.5, which is rounded to the count 4 next to it
+            $col_decimals = array_map(fn($col) => $this->cell_decimals($calc, $row[1][1], $col, $lst), $cols);
+            $units = [];
+            foreach ($cols as $c => $col) {
+                $units[$c] = $this->calculator_column_unit($vals[$i][$c], $row[1][1], $col, $msg);
+            }
+            $sub = ($numbered and $row[1][1] != null) ? $calc->phrase_hint($row[1][1]) : '';
+            $body .= $this->calculator_detail_row($row[0], $vals[$i], $fmts, $row[2], $msg, $texts, $number, $col_decimals,
+                array_column($cols, 6), $units, $sub);
         }
         return $this->calculator_table($head, $body);
     }
@@ -3754,26 +3866,33 @@ class ui_list extends ui_base
         $phr_lst = $exp->phr_lst()->lst();
         $other = array_filter($phr_lst, fn(phrase $phr) => !$is_exp($phr));
         $got = $this->calculator_general_value($other, $lst, $msg, [], true);
-        $same = ($got != null and $got->number() !== null and $this->calculator_check_same($got->number(), $exp->number()));
+        // a number that is missing differs and has no text, also an expected value without a number
+        $got_num = $got?->number();
+        $exp_num = $exp->number();
+        $same = ($got_num !== null and $exp_num !== null and $this->calculator_check_same($got_num, $exp_num));
         $status = $mtr->txt($same ? msg_id::CALCULATOR_CHECK_MATCH : msg_id::CALCULATOR_CHECK_DIFFERS);
         $src = $exp->src?->name() ?? '';
         $first = $html->esc($label) . ($src == '' ? '' : $html->span($html->esc($src), styles::CALC_SUB));
-        $got_txt = $got == null ? '' : $this->calculator_cell_text($got, new number_format(), false, $msg);
+        $got_txt = $got_num === null ? '' : $this->calculator_cell_text($got, new number_format(), false, $msg);
+        $exp_txt = $exp_num === null ? '' : $this->calculator_cell_text($exp, new number_format(), false, $msg);
         $got_id = '';
         $status_id = '';
-        if ($got != null) {
+        if ($got_num !== null) {
             $got_id = $this->calculator_cell_id($got);
-            $status_id = $got_id . self::CALC_CHECK_STATUS_SUFFIX;
             $this->cell_plan[$got_id] = $this->calculator_cell_format($got, new number_format(), false, false, $msg);
+        }
+        // without an expected number the status stays the same, so the script has nothing to update
+        if ($got_num !== null and $exp_num !== null) {
+            $status_id = $got_id . self::CALC_CHECK_STATUS_SUFFIX;
             $this->check_plan[] = [
                 self::CALC_CHECK_ID => $status_id,
                 self::CALC_CELL_NUMBER => $got->html_id(),
-                self::CALC_CHECK_EXPECTED => $exp->number(),
+                self::CALC_CHECK_EXPECTED => $exp_num,
                 self::CALC_CHECK_MATCH => [$mtr->txt(msg_id::CALCULATOR_CHECK_MATCH), styles::CALC_STATUS_OK],
                 self::CALC_CHECK_DIFFERS => [$mtr->txt(msg_id::CALCULATOR_CHECK_DIFFERS), styles::CALC_STATUS_FAIL],
             ];
         }
-        $cells = $html->block(html_base::TD, $html->esc($this->calculator_cell_text($exp, new number_format(), false, $msg)), styles::CALC_NUMBER)
+        $cells = $html->block(html_base::TD, $html->esc($exp_txt), styles::CALC_NUMBER)
             . $html->block(html_base::TD, $html->esc($got_txt), styles::CALC_NUMBER, $got_id)
             . $html->block(html_base::TD, $html->span($html->esc($status), $same ? styles::CALC_STATUS_OK : styles::CALC_STATUS_FAIL), styles::CALC_NUMBER, $status_id);
         return $this->calculator_row($first, $cells, false);
@@ -4062,9 +4181,20 @@ class ui_list extends ui_base
      * @param bool $with_unit true to add the unit e.g. in the main table, but not in a detail table whose header names the unit
      * @param user_message $msg to report a problem of the phrase types
      * @param int|null $decimals the decimals that the row sets, null for the decimals of the column
+     * @param bool $plus true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero
+     * @param string $sub the sub text behind the number e.g. the unit shares
      * @return string the html code of the number cell, empty if the page has no number
      */
-    private function calculator_cell(?sandbox_value $val, array $fmts, bool $signed, bool $with_unit, user_message $msg, ?int $decimals = null): string
+    private function calculator_cell(
+        ?sandbox_value $val,
+        array          $fmts,
+        bool           $signed,
+        bool           $with_unit,
+        user_message   $msg,
+        ?int           $decimals = null,
+        bool           $plus = false,
+        string         $sub = ''
+    ): string
     {
         $html = new html_base();
         $txt = '';
@@ -4078,9 +4208,18 @@ class ui_list extends ui_base
             $txt = $html->esc($this->calculator_cell_text($val, $fmt, $with_unit, $msg, $decimals));
             if ($signed) {
                 $txt = $html->span($txt, $val->number() < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
+            } elseif ($plus) {
+                $shown = round(round($val->number() * $fmt->factor, number_format::NOISE_DECIMALS), $fmt->decimals);
+                $txt = $html->span(($shown > 0 ? '+' : '') . $txt,
+                    $shown > 0 ? styles::CALC_POSITIVE : ($shown < 0 ? styles::CALC_NEGATIVE : ''));
+            }
+            if ($sub != '') {
+                $txt .= $html->span($html->esc($sub), styles::CALC_SUB);
             }
             $id = $this->calculator_cell_id($val);
             $this->cell_plan[$id] = $this->calculator_cell_format($val, $fmt, $signed, $with_unit, $msg, $decimals);
+            $this->cell_plan[$id][self::CALC_CELL_PLUS] = $plus;
+            $this->cell_plan[$id][self::CALC_CELL_SUB] = $sub;
         }
         return $html->block(html_base::TD, $txt, styles::CALC_NUMBER, $id);
     }
@@ -4625,6 +4764,9 @@ class ui_list extends ui_base
      * @param array $texts per phrase column its text instead of a number (calculator_phrase_cells)
      * @param string $number the position of the row in front of its label, '' for a table without row numbers
      * @param array $col_decimals per column the decimals that its phrase sets, null for the decimals of the column
+     * @param array $plus per column if it shows the plus sign
+     * @param array $units per column the unit that a cell shows as sub text, '' for none
+     * @param string $sub the sub text of the label e.g. the full name of a ticker
      * @return string the html code of the row of a detail table
      */
     private function calculator_detail_row(
@@ -4635,7 +4777,10 @@ class ui_list extends ui_base
         user_message $msg,
         array        $texts = [],
         string       $number = '',
-        array        $col_decimals = []
+        array        $col_decimals = [],
+        array        $plus = [],
+        array        $units = [],
+        string       $sub = ''
     ): string
     {
         $html = new html_base();
@@ -4643,9 +4788,9 @@ class ui_list extends ui_base
         foreach ($vals as $c => $val) {
             $cells .= array_key_exists($c, $texts)
                 ? $html->block(html_base::TD, $html->esc($texts[$c]))
-                : $this->calculator_cell($val, $fmts[$c] ?? [], false, false, $msg, $col_decimals[$c] ?? null);
+                : $this->calculator_cell($val, $fmts[$c] ?? [], false, false, $msg, $col_decimals[$c] ?? null, $plus[$c] ?? false, $units[$c] ?? '');
         }
-        $first = $html->esc($label);
+        $first = $html->esc($label) . ($sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB));
         if ($number != '') {
             $cells = $html->block(html_base::TD, $first) . $cells;
             $first = $number;

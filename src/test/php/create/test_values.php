@@ -1717,15 +1717,20 @@ class test_values extends test_objects
 
     /**
      * @param float|null $calculated the number with the same phrases as the expected number, null for none
+     * @param bool $has_expected false for an expected value without a number
      * @return value_list_ui the expected number and the calculated number of the check table test
      */
-    function value_list_calculator_check_ui(?float $calculated): value_list_ui
+    function value_list_calculator_check_ui(?float $calculated, bool $has_expected = true): value_list_ui
     {
         $tl = new test_lib();
         $t_wrd = new test_words($this->env);
         $inh = $t_wrd->word_inhabitant()->phrase();
         $lst = new value_list($this->env->usr1);
-        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_expected()->phrase()]));
+        $exp = $this->value_for_phrases([$inh, $t_wrd->word_expected()->phrase()]);
+        if (!$has_expected) {
+            $exp->set_number(null);
+        }
+        $lst->add($exp);
         if ($calculated !== null) {
             $lst->add($this->value_for_phrases([$inh], $calculated));
         }

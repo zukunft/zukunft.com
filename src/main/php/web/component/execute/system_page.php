@@ -210,6 +210,7 @@ class system_page extends component
         'page_independent' => triples::CALCULATOR_PAGE_INDEPENDENT,
         'row_number' => triples::CALCULATOR_ROW_NUMBER,
         'phrase_column' => triples::CALCULATOR_PHRASE_COLUMN,
+        'column_unit' => triples::CALCULATOR_COLUMN_UNIT,
         'decimals' => triples::CALCULATOR_DECIMALS,
         'read_only' => triples::CALCULATOR_READ_ONLY,
         'checkbox' => triples::CALCULATOR_CHECKBOX,
@@ -242,6 +243,7 @@ class system_page extends component
         msg_id::CALCULATOR_SOURCES,
         msg_id::CALCULATOR_COPY_JSON,
         msg_id::CALCULATOR_COPY_CSV,
+        msg_id::CALCULATOR_REMOVE,
         msg_id::CALCULATOR_CHECK_VALUE,
         msg_id::CALCULATOR_CHECK_EXPECTED,
         msg_id::CALCULATOR_CHECK_CALCULATED,
@@ -1573,7 +1575,8 @@ class system_page extends component
             $result .= $list->calculator_check($calc, $lst, $cfg, $msg)
                 . $list->calculator_diagrams($calc, $lst, $msg)
                 . $list->calculation_detail_tables($calc, $dbo, $lst, $msg, true)
-                . $list->calculator_notes($calc);
+                . $list->calculator_notes($calc)
+                . $list->calculator_imports($calc);
             $notes = $list->formula_notes($dbo, $msg, $cfg);
             $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
                 . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))

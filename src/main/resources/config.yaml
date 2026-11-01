@@ -296,9 +296,9 @@ zukunft.com:
               name: "CBAM Calculator"
               tooltip: "step by step process to calculate the carbon border adjustment"
             portfolio_split:
-              url: "/http/view.php?m=4&id=1954"
-              view name: ""
-              phrase name: ""
+              url: ""
+              view name: "Calculator"
+              phrase name: "example portfolio split"
               name: "Portfolio split"
               tooltip: "step by step process to calculate the splitting of an investment portfolio taking the round lots into account"
             company_sheet:

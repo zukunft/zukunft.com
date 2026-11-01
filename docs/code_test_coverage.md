@@ -13,7 +13,7 @@ src/main/php, api, http or src/test/php calls, for the developer to decide per
 function whether it is removed or kept; a function whose name appears as a quoted
 text may be called by name e.g. as a callable or a property hook and is marked
 
-1556 of 6328 public functions have at least 2 unit test calls; the 4568 functions below do not; the 204 functions of the last section are called nowhere
+1559 of 6333 public functions have at least 2 unit test calls; the 4570 functions below do not; the 204 functions of the last section are called nowhere
 
 ## 1999 functions of main backend have no test at all
 
@@ -2266,7 +2266,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- id_to_code_id - 0 unit test calls
 ```
 
-## 891 functions of frontend have no test at all
+## 890 functions of frontend have no test at all
 
 ```
 \-- ListBase
@@ -2290,8 +2290,6 @@ text may be called by name e.g. as a callable or a property hook and is marked
 \-- calculator
     \-- button_label - 0 unit test calls
     \-- diagram_title - 0 unit test calls
-    \-- item_phrase - 0 unit test calls
-    \-- kinds - 0 unit test calls
     \-- number_note - 0 unit test calls
     \-- options - 0 unit test calls
     \-- own_label - 0 unit test calls
@@ -2497,6 +2495,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- br - 0 unit test calls
     \-- br2 - 0 unit test calls
     \-- button - 0 unit test calls
+    \-- button_icon - 0 unit test calls
     \-- button_submit - 0 unit test calls
     \-- change_blocked - 0 unit test calls
     \-- change_icon - 0 unit test calls
@@ -4533,7 +4532,7 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- table_extension - 5 unit test calls shared by 7 classes
 ```
 
-## 523 functions of frontend have incomplete tests
+## 526 functions of frontend have incomplete tests
 
 ```
 \-- ListBase
@@ -4553,7 +4552,10 @@ text may be called by name e.g. as a callable or a property hook and is marked
     \-- set - 2 unit test calls shared by 16 classes
 \-- calculator
     \-- filter - 3 unit test calls shared by 5 classes
+    \-- item_phrase - 1 unit test calls
+    \-- kinds - 1 unit test calls
     \-- phrases - 1 unit test calls shared by 3 classes
+    \-- row_kinds - 1 unit test calls
 \-- change_log_link_list
     \-- tbl - 3 unit test calls shared by 7 classes
 \-- change_log_list

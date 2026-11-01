@@ -336,6 +336,12 @@ class triple_names
     // the keyword, the button and its label of the button test, which follow the check
     const int CALC_BUTTON_FIRST_ID = 906;
     const string CALC_BUTTON_COM = 'Download the inhabitants';
+    // the triples of the test with two instances of a repeated field and the imports, which follow the button
+    const int CALC_INSTANCES_FIRST_ID = 902;
+    const string CALC_SHORT_LABEL = 'Short canton';
+    const string CALC_ROW_HINT = 'The canton of Bern';
+    const string CALC_IMPORTS_LABEL = 'Inputs of Zurich';
+    const string CALC_IMPORT_LABEL = 'Import the inhabitants';
     // the triples of the calculation result test, which follow the 5 triples of the input test
     const int CALC_RESULT_FIRST_ID = 954;
     const string CALC_ZH_COLUMNS_LABEL_COM = 'Main numbers';
@@ -608,9 +614,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2753;
+    const int SHARE_RATIO_ID = 2755;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2805;
+    const int SHARE_SYMBOL_ID = 2807;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

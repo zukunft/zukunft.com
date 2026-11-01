@@ -398,6 +398,8 @@ class triples
     const string CALCULATOR_ROW_NUMBER_CODE_ID = 'system_calculator_row_number';
     const string CALCULATOR_PHRASE_COLUMN = 'calculator phrase column';
     const string CALCULATOR_PHRASE_COLUMN_CODE_ID = 'system_calculator_phrase_column';
+    const string CALCULATOR_COLUMN_UNIT = 'calculator column unit';
+    const string CALCULATOR_COLUMN_UNIT_CODE_ID = 'system_calculator_column_unit';
     const string CALCULATOR_PAGE_INDEPENDENT = 'calculator page independent';
     const string CALCULATOR_PAGE_INDEPENDENT_CODE_ID = 'system_calculator_page_independent';
     // the flags of a detail table and of its columns by their code id
@@ -406,6 +408,7 @@ class triples
         self::CALCULATOR_SECTION => self::CALCULATOR_SECTION_CODE_ID,
         self::CALCULATOR_ROW_NUMBER => self::CALCULATOR_ROW_NUMBER_CODE_ID,
         self::CALCULATOR_PHRASE_COLUMN => self::CALCULATOR_PHRASE_COLUMN_CODE_ID,
+        self::CALCULATOR_COLUMN_UNIT => self::CALCULATOR_COLUMN_UNIT_CODE_ID,
     ];
     const string CALCULATOR_FILE_IMPORT = 'calculator file import';
     const string CALCULATOR_FILE_IMPORT_CODE_ID = 'system_calculator_file_import';
