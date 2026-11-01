@@ -1938,6 +1938,22 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the request cache of the calculation result test with a colour and a hint of the detail table
+     */
+    function list_calculator_detail_style_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_detail_style());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculation result test with the sign flag on a row
+     */
+    function list_calculator_signed_row_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_signed_row());
+    }
+
+    /**
      * @return phrase_list_ui the request cache of the number note test: the calculation result test
      *         with a note behind the unit of the number of the row inhabitants
      */

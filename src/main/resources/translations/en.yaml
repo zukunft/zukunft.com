@@ -925,6 +925,7 @@ messages:
   calculator_sources: "Sources"
   calculator_copy_json: "Copy as zukunft.com JSON"
   calculator_copy_csv: "Copy as CSV"
+  calculator_diagram_final: "final"
   calculator_remove: "Remove the"
   calculator_check_value: "Value"
   calculator_check_expected: "Expected"

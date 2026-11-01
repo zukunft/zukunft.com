@@ -906,7 +906,8 @@ a:hover {
 /* the two panels stack on phones; the colours are the zukunft.com blues and grey of this file */
 .use-case {
     width: 100%;
-    max-width: 1180px;
+    /* the input panel, the gap and the result panel, whose width a calculator page can set */
+    max-width: calc(340px + 24px + var(--calc-result-width, 816px));
     margin: 0 auto;
     display: grid;
     gap: 24px;
@@ -931,6 +932,8 @@ a:hover {
     border-radius: 8px;
     padding: 18px;
     display: grid;
+    /* a wide table scrolls inside of the panel and never widens it across its border */
+    grid-template-columns: minmax(0, 1fr);
     gap: 14px;
     min-width: 0;
 }
@@ -971,7 +974,9 @@ a:hover {
 .use-case .inputs .field label {
     color: var(--page-link);
 }
-.use-case .field .hint {
+.use-case .field .hint,
+.use-case .check .hint,
+.use-case p.hint {
     font-size: .76rem;
     color: var(--page-grey);
 }
@@ -992,6 +997,51 @@ a:hover {
 }
 .use-case .field .row > input {
     flex: 1 1 auto;
+}
+/* the remove button of an instance keeps its button padding that the row rule above resets */
+.use-case .field .row > .btn {
+    padding: 2px 8px;
+    flex-shrink: 0;
+}
+/* the button to add an instance is as wide as its text */
+.use-case .inputs > .btn-sm {
+    justify-self: start;
+    padding: .25rem .5rem;
+    font-size: .875rem;
+}
+/* the save button is as wide as the other buttons of the input panel */
+.use-case .panel form .btn {
+    width: 100%;
+    margin-left: 0;
+}
+/* the selector keeps its arrow, which the bootstrap form-control removes */
+.use-case select {
+    appearance: auto;
+}
+/* a checkbox with its label and below it the hint */
+.use-case .check {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: .88rem;
+}
+.use-case .check span {
+    display: grid;
+}
+.use-case input[type=checkbox] {
+    width: auto;
+    accent-color: var(--page-link);
+}
+.use-case .ro {
+    padding: 7px 9px;
+    border: 1px dashed var(--page-border);
+    border-radius: 6px;
+    width: 100%;
+    color: var(--page-grey);
+}
+.use-case .warn {
+    font-size: .8rem;
+    color: var(--page-negative);
 }
 .use-case input,
 .use-case select {
@@ -1099,6 +1149,67 @@ a:hover {
     font-size: .76rem;
     color: var(--page-grey);
     font-weight: 400;
+}
+/* the header, the detail cells and the diagram line of a column with the keyword calculator colour: a single column, then the instances cycling */
+.use-case .col-first {
+    color: #274b8f;
+}
+.use-case .col-1 {
+    color: #385eb7;
+}
+.use-case .col-2 {
+    color: #6b86c2;
+}
+.use-case .col-3 {
+    color: #5476c8;
+}
+.use-case .col-4 {
+    color: #8ea3d3;
+}
+/* the status of a row of the check table */
+.use-case .pill {
+    display: inline-block;
+    font-size: .72rem;
+    padding: 1px 7px;
+    border-radius: 10px;
+    border: 1px solid currentColor;
+}
+.use-case .fail {
+    color: var(--page-negative);
+}
+/* the line diagram: the lines and points take the colour of their group */
+.use-case .chart svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+.use-case .chart line {
+    stroke: var(--page-border);
+    stroke-dasharray: 3 3;
+}
+.use-case .chart line:nth-of-type(2) {
+    stroke-dasharray: none;
+}
+.use-case .chart polyline {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linejoin: round;
+}
+.use-case .chart circle {
+    fill: currentColor;
+}
+.use-case .chart text {
+    font-size: 11px;
+    fill: var(--page-grey);
+}
+.use-case .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    font-size: .8rem;
+    color: var(--page-grey);
+    margin-top: 6px;
 }
 /* the sign of a number of a signed row group; red is the bootstrap danger colour */
 .use-case .pos {

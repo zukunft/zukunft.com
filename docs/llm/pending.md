@@ -2,24 +2,121 @@
 
 ## portfolio split page compared with its sample
 
-The steps fix `portfolio_split_calculator_diff.md` and the three case reports, 
-in this order, because each step makes the findings of the next one readable. 
-Numbers like (5) are the open points in the description of `portfolio_split_calculator.json`, 
-whose keywords are `PROPOSED NEW ELEMENT` in `calculator_keywords.json` and described 
-in `docs/json_structure.md` "Proposed elements". Every renderer change goes into `ui_list.php` 
-and `calculator_json.js` with a positive and a negative test. Run `test/test_part.php` 
-after each step; it already renders only this page.
+The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
+and the related reports.
 
-### step 1: increase column width
+### fix errors
 
-adjust the column width of 'Result per beneficiary' in src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
-so that in matches src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html
-and all number of the portfolio_split_calculator_js are within the border
+the call of http://localhost/http/view.php?m=16&id=-3286&u=11 shows on the screen these messages:
 
-because the column width of 'Main results over the lifetime' src/test/resources/web/html/use_cases/pv_lifetime_balance_js.html
-should not be changes the width must be a parameter that can be adjusted for each Calculator editor 
-which probably implies that a 'system triple' for that must be created where the other Calculator related system triples are added
-which implies that the ids are shifted, which is fine
+no word or triple found with the name "", trying to add ""scale million to one" (16)" which is already part of the formula list, trying to add ""scale billion to one" (17)" which is already part of the formula list, trying to add ""increase" (21)" which is already part of the formula list, trying to add ""currency conversion calculation" (32)" which is already part of the formula list, trying to add ""reverse currency conversion" (33)" which is already part of the formula list, trying to add ""bid-ask spread absolut" (34)" which is already part of the formula list, trying to add ""bid-ask spread percent" (35)" which is already part of the formula list, trying to add ""rate percent change" (36)" which is already part of the formula list, trying to add ""forward rate from spot" (37)" which is already part of the formula list, trying to add ""yearly average turnover by month sum" (38)" which is already part of the formula list, trying to add ""USD cross rate" (39)" which is already part of the formula list, trying to add ""density (formula)" (56)" which is already part of the formula list, trying to add ""share of canton (formula)" (57)" which is already part of the formula list, trying to add ""GDP per capita (formula)" (59)" which is already part of the formula list, trying to add ""foreign count (formula)" (60)" which is already part of the formula list, trying to add ""welfare (formula)" (61)" which is already part of the formula list, trying to add ""annual damage in money" (107)" which is already part of the formula list, trying to add ""person years per billion USD by the carbon border tariff" (117)" which is already part of the formula list, trying to add ""annual damage share from the reasons" (121)" which is already part of the formula list, trying to add ""annual total formula" (180)" which is already part of the formula list, trying to add ""stock holding value" (200)" which is already part of the formula list, trying to add ""bond holding value" (201)" which is already part of the formula list, trying to add ""foreign bond holding value" (202)" which is already part of the formula list, trying to add ""foreign cash holding value" (203)" which is already part of the formula list, trying to add ""CHF cash holding value" (204)" which is already part of the formula list, trying to add ""lot value of a holding" (205)" which is already part of the formula list, trying to add ""walk count of the parent" (206)" which is already part of the formula list, trying to add ""target value of a beneficiary" (207)" which is already part of the formula list, trying to add ""target share excess formula" (208)" which is already part of the formula list, trying to add ""target share difference formula" (209)" which is already part of the formula list, trying to add ""unit value of a holding" (210)" which is already part of the formula list, trying to add ""walk target of a child" (211)" which is already part of the formula list, trying to add ""walk count of the first child" (212)" which is already part of the formula list, trying to add ""walk count of the second child" (213)" which is already part of the formula list, trying to add ""walk deviation of a child" (214)" which is already part of the formula list, trying to add ""split deviation formula" (215)" which is already part of the formula list, trying to add ""currency conversion per share" (242)" which is already part of the formula list, trying to add ""earnings multiple target" (243)" which is already part of the formula list, trying to add ""free cash flow per share formula" (244)" which is already part of the formula list, trying to add ""net debt per share formula" (245)" which is already part of the formula list, trying to add ""upside formula" (250)" which is already part of the formula list, trying to add ""method upside formula" (251)" which is already part of the formula list, trying to add ""trailing P/E formula" (255)" which is already part of the formula list, trying to add ""forward P/E formula" (256)" which is already part of the formula list, trying to add ""market capitalisation formula" (259)" which is already part of the formula list, trying to add ""enterprise value multiple formula" (260)" which is already part of the formula list, trying to add ""free cash flow yield formula" (261)" which is already part of the formula list, trying to add ""dividend yield formula" (262)" which is already part of the formula list, trying to add ""BIS Triennial Survey Turnover of OTC foreign exchange instruments Daily averages in April 2022" (11)" which is already part of the source list, trying to add ""BIS Triennial Central Bank Survey 2022: Currency distribution of OTC foreign exchange turnover" (12)" which is already part of the source list, trying to add ""Wikipedia Template:Most traded currencies" (13)" which is already part of the source list, trying to add ""Statistik Stadt Zürich 2025" (25)" which is already part of the source list, trying to add ""Wikipedia Zurich" (27)" which is already part of the source list, trying to add ""BAK Economics 2025" (30)" which is already part of the source list, trying to add ""Statistik Kanton Zürich 2025" (43)" which is already part of the source list, trying to add ""BFS 2024/2025" (44)" which is already part of the source list, trying to add ""S&P Global 2025" (46)" which is already part of the source list, trying to add ""bank reporting bank leu client xy" (264)" which is already part of the source list, trying to add ""split agreement" (265)" which is already part of the source list, trying to add ""Trading Economics USD/CHF" (289)" which is already part of the source list
+
+try to fix these issues
+
+### case name 
+
+add to the src/test/resources/web/html/use_cases/portfolio_split_calculator_sample.html 
+
+### import
+
+based on this csv and a list of context phrases e.g. 'example portfolio split'
+
+Portfolio,040270501213,Date,06.02.26,,,,,,,,,,,,,,,,,,,
+List of Positions,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+Asset Class,Instrument Name,Instrument,Quantity,Region,Currency,Price,Price Curr,Quote Date,Maturity Date,Exchange Rate,Market Value,Ref. Curr,MV%,Cost Price,Ref. Curr,Exchange Rate,Net Cost Value,Ref. Curr,Capital P%L,Currency P&L,P&L(%),Indicative LTV (%)
+Cash and short-term investments , CH00 0000 0000 0000 0000 1,2120.001.01,484296.24,Other Region,CHF,1,CHF,,,1,484296.24,CHF,2.769954656,,CHF,1,424896.24,CHF,0,0,0,
+Cash and short-term investments , CH00 0000 0000 0000 0000 2,2120.814.01,209848.13,Other Region,EUR,1,EUR,,,0.9323,195641.41,CHF,1.275412178,,CHF,,,CHF,,,,
+Cash and short-term investments , TREUHAND CALLGELD - Deutsch Bank BONDS S.A.,N987272-,320000,Eurozone,EUR,1,EUR,,,0.9323,270571.28,CHF,1.763889878,1,CHF,0.93,297600.00,CHF,-9.33,0.25,-9.08,
+Cash and short-term investments , CH00 0000 0000 0000 0000 3,2120.333.01,205534.45,Other Region,USD,1,USD,,,0.8036,165167.48,CHF,1.076748623,,CHF,,,CHF,,,,
+Bonds and similar positions , Oak Lu Fd Gl RhC,LU0854923223,934.784,Eurozone,CHF,150.269,CHF,05.02.26,,1,140469.06,CHF,0.915736338,120.58,CHF,1,112713.36,CHF,24.63,0,24.63,70
+Bonds and similar positions , Oak Lu Fd Gl RhC,LU0854923140,200000,Eurozone,EUR,149.03,EUR,05.02.26,,0.9323,277881.34,CHF,1.811545111,,CHF,,,CHF,,,,90
+Bonds and similar positions , 4.1 PG 26 Bds,US742718FY05,150000,North America,USD,99.04,USD,05.02.26,,0.8036,119382.82,CHF,0.778272331,,CHF,,,CHF,,,,90
+Bonds and similar positions , 4.375 EBRD 28 Bds,US29874QEX88,200000,United Kingdom,USD,101.51,USD,05.02.26,09.03.28,0.8036,165659.9,CHF,1.079958748,100.28,CHF,0.8948,179467.46,CHF,1.1,-10.2,-9.1,90
+Bonds and similar positions , 4 Inter-Am 28 Bds,US4581X0EH74,250000,North America,USD,100.19,USD,05.02.26,,0.8036,201281.71,CHF,1.312182028,,CHF,,,CHF,,,,90
+Equities and similar positions , ABB Rg,CH0012221716,6000,Switzerland,CHF,61.74,CHF,05.02.26,,1,370440,CHF,2.414947242,17.34,CHF,1,104036.52,CHF,256.07,0,256.07,70
+Equities and similar positions , Accelleron Ind Rg,CH1169360919,3000,Switzerland,CHF,57.84,CHF,05.02.26,,1,173520.00,CHF,1.131199777,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Alcon Rg,CH0432492467,2500,Switzerland,CHF,77.13,CHF,05.02.26,,1,192825.00,CHF,1.257051620,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Amrize Rg,CH1430134226,5000,Switzerland,CHF,48.46,CHF,05.02.26,,1,242300.00,CHF,1.579585673,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , BB Biotech N,CH0038389992,3500,Switzerland,CHF,41.61,CHF,05.02.26,,1,145635.00,CHF,0.949413783,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , CieFinRichemont N,CH0210483332,1000,Switzerland,CHF,157.69,CHF,05.02.26,,1,157690.00,CHF,1.028001918,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Geberit N,CH0030170408,175,Switzerland,CHF,558.00,CHF,05.02.26,,1,97650.00,CHF,0.636593236,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Givaudan N,CH0010645932,35,Switzerland,CHF,3955.70,CHF,05.02.26,,1,138449.50,CHF,0.902570560,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Helvetia Bal Hl Rg,CH0466642201,700,Switzerland,CHF,160.39,CHF,05.02.26,,1,112273.00,CHF,0.731922502,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Holcim N,CH0012214059,1750,Switzerland,CHF,58.98,CHF,05.02.26,,1,103215.00,CHF,0.672872205,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Idorsia Rg,CH0363463438,40000,Switzerland,CHF,1.995,CHF,05.02.26,,1,79800.00,CHF,0.520226730,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Lindt & Spruengli N,CH0010570759,20,Switzerland,CHF,10448.32,CHF,05.02.26,,1,208966.40,CHF,1.362279536,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Nestle N,CH0038863350,2500,Switzerland,CHF,78.28,CHF,05.02.26,,1,195700.00,CHF,1.275794124,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Novartis N,CH0012005267,700,Switzerland,CHF,91.15,CHF,05.02.26,,1,63805.00,CHF,0.415953214,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Roche Hldg DR,CH0012032048,700,Switzerland,CHF,258.40,CHF,05.02.26,,1,180880.00,CHF,1.179180588,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Sandoz Group Rg,CH1243598427,5000,Switzerland,CHF,42.25,CHF,05.02.26,,1,211250.00,CHF,1.377166626,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , SGS Rg,CH1256740924,2000,Switzerland,CHF,96.48,CHF,05.02.26,,1,192960.00,CHF,1.257931702,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Sonova Hldg N,CH0012549785,300,Switzerland,CHF,257.67,CHF,05.02.26,,1,77301.00,CHF,0.503935419,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Straumann Hldg Rg,CH1175448666,1750,Switzerland,CHF,111.35,CHF,05.02.26,,1,194862.50,CHF,1.270334351,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Swisscom Rg,CH0008742519,400,Switzerland,CHF,569.00,CHF,05.02.26,,1,227600.00,CHF,1.483754433,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , UBS Group N,CH0244767585,6000,Switzerland,CHF,31.89,CHF,05.02.26,,1,191340.00,CHF,1.247370709,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Zurich Insur Gr N,CH0011075394,400,Switzerland,CHF,557.05,CHF,05.02.26,,1,222820.00,CHF,1.452592983,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , AB InBev,BE0974293251,700,Eurozone,EUR,59.26,EUR,05.02.26,,0.9323,38673.67,CHF,0.252118758,42.84,CHF,1.0945,32823.9,CHF,32.65,-14.82,17.82,70
+Equities and similar positions , adidas N,DE000A1EWWW0,1000,Eurozone,EUR,162.35,EUR,05.02.26,,0.9323,151358.91,CHF,0.986728707,63.08,CHF,1.0945,69044.98,CHF,134.04,-14.82,119.22,70
+Equities and similar positions , Allianz Rg,DE0008404005,250,Eurozone,EUR,280.45,EUR,05.02.26,,0.9323,65365.88,CHF,0.426128822,,CHF,,,CHF,,,,70
+Equities and similar positions , AXA,FR0000120628,1750,Eurozone,EUR,36.84,EUR,05.02.26,,0.9323,60105.38,CHF,0.391834910,,CHF,,,CHF,,,,70
+Equities and similar positions , BASF N,DE000BASF111,4000,Eurozone,EUR,47.11,EUR,05.02.26,,0.9323,175682.61,CHF,1.145298130,,CHF,,,CHF,,,,70
+Equities and similar positions , Bayer N,DE000BAY0017,7000,Eurozone,EUR,25.33,EUR,05.02.26,,0.9323,165306.11,CHF,1.077652364,,CHF,,,CHF,,,,70
+Equities and similar positions , Daimler Tr Hldg Rg,DE000DTR0CK8,6000,Eurozone,EUR,42.07,EUR,05.02.26,,0.9323,235331.17,CHF,1.534154925,,CHF,,,CHF,,,,70
+Equities and similar positions , Danone,FR0000120644,1000,Eurozone,EUR,60.32,EUR,05.02.26,,0.9323,56236.34,CHF,0.366612095,,CHF,,,CHF,,,,70
+Equities and similar positions , E.ON N,DE000ENAG999,15000,Eurozone,EUR,13.81,EUR,05.02.26,,0.9323,193125.95,CHF,1.259013520,,CHF,,,CHF,,,,70
+Equities and similar positions , Fid Germany AD,LU0048580004,6000,Eurozone,EUR,30.72,EUR,05.02.26,,0.9323,171841.54,CHF,1.120257649,,CHF,,,CHF,,,,70
+Equities and similar positions , MEDICAL BioH IC,LU0294851513,6000,Eurozone,EUR,13.84,EUR,05.02.26,,0.9323,77418.19,CHF,0.504699409,,CHF,,,CHF,,,,70
+Equities and similar positions , Mercedes-BenzGr N,DE0007100000,3500,Eurozone,EUR,56.75,EUR,05.02.26,,0.9323,185178.09,CHF,1.207200388,,CHF,,,CHF,,,,70
+Equities and similar positions , RWE I,DE0007037129,7000,Eurozone,EUR,35.01,EUR,05.02.26,,0.9323,228478.76,CHF,1.489483192,,CHF,,,CHF,,,,70
+Equities and similar positions , Shell Rg,GB00BP6MXD84,7000,United Kingdom,EUR,32.25,EUR,05.02.26,,0.9323,210466.73,CHF,1.372060353,,CHF,,,CHF,,,,70
+Equities and similar positions , Siemens Energy Rg,DE000ENER6Y0,1500,Eurozone,EUR,90.96,EUR,05.02.26,,0.9323,127203.01,CHF,0.829253221,,CHF,,,CHF,,,,70
+Equities and similar positions , Siemens N,DE0007236101,800,Eurozone,EUR,206.61,EUR,05.02.26,,0.9323,154098.00,CHF,1.004585212,,CHF,,,CHF,,,,70
+Equities and similar positions , HSBC Hldg Rg,GB0005405286,15000,United Kingdom,GBP,10.38,GBP,05.02.26,,1.0895,169635.15,CHF,1.105873927,,CHF,,,CHF,,,,70
+Equities and similar positions , Vodafone Group Rg,GB00BH4HKS39,230000,United Kingdom,GBP,0.776,GBP,05.02.26,,1.0895,194453.96,CHF,1.267671025,,CHF,,,CHF,,,,70
+Equities and similar positions , Altria Group Rg,US02209S1033,3000,North America,USD,55.77,USD,05.02.26,,0.8036,134450.32,CHF,0.876499352,,CHF,,,CHF,,,,70
+Equities and similar positions , Amgen Rg,US0311621009,600,North America,USD,312.44,USD,05.02.26,,0.8036,150646.07,CHF,0.982081612,,CHF,,,CHF,,,,70
+Equities and similar positions , Boeing Co Rg,US0970231058,800,North America,USD,198.70,USD,05.02.26,,0.8036,127740.26,CHF,0.832755585,,CHF,,,CHF,,,,70
+Equities and similar positions , Carrier Global Rg,US14448C1045,1750,North America,USD,70.96,USD,05.02.26,,0.8036,99791.05,CHF,0.650551010,,CHF,,,CHF,,,,70
+Equities and similar positions , Citigroup Rg,US1729674242,1750,North America,USD,93.16,USD,05.02.26,,0.8036,131010.91,CHF,0.854077397,,CHF,,,CHF,,,,70
+Equities and similar positions , GE Aerospace Rg,US3696043013,400,North America,USD,243.89,USD,05.02.26,,0.8036,78396.00,CHF,0.511073879,,CHF,,,CHF,,,,70
+Equities and similar positions , Gen Digital Rg,US6687711084,7000,North America,USD,26.56,USD,05.02.26,,0.8036,149405.31,CHF,0.973992944,,CHF,,,CHF,,,,70
+Equities and similar positions , GE Vernova Rg,US36828A1016,500,North America,USD,484.58,USD,05.02.26,,0.8036,194704.24,CHF,1.269302659,,CHF,,,CHF,,,,70
+Equities and similar positions , iShs MSCI Au USD-Ac,IE00B5377D42,3000,Asia Pacific exJP,USD,40.94,USD,05.02.26,,0.8036,98698.15,CHF,0.643426277,,CHF,,,CHF,,,,70
+Equities and similar positions , iShs NASDAQ USD-Ac,IE00B53SZB19,125,North America,USD,1033.48,USD,05.02.26,,0.8036,103813.07,CHF,0.676771076,,CHF,,,CHF,,,,70
+Equities and similar positions , Johnson&Johnson Rg,US4781601046,1750,North America,USD,169.07,USD,05.02.26,,0.8036,237763.14,CHF,1.550009291,,CHF,,,CHF,,,,70
+Equities and similar positions , Otis Worldwide Rg,US68902V1070,2500,North America,USD,99.53,USD,05.02.26,,0.8036,199955.77,CHF,1.303538050,,CHF,,,CHF,,,,70
+Equities and similar positions , Pepsico Rg,US7134481081,1750,North America,USD,142.62,USD,05.02.26,,0.8036,200566.51,CHF,1.307519519,,CHF,,,CHF,,,,70
+Equities and similar positions , Pfizer Rg,US7170811035,6000,North America,USD,26.11,USD,05.02.26,,0.8036,125891.98,CHF,0.820706404,,CHF,,,CHF,,,,70
+Equities and similar positions , Philip Mrrs Int Rg,US7181721090,1250,North America,USD,158.53,USD,05.02.26,,0.8036,159243.39,CHF,1.038128640,,CHF,,,CHF,,,,70
+Equities and similar positions , Procter&Gamble Rg,US7427181091,1750,North America,USD,152.13,USD,05.02.26,,0.8036,213940.42,CHF,1.394705822,,CHF,,,CHF,,,,70
+Equities and similar positions , RTX Rg,US75513E1010,1250,North America,USD,155.86,USD,05.02.26,,0.8036,156561.37,CHF,1.020644230,,CHF,,,CHF,,,,70
+Equities and similar positions , Verizon Comm Rg,US92343V1044,2500,North America,USD,43.94,USD,05.02.26,,0.8036,88275.46,CHF,0.575479372,,CHF,,,CHF,,,,70
+Equities and similar positions , Xtr MSCI Jap 1CC,LU0274209740,1450,Japan,USD,106.7701,USD,05.02.26,,0.8036,124405.71,CHF,0.81101724,68.09,CHF,0.9137,90210.64,CHF,49.96,-12.05,37.91,70
+Alternative investments , SwCHGETF -EA (USD)-,CH0047533549,56,Switzerland,USD,4295.92,USD,05.02.26,,0.8036,193315.58,CHF,1.260249775,1805.68,CHF,0.9001,91011.61,CHF,123.13,-10.72,112.41,70
+
+create a zukunft.com json that can be imported
+
+### pdf
+
+create a pdf that includes on the top the target portfolio positions with these columns
+
+'Total Anzahl Wertpapier	Bezeichnung	ISIN	Währung	Kurs    FX rate	 Wert in CHF 	Wert in EUR'
+
+and a logo of the presenting firm and use the zukunft logo as fallback
+
+and the other result data of  http://localhost/http/view.php?m=16&id=-3286&u=11 plus the formulas used
+
+### check
+
+Differences remaining
+
+- Button colours: the generated page uses the site's grey filled buttons, while the sample shows blue outlines. Those button rules are shared across the whole site and the sample doesn't load the site's stylesheet, so changing them here would affect every page.
+- Font: it differs for the same reason.
+- Button icons: these belong to step 7.
+- Import position: Import is below Save here and at the top in the sample. I didn't change this because it's page structure, not styling.
+- Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
+- Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
 
 ### step 2: add a "Add child" and remove
 
@@ -45,11 +142,6 @@ and the page needs the remove button per field. The button stays without a funct
 - the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
 - the colours of the walk cells and the hint below the holdings
 
-### step 6: the notes, the check table and the diagram (10), (11), (12)
-
-- the diagram draws one line, the cumulative deviation of the first child by the filter of its column, although the results of both children are stored; the sample draws one line per child with a point and a tooltip per position
-- the hint below the check table is missing
-
 ### step 7: the buttons (13)
 
 - the buttons "Download", "Report", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
@@ -57,7 +149,8 @@ and the page needs the remove button per field. The button stays without a funct
 
 ### step 8: decide what the generated page keeps
 
-- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", which the generated page shows at the assumptions and the holdings
+- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
+- which the generated page shows at the assumptions and the holdings
 
 ### step 9: calculate the split again in the browser (18)
 

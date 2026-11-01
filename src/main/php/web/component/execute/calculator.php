@@ -258,6 +258,26 @@ class calculator
     }
 
     /**
+     * @param phrase $col a column of a detail table with a diagram
+     * @return array per line of the diagram its filter phrase, its colour style and its label: one line per
+     *               instance if the filter of the column is an instance of a repeated input e.g. each child, else the column
+     */
+    function diagram_lines(phrase $col): array
+    {
+        $flt = $this->filter($col);
+        $result = [[$flt, '', $this->label($col)]];
+        foreach ($flt == null ? [] : $this->row_kinds($flt) as $kind) {
+            if ($this->is_repeated($kind)) {
+                $result = [];
+                foreach (array_values($this->kinds($kind)) as $pos => $instance) {
+                    $result[] = [$instance, $this->column_colour(true, $pos), mb_ucfirst($this->phrase_label($instance))];
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param phrase $phr a phrase that is no item e.g. a row of a detail table
      * @return string the hint of the phrase e.g. the full name of a ticker, an empty string if it has none
      */
@@ -346,6 +366,15 @@ class calculator
     }
 
     /**
+     * @param phrase|null $phr an item e.g. a detail table
+     * @return string the own hint of the item without the hint of its phrase, or an empty string
+     */
+    function own_hint(?phrase $phr): string
+    {
+        return $this->own_text($phr, triples::CALCULATOR_HINT) ?? '';
+    }
+
+    /**
      * @param phrase $phr a phrase that is no item e.g. an option of a selector or a row of a detail table
      * @return string the label of the phrase, else its acronym e.g. Jan for January, else its name with a capital first letter
      */
@@ -406,7 +435,6 @@ class calculator
     function columns(array $cols): array
     {
         $result = [];
-        $colours = 0;
         foreach ($cols as $col) {
             $phr = $this->item_phrase($col);
             $flt = $this->filter($col);
@@ -418,9 +446,9 @@ class calculator
             foreach ($repeated ? $this->sub_items($col, verbs::HAS_ID) : [] as $sub) {
                 $short[$this->item_phrase($sub)?->id()] = $this->label($sub);
             }
-            foreach ($repeated ? $this->kinds($phr) : [$phr] as $col_phr) {
+            foreach (array_values($repeated ? $this->kinds($phr) : [$phr]) as $pos => $col_phr) {
                 $label = $repeated ? ($short[$col_phr->id()] ?? mb_ucfirst($this->phrase_label($col_phr))) : $this->label($col);
-                $result[] = [$label, $col_phr, $flt, $has_colour ? $this->column_colour($colours++) : '', $repeated, $is_phrase,
+                $result[] = [$label, $col_phr, $flt, $has_colour ? $this->column_colour($repeated, $pos) : '', $repeated, $is_phrase,
                     $this->has_flag($col, triples::CALCULATOR_SIGNED), $this->has_flag($col, triples::CALCULATOR_COLUMN_UNIT)];
             }
         }
@@ -455,13 +483,14 @@ class calculator
     }
 
     /**
-     * @param int $pos the position of the column under the columns with a colour
-     * @return string the colour style of the column: the first colour once, then the others cycling
+     * @param bool $repeated true for a column of an instance of a repeated input e.g. the first child
+     * @param int $pos the position of the instance
+     * @return string the colour style of the column: the first colour for a single column wherever it stands, the others cycling for the instances
      */
-    private function column_colour(int $pos): string
+    private function column_colour(bool $repeated, int $pos): string
     {
         $cycle = count(styles::CALC_COLUMN_COLOURS) - 1;
-        return styles::CALC_COLUMN_COLOURS[$pos == 0 ? 0 : 1 + ($pos - 1) % $cycle];
+        return styles::CALC_COLUMN_COLOURS[$repeated ? 1 + $pos % $cycle : 0];
     }
 
     /**

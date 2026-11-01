@@ -363,6 +363,7 @@ messages:
   calculator_sources: "Quellen"
   calculator_copy_json: "Als zukunft.com JSON kopieren"
   calculator_copy_csv: "Als CSV kopieren"
+  calculator_diagram_final: "zuletzt"
   calculator_remove: "Entfernen:"
   calculator_check_value: "Wert"
   calculator_check_expected: "Erwartet"

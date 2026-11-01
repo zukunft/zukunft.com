@@ -6550,6 +6550,8 @@
             /execute/calculator.php
     \-- diagram_title - section for function diagram_title not yet defined that it should be texts and flags in /compone
             nt/execute/calculator.php
+    \-- diagram_lines - section for function diagram_lines not yet defined that it should be texts and flags in /compone
+            nt/execute/calculator.php
     \-- phrase_hint - section for function phrase_hint not yet defined that it should be texts and flags in /component/e
             xecute/calculator.php
     \-- row_kinds - section for function row_kinds not yet defined that it should be texts and flags in /component/execu
@@ -6564,6 +6566,8 @@
             xecute/calculator.php
     \-- own_label - section for function own_label not yet defined that it should be texts and flags in /component/execu
             te/calculator.php
+    \-- own_hint - section for function own_hint not yet defined that it should be texts and flags in /component/execute
+            /calculator.php
     \-- phrase_label - section for function phrase_label not yet defined that it should be texts and flags in /component
             /execute/calculator.php
     \-- options - section for function options not yet defined that it should be texts and flags in /component/execute/c
@@ -6911,6 +6915,8 @@
             atch in /component/execute/system_page.php
     \-- calculation_result - section for function calculation_result not yet defined that it should be process catch in 
             /component/execute/system_page.php
+    \-- calculator_result_width_style - section for function calculator_result_width_style not yet defined that it shoul
+            d be process catch in /component/execute/system_page.php
     \-- calculator_json - section for function calculator_json not yet defined that it should be process catch in /compo
             nent/execute/system_page.php
     \-- process_catch_fields - section for function process_catch_fields not yet defined that it should be process catch
@@ -7005,6 +7011,7 @@
     \-- calculator_hint_numbers - section for function calculator_hint_numbers missing in /component/execute/ui_list.php
     \-- calculation_table - section for function calculation_table missing in /component/execute/ui_list.php
     \-- calculation_table_unit - section for function calculation_table_unit missing in /component/execute/ui_list.php
+    \-- result_width - section for function result_width missing in /component/execute/ui_list.php
     \-- calculation_row_context - section for function calculation_row_context missing in /component/execute/ui_list.php
     \-- calculation_side_context - section for function calculation_side_context missing in /component/execute/ui_list.p
             hp
@@ -9802,6 +9809,8 @@
     \-- calculation_table_unit
         \-- ui_list - @param array $vals per row group,
                  row and column the number of the cell or null (calculation_table_values)
+    \-- result_width
+        \-- ui_list - @param phrase $phr the phrase of the calculator page
     \-- calculation_row_context
         \-- ui_list - @param calculator $calc the calculator reader of the page
     \-- calculation_side_context
@@ -10085,6 +10094,8 @@
     \-- diagram_title
         \-- calculator - @param phrase $col a column of a detail table e.g. portfolio split walk column cumulative devia
                 tion
+    \-- diagram_lines
+        \-- calculator - @param phrase $col a column of a detail table with a diagram
     \-- phrase_hint
         \-- calculator - @param phrase $phr a phrase that is no item e.g. a row of a detail table
     \-- row_kinds
@@ -10099,6 +10110,8 @@
         \-- calculator - @param phrase|null $item a list item e.g. PV installation input yield factor
     \-- own_label
         \-- calculator - @param phrase|null $phr e.g. the group of the inputs
+    \-- own_hint
+        \-- calculator - @param phrase|null $phr an item e.g. a detail table
     \-- phrase_label
         \-- calculator - @param phrase $phr a phrase that is no item e.g. an option of a selector or a row of a detail t
                 able
@@ -10416,6 +10429,8 @@
         \-- system_page - the results of the page phrase until now against the results after the save of the formula
     \-- calculation_result
         \-- system_page - the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+    \-- calculator_result_width_style
+        \-- system_page - @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
     \-- calculator_json
         \-- system_page - the calculator page that the browser builds from the phraseData answer of the page
     \-- process_catch_fields
@@ -10924,7 +10939,7 @@
         \-- html_base - display a file selector form
 \-- base elements - functions for all html elements used in zukunft.com
     \-- line_diagram
-        \-- html_base - a line diagram of a number per row without javascript,
+        \-- html_base - a line diagram of numbers per row without javascript,
                  with a line at zero and at the biggest number
     \-- label_no_for
         \-- html_base - @param string $text the html code of the label: a text that has no form field e.g. of a read onl

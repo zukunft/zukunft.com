@@ -158,6 +158,7 @@ class view_exe extends view_base
             $this->add_page_cache($dbo, $msg, $cfg);
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open($msg);
+            $result .= new system_page()->calculator_result_width_style($dbo, $cfg);
             // the page that the browser builds from the json data replaces the components, which
             // creates nothing for a phrase without calculator triples or if the config allows no
             // javascript for the calculator, so that the page of the server is shown

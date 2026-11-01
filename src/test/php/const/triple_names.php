@@ -333,6 +333,17 @@ class triple_names
     const string CALC_WARNING_COM = 'Too many inhabitants.';
     // the keyword and the group of the check table test, which follow the warning
     const int CALC_CHECK_FIRST_ID = 908;
+    // the column of the diagram test, whose filter is an instance of a repeated input
+    const string CALC_DIAGRAM_COLUMN = 'Zurich canton diagram column';
+    // the keyword and the hint of the check table test
+    const int CALC_CHECK_HINT_FIRST_ID = 1980;
+    const string CALC_CHECK_HINT = 'The numbers of the canton';
+    // the keywords and the hint of the detail table test with a colour and a hint
+    const int CALC_DETAIL_STYLE_FIRST_ID = 1995;
+    const string CALC_DETAIL_HINT = 'The cities of the canton';
+    // the keyword and the pixels of the result width test
+    const int CALC_RESULT_WIDTH_ID = 1985;
+    const int CALC_RESULT_WIDTH = 896;
     // the keyword, the button and its label of the button test, which follow the check
     const int CALC_BUTTON_FIRST_ID = 906;
     const string CALC_BUTTON_COM = 'Download the inhabitants';
@@ -614,9 +625,9 @@ class triple_names
     const int EURO_SIGN_SYMBOL_ID = 446;
     // the percent typed share unit of use_cases/pv_lifetime_balance.json and its symbol "share"
     const string SHARE_RATIO = 'share (ratio)';
-    const int SHARE_RATIO_ID = 2755;
+    const int SHARE_RATIO_ID = 2757;
     const string SHARE_SYMBOL = 'share is symbol for share (ratio)';
-    const int SHARE_SYMBOL_ID = 2807;
+    const int SHARE_SYMBOL_ID = 2809;
     const string EURO_SIGN_ALIAS = "€ is alias of Euro";
     const int EURO_SIGN_ALIAS_ID = 456;
     const string IN_EUR = "in EUR";

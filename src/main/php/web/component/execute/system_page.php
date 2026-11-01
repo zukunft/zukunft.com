@@ -212,6 +212,7 @@ class system_page extends component
         'phrase_column' => triples::CALCULATOR_PHRASE_COLUMN,
         'column_unit' => triples::CALCULATOR_COLUMN_UNIT,
         'decimals' => triples::CALCULATOR_DECIMALS,
+        'result_width' => triples::CALCULATOR_RESULT_WIDTH,
         'read_only' => triples::CALCULATOR_READ_ONLY,
         'checkbox' => triples::CALCULATOR_CHECKBOX,
         'repeat' => triples::CALCULATOR_REPEAT,
@@ -243,6 +244,7 @@ class system_page extends component
         msg_id::CALCULATOR_SOURCES,
         msg_id::CALCULATOR_COPY_JSON,
         msg_id::CALCULATOR_COPY_CSV,
+        msg_id::CALCULATOR_DIAGRAM_FINAL,
         msg_id::CALCULATOR_REMOVE,
         msg_id::CALCULATOR_CHECK_VALUE,
         msg_id::CALCULATOR_CHECK_EXPECTED,
@@ -1608,6 +1610,27 @@ class system_page extends component
         $html = new html_base();
         return $html->script_data(self::CALC_EDITOR_SEED_ID, $cfg->page_data)
             . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg));
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
+     * @param data_object|null $cfg the request cache with the values of the page
+     * @return string the style with the result panel width of the calculator page, empty for the standard width
+     */
+    function calculator_result_width_style(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $width = new ui_list()->result_width($dbo->phrase(), $cfg->val_lst);
+            if ($width > 0) {
+                $rule = '.' . view_styles::USE_CASE . '{' . styles::CALC_RESULT_WIDTH_VAR . ':' . $width . 'px}';
+                $result = new html_base()->block(html_base::STYLE, $rule);
+            }
+        }
+        return $result;
     }
 
     /**

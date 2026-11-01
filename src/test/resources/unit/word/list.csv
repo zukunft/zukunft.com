@@ -869,7 +869,7 @@ word_id,user_id,word_name,plural,description,phrase_type_id,view_id,usage,impact
 868,1,title,,,,,,,,,,,
 869,1,layout,,,,,,,,,,,
 870,1,side,,,,,,,,,,,
-871,1,width,,,,,,,,,,,
+871,1,width,,,1,,,,,,,,
 872,1,colours,,,,,,,,,,,
 873,1,grey,,,1,,,,,,,,
 874,1,deep,,,,,,,,,,,

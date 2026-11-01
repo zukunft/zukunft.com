@@ -18,7 +18,7 @@ Change the generated page portfolio_split_calculator_js.html#low so that it show
 - row: Realised / Cash, cells: the sample shows "2'302'740 | 767'580 | 767'580 | 3'837'900" and the generated page "1'151'396 | 1'343'252 | 1'343'252 | 3'837'900"
 - row: Realised / Portfolio value, cells: the sample shows "11'766'540 | 3'922'180 | 3'922'180 | 19'610'900" and the generated page "5'883'270 | 6'863'815 | 6'863'815 | 19'610'900"
 - row: Realised / Realised weight, cells: the sample shows "60.000 % | 20.000 % | 20.000 % | " and the generated page "30.000 % | 35.000 % | 35.000 % | "
-- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | 2'941'635.00 | 2'941'635.00 | 0.00"
+- row: Realised / Deviation from target, cells: the sample shows "0.00 | 0.00 | 0.00 | 0.00" and the generated page "0.00 | +2'941'635.00 | +2'941'635.00 | 0.00"
 - row: # / 3, cells: the sample shows "GIVN Givaudan SA | 100 shares | 3'700.00 | 20.000 | 20 | 20 | 60 | 0.00" and the generated page "ConfedBond30 Swiss Confederation 1.25% 2030 | 1'500'000 CHF | 5'025.00 | 300'000.000 | 300'000 | 300'000 | 900'000 | 0.00"
 - row: # / 4, cells: the sample shows "PGHN Partners Group Holding AG | 250 shares | 1'200.00 | 50.000 | 50 | 50 | 150 | 0.00" and the generated page "NestleBond27 Nestlé Holdings 0.875% 2027 | 1'500'000 CHF | 4'990.00 | 300'000.000 | 300'000 | 300'000 | 900'000 | 0.00"
 - row: # / 5, cells: the sample shows "GEBN Geberit AG | 500 shares | 590.00 | 100.000 | 100 | 100 | 300 | 0.00" and the generated page "RocheBond28 Roche Holdings 1.0% 2028 | 1'000'000 CHF | 4'950.00 | 200'000.000 | 200'000 | 200'000 | 600'000 | 0.00"
