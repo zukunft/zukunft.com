@@ -358,7 +358,7 @@ class word_list_write_tests
         $t->assert('word_list->value for ' . $wrd_lst->dsp_id(), $result, values::SAMPLE_INT);
 
         // test word list value scaled
-        // TODO review !!!
+        // TODO Prio 2 review !!!
         $val = $wrd_lst->value_scaled($msg);
         $result = $val->number();
         $t->assert('word_list->value_scaled for ' . $wrd_lst->dsp_id(), $result, values::SAMPLE_INT);

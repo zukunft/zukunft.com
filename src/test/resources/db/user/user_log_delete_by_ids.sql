@@ -1,0 +1,1 @@
+PREPARE user_log_delete_by_ids (bigint[]) AS DELETE FROM user_log WHERE user_log_id = ANY ($1);

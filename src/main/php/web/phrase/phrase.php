@@ -175,7 +175,7 @@ class phrase extends combine_named
         $vars[json_fields::DESCRIPTION] = $this->get_description();
         $vars[json_fields::TYPE] = $this->type_id($msg);
         $vars[json_fields::PLURAL] = $this->get_plural();
-        // TODO add exclude field and move to a parent object?
+        // TODO Prio 2 add exclude field and move to a parent object?
         if ($this->obj()?->share_id() != null) {
             $vars[json_fields::SHARE] = $this->obj()?->share_id();
         }
@@ -223,10 +223,14 @@ class phrase extends combine_named
      */
     function id(): int
     {
-        if ($this->is_word()) {
-            return $this->obj_id();
+        // the object is read once, because the id of a phrase is used for each cell of a table
+        $obj = $this->obj();
+        if ($obj === null) {
+            return 0;
+        } elseif ($obj::class == word::class) {
+            return $obj->id();
         } else {
-            return $this->obj_id() * -1;
+            return $obj->id() * -1;
         }
     }
 
@@ -403,15 +407,52 @@ class phrase extends combine_named
     {
         $result = '';
         if ($this->is_factor($msg) or $this->is_scaling($msg) or $this->is_measure($msg)) {
-            // a unit can be a symbol itself e.g. "EUR" for "Euro", so the symbol, the link and the
-            // tooltip are those of the phrase it stands for e.g. "€" with the description of "Euro"
-            $main_phr = $this->stands_for() ?? $this;
+            // the link and the tooltip are those of the phrase the symbol stands for e.g. "Euro"
+            $main_phr = $this->symbol_owner();
             $symbol = $main_phr->symbol_name($msg);
             if ($symbol != '') {
                 $html = new html_base();
                 $url = $html->url_back($main_phr->view_id(), $main_phr->id());
                 $result = $html->ref($url, $symbol, $main_phr->tooltip($msg));
             }
+        }
+        return $result;
+    }
+
+    /**
+     * a unit can be a symbol itself e.g. "EUR" for "Euro", so its symbol is the one of the phrase
+     * it stands for e.g. "€"
+     *
+     * @return phrase the phrase whose symbol is shown for this phrase: "Euro" for "EUR", else this phrase
+     */
+    function symbol_owner(): phrase
+    {
+        return $this->stands_for() ?? $this;
+    }
+
+    /**
+     * a ratio unit is a percent typed triple e.g. "share (ratio)": stored like a percent, but its
+     * symbol e.g. "share" names the ratio 0..1 and not the number times 100 like the "%" of the
+     * percent word, which is a word; the triple is the qualifier that makes the difference,
+     * because the percent word has no code id to compare with
+     *
+     * @return bool true if the number with this phrase is a ratio whose symbol is shown as the unit
+     */
+    function is_ratio_unit(user_message $msg): bool
+    {
+        return $this->is_percent($msg) and $this->is_triple();
+    }
+
+    /**
+     * the unit of a number in a field or a table cell, shortened by its symbol like behind a number
+     *
+     * @return string the symbol of this unit e.g. "kWh/a" or "€" for "EUR", else the name of this phrase
+     */
+    function unit_text(user_message $msg): string
+    {
+        $result = $this->symbol_owner()->symbol_name($msg);
+        if ($result == '') {
+            $result = $this->name();
         }
         return $result;
     }
@@ -508,11 +549,32 @@ class phrase extends combine_named
     }
 
     /**
+     * @param user_message $msg to report a missing phrase type list
+     * @return bool true if a number is shown with this phrase as its unit e.g. "kWh", "percent" or "million",
+     *              but not with the hidden scaling word "one", which is needed only for the calculation
+     */
+    function is_shown_unit(user_message $msg): bool
+    {
+        $is_unit = ($this->is_measure($msg) or $this->is_percent($msg));
+        $is_shown_scaling = ($this->is_scaling($msg) and !$this->obj()->is_hidden($msg));
+        $result = ($is_unit or $is_shown_scaling);
+        return $result;
+    }
+
+    /**
      * @return bool true if the wrapped word or triple has the type "time" e.g. "2022 (year)"
      */
     function is_time(user_message $msg): bool
     {
         return $this->obj()->is_time($msg);
+    }
+
+    /**
+     * @return bool true if the phrase says how a number has been found e.g. "assumed" or "modelled"
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->obj()->is_quality($msg);
     }
 
     function is_info(user_message $msg): bool
@@ -649,7 +711,12 @@ class phrase extends combine_named
      */
     function name_link(): string
     {
-        return $this->obj()->name_link();
+        if ($this->own_view_id() > 0) {
+            $html = new html_base();
+            return $html->ref($html->url_back($this->own_view_id(), $this->id()), $this->name(), $this->get_description());
+        } else {
+            return $this->obj()->name_link();
+        }
     }
 
     /**
@@ -688,6 +755,19 @@ class phrase extends combine_named
         $html = new html_base();
         // the page of a word or a triple is called with the id of the word or the triple
         return $html->url_back($this->view_id(), $this->obj_id(), $url_arr);
+    }
+
+    /**
+     * the default view of the phrase e.g. the calculator of example PV installation, which a link
+     * calls with the phrase id, negative for a triple (see frontend::dbo_for_url); only a phrase
+     * view takes a phrase id, so any other default view is not used
+     *
+     * @return int the database id of the default phrase view of the phrase or 0 if it has none
+     */
+    function own_view_id(): int
+    {
+        $msk_id = $this->obj()?->view_id() ?? 0;
+        return in_array($msk_id, views::PHRASE_MASKS_IDS) ? $msk_id : 0;
     }
 
     /**
@@ -831,7 +911,7 @@ class phrase extends combine_named
 
     /**
      * to enable the recursive function in work_link
-     * TODO add a list of triple already split to detect endless loops
+     * TODO Prio 2 add a list of triple already split to detect endless loops
      */
     function wrd_lst(user_message $msg): word_list
     {

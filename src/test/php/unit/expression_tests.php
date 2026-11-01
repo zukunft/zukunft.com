@@ -34,13 +34,16 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -176,6 +179,18 @@ class expression_tests
             $trm_lst
         );
         $this->frm_exp_convert($t, $msg,
+            'including the min function',
+            formula_names::MIN_CIRCUMFERENCE_PI,
+            formula_names::MIN_CIRCUMFERENCE_PI_DB,
+            $trm_lst
+        );
+        $this->frm_exp_convert($t, $msg,
+            'including the max function',
+            formula_names::MAX_CIRCUMFERENCE_PI,
+            formula_names::MAX_CIRCUMFERENCE_PI_DB,
+            $trm_lst
+        );
+        $this->frm_exp_convert($t, $msg,
             'including fixed formulas',
             formula_names::INCREASE_EXP,
             formula_names::INCREASE_DB,
@@ -227,8 +242,8 @@ class expression_tests
         $msg->reset();
 
         // test the element group list of the right side
-        // TODO check with cantons of switzerland
-        // TODO check if adjustment overwrite from some parts works
+        // TODO Prio 2 check with cantons of switzerland
+        // TODO Prio 2 check if adjustment overwrite from some parts works
         //      e.g. if the total needs to be adjusted, because
         //      the sum of tax payers of all cantons can be higher than
         //      the total number of tax payers in Switzerland
@@ -301,7 +316,7 @@ class expression_tests
         $target = '"' . formula_names::PRIOR . '","' . formula_names::THIS_NAME . '"';
         $t->assert('element_special_following for "' . $exp->dsp_id() . '"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
-        // TODO element_special_following_frm
+        // TODO Prio 2 element_special_following_frm
         //$target = '"time_prior","time_this"';
 
         $test_name = 'test the formula element group creation';
@@ -348,6 +363,62 @@ class expression_tests
         $result = $phr_lst->dsp_id();
         $target = 'phrase_id ' . word_names::ONE_ID . ' for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
+        $test_name = '... and the calculation part has the millions as element group';
+        $elm_scale_lst = $exp_scale->element_grp_lst($msg, $t_trm->term_list_all());
+        $t->assert_text_contains($test_name, $elm_scale_lst->dsp_id(), '(' . word_names::MIO_ID . ')');
+        $msg->reset();
+
+        // negative: a text without the equal sign is reported and has neither a result nor a calculation part
+        $test_name = 'an expression without an equal sign is reported';
+        $exp_no_calc = new expression($frm);
+        $exp_no_calc->set_user_text('"' . words::PERCENT . '"', $msg, $trm_lst);
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+        $test_name = '... and has no calculation part';
+        $t->assert($test_name, $exp_no_calc->r_part($msg), '');
+        $test_name = '... and no result part';
+        $t->assert($test_name, $exp_no_calc->res_part($msg), '');
+        $test_name = '... and no terms';
+        $t->assert($test_name, $exp_no_calc->term_id_list_all($msg)->count(), 0);
+        $msg->reset();
+        $test_name = 'a text without a phrase has no phrase ids';
+        $t->assert($test_name, $exp_no_calc->phr_id_lst('')->lst, []);
+        // negative: a triple used twice in the text is one phrase, like a word used twice
+        $test_name = 'a triple used twice is listed once with its negative phrase id';
+        $trp_ref = chars::TRIPLE_START . triple_names::PI_ID . chars::TRIPLE_END;
+        $t->assert($test_name, $exp_no_calc->phr_id_lst($trp_ref . $trp_ref)->lst, [-triple_names::PI_ID]);
+        // a triple left of a word e.g. the result triple of "delivered electricity" = "direct use" + ...
+        $test_name = 'a triple left of a word is listed after the word';
+        $wrd_ref = chars::WORD_START . words::PCT_ID . chars::WORD_END;
+        $t->assert($test_name, $exp_no_calc->phr_id_lst($trp_ref . $wrd_ref)->lst, [words::PCT_ID, -triple_names::PI_ID]);
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id shows the user text of the expression
+        $test_name = 'debug id with the user text';
+        $exp = $t_frm->expression();
+        $dsp = $exp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, formula_names::SCALE_TO_SEC_EXP);
+
+        // the debug id adds the reference text with the term ids
+        $test_name = 'debug id with the reference text';
+        $id_txt = (string)word_names::MINUTE_ID;
+        $exp = $t_frm->expression();
+        $dsp = $exp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a user text without equal sign has no reference text, so no term id is shown
+        $test_name = 'debug id without reference text';
+        $exp = new expression($t_frm->formula());
+        $exp->set_ref_and_user_text(null, word_names::MINUTE);
+        $dsp = $exp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
+        // negative: an empty element group list has an empty debug id
+        $test_name = 'debug id of an empty element group list';
+        $elm_grp_lst = new element_group_list($t->usr1);
+        $dsp = $elm_grp_lst->dsp_id();
+        $t->assert($test_name, $dsp, '');
 
     }
 

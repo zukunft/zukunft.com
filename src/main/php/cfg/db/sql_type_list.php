@@ -597,7 +597,7 @@ class sql_type_list
         }
     }
 
-    // TODO use const overwrites
+    // TODO Prio 2 use const overwrites
     public function num_user_fields(): array
     {
         if (in_array(sql_type::TEXT, $this->lst)) {
@@ -611,7 +611,7 @@ class sql_type_list
         }
     }
 
-    // TODO use const overwrites
+    // TODO Prio 2 use const overwrites
     public function txt_user_fields(): array
     {
         if (in_array(sql_type::TEXT, $this->lst)) {
@@ -621,7 +621,7 @@ class sql_type_list
         }
     }
 
-    // TODO use const overwrites
+    // TODO Prio 2 use const overwrites
     public function geo_user_fields(): array
     {
         if (in_array(sql_type::GEO, $this->lst)) {

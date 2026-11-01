@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        ABB shares buy, sell or hold - Decision calculator - zukunft.com
+    </title>
+    <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
+    <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+    <!-- the font and the colours that html_base::theme_style sets in the head of every page -->
+    <style>
+:root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+    </style>
+    <!--
+        Prototype of a zukunft.com "decision calculator" view for the question whether an investor should
+        buy, sell or hold the shares of ABB Ltd (SIX: ABBN) on the basis of a target price derived from the
+        key figures of equity valuation (earnings multiple, discounted cash flow, enterprise value multiple,
+        dividend discount and the analysts' consensus). The header, the footer and the use case layout are
+        the standard ones of style_html.css; the stylesheet below only adds the parts that the use case
+        style does not have yet (the arguments, the slider field and the verdict) and the script at the end
+        replaces calculator.js. The numbers, the formulas and the sources are the ones of abb_share_decision.json.
+        State of the data: closing price of 28 October 2026, Q3 2026 results of 20 October 2026.
+    -->
+    <style>
+        /* the parts of the decision calculator that the use case style of style_html.css does not */
+        /* have yet; no standard selector is redefined, only the width of the collapsed introduction */
+        /* and the two slider rules refine a standard rule; the colours are the zukunft.com blues and */
+        /* grey and the bootstrap success, warning and danger colours */
+
+        /* the introduction behind "... more" below the title fills the whole width of the page */
+        .use-case header details p {
+            max-width: none;
+        }
+
+        /* the arguments of both sides side by side above the calculator */
+        .use-case .arguments {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 24px;
+        }
+        @media (max-width: 860px) {
+            .use-case .arguments {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        /* a coloured dot in front of the heading tells the side without changing the heading style */
+        .use-case .pro h2::before,
+        .use-case .contra h2::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .use-case .pro h2::before {
+            background: #198754;
+        }
+        .use-case .contra h2::before {
+            background: #dc3545;
+        }
+        .use-case .argument-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: .9rem;
+        }
+        .use-case .argument-list li {
+            padding: 8px 0;
+            border-top: 1px solid #dee2e6;
+        }
+        .use-case .argument-list li:first-child {
+            border-top: 0;
+        }
+        /* the arguments behind "... more" continue the list, so their first one keeps the line */
+        .use-case details .argument-list li:first-child {
+            border-top: 1px solid #dee2e6;
+        }
+        .use-case .argument-list b {
+            display: block;
+        }
+        .use-case .num {
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+        .use-case .ref {
+            font-size: .76rem;
+            color: #9ea09e;
+        }
+
+        /* the slider field (the proposed calculator slider): the range, the number and the unit in */
+        /* one line, so the number keeps a fixed width and the range takes the rest; the range is no */
+        /* text field, so it has no border and no padding */
+        .use-case .field .row > input[type=range] {
+            border: 0;
+            padding: 0;
+            background: none;
+        }
+        .use-case .field .row > input[type=number] {
+            flex: 0 0 6.5rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .use-case .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* the verdict (the proposed calculator verdict) with the meter from sell to buy; for a share */
+        /* the upside is good, so unlike the vote pages the green end is on the right */
+        .use-case .verdict {
+            border: 2px solid #b9c6d6;
+            border-radius: 8px;
+            padding: 18px;
+            display: grid;
+            gap: 6px;
+        }
+        .use-case .verdict.buy {
+            border-color: #198754;
+        }
+        .use-case .verdict.sell {
+            border-color: #dc3545;
+        }
+        .use-case .verdict.hold {
+            border-color: #ffc107;
+        }
+        .use-case .verdict p {
+            margin: 0;
+        }
+        .use-case .verdict .headline {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .use-case .verdict .sub {
+            font-size: .76rem;
+            color: #9ea09e;
+        }
+        .use-case .verdict .meter {
+            position: relative;
+            height: 10px;
+            background: linear-gradient(90deg, #dc3545 0 45%, #dee2e6 45% 55%, #198754 55% 100%);
+            border-radius: 5px;
+            margin-top: 8px;
+        }
+        .use-case .verdict .needle {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 20px;
+            background: #274b8f;
+            border-radius: 2px;
+        }
+        .use-case .verdict .scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: .76rem;
+            color: #9ea09e;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar site-header fixed-top">
+    <a href="http://localhost/http/view.php" title="zukunft.com" class="navbar-brand">
+        <img src="http://localhost/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+    </a>
+    <form action="http://localhost/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+        <input type="hidden" name="m" value="107">
+        <label for="kp" class="visually-hidden">
+            Search
+        </label>
+        <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula"
+               style="min-width: 40vw; max-width: 800px;">
+        <button class="btn btn-outline-primary" type="submit">
+            Get numbers
+        </button>
+    </form>
+    <div class="col-md-2">
+        <ul class="nav navbar-nav">
+            <li class="active">
+                <details class="view-menu">
+                    <summary>
+                        <i class="fas fa-edit">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
+                                alternative
+                            </a>
+                        </li>
+                        <li>
+                            <a href="?view=more">
+                                ... more
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=85&amp;id=1">
+                                change view
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=84">
+                                add view
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+                <details class="lang-menu">
+                    <summary>
+                        <i class="fas fa-globe">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=en">
+                                English
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=en_us">
+                                US English
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=de" title="German">
+                                Deutsch
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=fr" title="French">
+                                Français
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=es" title="Spanish">
+                                Español
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                漢語
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                العربية
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=language_select">
+                                ... more
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+                <details class="user-menu">
+                    <summary>
+                        <i class="fas fa-user-circle">
+                        </i>
+                    </summary>
+                    <ul>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=11">
+                                Log in
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/http/view.php?m=13">
+                                Signup
+                            </a>
+                        </li>
+                        <li>
+                            <a href="http://localhost/settings">
+                                Settings
+                            </a>
+                        </li>
+                    </ul>
+                </details>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="main-container">
+    <div class="use-case">
+        <header>
+            <h4>
+                ABB shares (SIX: ABBN): buy, sell or hold at 72.88 CHF?
+            </h4>
+            <details>
+                <summary>
+                    ... more
+                </summary>
+            <p>
+                ABB Ltd of Zurich sells electrification and automation equipment, reports in US dollars and is
+                quoted in Swiss francs; 1.81 billion shares are outstanding, the market value is about 130 billion
+                CHF [1][9]. The Q3 2026 results of 20 October 2026 brought record orders of 12.1 billion USD and a
+                record operational EBITA margin of 20.8 %, but the adjusted earnings per share missed the consensus
+                by 13 % and the share fell from a 52-week high of 89.14 CHF to 72.88 CHF at the close of 28 October
+                [1][2][9]. Nine analysts rate the share hold with targets from 57 to 88 CHF, on average 77 CHF [3].
+                Behind the figures lie three portfolio moves: the sale of Robotics to SoftBank for 5.375 billion USD
+                closing in Q4 2026, the 5.5 billion USD offer for the British valve maker Rotork closing in the first
+                half of 2027, and a 51 % stake in Mitsubishi Electric's low-voltage business [1][5][11][13]. Below
+                are the arguments of the bulls and the bears with their numbers, then a calculator: it derives a
+                target price from five valuation methods (earnings multiple, discounted cash flow, enterprise value
+                multiple, dividend discount, analyst consensus), weights them as you say, compares the result with
+                the price - and tells you whether that suggests buying, holding or selling under your assumptions.
+                A model is not investment advice; the assumptions are the decision.
+            </p>
+            </details>
+        </header>
+
+        <div class="arguments">
+            <section class="panel pro">
+                <h2>
+                    Arguments for buying (bull case)
+                </h2>
+                <ul class="argument-list">
+                    <li>
+                        <b>
+                            Record order book
+                        </b>
+                        Q3 orders <span class="num">12.1 billion USD</span>, up 40 %, book-to-bill
+                        <span class="num">1.24</span>, backlog <span class="num">32.3 billion USD</span>, up 35 %;
+                        data-centre orders grew by a triple-digit percentage. The revenue of 2027 is largely in the
+                        books before it is sold. <span class="ref">[1]</span>
+                    </li>
+                </ul>
+                <details>
+                    <summary>
+                        ... more
+                    </summary>
+                    <ul class="argument-list">
+                    <li>
+                        <b>
+                            Record profitability
+                        </b>
+                        Operational EBITA margin <span class="num">20.8 %</span> in Q3 and 21.4 % over nine months,
+                        guidance for 2026 of at least 270 basis points above 2025; return on capital employed
+                        <span class="num">29.9 %</span>, return on equity <span class="num">33 %</span>.
+                        <span class="ref">[1][2]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Cash machine with an unlevered balance sheet
+                        </b>
+                        Free cash flow <span class="num">3.7 billion USD</span> over nine months and about
+                        <span class="num">5 billion USD</span> for the year; net debt only
+                        <span class="num">1.3 billion USD</span>, 0.2 times EBITA; a 2 billion USD buyback runs
+                        until January 2027 and the CFO sees 13 to 14 billion USD of debt capacity.
+                        <span class="ref">[1][2][4]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Portfolio shifted to the higher-margin businesses
+                        </b>
+                        Robotics (12 % margin) sold for <span class="num">5.375 billion USD</span> with a 2.4
+                        billion USD gain in Q4; Rotork (flow control) bought for <span class="num">5.5 billion USD</span>;
+                        Mitsubishi Electric low-voltage JV at 11 times EBITDA with a 20 % margin target.
+                        <span class="ref">[1][5][11][13]</span>
+                    </li>
+                    <li>
+                        <b>
+                            The price has already corrected
+                        </b>
+                        <span class="num">18 %</span> below the 52-week high of 89.14 CHF and more than 10 % down
+                        over the past month; a discounted cash flow model on Simply Wall St sees the share 14 %
+                        undervalued, Yahoo's one-year target estimate is 83.5 CHF. <span class="ref">[6][10]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Rising dividend
+                        </b>
+                        0.94 CHF for 2025 after 0.90 CHF, raised every year; 1.3 % yield plus the buyback, and the
+                        proceeds of Robotics still to be deployed. <span class="ref">[4]</span>
+                    </li>
+                    </ul>
+                </details>
+            </section>
+            <section class="panel contra">
+                <h2>
+                    Arguments for selling (bear case)
+                </h2>
+                <ul class="argument-list">
+                    <li>
+                        <b>
+                            Priced for perfection
+                        </b>
+                        Trailing P/E about <span class="num">32</span>, <span class="num">23</span> on the 2027
+                        estimate, EV/EBITA about <span class="num">19</span>; nine analysts, nine hold ratings,
+                        average target <span class="num">77 CHF</span> only 6 % above the price, Jefferies at 57 CHF.
+                        <span class="ref">[3][9][10]</span>
+                    </li>
+                </ul>
+                <details>
+                    <summary>
+                        ... more
+                    </summary>
+                    <ul class="argument-list">
+                    <li>
+                        <b>
+                            Earnings miss
+                        </b>
+                        Adjusted EPS <span class="num">0.69 USD</span> against 0.79 USD expected, 13 % short;
+                        reported EPS 0.65 USD, down 2 %; revenue slightly below consensus; the share lost 5 % on
+                        the day. <span class="ref">[2]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Orders do not fully reach the bottom line
+                        </b>
+                        Bernstein: revenue and margin "did not quite hold" what the orders promised; gross margin
+                        down 0.6 points to <span class="num">40.6 %</span>, Motion margin down to 19.1 %, Gamesa
+                        Electric loss-making. <span class="ref">[6][7]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Acquisition risk
+                        </b>
+                        Rotork at a full price with closing only in H1 2027, a deal-contingent hedge already cost
+                        <span class="num">115 million USD</span> in Q3; the Japanese JV adds integration work.
+                        <span class="ref">[1][2]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Cycle and AI dependency
+                        </b>
+                        Record margins tend to revert; Q4 margin guided to soften; the triple-digit data-centre
+                        growth is the first to fall if AI capital spending slows. <span class="ref">[1]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Currency drag
+                        </b>
+                        Earnings in USD, share in CHF: the dollar is down to about <span class="num">0.83 CHF</span>;
+                        every cent lost cuts the CHF earnings and dividend capacity. <span class="ref">[8]</span>
+                    </li>
+                    </ul>
+                </details>
+            </section>
+        </div>
+
+        <div class="grid">
+            <aside class="panel">
+                <div class="inputs">
+                    <h2>
+                        Your assumptions
+                    </h2>
+                    <div class="presets">
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="consensus"
+                                title="Consensus EPS 2027 of 3.75 USD, fair P/E 22, 8 % cash flow growth, analyst target 77 CHF">
+                            Consensus
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="bull"
+                                title="Data-centre supercycle: EPS 2027 4.20 USD, fair P/E 26, 11 % growth, EV/EBITA 21, target 88 CHF (UBS)">
+                            Bull: supercycle
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="bear"
+                                title="Mean reversion: EPS 2027 3.40 USD, fair P/E 17, 4 % growth, EV/EBITA 15, target 57 CHF (Jefferies)">
+                            Bear: reversion
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-preset="cashflow"
+                                title="Only cash counts: 70 % discounted cash flow, 30 % dividend discount, no multiples, no analysts">
+                            Cash flow only
+                        </button>
+                    </div>
+
+                    <div class="field">
+                        <label for="n-price">
+                            Share price
+                            <span class="tag m">measured 28.10.2026</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-price" min="40" max="120" step="0.5">
+                            <input type="number" id="n-price" value="72.88" min="40" max="120" step="0.01">
+                            <span class="unit">CHF</span>
+                        </div>
+                        <span class="hint">
+                                    Close on SIX of 28 October 2026; 52-week range 53.78 to 89.14 CHF [9]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-eps27">
+                            Earnings per share 2027 (estimate)
+                            <span class="tag m">measured consensus</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-eps27" min="2" max="6" step="0.05">
+                            <input type="number" id="n-eps27" value="3.75" min="2" max="6" step="0.05">
+                            <span class="unit">USD</span>
+                        </div>
+                        <span class="hint">
+                                    Consensus 3.75 USD for 2027 and 3.35 USD for 2026 [9]; 2025 reported 2.59 USD [4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-pe">
+                            Fair price-earnings ratio
+                            <span class="tag a">assumed 0.5</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-pe" min="10" max="35" step="0.5">
+                            <input type="number" id="n-pe" value="22" min="10" max="35" step="0.5">
+                            <span class="unit">x</span>
+                        </div>
+                        <span class="hint">
+                                    What a quality industrial with 10 % earnings growth deserves on next year's earnings; the share trades at 27.6 times 2025 and 23 times 2027 [9]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-fcf">
+                            Free cash flow 2026
+                            <span class="tag m">measured guidance</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-fcf" min="3" max="7" step="0.1">
+                            <input type="number" id="n-fcf" value="5.0" min="3" max="7" step="0.1">
+                            <span class="unit">billion USD</span>
+                        </div>
+                        <span class="hint">
+                                    3.7 billion USD over nine months, "near 5 billion" for the year according to the CFO; 4.6 billion in 2025 [1][2][4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-g1">
+                            Cash flow growth over the next ten years
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-g1" min="0" max="15" step="0.5">
+                            <input type="number" id="n-g1" value="8" min="0" max="15" step="0.5">
+                            <span class="unit">%/a</span>
+                        </div>
+                        <span class="hint">
+                                    Revenue guidance 2026 "low teens", backlog up 35 %; the EPS consensus implies 12 % from 2026 to 2027 [1][9]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-rr">
+                            Required return (discount rate)
+                            <span class="tag a">assumed 0.5</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-rr" min="4" max="14" step="0.5">
+                            <input type="number" id="n-rr" value="8" min="4" max="14" step="0.5">
+                            <span class="unit">%/a</span>
+                        </div>
+                        <span class="hint">
+                                    Cost of equity of a large Swiss industrial with a beta of about 1: risk-free rate plus 5 to 6 % equity premium [10]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-evm">
+                            Fair EV/EBITA multiple
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-evm" min="8" max="30" step="0.5">
+                            <input type="number" id="n-evm" value="18" min="8" max="30" step="0.5">
+                            <span class="unit">x</span>
+                        </div>
+                        <span class="hint">
+                                    ABB paid 11 times EBITDA for the Mitsubishi Electric business; the share trades at about 19 times its own 2026 EBITA [13]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-tan">
+                            Analyst consensus target
+                            <span class="tag m">measured 57-88</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-tan" min="40" max="120" step="1">
+                            <input type="number" id="n-tan" value="77" min="40" max="120" step="1">
+                            <span class="unit">CHF</span>
+                        </div>
+                        <span class="hint">
+                                    Average of nine targets, median 80: UBS 88, RBC 82, Berenberg, Bernstein, JP Morgan 80, Deutsche Bank, Barclays 76, Goldman 74, Jefferies 57 [3]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-thr">
+                            Margin of safety (decision threshold)
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-thr" min="0" max="40" step="1">
+                            <input type="number" id="n-thr" value="10" min="0" max="40" step="1">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    Buy only if the target is this much above the price, sell only if this much below; in between hold, because the error of the model is larger than the difference
+                                </span>
+                    </div>
+                </div>
+                <details>
+                    <summary>
+                        Assumptions
+                    </summary>
+                    <div class="field">
+                        <label for="n-eps26">
+                            Earnings per share 2026 (estimate)
+                            <span class="tag m">measured consensus</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-eps26" min="2" max="5" step="0.05">
+                            <input type="number" id="n-eps26" value="3.35" min="2" max="5" step="0.05">
+                            <span class="unit">USD</span>
+                        </div>
+                        <span class="hint">
+                                    Consensus [9]; nine months reported 2.06 USD; only used for the earnings growth of the PEG ratio
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-epsttm">
+                            Earnings per share, last twelve months
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-epsttm" min="1.5" max="4" step="0.01">
+                            <input type="number" id="n-epsttm" value="2.76" min="1.5" max="4" step="0.01">
+                            <span class="unit">USD</span>
+                        </div>
+                        <span class="hint">
+                                    Basic EPS: 2.59 for 2025 minus 1.89 for nine months 2025 plus 2.06 for nine months 2026 [1][4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-dps">
+                            Dividend per share
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-dps" min="0.5" max="2" step="0.01">
+                            <input type="number" id="n-dps" value="0.94" min="0.5" max="2" step="0.01">
+                            <span class="unit">CHF</span>
+                        </div>
+                        <span class="hint">
+                                    Paid for 2025, after 0.90 CHF for 2024 [4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-gd">
+                            Dividend growth, perpetual
+                            <span class="tag a">assumed 0.5</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-gd" min="0" max="10" step="0.5">
+                            <input type="number" id="n-gd" value="5" min="0" max="10" step="0.5">
+                            <span class="unit">%/a</span>
+                        </div>
+                        <span class="hint">
+                                    0.82 to 0.94 CHF from 2021 to 2025 is about 3.5 % a year; must stay below the required return
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-years1">
+                            Years of explicit cash flow growth
+                            <span class="tag a">assumed 0.6</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-years1" min="3" max="20" step="1">
+                            <input type="number" id="n-years1" value="10" min="3" max="20" step="1">
+                            <span class="unit">a</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="n-g2">
+                            Terminal growth after that
+                            <span class="tag a">assumed 0.6</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-g2" min="0" max="5" step="0.25">
+                            <input type="number" id="n-g2" value="2.5" min="0" max="5" step="0.25">
+                            <span class="unit">%/a</span>
+                        </div>
+                        <span class="hint">
+                                    Long-run nominal growth of the world economy; must stay below the required return
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-ebita">
+                            Operational EBITA 2026
+                            <span class="tag a">assumed 0.6</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-ebita" min="6" max="11" step="0.1">
+                            <input type="number" id="n-ebita" value="8.3" min="6" max="11" step="0.1">
+                            <span class="unit">billion USD</span>
+                        </div>
+                        <span class="hint">
+                                    6.0 billion USD over nine months plus a Q4 slightly below Q3's 2.0 billion plus the 240 million CHF property gain; 6.3 billion in 2025 [1][4]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-netdebt">
+                            Net debt
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-netdebt" min="-6" max="12" step="0.1">
+                            <input type="number" id="n-netdebt" value="1.33" min="-6" max="12" step="0.01">
+                            <span class="unit">billion USD</span>
+                        </div>
+                        <span class="hint">
+                                    30 September 2026, excluding net pension assets of 0.6 billion; Robotics brings in 5.4 billion in Q4, Rotork takes 5.5 billion out in 2027 [1]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-shares">
+                            Shares outstanding
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-shares" min="1.6" max="1.9" step="0.001">
+                            <input type="number" id="n-shares" value="1.808" min="1.6" max="1.9" step="0.001">
+                            <span class="unit">billion</span>
+                        </div>
+                        <span class="hint">
+                                    1'808 million at 30 September 2026 after 5.7 million bought back in Q3 [1]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-fx">
+                            US dollar in Swiss francs
+                            <span class="tag m">measured 15.10.2026</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-fx" min="0.6" max="1.1" step="0.01">
+                            <input type="number" id="n-fx" value="0.83" min="0.6" max="1.1" step="0.01">
+                            <span class="unit">CHF/USD</span>
+                        </div>
+                        <span class="hint">
+                                    0.827 on 15 October 2026 [8]; converts the USD earnings, cash flow and EBITA into the CHF of the share
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-hold">
+                            Holding period
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-hold" min="1" max="10" step="1">
+                            <input type="number" id="n-hold" value="3" min="1" max="10" step="1">
+                            <span class="unit">a</span>
+                        </div>
+                        <span class="hint">
+                                    Over how many years the price is expected to reach the target; only used for the expected annual return
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wpe">
+                            Weight: earnings multiple
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wpe" min="0" max="100" step="5">
+                            <input type="number" id="n-wpe" value="30" min="0" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="n-wdcf">
+                            Weight: discounted cash flow
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wdcf" min="0" max="100" step="5">
+                            <input type="number" id="n-wdcf" value="30" min="0" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="n-wev">
+                            Weight: enterprise value multiple
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wev" min="0" max="100" step="5">
+                            <input type="number" id="n-wev" value="20" min="0" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="n-wddm">
+                            Weight: dividend discount
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wddm" min="0" max="100" step="5">
+                            <input type="number" id="n-wddm" value="5" min="0" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    Low for a company that pays out only a third of its earnings and buys back shares instead
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wan">
+                            Weight: analyst consensus
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wan" min="0" max="100" step="5">
+                            <input type="number" id="n-wan" value="15" min="0" max="100" step="5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    The weights are normalised, so they need not add up to 100
+                                </span>
+                    </div>
+                </details>
+            </aside>
+
+            <section class="panel">
+                <div class="verdict hold" id="verdict">
+                    <p class="headline" id="verdict-headline">
+                        Hold
+                    </p>
+                    <p id="verdict-text">
+                    </p>
+                    <div class="meter">
+                        <div class="needle" id="verdict-needle" style="left: 50%"></div>
+                    </div>
+                    <div class="scale">
+                        <span>target below price: sell</span>
+                        <span>-30 ... 0 ... +30 % upside</span>
+                        <span>target above price: buy</span>
+                    </div>
+                    <p class="sub" id="verdict-note">
+                        The target price is the weighted result of five valuation methods under your assumptions;
+                        buy and sell need the margin of safety you set, everything in between is hold. This is a
+                        model of the key figures, not investment advice, and it knows nothing about your portfolio,
+                        taxes or horizon.
+                    </p>
+                </div>
+
+                <h2>
+                    Main results at the price of 28 October 2026
+                </h2>
+                <div class="scroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>
+                                Result
+                            </th>
+                            <th class="n">
+                                target price
+                            </th>
+                            <th class="n">
+                                weight
+                            </th>
+                            <th class="n">
+                                vs. price
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="sec">
+                            <td colspan="4">
+                                Target price by method
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Earnings multiple
+                                <span class="sub" id="res-pe-sub">
+                                                EPS 2027 x fair P/E
+                                            </span>
+                            </td>
+                            <td class="n" id="res-t-pe"></td>
+                            <td class="n" id="res-w-pe"></td>
+                            <td class="n" id="res-u-pe"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Discounted cash flow
+                                <span class="sub" id="res-dcf-sub">
+                                                free cash flow per share, two stages, minus net debt
+                                            </span>
+                            </td>
+                            <td class="n" id="res-t-dcf"></td>
+                            <td class="n" id="res-w-dcf"></td>
+                            <td class="n" id="res-u-dcf"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Enterprise value multiple
+                                <span class="sub" id="res-ev-sub">
+                                                EBITA 2026 x fair EV/EBITA, minus net debt
+                                            </span>
+                            </td>
+                            <td class="n" id="res-t-ev"></td>
+                            <td class="n" id="res-w-ev"></td>
+                            <td class="n" id="res-u-ev"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Dividend discount
+                                <span class="sub">
+                                                next dividend / (required return - dividend growth)
+                                            </span>
+                            </td>
+                            <td class="n" id="res-t-ddm"></td>
+                            <td class="n" id="res-w-ddm"></td>
+                            <td class="n" id="res-u-ddm"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Analyst consensus
+                            </td>
+                            <td class="n" id="res-t-an"></td>
+                            <td class="n" id="res-w-an"></td>
+                            <td class="n" id="res-u-an"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Weighted target price
+                            </td>
+                            <td class="n" id="res-target"></td>
+                            <td class="n">100 %</td>
+                            <td class="n" id="res-upside"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Expected annual return
+                                <span class="sub" id="res-ret-sub">
+                                                price to target over the holding period, plus dividend yield
+                                            </span>
+                            </td>
+                            <td class="n" id="res-ret"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Buy below / sell above
+                                <span class="sub">
+                                                the prices at which the verdict flips, with your margin of safety
+                                            </span>
+                            </td>
+                            <td class="n" id="res-buybelow"></td>
+                            <td class="n"></td>
+                            <td class="n" id="res-sellabove"></td>
+                        </tr>
+                        <tr class="sec">
+                            <td colspan="4">
+                                Key figures at the current price
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Price-earnings ratio, last twelve months
+                            </td>
+                            <td class="n" id="res-pettm"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Price-earnings ratio on 2027 estimate
+                            </td>
+                            <td class="n" id="res-pefwd"></td>
+                            <td class="n"></td>
+                            <td class="n" id="res-pefwd-vs"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                PEG ratio
+                                <span class="sub" id="res-peg-sub">
+                                                forward P/E divided by the earnings growth 2026 to 2027
+                                            </span>
+                            </td>
+                            <td class="n" id="res-peg"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                EV/EBITA 2026
+                            </td>
+                            <td class="n" id="res-evnow"></td>
+                            <td class="n"></td>
+                            <td class="n" id="res-evnow-vs"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Free cash flow yield
+                            </td>
+                            <td class="n" id="res-fcfy"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Dividend yield
+                            </td>
+                            <td class="n" id="res-divy"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Market capitalisation
+                            </td>
+                            <td class="n" id="res-mcap"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Net debt per share
+                            </td>
+                            <td class="n" id="res-nd"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <details>
+                    <summary>
+                        Sensitivity: weighted target price by fair P/E and earnings 2027
+                    </summary>
+                    <div class="more">
+                <div class="scroll">
+                    <table id="sensitivity">
+                        <thead>
+                        <tr>
+                            <th>
+                                Fair P/E
+                            </th>
+                            <th class="n">
+                                EPS 2027 3.30 USD
+                            </th>
+                            <th class="n">
+                                EPS 2027 3.75 USD
+                            </th>
+                            <th class="n">
+                                EPS 2027 4.20 USD
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="sensitivity-body">
+                        </tbody>
+                    </table>
+                </div>
+                <p class="hint">
+                    Each cell: the weighted target price in CHF and, in brackets, the upside against the current
+                    price in percent with all other assumptions as set on the left (green: buy, red: sell, grey: hold
+                    within the margin of safety); only the earnings multiple and the PEG change along the grid, the
+                    other methods stay as set.
+                </p>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>
+                        Formulas and sources
+                    </summary>
+                    <div class="more">
+                        <div class="notes">
+                            <p>
+                                <b>
+                                    currency formula
+                                </b>
+                                ABB reports in US dollars and the share is quoted in Swiss francs, so every per-share
+                                figure in USD is multiplied by the USD/CHF rate before it meets the price
+                            </p>
+                            <p>
+                                <b>
+                                    earnings multiple formula
+                                </b>
+                                the target by the earnings multiple: the earnings per share 2027 times the fair
+                                price-earnings ratio, in CHF
+                            </p>
+                            <p>
+                                <b>
+                                    free cash flow per share formula
+                                </b>
+                                the free cash flow of 2026 divided by the shares outstanding; billion USD divided by
+                                billion shares gives USD per share
+                            </p>
+                            <p>
+                                <b>
+                                    discounted cash flow formula
+                                </b>
+                                two stages: the free cash flow per share grows at the explicit rate for the number of
+                                years set and each year's cash flow is discounted at the required return; after the
+                                last year a terminal value is the next year's cash flow divided by the required
+                                return minus the terminal growth, discounted over the explicit years; the net debt per
+                                share is subtracted because the cash flow belongs to the creditors first; the only
+                                loop of this page
+                            </p>
+                            <p>
+                                <b>
+                                    enterprise value formula
+                                </b>
+                                the operational EBITA 2026 times the fair EV/EBITA multiple gives the enterprise
+                                value; minus the net debt gives the equity value; divided by the shares and converted
+                                gives the target per share
+                            </p>
+                            <p>
+                                <b>
+                                    dividend discount formula
+                                </b>
+                                the Gordon growth model: the dividend per share times one plus the growth, divided by
+                                the required return minus the growth; undefined if the growth is not below the return
+                            </p>
+                            <p>
+                                <b>
+                                    weighted target formula
+                                </b>
+                                each method's target times its weight, summed and divided by the sum of the weights
+                                of the methods that produced a value; a method without a value (dividend discount with
+                                growth above the return) is left out
+                            </p>
+                            <p>
+                                <b>
+                                    upside formula
+                                </b>
+                                the target divided by the price minus one, in percent; positive means the share is
+                                below its target
+                            </p>
+                            <p>
+                                <b>
+                                    share expected return formula
+                                </b>
+                                the annual return if the price reaches the target over the holding period: the ratio
+                                of target to price to the power of one over the years, minus one, plus the dividend
+                                yield
+                            </p>
+                            <p>
+                                <b>
+                                    flip price formula
+                                </b>
+                                buy below the target divided by one plus the margin of safety; sell above the target
+                                divided by one minus the margin of safety
+                            </p>
+                            <p>
+                                <b>
+                                    key figure formulas
+                                </b>
+                                trailing P/E: price divided by the last twelve months' EPS in CHF; forward P/E: price
+                                divided by the EPS 2027 in CHF; PEG: forward P/E divided by the earnings growth from
+                                2026 to 2027 in percent; EV/EBITA: market capitalisation in USD plus net debt, divided
+                                by the EBITA 2026; free cash flow yield: free cash flow per share in CHF divided by the
+                                price; dividend yield: dividend divided by the price
+                            </p>
+                            <p>
+                                <b>
+                                    verdict formula
+                                </b>
+                                buy if the upside is above the margin of safety, sell if it is below minus the margin
+                                of safety, hold in between; the margin is an assumption of the reader
+                            </p>
+                            <p>
+                                <b>
+                                    model limits
+                                </b>
+                                one price on one day against estimates that move every quarter; the EPS 2026
+                                consensus may or may not contain the 2.4 billion USD Robotics gain and is used for the
+                                PEG only; the Rotork outflow of 2027 and the Robotics inflow of Q4 2026 are not in the
+                                net debt; no tax on the dividend, no transaction cost, no portfolio context, no
+                                scenario probabilities; the analysts' models, the ABB financial report and the
+                                quarterly press releases are the places to look for these
+                            </p>
+                        </div>
+                        <div class="src">
+                            <h2>
+                                Sources
+                            </h2>
+                            <ol>
+                                <li>
+                                    <a href="https://library.e.abb.com/public/8954633d5ea54a4fb35da2ddbd1834f7/ABB-Q3-2026-press-release-English.pdf">
+                                        ABB Ltd, Q3 2026 results press release, Zurich, 20 October 2026 (orders,
+                                        revenues, margins, EPS, cash flow, net debt, backlog, shares, guidance)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.investing.com/news/transcripts/earnings-call-transcript-abb-posts-record-margins-in-q3-2026-but-misses-eps-93CH-4959247">
+                                        Investing.com, Q3 2026 earnings call transcript: EPS 0.69 vs 0.79 USD
+                                        expected, free cash flow near 5 billion USD, net debt 0.2 x EBITA, Rotork
+                                        closing H1 2027
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.finanzen.ch/kursziele/abb">
+                                        finanzen.ch, ABB Kursziele: nine analyst targets of May to October 2026
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://new.abb.com/news/detail/132985/q4-2025-results">
+                                        ABB Ltd, Q4 and full-year 2025 results, 29 January 2026 (EPS 2.59 USD, free
+                                        cash flow 4.6 billion USD, dividend 0.94 CHF, buyback 2 billion USD)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://new.abb.com/news/de/detail/129685/abb-verkauft-robotics-division-an-softbank-group">
+                                        ABB Ltd, 8 October 2025: sale of Robotics to SoftBank Group for 5.375 billion
+                                        USD
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://finance.yahoo.com/markets/stocks/articles/abb-swx-abbn-q3-earnings-042723759.html">
+                                        Simply Wall St via Yahoo Finance, October 2026: Q3 earnings, share down more
+                                        than 10 % over the month, discounted cash flow 14 % undervalued, Gamesa
+                                        Electric and Motion margin
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.wallstreet-online.de/nachricht/21559505-bernstein-research-stuft-abb-ltd-neutral">
+                                        dpa-AFX, 21 October 2026: Bernstein Research keeps Market-Perform, target 80
+                                        CHF
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://de.tradingeconomics.com/liechtenstein/currency">
+                                        Trading Economics: USD/CHF 0.827 on 15 October 2026
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.finanzen.ch/aktien/abb-aktie">
+                                        finanzen.ch, ABB Aktie: close 72.88 CHF on 28 October 2026, 52-week range,
+                                        P/E 2025 to 2027, EPS estimates 3.35 and 3.75 USD
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://finance.yahoo.com/quote/ABBN.SW/">
+                                        Yahoo Finance, ABBN.SW: market capitalisation, beta 0.98, one-year target
+                                        estimate 83.5 CHF
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.boerse-express.com/news/articles/abb-aktie-rotork-uebernahme-fuer-55-milliarden-dollar-933939">
+                                        Börse Express, July 2026: Rotork takeover for 5.5 billion USD, 503 pence per
+                                        share
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.wallstreet-online.de/nachricht/21558011-deutsche-bank-research-stuft-abb-ltd-hold">
+                                        dpa-AFX, 21 October 2026: Deutsche Bank Research keeps Hold, target 76 CHF
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.abb.com/global/en/news/139696/q3-2026-results">
+                                        ABB Ltd, Q3 2026 results page: Mitsubishi Electric low-voltage joint venture
+                                        at 11.1 x EBITDA, data-centre orders, Q4 and full-year outlook
+                                    </a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </details>
+
+                <script type="application/json" id="calc-data">
+                    {
+                        "inputs": {
+                            "price": {
+                                "unit": "CHF",
+                                "default": 72.88,
+                                "quality": "measured",
+                                "source": 9
+                            },
+                            "eps27": {
+                                "unit": "USD",
+                                "default": 3.75,
+                                "quality": "measured",
+                                "source": 9
+                            },
+                            "pe": {
+                                "unit": "x",
+                                "default": 22,
+                                "quality": "assumed",
+                                "confidence": 0.5
+                            },
+                            "fcf": {
+                                "unit": "billion USD",
+                                "default": 5.0,
+                                "quality": "measured",
+                                "source": 2
+                            },
+                            "g1": {
+                                "unit": "percent",
+                                "default": 8,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "rr": {
+                                "unit": "percent",
+                                "default": 8,
+                                "quality": "assumed",
+                                "confidence": 0.5
+                            },
+                            "evm": {
+                                "unit": "x",
+                                "default": 18,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "tan": {
+                                "unit": "CHF",
+                                "default": 77,
+                                "quality": "measured",
+                                "source": 3
+                            },
+                            "thr": {
+                                "unit": "percent",
+                                "default": 10,
+                                "quality": "assumed"
+                            },
+                            "eps26": {
+                                "unit": "USD",
+                                "default": 3.35,
+                                "quality": "measured",
+                                "source": 9
+                            },
+                            "epsttm": {
+                                "unit": "USD",
+                                "default": 2.76,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "dps": {
+                                "unit": "CHF",
+                                "default": 0.94,
+                                "quality": "measured",
+                                "source": 4
+                            },
+                            "gd": {
+                                "unit": "percent",
+                                "default": 5,
+                                "quality": "assumed",
+                                "confidence": 0.5
+                            },
+                            "years1": {
+                                "unit": "a",
+                                "default": 10,
+                                "quality": "assumed",
+                                "confidence": 0.6
+                            },
+                            "g2": {
+                                "unit": "percent",
+                                "default": 2.5,
+                                "quality": "assumed",
+                                "confidence": 0.6
+                            },
+                            "ebita": {
+                                "unit": "billion USD",
+                                "default": 8.3,
+                                "quality": "assumed",
+                                "confidence": 0.6
+                            },
+                            "netdebt": {
+                                "unit": "billion USD",
+                                "default": 1.33,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "shares": {
+                                "unit": "billion",
+                                "default": 1.808,
+                                "quality": "measured",
+                                "source": 1
+                            },
+                            "fx": {
+                                "unit": "CHF/USD",
+                                "default": 0.83,
+                                "quality": "measured",
+                                "source": 8
+                            },
+                            "hold": {
+                                "unit": "a",
+                                "default": 3,
+                                "quality": "assumed"
+                            },
+                            "wpe": {
+                                "unit": "percent",
+                                "default": 30,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wdcf": {
+                                "unit": "percent",
+                                "default": 30,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wev": {
+                                "unit": "percent",
+                                "default": 20,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wddm": {
+                                "unit": "percent",
+                                "default": 5,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "wan": {
+                                "unit": "percent",
+                                "default": 15,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            }
+                        },
+                        "presets": {
+                            "consensus": {
+                                "eps27": 3.75,
+                                "pe": 22,
+                                "g1": 8,
+                                "evm": 18,
+                                "tan": 77,
+                                "wpe": 30,
+                                "wdcf": 30,
+                                "wev": 20,
+                                "wddm": 5,
+                                "wan": 15
+                            },
+                            "bull": {
+                                "eps27": 4.2,
+                                "pe": 26,
+                                "g1": 11,
+                                "evm": 21,
+                                "tan": 88
+                            },
+                            "bear": {
+                                "eps27": 3.4,
+                                "pe": 17,
+                                "g1": 4,
+                                "evm": 15,
+                                "tan": 57
+                            },
+                            "cashflow": {
+                                "wpe": 0,
+                                "wdcf": 70,
+                                "wev": 0,
+                                "wddm": 30,
+                                "wan": 0
+                            }
+                        },
+                        "format": {
+                            "dec_point": ".",
+                            "thousand_sep": "'",
+                            "unit_sep": " ",
+                            "positive": "pos",
+                            "negative": "neg"
+                        }
+                    }
+                </script>
+                <script>
+                    (function () {
+                        "use strict";
+
+                        var calc_data = JSON.parse(document.getElementById("calc-data").textContent);
+                        var input_ids = Object.keys(calc_data.inputs);
+                        var format = calc_data.format;
+                        var meter_scale = 30;
+
+                        function read_number(id) {
+                            var field = document.getElementById("n-" + id);
+                            var result = parseFloat(field.value);
+                            if (isNaN(result)) {
+                                result = calc_data.inputs[id]["default"];
+                            }
+                            return result;
+                        }
+
+                        function read_inputs() {
+                            var result = {};
+                            var i;
+                            for (i = 0; i < input_ids.length; i++) {
+                                result[input_ids[i]] = read_number(input_ids[i]);
+                            }
+                            return result;
+                        }
+
+                        function dcf_per_share(fcf_ps, g1, years1, g2, rr, netdebt_ps) {
+                            // two-stage discounted cash flow per share, NaN if the terminal growth is not below the return
+                            var result = NaN;
+                            var pv = 0;
+                            var flow = fcf_ps;
+                            var t;
+                            for (t = 1; t <= years1; t++) {
+                                flow = flow * (1 + g1);
+                                pv = pv + flow / Math.pow(1 + rr, t);
+                            }
+                            if (rr > g2) {
+                                var terminal = flow * (1 + g2) / (rr - g2);
+                                var terminal_pv = terminal / Math.pow(1 + rr, years1);
+                                result = pv + terminal_pv - netdebt_ps;
+                            }
+                            return result;
+                        }
+
+                        function weighted(targets, weights) {
+                            // the weighted average of the targets that have a value
+                            var result = NaN;
+                            var sum = 0;
+                            var sum_w = 0;
+                            var i;
+                            for (i = 0; i < targets.length; i++) {
+                                if (!isNaN(targets[i])) {
+                                    sum = sum + targets[i] * weights[i];
+                                    sum_w = sum_w + weights[i];
+                                }
+                            }
+                            if (sum_w > 0) {
+                                result = sum / sum_w;
+                            }
+                            return result;
+                        }
+
+                        function calculate(inp) {
+                            var r = {};
+                            var rr = inp.rr / 100;
+                            var gd = inp.gd / 100;
+                            var g1 = inp.g1 / 100;
+                            var g2 = inp.g2 / 100;
+                            r.eps27_chf = inp.eps27 * inp.fx;
+                            r.epsttm_chf = inp.epsttm * inp.fx;
+                            r.fcf_ps = inp.fcf / inp.shares * inp.fx;
+                            r.netdebt_ps = inp.netdebt / inp.shares * inp.fx;
+                            r.t_pe = r.eps27_chf * inp.pe;
+                            r.t_dcf = dcf_per_share(r.fcf_ps, g1, inp.years1, g2, rr, r.netdebt_ps);
+                            r.t_ev = (inp.ebita * inp.evm - inp.netdebt) / inp.shares * inp.fx;
+                            r.t_ddm = NaN;
+                            if (rr > gd) {
+                                r.t_ddm = inp.dps * (1 + gd) / (rr - gd);
+                            }
+                            r.t_an = inp.tan;
+                            var targets = [r.t_pe, r.t_dcf, r.t_ev, r.t_ddm, r.t_an];
+                            var weights = [inp.wpe, inp.wdcf, inp.wev, inp.wddm, inp.wan];
+                            r.w_sum = 0;
+                            var i;
+                            for (i = 0; i < targets.length; i++) {
+                                if (!isNaN(targets[i])) {
+                                    r.w_sum = r.w_sum + weights[i];
+                                }
+                            }
+                            r.w_pe = inp.wpe / r.w_sum * 100;
+                            r.w_dcf = inp.wdcf / r.w_sum * 100;
+                            r.w_ev = inp.wev / r.w_sum * 100;
+                            r.w_ddm = inp.wddm / r.w_sum * 100;
+                            r.w_an = inp.wan / r.w_sum * 100;
+                            r.target = weighted(targets, weights);
+                            r.upside = (r.target / inp.price - 1) * 100;
+                            r.u_pe = (r.t_pe / inp.price - 1) * 100;
+                            r.u_dcf = (r.t_dcf / inp.price - 1) * 100;
+                            r.u_ev = (r.t_ev / inp.price - 1) * 100;
+                            r.u_ddm = (r.t_ddm / inp.price - 1) * 100;
+                            r.u_an = (r.t_an / inp.price - 1) * 100;
+                            r.div_yield = inp.dps / inp.price * 100;
+                            r.ret = (Math.pow(r.target / inp.price, 1 / inp.hold) - 1) * 100 + r.div_yield;
+                            r.buy_below = r.target / (1 + inp.thr / 100);
+                            r.sell_above = NaN;
+                            if (inp.thr < 100) {
+                                r.sell_above = r.target / (1 - inp.thr / 100);
+                            }
+                            r.pe_ttm = inp.price / r.epsttm_chf;
+                            r.pe_fwd = inp.price / r.eps27_chf;
+                            r.eps_growth = (inp.eps27 / inp.eps26 - 1) * 100;
+                            r.peg = NaN;
+                            if (r.eps_growth > 0) {
+                                r.peg = r.pe_fwd / r.eps_growth;
+                            }
+                            r.mcap_chf = inp.price * inp.shares;
+                            r.mcap_usd = r.mcap_chf / inp.fx;
+                            r.ev_now = (r.mcap_usd + inp.netdebt) / inp.ebita;
+                            r.fcf_yield = r.fcf_ps / inp.price * 100;
+                            if (r.upside > inp.thr) {
+                                r.verdict = "buy";
+                            } else if (r.upside < -inp.thr) {
+                                r.verdict = "sell";
+                            } else {
+                                r.verdict = "hold";
+                            }
+                            if (isNaN(r.upside)) {
+                                r.verdict = "hold";
+                            }
+                            return r;
+                        }
+
+                        function fmt(number, decimals) {
+                            var fixed = Math.abs(number).toFixed(decimals);
+                            var parts = fixed.split(".");
+                            var int_part = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, format.thousand_sep);
+                            var result = int_part;
+                            if (parts.length > 1) {
+                                result = result + format.dec_point + parts[1];
+                            }
+                            if (number < 0) {
+                                result = "-" + result;
+                            }
+                            return result;
+                        }
+
+                        function fmt_unit(number, decimals, unit) {
+                            var result = "-";
+                            if (!isNaN(number)) {
+                                result = fmt(number, decimals) + format.unit_sep + unit;
+                            }
+                            return result;
+                        }
+
+                        function fmt_signed(number, decimals, unit) {
+                            var cls = format.positive;
+                            var sign = "+";
+                            if (number < 0) {
+                                cls = format.negative;
+                                sign = "";
+                            }
+                            // for an upside a positive number is the good case for the buy side
+                            var result = "<span class=\"" + cls + "\">" + sign + fmt_unit(number, decimals, unit) + "</span>";
+                            if (isNaN(number)) {
+                                result = "-";
+                            }
+                            return result;
+                        }
+
+                        function set_text(id, html) {
+                            document.getElementById(id).innerHTML = html;
+                        }
+
+                        function render(inp, r) {
+                            set_text("res-pe-sub", fmt(r.eps27_chf, 2) + " CHF x " + fmt(inp.pe, 1));
+                            set_text("res-t-pe", fmt_unit(r.t_pe, 2, "CHF"));
+                            set_text("res-w-pe", fmt_unit(r.w_pe, 0, "%"));
+                            set_text("res-u-pe", fmt_signed(r.u_pe, 1, "%"));
+                            set_text("res-dcf-sub", fmt(r.fcf_ps, 2) + " CHF free cash flow per share, " + fmt(inp.g1, 1) + " % for " + fmt(inp.years1, 0) + " years, then " + fmt(inp.g2, 2) + " %, at " + fmt(inp.rr, 1) + " %");
+                            set_text("res-t-dcf", fmt_unit(r.t_dcf, 2, "CHF"));
+                            set_text("res-w-dcf", fmt_unit(r.w_dcf, 0, "%"));
+                            set_text("res-u-dcf", fmt_signed(r.u_dcf, 1, "%"));
+                            set_text("res-ev-sub", fmt(inp.ebita, 1) + " billion USD x " + fmt(inp.evm, 1) + " minus " + fmt(inp.netdebt, 2) + " billion net debt");
+                            set_text("res-t-ev", fmt_unit(r.t_ev, 2, "CHF"));
+                            set_text("res-w-ev", fmt_unit(r.w_ev, 0, "%"));
+                            set_text("res-u-ev", fmt_signed(r.u_ev, 1, "%"));
+                            set_text("res-t-ddm", fmt_unit(r.t_ddm, 2, "CHF"));
+                            set_text("res-w-ddm", fmt_unit(r.w_ddm, 0, "%"));
+                            set_text("res-u-ddm", fmt_signed(r.u_ddm, 1, "%"));
+                            set_text("res-t-an", fmt_unit(r.t_an, 2, "CHF"));
+                            set_text("res-w-an", fmt_unit(r.w_an, 0, "%"));
+                            set_text("res-u-an", fmt_signed(r.u_an, 1, "%"));
+                            set_text("res-target", fmt_unit(r.target, 2, "CHF"));
+                            set_text("res-upside", fmt_signed(r.upside, 1, "%"));
+                            set_text("res-ret-sub", "price to target over " + fmt(inp.hold, 0) + " years, plus " + fmt(r.div_yield, 2) + " % dividend yield");
+                            set_text("res-ret", fmt_signed(r.ret, 1, "%/a"));
+                            set_text("res-buybelow", fmt_unit(r.buy_below, 2, "CHF"));
+                            set_text("res-sellabove", fmt_unit(r.sell_above, 2, "CHF"));
+                            set_text("res-pettm", fmt_unit(r.pe_ttm, 1, "x"));
+                            set_text("res-pefwd", fmt_unit(r.pe_fwd, 1, "x"));
+                            set_text("res-pefwd-vs", fmt_signed(r.pe_fwd - inp.pe, 1, "x vs. fair"));
+                            set_text("res-peg-sub", "forward P/E divided by " + fmt(r.eps_growth, 1) + " % earnings growth 2026 to 2027");
+                            set_text("res-peg", fmt_unit(r.peg, 2, ""));
+                            set_text("res-evnow", fmt_unit(r.ev_now, 1, "x"));
+                            set_text("res-evnow-vs", fmt_signed(r.ev_now - inp.evm, 1, "x vs. fair"));
+                            set_text("res-fcfy", fmt_unit(r.fcf_yield, 2, "%"));
+                            set_text("res-divy", fmt_unit(r.div_yield, 2, "%"));
+                            set_text("res-mcap", fmt_unit(r.mcap_chf, 1, "billion CHF"));
+                            set_text("res-nd", fmt_unit(r.netdebt_ps, 2, "CHF"));
+                            render_verdict(inp, r);
+                            render_sensitivity(inp);
+                        }
+
+                        function render_verdict(inp, r) {
+                            var box = document.getElementById("verdict");
+                            var headline;
+                            var text;
+                            var target = fmt(r.target, 0);
+                            var price = fmt(inp.price, 2);
+                            var upside = fmt(Math.abs(r.upside), 0);
+                            var ret = fmt(r.ret, 1);
+                            var buy_below = fmt(r.buy_below, 0);
+                            var sell_above = fmt(r.sell_above, 0);
+                            if (r.verdict === "buy") {
+                                headline = "Buy - under your assumptions the share trades " + upside + " % below its target";
+                                text = "The weighted target price is " + target + " CHF against a price of " + price + " CHF, more than your margin of safety of " + fmt(inp.thr, 0) + " %. If the price reaches the target in " + fmt(inp.hold, 0) + " years, the return is about " + ret + " % a year including the dividend. The verdict turns to hold above " + buy_below + " CHF.";
+                            } else if (r.verdict === "sell") {
+                                headline = "Sell - under your assumptions the share trades " + upside + " % above its target";
+                                text = "The weighted target price is " + target + " CHF against a price of " + price + " CHF, more than your margin of safety of " + fmt(inp.thr, 0) + " % below the price. Held for " + fmt(inp.hold, 0) + " years until the price meets the target, the return is about " + ret + " % a year including the dividend. The verdict turns to hold below " + sell_above + " CHF.";
+                            } else {
+                                headline = "Hold - the target is within your margin of safety of the price";
+                                text = "The weighted target price is " + target + " CHF against a price of " + price + " CHF, a difference of " + fmt(r.upside, 0) + " %: less than the margin of safety of " + fmt(inp.thr, 0) + " % you require, so the key figures neither call for buying nor for selling. The expected return is about " + ret + " % a year including the dividend. Buy below " + buy_below + " CHF, sell above " + sell_above + " CHF - or change the assumptions that move the target most: the fair P/E, the cash flow growth and the required return.";
+                            }
+                            box.className = "verdict " + r.verdict;
+                            set_text("verdict-headline", headline);
+                            set_text("verdict-text", text);
+                            var position = 50 + r.upside / meter_scale * 50;
+                            if (isNaN(position)) {
+                                position = 50;
+                            }
+                            position = Math.max(1, Math.min(99, position));
+                            document.getElementById("verdict-needle").style.left = position + "%";
+                        }
+
+                        function render_sensitivity(inp) {
+                            var pe_levels = [16, 19, 22, 25, 28];
+                            var eps_levels = [3.3, 3.75, 4.2];
+                            var html = "";
+                            var i;
+                            var j;
+                            for (i = 0; i < pe_levels.length; i++) {
+                                html = html + "<tr><td>" + fmt(pe_levels[i], 0) + " x</td>";
+                                for (j = 0; j < eps_levels.length; j++) {
+                                    var scenario = Object.assign({}, inp);
+                                    scenario.pe = pe_levels[i];
+                                    scenario.eps27 = eps_levels[j];
+                                    var res = calculate(scenario);
+                                    var cls = "";
+                                    if (res.verdict === "buy") {
+                                        cls = "pos";
+                                    } else if (res.verdict === "sell") {
+                                        cls = "neg";
+                                    }
+                                    html = html + "<td class=\"n\"><span class=\"" + cls + "\">" + fmt(res.target, 0) + " (" + fmt_signed_plain(res.upside) + " %)</span></td>";
+                                }
+                                html = html + "</tr>";
+                            }
+                            set_text("sensitivity-body", html);
+                        }
+
+                        function fmt_signed_plain(number) {
+                            var result = fmt(number, 0);
+                            if (number > 0) {
+                                result = "+" + result;
+                            }
+                            return result;
+                        }
+
+                        function sync_from_number(id) {
+                            var number = document.getElementById("n-" + id);
+                            var range = document.getElementById("r-" + id);
+                            range.value = number.value;
+                        }
+
+                        function sync_from_range(id) {
+                            var number = document.getElementById("n-" + id);
+                            var range = document.getElementById("r-" + id);
+                            number.value = range.value;
+                        }
+
+                        function recalculate() {
+                            var inp = read_inputs();
+                            var r = calculate(inp);
+                            render(inp, r);
+                        }
+
+                        function apply_preset(name) {
+                            var preset = calc_data.presets[name];
+                            var keys = Object.keys(preset);
+                            var i;
+                            for (i = 0; i < keys.length; i++) {
+                                document.getElementById("n-" + keys[i]).value = preset[keys[i]];
+                                sync_from_number(keys[i]);
+                            }
+                            recalculate();
+                        }
+
+                        function bind() {
+                            var i;
+                            for (i = 0; i < input_ids.length; i++) {
+                                (function (id) {
+                                    var number = document.getElementById("n-" + id);
+                                    var range = document.getElementById("r-" + id);
+                                    sync_from_number(id);
+                                    range.addEventListener("input", function () {
+                                        sync_from_range(id);
+                                        recalculate();
+                                    });
+                                    number.addEventListener("input", function () {
+                                        sync_from_number(id);
+                                        recalculate();
+                                    });
+                                }(input_ids[i]));
+                            }
+                            var buttons = document.querySelectorAll("[data-preset]");
+                            for (i = 0; i < buttons.length; i++) {
+                                (function (button) {
+                                    button.addEventListener("click", function () {
+                                        apply_preset(button.getAttribute("data-preset"));
+                                    });
+                                }(buttons[i]));
+                            }
+                        }
+
+                        bind();
+                        recalculate();
+                    }());
+                </script>
+            </section>
+        </div>
+    </div>
+</main>
+<!--usr_msg-->
+<footer class="site-footer">
+    <p>
+        <a href="http://localhost/http/about.php">
+            About
+        </a>
+        &middot;
+        <a href="http://localhost/http/privacy_policy.html">
+            Privacy Policy
+        </a>
+        &middot;
+        All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+            Creative Commons CC0
+        </a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com">
+            program code
+        </a>
+        of this version 0.0.3
+        under the
+        <a href="https://www.gnu.org/licenses/agpl.html">
+            AGPL3
+        </a>
+        Licence.
+    </p>
+</footer>
+</body>
+</html>

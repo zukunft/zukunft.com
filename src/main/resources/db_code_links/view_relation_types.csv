@@ -1,3 +1,4 @@
 view_relation_type_id, type_name, code_id, description
 1, 'add components', 'add_components', 'add the components of the child view to the parent view at the start position'
 2, 'remove components', 'del_components', 'delete the components of the child view from the parent and if the start position is set starting at this position'
+3, 'editor', 'editor', 'the child view is the editor of the parent view, which the edit menu of the navbar offers instead of the alternative views'

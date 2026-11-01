@@ -188,6 +188,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -254,6 +257,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "GDP mismeasurement",
       "from": "mismeasurement",
@@ -571,8 +586,8 @@
     {"words": ["natural capital depletion due to GDP mismeasurement", "DR Congo", "2021", "percent", "GNI"], "number": "0.330940322255891", "source": "World Bank WDI Adjusted savings natural resources depletion"},
     {"words": ["marine fish stock", "wealth change", "world", "1995-2018", "percent"], "number": "-0.83", "source": "World Bank (2021) The Changing Wealth of Nations 2021", "description": "the change of the value of the global marine fish stocks; attributed by the source to the poor management and the overfishing, not to the GDP mismeasurement"},
     {"words": ["forest", "wealth per capita change", "low- and middle-income country", "1995-2018", "percent"], "number": "-0.08", "source": "World Bank (2021) The Changing Wealth of Nations 2021", "description": "the change of the forest wealth per capita of the low- and middle-income countries; attributed by the source to the deforestation, not to the GDP mismeasurement"},
-    {"words": ["air pollution damage due to GDP mismeasurement", "coal-fired power plant", "United States", "percent", "value added", "low"], "number": "0.8", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the gross external damages are 0.8 times the value added under the low assumptions of the social cost of carbon and the health impacts"},
-    {"words": ["air pollution damage due to GDP mismeasurement", "coal-fired power plant", "United States", "percent", "value added", "high"], "number": "5.6", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the gross external damages are 5.6 times the value added under the high assumptions of the social cost of carbon and the health impacts"},
+    {"words": ["air pollution damage due to GDP mismeasurement", "coal-fired power plant", "United States", "percent", "value added", "variance low (system)"], "number": "0.8", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the gross external damages are 0.8 times the value added under the low assumptions of the social cost of carbon and the health impacts"},
+    {"words": ["air pollution damage due to GDP mismeasurement", "coal-fired power plant", "United States", "percent", "value added", "variance high (system)"], "number": "5.6", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the gross external damages are 5.6 times the value added under the high assumptions of the social cost of carbon and the health impacts"},
     {"words": ["air pollution damage due to GDP mismeasurement", "agriculture", "United States", "percent", "value added"], "number": "0.38", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "the ratio of the gross external damages to the value added"},
     {"words": ["air pollution damage due to GDP mismeasurement", "agriculture", "United States", "billion", "EUR"], "number": "29.59", "source": "Muller, Mendelsohn & Nordhaus (2011)", "description": "32 billion USD of gross external damages at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["consumer surplus due to GDP mismeasurement", "willingness to accept", "search engine", "annual", "EUR"], "number": "16212", "source": "Brynjolfsson, Collis & Eggers (2019)", "description": "the median compensation of 17'530 USD to forgo search engines for a year, at the ECB 2023 average of 1.0813 USD per EUR"},

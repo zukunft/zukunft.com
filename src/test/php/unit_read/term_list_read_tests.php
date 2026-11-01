@@ -95,7 +95,7 @@ class term_list_read_tests
         $t->assert($test_name . $trm_lst->dsp_id(), $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';
-        // TODO add this to all db read tests for all API call functions
+        // TODO Prio 2 add this to all db read tests for all API call functions
         $json_txt = $trm_lst->api_json();
         $result = json_decode($json_txt, true);
         $result = $t->json_remove_fields_only_to_ui($result);

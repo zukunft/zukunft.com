@@ -4,11 +4,15 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>
-            test - zukunft.com
+            mathematics - Add word with details - zukunft.com
         </title>
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -35,22 +39,20 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
-                                        alternative
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=85&amp;id=1">
-                                        change view
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=84">
+                                    <a href="http://localhost/http/view.php?m=84" title="create a new named view editor">
                                         add view
                                     </a>
                                 </li>
@@ -292,11 +294,14 @@
                             <option value="180"  >
                                 Biological
                             </option>
+                            <option value="193"  >
+                                CBAM Part Tree Calculator
+                            </option>
                             <option value="16"  >
                                 Calculator
                             </option>
-                            <option value="175"  >
-                                Complete
+                            <option value="200"  >
+                                Comparison table
                             </option>
                             <option value="187"  >
                                 Currency
@@ -310,9 +315,6 @@
                             <option value="179"  >
                                 Historic
                             </option>
-                            <option value="158"  >
-                                Language selection
-                            </option>
                             <option value="185"  >
                                 Mathematical constant
                             </option>
@@ -321,6 +323,9 @@
                             </option>
                             <option value="112"  >
                                 Phrase (default)
+                            </option>
+                            <option value="202"  >
+                                Portfolio Split Calculator
                             </option>
                             <option value="177"  >
                                 Ranking
@@ -334,14 +339,11 @@
                             <option value="184"  >
                                 Simple
                             </option>
-                            <option value="193"  >
+                            <option value="203"  >
                                 System Test View Complete
                             </option>
-                            <option value="195"  >
+                            <option value="205"  >
                                 System Test View Table
-                            </option>
-                            <option value="136"  >
-                                System log
                             </option>
                             <option value="2"  >
                                 Table
@@ -376,20 +378,23 @@
                             <option value="31"  >
                                 Word (range)
                             </option>
-                            <option value="176"  >
-                                base units
-                            </option>
-                            <option value="191"  >
-                                company list with main ratios
-                            </option>
-                            <option value="190"  >
-                                company sheet
-                            </option>
                             <option value="189"  >
                                 country ratios
                             </option>
                             <option value="186"  >
                                 problem with solutions
+                            </option>
+                            <option value="198"  >
+                                process catch detail page
+                            </option>
+                            <option value="197"  >
+                                process catch main page
+                            </option>
+                            <option value="199"  >
+                                process catch result page
+                            </option>
+                            <option value="196"  >
+                                process catch start page
                             </option>
                             <option value="188"  >
                                 solution priority validation

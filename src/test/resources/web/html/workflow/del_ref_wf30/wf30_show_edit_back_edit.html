@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -34,23 +38,60 @@
                                 </i>
                             </summary>
                             <ul>
-                                <li>
-                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
-                                        alternative
+                                <li class="menu-header">
+                                    alternative views
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=7&amp;id=992" title="show &#039; System Test Reference External Key&#039; with the &#039;Reference (default)&#039; view">
+                                        Reference (default)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=68&amp;id=992&amp;d=7" title="adjust &#039; System Test Reference External Key&#039; so that it is always shown with the &#039;Reference (default)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=27&amp;id=992" title="show &#039; System Test Reference External Key&#039; with the &#039;Reference (detail)&#039; view">
+                                        Reference (detail)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=68&amp;id=992&amp;d=27" title="adjust &#039; System Test Reference External Key&#039; so that it is always shown with the &#039;Reference (detail)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=35&amp;id=992" title="show &#039; System Test Reference External Key&#039; with the &#039;Reference (range)&#039; view">
+                                        Reference (range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=68&amp;id=992&amp;d=35" title="adjust &#039; System Test Reference External Key&#039; so that it is always shown with the &#039;Reference (range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=43&amp;id=992" title="show &#039; System Test Reference External Key&#039; with the &#039;Reference (detail with range)&#039; view">
+                                        Reference (detail with range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=68&amp;id=992&amp;d=43" title="adjust &#039; System Test Reference External Key&#039; so that it is always shown with the &#039;Reference (detail with range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views e.g. Start view, Table, Word (default)">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=85&amp;id=69&amp;9id=992&amp;9m=69">
-                                        change view
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=69&amp;9id=992&amp;9m=69" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=84&amp;9id=992&amp;9m=69">
+                                    <a href="http://localhost/http/view.php?m=84&amp;9id=992&amp;9m=69" title="create a new named view editor for this  System Test Reference External Key">
                                         add view
                                     </a>
                                 </li>
@@ -146,589 +187,627 @@
                         </label>
                         <input type="text" list="p_form_select_phrase_list" class="form-control" name="p" form="ref_del" id="p_form_select_phrase" >
                         <datalist id="p_form_select_phrase_list">
-                            <option value="2023 (year)" data-value="-636">
+                            <option value="2023 (year)" data-value="-685">
                             </option>
-                            <option value="2023 is follower of 2022" data-value="-646">
+                            <option value="2023 is follower of 2022" data-value="-695">
                             </option>
-                            <option value="2024 (year)" data-value="-635">
+                            <option value="2024 (year)" data-value="-684">
                             </option>
-                            <option value="2024 is follower of 2023" data-value="-645">
+                            <option value="2024 is follower of 2023" data-value="-694">
                             </option>
-                            <option value="AI incident due to black-box AI" data-value="-1758">
+                            <option value="AI incident due to black-box AI" data-value="-1831">
                             </option>
-                            <option value="COVID-19 deaths due to disinformation" data-value="-1803">
+                            <option value="COVID-19 deaths due to disinformation" data-value="-1876">
                             </option>
-                            <option value="Delphi method (biased information solution)" data-value="-2336">
+                            <option value="Delphi method (biased information solution)" data-value="-2409">
                             </option>
-                            <option value="Delphi method (solution)" data-value="-201">
+                            <option value="Delphi method (solution)" data-value="-258">
                             </option>
-                            <option value="EUR (ISO 4217 code)" data-value="-422">
+                            <option value="EUR (ISO 4217 code)" data-value="-471">
                             </option>
-                            <option value="EUR (currency)" data-value="-624">
+                            <option value="EUR (currency)" data-value="-673">
                             </option>
-                            <option value="EUR is symbol for Euro" data-value="-396">
+                            <option value="EUR is symbol for Euro" data-value="-445">
                             </option>
-                            <option value="EUR per kWh" data-value="-1978">
+                            <option value="EUR per kW" data-value="-2942">
                             </option>
-                            <option value="EUR per kWp" data-value="-1979">
+                            <option value="EUR per kWh" data-value="-2051">
                             </option>
-                            <option value="EUR per person year" data-value="-192">
+                            <option value="EUR per kWp" data-value="-2052">
                             </option>
-                            <option value="EUR per tonne CO2" data-value="-1644">
+                            <option value="EUR per person year" data-value="-249">
                             </option>
-                            <option value="GDP decline" data-value="-123">
+                            <option value="EUR per tonne" data-value="-2531">
                             </option>
-                            <option value="GDP is symbol for gross domestic product" data-value="-894">
+                            <option value="EUR per tonne CO2" data-value="-1716">
                             </option>
-                            <option value="GDP loss (education reason)" data-value="-2377">
+                            <option value="EUR per tonne CO2-eq" data-value="-2587">
                             </option>
-                            <option value="GDP loss (health reason)" data-value="-2366">
+                            <option value="GDP decline" data-value="-173">
                             </option>
-                            <option value="GDP loss (reason)" data-value="-2309">
+                            <option value="GDP is symbol for gross domestic product" data-value="-962">
                             </option>
-                            <option value="GDP loss due to global warming" data-value="-1645">
+                            <option value="GDP loss (education reason)" data-value="-2450">
                             </option>
-                            <option value="GDP mismeasurement (global problem)" data-value="-197">
+                            <option value="GDP loss (health reason)" data-value="-2439">
                             </option>
-                            <option value="GDP mismeasurement reason" data-value="-2342">
+                            <option value="GDP loss (reason)" data-value="-2382">
                             </option>
-                            <option value="GDP per capita" data-value="-779">
+                            <option value="GDP loss due to global warming" data-value="-1717">
                             </option>
-                            <option value="GDP per capita change (populism reason)" data-value="-2346">
+                            <option value="GDP mismeasurement (global problem)" data-value="-254">
                             </option>
-                            <option value="GDP per capita change (reason)" data-value="-2307">
+                            <option value="GDP mismeasurement reason" data-value="-2415">
                             </option>
-                            <option value="GDP per capita change due to global warming" data-value="-1646">
+                            <option value="GDP per capita" data-value="-847">
                             </option>
-                            <option value="GDP per capita change due to populism" data-value="-1682">
+                            <option value="GDP per capita change (populism reason)" data-value="-2419">
                             </option>
-                            <option value="GDP revision (GDP mismeasurement reason)" data-value="-2441">
+                            <option value="GDP per capita change (reason)" data-value="-2380">
                             </option>
-                            <option value="GDP revision (reason)" data-value="-2317">
+                            <option value="GDP per capita change due to global warming" data-value="-1718">
                             </option>
-                            <option value="GDP revision due to GDP mismeasurement" data-value="-1853">
+                            <option value="GDP per capita change due to populism" data-value="-1755">
                             </option>
-                            <option value="OLS is symbol for ordinary least squares" data-value="-221">
+                            <option value="GDP revision (GDP mismeasurement reason)" data-value="-2514">
                             </option>
-                            <option value="absolute poverty" data-value="-1011">
+                            <option value="GDP revision (reason)" data-value="-2390">
                             </option>
-                            <option value="agricultural productivity change due to global warming" data-value="-1665">
+                            <option value="GDP revision due to GDP mismeasurement" data-value="-1926">
                             </option>
-                            <option value="air pollution damage due to GDP mismeasurement" data-value="-1854">
+                            <option value="OLS is symbol for ordinary least squares" data-value="-279">
                             </option>
-                            <option value="alert fatigue due to black-box AI" data-value="-1757">
+                            <option value="absolute poverty" data-value="-1079">
                             </option>
-                            <option value="algorithmic discrimination due to black-box AI" data-value="-1755">
+                            <option value="agricultural productivity change due to global warming" data-value="-1738">
                             </option>
-                            <option value="alignment research" data-value="-1540">
+                            <option value="air pollution damage due to GDP mismeasurement" data-value="-1927">
                             </option>
-                            <option value="assumed (conjecture)" data-value="-166">
+                            <option value="alert fatigue due to black-box AI" data-value="-1830">
                             </option>
-                            <option value="avoid wrong decisions (populism solution)" data-value="-2322">
+                            <option value="algorithmic discrimination due to black-box AI" data-value="-1828">
                             </option>
-                            <option value="avoid wrong decisions (solution)" data-value="-227">
+                            <option value="alignment research" data-value="-1612">
                             </option>
-                            <option value="basic income (solution)" data-value="-199">
+                            <option value="annual label" data-value="-2752">
                             </option>
-                            <option value="basic income (wealth concentration solution)" data-value="-2330">
+                            <option value="annuity factor" data-value="-2955">
                             </option>
-                            <option value="biased information (global problem)" data-value="-195">
+                            <option value="assumed (conjecture)" data-value="-216">
                             </option>
-                            <option value="biased information reason" data-value="-2335">
+                            <option value="basic income (solution)" data-value="-256">
                             </option>
-                            <option value="billion (scaling)" data-value="-626">
+                            <option value="basic income (wealth concentration solution)" data-value="-2403">
                             </option>
-                            <option value="billion USD" data-value="-1112">
+                            <option value="biased information (global problem)" data-value="-252">
                             </option>
-                            <option value="black-box AI (global problem)" data-value="-228">
+                            <option value="biased information reason" data-value="-2408">
                             </option>
-                            <option value="black-box AI reason" data-value="-2337">
+                            <option value="billion (scaling)" data-value="-675">
                             </option>
-                            <option value="budget misallocation (citizen participation reason)" data-value="-2431">
+                            <option value="billion CHF" data-value="-3521">
                             </option>
-                            <option value="budget misallocation (reason)" data-value="-2316">
+                            <option value="billion USD" data-value="-1181">
                             </option>
-                            <option value="budget misallocation due to citizen participation" data-value="-1781">
+                            <option value="black-box AI (global problem)" data-value="-301">
                             </option>
-                            <option value="canton GDP" data-value="-778">
+                            <option value="black-box AI reason" data-value="-2410">
                             </option>
-                            <option value="cartel overcharge due to market power" data-value="-1895">
+                            <option value="break-even spending" data-value="-3540">
                             </option>
-                            <option value="child poverty" data-value="-1694">
+                            <option value="budget misallocation (citizen participation reason)" data-value="-2504">
                             </option>
-                            <option value="citizen participation (global problem)" data-value="-196">
+                            <option value="budget misallocation (reason)" data-value="-2389">
                             </option>
-                            <option value="citizen participation reason" data-value="-2339">
+                            <option value="budget misallocation due to citizen participation" data-value="-1854">
                             </option>
-                            <option value="civic education" data-value="-1188">
+                            <option value="canton GDP" data-value="-846">
                             </option>
-                            <option value="climate adaptation (global warming solution)" data-value="-1658">
+                            <option value="capacity factor" data-value="-2954">
                             </option>
-                            <option value="climate adaptation (solution)" data-value="-1656">
+                            <option value="cartel overcharge due to market power" data-value="-1968">
                             </option>
-                            <option value="climate gas emissions (global warming reason)" data-value="-1652">
+                            <option value="child poverty" data-value="-1767">
                             </option>
-                            <option value="climate gas emissions (reason)" data-value="-239">
+                            <option value="citizen participation (global problem)" data-value="-253">
                             </option>
-                            <option value="climate migrant due to global warming" data-value="-1648">
+                            <option value="citizen participation reason" data-value="-2412">
                             </option>
-                            <option value="column confidence" data-value="-255">
+                            <option value="civic education" data-value="-1259">
                             </option>
-                            <option value="column consumption mix" data-value="-1956">
+                            <option value="climate adaptation (global warming solution)" data-value="-1731">
                             </option>
-                            <option value="column cost" data-value="-247">
+                            <option value="climate adaptation (solution)" data-value="-1728">
                             </option>
-                            <option value="column cost is explaining column for column problem (high prio)" data-value="-273">
+                            <option value="climate gas emissions (global warming reason)" data-value="-1724">
                             </option>
-                            <option value="column displacement mix" data-value="-1957">
+                            <option value="climate gas emissions (reason)" data-value="-311">
                             </option>
-                            <option value="column displacement mix is next main column after column consumption mix" data-value="-1958">
+                            <option value="climate migrant due to global warming" data-value="-1720">
                             </option>
-                            <option value="column effort" data-value="-252">
+                            <option value="column confidence" data-value="-293">
                             </option>
-                            <option value="column effort is explaining column for column solution (high prio)" data-value="-277">
+                            <option value="column consumption mix" data-value="-2029">
                             </option>
-                            <option value="column expected return" data-value="-251">
+                            <option value="column cost" data-value="-285">
                             </option>
-                            <option value="column expected return is explaining column for column solution (high prio)" data-value="-279">
+                            <option value="column cost is explaining column for column problem (high prio)" data-value="-320">
                             </option>
-                            <option value="column gain" data-value="-245">
+                            <option value="column displacement mix" data-value="-2030">
                             </option>
-                            <option value="column gain is explaining column for column solution (high prio)" data-value="-276">
+                            <option value="column displacement mix is next main column after column consumption mix" data-value="-2031">
                             </option>
-                            <option value="column initial effort" data-value="-258">
+                            <option value="column effort" data-value="-290">
                             </option>
-                            <option value="column loss" data-value="-242">
+                            <option value="column effort is explaining column for column solution (high prio)" data-value="-324">
                             </option>
-                            <option value="column loss is explaining column for column problem (high prio)" data-value="-272">
+                            <option value="column expected return" data-value="-289">
                             </option>
-                            <option value="column loss reduction" data-value="-257">
+                            <option value="column expected return is explaining column for column solution (high prio)" data-value="-326">
                             </option>
-                            <option value="column percent" data-value="-253">
+                            <option value="column first child portfolio" data-value="-3349">
                             </option>
-                            <option value="column percent is explaining column for column problem (high prio)" data-value="-275">
+                            <option value="column first child portfolio is next main column after column parent portfolio" data-value="-3392">
                             </option>
-                            <option value="column potential gain" data-value="-244">
+                            <option value="column initial effort" data-value="-298">
                             </option>
-                            <option value="column potential gain is explaining column for column solution (high prio)" data-value="-278">
+                            <option value="column loss reduction" data-value="-297">
                             </option>
-                            <option value="column potential loss" data-value="-241">
+                            <option value="column parent portfolio" data-value="-3294">
                             </option>
-                            <option value="column potential loss is explaining column for column problem (high prio)" data-value="-274">
+                            <option value="column percent" data-value="-291">
                             </option>
-                            <option value="column potential loss of reason" data-value="-266">
+                            <option value="column percent is explaining column for column problem (high prio)" data-value="-322">
                             </option>
-                            <option value="column potential loss of reason is explaining column for column reason" data-value="-281">
+                            <option value="column potential gain" data-value="-283">
                             </option>
-                            <option value="column priority" data-value="-248">
+                            <option value="column potential gain in EUR" data-value="-292">
                             </option>
-                            <option value="column probability" data-value="-249">
+                            <option value="column potential gain in EUR is explaining column for column solution (high prio)" data-value="-319">
                             </option>
-                            <option value="column probability is explaining column for column priority" data-value="-268">
+                            <option value="column potential gain in htp" data-value="-296">
                             </option>
-                            <option value="column probability range" data-value="-260">
+                            <option value="column potential gain in htp is explaining column for column solution (high prio)" data-value="-323">
                             </option>
-                            <option value="column problem (high prio)" data-value="-240">
+                            <option value="column potential gain is explaining column for column solution (high prio)" data-value="-325">
                             </option>
-                            <option value="column problem (high prio) is next main column after column priority" data-value="-267">
+                            <option value="column potential loss" data-value="-281">
                             </option>
-                            <option value="column ranking" data-value="-246">
+                            <option value="column potential loss is explaining column for column problem (high prio)" data-value="-321">
                             </option>
-                            <option value="column ranking is explaining column for column priority" data-value="-270">
+                            <option value="column potential loss of reason" data-value="-313">
                             </option>
-                            <option value="column reason" data-value="-265">
+                            <option value="column potential loss of reason is explaining column for column reason" data-value="-330">
                             </option>
-                            <option value="column reason is next main column after column problem (high prio)" data-value="-280">
+                            <option value="column priority" data-value="-286">
                             </option>
-                            <option value="column reward ratio" data-value="-259">
+                            <option value="column probability" data-value="-287">
                             </option>
-                            <option value="column solution (high prio)" data-value="-243">
+                            <option value="column probability is explaining column for column priority" data-value="-316">
                             </option>
-                            <option value="column solution (high prio) is next main column after column reason" data-value="-282">
+                            <option value="column probability range" data-value="-300">
                             </option>
-                            <option value="column source" data-value="-254">
+                            <option value="column problem (high prio)" data-value="-280">
                             </option>
-                            <option value="column source is explaining column for column priority" data-value="-271">
+                            <option value="column problem (high prio) is next main column after column priority" data-value="-315">
                             </option>
-                            <option value="column standard deviation" data-value="-250">
+                            <option value="column ranking" data-value="-284">
                             </option>
-                            <option value="column standard deviation is explaining column for column priority" data-value="-269">
+                            <option value="column ranking is explaining column for column priority" data-value="-318">
                             </option>
-                            <option value="compliance cost due to black-box AI" data-value="-1759">
+                            <option value="column reason" data-value="-312">
                             </option>
-                            <option value="conflicted advice due to biased information" data-value="-1735">
+                            <option value="column reason is next main column after column problem (high prio)" data-value="-329">
                             </option>
-                            <option value="consumer surplus due to GDP mismeasurement" data-value="-1855">
+                            <option value="column reward ratio" data-value="-299">
                             </option>
-                            <option value="consumption change due to populism" data-value="-1688">
+                            <option value="column second child portfolio" data-value="-3350">
                             </option>
-                            <option value="cost overrun (biased information reason)" data-value="-2413">
+                            <option value="column second child portfolio is next main column after column first child portfolio" data-value="-3393">
                             </option>
-                            <option value="cost overrun (reason)" data-value="-2314">
+                            <option value="column solution (high prio)" data-value="-282">
                             </option>
-                            <option value="cost overrun due to biased information" data-value="-1733">
+                            <option value="column solution (high prio) is next main column after column reason" data-value="-331">
                             </option>
-                            <option value="crime due to poverty" data-value="-1702">
+                            <option value="column standard deviation" data-value="-288">
                             </option>
-                            <option value="critical thinking education" data-value="-1263">
+                            <option value="column standard deviation is explaining column for column priority" data-value="-317">
                             </option>
-                            <option value="crop yield change due to global warming" data-value="-1664">
+                            <option value="compliance cost due to black-box AI" data-value="-1832">
                             </option>
-                            <option value="current GDP" data-value="-1807">
+                            <option value="conflicted advice due to biased information" data-value="-1808">
                             </option>
-                            <option value="deadweight loss (market power reason)" data-value="-2403">
+                            <option value="consumer surplus due to GDP mismeasurement" data-value="-1928">
                             </option>
-                            <option value="deadweight loss (reason)" data-value="-2313">
+                            <option value="consumption change due to populism" data-value="-1761">
                             </option>
-                            <option value="deadweight loss due to market power" data-value="-1892">
+                            <option value="cost overrun (biased information reason)" data-value="-2486">
                             </option>
-                            <option value="debt to GDP ratio change due to populism" data-value="-1692">
+                            <option value="cost overrun (reason)" data-value="-2387">
                             </option>
-                            <option value="default sort order (system)" data-value="-238">
+                            <option value="cost overrun due to biased information" data-value="-1806">
                             </option>
-                            <option value="disinformation (global problem)" data-value="-155">
+                            <option value="cost overrun limits lifting the NPP ban" data-value="-3065">
                             </option>
-                            <option value="disinformation can cause ignorance" data-value="-983">
+                            <option value="crime due to poverty" data-value="-1775">
                             </option>
-                            <option value="disinformation influences populism" data-value="-984">
+                            <option value="critical thinking education" data-value="-1335">
                             </option>
-                            <option value="disinformation kind of misinformation" data-value="-982">
+                            <option value="crop yield change due to global warming" data-value="-1737">
                             </option>
-                            <option value="disinformation reason" data-value="-2331">
+                            <option value="current GDP" data-value="-1880">
                             </option>
-                            <option value="economic nationalism due to populism" data-value="-1689">
+                            <option value="deadweight loss (market power reason)" data-value="-2476">
                             </option>
-                            <option value="ecosystem collapse due to global warming" data-value="-1649">
+                            <option value="deadweight loss (reason)" data-value="-2386">
                             </option>
-                            <option value="education (climate solution)" data-value="-1166">
+                            <option value="deadweight loss due to market power" data-value="-1965">
                             </option>
-                            <option value="education can be global problem" data-value="-125">
+                            <option value="debt to GDP ratio change due to populism" data-value="-1765">
                             </option>
-                            <option value="education reason" data-value="-2327">
+                            <option value="default sort order (system)" data-value="-275">
                             </option>
-                            <option value="education spending" data-value="-1364">
+                            <option value="disinformation (global problem)" data-value="-205">
                             </option>
-                            <option value="election interference (disinformation reason)" data-value="-2393">
+                            <option value="disinformation can cause ignorance" data-value="-1051">
                             </option>
-                            <option value="election interference (reason)" data-value="-2312">
+                            <option value="disinformation influences populism" data-value="-1052">
                             </option>
-                            <option value="election interference due to disinformation" data-value="-1804">
+                            <option value="disinformation kind of misinformation" data-value="-1050">
                             </option>
-                            <option value="excess mortality due to populism" data-value="-1691">
+                            <option value="disinformation reason" data-value="-2404">
                             </option>
-                            <option value="excess mortality due to wealth concentration" data-value="-1934">
+                            <option value="economic nationalism due to populism" data-value="-1762">
                             </option>
-                            <option value="excess profit due to market power" data-value="-1893">
+                            <option value="ecosystem collapse due to global warming" data-value="-1721">
                             </option>
-                            <option value="extreme poverty" data-value="-1013">
+                            <option value="education (climate solution)" data-value="-1236">
                             </option>
-                            <option value="extreme weather (global warming reason)" data-value="-1655">
+                            <option value="education can be global problem" data-value="-175">
                             </option>
-                            <option value="extreme weather (reason)" data-value="-1634">
+                            <option value="education reason" data-value="-2400">
                             </option>
-                            <option value="extreme weather due to global warming" data-value="-1175">
+                            <option value="education spending" data-value="-1436">
                             </option>
-                            <option value="factor wrong" data-value="-755">
+                            <option value="election interference (disinformation reason)" data-value="-2466">
                             </option>
-                            <option value="financial globalization change due to populism" data-value="-1693">
+                            <option value="election interference (reason)" data-value="-2385">
                             </option>
-                            <option value="fishery revenue change due to global warming" data-value="-1666">
+                            <option value="election interference due to disinformation" data-value="-1877">
                             </option>
-                            <option value="fluid democracy (citizen participation solution)" data-value="-2437">
+                            <option value="electricity demand" data-value="-2976">
                             </option>
-                            <option value="fluid democracy (solution)" data-value="-202">
+                            <option value="excess mortality due to populism" data-value="-1764">
                             </option>
-                            <option value="free software (solution)" data-value="-203">
+                            <option value="excess mortality due to wealth concentration" data-value="-2007">
                             </option>
-                            <option value="global problem" data-value="-104">
+                            <option value="excess profit due to market power" data-value="-1966">
                             </option>
-                            <option value="global problem reason" data-value="-2319">
+                            <option value="extreme poverty" data-value="-1081">
                             </option>
-                            <option value="global problem solution" data-value="-2320">
+                            <option value="extreme weather (global warming reason)" data-value="-1727">
                             </option>
-                            <option value="global warming (global problem)" data-value="-181">
+                            <option value="extreme weather (reason)" data-value="-1706">
                             </option>
-                            <option value="global warming is alias of climate change" data-value="-978">
+                            <option value="extreme weather due to global warming" data-value="-1245">
                             </option>
-                            <option value="global warming reason" data-value="-1631">
+                            <option value="factor wrong" data-value="-807">
                             </option>
-                            <option value="government spending" data-value="-964">
+                            <option value="financial globalization change due to populism" data-value="-1766">
                             </option>
-                            <option value="gross domestic usage (GDP mismeasurement solution)" data-value="-2448">
+                            <option value="fishery revenue change due to global warming" data-value="-1739">
                             </option>
-                            <option value="gross domestic usage (solution)" data-value="-231">
+                            <option value="fluid democracy (citizen participation solution)" data-value="-2510">
                             </option>
-                            <option value="growth loss (reason)" data-value="-2311">
+                            <option value="fluid democracy (solution)" data-value="-259">
                             </option>
-                            <option value="growth loss (wealth concentration reason)" data-value="-2385">
+                            <option value="free software (solution)" data-value="-260">
                             </option>
-                            <option value="growth loss due to wealth concentration" data-value="-1943">
+                            <option value="global problem" data-value="-139">
                             </option>
-                            <option value="hallucination due to black-box AI" data-value="-1751">
+                            <option value="global problem reason" data-value="-2392">
                             </option>
-                            <option value="happiness factor" data-value="-1360">
+                            <option value="global problem solution" data-value="-2393">
                             </option>
-                            <option value="hardware upgrade due to proprietary software" data-value="-1913">
+                            <option value="global warming (global problem)" data-value="-233">
                             </option>
-                            <option value="health can be a global problem" data-value="-122">
+                            <option value="global warming is alias of climate change" data-value="-1046">
                             </option>
-                            <option value="health cost due to disinformation" data-value="-1797">
+                            <option value="global warming reason" data-value="-1703">
                             </option>
-                            <option value="health cost due to global warming" data-value="-1651">
+                            <option value="government spending" data-value="-1032">
                             </option>
-                            <option value="health cost due to poverty" data-value="-1703">
+                            <option value="gross domestic usage (GDP mismeasurement solution)" data-value="-2521">
                             </option>
-                            <option value="health reason" data-value="-2325">
+                            <option value="gross domestic usage (solution)" data-value="-304">
                             </option>
-                            <option value="health spending" data-value="-1695">
+                            <option value="growth loss (reason)" data-value="-2384">
                             </option>
-                            <option value="health taxes" data-value="-1362">
+                            <option value="growth loss (wealth concentration reason)" data-value="-2458">
                             </option>
-                            <option value="heat mortality (global warming reason)" data-value="-1654">
+                            <option value="growth loss due to wealth concentration" data-value="-2016">
                             </option>
-                            <option value="heat mortality (reason)" data-value="-1633">
+                            <option value="hallucination due to black-box AI" data-value="-1824">
                             </option>
-                            <option value="heat mortality due to global warming" data-value="-1174">
+                            <option value="happiness factor" data-value="-1432">
                             </option>
-                            <option value="household air pollution due to poverty" data-value="-1710">
+                            <option value="hardware upgrade due to proprietary software" data-value="-1986">
                             </option>
-                            <option value="htp is symbol for happy time points" data-value="-220">
+                            <option value="health can be a global problem" data-value="-172">
                             </option>
-                            <option value="hunger (poverty reason)" data-value="-2355">
+                            <option value="health cost due to disinformation" data-value="-1870">
                             </option>
-                            <option value="hunger (reason)" data-value="-2308">
+                            <option value="health cost due to global warming" data-value="-1723">
                             </option>
-                            <option value="hunger due to poverty" data-value="-1706">
+                            <option value="health cost due to poverty" data-value="-1776">
                             </option>
-                            <option value="ill health" data-value="-1858">
+                            <option value="health reason" data-value="-2398">
                             </option>
-                            <option value="in EUR" data-value="-406">
+                            <option value="health spending" data-value="-1768">
                             </option>
-                            <option value="income loss (education reason)" data-value="-2376">
+                            <option value="health taxes" data-value="-1434">
                             </option>
-                            <option value="income loss (poverty reason)" data-value="-2359">
+                            <option value="heat mortality (global warming reason)" data-value="-1726">
                             </option>
-                            <option value="income loss (reason)" data-value="-2310">
+                            <option value="heat mortality (reason)" data-value="-1705">
                             </option>
-                            <option value="income loss due to poverty" data-value="-1704">
+                            <option value="heat mortality due to global warming" data-value="-1244">
                             </option>
-                            <option value="infant mortality due to citizen participation" data-value="-1782">
+                            <option value="household air pollution due to poverty" data-value="-1783">
                             </option>
-                            <option value="informal economy due to GDP mismeasurement" data-value="-1852">
+                            <option value="htp is symbol for happy time points" data-value="-278">
                             </option>
-                            <option value="institutional erosion due to populism" data-value="-1690">
+                            <option value="hunger (poverty reason)" data-value="-2428">
                             </option>
-                            <option value="investment loss due to market power" data-value="-1896">
+                            <option value="hunger (reason)" data-value="-2381">
                             </option>
-                            <option value="labour productivity loss (global warming reason)" data-value="-1653">
+                            <option value="hunger due to poverty" data-value="-1779">
                             </option>
-                            <option value="labour productivity loss (health reason)" data-value="-2370">
+                            <option value="ill health" data-value="-1931">
                             </option>
-                            <option value="labour productivity loss (reason)" data-value="-1632">
+                            <option value="in EUR" data-value="-455">
                             </option>
-                            <option value="labour productivity loss due to global warming" data-value="-1185">
+                            <option value="income loss (education reason)" data-value="-2449">
                             </option>
-                            <option value="labour share change due to market power" data-value="-1897">
+                            <option value="income loss (poverty reason)" data-value="-2432">
                             </option>
-                            <option value="learning poverty" data-value="-1363">
+                            <option value="income loss (reason)" data-value="-2383">
                             </option>
-                            <option value="licence cost (reason)" data-value="-2318">
+                            <option value="income loss due to poverty" data-value="-1777">
                             </option>
-                            <option value="licence cost due to proprietary software" data-value="-1912">
+                            <option value="infant mortality due to citizen participation" data-value="-1855">
                             </option>
-                            <option value="licence price change due to proprietary software" data-value="-1915">
+                            <option value="informal economy due to GDP mismeasurement" data-value="-1925">
                             </option>
-                            <option value="licence spending" data-value="-1613">
+                            <option value="institutional erosion due to populism" data-value="-1763">
                             </option>
-                            <option value="life expectancy gap due to poverty" data-value="-1708">
+                            <option value="interest-during-construction factor" data-value="-3006">
                             </option>
-                            <option value="life satisfaction loss due to citizen participation" data-value="-1785">
+                            <option value="investment loss due to market power" data-value="-1969">
                             </option>
-                            <option value="low economic mobility due to wealth concentration" data-value="-1946">
+                            <option value="labour productivity loss (global warming reason)" data-value="-1725">
                             </option>
-                            <option value="main column (system)" data-value="-223">
+                            <option value="labour productivity loss (health reason)" data-value="-2443">
                             </option>
-                            <option value="marginal column (system)" data-value="-225">
+                            <option value="labour productivity loss (reason)" data-value="-1704">
                             </option>
-                            <option value="market power (global problem)" data-value="-194">
+                            <option value="labour productivity loss due to global warming" data-value="-1256">
                             </option>
-                            <option value="market power reason" data-value="-2333">
+                            <option value="labour share change due to market power" data-value="-1970">
                             </option>
-                            <option value="market share tax (market power solution)" data-value="-2410">
+                            <option value="learning poverty" data-value="-1435">
                             </option>
-                            <option value="market share tax (solution)" data-value="-229">
+                            <option value="licence cost (reason)" data-value="-2391">
                             </option>
-                            <option value="markup (market power reason)" data-value="-2404">
+                            <option value="licence cost due to proprietary software" data-value="-1985">
                             </option>
-                            <option value="markup due to market power" data-value="-1889">
+                            <option value="licence price change due to proprietary software" data-value="-1988">
                             </option>
-                            <option value="maternal and child health" data-value="-1325">
+                            <option value="licence spending" data-value="-1685">
                             </option>
-                            <option value="mayor column (system)" data-value="-222">
+                            <option value="life expectancy gap due to poverty" data-value="-1781">
                             </option>
-                            <option value="minor column (system)" data-value="-224">
+                            <option value="life satisfaction loss due to citizen participation" data-value="-1858">
                             </option>
-                            <option value="misjudged risk due to biased information" data-value="-1734">
+                            <option value="low economic mobility due to wealth concentration" data-value="-2019">
                             </option>
-                            <option value="missed diagnosis due to black-box AI" data-value="-1756">
+                            <option value="main column (system)" data-value="-237">
                             </option>
-                            <option value="mistake (black-box AI reason)" data-value="-2422">
+                            <option value="marginal column (system)" data-value="-239">
                             </option>
-                            <option value="mistake (reason)" data-value="-2315">
+                            <option value="market power (global problem)" data-value="-251">
                             </option>
-                            <option value="mistake due to black-box AI" data-value="-1752">
+                            <option value="market power reason" data-value="-2406">
                             </option>
-                            <option value="multidimensional poverty" data-value="-1015">
+                            <option value="market share tax (market power solution)" data-value="-2483">
                             </option>
-                            <option value="natural capital depletion due to GDP mismeasurement" data-value="-1857">
+                            <option value="market share tax (solution)" data-value="-302">
                             </option>
-                            <option value="nominal GDP" data-value="-966">
+                            <option value="markup (market power reason)" data-value="-2477">
                             </option>
-                            <option value="overstated efficacy due to biased information" data-value="-1731">
+                            <option value="markup due to market power" data-value="-1962">
                             </option>
-                            <option value="participatory budgeting (populism solution)" data-value="-1248">
+                            <option value="maternal and child health" data-value="-1397">
                             </option>
-                            <option value="percent decimal" data-value="-773">
+                            <option value="mayor column (system)" data-value="-236">
                             </option>
-                            <option value="person year per billion USD" data-value="-1171">
+                            <option value="minor column (system)" data-value="-238">
                             </option>
-                            <option value="person year per trillion EUR" data-value="-1170">
+                            <option value="misjudged risk due to biased information" data-value="-1807">
                             </option>
-                            <option value="platform regulation (disinformation solution)" data-value="-2400">
+                            <option value="missed diagnosis due to black-box AI" data-value="-1829">
                             </option>
-                            <option value="platform regulation (solution)" data-value="-200">
+                            <option value="mistake (black-box AI reason)" data-value="-2495">
                             </option>
-                            <option value="political capture due to wealth concentration" data-value="-1945">
+                            <option value="mistake (reason)" data-value="-2388">
                             </option>
-                            <option value="populism (global problem)" data-value="-121">
+                            <option value="mistake due to black-box AI" data-value="-1825">
                             </option>
-                            <option value="populism can cause GDP decline" data-value="-183">
+                            <option value="multidimensional poverty" data-value="-1083">
                             </option>
-                            <option value="populism reason" data-value="-2321">
+                            <option value="natural capital depletion due to GDP mismeasurement" data-value="-1930">
                             </option>
-                            <option value="potential gain and initial effort" data-value="-216">
+                            <option value="nominal GDP" data-value="-1034">
                             </option>
-                            <option value="potential gain and potential loss" data-value="-2452">
+                            <option value="normal-rate spending" data-value="-3586">
                             </option>
-                            <option value="potential income loss" data-value="-1173">
+                            <option value="one-click hide (populism solution)" data-value="-1300">
                             </option>
-                            <option value="potential loss of reason" data-value="-219">
+                            <option value="one-click hide (solution)" data-value="-1301">
                             </option>
-                            <option value="poverty (global problem)" data-value="-124">
+                            <option value="overstated efficacy due to biased information" data-value="-1804">
                             </option>
-                            <option value="poverty reason" data-value="-2323">
+                            <option value="participatory budgeting (populism solution)" data-value="-1320">
                             </option>
-                            <option value="poverty research" data-value="-1289">
+                            <option value="percent decimal" data-value="-841">
                             </option>
-                            <option value="primary education" data-value="-1294">
+                            <option value="person year per billion USD" data-value="-1241">
                             </option>
-                            <option value="probability range factor" data-value="-1072">
+                            <option value="person year per trillion EUR" data-value="-1240">
                             </option>
-                            <option value="proprietary software (global problem)" data-value="-198">
+                            <option value="platform regulation (disinformation solution)" data-value="-2473">
                             </option>
-                            <option value="public AI (black-box AI solution)" data-value="-2338">
+                            <option value="platform regulation (solution)" data-value="-257">
                             </option>
-                            <option value="public AI (solution)" data-value="-230">
+                            <option value="political capture due to wealth concentration" data-value="-2018">
                             </option>
-                            <option value="public education" data-value="-1382">
+                            <option value="populism (global problem)" data-value="-171">
                             </option>
-                            <option value="public overspending due to citizen participation" data-value="-1780">
+                            <option value="populism can cause GDP decline" data-value="-235">
                             </option>
-                            <option value="real GDP" data-value="-967">
+                            <option value="populism reason" data-value="-2394">
                             </option>
-                            <option value="reduce climate gas emissions (global warming solution)" data-value="-1657">
+                            <option value="potential gain and initial effort" data-value="-274">
                             </option>
-                            <option value="reduce climate gas emissions (solution)" data-value="-256">
+                            <option value="potential gain and potential loss" data-value="-2629">
                             </option>
-                            <option value="relative poverty" data-value="-1012">
+                            <option value="potential gain in EUR" data-value="-240">
                             </option>
-                            <option value="research (climate solution)" data-value="-1163">
+                            <option value="potential gain in htp" data-value="-241">
                             </option>
-                            <option value="research (poverty solution)" data-value="-2324">
+                            <option value="potential income loss" data-value="-1243">
                             </option>
-                            <option value="research (solution)" data-value="-140">
+                            <option value="potential loss of reason" data-value="-277">
                             </option>
-                            <option value="research expenditure share" data-value="-932">
+                            <option value="poverty (global problem)" data-value="-174">
                             </option>
-                            <option value="research waste due to biased information" data-value="-1732">
+                            <option value="poverty reason" data-value="-2396">
                             </option>
-                            <option value="sanitation (poverty solution)" data-value="-1328">
+                            <option value="poverty research" data-value="-1361">
                             </option>
-                            <option value="sea level rise due to global warming" data-value="-1663">
+                            <option value="present value factor" data-value="-3952">
                             </option>
-                            <option value="secondary education" data-value="-1815">
+                            <option value="primary education" data-value="-1366">
                             </option>
-                            <option value="social cost due to disinformation" data-value="-1798">
+                            <option value="probability range factor" data-value="-1141">
                             </option>
-                            <option value="social cost due to poverty" data-value="-1701">
+                            <option value="proprietary software (global problem)" data-value="-255">
                             </option>
-                            <option value="software spending" data-value="-1905">
+                            <option value="public AI (black-box AI solution)" data-value="-2411">
                             </option>
-                            <option value="solidarity compass (citizen participation solution)" data-value="-2438">
+                            <option value="public AI (solution)" data-value="-303">
                             </option>
-                            <option value="solidarity compass (solution)" data-value="-2341">
+                            <option value="public CBAM calculation (global warming solution)" data-value="-1730">
                             </option>
-                            <option value="sort numeric descending of potential loss" data-value="-264">
+                            <option value="public CBAM calculation (solution)" data-value="-1246">
                             </option>
-                            <option value="spending (education solution)" data-value="-2382">
+                            <option value="public education" data-value="-1454">
                             </option>
-                            <option value="spending (solution)" data-value="-142">
+                            <option value="public overspending due to citizen participation" data-value="-1853">
                             </option>
-                            <option value="stock market loss due to disinformation" data-value="-1805">
+                            <option value="real GDP" data-value="-1035">
                             </option>
-                            <option value="stunting due to poverty" data-value="-1705">
+                            <option value="relative poverty" data-value="-1080">
                             </option>
-                            <option value="subjective poverty" data-value="-1014">
+                            <option value="research (climate solution)" data-value="-1233">
                             </option>
-                            <option value="tax avoidance due to wealth concentration" data-value="-1944">
+                            <option value="research (poverty solution)" data-value="-2397">
                             </option>
-                            <option value="taxes (health solution)" data-value="-2373">
+                            <option value="research (solution)" data-value="-190">
                             </option>
-                            <option value="taxes (solution)" data-value="-141">
+                            <option value="research expenditure share" data-value="-1000">
                             </option>
-                            <option value="tax evasion due to citizen participation" data-value="-1783">
+                            <option value="research waste due to biased information" data-value="-1805">
                             </option>
-                            <option value="tax evasion due to wealth concentration" data-value="-1933">
+                            <option value="sanitation (poverty solution)" data-value="-1400">
                             </option>
-                            <option value="temperature mortality due to global warming" data-value="-1647">
+                            <option value="sea level rise due to global warming" data-value="-1736">
                             </option>
-                            <option value="tertiary education" data-value="-1816">
+                            <option value="secondary education" data-value="-1888">
                             </option>
-                            <option value="tipping point due to global warming" data-value="-1650">
+                            <option value="social cost due to disinformation" data-value="-1871">
                             </option>
-                            <option value="trillion EUR" data-value="-1111">
+                            <option value="social cost due to poverty" data-value="-1774">
                             </option>
-                            <option value="trust gap due to citizen participation" data-value="-1784">
+                            <option value="software spending" data-value="-1978">
                             </option>
-                            <option value="universal basic income" data-value="-1304">
+                            <option value="solidarity compass (citizen participation solution)" data-value="-2511">
                             </option>
-                            <option value="unpaid work due to GDP mismeasurement" data-value="-1851">
+                            <option value="solidarity compass (solution)" data-value="-2414">
                             </option>
-                            <option value="unsafe WASH due to poverty" data-value="-1709">
+                            <option value="sort numeric descending of potential loss" data-value="-310">
                             </option>
-                            <option value="vaccination intent change due to biased information" data-value="-1737">
+                            <option value="spending (education solution)" data-value="-2455">
                             </option>
-                            <option value="vaccine hesitancy due to disinformation" data-value="-1802">
+                            <option value="spending (solution)" data-value="-192">
                             </option>
-                            <option value="vendor lock-in due to proprietary software" data-value="-1914">
+                            <option value="stock market loss due to disinformation" data-value="-1878">
                             </option>
-                            <option value="virality due to disinformation" data-value="-1799">
+                            <option value="stunting due to poverty" data-value="-1778">
                             </option>
-                            <option value="vote share change due to biased information" data-value="-1736">
+                            <option value="subjective poverty" data-value="-1082">
                             </option>
-                            <option value="wage markdown due to market power" data-value="-1894">
+                            <option value="tax avoidance due to wealth concentration" data-value="-2017">
                             </option>
-                            <option value="wealth concentration (global problem)" data-value="-193">
+                            <option value="taxes (health solution)" data-value="-2446">
                             </option>
-                            <option value="wealth concentration reason" data-value="-2329">
+                            <option value="taxes (solution)" data-value="-191">
                             </option>
-                            <option value="welfare gap due to GDP mismeasurement" data-value="-1856">
+                            <option value="tax evasion due to citizen participation" data-value="-1856">
                             </option>
-                            <option value="windfall taxes" data-value="-1391">
+                            <option value="tax evasion due to wealth concentration" data-value="-2006">
                             </option>
-                            <option value="working hour loss due to global warming" data-value="-1662">
+                            <option value="temperature mortality due to global warming" data-value="-1719">
                             </option>
-                            <option value="wrong decisions" data-value="-139">
+                            <option value="tertiary education" data-value="-1889">
+                            </option>
+                            <option value="tipping point due to global warming" data-value="-1722">
+                            </option>
+                            <option value="trillion EUR" data-value="-1180">
+                            </option>
+                            <option value="trust gap due to citizen participation" data-value="-1857">
+                            </option>
+                            <option value="universal basic income" data-value="-1376">
+                            </option>
+                            <option value="unpaid work due to GDP mismeasurement" data-value="-1924">
+                            </option>
+                            <option value="unsafe WASH due to poverty" data-value="-1782">
+                            </option>
+                            <option value="vaccination intent change due to biased information" data-value="-1810">
+                            </option>
+                            <option value="vaccine hesitancy due to disinformation" data-value="-1875">
+                            </option>
+                            <option value="vendor lock-in due to proprietary software" data-value="-1987">
+                            </option>
+                            <option value="virality due to disinformation" data-value="-1872">
+                            </option>
+                            <option value="vote share change due to biased information" data-value="-1809">
+                            </option>
+                            <option value="wage markdown due to market power" data-value="-1967">
+                            </option>
+                            <option value="wealth concentration (global problem)" data-value="-250">
+                            </option>
+                            <option value="wealth concentration reason" data-value="-2402">
+                            </option>
+                            <option value="welfare gap due to GDP mismeasurement" data-value="-1929">
+                            </option>
+                            <option value="windfall taxes" data-value="-1463">
+                            </option>
+                            <option value="working hour loss due to global warming" data-value="-1735">
+                            </option>
+                            <option value="wrong decisions" data-value="-189">
+                            </option>
+                            <option value="yield factor" data-value="-2726">
                             </option>
                         </datalist>
                     </div>

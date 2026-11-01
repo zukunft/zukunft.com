@@ -12,7 +12,8 @@
     "ext-mysqli": "*",
     "ext-pdo": "*",
     "ext-curl": "*",
-    "ext-zip": "*"
+    "ext-zip": "*",
+    "ext-mbstring": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^11.5"

@@ -7,9 +7,9 @@
 
     $res is the suggested var name
 
-    TODO: add these function
-    TODO rename to result
-    TODO create a separate table for the time series results
+    TODO Prio 2 add these function
+    TODO Prio 2 rename to result
+    TODO Prio 2 create a separate table for the time series results
 
     set_dirty_on_value_update  - set all formula result value to dirty that are depending on an updated values via Apache Kafka messages not via database
     set_dirty_on_result_update - set all formula result value to dirty that are depending on an updated formula result
@@ -88,6 +88,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'element_types.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -129,6 +130,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\element_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -195,7 +197,7 @@ class result extends sandbox_value
     // database fields
     public ?group $src_grp = null;      // the phrase group used that selected the numbers to calculate this result
     public formula $frm;                // the formula object used to calculate this result
-    // TODO use the is_std of the sandbox_value object
+    // TODO Prio 2 use the is_std of the sandbox_value object
     public ?bool $is_std = True;        // true as long as no user-specific value, formula or assignment is used for this result
 
     // database related variables
@@ -226,6 +228,9 @@ class result extends sandbox_value
     // the right side of the formula split into parts, each the shown text and the figure used or
     // null for an operator text, filled only for the result page like the used lists above
     public ?array $expression_parts = null;
+    // the phrases that select the numbers used and if any of them is enough, decided once per
+    // result, because each used list of the page asks for it (see used_phrase_selection)
+    private ?array $used_selection = null;
     // the bigger table in which the fallback load looks for a result that its source group has
     // moved there (see load_moved), null if the result is in the table of its source group
     private ?sql_type $moved_table_type = null;
@@ -250,6 +255,7 @@ class result extends sandbox_value
         $this->src_grp = new group($this->get_user());
         $this->add_info = null;
         $this->moved_table_type = null;
+        $this->used_selection = null;
         $this->set_id(0);
     }
 
@@ -269,9 +275,11 @@ class result extends sandbox_value
         if ($db_row !== null and $db_row !== []) {
             // a row of the group keyed result tables carries the text group key, a row of the
             // prime and main tables the phrase id columns, and a union of both kinds shows an
-            // empty key for the latter, so the key decides the group (see set_grp_by_row)
+            // empty key for the latter, so the key decides the group (see set_grp_by_row);
+            // without the phrase names, because a result list loads them for all rows with one
+            // query and a single result after the mapping (see row_mapper_with_phrases)
             $one_id_fld = $this->set_grp_by_row($db_row, $msg, result_fields::FLD_ID,
-                $this->id_fields_main(1, result_id::MAIN_PHRASES_ALL));
+                $this->id_fields_main(1, result_id::MAIN_PHRASES_ALL), false);
             $result = parent::row_mapper_multi($db_row, $msg, $ext, result_fields::FLD_ID, $one_id_fld);
         }
         if ($result) {
@@ -292,15 +300,34 @@ class result extends sandbox_value
             $this->set_owner_id($db_row[user_db::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]));
             $this->last_val_update = $lib->get_datetime($db_row[fields::FLD_LAST_UPDATE]);
-
-            $this->load_phrases($msg, true);
+            // the groups of the row may differ from a previous load of this object
+            $this->used_selection = null;
         }
 
         return $msg->is_ok();
     }
 
     /**
-     * TODO move the common parts to the parent object
+     * map a result row of a single result load and load the result and the source phrases,
+     * whereas a result list loads the phrases of all its results with one query (result_list::load)
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param user_message $msg to collect the mapping and loading problems
+     * @param string $ext the table type e.g. to indicate if the id is int
+     * @return bool true if the result has been mapped without problems
+     */
+    private function row_mapper_with_phrases(?array $db_row, user_message $msg, string $ext): bool
+    {
+        $result = $this->row_mapper_multi($db_row, $msg, $ext);
+        if ($result) {
+            // the mapper has just set the groups, so the phrases are reloaded for them
+            $this->load_phrases($msg, true);
+        }
+        return $result;
+    }
+
+    /**
+     * TODO Prio 2 move the common parts to the parent object
      * map a result api json to this model result object
      * @param array $api_json the api array with the values that should be mapped
      * @param user_message $msg if the mapping is incomplete the human-readable message what happened and how to solve it
@@ -342,7 +369,7 @@ class result extends sandbox_value
 
     /**
      * set the vars of this value object based on the given json without writing to the database
-     * TODO import the description and save it in the group description
+     * TODO Prio 2 import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user_message $msg to enrich with warnings, problems and solutions
@@ -472,7 +499,7 @@ class result extends sandbox_value
         // add the source phrases if requested
         if ($typ_lst->include_phrases() or $typ_lst->phrase_names()) {
             $phr_lst = $this->source_group()->phrase_list();
-            $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($typ_lst, $msg);
+            $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($this->phrase_typ_lst($typ_lst), $msg);
         }
 
         // add the formula that has created the result
@@ -492,7 +519,7 @@ class result extends sandbox_value
                     // with the from and to of its triples like the phrases of a value
                     $this->grp()->phrase_list()->load_triple_sides($msg);
                 }
-                $vars[json_fields::PHRASES] = $this->grp()->phrase_list()->api_json_array($typ_lst, $msg);
+                $vars[json_fields::PHRASES] = $this->grp()->phrase_list()->api_json_array($this->phrase_typ_lst($typ_lst), $msg);
             }
             if ($this->formula_id() != 0) {
                 // the result row only carries the formula id, so the name is loaded on demand
@@ -689,9 +716,17 @@ class result extends sandbox_value
         return $lst;
     }
 
+    /**
+     * a text key is never prime, because it is the key of the standard or the big table
+     * e.g. the key that id() returns for a result moved by its source group
+     * @return bool true if the result is saved in the prime table
+     */
     function is_prime(): bool
     {
-        return (!$this->src_grp_moves_table() and parent::is_prime());
+        $grp_id = new group_id();
+        return (!$this->src_grp_moves_table()
+            and parent::is_prime()
+            and $grp_id->is_prime($this->grp_key_id()));
     }
 
     function is_main(): bool
@@ -757,6 +792,8 @@ class result extends sandbox_value
     function set_src_grp(group $grp): void
     {
         $this->src_grp = $grp;
+        // the source group decides which numbers have been used
+        $this->used_selection = null;
     }
 
     function source_group(): group
@@ -992,7 +1029,7 @@ class result extends sandbox_value
         if ($qp->name != '') {
             $db_row = $db_con->get1($qp, $msg);
             if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                 $result = $this->id();
             }
         }
@@ -1055,7 +1092,7 @@ class result extends sandbox_value
                 $qp = $load_sql($db_con->sql_creator(), $tbl_typ);
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $loaded = true;
                 }
             }
@@ -1088,7 +1125,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1123,7 +1160,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1154,7 +1191,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1183,7 +1220,7 @@ class result extends sandbox_value
             if ($qp->name != '') {
                 $db_row = $db_con->get1($qp, $msg);
                 if ($db_row !== false and $db_row !== null and $db_row !== []) {
-                    $this->row_mapper_multi($db_row, $msg, $qp->ext);
+                    $this->row_mapper_with_phrases($db_row, $msg, $qp->ext);
                     $result = true;
                 }
             }
@@ -1249,7 +1286,7 @@ class result extends sandbox_value
             if (count($val_rows) > 0) {
                 $val_row = $val_rows[0];
                 if ($val_row !== false and $val_row !== null and $val_row !== []) {
-                    $result = $this->row_mapper_multi($val_row, $msg, $qp->ext);
+                    $result = $this->row_mapper_with_phrases($val_row, $msg, $qp->ext);
                 }
             }
         }
@@ -1349,16 +1386,25 @@ class result extends sandbox_value
      */
     function used_phrase_selection(user_message $msg): array
     {
-        $this->load_phrases($msg);
-        $phr_lst = $this->src_grp?->phrase_list();
-        // the source phrases name exactly the numbers used, so a number must carry all of them;
-        // the result phrases of the fallback name the result, so any of them makes a number related
-        $any_phrase = false;
-        if ($phr_lst == null or $phr_lst->empty()) {
-            $phr_lst = $this->grp()->phrase_list();
-            $any_phrase = true;
+        if ($this->used_selection === null) {
+            $this->load_phrases($msg);
+            $phr_lst = $this->src_grp?->phrase_list();
+            // the source phrases name exactly the numbers used, so a number must carry all of them;
+            // the result phrases of the fallback name the result, so any of them makes a number related
+            $any_phrase = false;
+            if ($phr_lst == null or $phr_lst->empty()) {
+                $phr_lst = $this->grp()->phrase_list();
+                $any_phrase = true;
+            }
+            $phr_lst = $phr_lst ?? new phrase_list($this->get_user());
+            // shows with '&debug=…' which result selects its used numbers by the fallback, because
+            // a fallback with a common phrase e.g. EUR selects many numbers
+            $selection = $any_phrase ? 'any of the ' : 'all ';
+            log_debug($this->dsp_id() . ' selects the used numbers by ' . $selection
+                . $phr_lst->count() . ' phrases ' . $phr_lst->dsp_name());
+            $this->used_selection = [$phr_lst, $any_phrase];
         }
-        return [$phr_lst ?? new phrase_list($this->get_user()), $any_phrase];
+        return $this->used_selection;
     }
 
     /**
@@ -1371,12 +1417,16 @@ class result extends sandbox_value
      */
     function load_values_used(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $val_lst = new value_list($this->get_user());
         [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
         if (!$phr_lst->empty()) {
             $val_lst->load_by_phr_lst($phr_lst, $msg, $any_phrase, value_list::read_limit());
         }
         $this->values_used = $val_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -1390,6 +1440,9 @@ class result extends sandbox_value
      */
     function load_results_used(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $res_lst = new result_list($this->get_user());
         [$phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
         if (!$phr_lst->empty()) {
@@ -1397,6 +1450,7 @@ class result extends sandbox_value
             $res_lst->unset_by_id($this->id());
         }
         $this->results_used = $res_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -1410,6 +1464,9 @@ class result extends sandbox_value
      */
     function load_formulas_used(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $frm_lst = new formula_list($this->get_user());
         if ($this->results_used == null) {
             $this->load_results_used($msg);
@@ -1425,6 +1482,7 @@ class result extends sandbox_value
             $frm_lst->load_by_ids($frm_ids, $msg);
         }
         $this->formulas_used = $frm_lst;
+        $sys->times->switch();
     }
 
     /**
@@ -1438,6 +1496,9 @@ class result extends sandbox_value
      */
     function load_expression_parts(user_message $msg): void
     {
+        global $sys;
+
+        $sys->times->switch(system_time_type::LOAD_RELATED);
         $parts = [];
         [$src_phr_lst, $any_phrase] = $this->used_phrase_selection($msg);
         if (!$any_phrase and $this->formula_id() != 0) {
@@ -1446,6 +1507,7 @@ class result extends sandbox_value
             $parts = $this->expression_parts($exp->r_part($msg), $grp_parts);
         }
         $this->expression_parts = $parts;
+        $sys->times->switch();
     }
 
     /**
@@ -1685,10 +1747,19 @@ class result extends sandbox_value
     {
         $vars = parent::export_json($msg, $exp_typ, $do_load);
 
+        // the reload by id maps only the formula id, so the name is loaded on demand
+        if ($do_load and $this->frm->name() == '' and $this->formula_id() != 0) {
+            $this->frm->load_by_id($this->formula_id(), $msg);
+        }
         // the formula that has created the result
         $vars[json_fields::FORMULA_NAME] = $this->frm->name();
 
-        // TODO add source group
+        // the phrases that select the values used for the calculation, as the import reads them,
+        // e.g. so that a client of the phrase data can explain a result by its operands
+        $ctx = $this->source_group()->phrase_list()->names();
+        if ($ctx != []) {
+            $vars[json_fields::CONTEXT] = $ctx;
+        }
 
         // add the value itself
         $vars[json_fields::NUMBER] = $this->number();
@@ -1706,10 +1777,10 @@ class result extends sandbox_value
     private function save_prepare_phr_lst_src(user_message $msg): void
     {
         if ($this->src_grp->phrase_list()->is_empty()) {
-            // TODO check if the phrases are already loaded
+            // TODO Prio 2 check if the phrases are already loaded
             // $this->src_grp->phrase_list()->load();
             // get the word group id (and create the group if needed)
-            // TODO include triples
+            // TODO Prio 2 include triples
             if (count($this->src_grp->phrase_list()->id_lst()) > 0) {
                 log_debug("source group for " . $this->src_grp->phrase_list()->dsp_id() . ".");
                 $grp = new group($this->get_user());
@@ -1725,7 +1796,7 @@ class result extends sandbox_value
     {
         if ($this->grp()->phrase_list()->is_empty()) {
             // get the word group id (and create the group if needed)
-            // TODO include triples
+            // TODO Prio 2 include triples
             $grp = new group($this->get_user());
             $grp->load_by_phr_lst($this->grp()->phrase_list(), $msg);
             $this->grp()->set_id($grp->get_id($msg));
@@ -1916,7 +1987,7 @@ class result extends sandbox_value
             }
         }
         // get formula results that may need an update (maybe include also word groups that have any word of the updated word group)
-        // TODO Prio review
+        // TODO Prio 2 review
         /*
         if (!empty($frm_ids)) {
             $sql_in = $lib->sql_array($frm_ids, ' formula_id IN (', ') ');
@@ -1982,7 +2053,7 @@ class result extends sandbox_value
      *      the guess is that the user wants the latest reported number
      *      so this function will return false if the latest reported number is not yet saved in the database
      */
-    // TODO add check
+    // TODO Prio 2 add check
     private function has_no_time_value(user_message $msg): bool
     {
         $res_check = $this->clone_all();
@@ -2115,7 +2186,7 @@ class result extends sandbox_value
 
     /**
      * save the formula result to the database
-     * TODO check if user-specific result needs to be added
+     * TODO Prio 2 check if user-specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
      *
      * @param user_message $msg the message that should be shown to the user in case something went wrong

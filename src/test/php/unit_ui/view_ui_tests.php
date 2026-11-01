@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
@@ -128,6 +129,54 @@ class view_ui_tests
         $test_name = 'a view without a type shows no subtitle';
         $t->assert_text_not_contains($test_name, $sfm->title_named($msk, $msg), styles::SUBTITLE);
 
+        $t->subheader($ts . 'api mapper');
+
+        // the view base part of the mapper takes the display style of the api message
+        $test_name = 'the view base part of the mapper sets the style';
+        $msk_map = new view();
+        $msk_map->api_mapper(json_decode($t_msk->view_filled_included()->api_json(), true), $msg);
+        $t->assert($test_name, $msk_map->get_style_id(), view_styles::COL_SM_4_ID);
+        $msg->reset();
+
+        // the id is mandatory, because without it a save would add a new view
+        $test_name = 'a view json without an id is refused';
+        $t->assert_false($test_name, $msk_map->api_mapper([json_fields::NAME => views::START_NAME], $msg));
+        $msg->reset();
+
+        // the api message of a view relation carries the id of the parent view
+        $test_name = 'the api mapper sets the parent view of a view relation';
+        $mrl = new view_relation_ui();
+        $mrl->api_mapper(json_decode($t_msk->view_relation_filled_included()->api_json(), true), $msg);
+        $t->assert($test_name, $mrl->parent()?->id(), views::WORD_EDIT_ID);
+        $msg->reset();
+
+        // a view relation without a parent view in the api message has no parent view
+        $test_name = 'a view relation json without a parent leaves the parent view empty';
+        $mrl = new view_relation_ui();
+        $mrl->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
+        $t->assert_null($test_name, $mrl->parent()?->dsp_id());
+        $msg->reset();
+
+        // a page request carries the linked view with its name
+        $test_name = 'the api mapper sets the view of a term view';
+        $trm_msk_json = $t_msk->term_view_filled_included()->api_json([api_types::TEST_MODE, api_types::INCL_RELATED]);
+        $trm_msk = new term_view_ui();
+        $trm_msk->api_mapper(json_decode($trm_msk_json, true), $msg);
+        $t->assert($test_name, $trm_msk->view()?->name(), views::MATH_CONST_NAME);
+        $msg->reset();
+
+        // the page request carries the linked term too
+        $test_name = 'the api mapper sets the term of a term view';
+        $trm_linked = $trm_msk->term_linked();
+        $t->assert($test_name, $trm_linked?->id(), $t_msk->term_view()->term()->id());
+
+        // a term view without a term in the api message has no term
+        $test_name = 'a term view json without a term leaves the term empty';
+        $trm_msk = new term_view_ui();
+        $trm_msk->api_mapper([json_fields::ID => test_const::LINK_ID], $msg);
+        $t->assert_null($test_name, $trm_msk->term_linked()?->dsp_id());
+        $msg->reset();
+
         $t->subheader($ts . 'show fields');
 
         // the view default page shows the name of the display style (see base_views.json
@@ -170,8 +219,8 @@ class view_ui_tests
         // the components come from the request cache that also provides the views for the page
         // rendering itself, because the page url only carries the view id
         $list = new ui_list();
-        $cmp_html = $list->view_components($msk, $msg);
         $test_name = 'the components of the start view are listed';
+        $cmp_html = $list->view_components($msk, $msg);
         $t->assert_text_contains($test_name, $cmp_html, components::WORD_NAME);
         $test_name = 'the listed components link to the component default page';
         $t->assert_text_contains($test_name, $cmp_html, url_var::MASK . '=' . views::COMPONENT_DEFAULT_ID);
@@ -186,11 +235,21 @@ class view_ui_tests
         $sorted = $cmp_lst->sorted_by_position();
         $t->assert($test_name, $sorted[0]->position <= $sorted[count($sorted) - 1]->position, true);
 
+        // negative: a component list without components has nothing to sort
+        $test_name = 'an empty component list is sorted to an empty list';
+        $cmp_lst_empty = new component_list();
+        $sorted_empty = $cmp_lst_empty->sorted_by_position();
+        $t->assert($test_name, $sorted_empty, []);
+
         // a view that is not in the cache or has no components gets the no-components message
         $test_name = 'a view without components shows the no-components message';
         $msk_empty = new view($t_msk->view_add()->api_json());
         $t->assert($test_name, $list->view_components($msk_empty, $msg),
             $mtr->txt(msg_id::INFO_VIEW_HAS_NO_COMPONENTS));
+        // negative: a view without components in its api message has an empty component list
+        $test_name = 'a view without components has an empty component list';
+        $cmp_lst_empty = $msk_empty->get_component_list();
+        $t->assert($test_name, $cmp_lst_empty->count(), 0);
 
         // beside the position, the name and the position type each row offers the icons to change
         // or to remove the component link; the add row has no link yet, so it shows no icons
@@ -249,6 +308,18 @@ class view_ui_tests
         $test_name = 'the add field shows no label';
         $t->assert_text_not_contains($test_name, $cmp_html, '<' . html_base::LABEL);
 
+
+        // the edit menu of the navbar offers the column and form selection for a page with a value table
+        $t->subheader($ts . 'value table');
+        $test_name = 'the table view shows a value table';
+        $msk_tbl = $ui_sys->typ_lst_cache->get_view_by_id(views::TABLE_ID);
+        $shows_tbl = $msk_tbl->shows_value_table($ui_sys->typ_lst_cache, $msg);
+        $t->assert_true($test_name, $shows_tbl);
+        // negative: the default word view lists values, but shows no value table
+        $test_name = '... but not the default word view';
+        $msk_wrd = $ui_sys->typ_lst_cache->get_view_by_id(views::WORD_ID);
+        $shows_tbl = $msk_wrd->shows_value_table($ui_sys->typ_lst_cache, $msg);
+        $t->assert_false($test_name, $shows_tbl);
 
         $t->subheader($ts . 'view terms');
 
@@ -483,6 +554,11 @@ class view_ui_tests
         $t->assert($test_name, $sfm->show_link_type($mrl_del_ui),
             $t->labeled(msg_id::SHOW_FIELD_LINK_TYPE, view_relation_types::REMOVE_NAME));
 
+        $test_name = 'an empty relation type sets no relation type';
+        $mrl_emp = $t_msk->view_relation_filled_included();
+        $mrl_emp->set_relation_type('');
+        $t->assert($test_name, $mrl_emp->predicate_id(), 0);
+
         $test_name = 'the view relation page shows the start position';
         $t->assert($test_name, $sfm->show_start_pos($mrl),
             $t->labeled(msg_id::SHOW_FIELD_START_POS, (string)$t_msk->view_relation()->start_pos));
@@ -580,10 +656,49 @@ class view_ui_tests
         $t->assert_text_order($test_name, $cols_html, components::COL_FIRST_NAME, components::COL_SECOND_NAME);
         $test_name = 'the side-or-below column is shown before the side-or-last-below column';
         $t->assert_text_order($test_name, $cols_html, components::COL_THIRD_NAME, components::COL_FOURTH_NAME);
-        // rendering the plain view builds the complete component html, so a semi page timeout is used
+        // the plain view has only a word component, because a calculated component like the
+        // matrix loads and renders the start page table, which is not what these tests check
         $test_name = 'without the side or below position types no minimal width is set';
-        $msk_plain = new view($t_msk->view_with_components()->api_json([api_types::INCL_COMPONENTS]));
-        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width', $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $msk_plain = new view($t_msk->view_with_word_component()->api_json([api_types::INCL_COMPONENTS]));
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true), 'min-width');
+
+        $t->subheader($ts . 'page class');
+        // the style of a view is the class of the div around its components e.g. the grid of a use case page
+        $test_name = 'the view style is the page class around the components';
+        $msk_plain->set_style_id(view_styles::USE_CASE_ID);
+        $t->assert_text_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
+            '<div class="' . view_styles::USE_CASE . '">');
+        $test_name = 'a view without a style adds no page class';
+        $msk_plain->set_style_id();
+        $t->assert_text_not_contains($test_name, $msk_plain->show($wrd, $msg, $ui->dto, '', true),
+            view_styles::USE_CASE);
+
+        $t->subheader($ts . 'use case frame');
+        // a use case page like the calculator shows its first row as the header and its
+        // side-or-below group as one grid of the input panel beside the result panel
+        $msk_uc = new view($t_msk->view_use_case()->api_json([api_types::INCL_COMPONENTS]));
+        $msk_uc->set_style_id(view_styles::USE_CASE_ID);
+        $uc_html = $msk_uc->show($wrd, $msg, $ui->dto, '', true);
+        $test_name = 'the first row of a use case page is the header';
+        $t->assert_text_order($test_name, $uc_html, '<' . html_base::HEADER . '>', components::COL_FIRST_NAME);
+        $test_name = '... above the grid';
+        $t->assert_text_order($test_name, $uc_html, components::COL_FIRST_NAME, '<div class="' . styles::GRID . '">');
+        $test_name = 'the first column of the group is the input panel';
+        $t->assert_text_order($test_name, $uc_html,
+            '<' . html_base::ASIDE . ' class="' . styles::PANEL . '">', components::COL_SECOND_NAME);
+        $test_name = 'the last column of the group is the result panel';
+        $t->assert_text_order($test_name, $uc_html,
+            '<' . html_base::SECTION . ' class="' . styles::PANEL . '">', components::COL_FOURTH_NAME);
+        $test_name = '... without the bootstrap columns';
+        $t->assert_text_not_contains($test_name, $uc_html, 'min-width');
+        // negative: the same components without the use case style keep the bootstrap rows and columns
+        $msk_uc->set_style_id();
+        $plain_html = $msk_uc->show($wrd, $msg, $ui->dto, '', true);
+        $test_name = 'a view without the use case style has no header';
+        $t->assert_text_not_contains($test_name, $plain_html, '<' . html_base::HEADER . '>');
+        $test_name = '... and no grid but the bootstrap columns';
+        $t->assert_text_not_contains($test_name, $plain_html, '<div class="' . styles::GRID . '">');
+        $t->assert_text_contains($test_name, $plain_html, 'min-width');
 
 
         $t->subheader($ts . 'same line');

@@ -187,7 +187,7 @@ class triple extends sandbox_code_id
      */
 
     /**
-     * TODO add the cache object and use it to get linked objects
+     * TODO Prio 2 add the cache object and use it to get linked objects
      * set the vars of this word frontend object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      *
@@ -408,6 +408,9 @@ class triple extends sandbox_code_id
         if (array_key_exists(json_fields::CONDITION_ID, $json_array)) {
             $this->condition_id = $json_array[json_fields::CONDITION_ID];
         }
+        if (array_key_exists(json_fields::VIEW, $json_array)) {
+            $this->view_id = $json_array[json_fields::VIEW];
+        }
         if (array_key_exists(json_fields::CONDITION, $json_array)) {
             $frm = new formula();
             $frm->api_mapper($json_array[json_fields::CONDITION], $msg);
@@ -496,6 +499,9 @@ class triple extends sandbox_code_id
         // usage and impact are included here because to allow
         // at least admin users to overwrite the impact and usage via GUI
         $vars[json_fields::IMPACT] = $this->impact;
+        if ($this->view_id != null) {
+            $vars[json_fields::VIEW] = $this->view_id;
+        }
         if ($this->phr_lst != null and !$this->phr_lst->is_empty()) {
             $vars[json_fields::PHRASES_RELATED] = $this->phr_lst->api_array($typ_lst, $msg);
         }
@@ -627,18 +633,7 @@ class triple extends sandbox_code_id
         $phr = null;
         if (!is_numeric($id)) {
             // resolve the phrase name from the request cache first to avoid a backend call
-            if ($dto != null) {
-                $phr = $dto->phr_lst->get_by_name($id, $msg);
-            }
-            if ($phr == null) {
-                $phr_loaded = new phrase();
-                if ($phr_loaded->load_by_name($id, $msg)) {
-                    $phr = $phr_loaded;
-                } else {
-                    // an unknown phrase name is a user input that the user can correct
-                    $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => $id]);
-                }
-            }
+            $phr = ($dto?->phr_lst ?? new phrase_list())->load_or_get_by_name($id, $msg);
         } else {
             if ($dto != null) {
                 $phr_lst = $dto->phr_lst;
@@ -703,7 +698,7 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * TODO use ENUM instead of string in php version 8.1
+     * TODO Prio 2 use ENUM instead of string in php version 8.1
      * @return phrase_types|null the phrase type of this word
      */
     function type(user_message $msg): ?object
@@ -969,7 +964,7 @@ class triple extends sandbox_code_id
      *
      * @param string $type the ENUM string of the fixed type
      * @returns bool true if the word has the given type
-     * TODO Switch to php 8.1 and real ENUM
+     * TODO Prio 2 Switch to php 8.1 and real ENUM
      */
     function is_type(string $type, user_message $msg): bool
     {
@@ -1039,6 +1034,14 @@ class triple extends sandbox_code_id
     function is_time(user_message $msg): bool
     {
         return $this->is_type(phrase_types::TIME, $msg);
+    }
+
+    /**
+     * @return bool true if the triple says how a number has been found e.g. a named survey method
+     */
+    function is_quality(user_message $msg): bool
+    {
+        return $this->is_type(phrase_types::VALUE_QUALITY, $msg);
     }
 
     /**
@@ -1168,7 +1171,7 @@ class triple extends sandbox_code_id
             if ($title == '') {
                 $title = $this->name();
             }
-            $result = $html->ref($url, $html->esc($lnk_phr->name()), $title);
+            $result = $html->ref($url, $lnk_phr->name(), $title);
         }
         return $result;
     }
@@ -1179,7 +1182,7 @@ class triple extends sandbox_code_id
 
     /**
      * display one link to the user by returning the HTML code for the link to the calling function
-     * TODO include the user sandbox in the selection
+     * TODO Prio 2 include the user sandbox in the selection
      */
     function display(): string
     {
@@ -1206,7 +1209,7 @@ class triple extends sandbox_code_id
         $result = ''; // reset the html code var
 
         // prepare to show the triple in the reverse direction
-        // TODO use the reverse name of the verb e.g. "are" instead of "is a"
+        // TODO Prio 2 use the reverse name of the verb e.g. "are" instead of "is a"
         $result .= $this->get_to()->name() . ' ';     // e.g. Countries
         $result .= $this->get_verb()->name() . ' ';   // e.g. are
         $result .= $this->get_from()->name();         // e.g. Australia (and others)
@@ -1235,7 +1238,7 @@ class triple extends sandbox_code_id
     function display_linked(): string
     {
         $html = new html_base();
-        return $html->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $html->esc($this->name()));
+        return $html->ref(api::MAIN_SCRIPT . '?link=' . $this->id(), $this->name());
     }
 
 }

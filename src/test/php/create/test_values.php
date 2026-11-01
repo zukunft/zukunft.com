@@ -49,7 +49,10 @@ include_once paths::MODEL_VALUE . 'value_time_series.php';
 include_once paths::MODEL_VALUE . 'value_ts_data.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'values.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
@@ -57,6 +60,8 @@ include_once paths::SHARED . 'url_var.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
@@ -64,6 +69,8 @@ include_once test_paths::UTILS . 'test_lib.php';
 use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -73,7 +80,10 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
@@ -110,6 +120,17 @@ class test_values extends test_objects
     {
         $t_grp = new test_groups($this->env);
         $grp = $t_grp->group();
+        return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
+    }
+
+    /**
+     * the standard test value with the description of its group, which is the description of the value
+     * @return value the test value with the group description groups::TN_READ_COM
+     */
+    function value_with_description(): value
+    {
+        $t_grp = new test_groups($this->env);
+        $grp = $t_grp->group_filled();
         return new value($this->env->usr1, round(values::PI_LONG, 13), $grp);
     }
 
@@ -311,12 +332,25 @@ class test_values extends test_objects
     function value_mio_eur(): value
     {
         $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
         return $this->value_for_phrases([
             $t_wrd->word()->phrase(),
             $t_wrd->word_assumed()->phrase(),
-            $t_wrd->word_high()->phrase(),
+            $t_trp->variance_high()->phrase(),
             $t_wrd->word_million()->phrase(),
             $t_wrd->word_eur()->phrase()]);
+    }
+
+    /**
+     * @return value in the percent unit share (ratio), which a field shows with its symbol "share"
+     */
+    function value_share(): value
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        return $this->value_for_phrases([
+            $t_wrd->word()->phrase(),
+            $t_trp->share_ratio()->phrase()]);
     }
 
     /**
@@ -673,6 +707,16 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_ui the inhabitants of Switzerland for frontend unit testing e.g. as a value
+     *                  of the request cache that a calculator page does not use
+     */
+    function value_ch_ui(): value_ui
+    {
+        $tl = new test_lib();
+        return $tl->ui_value($this->value_ch());
+    }
+
+    /**
      * @return value with the inhabitants of Switzerland
      *               but with "million" missing the scaling type to test the scaling type check
      */
@@ -728,6 +772,16 @@ class test_values extends test_objects
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_pi());
         $lst->add($this->value_e());
+        return $lst;
+    }
+
+    /**
+     * @return value_list with only the pi value e.g. to test that a single value is not exported as a list
+     */
+    function list_pi(): value_list
+    {
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_pi());
         return $lst;
     }
 
@@ -1078,13 +1132,13 @@ class test_values extends test_objects
     }
 
     /**
-     * the ranking values with the loss of the reason, the range of the loss of the first problem
+     * the ranking values with the loss of the reason, the variance of the loss of the first problem
      * and per problem a number in each minor and marginal column, so that every selection of the
      * start page sub menus shows its own columns: the main tier the reason columns, the minor
      * tier the loss in percent of the GDP and of the htp, the initial effort and the loss
-     * reduction, the full table the reward ratio, and the range selection the bounds
+     * reduction, the full table the reward ratio, and the variance selection the bounds
      *
-     * @return value_list the ranking values plus the numbers of every column tier and the range bounds
+     * @return value_list the ranking values plus the numbers of every column tier and the variance bounds
      */
     function value_list_start_page(): value_list
     {
@@ -1092,8 +1146,8 @@ class test_values extends test_objects
         $t_trp = new test_triples($this->env);
         $lst = $this->value_list_solution_prio_reason();
         $loss_phr = $this->solution_prio_loss_phrases($t_trp->global_warming()->phrase(), false);
-        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_low()->phrase()]), 25));
-        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_wrd->word_high()->phrase()]), 40));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_trp->variance_low()->phrase()]), 25));
+        $lst->add($this->value_for_phrases(array_merge($loss_phr, [$t_trp->variance_high()->phrase()]), 40));
         $pct = $t_wrd->word_percent()->phrase();
         $loss = $t_trp->potential_loss()->phrase();
         foreach ($this->solution_prio_rows() as [$problem, $loss_nbr, , $gain_nbr, $is_assumed]) {
@@ -1210,15 +1264,15 @@ class test_values extends test_objects
     }
 
     /**
-     * the potential loss of global warming with the bounds of its probability range and its
+     * the potential loss of global warming with the bounds of its variance and its
      * confidence and the potential gain of its solution without bounds, with the numbers of
-     * solution_prio.json, so that the range display of a value table can be tested: the bounds
+     * solution_prio.json, so that the variance display of a value table can be tested: the bounds
      * are tagged "low" and "high", the confidence "confidence" and the loss is an estimate, so
      * it carries "assumed"
      *
      * @return value_list the centre, low and high potential loss, its confidence and the gain
      */
-    function value_list_range(): value_list
+    function value_list_variance(): value_list
     {
         $t_wrd = new test_words($this->env);
         $t_trp = new test_triples($this->env);
@@ -1227,8 +1281,8 @@ class test_values extends test_objects
         $loss_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
             $t_wrd->word_trillion()->phrase(), $t_wrd->word_eur()->phrase(),
             $t_wrd->word_assumed()->phrase()];
-        $low_phr = array_merge($loss_phr, [$t_wrd->word_low()->phrase()]);
-        $high_phr = array_merge($loss_phr, [$t_wrd->word_high()->phrase()]);
+        $low_phr = array_merge($loss_phr, [$t_trp->variance_low()->phrase()]);
+        $high_phr = array_merge($loss_phr, [$t_trp->variance_high()->phrase()]);
         // the confidence is a share, so it names no unit of the loss but the percent format
         $conf_phr = [$problem, $potential, $t_wrd->word_loss()->phrase(),
             $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase(),
@@ -1283,12 +1337,39 @@ class test_values extends test_objects
     }
 
     /**
-     * @return value_list_ui the potential loss with its range for frontend unit testing
+     * @return value_list_ui the potential loss with its variance for frontend unit testing
      */
-    function value_list_range_ui(): value_list_ui
+    function value_list_variance_ui(): value_list_ui
     {
         $tl = new test_lib();
-        return $tl->list_to_ui($this->value_list_range(), [api_types::INCL_PHRASES]);
+        return $tl->list_to_ui($this->value_list_variance(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the low and high potential loss of value_list_variance without their centre value, so that
+     * a list can be tested that has bounds without a centre to show them behind
+     *
+     * @return value_list_ui the two bounds of the potential loss for frontend unit testing
+     */
+    function value_list_bounds_only_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $lst = new value_list($this->env->usr1);
+        foreach ($this->value_list_variance()->lst() as $val) {
+            if ($this->is_variance_bound($val)) {
+                $lst->add($val);
+            }
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param value $val the value to check
+     * @return bool true if the value is tagged as the low or high bound of a variance
+     */
+    private function is_variance_bound(value $val): bool
+    {
+        return array_intersect($val->grp()->phrase_list()->names(), triples::VARIANCE_BOUNDS) != [];
     }
 
     /**
@@ -1354,6 +1435,38 @@ class test_values extends test_objects
     {
         $tl = new test_lib();
         return $tl->list_to_ui($this->value_list_unit_majority(), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the potential gain like on the start page: in billion htp for two problems and in trillion
+     * EUR only for global warming, so that only a unit definition can let the EUR column lead
+     *
+     * @return value_list the potential gain in billion htp of two problems and in trillion EUR of one
+     */
+    function value_list_gain_units(): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $gain = $t_trp->potential_gain()->phrase();
+        $gw = $t_trp->global_warming()->phrase();
+        $billion = $t_wrd->word_billion()->phrase();
+        $htp = $t_wrd->word_htp()->phrase();
+        $trillion = $t_wrd->word_trillion()->phrase();
+        $eur = $t_wrd->word_eur()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$gw, $gain, $billion, $htp], 320.01));
+        $lst->add($this->value_for_phrases([$gw, $gain, $trillion, $eur], 1.6));
+        $lst->add($this->value_for_phrases([$t_wrd->word_populism()->phrase(), $gain, $billion, $htp], 26.4));
+        return $lst;
+    }
+
+    /**
+     * @return value_list_ui the potential gain mostly in billion htp for frontend unit testing
+     */
+    function value_list_gain_units_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->value_list_gain_units(), [api_types::INCL_PHRASES]);
     }
 
     /**
@@ -1472,6 +1585,401 @@ class test_values extends test_objects
     }
 
     /**
+     * @return value_list_ui the result panel width that the page Zurich (city) sets
+     */
+    function value_list_result_width_ui(): value_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $kw = new triple($this->env->usr1);
+        $kw->set(triple_names::CALC_RESULT_WIDTH_ID, triples::CALCULATOR_RESULT_WIDTH);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->zh_city()->phrase(), $kw->phrase()], triple_names::CALC_RESULT_WIDTH));
+        return new test_lib()->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the assumption test (test_results::result_zh_scaled_ui): the value of the page
+     * Zurich and the two values that the result uses without Zurich, the inhabitants without a
+     * source, so assumed, and Bern with a source, so measured
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_assumptions_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $t_src = new test_sources($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $t_trp->zh_city_low_impact()->phrase()]));
+        $lst->add($this->value_for_phrases([$t_wrd->word_inhabitant()->phrase()], values::SAMPLE_INT));
+        $bern = $this->value_for_phrases([$t_wrd->word_bern()->phrase()], values::SAMPLE_FLOAT);
+        $bern->set_source($t_src->source_reserved());
+        $lst->add($bern);
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the list function test (formula_calc::list_values): two values of the inhabitants of
+     * the context of result_zh_sum_ui, the same fact with a confidence and another value without the context
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_list_function_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $ctx = [
+            $t_wrd->word_zh()->phrase(),
+            $t_trp->zh_city_low_impact()->phrase(),
+            $t_trp->company_zurich_high_impact()->phrase()
+        ];
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([...$ctx, $inh], 10));
+        $lst->add($this->value_for_phrases([...$ctx, $inh, $t_wrd->word_kwh()->phrase()], 20));
+        $lst->add($this->value_for_phrases([...$ctx, $inh, $t_wrd->word_confidence()->phrase()], 30));
+        $lst->add($this->value_for_phrases([$inh], 40));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the confidence test (ui_list::assumption_tag): an assumedvalue in kWh with its
+     * confidence in percent, and an assumed value of another phrase without a confidence
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_unit_confidence_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_kwh()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$inh, $t_wrd->word_confidence()->phrase(), $t_wrd->word_percent()->phrase()]));
+        $lst->add($this->value_for_phrases([$t_wrd->word_bern()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the detail table test: the inhabitants of the canton of Bern, which do not name the page Zurich
+     *
+     * @param bool $with_year true to add a second value that also has the phrases of the cell
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_bern_canton_ui(bool $with_year): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $phr_lst = [$t_wrd->word_bern()->phrase(), $t_wrd->word_inhabitant()->phrase(), $t_wrd->word_canton()->phrase()];
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases($phr_lst, values::SAMPLE_INT));
+        if ($with_year) {
+            $lst->add($this->value_for_phrases([...$phr_lst, $t_wrd->word_2019()->phrase()], values::SAMPLE_FLOAT));
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the input field test (test_phrases::list_input_fields_ui): the inhabitants of
+     * Zurich as the number of the page, the limit and the step of the inhabitants field, and the
+     * values of the city with the cities that the city selector offers
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_input_fields_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $city = $t_wrd->word_city()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $inhab], values::CITY_ZH_INHABITANTS_2019));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_limit_down()->phrase()], 0));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_step()->phrase()], 100));
+        // the percent of the selector values is a unit and never an option of the selector
+        $pct = $t_wrd->word_percent()->phrase();
+        $lst->add($this->value_for_phrases([$city, $t_wrd->word_bern()->phrase(), $pct], 1));
+        $lst->add($this->value_for_phrases([$city, $t_wrd->word_zh()->phrase(), $pct], 2));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the calculator input test (test_phrases::list_calculator_input_ui): the
+     * inhabitants of Zurich with the limit and the step of the inhabitants field, and the number
+     * of the option 2020 of the canton selector
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_input_ui(): value_list_ui
+    {
+        return $this->calculator_values_ui(false);
+    }
+
+    /**
+     * @return value_list_ui two different numbers of the option 2020 that rank the same, which are numbers of other phrases
+     */
+    function value_list_calculator_option_tie_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $opt = $t_wrd->word_2020()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$opt, $t_wrd->word_bern()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$opt, $t_wrd->word_ge()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param float|null $calculated the number with the same phrases as the expected number, null for none
+     * @param bool $has_expected false for an expected value without a number
+     * @return value_list_ui the expected number and the calculated number of the check table test
+     */
+    function value_list_calculator_check_ui(?float $calculated, bool $has_expected = true): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $inh = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $exp = $this->value_for_phrases([$inh, $t_wrd->word_expected()->phrase()]);
+        if (!$has_expected) {
+            $exp->set_number(null);
+        }
+        $lst->add($exp);
+        if ($calculated !== null) {
+            $lst->add($this->value_for_phrases([$inh], $calculated));
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param float $num the number of the warning phrase, above zero to show the warning
+     * @return value_list_ui the number of the page and the phrase of the warning test (test_triples::calculator_zh_warning)
+     */
+    function value_list_calculator_warning_ui(float $num): value_list_ui
+    {
+        $tl = new test_lib();
+        $inh = new test_words($this->env)->word_inhabitant()->phrase();
+        $page = new test_triples($this->env)->zh_city()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$page, $inh], $num));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @return value_list_ui the number of the option 2020 of the phrase selector canton (test_triples::calculator_zh_input)
+     */
+    function value_list_calculator_option_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $t_wrd->word_2020()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the config of a pod that switches the javascript of the calculator pages off, which config.yaml allows by default
+     *
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_calculator_javascript_off(): value_list
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_trp->config_use_javascript()->phrase(),
+            $t_trp->config_for_calculator()->phrase()], 0));
+        return $lst;
+    }
+
+    /**
+     * the config of a pod that overwrites the digits of the default and of the precise tier
+     * (config.yaml number format > digits) by one more digit than the fallback; both have the
+     * path of a user default value, so the path of the precise tier contains the default key too
+     *
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_config_digits(): value_list
+    {
+        $t_phr = new test_phrases($this->env);
+        $path = [words::DEFAULT, triples::NUMBER_FORMAT, words::DIGITS];
+        $lst = new value_list($this->env->usr1);
+        // the precise tier first, so that a first match would read it also for the default tier;
+        // set directly like config_cache_switch, because add() skips a value without a group name
+        $lst->set_lst([
+            new value($this->env->usr1, shared_config::PRECISE_DIGITS + 1,
+                $t_phr->list_cache_switch([...$path, words::PRECISE])->get_grp_id(false)),
+            new value($this->env->usr1, shared_config::DEFAULT_DIGITS + 1,
+                $t_phr->list_cache_switch($path)->get_grp_id(false)),
+        ]);
+        return $lst;
+    }
+
+    /**
+     * the config of a pod that sets one text e.g. the font or a colour of the pages
+     * (config.yaml user > default > frontend > layout > font)
+     *
+     * @param array $keys the config.yaml keys below user > default > frontend > layout e.g. [words::FONT]
+     * @param string $text the text of the config value e.g. "Segoe UI", sans-serif
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_config_text(array $keys, string $text): value_list
+    {
+        $t_phr = new test_phrases($this->env);
+        $path = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT, ...$keys];
+        $lst = new value_list($this->env->usr1);
+        // set directly like value_list_config_digits, because add() skips a value without a group name
+        $lst->set_lst([
+            new value_text($this->env->usr1, $text, $t_phr->list_cache_switch($path)->get_grp_id(false)),
+        ]);
+        return $lst;
+    }
+
+    /**
+     * the config of a pod that sets one number e.g. the dark or light mode of the pages
+     * (config.yaml user > default > frontend > layout > colour mode)
+     *
+     * @param array $keys the config.yaml keys below user > default > frontend > layout e.g. [triples::COLOUR_MODE]
+     * @param float $number the number of the config value e.g. def::MODE_DARK
+     * @return value_list the config values, which the frontend config reads from their api message
+     */
+    function value_list_config_number(array $keys, float $number): value_list
+    {
+        $t_phr = new test_phrases($this->env);
+        $path = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT, ...$keys];
+        $lst = new value_list($this->env->usr1);
+        // set directly like value_list_config_digits, because add() skips a value without a group name
+        $lst->set_lst([
+            new value($this->env->usr1, $number, $t_phr->list_cache_switch($path)->get_grp_id(false)),
+        ]);
+        return $lst;
+    }
+
+    /**
+     * the values of the calculator input test and the inhabitants of a city, which fit the field
+     * inhabitants of the page Zurich (city) as well as the inhabitants of Zurich, because city and
+     * Zurich are both parts of the page triple, so that the field has to pick one of two values
+     * that rank the same
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_input_tie_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = $this->calculator_values(false);
+        $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase(), $t_wrd->word_inhabitant()->phrase()], values::SAMPLE_INT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the calculator input test and the inhabitants of Bern with a bigger number,
+     * which the preferred order of numbers would pick, but Bern is no part of the page triple
+     * Zurich (city), like the lifetime of a new NPP on the page of a PV installation
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_input_foreign_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $lst = $this->calculator_values(false);
+        $lst->add($this->value_for_phrases([$t_wrd->word_bern()->phrase(), $t_wrd->word_inhabitant()->phrase()], values::SAMPLE_BIG));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * the values of the calculation result test: the values of the calculator input test and
+     * the inhabitants of the canton of Zurich in 2019 as the number of the row inhabitants with
+     * the filter canton in the column 2019
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_result_ui(): value_list_ui
+    {
+        return $this->calculator_values_ui(true);
+    }
+
+    /**
+     * the inhabitants of Zurich in 2019 and in 2020, so that the phrases Zurich and inhabitants
+     * select two numbers with the same number of other phrases and a calculator cell of only
+     * these two phrases is ambiguous
+     *
+     * @return value_list_ui the frontend values for unit testing
+     */
+    function value_list_calculator_ambiguous_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$zh, $inhab, $t_wrd->word_2019()->phrase()], values::SAMPLE_INT));
+        $lst->add($this->value_for_phrases([$zh, $inhab, $t_wrd->word_2020()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param bool $with_result true to add the number of the result table
+     * @return value_list_ui the values of the calculator tests
+     */
+    private function calculator_values_ui(bool $with_result): value_list_ui
+    {
+        $tl = new test_lib();
+        return $tl->list_to_ui($this->calculator_values($with_result), [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * @param bool $with_result true to add the number of the result table
+     * @return value_list the values of the calculator tests
+     */
+    private function calculator_values(bool $with_result): value_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$zh, $inhab], values::CITY_ZH_INHABITANTS_2019));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_limit_down()->phrase()], 0));
+        $lst->add($this->value_for_phrases([$inhab, $t_trp->field_step()->phrase()], 100));
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $t_wrd->word_2020()->phrase()], values::SAMPLE_FLOAT));
+        if ($with_result) {
+            $lst->add($this->value_for_phrases([$zh, $inhab, $t_wrd->word_canton()->phrase(),
+                $t_wrd->word_2019()->phrase()], values::SAMPLE_INT));
+        }
+        return $lst;
+    }
+
+    /**
+     * the inhabitants of Zurich in 2019 and 2020 with the same number of phrases, so that only the
+     * field value phrase 2019 decides which value the inhabitants field shows
+     * @param bool $year_2020_first true to add the 2020 value first, so that the test shows the
+     *                              choice does not depend on the order of the values
+     * @return value_list_ui the ui value list of the inhabitants of Zurich in two years
+     */
+    function value_list_input_field_value_phrases_ui(bool $year_2020_first): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $zh = $t_wrd->word_zh()->phrase();
+        $inhab = $t_wrd->word_inhabitant()->phrase();
+        $val_2019 = $this->value_for_phrases([$zh, $inhab, $t_wrd->word_2019()->phrase()], values::CITY_ZH_INHABITANTS_2019);
+        $val_2020 = $this->value_for_phrases([$zh, $inhab, $t_wrd->word_2020()->phrase()], values::SAMPLE_INT);
+        $lst = new value_list($this->env->usr1);
+        if ($year_2020_first) {
+            $lst->add($val_2020);
+            $lst->add($val_2019);
+        } else {
+            $lst->add($val_2019);
+            $lst->add($val_2020);
+        }
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
      * two values with the same (zero) impact and the same number but assigned to phrases with a
      * different name ("Zurich" and "city"), so that the deterministic tie break by the group name
      * can be tested independent of the volatile phrase group id (see value_list::sort_by_impact)
@@ -1484,6 +1992,24 @@ class test_values extends test_objects
         $lst = new value_list($this->env->usr1);
         $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase()], values::SAMPLE_FLOAT));
         $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase()], values::SAMPLE_FLOAT));
+        return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
+    }
+
+    /**
+     * two values in kWh and a smaller value in gram with the same impact, so that a sort that
+     * compares the numbers of different units would put the gram value last
+     *
+     * @return value_list_ui the values with two units for unit testing
+     */
+    function value_list_sort_units_ui(): value_list_ui
+    {
+        $tl = new test_lib();
+        $t_wrd = new test_words($this->env);
+        $kwh = $t_wrd->word_kwh()->phrase();
+        $lst = new value_list($this->env->usr1);
+        $lst->add($this->value_for_phrases([$t_wrd->word_zh()->phrase(), $kwh], values::SAMPLE_FLOAT));
+        $lst->add($this->value_for_phrases([$t_wrd->word_city()->phrase(), $t_wrd->word_gram()->phrase()], 1));
+        $lst->add($this->value_for_phrases([$t_wrd->word_canton()->phrase(), $kwh], values::SAMPLE_INT));
         return $tl->list_to_ui($lst, [api_types::INCL_PHRASES]);
     }
 

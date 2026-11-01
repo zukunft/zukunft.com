@@ -7,7 +7,7 @@
 
     $trm is the suggested var name
 
-    TODO: load formula word
+    TODO Prio 2 load formula word
         check triple
 
     mainly to check the term consistency of all objects
@@ -281,7 +281,7 @@ class term extends combine_named
     }
 
     /**
-     * TODO deprecate and replace with row_mapper_obj
+     * TODO Prio 2 deprecate and replace with row_mapper_obj
      * map the main field from the term view to a term object
      * @return bool true if at least one term has been loaded
      */
@@ -325,7 +325,7 @@ class term extends combine_named
         $result = false;
         $this->set_obj_id(0);
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
-            if (array_key_exists(term::FLD_ID, $db_row)) {
+            if ($this->row_has_ids($db_row, $id_fld)) {
                 $this->set_obj_from_id($db_row[term::FLD_ID]);
                 if ($this->type() == word::class) {
                     $result = $this->get_word()->row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
@@ -348,10 +348,27 @@ class term extends combine_named
                     $this->set_obj_id($db_row[$id_fld]);
                 }
             } else {
-                log_err_msg('id field missing when trying to map term from ' . implode(',', $db_row), $msg);
+                // a corrupted row, because the term loads select both ids: the user is told what has failed
+                // and the admin gets the row to find the cause
+                $msg->add(msg_id::TERM_ROW_ID_MISSING, [msg_id::VAR_NAME => $id_fld]);
+                log_err_msg('id field ' . $id_fld . ' missing when trying to map term from ' . implode(',', $db_row), $msg);
             }
         }
         return $msg->is_ok();
+    }
+
+    /**
+     * the row must have the term id to select the class and the id of the object, which only a
+     * corrupted row misses, because every term load selects both ids
+     * public only so that the check can be tested without the error log of the row mapper
+     *
+     * @param array $db_row the database row that should be mapped to a term
+     * @param string $id_fld the name of the id field of the object e.g. formula_fields::FLD_ID
+     * @return bool true if the row has both ids
+     */
+    function row_has_ids(array $db_row, string $id_fld): bool
+    {
+        return array_key_exists(term::FLD_ID, $db_row) and array_key_exists($id_fld, $db_row);
     }
 
     function clone_reset(bool $keep_user): word|verb|triple|formula|phrase|term
@@ -390,7 +407,7 @@ class term extends combine_named
     /**
      * create the expected object based on the id
      * must have the same logic as the database view and the frontend
-     * TODO dismiss?
+     * TODO Prio 3 dismiss?
      *
      * @param int $id the term id as received e.g. from the database view
      * @return void
@@ -448,7 +465,7 @@ class term extends combine_named
     /**
      * set the term id based id the word, triple, verb or formula id
      * must have the same logic as the database view and the frontend
-     * TODO deprecate?
+     * TODO Prio 3 deprecate?
      *
      * @param int $id the object id that is converted to the term id
      * @param string $class the class of the term object
@@ -552,7 +569,13 @@ class term extends combine_named
      */
     function get_user_id(): int
     {
-        return $this->obj()->get_user_id();
+        // by the user of the term, because a verb has no user id of its own and its user can be null
+        $result = 0;
+        $usr = $this->get_user();
+        if ($usr != null) {
+            $result = $usr->id();
+        }
+        return $result;
     }
 
     /**
@@ -563,7 +586,10 @@ class term extends combine_named
         return $this->obj()->owner_id();
     }
 
-    function code_id(): ?int
+    /**
+     * @return string|null the code id of the word, triple, verb or formula e.g. "font" or null if it has none
+     */
+    function code_id(): ?string
     {
         return $this->obj()->get_code_id();
     }
@@ -795,6 +821,8 @@ class term extends combine_named
 
         $sc->set_class(self::class);
         $sc->set_name($qp->name);
+        // the user row of the requesting user e.g. with the name that the user has given the term
+        $sc->set_usr($this->get_user_id());
 
         $sc->set_usr_fields(self::FLD_NAMES_USR);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);

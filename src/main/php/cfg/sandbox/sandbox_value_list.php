@@ -47,6 +47,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_GROUP . 'group_db.php';
 //include_once paths::MODEL_GROUP . 'group_id.php';
 //include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
 //include_once paths::MODEL_PHRASE . 'phrase.php';
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 //include_once paths::MODEL_RESULT . 'result.php';
@@ -67,6 +68,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'formula_fields.php';
 include_once paths::SHARED_CONST_FIELDS . 'group_fields.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -78,6 +80,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_db;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
 use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
@@ -98,6 +101,7 @@ use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class sandbox_value_list extends sandbox_list
 {
@@ -139,8 +143,9 @@ class sandbox_value_list extends sandbox_list
                 $val = new value_geo($this->get_user());
             } else {
                 $val = new value($this->get_user());
+                // as text, because a message var is a string
                 $msg->add(msg_id::IMPORT_VALUE_FORMAT_NOT_KNOWN, [
-                    msg_id::VAR_JSON_TEXT => $json_val
+                    msg_id::VAR_JSON_TEXT => json_encode($json_val)
                 ]);
             }
             if ($val->api_mapper($json_val, $msg)) {
@@ -204,9 +209,8 @@ class sandbox_value_list extends sandbox_list
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
      *
-     *  TODO use order by in query
-     *  TODO use limit and page in query
-     *  TODO replace return bool with user message e.g. to be able to return to the user
+     *  TODO Prio 2 use order by in query, because without an order a page can repeat a row
+     *  TODO Prio 2 replace return bool with user message e.g. to be able to return to the user
      *       "no values found, click here to search for values linked to any word of the list"
      *       or "... click here for related words"
      *
@@ -221,7 +225,7 @@ class sandbox_value_list extends sandbox_list
         phrase_list $phr_lst,
         user_message $msg, string      $class = value::class,
         bool        $or = false,
-        int         $limit = sql_db::ROW_LIMIT,
+        int         $limit = sql_db::ROW_MAX,
         int         $page = 0
     ): bool
     {
@@ -240,8 +244,7 @@ class sandbox_value_list extends sandbox_list
     /**
      * create an SQL statement to retrieve a list of values by a list of phrases from the database
      * return all values that match at least one phrase of the list
-     * TODO add ORDER BY (relevance of value)
-     * TODO use LIMIT and PAGE
+     * TODO Prio 2 add ORDER BY (relevance of value)
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -331,6 +334,11 @@ class sandbox_value_list extends sandbox_list
                 $pos_phr_lst, $pos_grp_lst, $pos_usr);
             $qp->merge($qp_tbl);
         }
+        // the limit belongs to the union and not to one of its branches, so it is added after the
+        // loop and its two parameters are the last ones, which is what get_page() assumes
+        $sc->set_page($limit, $page);
+        $qp->par = array_merge($qp->par, array_slice($sc->get_par(), -2));
+        $qp->sql .= $sc->get_page();
 
         foreach ($qp->par as $par) {
             if (is_numeric($par)) {
@@ -423,7 +431,7 @@ class sandbox_value_list extends sandbox_list
 
     /**
      * add the single phrase fields to the sql creator object
-     * TODO make $par_pos unnecessary
+     * TODO Prio 2 make $par_pos unnecessary
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $phr_pos_lst to set a fixed name for the parameter
@@ -507,7 +515,7 @@ class sandbox_value_list extends sandbox_list
             }
             $fld_lst_usr_ex_std = result_db::FLD_NAMES_DATE_USR_EX_STD;
             $fld_lst_usr_num_ex_std = result_db::FLD_NAMES_NUM_USR_EX_STD;
-            // TODO use const overwrites for the result types a.g. for geo location results
+            // TODO Prio 2 use const overwrites for the result types a.g. for geo location results
             $fld_lst_usr_txt = [];
             $fld_lst_usr_num = result_db::FLD_NAMES_NUM_USR;
             $fld_lst_usr_only = result_db::FLD_NAMES_USR_ONLY;
@@ -561,7 +569,7 @@ class sandbox_value_list extends sandbox_list
 
         $sc->set_usr($this->get_user()->id);
         if ($is_std) {
-            // TODO replace next line with union select field name synchronisation
+            // TODO Prio 2 replace next line with union select field name synchronisation
             $sc->set_fields_num_dummy($fld_lst_dummy);
             if ($lib->is_value($class)) {
                 $sc->set_fields($fld_lst_std);
@@ -591,46 +599,103 @@ class sandbox_value_list extends sandbox_list
     }
 
     /**
-     * get the first value or result of the list that is related to all given phrase names
-     * and where all its phrases are within the given context
-     * e.g. to select the number that a formula uses to calculate a result
+     * set the phrases of all values or results in the list and the from and to of their
+     * triples, each with one query for the whole list;
+     * not included in load, because sometimes loading of the phrases is not needed
      *
-     * several names select one entry, because an operand of a formula can be a group of
-     * phrases e.g. "potential","loss","trillion","EUR" names the potential loss in trillion EUR
-     *
-     * @param array $phr_names the names of the phrases that select the number e.g. "price"
-     * @param array $ctx_names the phrase names that limit the selection e.g. "apple" and "CHF"
-     * @return sandbox_value|null the first matching number or null if none matches
-     */
-    function get_by_names_and_context(array $phr_names, array $ctx_names): ?sandbox_value
-    {
-        $result = null;
-        foreach ($this->lst() as $val) {
-            if ($result == null) {
-                if ($val->match_all($phr_names) and $val->matches_context($ctx_names)) {
-                    $result = $val;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * set the word objects for all values or results in the list if needed
-     * not included in load, because sometimes loading of the word objects is not needed
+     * @param user_message $msg to collect the loading problems
+     * @return void
      */
     function load_phrases(user_message $msg): void
     {
-        // loading via word group is the most used case, because to save database space and reading time the value is saved with the word group id
-        $all_phr = new phrase_list($this->get_user());
+        // the names that the list load has already set are not read again
+        $this->set_phrases($this->lst(), $msg, false);
+        // the from and to of the triples of all values with one read, e.g. to head a column by one part;
+        // each phrase object of each group, because a group that has been loaded before may hold its own objects
+        $phr_objects = [];
         foreach ($this->lst() as $val) {
-            $val->load_phrases($msg);
-            foreach ($val->grp()->phrase_list()->lst() as $phr) {
-                $all_phr->add($phr, true);
+            foreach ($this->groups_of($val) as $grp) {
+                if ($grp != null) {
+                    $phr_objects = array_merge($phr_objects, $grp->phrase_list()->lst());
+                }
             }
         }
-        // the from and to of the triples of all values with one read, e.g. to head a column by one part
+        $all_phr = new phrase_list($this->get_user());
+        $all_phr->set_lst($phr_objects);
         $all_phr->load_triple_sides($msg);
+    }
+
+    /**
+     * the api message of the list with the phrases of all entries loaded upfront with one query,
+     * so that the api message of a single value never loads its phrases on its own
+     *
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user_message $msg to collect the mapping problems for the requesting user
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+        // the same condition as in sandbox_value::api_json_array, which loads the phrases of one value
+        if ($typ_lst->include_phrases() or $typ_lst->phrase_names() or $typ_lst->incl_related()) {
+            $all_phr = $this->set_phrases($this->lst(), $msg, false);
+            $all_phr->load_triple_sides($msg);
+        }
+        return parent::api_json_array($typ_lst, $msg, $usr);
+    }
+
+    /**
+     * set the phrases of the groups of the given values or results with one query for the names
+     * of all phrases, because a query per value makes the load of a long list slow
+     *
+     * @param array $val_lst the values or results whose groups should get their phrases
+     * @param user_message $msg to collect the loading problems
+     * @param bool $reload true to reload also a group whose phrases are already loaded
+     * @return phrase_list the phrases that have been set
+     */
+    protected function set_phrases(array $val_lst, user_message $msg, bool $reload): phrase_list
+    {
+        $grp_id = new group_id();
+        $grp_lst = [];
+        $ids = [];
+        foreach ($val_lst as $val) {
+            foreach ($this->groups_of($val) as $grp) {
+                if ($grp != null and $grp->is_id_set()) {
+                    if ($reload or !$grp->phrase_list()->loaded()) {
+                        $grp_ids = $grp_id->get_array($grp->id());
+                        $grp_lst[] = [$grp, $grp_ids];
+                        $ids = array_merge($ids, $grp_ids);
+                    }
+                }
+            }
+        }
+        $all_phr = new phrase_list($this->get_user());
+        $ids = array_values(array_unique($ids));
+        if ($ids != []) {
+            $all_phr->load_names_by_ids(new phr_ids($ids), $msg);
+        }
+        foreach ($grp_lst as [$grp, $grp_ids]) {
+            $phr_lst = $all_phr->filter_by_ids(new phr_ids($grp_ids));
+            if ($phr_lst->is_empty()) {
+                // a number without phrases can never be shown, so report it like the single load
+                log_warning('Missing phrases for the group id ' . $grp->dsp_id(), $this::class . '->set_phrases');
+            } else {
+                $grp->set_phrase_list($phr_lst);
+            }
+        }
+        return $all_phr;
+    }
+
+    /**
+     * @param value_base|result $val a value or result of the list
+     * @return array the groups of the entry whose phrases are loaded with the list
+     */
+    protected function groups_of(value_base|result $val): array
+    {
+        return [$val->grp()];
     }
 
 

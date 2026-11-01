@@ -1,0 +1,4101 @@
+{
+    "entities": {
+        "P1082": {
+            "pageid": 17326872,
+            "ns": 120,
+            "title": "Property:P1082",
+            "lastrevid": 2553982480,
+            "modified": "2026-10-06T15:04:23Z",
+            "type": "property",
+            "datatype": "quantity",
+            "id": "P1082",
+            "labels": {
+                "en": {
+                    "language": "en",
+                    "value": "population"
+                },
+                "de": {
+                    "language": "de",
+                    "value": "Einwohnerzahl"
+                },
+                "fr": {
+                    "language": "fr",
+                    "value": "population"
+                },
+                "es": {
+                    "language": "es",
+                    "value": "población"
+                },
+                "it": {
+                    "language": "it",
+                    "value": "popolazione"
+                },
+                "cs": {
+                    "language": "cs",
+                    "value": "počet obyvatel"
+                },
+                "hu": {
+                    "language": "hu",
+                    "value": "népesség"
+                },
+                "yue": {
+                    "language": "yue",
+                    "value": "人口"
+                },
+                "zh": {
+                    "language": "zh",
+                    "value": "人口"
+                },
+                "zh-cn": {
+                    "language": "zh-cn",
+                    "value": "人口"
+                },
+                "zh-hk": {
+                    "language": "zh-hk",
+                    "value": "人口"
+                },
+                "ru": {
+                    "language": "ru",
+                    "value": "численность населения"
+                },
+                "fi": {
+                    "language": "fi",
+                    "value": "väkiluku"
+                },
+                "sv": {
+                    "language": "sv",
+                    "value": "invånarantal"
+                },
+                "pt-br": {
+                    "language": "pt-br",
+                    "value": "população"
+                },
+                "pt": {
+                    "language": "pt",
+                    "value": "população"
+                },
+                "nds": {
+                    "language": "nds",
+                    "value": "Inwahnertall"
+                },
+                "en-gb": {
+                    "language": "en-gb",
+                    "value": "population"
+                },
+                "nb": {
+                    "language": "nb",
+                    "value": "folketall"
+                },
+                "nn": {
+                    "language": "nn",
+                    "value": "folketal"
+                },
+                "da": {
+                    "language": "da",
+                    "value": "indbyggertal"
+                },
+                "el": {
+                    "language": "el",
+                    "value": "πληθυσμός"
+                },
+                "uk": {
+                    "language": "uk",
+                    "value": "кількість населення"
+                },
+                "ca": {
+                    "language": "ca",
+                    "value": "població"
+                },
+                "ja": {
+                    "language": "ja",
+                    "value": "人口"
+                },
+                "ko": {
+                    "language": "ko",
+                    "value": "인구수"
+                },
+                "et": {
+                    "language": "et",
+                    "value": "rahvaarv"
+                },
+                "pl": {
+                    "language": "pl",
+                    "value": "liczba ludności"
+                },
+                "fa": {
+                    "language": "fa",
+                    "value": "جمعیت"
+                },
+                "lv": {
+                    "language": "lv",
+                    "value": "iedzīvotāju skaits"
+                },
+                "nl": {
+                    "language": "nl",
+                    "value": "inwonertal"
+                },
+                "be": {
+                    "language": "be",
+                    "value": "колькасць насельніцтва"
+                },
+                "vi": {
+                    "language": "vi",
+                    "value": "dân số"
+                },
+                "he": {
+                    "language": "he",
+                    "value": "אוכלוסייה"
+                },
+                "be-tarask": {
+                    "language": "be-tarask",
+                    "value": "колькасьць насельніцтва"
+                },
+                "or": {
+                    "language": "or",
+                    "value": "ଲୋକସଂଖ୍ୟା"
+                },
+                "sr": {
+                    "language": "sr",
+                    "value": "насељеност"
+                },
+                "sr-ec": {
+                    "language": "sr-ec",
+                    "value": "насељеност"
+                },
+                "sr-el": {
+                    "language": "sr-el",
+                    "value": "naseljenost"
+                },
+                "sk": {
+                    "language": "sk",
+                    "value": "počet obyvateľov"
+                },
+                "eo": {
+                    "language": "eo",
+                    "value": "loĝantaro"
+                },
+                "bs": {
+                    "language": "bs",
+                    "value": "stanovništvo"
+                },
+                "is": {
+                    "language": "is",
+                    "value": "íbúafjöldi"
+                },
+                "sco": {
+                    "language": "sco",
+                    "value": "population"
+                },
+                "yi": {
+                    "language": "yi",
+                    "value": "באפעלקערונג"
+                },
+                "ro": {
+                    "language": "ro",
+                    "value": "populație"
+                },
+                "zh-hans": {
+                    "language": "zh-hans",
+                    "value": "人口"
+                },
+                "zh-hant": {
+                    "language": "zh-hant",
+                    "value": "人口"
+                },
+                "br": {
+                    "language": "br",
+                    "value": "poblañs"
+                },
+                "bn": {
+                    "language": "bn",
+                    "value": "জনসংখ্যা"
+                },
+                "ka": {
+                    "language": "ka",
+                    "value": "მოსახლეობა"
+                },
+                "af": {
+                    "language": "af",
+                    "value": "bevolking"
+                },
+                "eu": {
+                    "language": "eu",
+                    "value": "biztanleria"
+                },
+                "scn": {
+                    "language": "scn",
+                    "value": "pupulazzioni"
+                },
+                "mk": {
+                    "language": "mk",
+                    "value": "население"
+                },
+                "sl": {
+                    "language": "sl",
+                    "value": "prebivalstvo"
+                },
+                "zh-tw": {
+                    "language": "zh-tw",
+                    "value": "人口"
+                },
+                "mr": {
+                    "language": "mr",
+                    "value": "लोकसंख्या"
+                },
+                "th": {
+                    "language": "th",
+                    "value": "ประชากร"
+                },
+                "ar": {
+                    "language": "ar",
+                    "value": "عدد السكان"
+                },
+                "gl": {
+                    "language": "gl",
+                    "value": "poboación"
+                },
+                "ne": {
+                    "language": "ne",
+                    "value": "जनसंख्या"
+                },
+                "tr": {
+                    "language": "tr",
+                    "value": "nüfus"
+                },
+                "hy": {
+                    "language": "hy",
+                    "value": "բնակչություն"
+                },
+                "bg": {
+                    "language": "bg",
+                    "value": "население"
+                },
+                "la": {
+                    "language": "la",
+                    "value": "numerus incolarum"
+                },
+                "kn": {
+                    "language": "kn",
+                    "value": "ಜನಸಂಖ್ಯೆ"
+                },
+                "ta": {
+                    "language": "ta",
+                    "value": "மக்கள்தொகை"
+                },
+                "cy": {
+                    "language": "cy",
+                    "value": "poblogaeth"
+                },
+                "lt": {
+                    "language": "lt",
+                    "value": "gyventojų skaičius"
+                },
+                "am": {
+                    "language": "am",
+                    "value": "የህዝብ ብዛት"
+                },
+                "mt": {
+                    "language": "mt",
+                    "value": "popolazzjoni"
+                },
+                "en-ca": {
+                    "language": "en-ca",
+                    "value": "population"
+                },
+                "id": {
+                    "language": "id",
+                    "value": "jumlah penduduk"
+                },
+                "ast": {
+                    "language": "ast",
+                    "value": "población"
+                },
+                "ps": {
+                    "language": "ps",
+                    "value": "د وگړو شمېر"
+                },
+                "hsb": {
+                    "language": "hsb",
+                    "value": "ličba wobydlerstwa"
+                },
+                "ml": {
+                    "language": "ml",
+                    "value": "ജനസംഖ്യ"
+                },
+                "ku-latn": {
+                    "language": "ku-latn",
+                    "value": "nifûs"
+                },
+                "zh-mo": {
+                    "language": "zh-mo",
+                    "value": "人口"
+                },
+                "zh-my": {
+                    "language": "zh-my",
+                    "value": "人口"
+                },
+                "zh-sg": {
+                    "language": "zh-sg",
+                    "value": "人口"
+                },
+                "lb": {
+                    "language": "lb",
+                    "value": "Awunnerzuel"
+                },
+                "oc": {
+                    "language": "oc",
+                    "value": "populacion"
+                },
+                "ba": {
+                    "language": "ba",
+                    "value": "халыҡ һаны"
+                },
+                "tl": {
+                    "language": "tl",
+                    "value": "populasyon"
+                },
+                "vmf": {
+                    "language": "vmf",
+                    "value": "Eiwohnärzôhl"
+                },
+                "ur": {
+                    "language": "ur",
+                    "value": "آبادی"
+                },
+                "tg": {
+                    "language": "tg",
+                    "value": "шумораи аҳолӣ"
+                },
+                "ky": {
+                    "language": "ky",
+                    "value": "калкынын саны"
+                },
+                "hr": {
+                    "language": "hr",
+                    "value": "stanovništvo"
+                },
+                "pam": {
+                    "language": "pam",
+                    "value": "populasyun"
+                },
+                "yo": {
+                    "language": "yo",
+                    "value": "iye èrò"
+                },
+                "tg-cyrl": {
+                    "language": "tg-cyrl",
+                    "value": "шумораи аҳолӣ"
+                },
+                "sq": {
+                    "language": "sq",
+                    "value": "popullsia"
+                },
+                "gsw": {
+                    "language": "gsw",
+                    "value": "Yywohnerzahl"
+                },
+                "ms": {
+                    "language": "ms",
+                    "value": "jumlah penduduk"
+                },
+                "ilo": {
+                    "language": "ilo",
+                    "value": "populasion"
+                },
+                "ia": {
+                    "language": "ia",
+                    "value": "population"
+                },
+                "ce": {
+                    "language": "ce",
+                    "value": "бахархой"
+                },
+                "tt": {
+                    "language": "tt",
+                    "value": "халык саны"
+                },
+                "se": {
+                    "language": "se",
+                    "value": "olmmošlohku"
+                },
+                "tt-cyrl": {
+                    "language": "tt-cyrl",
+                    "value": "халык саны"
+                },
+                "frr": {
+                    "language": "frr",
+                    "value": "iinwenertaal"
+                },
+                "my": {
+                    "language": "my",
+                    "value": "လူဦးရေ"
+                },
+                "atj": {
+                    "language": "atj",
+                    "value": "e tacihaniwok"
+                },
+                "lij": {
+                    "language": "lij",
+                    "value": "popolaçion"
+                },
+                "pa": {
+                    "language": "pa",
+                    "value": "ਆਬਾਦੀ"
+                },
+                "hi": {
+                    "language": "hi",
+                    "value": "जनसंख्या"
+                },
+                "az": {
+                    "language": "az",
+                    "value": "əhalisi"
+                },
+                "ga": {
+                    "language": "ga",
+                    "value": "daonra"
+                },
+                "diq": {
+                    "language": "diq",
+                    "value": "nıfus"
+                },
+                "nds-nl": {
+                    "language": "nds-nl",
+                    "value": "inwoanertal"
+                },
+                "mi": {
+                    "language": "mi",
+                    "value": "taupori"
+                },
+                "gu": {
+                    "language": "gu",
+                    "value": "વસ્તી / જનસંખ્યા"
+                },
+                "hyw": {
+                    "language": "hyw",
+                    "value": "բնակչութեան թիւ"
+                },
+                "nqo": {
+                    "language": "nqo",
+                    "value": "ߡߌ߬ߙߌ߲߬ߘߌ"
+                },
+                "vec": {
+                    "language": "vec",
+                    "value": "popołasion"
+                },
+                "olo": {
+                    "language": "olo",
+                    "value": "rahvahan lugumiäry"
+                },
+                "sh": {
+                    "language": "sh",
+                    "value": "stanovništvo"
+                },
+                "kw": {
+                    "language": "kw",
+                    "value": "poblans"
+                },
+                "ckb": {
+                    "language": "ckb",
+                    "value": "دانیشتووان"
+                },
+                "szl": {
+                    "language": "szl",
+                    "value": "wielość ludności"
+                },
+                "arz": {
+                    "language": "arz",
+                    "value": "عدد السكان"
+                },
+                "ti": {
+                    "language": "ti",
+                    "value": "ብዝሒ ህዝቢ"
+                },
+                "ms-arab": {
+                    "language": "ms-arab",
+                    "value": "جومله ڤندودوق"
+                },
+                "te": {
+                    "language": "te",
+                    "value": "జనాభా"
+                },
+                "uz": {
+                    "language": "uz",
+                    "value": "aholisi"
+                },
+                "dag": {
+                    "language": "dag",
+                    "value": "daadambiɛligu kalinli"
+                },
+                "udm": {
+                    "language": "udm",
+                    "value": "улӥсьёслэн лыдзы"
+                },
+                "zu": {
+                    "language": "zu",
+                    "value": "inani labantu"
+                },
+                "smn": {
+                    "language": "smn",
+                    "value": "ässeeloho"
+                },
+                "sms": {
+                    "language": "sms",
+                    "value": "aassilååkk"
+                },
+                "bar": {
+                    "language": "bar",
+                    "value": "Eihwohnazoih"
+                },
+                "os": {
+                    "language": "os",
+                    "value": "цæрджытæ"
+                },
+                "xmf": {
+                    "language": "xmf",
+                    "value": "მახორობა"
+                },
+                "lmo": {
+                    "language": "lmo",
+                    "value": "popolazzion"
+                },
+                "ff": {
+                    "language": "ff",
+                    "value": "Ɗuunma"
+                },
+                "ha": {
+                    "language": "ha",
+                    "value": "yawan mutane"
+                },
+                "gd": {
+                    "language": "gd",
+                    "value": "àireamh-sluaidh"
+                },
+                "crh": {
+                    "language": "crh",
+                    "value": "eali"
+                },
+                "ig": {
+                    "language": "ig",
+                    "value": "ọnụọgụgụ mmadụ"
+                },
+                "mn": {
+                    "language": "mn",
+                    "value": "хүн ам"
+                },
+                "ks": {
+                    "language": "ks",
+                    "value": "آبٲدی"
+                },
+                "pnb": {
+                    "language": "pnb",
+                    "value": "آبادی"
+                },
+                "sc": {
+                    "language": "sc",
+                    "value": "populatzione"
+                },
+                "gur": {
+                    "language": "gur",
+                    "value": "kalɛ"
+                },
+                "sw": {
+                    "language": "sw",
+                    "value": "idadi ya watu"
+                },
+                "arq": {
+                    "language": "arq",
+                    "value": "عدد السكان"
+                },
+                "fo": {
+                    "language": "fo",
+                    "value": "fólkatal"
+                },
+                "haw": {
+                    "language": "haw",
+                    "value": "heluna kānaka"
+                },
+                "ryu": {
+                    "language": "ryu",
+                    "value": "ッチュカジ"
+                },
+                "cu": {
+                    "language": "cu",
+                    "value": "въсєлѥниѥ"
+                },
+                "ext": {
+                    "language": "ext",
+                    "value": "puebración"
+                },
+                "cv": {
+                    "language": "cv",
+                    "value": "халӑх йышӗ"
+                },
+                "kaa": {
+                    "language": "kaa",
+                    "value": "xalqı"
+                },
+                "ban": {
+                    "language": "ban",
+                    "value": "akéh krama"
+                },
+                "ku": {
+                    "language": "ku",
+                    "value": "nifûs"
+                },
+                "grc": {
+                    "language": "grc",
+                    "value": "ἐνοικοῦντες"
+                },
+                "shi": {
+                    "language": "shi",
+                    "value": "amḍan n imzdaɣn"
+                },
+                "tly": {
+                    "language": "tly",
+                    "value": "Əhalisi"
+                },
+                "za": {
+                    "language": "za",
+                    "value": "haeujvunz"
+                },
+                "prg": {
+                    "language": "prg",
+                    "value": "buwīntajai"
+                },
+                "tig": {
+                    "language": "tig",
+                    "value": "ብዝሔ ኣዳም"
+                },
+                "tok": {
+                    "language": "tok",
+                    "value": "mute jan"
+                },
+                "sat": {
+                    "language": "sat",
+                    "value": "ᱦᱚᱲᱞᱮᱠᱷᱟ"
+                },
+                "syl": {
+                    "language": "syl",
+                    "value": "ꠎꠘꠡꠂꠈ꠆ꠈꠣ"
+                },
+                "av": {
+                    "language": "av",
+                    "value": "чагӀазул рикӀкӀен"
+                },
+                "mzn": {
+                    "language": "mzn",
+                    "value": "جمیعت"
+                },
+                "nan-hant": {
+                    "language": "nan-hant",
+                    "value": "人口"
+                },
+                "nan": {
+                    "language": "nan",
+                    "value": "Jîn-kháu"
+                },
+                "nan-hani": {
+                    "language": "nan-hani",
+                    "value": "人口"
+                },
+                "nan-latn-pehoeji": {
+                    "language": "nan-latn-pehoeji",
+                    "value": "Jîn-kháu"
+                },
+                "nan-latn-tailo": {
+                    "language": "nan-latn-tailo",
+                    "value": "Jîn-kháu"
+                },
+                "vo": {
+                    "language": "vo",
+                    "value": "belödans"
+                },
+                "aig": {
+                    "language": "aig",
+                    "value": "naiganumba"
+                },
+                "lbe": {
+                    "language": "lbe",
+                    "value": "агьалинал аьдад"
+                },
+                "kab": {
+                    "language": "kab",
+                    "value": "taɣerfa"
+                },
+                "wal": {
+                    "language": "wal",
+                    "value": "asaa coratettaa"
+                },
+                "lg": {
+                    "language": "lg",
+                    "value": "obunji bw'abantu"
+                },
+                "sjd": {
+                    "language": "sjd",
+                    "value": "е̄ллье числа"
+                },
+                "mai": {
+                    "language": "mai",
+                    "value": "जनसङ्ख्या"
+                },
+                "isv-cyrl": {
+                    "language": "isv-cyrl",
+                    "value": "насељенје"
+                },
+                "isv-latn": {
+                    "language": "isv-latn",
+                    "value": "naseljenje"
+                },
+                "lzz": {
+                    "language": "lzz",
+                    "value": "nakʼonoba"
+                }
+            },
+            "descriptions": {
+                "en": {
+                    "language": "en",
+                    "value": "number of people inhabiting the place; number of people of subject"
+                },
+                "de": {
+                    "language": "de",
+                    "value": "Anzahl der Einwohner eines Orts oder Gebietes"
+                },
+                "fr": {
+                    "language": "fr",
+                    "value": "nombre d'habitants du lieu ou de personnes dans un groupe"
+                },
+                "it": {
+                    "language": "it",
+                    "value": "numero di abitanti di un luogo"
+                },
+                "fi": {
+                    "language": "fi",
+                    "value": "tietyssä paikassa asuvien ihmisten määrä"
+                },
+                "pt-br": {
+                    "language": "pt-br",
+                    "value": "número de pessoas que habitam o local"
+                },
+                "pt": {
+                    "language": "pt",
+                    "value": "número de pessoas que habitam o local"
+                },
+                "nb": {
+                    "language": "nb",
+                    "value": "antall personer som bor fast i området"
+                },
+                "el": {
+                    "language": "el",
+                    "value": "αριθμός ατόμων που κατοικούν σε ένα μέρος"
+                },
+                "uk": {
+                    "language": "uk",
+                    "value": "кількість людей, що живуть у локації"
+                },
+                "nl": {
+                    "language": "nl",
+                    "value": "aantal inwoners van een plaats of gebied"
+                },
+                "es": {
+                    "language": "es",
+                    "value": "número de habitantes de un lugar"
+                },
+                "he": {
+                    "language": "he",
+                    "value": "מספר האנשים שגרים במקום"
+                },
+                "or": {
+                    "language": "or",
+                    "value": "ସେହି ସ୍ଥାନରେ ରହୁଥିବା ଲୋକଙ୍କ ସଂଖ୍ୟା"
+                },
+                "eo": {
+                    "language": "eo",
+                    "value": "nombro de homoj loĝantaj en la areo"
+                },
+                "is": {
+                    "language": "is",
+                    "value": "fjöldi fólks sem býr á svæðinu"
+                },
+                "yi": {
+                    "language": "yi",
+                    "value": "צאל אײַנוואוינער אין ארט"
+                },
+                "sr": {
+                    "language": "sr",
+                    "value": "број људи који насељавају место"
+                },
+                "sr-ec": {
+                    "language": "sr-ec",
+                    "value": "број људи који насељавају место"
+                },
+                "sr-el": {
+                    "language": "sr-el",
+                    "value": "broj ljudi koji naseljavaju mesto"
+                },
+                "ro": {
+                    "language": "ro",
+                    "value": "numărul locuitorilor într-o anumită arie sau loc geografic"
+                },
+                "hu": {
+                    "language": "hu",
+                    "value": "egy adott helyen lakó emberek száma"
+                },
+                "br": {
+                    "language": "br",
+                    "value": "niver a dud o vevañ el lec'h"
+                },
+                "bn": {
+                    "language": "bn",
+                    "value": "স্থান নিবাসী মানুষের সংখ্যা"
+                },
+                "eu": {
+                    "language": "eu",
+                    "value": "biztanleen kopurua"
+                },
+                "scn": {
+                    "language": "scn",
+                    "value": "nùmmaru di cristiani ntôn postu o ntôn gruppu"
+                },
+                "ar": {
+                    "language": "ar",
+                    "value": "عدد الأشخاص الذين يقطنون هذا المكان"
+                },
+                "gl": {
+                    "language": "gl",
+                    "value": "número de habitantes dun lugar"
+                },
+                "ne": {
+                    "language": "ne",
+                    "value": "कुनै समयमा कुनै क्षेत्रमा बसोबास गर्ने मनिसको संख्या"
+                },
+                "ca": {
+                    "language": "ca",
+                    "value": "nombre d'habitants d'un lloc"
+                },
+                "da": {
+                    "language": "da",
+                    "value": "antal personer der bor et sted"
+                },
+                "tr": {
+                    "language": "tr",
+                    "value": "bu yerde yaşayan insanların sayısı"
+                },
+                "pl": {
+                    "language": "pl",
+                    "value": "ilość ludzi zamieszkujących miejsce"
+                },
+                "lt": {
+                    "language": "lt",
+                    "value": "žmonių skaičius, kurie gyvena vietoje"
+                },
+                "en-gb": {
+                    "language": "en-gb",
+                    "value": "number of people inhabiting the place; number of people of subject"
+                },
+                "id": {
+                    "language": "id",
+                    "value": "jumlah penduduk yang mendiami suatu tempat; jumlah penduduk dari subjek"
+                },
+                "ast": {
+                    "language": "ast",
+                    "value": "númberu d'habitantes d'un llugar"
+                },
+                "ps": {
+                    "language": "ps",
+                    "value": "د ټولو مېشتو وگړو شمېر"
+                },
+                "en-ca": {
+                    "language": "en-ca",
+                    "value": "number of people inhabiting the place; number of people of subject"
+                },
+                "hsb": {
+                    "language": "hsb",
+                    "value": "ličba wobydlerjow jednoho městna abo teritorija"
+                },
+                "ml": {
+                    "language": "ml",
+                    "value": "താമസിക്കുന്ന ആൾക്കാരുടെ എണ്ണം"
+                },
+                "ka": {
+                    "language": "ka",
+                    "value": "რაიმე ადგილის (ქვეყნის, ქალაქის და მისთანის) მცხოვრებთა ერთობლიობა დროის მოცემულ მომენტში"
+                },
+                "bg": {
+                    "language": "bg",
+                    "value": "брой хора, населяващи дадено място"
+                },
+                "oc": {
+                    "language": "oc",
+                    "value": "nombre d'abitants del luòc o de personas dins un grop."
+                },
+                "tl": {
+                    "language": "tl",
+                    "value": "kabuuan ng bilang ng mga taong naninirahan sa isang lugar"
+                },
+                "cs": {
+                    "language": "cs",
+                    "value": "počet lidí obývajících místo"
+                },
+                "vmf": {
+                    "language": "vmf",
+                    "value": "Ôzôhl von dä Eiwohnär von äm Ord odär Gbied"
+                },
+                "ur": {
+                    "language": "ur",
+                    "value": "ایک خاص مقام کے رہنے والوں کی کل تعداد"
+                },
+                "ru": {
+                    "language": "ru",
+                    "value": "количество людей, населяющих место"
+                },
+                "hr": {
+                    "language": "hr",
+                    "value": "broj stanovnika"
+                },
+                "be": {
+                    "language": "be",
+                    "value": "колькасць жыхароў дадзенай мясціны"
+                },
+                "sq": {
+                    "language": "sq",
+                    "value": "numri i njerëzve që banojnë në një vend; numri i njerëzve në subjekt"
+                },
+                "ms": {
+                    "language": "ms",
+                    "value": "penduduk sesebuah kawasan"
+                },
+                "ilo": {
+                    "language": "ilo",
+                    "value": "bilang ti tattao a mangtagtagitao iti lugar;"
+                },
+                "bcl": {
+                    "language": "bcl",
+                    "value": "bilang ti tattao iti suheto"
+                },
+                "mr": {
+                    "language": "mr",
+                    "value": "एखाद्या ठिकाणी वस्तीस असलेल्या लोकांची संख्या ;विषयानुसार लोकांची संख्या"
+                },
+                "ko": {
+                    "language": "ko",
+                    "value": "특정 지역에 거주하는 사람의 수"
+                },
+                "sv": {
+                    "language": "sv",
+                    "value": "antal personer som bebor platsen"
+                },
+                "be-tarask": {
+                    "language": "be-tarask",
+                    "value": "колькасьць людзей, якія насяляюць мясьціну"
+                },
+                "zh": {
+                    "language": "zh",
+                    "value": "某地居住的人數；某個主體中的人數"
+                },
+                "zh-hant": {
+                    "language": "zh-hant",
+                    "value": "某地居住的人數；某個主體中的人數"
+                },
+                "zh-tw": {
+                    "language": "zh-tw",
+                    "value": "某地居住的人數；某個主體中的人數"
+                },
+                "lij": {
+                    "language": "lij",
+                    "value": "nùmero de abitànti de 'n pòsto"
+                },
+                "lb": {
+                    "language": "lb",
+                    "value": "Zuel vun de Leit, déi do wunnen"
+                },
+                "pa": {
+                    "language": "pa",
+                    "value": "ਕਿਸੇ ਥਾਂ ਤੇ ਰਹਿਣ ਵਾਲੇ ਲੋਕਾਂ ਦੀ ਗਿਣਤੀ"
+                },
+                "hi": {
+                    "language": "hi",
+                    "value": "किसी स्थान पर निवास करने वाले लोगों की संख्या"
+                },
+                "ga": {
+                    "language": "ga",
+                    "value": "líon daoine ina gcónaí san áit"
+                },
+                "nds-nl": {
+                    "language": "nds-nl",
+                    "value": "antal inwoaners van een plaatse of gebeed"
+                },
+                "gu": {
+                    "language": "gu",
+                    "value": "આ સ્થાને રહેતા લોકોની વસ્તી"
+                },
+                "sh": {
+                    "language": "sh",
+                    "value": "broj ljudi koji naseljavaju mjesto"
+                },
+                "kw": {
+                    "language": "kw",
+                    "value": "niver a bobel trigys y'n tyller"
+                },
+                "szl": {
+                    "language": "szl",
+                    "value": "wielość ludzi zamiyszkujōncych plac"
+                },
+                "ti": {
+                    "language": "ti",
+                    "value": "ብዝሒ ተቐመጥቲ ናይ ሓደ ቦታ"
+                },
+                "ba": {
+                    "language": "ba",
+                    "value": "ниндәйҙер торама пунктта йәшәүсе кешеләр"
+                },
+                "te": {
+                    "language": "te",
+                    "value": "ఒక ప్రదేశం లో ఉన్న వ్యక్తుల సంఖ్య"
+                },
+                "udm": {
+                    "language": "udm",
+                    "value": "та интыын улӥсьёслэн лыдзы"
+                },
+                "dag": {
+                    "language": "dag",
+                    "value": "daadama kalinli ban ʒi shɛli polo"
+                },
+                "ja": {
+                    "language": "ja",
+                    "value": "その場所に住む人々の数; 主題の人の数"
+                },
+                "ig": {
+                    "language": "ig",
+                    "value": "ọnụ ọgụgụ ndị mmadụ bi n'ebe ahụ; ọnụ ọgụgụ ndị mmadụ nke isiokwu"
+                },
+                "pnb": {
+                    "language": "pnb",
+                    "value": "اکسے تھاں تے رہݨ والے لوکاں دی گݨتی"
+                },
+                "sc": {
+                    "language": "sc",
+                    "value": "nùmeru de abitantes de unu logu"
+                },
+                "gur": {
+                    "language": "gur",
+                    "value": "nɛreba kãlɛ n de se'em bɔna zi'an"
+                },
+                "sw": {
+                    "language": "sw",
+                    "value": "namba ya watu katika eneo fulani"
+                },
+                "ext": {
+                    "language": "ext",
+                    "value": "númiru de habitantis nun lugal"
+                },
+                "prg": {
+                    "language": "prg",
+                    "value": "gīrbjas buwijjai ēn deīktan / gīrbjas zmūnin subjaktan"
+                },
+                "tok": {
+                    "language": "tok",
+                    "value": "ijo ni la jan li mute seme?"
+                },
+                "sat": {
+                    "language": "sat",
+                    "value": "ᱚᱱᱟ ᱡᱟᱭᱜᱟ ᱨᱮ ᱵᱟᱥᱟ ᱦᱚᱲ ᱠᱚᱣᱟᱜ ᱮᱞ;  ᱥᱟᱛᱟᱢ ᱨᱮᱱ ᱦᱚᱲ ᱠᱚᱣᱟᱜ ᱮᱞ"
+                },
+                "av": {
+                    "language": "av",
+                    "value": "бакӀалда ругезул рикӀкӀен"
+                },
+                "mzn": {
+                    "language": "mzn",
+                    "value": "آدمونی که اتا جا درنه تعداد"
+                },
+                "nan-hant": {
+                    "language": "nan-hant",
+                    "value": "某麼所在的蹛踮的人數；主題的人數"
+                },
+                "nan": {
+                    "language": "nan",
+                    "value": "bó͘-mih só͘-chai ê tòa-tiàm ê jîn-sò͘, chú-tê ê jîn-sò͘"
+                },
+                "nan-hani": {
+                    "language": "nan-hani",
+                    "value": "某麼所在的蹛踮的人數；主題的人數"
+                },
+                "nan-latn-pehoeji": {
+                    "language": "nan-latn-pehoeji",
+                    "value": "bó͘-mih só͘-chai ê tòa-tiàm ê jîn-sò͘, chú-tê ê jîn-sò͘"
+                },
+                "nan-latn-tailo": {
+                    "language": "nan-latn-tailo",
+                    "value": "boó-mih soó-tsai ê tuà-tiàm ê jîn-sòo, tsú-tê ê jîn-sòo"
+                },
+                "sk": {
+                    "language": "sk",
+                    "value": "počet ľudí žijúcich v danej lokalite"
+                }
+            },
+            "aliases": {
+                "cs": [
+                    {
+                        "language": "cs",
+                        "value": "obyvatel"
+                    },
+                    {
+                        "language": "cs",
+                        "value": "populace"
+                    }
+                ],
+                "ru": [
+                    {
+                        "language": "ru",
+                        "value": "население"
+                    },
+                    {
+                        "language": "ru",
+                        "value": "жителей"
+                    }
+                ],
+                "de": [
+                    {
+                        "language": "de",
+                        "value": "Population"
+                    },
+                    {
+                        "language": "de",
+                        "value": "Bewohner"
+                    },
+                    {
+                        "language": "de",
+                        "value": "Bevölkerung"
+                    },
+                    {
+                        "language": "de",
+                        "value": "Einwohner"
+                    }
+                ],
+                "ko": [
+                    {
+                        "language": "ko",
+                        "value": "인구"
+                    },
+                    {
+                        "language": "ko",
+                        "value": "사람 수"
+                    },
+                    {
+                        "language": "ko",
+                        "value": "인구 수"
+                    }
+                ],
+                "et": [
+                    {
+                        "language": "et",
+                        "value": "elanike arv"
+                    }
+                ],
+                "nl": [
+                    {
+                        "language": "nl",
+                        "value": "bevolking"
+                    },
+                    {
+                        "language": "nl",
+                        "value": "populatie"
+                    },
+                    {
+                        "language": "nl",
+                        "value": "inwonersaantal"
+                    },
+                    {
+                        "language": "nl",
+                        "value": "inwoners"
+                    }
+                ],
+                "be": [
+                    {
+                        "language": "be",
+                        "value": "насельніцтва"
+                    },
+                    {
+                        "language": "be",
+                        "value": "жыхароў"
+                    }
+                ],
+                "vi": [
+                    {
+                        "language": "vi",
+                        "value": "số dân cư"
+                    }
+                ],
+                "or": [
+                    {
+                        "language": "or",
+                        "value": "ଜନସଂଖ୍ୟା"
+                    }
+                ],
+                "hu": [
+                    {
+                        "language": "hu",
+                        "value": "lakosság"
+                    },
+                    {
+                        "language": "hu",
+                        "value": "lakónépesség"
+                    },
+                    {
+                        "language": "hu",
+                        "value": "lakosságszám"
+                    },
+                    {
+                        "language": "hu",
+                        "value": "népességadat"
+                    },
+                    {
+                        "language": "hu",
+                        "value": "lélekszám"
+                    }
+                ],
+                "it": [
+                    {
+                        "language": "it",
+                        "value": "abitanti"
+                    },
+                    {
+                        "language": "it",
+                        "value": "numero di abitanti"
+                    }
+                ],
+                "fr": [
+                    {
+                        "language": "fr",
+                        "value": "nombre d'habitants"
+                    },
+                    {
+                        "language": "fr",
+                        "value": "nombre de personnes"
+                    }
+                ],
+                "scn": [
+                    {
+                        "language": "scn",
+                        "value": "populazzioni"
+                    }
+                ],
+                "mr": [
+                    {
+                        "language": "mr",
+                        "value": "वस्तीची लोकसंख्या"
+                    },
+                    {
+                        "language": "mr",
+                        "value": "जनगणना"
+                    }
+                ],
+                "ro": [
+                    {
+                        "language": "ro",
+                        "value": "populatie"
+                    },
+                    {
+                        "language": "ro",
+                        "value": "număr de locuitori"
+                    }
+                ],
+                "pl": [
+                    {
+                        "language": "pl",
+                        "value": "populacja"
+                    },
+                    {
+                        "language": "pl",
+                        "value": "mieszkańcy"
+                    },
+                    {
+                        "language": "pl",
+                        "value": "liczba mieszkańców"
+                    }
+                ],
+                "es": [
+                    {
+                        "language": "es",
+                        "value": "número de habitantes"
+                    },
+                    {
+                        "language": "es",
+                        "value": "habitantes"
+                    },
+                    {
+                        "language": "es",
+                        "value": "población humana"
+                    }
+                ],
+                "fi": [
+                    {
+                        "language": "fi",
+                        "value": "väestömäärä"
+                    },
+                    {
+                        "language": "fi",
+                        "value": "asukasluku"
+                    }
+                ],
+                "lt": [
+                    {
+                        "language": "lt",
+                        "value": "populiacija"
+                    },
+                    {
+                        "language": "lt",
+                        "value": "gyventojų"
+                    }
+                ],
+                "uk": [
+                    {
+                        "language": "uk",
+                        "value": "населення"
+                    },
+                    {
+                        "language": "uk",
+                        "value": "людей"
+                    },
+                    {
+                        "language": "uk",
+                        "value": "жителів"
+                    },
+                    {
+                        "language": "uk",
+                        "value": "чисельність населення"
+                    }
+                ],
+                "en": [
+                    {
+                        "language": "en",
+                        "value": "inhabitants"
+                    },
+                    {
+                        "language": "en",
+                        "value": "human population"
+                    }
+                ],
+                "en-ca": [
+                    {
+                        "language": "en-ca",
+                        "value": "inhabitants"
+                    },
+                    {
+                        "language": "en-ca",
+                        "value": "human population"
+                    }
+                ],
+                "en-gb": [
+                    {
+                        "language": "en-gb",
+                        "value": "inhabitants"
+                    },
+                    {
+                        "language": "en-gb",
+                        "value": "human population"
+                    }
+                ],
+                "id": [
+                    {
+                        "language": "id",
+                        "value": "pencacahan jiwa"
+                    },
+                    {
+                        "language": "id",
+                        "value": "populasi"
+                    },
+                    {
+                        "language": "id",
+                        "value": "penduduk"
+                    }
+                ],
+                "sv": [
+                    {
+                        "language": "sv",
+                        "value": "befolkning"
+                    },
+                    {
+                        "language": "sv",
+                        "value": "folkmängd"
+                    }
+                ],
+                "nb": [
+                    {
+                        "language": "nb",
+                        "value": "befolkning"
+                    },
+                    {
+                        "language": "nb",
+                        "value": "innbyggere"
+                    }
+                ],
+                "ast": [
+                    {
+                        "language": "ast",
+                        "value": "habitantes"
+                    }
+                ],
+                "gl": [
+                    {
+                        "language": "gl",
+                        "value": "habitantes"
+                    },
+                    {
+                        "language": "gl",
+                        "value": "número de habitantes"
+                    }
+                ],
+                "hsb": [
+                    {
+                        "language": "hsb",
+                        "value": "wobydlerstwo"
+                    }
+                ],
+                "ka": [
+                    {
+                        "language": "ka",
+                        "value": "მოსახლეობის რაოდენობა"
+                    }
+                ],
+                "bg": [
+                    {
+                        "language": "bg",
+                        "value": "популация"
+                    }
+                ],
+                "oc": [
+                    {
+                        "language": "oc",
+                        "value": "nombre d'abitants"
+                    },
+                    {
+                        "language": "oc",
+                        "value": "abitants"
+                    },
+                    {
+                        "language": "oc",
+                        "value": "nombre d'estatjants"
+                    }
+                ],
+                "ba": [
+                    {
+                        "language": "ba",
+                        "value": "халыҡ һаны"
+                    }
+                ],
+                "vmf": [
+                    {
+                        "language": "vmf",
+                        "value": "Eiwohnär"
+                    },
+                    {
+                        "language": "vmf",
+                        "value": "Bwohnär"
+                    },
+                    {
+                        "language": "vmf",
+                        "value": "Bävölkärung"
+                    }
+                ],
+                "tg": [
+                    {
+                        "language": "tg",
+                        "value": "аҳолӣ"
+                    },
+                    {
+                        "language": "tg",
+                        "value": "сокинон"
+                    },
+                    {
+                        "language": "tg",
+                        "value": "шаҳрвандон"
+                    },
+                    {
+                        "language": "tg",
+                        "value": "зиндагидорон"
+                    },
+                    {
+                        "language": "tg",
+                        "value": "умрбасарбурдагон"
+                    },
+                    {
+                        "language": "tg",
+                        "value": "одамон"
+                    }
+                ],
+                "el": [
+                    {
+                        "language": "el",
+                        "value": "κάτοικοι"
+                    }
+                ],
+                "yo": [
+                    {
+                        "language": "yo",
+                        "value": "Iye èrò ènìyàn"
+                    },
+                    {
+                        "language": "yo",
+                        "value": "Iye ènìyàn"
+                    }
+                ],
+                "sq": [
+                    {
+                        "language": "sq",
+                        "value": "banorë"
+                    },
+                    {
+                        "language": "sq",
+                        "value": "njerëz"
+                    }
+                ],
+                "ilo": [
+                    {
+                        "language": "ilo",
+                        "value": "bilang dagiti umili"
+                    }
+                ],
+                "tr": [
+                    {
+                        "language": "tr",
+                        "value": "sakinleri"
+                    },
+                    {
+                        "language": "tr",
+                        "value": "popülasyon"
+                    },
+                    {
+                        "language": "tr",
+                        "value": "toplam sayı"
+                    }
+                ],
+                "be-tarask": [
+                    {
+                        "language": "be-tarask",
+                        "value": "насельніцтва"
+                    },
+                    {
+                        "language": "be-tarask",
+                        "value": "жыхароў"
+                    },
+                    {
+                        "language": "be-tarask",
+                        "value": "колькасьць жыхароў"
+                    },
+                    {
+                        "language": "be-tarask",
+                        "value": "людзей"
+                    },
+                    {
+                        "language": "be-tarask",
+                        "value": "пражываюць"
+                    }
+                ],
+                "ca": [
+                    {
+                        "language": "ca",
+                        "value": "habitants"
+                    }
+                ],
+                "zh": [
+                    {
+                        "language": "zh",
+                        "value": "人口數"
+                    },
+                    {
+                        "language": "zh",
+                        "value": "人口数"
+                    }
+                ],
+                "zh-hant": [
+                    {
+                        "language": "zh-hant",
+                        "value": "人口數"
+                    }
+                ],
+                "zh-tw": [
+                    {
+                        "language": "zh-tw",
+                        "value": "人口數"
+                    }
+                ],
+                "nn": [
+                    {
+                        "language": "nn",
+                        "value": "innbyggjarar"
+                    },
+                    {
+                        "language": "nn",
+                        "value": "innbyggarar"
+                    },
+                    {
+                        "language": "nn",
+                        "value": "innbyggjartal"
+                    },
+                    {
+                        "language": "nn",
+                        "value": "innbyggartal"
+                    }
+                ],
+                "lij": [
+                    {
+                        "language": "lij",
+                        "value": "abitànti"
+                    }
+                ],
+                "lb": [
+                    {
+                        "language": "lb",
+                        "value": "Awunner"
+                    }
+                ],
+                "pa": [
+                    {
+                        "language": "pa",
+                        "value": "ਜਨਸੰਖਿਆ"
+                    }
+                ],
+                "hi": [
+                    {
+                        "language": "hi",
+                        "value": "आबादी"
+                    }
+                ],
+                "nds-nl": [
+                    {
+                        "language": "nds-nl",
+                        "value": "bevolking"
+                    },
+                    {
+                        "language": "nds-nl",
+                        "value": "populaty"
+                    },
+                    {
+                        "language": "nds-nl",
+                        "value": "inwoaners"
+                    },
+                    {
+                        "language": "nds-nl",
+                        "value": "inwoanerantal"
+                    }
+                ],
+                "ar": [
+                    {
+                        "language": "ar",
+                        "value": "حجم السكان"
+                    }
+                ],
+                "hyw": [
+                    {
+                        "language": "hyw",
+                        "value": "Բնակչութիւն"
+                    }
+                ],
+                "ckb": [
+                    {
+                        "language": "ckb",
+                        "value": "ژمارەی دانیشتووان"
+                    }
+                ],
+                "szl": [
+                    {
+                        "language": "szl",
+                        "value": "populacyjŏ"
+                    }
+                ],
+                "ti": [
+                    {
+                        "language": "ti",
+                        "value": "ተቐመጥቲ"
+                    },
+                    {
+                        "language": "ti",
+                        "value": "ብዝሒ ተቐመጥቲ"
+                    }
+                ],
+                "ms-arab": [
+                    {
+                        "language": "ms-arab",
+                        "value": "ڤوڤولاسي"
+                    }
+                ],
+                "ms": [
+                    {
+                        "language": "ms",
+                        "value": "populasi"
+                    }
+                ],
+                "te": [
+                    {
+                        "language": "te",
+                        "value": "జనాభా లెక్కలు"
+                    }
+                ],
+                "udm": [
+                    {
+                        "language": "udm",
+                        "value": "улӥсь калык"
+                    }
+                ],
+                "sms": [
+                    {
+                        "language": "sms",
+                        "value": "narodlååkk"
+                    }
+                ],
+                "lv": [
+                    {
+                        "language": "lv",
+                        "value": "iedzīvotāji"
+                    }
+                ],
+                "ja": [
+                    {
+                        "language": "ja",
+                        "value": "じんこう"
+                    }
+                ],
+                "ff": [
+                    {
+                        "language": "ff",
+                        "value": "adadu yimɓe"
+                    },
+                    {
+                        "language": "ff",
+                        "value": "anna"
+                    },
+                    {
+                        "language": "ff",
+                        "value": "annaji"
+                    }
+                ],
+                "pnb": [
+                    {
+                        "language": "pnb",
+                        "value": "جنسنکھیا"
+                    }
+                ],
+                "sc": [
+                    {
+                        "language": "sc",
+                        "value": "abitantes"
+                    },
+                    {
+                        "language": "sc",
+                        "value": "nùmeru de abitantes"
+                    },
+                    {
+                        "language": "sc",
+                        "value": "bividores"
+                    },
+                    {
+                        "language": "sc",
+                        "value": "nùmeru de bividores"
+                    }
+                ],
+                "gur": [
+                    {
+                        "language": "gur",
+                        "value": "nɛrekãlɛ"
+                    }
+                ],
+                "dag": [
+                    {
+                        "language": "dag",
+                        "value": "daadambiɛligu kalinli"
+                    }
+                ],
+                "ryu": [
+                    {
+                        "language": "ryu",
+                        "value": "人口"
+                    }
+                ],
+                "ext": [
+                    {
+                        "language": "ext",
+                        "value": "habitantis"
+                    }
+                ],
+                "tok": [
+                    {
+                        "language": "tok",
+                        "value": "mute ijo"
+                    }
+                ],
+                "pt": [
+                    {
+                        "language": "pt",
+                        "value": "habitantes"
+                    },
+                    {
+                        "language": "pt",
+                        "value": "população humana"
+                    }
+                ],
+                "sat": [
+                    {
+                        "language": "sat",
+                        "value": "ᱦᱚᱲ ᱮᱞ"
+                    }
+                ],
+                "av": [
+                    {
+                        "language": "av",
+                        "value": "популация"
+                    }
+                ],
+                "mzn": [
+                    {
+                        "language": "mzn",
+                        "value": "جمعیت"
+                    }
+                ],
+                "nan": [
+                    {
+                        "language": "nan",
+                        "value": "Lîn-kháu"
+                    },
+                    {
+                        "language": "nan",
+                        "value": "Jîn-kháu-sò͘"
+                    },
+                    {
+                        "language": "nan",
+                        "value": "Lîn-kháu-sò͘"
+                    }
+                ],
+                "nan-hani": [
+                    {
+                        "language": "nan-hani",
+                        "value": "人口數"
+                    }
+                ],
+                "nan-hant": [
+                    {
+                        "language": "nan-hant",
+                        "value": "人口數"
+                    }
+                ],
+                "nan-latn-pehoeji": [
+                    {
+                        "language": "nan-latn-pehoeji",
+                        "value": "Lîn-kháu"
+                    },
+                    {
+                        "language": "nan-latn-pehoeji",
+                        "value": "Jîn-kháu-sò͘"
+                    },
+                    {
+                        "language": "nan-latn-pehoeji",
+                        "value": "Lîn-kháu-sò͘"
+                    }
+                ],
+                "nan-latn-tailo": [
+                    {
+                        "language": "nan-latn-tailo",
+                        "value": "Lîn-kháu"
+                    },
+                    {
+                        "language": "nan-latn-tailo",
+                        "value": "Jîn-kháu-sòo"
+                    },
+                    {
+                        "language": "nan-latn-tailo",
+                        "value": "Lîn-kháu-sòo"
+                    }
+                ],
+                "sk": [
+                    {
+                        "language": "sk",
+                        "value": "populácia"
+                    },
+                    {
+                        "language": "sk",
+                        "value": "obyvateľstvo"
+                    },
+                    {
+                        "language": "sk",
+                        "value": "počet duší"
+                    }
+                ]
+            },
+            "claims": {
+                "P1659": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "fca74197d5ab206c814ed85ae1013ef11aeaeaa4",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 1539,
+                                    "id": "P1539"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$32945610-468c-5a79-12d2-9b206cedc683",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "3470042cb3a561f002b7d935d387e045a3596380",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 1540,
+                                    "id": "P1540"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$972521db-497a-1082-cd97-a56cd4f739a4",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "71385385ab50d0252266c89d9fdce999d9ffb09b",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 4179,
+                                    "id": "P4179"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$b14f53f8-4b26-53df-0420-5692b1654fac",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "9b8d5f5bb2529125c539679c3fc45be037dff70a",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 1538,
+                                    "id": "P1538"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$7057c528-4f80-4ede-45bc-2cbfe527391c",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "68a2e43b92d8b3601d67082341ec6ad318fe882e",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 6343,
+                                    "id": "P6343"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$1ece447e-495f-f5a0-7f86-76f71c4e1f1e",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "084b208c11a554a2d6e14412953f65b2976a1000",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 6344,
+                                    "id": "P6344"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$f2a69ab3-4e8c-a50d-a02d-b546a6eaa395",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "2ec007e394be02b4839f23b6f59b3e4b43eb34d8",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 6499,
+                                    "id": "P6499"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$30ed214d-4b72-4e18-3e9b-cd0e0728901d",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1659",
+                            "hash": "1d182cf20e155b70a950aa7e39e66577858ee325",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "property",
+                                    "numeric-id": 12712,
+                                    "id": "P12712"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-property"
+                        },
+                        "type": "statement",
+                        "id": "P1082$6a901e2c-43a8-cd8c-9ee5-f41213add95c",
+                        "rank": "normal"
+                    }
+                ],
+                "P2668": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2668",
+                            "hash": "ab776ac00123713d3fb116fef5047da54bcbfbf5",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 23611587,
+                                    "id": "Q23611587"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$5b4fad72-4a3e-4999-3b8e-7204392565ad",
+                        "rank": "normal"
+                    }
+                ],
+                "P2875": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2875",
+                            "hash": "e88bf0b901597c66f866c6a5b5256427b5b3929e",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 20990019,
+                                    "id": "Q20990019"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$0a7f072b-4881-7c16-2ffd-b896f84428a3",
+                        "rank": "normal"
+                    }
+                ],
+                "P3254": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P3254",
+                            "hash": "93389ef63021485c680417c491961d08df1eead5",
+                            "datavalue": {
+                                "value": "https://www.wikidata.org/wiki/Wikidata:Property_proposal/Archive/18#P1082",
+                                "type": "string"
+                            },
+                            "datatype": "url"
+                        },
+                        "type": "statement",
+                        "id": "P1082$561C9C1A-AF31-49E4-ABFA-35D71A15EF8E",
+                        "rank": "normal"
+                    }
+                ],
+                "P2302": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "ebdfa0ec216b8763162f0028878b1c5ed9978c47",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21510860,
+                                    "id": "Q21510860"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2312": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2312",
+                                    "hash": "1a13d1a1d26ccf69c8607da92b0ec4f0db9f2c4d",
+                                    "datavalue": {
+                                        "value": {
+                                            "amount": "+100000000000",
+                                            "unit": "1"
+                                        },
+                                        "type": "quantity"
+                                    },
+                                    "datatype": "quantity"
+                                }
+                            ],
+                            "P2313": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2313",
+                                    "hash": "0050457474815bbf824ddf676682ac32c605ad0f",
+                                    "datavalue": {
+                                        "value": {
+                                            "amount": "+0",
+                                            "unit": "1"
+                                        },
+                                        "type": "quantity"
+                                    },
+                                    "datatype": "quantity"
+                                }
+                            ],
+                            "P2303": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "712a9aa0574d4e88492357d7937feba9ad0d4270",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 66370715,
+                                            "id": "Q66370715"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "c4da86382d10cb68e921d589c1f9b8c7a2e220d3",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 3530052,
+                                            "id": "Q3530052"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "8ed77648f002390e377259ea83c56e9ed0436202",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 3742737,
+                                            "id": "Q3742737"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "eddd69b9e77ac4523e05a1a73b8369726b556d38",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 760864,
+                                            "id": "Q760864"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "2ce599d3cd7e8c44cc6f0713d9e5e744cb72d347",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 1249325,
+                                            "id": "Q1249325"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "37529201b846207a5fba551a0fe794e1b07a5709",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 57033047,
+                                            "id": "Q57033047"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "efecb6c42583503d0184d3032abbb9ba608ceb15",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 66371234,
+                                            "id": "Q66371234"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "d3d0e0ddad331975dcbb6e5e50965601db46c282",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 2786172,
+                                            "id": "Q2786172"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "115b74fddb3f2a76c688c10a53d71b9e31106022",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 24229363,
+                                            "id": "Q24229363"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "98c516b2afd90fefb8cb8aeaf3136e12b1560396",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 57032684,
+                                            "id": "Q57032684"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "541b990403d0786e5ce55590a4c9ea589ef383cc",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 49225047,
+                                            "id": "Q49225047"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "62d356809332e16fd5d228665106edb9f778fa67",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 718160,
+                                            "id": "Q718160"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "55dac788c3ec71bb3ecb369e9d16147acc81dfff",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 13576156,
+                                            "id": "Q13576156"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "178bf87c6d73bc089801264a128ed8eef8a00204",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 122733396,
+                                            "id": "Q122733396"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "abdbe0abc9b2504ee5b4f3c114581edacd721a78",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 719329,
+                                            "id": "Q719329"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "c2f2dda1bad9d6939ca52d5e8aea58cd4c3f7014",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 122706786,
+                                            "id": "Q122706786"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2312",
+                            "P2313",
+                            "P2303"
+                        ],
+                        "id": "P1082$B4161C3D-41C6-4927-90EF-57B1ACDA1B76",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "55cfe775ff19641cea395be018002e38e05f3749",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21510851,
+                                    "id": "Q21510851"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2306": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "faff7072a38e7665f630bb7020158af1b995ea5d",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 459,
+                                            "id": "P459"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "a6be4e7a327c415e1c8d7d72c7fe6e7f784d4f57",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 585,
+                                            "id": "P585"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "f7c15da951bf8ff0c60d9ac92f017e876feec22c",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1013,
+                                            "id": "P1013"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "3efd1f494ba2c1ac4bdc572df5784d4cca879442",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 518,
+                                            "id": "P518"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "b9b8666ef137802d79d811b0edcdaf34f55f0923",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1540,
+                                            "id": "P1540"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "90937d6b40ffb46c1588c04d07fa51e5b729d617",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1539,
+                                            "id": "P1539"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "21bf3bc28e14011010a5deb5b3ee33cd324f8175",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1011,
+                                            "id": "P1011"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "b7b2b2d31ff3460e580b1cbaa9444277a00ce47c",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 2241,
+                                            "id": "P2241"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "c727d8c248a2a6717f17120988d42f83f157e02d",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1538,
+                                            "id": "P1538"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "6da4df338dbee3f1ecd9d7f0db793e511df16cc2",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1012,
+                                            "id": "P1012"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "94b647e492fe9195f4f166518ef387b430a36d96",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1480,
+                                            "id": "P1480"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "8fd4092aebb06b7e8d6cbb2cb58038a51c556076",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 805,
+                                            "id": "P805"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "6b2485e2c2137f3688fe0dbb8af91308de46b999",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 7452,
+                                            "id": "P7452"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "62da6e7fdc78975afcda0fda5d54e6d878679232",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 3680,
+                                            "id": "P3680"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "712b7e6d93c47a48017c086a4d0f9476853fa988",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 10663,
+                                            "id": "P10663"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "4f27f7745f35fa635bef15fe91d44e9cb46c6c00",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 5102,
+                                            "id": "P5102"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "d53aa6fc223b6091453ce5ea594132f378cc4994",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1810,
+                                            "id": "P1810"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "0b1b0b5dc3cd4ffc76180adb4b7d5c382fe303eb",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 172,
+                                            "id": "P172"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "43f5cf60e9a7292de0cdd8198b14ec622bc13e8f",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 6343,
+                                            "id": "P6343"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "430fadf38d5dc1c8745412841443c313c3b7d79c",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 6344,
+                                            "id": "P6344"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "38d1b7959cdf59c23c9bcdeb5cf7b128b721ed4f",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 11279,
+                                            "id": "P11279"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "7e556b3bce4e22df697e73c363f7f530ad37bdb2",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1107,
+                                            "id": "P1107"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ],
+                            "P2304": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2304",
+                                    "hash": "b661e6ca06e0a581c8d861e75882bccc40f25cf4",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 17,
+                                            "id": "P17"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2306",
+                            "P2304"
+                        ],
+                        "id": "P1082$5C4EBC3A-92DE-4D35-9BAE-1E408169F4AF",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "1c2d57d98191d133ed74379d6458b4cae0fc1f41",
+                                "snaks": {
+                                    "P2306": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P2306",
+                                            "hash": "7e556b3bce4e22df697e73c363f7f530ad37bdb2",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "property",
+                                                    "numeric-id": 1107,
+                                                    "id": "P1107"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-property"
+                                        }
+                                    ],
+                                    "P5997": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P5997",
+                                            "hash": "aaf7047517139ec3d8c0f0ceec18d7614b6bfd90",
+                                            "datavalue": {
+                                                "value": "https://www.wikidata.org/w/index.php?title=Q132480&diff=prev&oldid=2343589224",
+                                                "type": "string"
+                                            },
+                                            "datatype": "string"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P2306",
+                                    "P5997"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "a00327947c6d834f33f6ee14916142d6a2008aef",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21503250,
+                                    "id": "Q21503250"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2308": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "b100c3f90d61105dc03c70a23343e2487a30335c",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 82794,
+                                            "id": "Q82794"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "5a718b82ec049447d9754ffe273bb9b068e5f4b2",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 4835091,
+                                            "id": "Q4835091"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "6ba54e769f751a09714df5c62d936aaa86fbd2d3",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 15642541,
+                                            "id": "Q15642541"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "dca49de1ea67384116ce4146f4bef1c70c1fab56",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 486972,
+                                            "id": "Q486972"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "7b6576e6a9ede9345612cea3bc98af95f68d8d5a",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 5107,
+                                            "id": "Q5107"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "db75630b4afde6df85302e098109978a47b5dbff",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 33837,
+                                            "id": "Q33837"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "9dabb00d614f60cabfb161bfde5454b04c81dd31",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 23442,
+                                            "id": "Q23442"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "66c5486cc9d43047c8efdd1d9d9ed5561e9b94b4",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 28864185,
+                                            "id": "Q28864185"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "9fe2fd8dc9973963aebf6eb468acbec9c20c96fc",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 3895768,
+                                            "id": "Q3895768"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "c912613b584c49743097a5598f7967c1963fbb8b",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 21871294,
+                                            "id": "Q21871294"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "d27da37ad18b28ec6fc17aa051d38878afc8e0a2",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 41710,
+                                            "id": "Q41710"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "7acc8f81168291739959e32fc7dd92846a30d4e5",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 189760,
+                                            "id": "Q189760"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2308",
+                                    "hash": "7d740cb9f2ecb322b4dbd7a3073d7f40513c837a",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 108788952,
+                                            "id": "Q108788952"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ],
+                            "P2309": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2309",
+                                    "hash": "8d7afee22e0fa6211dd8c95f247e1dd7b38daf70",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 21503252,
+                                            "id": "Q21503252"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ],
+                            "P2304": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2304",
+                                    "hash": "b661e6ca06e0a581c8d861e75882bccc40f25cf4",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 17,
+                                            "id": "P17"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ],
+                            "P2303": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "011711c2db2a40c0773100572fab77f3317bbb7e",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 2,
+                                            "id": "Q2"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2308",
+                            "P2309",
+                            "P2304",
+                            "P2303"
+                        ],
+                        "id": "P1082$EED40D96-B2BA-4C86-B09A-973BF02680D2",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "60d5b5bf5da8d7ec1e010402497e0015713c2bbf",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21502838,
+                                    "id": "Q21502838"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2306": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "688f8a266cf4724d69fce209b1da1324838db238",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 27,
+                                            "id": "P27"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2306"
+                        ],
+                        "id": "P1082$1B9BF539-BCE1-4D87-BF75-EF9AEDF15EBF",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "4f67bd6fb3c1dac4c183163e5bddd82d85013b0e",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 52848401,
+                                    "id": "Q52848401"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$b041be0a-4e03-3905-0830-8f4f541e3fb6",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "bc9f04ae1b17d1f0be97eae471d20ac6a83546ed",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 19474404,
+                                    "id": "Q19474404"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P4155": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P4155",
+                                    "hash": "2ab3589a99beb6e5d27f6983836d4df2e84e2e27",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 585,
+                                            "id": "P585"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P4155",
+                                    "hash": "4496ad860e59faa39865be3401342fc95144262c",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 459,
+                                            "id": "P459"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P4155",
+                                    "hash": "e8d676da952341796e85cdedd29bdca265c6e592",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 518,
+                                            "id": "P518"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P4155",
+                                    "hash": "aa0446df15b0f9517daf0f55e2bbfe596bd10e40",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 10663,
+                                            "id": "P10663"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P4155"
+                        ],
+                        "id": "P1082$9f0fe419-4ab2-0b5c-8032-eaa2bcffb0f2",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "53d308536f097808b330155b19a3241548159443",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 52060874,
+                                    "id": "Q52060874"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P4155": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P4155",
+                                    "hash": "4496ad860e59faa39865be3401342fc95144262c",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 459,
+                                            "id": "P459"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P4155",
+                                    "hash": "2ab3589a99beb6e5d27f6983836d4df2e84e2e27",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 585,
+                                            "id": "P585"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P4155",
+                                    "hash": "e8d676da952341796e85cdedd29bdca265c6e592",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 518,
+                                            "id": "P518"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P4155"
+                        ],
+                        "id": "P1082$f64ebd63-45e5-c54f-3130-9d1abf24a4bf",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "5a26616612d76793d811f6e74313fc989bf0b540",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21510856,
+                                    "id": "Q21510856"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2306": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "faff7072a38e7665f630bb7020158af1b995ea5d",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 459,
+                                            "id": "P459"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ],
+                            "P2304": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2304",
+                                    "hash": "b661e6ca06e0a581c8d861e75882bccc40f25cf4",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 17,
+                                            "id": "P17"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ],
+                            "P2316": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2316",
+                                    "hash": "0b5129f8885b62f5606bb8acf8d7c40022ac2f8e",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 62026391,
+                                            "id": "Q62026391"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2306",
+                            "P2304",
+                            "P2316"
+                        ],
+                        "id": "P1082$E8CBFFC0-0655-46D1-B292-FECE461E8253",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "5a26616612d76793d811f6e74313fc989bf0b540",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21510856,
+                                    "id": "Q21510856"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2306": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "a6be4e7a327c415e1c8d7d72c7fe6e7f784d4f57",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 585,
+                                            "id": "P585"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ],
+                            "P2304": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2304",
+                                    "hash": "b661e6ca06e0a581c8d861e75882bccc40f25cf4",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 17,
+                                            "id": "P17"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ],
+                            "P2303": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2303",
+                                    "hash": "ceb4a76e801458f1043852ad52ac24f9cc56b5d5",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 1310153,
+                                            "id": "Q1310153"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2306",
+                            "P2304",
+                            "P2303"
+                        ],
+                        "id": "P1082$af131c7f-4745-6ec5-b052-4cad42f33028",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "eba677434c5f12338ab5fd1ce6a834ab3139856a",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 52004125,
+                                    "id": "Q52004125"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2305": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2305",
+                                    "hash": "76a83209b6ab9e5ea1a1dd8e2986281a5a0479d7",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 29934200,
+                                            "id": "Q29934200"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2305"
+                        ],
+                        "id": "P1082$e24f63d1-444b-136b-23ce-783377f672a7",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "793a77bb61b7ab2ebc9b8ef826c2c4c236eeccc1",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 53869507,
+                                    "id": "Q53869507"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P5314": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P5314",
+                                    "hash": "a0202111cb525ed31611bf926974b74a2419b8ab",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 54828448,
+                                            "id": "Q54828448"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P5314"
+                        ],
+                        "id": "P1082$c89f156e-4ea8-c353-dec7-04cc8d3aae93",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "80fd52d4f93d38380a09d0d046b9923974a06a5d",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21514353,
+                                    "id": "Q21514353"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2305": [
+                                {
+                                    "snaktype": "novalue",
+                                    "property": "P2305",
+                                    "hash": "9f444d3aec2f469398b5161a4702f58ab9d2bd39",
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2305"
+                        ],
+                        "id": "P1082$8124D66D-5F8A-4F88-B830-539C8D446016",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2302",
+                            "hash": "60d5b5bf5da8d7ec1e010402497e0015713c2bbf",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 21502838,
+                                    "id": "Q21502838"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2306": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2306",
+                                    "hash": "3ddc4ad29126fc52df59c12e53a5e960a0ffccee",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "property",
+                                            "numeric-id": 1394,
+                                            "id": "P1394"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-property"
+                                }
+                            ],
+                            "P6607": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P6607",
+                                    "hash": "14646aef3d3578dbe1632932d34d52c49115bd06",
+                                    "datavalue": {
+                                        "value": {
+                                            "text": "Use \"number of speakers\" (P1098) for languages.",
+                                            "language": "en"
+                                        },
+                                        "type": "monolingualtext"
+                                    },
+                                    "datatype": "monolingualtext"
+                                },
+                                {
+                                    "snaktype": "value",
+                                    "property": "P6607",
+                                    "hash": "aa72bed4e04765eba9a5345e813a0b248b5da1d9",
+                                    "datavalue": {
+                                        "value": {
+                                            "text": "对于语言，请使用“使用人数”（P1098）",
+                                            "language": "zh"
+                                        },
+                                        "type": "monolingualtext"
+                                    },
+                                    "datatype": "monolingualtext"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2306",
+                            "P6607"
+                        ],
+                        "id": "P1082$84a05134-4a55-6a56-8fba-5ffcb75830cd",
+                        "rank": "normal"
+                    }
+                ],
+                "P3713": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P3713",
+                            "hash": "6be9516ede5eefd6cf26c24d203d19debc574c09",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 32765317,
+                                    "id": "Q32765317"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$00ead85b-4faf-9265-22e9-a5e4bcc50290",
+                        "rank": "normal"
+                    }
+                ],
+                "P31": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P31",
+                            "hash": "20ef810b6aad106bc48be57f043da48b5b2bf8e6",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 22984494,
+                                    "id": "Q22984494"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$d58faa0d-4af6-04ac-19e1-680858ff07be",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P31",
+                            "hash": "719beb4fe1b5f1727d0cb96789329059ba968c53",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 111974592,
+                                    "id": "Q111974592"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$8a53a2b9-490d-24a0-8079-d645bc651080",
+                        "rank": "normal"
+                    }
+                ],
+                "P1629": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1629",
+                            "hash": "6f09e4f3e00f550e35cc1e6dddeb9585c8378abd",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 1613416,
+                                    "id": "Q1613416"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$9106d6f4-4756-fba9-7432-da64fbc0486f",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1629",
+                            "hash": "73534b663bf8a88b1dfb5cfc0afb3cc64c7d6a90",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 33829,
+                                    "id": "Q33829"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P2241": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P2241",
+                                    "hash": "827b85d92fcdf7a4f6a3dddaa2fdcaf1ca2389d7",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 41755623,
+                                            "id": "Q41755623"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P2241"
+                        ],
+                        "id": "P1082$ebe1e729-4e62-3233-4387-8c7571e73577",
+                        "rank": "deprecated"
+                    }
+                ],
+                "P1896": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1896",
+                            "hash": "61f82d817a2bde79fdfc75881965433d19587ebb",
+                            "datavalue": {
+                                "value": "http://data.worldbank.org/indicator/SP.POP.TOTL",
+                                "type": "string"
+                            },
+                            "datatype": "url"
+                        },
+                        "type": "statement",
+                        "id": "P1082$70a60abb-4dd5-2ec3-a6af-860fe24d6ff7",
+                        "rank": "normal"
+                    }
+                ],
+                "P1855": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1855",
+                            "hash": "b85bd5d8b3bb1ea58534405fb9c02bf1d966522c",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 62,
+                                    "id": "Q62"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P1082": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P1082",
+                                    "hash": "52e734a556cec97edba03ef3b2b4afc0a702430c",
+                                    "datavalue": {
+                                        "value": {
+                                            "amount": "+892533",
+                                            "unit": "1"
+                                        },
+                                        "type": "quantity"
+                                    },
+                                    "datatype": "quantity"
+                                }
+                            ],
+                            "P585": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P585",
+                                    "hash": "6174553681261aeec411766adf691fdeec1dee47",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+2018-00-00T00:00:00Z",
+                                            "timezone": 0,
+                                            "before": 0,
+                                            "after": 0,
+                                            "precision": 9,
+                                            "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                                        },
+                                        "type": "time"
+                                    },
+                                    "datatype": "time"
+                                }
+                            ],
+                            "P459": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P459",
+                                    "hash": "59e16663852542d613c363dbd575ca58fff3b6e7",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 791801,
+                                            "id": "Q791801"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P1082",
+                            "P585",
+                            "P459"
+                        ],
+                        "id": "P1082$cdb1ea3c-4b19-083f-89a5-865dc7981d2e",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1855",
+                            "hash": "b0e364fc6e7f9f95cec75a93e94ee459e847f007",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 40168,
+                                    "id": "Q40168"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "qualifiers": {
+                            "P1082": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P1082",
+                                    "hash": "b5d7a5df1d85f0a3adaeaf221b37f6880c06dc8c",
+                                    "datavalue": {
+                                        "value": {
+                                            "amount": "+63692",
+                                            "unit": "1"
+                                        },
+                                        "type": "quantity"
+                                    },
+                                    "datatype": "quantity"
+                                }
+                            ],
+                            "P459": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P459",
+                                    "hash": "f34609d440cf44ebaa8a3e704c9369413240618c",
+                                    "datavalue": {
+                                        "value": {
+                                            "entity-type": "item",
+                                            "numeric-id": 39825,
+                                            "id": "Q39825"
+                                        },
+                                        "type": "wikibase-entityid"
+                                    },
+                                    "datatype": "wikibase-item"
+                                }
+                            ],
+                            "P585": [
+                                {
+                                    "snaktype": "value",
+                                    "property": "P585",
+                                    "hash": "6c1a7f66d36243f543267c900bd5cd709544b528",
+                                    "datavalue": {
+                                        "value": {
+                                            "time": "+2015-08-15T00:00:00Z",
+                                            "timezone": 0,
+                                            "before": 0,
+                                            "after": 0,
+                                            "precision": 11,
+                                            "calendarmodel": "http://www.wikidata.org/entity/Q1985727"
+                                        },
+                                        "type": "time"
+                                    },
+                                    "datatype": "time"
+                                }
+                            ]
+                        },
+                        "qualifiers-order": [
+                            "P1082",
+                            "P459",
+                            "P585"
+                        ],
+                        "id": "P1082$ca3a2300-4897-c741-f877-0b31e6a58446",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "5cea87e24b6050b993619ab755f31c643daf37b5",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "075708938aee763d474d46f557bccc0fbcd4b126",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 24170418,
+                                                    "id": "Q24170418"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "P1628": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1628",
+                            "hash": "5b98b0832896396f5bb88648df72783d9aa2224e",
+                            "datavalue": {
+                                "value": "http://dbpedia.org/ontology/populationTotal",
+                                "type": "string"
+                            },
+                            "datatype": "url"
+                        },
+                        "type": "statement",
+                        "id": "P1082$71cba7a2-406b-174a-a00e-2d497e7e1eb8",
+                        "rank": "normal"
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1628",
+                            "hash": "10c91ad1b5e5a105311194e2e0535ef8eec7e419",
+                            "datavalue": {
+                                "value": "http://gov.genealogy.net/ontology.owl#hasPopulation",
+                                "type": "string"
+                            },
+                            "datatype": "url"
+                        },
+                        "type": "statement",
+                        "id": "P1082$a159e077-41f0-6a5b-8e57-d640724bf205",
+                        "rank": "normal",
+                        "references": [
+                            {
+                                "hash": "4b36a8349bd4fd6d816f04e085daf7c47fd1fad3",
+                                "snaks": {
+                                    "P248": [
+                                        {
+                                            "snaktype": "value",
+                                            "property": "P248",
+                                            "hash": "01905e6fb04e93a7d773fa0c75ddee224a544e00",
+                                            "datavalue": {
+                                                "value": {
+                                                    "entity-type": "item",
+                                                    "numeric-id": 141592110,
+                                                    "id": "Q141592110"
+                                                },
+                                                "type": "wikibase-entityid"
+                                            },
+                                            "datatype": "wikibase-item"
+                                        }
+                                    ]
+                                },
+                                "snaks-order": [
+                                    "P248"
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P1628",
+                            "hash": "2caa5168160c0b4d769d8e5e3af37651dd35b386",
+                            "datavalue": {
+                                "value": "https://www.geonames.org/ontology#population",
+                                "type": "string"
+                            },
+                            "datatype": "url"
+                        },
+                        "type": "statement",
+                        "id": "P1082$e1f4d9bd-4f50-d3df-58b6-8532470f38cc",
+                        "rank": "normal"
+                    }
+                ],
+                "P3709": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P3709",
+                            "hash": "7a2d251afe9fcfe9b60a529c2633fecc033915ef",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 57337476,
+                                    "id": "Q57337476"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$9e43e3b8-44cb-5b7d-3cf4-2ea853c8df61",
+                        "rank": "normal"
+                    }
+                ],
+                "P3734": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P3734",
+                            "hash": "9a30d477c5f500d1c636c061734df352b6a12bf4",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 105089828,
+                                    "id": "Q105089828"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$b91a893e-4edc-8848-5793-d1e986eb0f07",
+                        "rank": "normal"
+                    }
+                ],
+                "P2667": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P2667",
+                            "hash": "2f42d0b131bd740b3c37a77cce640c18b8f32870",
+                            "datavalue": {
+                                "value": {
+                                    "entity-type": "item",
+                                    "numeric-id": 43428644,
+                                    "id": "Q43428644"
+                                },
+                                "type": "wikibase-entityid"
+                            },
+                            "datatype": "wikibase-item"
+                        },
+                        "type": "statement",
+                        "id": "P1082$3ca7529a-4bba-b46b-9493-a3483d8685cf",
+                        "rank": "normal"
+                    }
+                ],
+                "P13786": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P13786",
+                            "hash": "4509b7c63d5267316c5b3b58812f40347db3c699",
+                            "datavalue": {
+                                "value": "population",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "P1082$921e4253-4e7a-0523-f173-b6df00408a4f",
+                        "rank": "normal"
+                    }
+                ],
+                "P14692": [
+                    {
+                        "mainsnak": {
+                            "snaktype": "value",
+                            "property": "P14692",
+                            "hash": "e5511f82d36f108222d6c8b906385d4afc422a94",
+                            "datavalue": {
+                                "value": "Q574",
+                                "type": "string"
+                            },
+                            "datatype": "external-id"
+                        },
+                        "type": "statement",
+                        "id": "P1082$D9C0B968-39A7-4FAF-8073-FCF4BE671A65",
+                        "rank": "normal"
+                    }
+                ]
+            }
+        }
+    }
+}

@@ -1,8 +1,227 @@
 # pending prio 2
 
+## case name of a calculator page
+
+`calculator_json.js` (`caseMessage`, `saveCase`) creates a case by the updatePut api:
+- a case copies all values of the page phrase, also the `modelled` numbers of the page, because a case has no own numbers for its result table until the split is calculated again in the browser (pending.md step 9) or by the backend
+- the walk results of the portfolio split have no page phrase, so each case shows the same walk until then
+- the selected option of a selector is not saved, so a case takes the options that the page has stored
+- a name that exists already updates this case, and only the source of a value is sent by its database id, because a value does not keep a source that is named only
+- the page of the server (no javascript) has no case name, because the updatePut api needs javascript
+- `caseMessage` and `saveCase` have only been checked with a stubbed api in a browser, a run against a pod and a page test are missing
+
+## pdf report of a calculator page
+
+`web/component/execute/calculator_report.php` shows what the backend has saved:
+- numbers that a user has changed in the browser and not saved are not part of the pdf
+- the diagrams are not drawn, because `pdf_writer` has no vector graphics; their numbers are in the walk table
+- `pdf_writer` uses the standard fonts of Windows-1252, so a char outside of it is shown as a question mark
+- the setting `report logo` needs a jpeg in the images folder of the server, so a user without server access needs an upload
+- the isin column stays empty until the portfolio import adds a triple from a holding to a phrase that is an `ISIN`
+- `user_logo` has no unit test, because the test has no config value with a logo; the fallback to the zukunft.com logo is tested
+
+## test run speed
+
+Candidates from a full `test/test.php` run of 1347 s with `xdebug.mode=debug`; the savings are estimates from that log and none is measured yet. About 131 s of the run were the two stops of a breakpoint at the two test errors in `coding_rule_tests::use_case_no_test_formula_tests`, so that time is no candidate.
+
+1. Run without Xdebug if no breakpoint is needed: `php test/test.php`. This is the easiest step and speeds up all PHP of the test process. Measure the saving, because the factor depends on the mode.
+2. Start page after a write, about 60 to 80 s: an `_edit_back` step of the url workflows and write workflows returns to the start page, which takes 1 to 3 s with a filled cache and up to 11 s after a write. The `api list response` of 138 s is the biggest part of `api_wait`. Check which of these steps need the start page and let the others go back to a small view. The snapshots of these steps change.
+3. Phrase data calls in the tests, about 16 s: `phrase_data_read_tests` loads `example portfolio split` once without and once with results. Check if the assertions of the call without results can use the call with results.
+4. Config rebuild after a write, about 25 s: `write_config_cache` appears about 15 times, each with about 1.7 s of `db_map` and `db_read`, although `frontend.php` keeps the cached config on a write that cannot change it. Find out which of the writes still drop it, for example because the cache is per user.
+5. Use case imports in `import_tests`, about 9 s: portfolio split, AHV, ABB and CBAM are each imported a second time for the negative test. Check if the negative tests can change the values of the first data object and run only the calc validation.
+6. Cleanup of the test objects, about 10 s: `test_objects::cleanup_objects` loads and deletes each test name on its own. Load the existing names with one query first and loop only over these.
+7. Web login, about 6 s: `view.php?m=11` runs into the timeout of 1 s up to five times per run. Skip the following logins after the first timeout of a run. A faster login page would also activate the skipped user api tests.
+
+## calculator js
+
+in src/main/resources/script/calculator_json.js are some fixed text warning messages like 'console.warn('the data selects several numbers for ' + what + ': ' + Array.from(numbers).join(', '));'
+make this text translatable so that the frontend language shows the warning in the correct language
+
+## import test of a renamed link below a triple
+
+`triple_list::save_with_cache` renames a triple whose from/verb/to link exists under another name also when its from side is a triple that gets its id only in a later level of the import. No test covers this yet: add a write test that saves a triple below a named triple, imports the same link under a new name and checks that the row is renamed and no second row is added, and a negative test with a new link that is inserted.
+
+## calculator selector with and without numbers
+
+A selector that mixes options with and without a number keeps the last results while an option without a number is selected, because no number exists for it, and the page does not tell the user. Report this on the page, or refuse such a selector in the import, with a positive and a negative test. The selected option of such a selector is also not saved, because a phrase selector has no save vars.
+
+## calculator scripts without a browser test of a checkbox
+
+No use case has a formula that reads a checkbox, so no input case toggles one in `calculator.js` or `calculator_json.js`. Add the toggle to `use_case_cases.js` and a case when the first such formula exists, e.g. mirroring in the portfolio split walk.
+
+## formula editor
+
+- the toast of a failed save in `src/main/resources/script/formula_editor.js` says "The message is shown
+  in the Changes tab", but a formula editor view without the formula result compare component has no
+  Changes tab; show the message in the editor column if the compare host is missing
+- the rule `.row:has(> .col > .formula-editor) > .col` of `style/formula_editor.css` overwrites the
+  inline min width of `html_base::div_col_min_width` with `!important`; if more views need narrower
+  side by side columns, set the column width by the view instead and remove the rule
+- the toolbar `.bar` of the formula editor sticks at `top: 0` and slides under the fixed site header
+  when the page scrolls; stick it below the site header
+- the formula editor inside the calculator editor reports every keystroke, which the calculator editor
+  adds by `mutate` with the history key `frm:<id>`; check that `pushHistory` merges the keystrokes of one
+  formula, so that one undo after typing a few characters takes back the typed text and not one character
+- the `toggle` listener of `calculator_editor.js` on `document` does not skip the formula editor hosts
+  like `onClick`, `onInput`, `onChange` and `onKey` (`inFormulaEditor`); it only reacts to `details.sect`
+  and `data-preview`, which the formula editor has not, but skip the formula editor hosts there too,
+  so that a later collapsed block of the formula editor never changes the open lists of the structure
+
+#### reach the formula editor from the page
+
+the formula editor (`views::FORMULA_EDITOR`) is reached only by its url e.g.
+http://localhost/http/view.php?m=formula_editor&id=-2757, because the calculator has one editor relation
+(the calculator editor, `view::editor_id`); add a link from the calculator editor or a second relation
+type, so that the edit menu offers both editors
+
+#### the formula editor inside the calculator editor
+
+the calculator editor shows a formula selected in the "Page structure" column in the formula editor
+(`startFormulaEditor` of `formula_editor.js` with the hosts `calcFormulaEditor` and `calcFormulaCompare`)
+instead of the settings and on the "Page preview" tab the result compare instead of the preview; open:
+- check in the browser: typing, the token tools and the reset of one formula change the "changed" chip
+  of the formula in the structure and the change count; undo, discard changes and the save of the
+  calculator editor update the formula editor; loading another phrase shows its formulas
+- the "Page preview" tab keeps its name while it shows the result compare; name it "Results" while a
+  formula is selected
+- the global rules of `calculator_editor.css` e.g. `.col`, `.btn` and `.chip` also format the formula
+  editor hosts where `formula_editor.css` sets no value; nesting `calculator_editor.css` (see below)
+  removes this
+
+#### one code for both editors
+
+`formula_editor.js` and `calculator_editor.js` each have their own `esc`, the read of the seed and the
+save by the update put message, and `formula_editor.css` and `calculator_editor.css` the same colour
+tokens; share them in one file, and nest `calculator_editor.css` in its host like `formula_editor.css`,
+so that the calculator editor page also keeps the standard css
+
+#### show a list with all results (to review)
+
+list below the formula the results and values sets used in this calculator
+show the results and the values in the formula expression format and make the lines selectable
+if a line is selected show below the formula with the results in the latex format
+
+#### selector for phrases and terms (to review)
+
+if in the formula expression a result phrase (left of the equal sign)
+or a term used for the values selection (right of the equal sign)
+is selected show an interactive phrase or term selection that reloads the phrases or terms based on the pattern
+
+## static files of the frontend
+
+the scripts and styles e.g. `formula_editor.js` and `calculator_editor.css` are served without a
+version, so a browser may run an old copy after a change, e.g. the calculator editor showed the old
+formula inspector after the formula editor was added; add the modification time of the file to the
+url of the script and the style (`html_base::script_src`, `html_base::link_style`, e.g. `?v=<time>`),
+with a fixed value in the test snapshots, so that the browser reads the changed file
+
+## headless browser of the calculator editor scenarios
+
+- name the inline literals by consts: the profile file `user.js`, the process dir `/proc/` and the
+  Marionette commands e.g. `WebDriver:Navigate` and `Marionette:Quit` in `test/php/utils/headless_browser.php`,
+  and the script dir `script` and the temp page of `use_case_ui_tests::scenario_page` in the test `paths.php`
+  and `files.php`
+- split the lines with more than one step: `trim(shell_exec(...) ?? '')` in `headless_browser::start`,
+  the ternary `$part = $part === '' ? false : $part` in `headless_browser::read` and the three conditions
+  of the wait in `headless_browser::stop`
+- read the message of a no-change scenario into a named variable before the assert in
+  `use_case_ui_tests::calculator_editor_scenario_tests`
+- if Marionette of the first browser found does not start, try the next one, e.g. Firefox if LibreWolf
+  fails; name the failed browser in the warning instead of "no headless browser found", and leave out
+  "in" of the subheader if no browser is used
+- if `Marionette:Quit` fails, `headless_browser::stop` waits the timeout and removes the profile of a
+  browser that may still run; end the process before the profile is removed; remove the temp page of
+  `scenario_page` also if a scenario test ends with an exception
+- add a test of `headless_browser` itself with a positive and a negative case: a page with the element,
+  a page without it (null) and no browser found
+
+## calculator field value of the page triple
+
+`ui_list::calculator_value` and its twin `fieldEntry` in `calculator_json.js` rank a value that a
+result of the page uses first; for a field whose value no result uses, a value that has a part of
+the page triple ranks directly after a value with the page phrase, and both sides of the triple
+count as parts; the `to` side is a class or a qualifier that many unrelated values share, e.g.
+"example" of "example PV installation" (PV installation kind of example), so such a field would
+show e.g. the assumed 1000 kWh per kWp of `pv_yield.json` with the word "example"
+
+count only the `from` side of the page triple, the phrase the page is about e.g. PV installation or
+Zurich of Zurich (city), so that the lifetime of a new NPP still ranks below the lifetime of the PV
+installation; then:
+- change the tie fixture `test_values::value_list_calculator_input_tie_ui`, whose second value uses
+  city (the `to` side of Zurich (city)) to rank the same as Zurich, to two values that rank the same
+  without a part of the page triple
+- add a negative test to `use_case_ui_tests` that a value with the `to` side of the page triple e.g.
+  city does not win over a value with a smaller context
+
+## the verb "is" of the frontend type cache
+
+the chain `$ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS)` is written out in
+`ui_list.php` (twice) and behind the private `phrase_data::is_verb_name` of `web/phrase/phrase_data.php`;
+add one function on the owning class (the verb list of the type cache) and let all three call it
+
+## generated triple name of a phraseData answer without type cache
+
+`web/phrase/phrase_data::generated_name` shows a triple with the verb "is" as `<from> (<to>)` only if the
+type cache knows the name of the verb "is"; without the cache it is named `<from> is <to>`, and a triple
+with an empty verb is named `<from> (<to>)` instead of `<from> <to>` of the backend `triple::generate_name`;
+the name is then not found and reported as `PHRASE_NAME_NOT_FOUND`, so follow the backend for each case
+and add a unit test for the empty verb and for the missing cache
+
+## result group of the phrase data
+
+`cfg/export/phrase_data::result_phrase_ids` reads the source group only if its id is set, but the result
+group without a guard, which is safe, because a group without id gives no phrase id; add a one line
+comment that a result always has its group, so that the asymmetry is explained
+
+## test of the page object of a phrase view
+
+frontend::dbo_for_url gives a view of type word or triple the word of a positive and the triple
+of a negative phrase id, e.g. the calculator editor of example PV installation with id -2757;
+it is private and only reached by url_to_html with the view in the cache, so add a unit test
+via url_to_html for a word view and a triple view, each called with a word and with a triple id
+
+## units in the phrase selector of a value
+
+the phrase selector of a value edit page (`ui_select::phrase_offer`) fills up the matching phrases with
+the system phrases of the frontend cache, which hold every unit and scaling word of
+`phrase_types::PRELOAD_TYPES`; these are offered in the load order (usage, then name) and not by the
+relevance that the docblock of `phrase_field` names, and they use part of the preload limit
+(config.yaml "user > frontend > lists > preload > phrase list"); whether the units belong in this
+selector is the developer's decision: if yes, the offered phrases need one deterministic order, if not,
+the selector leaves out the words of the preload types
+
 ## start page global problem
 
 add a subtitle with the country, region and an 'yours' option for the problem and solution list where the region and country are based on the ip if the user is not logged in and 'yours' is grey with the tooltip 'signup or login to create your personal list'
+
+### table editor
+
+create a new component 'triple list' and add it to the table editor. The component has at least two parameters: the base phrase e.g. 'populism solution' and the type phrase e.g. 'mayor column (system)'
+The component shows the name of the type phrase as a label and lists below all triples that have the type phrase as 'to' e.g. 'column problem (high prio)' that have any relation to the base phrase e.g. 'populism solution'
+
+add four components to the editor for the type phrases 'mayor column (system)', 'main column (system)', 'minor column (system)' and 'marginal column (system)' or use 'column (system)' for the selection of the component list
+
+the triple list (`ui_list::triples_of_types`) shows every triple of a type and not yet only those related to the base phrase: the walk of `phrase_list::parents_all` takes the "to" side of every link up of a word as a parent, e.g. "health" via "solution of health" for "solution", so it reaches most of the graph with one growing api call per level and the table editor page did not respond; `related_triples_to` and `parents_all` stay with their unit tests and need a narrower parent definition (e.g. only the sides and the "is a" links) before they are switched on again
+
+gap of the triple list: each list shows all its triples, because there is no view yet for the "… and n more" tail to link to, so the short, more and all versions of the list are still missing
+
+the form of the phrase selector of the editors reuses the component type `process_catch_button_refresh`, because it already shows a page again with the entered values; a generic name for the type (e.g. `button_refresh`) is the developer's decision; the unknown-name path of `frontend::url_with_selected_phrase` asks the backend and has no unit test yet
+
+### pinned views of the start page
+
+gaps of the pinned views (`html_base::start_page`, `config.yaml` startup): the links and the short urls are
+written from the config.yaml file by the test run, so a pinned view that an admin changes in the database is
+not shown until the file is changed and the tests are run again; the urls still point to the placeholder
+view `m=4&id=1954` except the global problems; the search field of `index.html` still sends `q`, which is
+the language url var and not a search
+
+### process catch geolocator and refresh
+
+gaps of the geolocator (`system_page::geolocator`): the input is a plain text field without the
+postal codes of the cache as datalist, the entered place is not yet saved as a value with the row
+phrase of the component (`place of user`), and the next and back links drop it, because only the
+refresh button submits the inputs; the refresh button shows the ui message of the component and not
+yet the `button refresh label` / `button refresh tooltip` of the question phrase
 
 ### leftovers
 
@@ -18,7 +237,17 @@ with CACHE_LOCATION file the config cache file is never dropped by a value chang
 
 the settings tree shows the config.yaml value as "default" behind a value that differs, but after an admin has changed the default in the database the default is the database standard value; the api could send the standard value besides the value of the user, so the tree shows the real default. The confirmation of an admin names the number that the admin has seen, which can be the own overwrite and not the previous default
 
-a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A text setting e.g. the language needs a text input. After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
+a boolean setting is shown as true or false and therefore not yet editable on the settings page (web/helper/config_tree::is_editable); it needs a true / false selector that saves 1 or 0. A number without a database value cannot be added on the settings page like a text without one (cfg/helper/config_tree::is_addable). The confirmation of a first saved text names an empty previous value as "(from )". After a save the page shows the whole tree, so the search and the scope of the page could be kept as '9'-prefixed back vars
+
+## security
+
+all api call should include the user session key
+and all backend calls should include a sequence id
+if a backend call breaks the sequence id the session is set to invalid and a new login is required
+
+## pinned views
+
+for the pinned views in the frontend offer to use the view name and a phrase name instead of a fixed url so that a re-pin of the phrase does not break the link
 
 ## frontend rules
 
@@ -40,9 +269,81 @@ assign all values assigned to a symbol to the main word or triple but in the def
 
 if a value of a phrase is shown that has a symbol use the shortest symbol that is unique for the page. E.g. if values in Euro are shown use € instead of Euro
 
+check the words that a later file uses with another meaning than their home file (the first imported, which has the only description); if both meanings are needed, give the second one its own triple, e.g. "physical power" (power of physics), and use it in the later file:
+- `x`: the symbol of a factor (`scaling.json`) and a stereotactic coordinate next to `y` (`math.json`, `conformity_mri_berns.json`)
+- `power`: the energy per time in watt (`solution_prio.json`, also `math.json`, `physics.json`) and the result of raising a number to an exponent (`math_propagation_of_uncertainty.json`)
+- `factor`: how many times bigger one number is (`scaling.json`) and a circumstance that contributes to a result (`zurich_htp_impact.json`)
+- `adaptation`: the change of how people live and build for a changed climate (`problem_global_warming_reasons.json`) and a trait that increases the fitness of an organism (`biology.json`)
+- `trial`: a test of the performance or the effect of something (`solution_prio.json`) and a single presentation and judgment cycle of a task (`accounting.json`, `conformity_mri_berns.json`)
+- `measurement`: finding the size of a quantity by a unit (`solution_prio.json`) and running a study to estimate a factor (`fermi_internet_pro_contra.json`)
+- `self-consumption share`: the use at the time of the production (`pv_yield.json`) and the use on site directly or via the battery (`pv_lifetime_balance.json`)
+- `duration`: the average length of time a health condition lasts (`health.json`) and any length of time, e.g. in the triple `duration unit` of the use cases (`pv_lifetime_balance.json`, `ahv_vat_vote.json`, `share_buy_sell_abb.json`)
+
 the phrase type "measure type" (code id "measure") has been renamed to "measure unit" (code id "measure_unit") in phrase_types.csv and the code; a database created before the rename still carries the old code id in the phrase_types table, so the update process of the code link tables (see the TODO in cfg/phrase/phrase_types.php) must rename it before the next production upgrade
 
+## math functions of a symbol
+
+`integral`, `lim`, `d` and `C` describe a law with symbols; they stay missing in calc_internal, because a calculation with the numbers of a single value would give a wrong number
+
+## list functions
+
+wrong number:
+- `formula_calc::is_list_argument` and `LIST_ARGUMENT_START` in `calculator_json.js` also read the brackets inside a quoted phrase name, so in `sum("Bern (city)";"b")` the operand "b" is one value instead of its list: remove the quoted names before the check
+- `formula_calc::list_values` and `listEntries` in `calculator_json.js` and `formula_editor.js` keep a value without a number, which counts as 0, whereas `formula::fill_list_element_group` skips it: add the same check
+- the page calculates a list only with the values of the page and the backend with all values of the database, so a list that is not complete on the page gives another number, which replaces the stored one on the page
+- `sum` also adds a value without a year to the values of the years, e.g. the inhabitants of Switzerland: a total counts twice under the rule that a list has all matching values
+
+failed calculation:
+- the early return of `formula::to_num_new` for a list function with a calculated argument keeps the stored result, but a failed calculation should overwrite it with nothing (`docs/json_structure.md`)
+- `formula::fill_list_element_group` adds no message for a list without a value or with a formula as the operand, so the user is not told why there is no number
+
+limits of the phrase list load:
+- the limit of `load_by_phr_lst` cuts a list silently except in the list functions, also for the `phrase_data` export with 2000 and the related values with 1000 rows
+- the query has no `ORDER BY`, so a later page can repeat or miss a row
+- a list function refuses a list of exactly 2000 values as too long, because it looks the same as a cut list
+
+code:
+- `LIST_EXCLUDED` repeats the phrase names of `words::LIST_FUNCTION_EXCLUDED` in `calculator_json.js` and `formula_editor.js`, and no test compares them
+- `LIST_ARGUMENTS_PLAIN` in `calculator_json.js` repeats the pattern of `arithmetic::list_args_are_plain`, and no test compares them
+- the comments in `phrase_data.php`, `update_put.php`, `phrase_data_walks.php` and `url_var.php` use the example id -2757, whereas `pv` redirects to -2758: check them after the next id shift
+- the `use` line of `sql_db` in `formula.php` is out of order
+
+## slow diff of a large file
+
+a difference in a large csv file takes minutes: a test run needed 149 seconds (546 s to 695 s of the run) to report the difference of `unit/result/list.csv` with 152 KB. A matching file is fast, because the check itself is a plain string compare, so the delay only shows if there are differences. The time is booked as `test diff` in the time report.
+
+cause, in the path `test_base::assert` → `library::diff_msg` → `str_diff` → `str_diff_list`:
+- a csv is of the type `STR_TYPE_CODE`, so `str_split_for_humans` splits the file into one part per char, 152'297 parts for this file
+- for each char that differs, `str_diff_list_next_array_match` searches the next 8 matching chars (`STR_DIFF_MATCH_LEN`) up to the end of the text, so if the end has changed too, nothing matches and each char costs a full scan: the time grows with about the square of the size
+- the message stops at about 100 chars (`STR_DIFF_MSG_LEN`), so almost all of the diff is calculated and dropped, e.g. "and 243374 more" in the message
+
+measured without database by calling `diff_msg` with parts of the file, with the first 20 % matching and all digits of the rest changed:
+
+| text size | time |
+| ---: | ---: |
+| 2'500 chars | 3.05 s |
+| 5'000 chars | 8.40 s |
+| 10'000 chars | 28.21 s |
+| 20'000 chars | 62.87 s |
+| 40'000 chars | not finished in the about 20 s left of a 110 s limit |
+| 152'000 chars | not finished in a 280 s run over all sizes up to this one |
+
+the time depends on how much of the text no longer matches: the old and the new version of the file from git with 152 KB, which are mostly the same, needed 0.72 s
+
+possible fixes:
+1. `test_db_load::csv_check_of_class` compares a large csv line by line and reports the changed rows with `array_diff` like `csv_leftover_check`, which should need well under a second and is easier to read than e.g. `30407//+f4-//`; this is the recommended fix, but it covers only the csv files
+2. `str_diff_list` stops when the message has enough differences, for the large html and text snapshots; the count of "and N more" is then no longer available
+3. limit the search of `str_diff_list_next_array_match`: a small change, but the diff of moved text gets less exact
+
 ## use case
+
+the PV calculator page (pv_lifetime_balance.json) recalculates in the browser only what its formulas calculate, so the input cases of system_views_read_tests::run_pv_lifetime_balance_cases still differ from the sample (pv_lifetime_balance_diff_high.md, _low.md):
+- the reference yield of 976 and the reference lifetime of 30 years are also numbers in the formula "PV embodied intensity formula": give them their own phrases, so that they are values with a source
+
+differences of the PV calculator page to its sample that no `pv_lifetime_balance_diff*.md` report shows, because no input case reaches them:
+- the sample always shows the lifetime column in tonnes, whereas the generated page switches to tonnes only from 10'000 kg, so small values entered by hand can show different units
+- `calculator.js` of the server page does not update the numbers in a row sub text when an input changes, whereas `calculator_json.js` and the sample do
+- the sample no longer shows the midpoint of 350–440 in the option of the production mix, so the midpoint is only in the description of the value in `pv_lifetime_balance.json`
 
 PV in Switzerland
 
@@ -52,13 +353,33 @@ if the value if updated use the frontend cache to update the results within the 
 
 the html page cache (db_cache_page) is dropped only after a data change (frontend::drop_cached_pages), so after a code change of a renderer a page cached before the change is still served until a data change or `nc=1` bypasses it; add the program version (version.txt) to the cache key or drop all cached pages when the frontend starts with a new version, so that a deployment never shows a stale page
 
+the resultList, the valueList, the phraseList and the phraseData api messages are cached in db_cache_page (db_cache_page::api_key, json_by_key, save_json) and dropped with the html pages of the user, but a result that the batch job recalculates or a value, word or triple written via the api of another client or an import drops nothing, so it is renewed only after CACHE_MAX_AGE (by decision); each phraseList search pattern (kp) is its own cache row; the api has no `nc=1` bypass, the pod switch is the html page switch (config_numbers::page_cache_allowed) and its off branch has no test yet; a very long phrase id list could exceed the btree index limit of the url column, which only logs a failed cache write
+
 the url form of a group id (shared/group_id_url.php) has known limits:
 - the alpha_num char "/" (value 1) is still url encoded as "%2F" e.g. "/x-" is "%2Fx-"; a free char like "~" could replace it the same way as "_" replaces the "+" of a word
 - the short form of a "9"-prefixed back target is only read back if "9m" is a numeric mask of views::GROUP_ID_MASKS_IDS; a back target with a view code id keeps the id as it is
 - the decoding is limited to the masks of views::GROUP_ID_MASKS_IDS, so a user defined view that shows a value or result by a group id in the url is not covered until the mask list is derived from the view type instead of the fixed system mask lists
 - a raw "+" in a hand written old link arrives as a space (a url reads "+" as a space) and is not repaired; only the "%2B" form of an old link is accepted
 
-the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "high" lists every result with "high"; the fallback should be the phrases of the formula expression instead
+the used values and results of a result are selected by any phrase of the result when the result has no source group (result::used_phrase_selection), so a result that carries e.g. "variance high (system)" lists every result with "variance high (system)"; the fallback should be the phrases of the formula expression instead
+
+### Portfolio Split Calculator
+
+the system view Calculator shows the example portfolio split by the calculator triples of portfolio split
+(system_views_read_tests::run_portfolio_split_calculator), so the own view of the use case is not used any more;
+remove from src/main/resources/messages/use_cases/portfolio_split_calculator.json the view "Portfolio Split Calculator"
+and its components "Title example portfolio split", "description example portfolio split" and
+"table example portfolio split per beneficiary", and then views::PORTFOLIO_SPLIT_CALCULATOR_NAME if nothing else uses it;
+the removal shifts the view and component ids of every later import, which the re-pin process handles
+
+the page json of portfolio_split_calculator.json uses the proposed calculator elements (PROPOSED NEW ELEMENT in
+calculator_keywords.json, "Proposed elements" in docs/json_structure.md), which the calculator view does not read yet;
+until they are implemented the generated portfolio_split_calculator_no_js.html shows only the frame, the existing input
+fields and the summary rows; the open points are listed as (1) to (18) in the description of the use case file
+
+test/test_part.php (a_selected_test) re-imports the calculator keywords and the portfolio use case and renders the
+page, but cannot rebuild the database, because a_selected_test extends all_unit_tests and not all_unit_write_tests;
+after a change of the import order run test/test_re_pin.php first
 
 ## start page data
 
@@ -84,6 +405,14 @@ the formula line with the numbers of the result default view (result::load_expre
 
 see /docs/llm/coding.md and if the search e.g. http://localhost/http/view.php?m=67&pattern=Momo returns no result, additional to the simple add word button show an 'add word' button with a selection of the parent phrases last used by the user. For the phrase selection list use an list in the user section of the config.yaml that contains the x parent phrases last used by the user. x is the max number of phrases to show in the list that is itself a value in the config.yaml. A parent phrase is a phrase
 connected wth the 'is a' verb. So e.g. if a tripel 'basel is a city' has been added, add city to the list of last used parents and if the the word lugano is searched and the result is empty shown 'add lugano as a city' with a link that confirms the adding of the word lugano and the triple 'lugano is a city' in one confirm page.
+
+## search with the user overwrites
+
+check every search query again, so that it uses the user overwrites of the requesting user:
+the name the user has changed is found by the new name and no longer by the standard name,
+and an object the user has excluded is not found; e.g. the `load_sql_like` / `load_sql_by_pattern`
+of `word_list`, `phrase_list`, `term_list`, `formula_list`, `source_list` and `view_list`;
+add a unit test with the sql fixture and a db read test for each case
 
 ## after replacing the `$back` parameter by the url array of the calling page
 
@@ -655,6 +984,14 @@ Fill the gap: Compare with the actual spec for your existing "auto user and IP w
 
 add to the config.yaml the size and age limit for the cache tables and use it to clean up the cache if needed
 
+#### loading start of a slow page
+
+`http/view.php` sends the start of the page (`frontend::send_loading_start`) before the page is
+created, and the complete page follows it, so the document repeats the doctype, `<html>`,
+`<head>` and `<body>` of the page. The browsers merge them by the html error recovery, but the
+page is not valid html. Target: `render_url` returns the page without its document start when
+the loading start has been sent, and the cached page keeps the complete document.
+
 ### prepare denial-of-service protection
 
 use the cache for read only pages
@@ -1104,30 +1441,6 @@ make the export views work: m=77 (export in the selected format), m=78 (json), m
 
 remove or rewrite the experimental js files src/test/php/dev/test_js.php and src/test/php/dev/test_jquery.php: they call the retired /http/get_json.php, partly on the productive server (https://zukunft.com/http/get_json.php), and they are not part of any test suite. The retired http_old/get_json_test.php belongs to them: it just echoed a hard coded json array with ten sample names ('balance sheet', 'BMW', ...) as the answer for the autocomplete experiments, so nothing has to be migrated from it. The real suggestion list for the search field comes from the word find view (m=67) resp. from the api (api/phraseList), and if a type ahead suggestion is wanted again, it must use the api and not a static file
 
-### error log view (missing parts of the retired http_old/error_log.php)
-
-the legacy controller http_old/error_log.php (show one internal error to the user, so that he can track the solving of it) has a mask in the new frontend: the error log view called via /http/view.php?m=65 (views::ERROR_LOG_ID), and frontend::url_to_action already has the action for the error update view (m=66, views::ERROR_UPDATE_ID). Its only caller was the critical error message of cfg/log_text/text_log_functions.php ('You can track the solving of the error with this link:'), which built the url from api::SCRIPT_PATH . api::ERROR_LOG_SCRIPT and therefore created the doubled and invalid path '/http//http/error_log.php'. The link now points to /http/view.php?m=65&id=<sys_log id> and the unused const api::ERROR_LOG_SCRIPT is removed. But the component of the view is a stub.
-
-fill web/component/execute/system_page.php::error_log() with the real code: it returns only the text 'error_log placeholder' (see the snapshot src/test/resources/web/html/views_by_id/sys_log/65_sys_log_2.html), while web/system/sys_log.php::page_view already creates the page of one error entry and has no caller any more since http_old/error_log.php is retired. Load the sys log entry by the id from the url, show it and add a page test. Take care that a user may only see his own errors and that only an admin sees the errors of all users
-
-### calculate all results (missing parts of the retired http_old/calculate.php)
-
-the legacy controller http_old/calculate.php ('update all formula results', the batch version of the retired formula_test.php) had no caller in the program code. It loaded all formulas in blocks, built the calculation queue per formula and calculated all results, while it streamed the progress in percent to the browser with ob_flush every few seconds (the pause taken from the configured frontend response time). It has no direct replacement: the job views exist (m=82 job_async 'Progress', m=83 job_control 'Process list' and m=84 job_check, views::JOB_ASYNC_ID, JOB_CONTROL_ID and JOB_CHECK_ID), but they show only 'process_progress placeholder' resp. 'process_list placeholder', and shared/types/job_types.php has only the per object triggers (value_update, formula_update, ...), no job that recalculates all results.
-
-add a job type that recalculates all formula results (the queue building of the old controller with result_list::frm_upd_lst and formula::calc can be taken over) and let the admin start it from the job control view (m=83). A long running recalculation must not block a http request, so it must run as an async job, not synchronously as the old controller did
-
-fill the job views with real code: web/component/execute/system_page.php shows only 'process_list placeholder' for the job control view (m=83) and 'process_progress placeholder' for the job async view (m=82), so a running job can neither be seen nor followed. Show the job list with the status of each job and the progress in percent of the running job, which replaces the streaming progress of the old controller, and add a page test
-
-note for the denial of service protection (see the section above): the old controller was a perfect attack target, because it recalculated all formulas of the pod on a simple GET request and checked only that the user id is set, so even an ip user without a login could start it. The new job must be startable only by an admin user, and there must be a test for the negative case
-
-### reload the base configuration (missing parts of the retired http_old/async_process.php)
-
-the legacy controller http_old/async_process.php had no caller in the program code and it did not do what its name and its header say ('display the progress of an asynchronous process'): for an admin user it reloaded the base configuration synchronously in the http request (import_file::import_system_data, the action that the retired http_old/user.php offered as 'Force reloading the base configuration e.g. to check that the units definition are still OK'), it showed the import view (m=76) as the header and printed only 'loading of base configuration started' and 'finished' around the import. The function import_system_data is still used by cfg/db/sql_db.php, so only the frontend action is missing.
-
-add the 'reload the base configuration' action for an admin to http/server_admin.php (where the other admin functions live) or as a job type, with a confirm step, because the import overwrites the system objects. Do not run it synchronously in a http request as the old page did: a long running import belongs to an async job, whose progress is shown in the job async view (m=82), see the calculate all results section above
-
-the mask that the name of the old page promises is the job async view (m=82, views::JOB_ASYNC_ID, 'Progress'), but it shows only 'process_progress placeholder', so the progress of an asynchronous process cannot be followed at all, see the calculate all results section above
-
 ### data load
 
 are there any database or object fields that are not yet filled or set by one of the json import tests
@@ -1200,11 +1513,11 @@ fix the '// TODO add json_fields::VIEW_VALIDATION' in src/main/php/cfg/import/im
 5. add a small sample import file with a view-validation section and a $dto unit test in import_tests.php: one positive (the rendered view matches) and one negative (a wrong expected ".md" reports the mismatch via $msg)
    open questions for review: render the view against the imported $dto only or the database; which user context; is html_to_markdown the right normalisation or should both text and markdown be supported
 
+a triple whose "from" is a triple defined later in the same json file fails the import: e.g. "PV installation assumption PV in Switzerland" "has a" "calculator label" placed before the triple "PV installation assumption PV in Switzerland" in pv_lifetime_balance.json logs "triple phrase from id is 0" (triple.php, TRIPLE_PHRASE_WITHOUT_DB_ID) and "Cannot find word or triple" (triple_list::report_missing). `triple_list::save` already repeats the add in levels up to `$max_trp_levels`, so a forward reference should be resolved by a later level; find why the triple of the later level is not linked to the referencing triple (`triples_to_add_to_db`, `fill_by_name` with the cache, `get_ready`) and add a unit test with a forward reference between two triples. Until then a referenced triple must be placed before the triple that uses it.
+
 ### user frontend
 
 fill the placeholders
-
-add a page with the sys_log entries to the admin menu
 
 dsp_sandbox_* family → one generic "user changes vs. standard" component
 
@@ -1638,3 +1951,314 @@ pure html value add view with one form (ui_select::value_add_fields):
   value_quality, so in the unit tests sandbox_value::name_link still names "assumed" as a phrase
   link next to its "a" mark; set phrase_types::VALUE_QUALITY there, add the negative test that
   value_ui_tests no longer shows the ">assumed</a>" link and re-baseline the fixtures it changes
+
+## the term view that the database reset creates
+
+found 2026-10-14 while fixing the used by box of views_by_object/view/view_edit_view_1.html:
+
+- sql_db (after the import, "TODO Prio 0 review") saves a term view of the word mathematics to the
+  start view with the test description 'add usage and log of a word' as the system user, while
+  test_db_load::test_term_view_unlink says that no term view is expected after a reset; decide
+  whether the reset should create it (then move it to an import file) or not (then remove it and
+  re-baseline unit/term_view/list.csv and view_edit_view_1.html)
+- a test user exclusion of a link is not removed by the test cleanup, so a test that excludes a
+  seed link (like the save of a fixture with the id of another row did) changes the snapshots of
+  every later run until the next reset
+
+## user log
+
+found 2026-10-14 when the user_log table and its writer in application::end_api were added:
+
+- the html frontend saves its changes with the backend objects directly (the api_post / api_put /
+  api_del calls of web/sandbox/db_object.php are still a TODO), so a change done in the html
+  frontend is not counted in updated and update_time until these calls go through the api
+- requests counts api requests, so one html page counts as the number of api calls it needs;
+  a page count needs the frontend to tell the api which call is the page request
+- the user of an own pod call is the id of url_var::USER without a load (user::data_user_id), so
+  an unknown id is only rejected by the foreign key of the insert, which is logged as an end_api
+  error instead of being reported before the write; the user is loaded only if the pod has
+  switched off the log of the ip users and the counted user is not the session user
+  (user_log::allowed)
+- each api request now reads and writes one user log row and checks the two pod switches, which
+  rebuilds config_numbers::exact_lookup() once per switch, because the map is not kept between
+  calls; if this shows up in the response times, keep the map until the config values change and
+  collect the counts in the session to write them once per minute
+
+## view relations
+
+- the "view_relations" list of an import json is read only by the data_object import
+  (import::get_data_object); the direct import (import::put) still reports it as an unknown element,
+  because there each view is saved on its own and no import cache holds the views of the file
+- only the system views get their editor (view_sys_list::load_list), so a user view with an editor
+  relation does not yet show the editor in the navbar
+- view_relation_list::view_ids() and names() are copies of the component link list and call
+  get_view() and get_component(), which a view relation does not have; nothing calls them yet,
+  but they should return the parent and child view ids and names
+- the db comment view_relation_db::FLD_TYPE_COM names only the types 1 and 2 and not the editor (3);
+  changing it changes the table create sql and its fixture
+- view_relation_list::load_sql() selects no user number fields, so a load by ids gives the row mapper
+  no start_pos (PHP warning "Undefined array key"); the load by parent ids adds them on its own,
+  the common load_sql should add them like component_link_list, which changes the by_ids fixtures
+
+## result id
+
+`cfg/group/result_id::two_int_group_id` builds the 128 bit key from `array_slice($id_lst, 0, 3)` and
+`array_slice($id_lst, 4, 7)`, so the phrase at position 3 is never part of the key, e.g. the year of
+"Zurich (city), Geneva (city), inhabitants, 2020"; two results that differ only in that phrase get the same
+id. The two 64-bit parts are joined as decimal texts without a fixed length, so the key cannot be split
+again. The fix changes the stored result ids; `group_tests` "128 bit result_id" pins the current key.
+
+## api mapper
+
+found while adding the api_mapper unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `web/sandbox/combine_object::api_mapper` and
+  `web/sandbox/ListBase::api_mapper` are stubs that call `log_err`, so a unit test would count a
+  system error; ListBase::api_mapper also returns a user_message and takes no `$msg`
+- not testable without a change: `cfg/element/element::api_mapper` returns true for a missing id,
+  class or formula (only `log_warning`, nothing on `$msg`), and `validate_type` calls `dsp_id()` on a
+  null term for an unknown class, which is a fatal error
+- `cfg/sandbox/sandbox_value::api_mapper` passes the last update string to `set_last_update(?DateTime)`
+  (TypeError for a json with a last update) and the following `sandbox_multi::api_mapper` resets it
+- `cfg/value/value_time`: `api_json_array` writes a DateTime into TIME_VALUE, `api_mapper` expects a text
+- `cfg/formula/figure::api_mapper` and `cfg/phrase/phrase::api_mapper` select value/result resp.
+  word/triple by the sign of the id only, although the json names the class; a phrase without id is
+  only logged and the message stays ok
+- `cfg/component/component_link::api_mapper` ignores `json_fields::LINK_ID`, so the single layer json
+  of a link sets the link id to the component id
+- a missing key is read without a check: `cfg/language/language` (LOCAL_NAME, USAGE),
+  `cfg/formula/formula_link_type` (PHRASE_TYPE_ID), `cfg/formula/figure` (ID), `web/phrase/term`
+  (OBJECT_CLASS), `web/view/view_base` (checks the id of the outer json instead of the nested one)
+- `web/types/type_object::api_mapper` sets the not nullable name and code id to null for a json
+  without them (TypeError)
+- `cfg/user/user` json_mapper maps a null date as now, because `user_message::api_array` and
+  `sql_message::api_array` send the unfiltered user json; `sql_message::api_mapper` keeps the user only
+  if the message of the caller is ok
+- `cfg/sandbox/sandbox_value_list::api_mapper` passes the json array as a message text var
+  (Array to string conversion)
+- `cfg/value/value_base::api_mapper` resets again after the parent mapper
+- `web/sandbox/ListBase::api_mapper_list` adds an object even if its mapping failed
+- `web/group/group::api_array` sends the name only if the description is set
+- `cfg/phrase/phrase_type::row_mapper_typ_obj` assigns instead of compares the scale
+  (`if ($db_row[self::FLD_SCALE] = 'NULL')`)
+
+## functions with one unit test call
+
+found while adding the missing negative tests (see docs/llm/pending.md, test coverage);
+each point needs a source change before the second test can be written
+
+- the failure is only a `log_err`, which a unit test counts as a system error, instead of a
+  message on `$msg`: `cfg/db/sql_creator::create_db_role` (unknown db type),
+  `cfg/word/word_list::get_grp` (empty list)
+- `cfg/import/import_convert_xbrl::convert_folder_to_file` throws a RuntimeException for a missing
+  folder or a failed write instead of reporting it
+- `cfg/import/import_file::import_config_yaml` returns the message unchanged for a user who is
+  neither admin nor system, so the refusal is not reported
+- `cfg/formula/formula_map::get_ref_text` converts only if the dirty flag is set, which only
+  `set_user_text` sets while it already runs and reports the same conversion
+- the counter counts a call in a commented-out line or block, so `cfg/view/view::load_by_term`
+  (`unit_read/view_read_tests.php`) and `cfg/word/word_list::get_grp` (`unit_ui/value_ui_tests.php`)
+  look tested but have no active test
+
+## api json array
+
+found while adding the api_json_array unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `cfg/user/user_list::api_json_array` passes the requesting user
+  as the `user_message` of `user::api_json_array`, so every non-empty list throws a TypeError
+- not testable without a change: `cfg/helper/db_object_multi::api_json_array` is never reached,
+  because `cfg/sandbox/sandbox_multi::api_json_array` does not call the parent; either call it or
+  remove the override
+- not testable without the database: `cfg/sandbox/sandbox_value_list::api_json_array` loads the
+  phrase names even with `TEST_MODE`, and for a list with loaded phrases the output is the same
+- `cfg/sandbox/sandbox_named::api_json_array`: the `TEST_MODE` branch sends `description` instead of
+  `get_description()`, which is the same value for every class, so the branch can be removed
+- `cfg/component/component_link::api_json_array` sends the position and the position type as null
+  for a new link without a position, because `null != START_ORDER_NBR` is true
+- `cfg/helper/type_object::api_json_array` merges `get_object_vars`, so a child sends its fields
+  under the property name (`status_id`, `prio`, `scale`) in addition to the `json_fields` key
+- `cfg/phrase/phrase_type::export_json` checks the scale instead of the symbol before it adds the
+  symbol
+- `cfg/helper/combine_object::api_json_array` sends no object class for an excluded term requested
+  with `WITH_EXCLUDED_ID`, so the frontend cannot tell which kind of term has been excluded
+- untested for a missing fixture: the condition of `cfg/word/triple::api_json_array` (no factory
+  sets a `condition_id`) and the action of `cfg/system/sys_log_status` (no const for an action text)
+
+## export json
+
+found while adding the export_json unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `cfg/phrase/phrase_list::export_json` compares `get_class` of
+  each entry with word and triple, but the list holds phrase objects, so every entry is logged as
+  an error and the export is always empty
+- not testable without a change: the refs of `cfg/word/triple::export_json` (`ref_lst` is private
+  without a setter)
+- `$do_load = false` is not passed on: the nested term, view and source of
+  `cfg/user/user::export_json` (so the view loads its components), the refs of
+  `cfg/word/word::export_json` and `cfg/word/triple::export_json`, and the condition formula of
+  `cfg/word/triple::export_json`, which is always loaded by id
+- `cfg/helper/data_object::export_json` takes no `$exp_typ` and `$do_load` like the other
+  export functions and always exports its objects without a load
+- a null position is exported as `POSITION => null`, because `null >= 0` is true:
+  `cfg/view/view_relation::export_json`, `cfg/component/component::export_json` and
+  `cfg/component/component_link::export_json`
+- the default view style differs: `view_style_list::default_id` is COL_SM_8, which
+  `cfg/view/view::export_json` leaves out, while `cfg/component/component_link::export_json`
+  compares with `view_styles::DEFAULT` (COL_SM_4)
+- `cfg/view/view_relation::export_json` uses `$do_load` to choose between the parent and child as
+  names or as objects, but loads nothing
+- empty fields are exported as null: the name and description of `cfg/group/group::export_json`
+  and the formula name of `cfg/result/result::export_json` for a result without a formula
+- `cfg/verb/verb::export_json` writes the description a second time after
+  `type_object::export_json`
+- `cfg/value/value_time::export_json` exports the time as a DateTime object instead of a text
+- not testable without the database (`$do_load = true` only): the reload by group of
+  `sandbox_value`, the phrases of `group`, the source of `value_base`, the assigned phrases of
+  `formula_map`, the view reload of `source` and the phrase reload of `component`
+
+## add
+
+found while adding the add unit tests of the lists (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- a double is not detected, because the check searches the list positions instead of the ids:
+  `cfg/sandbox/sandbox_value_list::add` (`in_array` on `id_lst()`)
+- web `group::name_pos_lst` and the `lst_dirty` flag that only it reads are no longer used, since
+  `group::add` checks the phrase ids; remove them
+- `add` returns true although the double is refused and only reported on the message:
+  `cfg/log/change_log_list::add`, `cfg/log/change_log_link_list::add`, web `ListBase::add`; and
+  `cfg/sandbox/sandbox_list_named::add` skips a double or an entry without id on a non-empty list
+  silently and ignores `$allow_duplicates`
+- `cfg/sandbox/sandbox_value_list::add` with `$allow_duplicates` adds the value but returns false
+- a null entry, which the signature allows, is a fatal error: `cfg/element/element_list::add`
+  (passes it to `add_direct`), `cfg/result/result_list::add` (`dsp_id()` in the debug log),
+  `cfg/sandbox/sandbox_list_named::add` (`$to_add::class`), web `figure_list::add` and
+  `value_list::add` (`id()`); `cfg/db/sql_field_list::add`, `sql_par_list::add` and
+  `sql_where_list::add` append the null entry, and `sql_par_list::add_by_name` reads its name
+- `shared/helper/ListOfIdObjects::add_obj` checks a double by the id only, so a second unsaved
+  object with id 0 (e.g. an ip range or a sys log entry) is refused as a double
+- `cfg/system/job_list::has_similar` overwrites `$chk_phr_lst_ids` instead of appending, and calls
+  `phr_lst->id()` without a null check, so adding a job to a list with a base import job fails
+- `cfg/formula/figure_list::add` has a dead "no id and no name" guard (`figure::name()` is never
+  empty) and returns `$msg->is_ok()`, so an earlier error on the same message refuses the figure
+- web `group_list::dsp_id` counts the not yet set `time_lst`, which fails on the first refused add
+- `cfg/system/sys_log_list::add` is documented to return a bool but returns nothing
+
+## dsp id
+
+found while adding the dsp_id unit tests (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: `cfg/db/sql_type_list::dsp_id` implodes the `sql_type` enum
+  cases, which cannot become a string, so a list with any entry fails; and the shared
+  `CombineObject::dsp_id` is never reached, because every child overrides it without the parent
+- a missing guard is a fatal error: web `term::dsp_id` calls `obj()->dsp_id()` without the null
+  check of `combine_object::dsp_id`, and `cfg/system/sys_log::dsp_id` and
+  `cfg/log/change_log::dsp_id` format the time without a check for null
+- web `type_list::dsp_id` always returns an empty text, so a log message of a type list carries
+  no information (the unit test pins the empty text with a `TODO Prio 2`); web `group_list::dsp_id`
+  lists the group names only for a debug level above 0
+- `cfg/helper/type_list::dsp_id` writes the list position instead of the database id
+- `cfg/db/sql_par_list::dsp_id` adds `', '` for every entry after the length limit
+- `cfg/log/change::dsp_id` and `cfg/log/change_value::dsp_id` have no space before `'to '`
+- dead branches: the id-only else of `cfg/system/ip_range::dsp_id` (the class name is never empty),
+  the `for phrases` part of `cfg/group/group::dsp_id` and the id-only branch of
+  `cfg/formula/figure_list::dsp_id` (`name()` never returns `'""'`)
+- `cfg/word/triple::dsp_id` closes the bracket of the link ids only for a triple with id
+- `cfg/sandbox/sandbox_value::dsp_id` shows the number 0 as null
+- `cfg/helper/db_object_multi::dsp_id` joins an array id field without an id to a string
+- `shared/calc/expression::get_ref_text` passes a null user text to `strpos`, and
+  `cfg/formula/expression::dsp_id` creates a message that is never reported
+- web `db_object::dsp_id` and shared `CombineObject::dsp_id` return the `int|string` id as string
+  only through the implicit cast
+
+## library
+
+found while adding the unit tests of `shared/library` (see docs/llm/pending.md, test coverage);
+each point needs a source change and a test that shows the bug first
+
+- not testable without a change: the private helpers `str_sep`, `str_split_add_sep`,
+  `str_word_len_normal`, `str_diff_list`, `str_diff_list_next_array_match`,
+  `str_diff_list_next_match` and the private static `sort_by_class_and_id`; either test them
+  through their public caller or remove them from the public function list of the report
+- not tested: the positive case of `dir_remove` (it would need a folder that the test creates and
+  removes) and `env_to_log` (it reads the process environment)
+- an empty or null maker loops forever: `str_left_of_or_all` and `str_right_of_or_all`
+- `str_right($text, 0)` returns the whole text instead of an empty text
+- `count_recursive` raises the level inside the loop, so each sibling after the first is counted
+  one level deeper and a level limit undercounts
+- `array_get_first_two_col` implodes the nested array for its error message
+- `key_num_sort` renumbers the numeric keys through `array_merge`
+- `json_clean` filters without a callback, so it also removes `0`, `"0"` and `false`; after that
+  `json_contains` reads the missing `id` key of an entry with id 0
+- `json_merge_str` passes the decoded json without a check, so an invalid json is a fatal error
+- `explain_missing` writes `gettype($target)` twice instead of the type of the result, and
+  `array_explain_missing` compares `!$result[$key] == $value` instead of `!=`
+- `dsp_var` shows `0` and `'0'` as an empty text, and `dsp_array_keys([])` returns `null` while
+  `dsp_array([])` returns an empty text
+- `php_code_use` and its sorted and converted variants take every line that starts with `use`
+  (e.g. `user…`), and `php_code_function` skips the `public` and `private` functions
+- the doc comments of `ids_not_empty` (negative ids are dropped) and `array_merge_by_key`
+  (numeric keys are merged) do not match the code
+
+## code id of a triple
+
+the save of a triple never writes its code id: `triple::db_fields_changed` compares the type, the
+verb, the exclusion, the names, the weight and the condition, but not `code_id`, so the code ids of
+the system triples in the import files (e.g. `system_calculator_label` in calculator_keywords.json,
+`system_field_phrase_selector_type` in process_catch_fields.json) never reach the database and no
+triple of the test database has one (src/test/resources/unit/triple/list.csv); the frontend
+calculator and `phrase_data::keyword_ids` therefore select their keywords by the name; the fix needs
+the code id in the triple insert and update statements with their sql fixtures and change log row
+(`change_fields.csv`), and then `phrase_data::keyword_ids` can use `triple_list::load_by_code_ids`,
+whose statement still needs its sql fixture and unit test
+
+## circular includes of the web classes
+
+the web classes include each other in a circle, so an entry point works only if it includes
+`web/frontend.php` before any other web class: `web/sandbox/sandbox_list_named.php` includes
+`word.php` before its own class is defined, and that chain (word, change_log_named, component_exe,
+system_form) reaches `web/component/component_list.php`, which extends the still undefined
+`sandbox_list_named` and stops php with a fatal; e.g. `a_selected_test.php` loaded the web package
+first via test_db_load, test_pinned_ids, test_cleanup, test_api and change_log_list and failed, so
+it now includes `web/frontend.php` first; no include_once is removed until the includes are
+changed to a proper dynamic loading (docs/llm/file-layout.md), which also removes this order
+dependency; until then a coded check could load each web class file alone in a fresh php process
+and report the files that fail
+
+## theme: font, dark or light mode and colours
+
+- split the long lines into named steps (coding.md rule 2 and 110): the cast, `?->` and `??` of the
+  mode read in `html_base::theme_mode`, the inline `array_intersect($without, …) == []` of
+  `config::get_by_names_specific` (e.g. a named `value::has_none($names)`) and the ternary in the
+  `list_item` call of `html_base::theme_switch_item`
+- `html_base::theme_switch_item` builds its `<button>` inline, because neither `button()` nor
+  `button_submit_text()` takes a tooltip; add the tooltip to one of them and use it (coding.md 187)
+- `coding_rule_tests::config_yaml_theme_fallback_tests` names the dark group by the literal
+  `' dark '` instead of `words::DARK`
+- `html_base::theme_mode` scans the whole frontend config up to three times per page (`theme_css`,
+  `theme_switch`, `lang`) and once more per chart, and every chart repeats its 18 colour lookups;
+  read the mode and the chart colours once per request, which also reports an invalid chart colour
+  once and not once per chart
+- check by a write or workflow test that a mode saved by the switch of the user menu reaches the
+  `$ui_sys->cfg` of that user on the next request, so the page is then shown in the chosen mode
+
+## qlever import
+
+`src/main/php/cfg/rdf/qlever.php` came with the merge of the wikidata branch (#220) as a stub:
+`qlever::import()` only returns a new `user_message` and nothing calls it, so the unit test coverage
+report lists it as called nowhere; either implement the import of the qlever nt and tsv files with a
+positive and a negative unit test or remove the class; when implemented, `import()` gets the
+`user_message $msg` of the caller instead of creating its own, and the predicate const `VIEW = 'is-a'`
+gets a name that says what it is
+
+## word rdf mapping
+
+`src/main/php/cfg/word/word_rdf.php` came with the same merge as a stub of the word mapping to RDF:
+it only holds the predicate consts `WORD_TYPE` and `PLURAL`, which no code uses, and includes and uses
+`cfg/db/sql.php` without needing it; either implement the RDF mapping of a word (e.g. for the qlever
+import above) with a positive and a negative unit test or remove the class; its header still says
+`model/word/word_rdf.php` instead of `cfg/word/word_rdf.php`

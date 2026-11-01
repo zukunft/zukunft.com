@@ -77,7 +77,7 @@ class phrase_list_write_tests
         $t_trp->cleanup($ts);
         $t_wrd->cleanup($ts);
 
-        // TODO make prepare not needed any more
+        // TODO Prio 2 make prepare not needed any more
         $t_db->test_word($msg, words::CHF, phrase_type_shared::MEASURE);
         $t_db->test_word($msg, word_names::SALES);
 

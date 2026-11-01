@@ -54,7 +54,7 @@ class sql
     // setup tables
     const string CREATE = 'CREATE OR REPLACE';
     const string INDEX = 'INDEX';
-    const string UNIQUE = 'UNIQUE INDEX';  // TODO check if UNIQUE needs to be used for word and triple names
+    const string UNIQUE = 'UNIQUE INDEX';  // TODO Prio 2 check if UNIQUE needs to be used for word and triple names
 
     // functions
     const string NOW = 'Now()';
@@ -120,10 +120,14 @@ class sql
     const string UNION_ALL = 'UNION ALL';
     const string IN = 'IN';
     const string ANY = '= ANY';
+    // to add a value to the database value of a field e.g. to count requests (see sql_par_field::increment)
+    const string PLUS = '+';
     const string LIKE = 'LIKE';
     // lower case like the pattern search of the existing queries
     const string LIKE_LOWER_CASE = 'like';
     const string LIKE_NO_UP_CASE = 'ilike';
+    // the part of a like pattern that matches any text e.g. between the start and the end of a key
+    const string WILDCARD = '%';
     // the postgres name of the fixed length char type, which postgres returns padded with spaces
     const string PG_TYPE_CHAR = 'bpchar';
     // the case-sensitive regular expression match of postgres and mysql (see sql_creator::key_match)

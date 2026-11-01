@@ -888,6 +888,7 @@ class test_mappers
             case component_types::SYSTEM_BODY_ERROR_UPDATE:
             case component_types::LIST_PARENTS_OF_WORD:
             case component_types::LIST_CHILDREN_OF_WORD:
+            case component_types::LIST_CHILD_TRIPLES:
             case component_types::LINK_LIST_WORD:
             case component_types::RANK_PHRASE:
             case component_types::RANKING_PARAMETERS:
@@ -901,6 +902,22 @@ class test_mappers
             case component_types::SYSTEM_ADMIN_ERRORS_UNASSIGNED:
             case component_types::SYSTEM_ADMIN_ERRORS_DELAYED_FIX:
             case component_types::SYSTEM_ADMIN_JOBS_DELAYED:
+            case component_types::SYSTEM_ADMIN_SUBTITLE:
+            case component_types::SYSTEM_ADMIN_USER_LOAD:
+            case component_types::SYSTEM_TEXT_EXPLAIN:
+            case component_types::PROCESS_CATCH_FIELDS:
+            case component_types::PROCESS_CATCH_TAB:
+            case component_types::PROCESS_CATCH_BUTTON_NEXT:
+            case component_types::PROCESS_CATCH_BUTTON_BACK:
+            case component_types::PROCESS_CATCH_BUTTON_REFRESH:
+            case component_types::GEOLOCATOR:
+            case component_types::CALCULATOR_TITLE:
+            case component_types::CALCULATOR_INPUT:
+            case component_types::CALCULATION_RESULT:
+            case component_types::CALCULATOR_EDITOR:
+            case component_types::FORMULA_EDITOR:
+            case component_types::FORMULA_SELECTOR:
+            case component_types::FORMULA_RESULT_COMPARE:
             case component_types::USED_IN_AS_TEXT:
             case component_types::USED_IN_AS_TEXT_WITH_LINK:
             case component_types::FORM_CLASS:
@@ -937,6 +954,9 @@ class test_mappers
             case component_types::FORM_FIELD_WEIGHT:
                 $obj = $t_trp->triple_filled();
                 break;
+            case component_types::TRIPLE_LIST:
+                $obj = $t_trp->populism_solution();
+                break;
             case component_types::FORM_SELECT_SOURCE:
             case component_types::FORM_SELECT_SOURCES:
             case component_types::FORM_SELECT_SOURCE_TYPE:
@@ -966,6 +986,7 @@ class test_mappers
             case component_types::VALUES_MOST_RELEVANT:
             case component_types::VALUES_IN_COLUMNS:
             case component_types::TABLE_WITH_RELATED_COLUMNS:
+            case component_types::TABLE_WITH_OWN_COLUMNS:
             case component_types::NUMERIC_VALUE:
             case component_types::VALUES_ALL:
             case component_types::SYSTEM_BODY_VALUE_DETAIL:
@@ -1125,10 +1146,10 @@ class test_mappers
                 $url_array = array_merge($url_array, $obj_array);
                 break;
             case phrase::class:
-                // the table and the calculator show the values of a phrase as a table, so their
-                // sample is the triple "global warming", which has the values of the start page
-                // fixture, instead of the filled test phrase that has none
-                if (in_array($msk_id, [views::TABLE_ID, views::CALCULATOR_ID])) {
+                // the table and the comparison table show the values of a phrase as a table, so
+                // their sample is the triple "global warming", which has the values of the start
+                // page fixture, instead of the filled test phrase that has none
+                if (in_array($msk_id, [views::TABLE_ID, views::COMPARISON_TABLE_ID])) {
                     $obj = $t_trp->global_warming()->phrase();
                 } else {
                     $obj = $t_phr->phrase_filled();
@@ -1384,7 +1405,7 @@ class test_mappers
     }
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask

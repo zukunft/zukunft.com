@@ -35,8 +35,8 @@
     - del:               manage to remove from the database
     - debug:             internal support functions for debugging
 
-    TODO add to UI; add unit tests
-    TODO allow to reference terms instead of phrases so that also formulas can be referenced
+    TODO Prio 2 add to UI; add unit tests
+    TODO Prio 2 allow to reference terms instead of phrases so that also formulas can be referenced
 
 
     This file is part of zukunft.com - calc with words
@@ -202,7 +202,7 @@ class ref extends sandbox_link
     public ?float $impact = null;          // a cached number used for the default sorting and as an importance indicator
     private ?DateTime $last_update = null; // timestamp of the last successful update used to trigger the next refresh job
 
-    // TODO deprecate
+    // TODO Prio 2 deprecate
     public ?string $name = null;
 
 
@@ -531,7 +531,7 @@ class ref extends sandbox_link
         if ($this->get_url() <> '') {
             $vars[json_fields::URL] = $this->get_url();
         }
-        // TODO on export check always by the name not the id
+        // TODO Prio 2 on export check always by the name not the id
         if ($this->phrase_name() != '' and $this->phrase_name() != null) {
             $vars[json_fields::FROM_PHRASE] = $this->phrase_name();
         }
@@ -574,7 +574,7 @@ class ref extends sandbox_link
 
     /**
      * set the phrase by the id
-     * TODO use a cache to reduce db requests
+     * TODO Prio 2 use a cache to reduce db requests
      *
      * @param int|null $id
      * @param phrase_list|null $phr_lst cache of phrases
@@ -667,7 +667,7 @@ class ref extends sandbox_link
         $this->name = $name;
     }
 
-    // TODO check why >= and not >
+    // TODO Prio 1 check why >= and not >
     function has_type(): bool
     {
         if ($this->predicate_id() >= 0) {
@@ -786,8 +786,8 @@ class ref extends sandbox_link
     }
 
     /**
-     * TODO use always a function like this to set an object
-     * TODO use a cache to reduce database access because an id will never change and due to that no database refresh is needed
+     * TODO Prio 2 use always a function like this to set an object
+     * TODO Prio 2 use a cache to reduce database access because an id will never change and due to that no database refresh is needed
      * @param int|null $id
      * @return void
      */
@@ -1059,7 +1059,7 @@ class ref extends sandbox_link
     }
 
     /**
-     * TODO add the missing objects like the source
+     * TODO Prio 2 add the missing objects like the source
      * @param user_message $msg to collect the message due to missing links
      * @return bool true if all the related objects have been loaded
      */
@@ -1082,7 +1082,7 @@ class ref extends sandbox_link
     }
 
     /**
-     * TODO check if it should be changed to group_id
+     * TODO Prio 2 check if it should be changed to group_id
      * @return string with the field name of the internal object that is linked
      */
     function from_field(): string
@@ -1211,8 +1211,8 @@ class ref extends sandbox_link
         $log = new change_link($this->get_user());
         $log->set_action(change_actions::ADD, $msg);
         $log->set_table(change_tables::REF, $msg);
-        // TODO review in log_link
-        // TODO object must be loaded before it can be logged
+        // TODO Prio 2 review in log_link
+        // TODO Prio 1 object must be loaded before it can be logged
         $log->new_from = $this->phrase();
         $log->new_link = $this->type();
         $log->new_to = $this;
@@ -1407,7 +1407,7 @@ class ref extends sandbox_link
 
     /**
      * update a ref in the database or update the existing
-     * TODO review by comparing with sandbox function
+     * TODO Prio 2 review by comparing with sandbox function
      *
      * @param user_message $msg the message object that is enriched in case something went wrong to show the user the problem and the suggested solutions
      * @param sql_type_list|array $sc_par_lst the parameters for the sql statement creation

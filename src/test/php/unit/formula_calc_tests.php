@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::SHARED_CALC . 'prior_operand.php';
 include_once html_paths::ELEMENT . 'element_group.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
@@ -57,6 +58,8 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
@@ -85,6 +88,61 @@ class formula_calc_tests
         // start the test section (ts)
         $ts = 'unit formula calc ';
         $t->header($ts);
+
+        $t->subheader($ts . 'prior operand');
+        // Bern follows Zurich and Geneva follows Bern e.g. in the rows of a walk
+        $pri = new prior_operand([word_names::BE => word_names::ZH, word_names::GE => word_names::BE]);
+        $names = [word_names::INHABITANTS, phrase_types::PRIOR_NAME];
+
+        $test_name = 'prior selects the previous phrase instead of the phrase of the context';
+        [$sel_names, $sel_ctx] = $pri->select($names, [word_names::INHABITANTS, word_names::GE]);
+        $t->assert($test_name, [$sel_names, $sel_ctx],
+            [[word_names::INHABITANTS, word_names::BE], [word_names::INHABITANTS, word_names::BE]]);
+        $test_name = '... and a row in the middle is no first row';
+        $is_mid_first = $pri->is_first($names, [word_names::INHABITANTS, word_names::GE]);
+        $t->assert($test_name, $is_mid_first, false);
+        $test_name = 'the first row of a chain has no previous row';
+        $is_first = $pri->is_first($names, [word_names::INHABITANTS, word_names::ZH]);
+        $t->assert($test_name, $is_first, true);
+        // negative: nothing changes for what is no row of one chain, so that the operand finds no number
+        $test_name = '... but a context outside of a chain is no first row';
+        $is_other_first = $pri->is_first($names, [word_names::INHABITANTS, word_names::CANTON]);
+        $t->assert($test_name, $is_other_first, false);
+        $test_name = '... and it selects no other phrase';
+        $other_ctx = [word_names::INHABITANTS, word_names::CANTON];
+        $other_sel = $pri->select($names, $other_ctx);
+        $t->assert($test_name, $other_sel, [$names, $other_ctx]);
+        $test_name = '... and two phrases of a chain in the context are not clear';
+        $two_ctx = [word_names::BE, word_names::GE];
+        $two_sel = $pri->select($names, $two_ctx);
+        $t->assert($test_name, $two_sel, [$names, $two_ctx]);
+        $test_name = '... and neither is a first row';
+        $is_two_first = $pri->is_first($names, [word_names::ZH, word_names::GE]);
+        $t->assert($test_name, $is_two_first, false);
+        // negative: a plain prior stays the time jump of the backend e.g. in the formula increase
+        $test_name = '... and a plain prior stays the time jump';
+        $plain = [phrase_types::PRIOR_NAME];
+        $plain_ctx = [word_names::BE];
+        $plain_sel = $pri->select($plain, $plain_ctx);
+        $t->assert($test_name, $plain_sel, [$plain, $plain_ctx]);
+        // negative: another operand with several phrases is not changed
+        $test_name = '... and an operand without prior is not changed';
+        $no_pri = [word_names::INHABITANTS, word_names::BE];
+        $no_pri_sel = $pri->select($no_pri, $plain_ctx);
+        $t->assert($test_name, $no_pri_sel, [$no_pri, $plain_ctx]);
+        // a phrase with two previous phrases has no clear row, whatever order the links are loaded in
+        $test_name = 'a second link to the same previous phrase keeps the previous phrase';
+        $one_link = prior_operand::with_link([], word_names::GE, word_names::BE);
+        $t->assert($test_name, prior_operand::with_link($one_link, word_names::GE, word_names::BE), [word_names::GE => word_names::BE]);
+        $test_name = '... but a link to another previous phrase is not clear';
+        $two_links = prior_operand::with_link($one_link, word_names::GE, word_names::ZH);
+        $three_links = prior_operand::with_link($two_links, word_names::GE, word_names::BE);
+        $pri_two = new prior_operand($three_links);
+        $unclear_ctx = [word_names::INHABITANTS, word_names::GE];
+        $t->assert($test_name, $pri_two->select($names, $unclear_ctx), [$names, $unclear_ctx]);
+        $test_name = '... and such a phrase is no first row';
+        $is_unclear_first = $pri_two->is_first($names, $unclear_ctx);
+        $t->assert($test_name, $is_unclear_first, false);
 
         $t->subheader($ts . 'expression');
 
@@ -205,7 +263,7 @@ class formula_calc_tests
             . $lib->term_id(triple_names::SECOND_ID, triple::class) . ','
             . $lib->term_id(word_names::MINUTE_ID, word::class) . ')');
 
-        // TODO add result display test
+        // TODO Prio 2 add result display test
 
         // test the calculation of one value
         $trm_lst = $t->term_list_for_tests(array(

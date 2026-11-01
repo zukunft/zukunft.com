@@ -79,6 +79,30 @@ class phrase_read_tests
         $t->assert($test_name, $phr_by_id->name(), triple_names::PI);
 
 
+        $t->subheader($ts . 'formula ancestors');
+
+        // the parent formulas of a word are the formulas of its is a ancestors over all levels
+        $test_name = 'the formula ancestors of ' . word_names::METRE . ' are its is a parents over all levels';
+        $phr = new phrase($t->usr1);
+        $phr->load_by_name(word_names::METRE, $msg);
+        $anc_names = $phr->formula_ancestors($msg)->names();
+        $t->assert_contains($test_name, $anc_names, [word_names::SI_BASE_UNIT, word_names::PHYSICAL_CONSTANT]);
+        // negative: a phrase linked by another verb e.g. square of square metre is no ancestor,
+        // because over all verbs the walk would reach most of the graph and the loop limit
+        $test_name = '... but not the phrases linked by another verb';
+        $t->assert_contains_not($test_name, $anc_names, [word_names::SQUARE]);
+        // negative: the phrase itself is no ancestor
+        $test_name = '... and not the phrase itself';
+        $t->assert_contains_not($test_name, $anc_names, [word_names::METRE]);
+
+        // a symbol stands for its phrase, so the ancestors of the phrase are the ancestors of the symbol
+        $test_name = 'the formula ancestors of the symbol ' . word_names::M . ' include the parents of ' . word_names::METRE;
+        $phr_sym = new phrase($t->usr1);
+        $phr_sym->load_by_name(word_names::M, $msg);
+        $t->assert_contains($test_name, $phr_sym->formula_ancestors($msg)->names(), [word_names::SI_BASE_UNIT]);
+        $t->assert_msg($test_name, $msg);
+
+
         $t->subheader($ts . 'type');
 
         // test reading a phrase type via API that is not yet included in the preloaded phrase type

@@ -37,7 +37,9 @@ use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
@@ -45,12 +47,17 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 include_once html_paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SHARED . 'api.php';
 include_once html_paths::SHARED . 'group_id_url.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once html_paths::SHARED . 'library.php';
+include_once html_paths::SHARED_TYPES . 'system_time_type.php';
 include_once html_paths::USER . 'user_message.php';
 
 class rest_call
 {
+
+    // the start of a slow answer that names the seconds of its backend steps (see controller::json_with_time)
+    const string TIME_START = '{"' . json_fields::API_TIME . '":{';
 
     // the session cookie file used for all api calls of this process:
     // set by the test bootstrap after the admin login (test_base::api_login) so that the
@@ -152,16 +159,18 @@ class rest_call
     }
 
     /**
-     * add the id of the logged-in user to the url vars of an api get call,
-     * so that the backend returns the sandbox of this user (see user::data_user)
+     * add the id of the requesting user to the url vars of an api get call, so that the backend
+     * returns the sandbox of this user (see user::data_user); unlike the page url (id_for_url) also a
+     * user of the standard data is named, because the backend sees the call of the own pod without
+     * the session and would otherwise answer for the ip user of the pod
      * @param array $data the url vars of the api get call
      * @param user_message $msg with the requesting user
-     * @return array the url vars with the user id; unchanged if nobody is logged in
+     * @return array the url vars with the user id; unchanged if the requesting user has no id
      *               or if the caller has already named a data user e.g. an admin viewing another user
      */
     function data_with_user(array $data, user_message $msg): array
     {
-        $usr_id = $msg->usr?->id_for_url() ?? 0;
+        $usr_id = $msg->usr?->id() ?? 0;
         if ($usr_id > 0) {
             $data[url_var::USER] ??= $usr_id;
         }
@@ -223,6 +232,133 @@ class rest_call
     }
 
     /**
+     * @param string $line one http header line of an api answer e.g. "X-Zukunft-Cache: hit"
+     * @return string api::CACHE_HIT or api::CACHE_MISS if the line is the cache header, else an empty string
+     */
+    static function cache_state_of(string $line): string
+    {
+        $result = '';
+        $parts = explode(':', $line, 2);
+        // a header name is case-insensitive, e.g. http/2 sends it in lower case
+        if (count($parts) == 2 and strcasecmp(trim($parts[0]), api::CACHE_HEADER) == 0) {
+            $result = trim($parts[1]);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $json the json answer of the backend
+     * @return array the seconds per backend step that a slow answer names (see controller::json_with_time), else an empty array
+     */
+    static function time_steps_of(string $json): array
+    {
+        $result = [];
+        $end = self::time_end($json);
+        if ($end > 0) {
+            $start = strlen(self::TIME_START) - 1;
+            $result = json_decode(substr($json, $start, $end - $start + 1), true) ?? [];
+        }
+        return $result;
+    }
+
+    /**
+     * the parts of the wait for an api answer that the frontend measures itself, so that the
+     * rest of the wait is only the backend work that no answer has named
+     *
+     * @param float $connect the seconds until the connection to the backend has been open
+     * @param float $first_byte the seconds until the first byte of the answer has been received
+     * @param float $total the seconds until the whole answer has been received
+     * @return array the seconds of the connect and of the transfer after the first byte, without a part that has taken no time
+     */
+    static function transfer_steps(float $connect, float $first_byte, float $total): array
+    {
+        $steps = [
+            system_time_type::API_CONNECT => $connect,
+            system_time_type::API_TRANSFER => $total - $first_byte,
+        ];
+        return array_filter($steps, fn($seconds) => $seconds > 0);
+    }
+
+    /**
+     * @param float $wait the seconds that the frontend has waited for the api call
+     * @param float $total the seconds of the call that curl has counted
+     * @return array the seconds of the wait that curl has not counted e.g. the session cookie file, empty if none
+     */
+    static function curl_step(float $wait, float $total): array
+    {
+        $steps = [system_time_type::API_CURL => $wait - $total];
+        return array_filter($steps, fn($seconds) => $seconds > 0);
+    }
+
+    /**
+     * the server time of an answer split into the backend steps that a slow answer names and the
+     * part that they do not cover, or named by the kind of answer if it names no steps
+     *
+     * @param string $json the json answer of the backend, empty if the call has failed
+     * @param float $server the seconds from the open connection until the first byte of the answer
+     * @return array the seconds per step of the server time
+     */
+    static function server_steps(string $json, float $server): array
+    {
+        $result = self::time_steps_of($json);
+        if ($result == []) {
+            $result = [self::answer_kind($json) => $server];
+        } else {
+            $not_measured = $server - array_sum($result);
+            if ($not_measured > 0) {
+                $result[system_time_type::API_NOT_MEASURED] = $not_measured;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $json a json answer of the backend that names no steps
+     * @return string the step name of the kind of answer: an object names its steps if it has been slow
+     *                (see controller::json_with_time), so without them it has been fast; a json list has no
+     *                field for the steps, so it can have been fast or slow
+     */
+    private static function answer_kind(string $json): string
+    {
+        $result = system_time_type::API_NO_JSON;
+        if (str_starts_with($json, '{')) {
+            $result = system_time_type::API_FAST;
+        } elseif (str_starts_with($json, '[')) {
+            $result = system_time_type::API_LIST;
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $json the json answer of the backend
+     * @return string the json without the seconds of the backend steps, so that a slow answer is the same as a fast one
+     */
+    static function without_time(string $json): string
+    {
+        $result = $json;
+        $end = self::time_end($json);
+        if ($end > 0) {
+            // the comma behind the steps is dropped with them
+            $result = '{' . substr($json, $end + 2);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $json the json answer of the backend
+     * @return int the position of the brace that closes the backend steps, 0 if the answer names none;
+     *             the steps are one flat object, so the first closing brace of the answer ends them
+     */
+    private static function time_end(string $json): int
+    {
+        $result = 0;
+        if (str_starts_with($json, self::TIME_START)) {
+            $result = (int)strpos($json, '}');
+        }
+        return $result;
+    }
+
+    /**
      * execute an api call
      *
      * @param string $method the REST method (GET, POST, PUT or DELETE)
@@ -234,6 +370,8 @@ class rest_call
      */
     function api_call(string $method, string $url, array $data, array $extra_headers = []): string
     {
+        global $ui_sys;
+
         $curl = curl_init();
         $data_json = json_encode($data);
 
@@ -288,10 +426,43 @@ class rest_call
         // backend calls a rendering triggers, because an api call is neither a db read nor a db write
         log_debug($method . ' ' . $url, url_var::DEBUG_LEVEL_API_CALL);
 
-        // TODO Prio 2 measure the api call time in a frontend owned timing object on $ui_sys, so that
-        //      the api_ctrl section of the time report also covers the wait of the html frontend;
-        //      the backend $sys must not be used here (web/ may declare only $ui_sys and $mtr)
+        // the backend names in a header if the answer comes from the cache (see def::DEBUG_API_CACHE)
+        $cache_state = '';
+        curl_setopt($curl, CURLOPT_HEADERFUNCTION, function ($curl, string $line) use (&$cache_state): int {
+            $cache_state = self::cache_state_of($line) ?: $cache_state;
+            return strlen($line);
+        });
+
+        // the wait is counted on the frontend cache, because web/ must not use the backend $sys
+        $wait_start = microtime(true);
         $result = curl_exec($curl);
+        $wait = microtime(true) - $wait_start;
+        if ($ui_sys != null) {
+            $ui_sys->api_wait += $wait;
+        }
+        // the whole wait is split: the curl time around the call, the connect, the server time and
+        // the transfer; a slow answer names the steps of its server time and is then passed on like
+        // a fast answer (see controller::json_with_time)
+        $connect = curl_getinfo($curl, CURLINFO_CONNECT_TIME);
+        $first_byte = curl_getinfo($curl, CURLINFO_STARTTRANSFER_TIME);
+        $total = curl_getinfo($curl, CURLINFO_TOTAL_TIME);
+        $answer = '';
+        if (is_string($result)) {
+            $answer = $result;
+            $result = self::without_time($result);
+        }
+        $ui_sys?->add_api_steps(self::curl_step($wait, $total));
+        $ui_sys?->add_api_steps(self::transfer_steps($connect, $first_byte, $total));
+        $ui_sys?->add_api_steps(self::server_steps($answer, $first_byte - $connect));
+
+        // the time shown with this message is the wait for the backend, so that the time of the next
+        // message is the work of the frontend after the answer and not the api call
+        log_debug('answer of ' . $method . ' ' . $url, url_var::DEBUG_LEVEL_API_CALL);
+
+        // the header is only sent if the debug switch of the backend is on, so the message is shown at every level
+        if ($cache_state != '') {
+            log_debug('api cache ' . $cache_state . ' for ' . $url, url_var::DEBUG_LEVEL_SWITCHED);
+        }
 
         if ($result === false) {
             $error = curl_error($curl);

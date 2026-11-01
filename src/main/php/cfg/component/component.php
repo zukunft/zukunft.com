@@ -184,7 +184,7 @@ class component extends sandbox_code_id
     public ?float $ui_msg_value_exception = null;
 
     // the position in the linked view
-    // TODO dismiss and use link order number instead
+    // TODO Prio 2 dismiss and use link order number instead
     public ?int $order_nbr = null;
 
     // the word link type used to build the word tree started with the $start_word_id
@@ -201,8 +201,8 @@ class component extends sandbox_code_id
     public ?int $word_id_col2 = null;
 
     // database fields repeated from the component link for a easy to use in memory view object
-    // TODO create a component_phrase_link table with a type fields where the type can be at least row, row_right, col and sub_col
-    // TODO easy use the position type object similar to the style
+    // TODO Prio 2 create a component_phrase_link table with a type fields where the type can be at least row, row_right, col and sub_col
+    // TODO Prio 2 easy use the position type object similar to the style
 
     // linked fields
 
@@ -417,7 +417,7 @@ class component extends sandbox_code_id
             $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID], $msg);
             $this->set_formula($frm);
         }
-        // TODO map e.g. the $row_phrase
+        // TODO Prio 2 map e.g. the $row_phrase
 
         return $msg->is_ok();
     }
@@ -610,7 +610,7 @@ class component extends sandbox_code_id
             $frm->api_mapper($value, $msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
-                // TODO use formula cache
+                // TODO Prio 2 use formula cache
                 $frm->id = $value;
             }
         } else {
@@ -1019,8 +1019,8 @@ class component extends sandbox_code_id
 
     /**
      * set the formula of the component by the id
-     * TODO use cache to reduce the db loads
-     * TODO use this as a sample for all row_mappers
+     * TODO Prio 2 use cache to reduce the db loads
+     * TODO Prio 2 use this as a sample for all row_mappers
      * @param int|null $id the id for the formula
      * @param user_message $msg to report an id that is neither null nor a valid formula id
      * @return void
@@ -1093,7 +1093,7 @@ class component extends sandbox_code_id
     }
 
     /**
-     * TODO use a set_join function for all not simple sql joins
+     * TODO Prio 2 use a set_join function for all not simple sql joins
      * @param sql_creator $sc the sql creator without component joins
      * @return sql_creator the sql creator with the components join set
      */
@@ -1649,7 +1649,7 @@ class component extends sandbox_code_id
 
     /**
      * remove a view component from a view
-     * TODO check if the view component is not linked anywhere else
+     * TODO Prio 2 check if the view component is not linked anywhere else
      *        and if yes, delete the view component after confirmation
      * @param view $msk the view from where this component should be removed
      * @param user_message $msg explain to the user why the component cannot be removed from the view
@@ -1797,7 +1797,7 @@ class component extends sandbox_code_id
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            // TODO easy move to id function of type list
+            // TODO Prio 2 easy move to id function of type list
             if ($this->get_style_id() < 0) {
                 $msg->add(msg_id::COMPONENT_STYLE_MISSING, [
                     msg_id::VAR_TYPE => $this->get_style_id(),

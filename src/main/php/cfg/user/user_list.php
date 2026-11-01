@@ -75,7 +75,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 
-// TODO base it on the base_list object or ListOfIdNamedCodeObjects
+// TODO Prio 2 base it on the base_list object or ListOfIdNamedCodeObjects
 class user_list
 {
     // internal db field name to count the changes by on user
@@ -271,7 +271,7 @@ class user_list
      * user sandbox, so a new sandbox table is included automatically once it is added
      * there (unlike DB_TABLE_CLASSES_DESC_DEPENDING, which also holds the non-sandbox
      * type tables and only marks the user overlay for the truncate order)
-     * TODO add the prime, big and geo sub-tables of the value and result overlays
+     * TODO Prio 1 add the prime, big and geo sub-tables of the value and result overlays
      *
      * @return string the union of the per-table user row counts across all user_* tables
      */

@@ -98,7 +98,7 @@ class term extends combine_named
             $trp = new triple();
             $trp->api_mapper($json_array, $msg);
             $this->set_obj($trp);
-            // TODO check if needed
+            // TODO Prio 3 check if needed
             //$this->set_id($trp->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
             $vrb = new verb();
@@ -311,7 +311,7 @@ class term extends combine_named
     /**
      * set the term id based id the word, triple, verb or formula id
      * must have the same logic as the database view and the frontend
-     * TODO deprecate?
+     * TODO Prio 2 deprecate?
      *
      * @param int $id the object id that is converted to the term id
      * @param string $class the class of the term object
@@ -351,7 +351,7 @@ class term extends combine_named
      */
 
     /**
-     * TODO review and use the api_array function of the objects
+     * TODO Prio 2 review and use the api_array function of the objects
      * @return array the json message array to send the updated data to the backend
      * corresponding to the api jsonSerialize function:
      * use the object id not the term id because the class is included
@@ -393,11 +393,16 @@ class term extends combine_named
             $vars[json_fields::NAME] = $this->name();
             $vars[json_fields::DESCRIPTION] = $this->get_description();
             $vars[json_fields::TYPE] = $this->type_id($msg);
+            // like the backend the default view of a word or triple is only sent if set
+            $view_id = $this->phrase_view_id();
+            if ($view_id != null) {
+                $vars[json_fields::VIEW] = $view_id;
+            }
             if ($this->is_formula()) {
                 $vars[json_fields::USER_TEXT] = $this->obj()->get_usr_text();
                 $vars[json_fields::LATEX] = $this->obj()->get_latex();
             }
-            // TODO add exclude field and move to a parent object?
+            // TODO Prio 2 add exclude field and move to a parent object?
             if ($this->obj()?->share_id() != null) {
                 $vars[json_fields::SHARE] = $this->obj()?->share_id();
             }
@@ -409,6 +414,19 @@ class term extends combine_named
             }
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+    /**
+     * @return int|null the default view of the word or triple of this term e.g. 185 for "mathematical constant",
+     *                  null for a formula or verb, which have no default view in the term api
+     */
+    function phrase_view_id(): ?int
+    {
+        $result = null;
+        if ($this->is_word() or $this->is_triple()) {
+            $result = $this->obj()?->view_id();
+        }
+        return $result;
     }
 
 
@@ -656,7 +674,7 @@ class term extends combine_named
      */
     function dsp_selector(term $type, string $form, int $pos, string $class, user_message $msg, array $url_arr = []): string
     {
-        // TODO include pattern in the call
+        // TODO Prio 2 include pattern in the call
         $pattern = '';
         $trm_lst = new term_list();
         $trm_lst->load_like($pattern, $msg);

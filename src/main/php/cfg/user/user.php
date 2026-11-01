@@ -7,10 +7,10 @@
 
     $usr is the suggested var name
 
-    TODO make sure that no right gain is possible
-    TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
-    TODO log the access attempts to objects with a restricted access
-    TODO build a process so that a user can request access to an object with restricted access
+    TODO Prio 1 make sure that no right gain is possible
+    TODO Prio 2 move the non functional user parameters to hidden words to be able to reuse the standard view functionality
+    TODO Prio 2 log the access attempts to objects with a restricted access
+    TODO Prio 2 build a process so that a user can request access to an object with restricted access
 
     if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
     if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
@@ -104,6 +104,7 @@ include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_VERB . 'verb_list.php';
@@ -116,6 +117,8 @@ include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_functions.php';
+include_once paths::SHARED_ENUM . 'sys_log_levels.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'user_types.php';
 include_once paths::SHARED_ENUM . 'user_statuum.php';
@@ -162,6 +165,8 @@ use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_functions;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_levels;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_statuum;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_types;
@@ -257,13 +262,13 @@ class user extends db_id_object_non_sandbox
     public ?view $msk = null;              // the last view used by the user
     public ?source $src = null;            // the last source used by the user
 
-    // TODO move to user config e.g. by using the key word "pod-user-config"
+    // TODO Prio 2 move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;      // the decimal point char for this user
     public ?string $thousand_sep = null;   // the thousand separator user for this user
     public ?int $percent_decimals = null;  // the number of decimals for this user
 
 
-    // TODO add set and get
+    // TODO Prio 2 add set and get
     // e.g. only admin are allowed to see other user parameters
     public ?user $viewer = null;           // the user who wants to access this user
 
@@ -627,7 +632,7 @@ class user extends db_id_object_non_sandbox
 
     /**
      * the common mapping part for the api and import mapper
-     * TODO add api type to force to include the related objects in the json message
+     * TODO Prio 2 add api type to force to include the related objects in the json message
      *
      * @param array $json
      * @param user_message $msg with the requesting user to collect the message for the user
@@ -962,6 +967,10 @@ class user extends db_id_object_non_sandbox
         // does not confirm which usernames or emails exist (user enumeration)
         if (!$this->has_db_id() || !$pw_ok) {
             $msg->add(msg_id::PASSWORD_WRONG, []);
+            // the admin dashboard lists the failed logins by the typed name to detect a brute force attack;
+            // a warning is below text_log::LOG_LEVEL, so the entry is forced into the system log
+            log_msg(sys_log_functions::LOGIN_FAILED_TEXT, $usr_name, sys_log_levels::WARNING_ID,
+                sys_log_functions::USER_LOGIN_FAILED, '', null, true);
         }
         return $msg->is_ok();
     }
@@ -1171,7 +1180,7 @@ class user extends db_id_object_non_sandbox
     /**
      * load a user by id from the database
      *
-     * TODO make sure that it is always checked if the requesting user has the sufficient permissions
+     * TODO Prio 1 make sure that it is always checked if the requesting user has the sufficient permissions
      *  param user|null $request_usr the user who has requested the loading of the user data to prevent right gains
      *
      * @param int $id of the user that should be loaded
@@ -1199,8 +1208,29 @@ class user extends db_id_object_non_sandbox
     function data_user(int $req_usr_id, user_message $msg, bool $from_pod = false): user
     {
         $result = $this;
-        // only switch to the requested data user if it differs from the session user (the session
-        // user is already fully loaded via get(), so reloading it by id would drop that setup) and
+        // the session user is already fully loaded via get(), so reloading it by id would drop that setup
+        $data_usr_id = $this->data_user_id($req_usr_id, $from_pod);
+        if ($data_usr_id != $this->id) {
+            $req_usr = new user();
+            $req_usr->load_by_id($data_usr_id, $msg);
+            if ($req_usr->id > 0) {
+                $result = $req_usr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the id of the user whose data an api request should load without loading the user,
+     * e.g. to count the request in the user log for the browsing user (see data_user)
+     * @param int $req_usr_id the requested data user id from the api request, 0 for the session user
+     * @param bool $from_pod true if the request has been sent by this pod itself (see server_guard::from_own_pod)
+     * @return int the id of the session user, or the requested id when the caller is permitted
+     */
+    function data_user_id(int $req_usr_id, bool $from_pod = false): int
+    {
+        $result = $this->id;
+        // only switch to the requested data user if it differs from the session user and
         // only when the session user may see another user's data (an admin or the system user) or
         // the request comes from this pod itself ($from_pod, see server_guard::from_own_pod),
         // because the own html frontend has validated the browsing user's session before calling
@@ -1209,11 +1239,7 @@ class user extends db_id_object_non_sandbox
         if ($req_usr_id > 0
             and $req_usr_id != $this->id
             and ($from_pod or $this->is_admin() or $this->is_system())) {
-            $req_usr = new user();
-            $req_usr->load_by_id($req_usr_id, $msg);
-            if ($req_usr->id > 0) {
-                $result = $req_usr;
-            }
+            $result = $req_usr_id;
         }
         return $result;
     }
@@ -1519,7 +1545,8 @@ class user extends db_id_object_non_sandbox
         $sys->msk_cac = new view_sys_list($this);
         $sys->msk_cac->load($db_con, $msg);
 
-        $sys->times->switch(system_time_type::DEFAULT);
+        // continue with the section of the caller
+        $sys->times->switch();
     }
 
     function has_any_user_this_profile(string $profile_code_id, user_message $msg): bool
@@ -1625,7 +1652,7 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * TODO return a translatable msg_id instead of a string
+     * TODO Prio 2 return a translatable msg_id instead of a string
      * @returns string the active session user object
      */
     function get(user_message $msg): string
@@ -1713,7 +1740,7 @@ class user extends db_id_object_non_sandbox
      * create the core system users
      * BUT only if the user table is empty
      * fixed code to create the initial system user
-     * TODO move to system_user
+     * TODO Prio 2 move to system_user
      * @param user_message $msg OK if the system users have been created
      * @return bool true if the system users have been created
      */
@@ -1972,7 +1999,7 @@ class user extends db_id_object_non_sandbox
     /**
      * check if the user is allowed to permit other user to have the given profile
      * this function is part of the profile list because the profile list is already a cached object
-     * TODO add the missing profiles and use the profile level as a second line of defence
+     * TODO Prio 2 add the missing profiles and use the profile level as a second line of defence
      *
      * @param int $profile_id the profile that should be set
      * @return bool
@@ -2107,7 +2134,7 @@ class user extends db_id_object_non_sandbox
         }
         // the development users can change the code id ...
         if ($this->is_developer()) {
-            // TODO review
+            // TODO Prio 1 review
             // ... but only in the deployed development branch
             // if (!$env->is_development()) {
             $result = true;
@@ -2214,7 +2241,7 @@ class user extends db_id_object_non_sandbox
             if ($msg->is_ok()) {
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
-                // TODO use the right level of the profile
+                // TODO Prio 1 use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
                     $this->save_user($msg, $usr_req);
                 }
@@ -2510,7 +2537,7 @@ class user extends db_id_object_non_sandbox
      */
     function never_used(): bool
     {
-        // TODO just read the change log
+        // TODO Prio 2 just read the change log
         //      and because the change log is expected to be complete
         //      if the change log for this user is empty
         //      it can be assumed that the user has never done any relevant change
@@ -2796,7 +2823,7 @@ class user extends db_id_object_non_sandbox
     }
 
     // remember the last source that the user has used
-    // TODO add the database field
+    // TODO Prio 2 add the database field
     function set_verb($vrb_id): bool
     {
         log_debug('(' . $this->id . ',s' . $vrb_id . ')');
@@ -3369,7 +3396,7 @@ class user extends db_id_object_non_sandbox
         $lib = new library();
         $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
-        // TODO check if the prepared function already exists and if yes, skip the query recreation
+        // TODO Prio 2 check if the prepared function already exists and if yes, skip the query recreation
 
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
@@ -3511,7 +3538,7 @@ class user extends db_id_object_non_sandbox
             $lib = new library();
             $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all, $msg);
 
-            // TODO check if the prepared function already exists and if yes, skip the query recreation
+            // TODO Prio 2 check if the prepared function already exists and if yes, skip the query recreation
 
             // create the main query parameter object and set the query name
             $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
@@ -3870,7 +3897,7 @@ class user extends db_id_object_non_sandbox
             );
         }
 
-        // TODO a profile with more permissions can only be set by a user that has the permission to do so
+        // TODO Prio 1 a profile with more permissions can only be set by a user that has the permission to do so
         if ($obj->profile_id() !== $this->profile_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -3912,7 +3939,7 @@ class user extends db_id_object_non_sandbox
                 $obj->code_id
             );
         }
-        // TODO the confirmation levels should created and be added
+        // TODO Prio 2 the confirmation levels should created and be added
         // the confirmation type should only be changed by the system based on the confirmation process
         // like the password a null in-memory type can only mean "not specified" (e.g. a user rebuilt
         // from an api json without the field), so a null never overwrites the stored type
@@ -4172,12 +4199,21 @@ class user extends db_id_object_non_sandbox
                             'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
                             . ' has been deleted in the meantime.', (new Exception)->getTraceAsString());
                     } else {
-                        // the cache entries of the user reference the user row, so they are
-                        // removed first (see db_cache::del_by_user)
+                        // the cache entries and the user log sessions of the user reference the user row,
+                        // so they are removed first (see db_cache::del_by_user and user_log::del_by_user)
+                        $del_msg = new user_message($msg->usr); // merged back below
                         $cac = new db_cache($this);
-                        $cac->del_by_user($this->id, $msg);
-                        // TODO check if there are related log entries and if yes exclude it instead of delete
-                        parent::del_exe($msg);
+                        $cac->del_by_user($this->id, $del_msg);
+                        $usr_log = new user_log();
+                        $usr_log->del_by_user($this->id, $del_msg);
+                        $msg->merge($del_msg);
+                        if ($del_msg->is_ok()) {
+                            // TODO Prio 1 check if there are related log entries and if yes exclude it instead of delete
+                            parent::del_exe($msg);
+                        } else {
+                            // the user row is not deleted, because its remaining rows would block it
+                            log_debug('delete of ' . $this->dsp_id() . ' skipped');
+                        }
                     }
                 }
             }

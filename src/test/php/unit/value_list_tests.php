@@ -48,7 +48,10 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\group_id_url;
@@ -91,15 +94,48 @@ class value_list_tests
         $test_name = 'test the grp_ids function';
         $val_ids = $t_val->value_list($msg)->grp_ids()->dsp_id();
         $t->assert($test_name, $val_ids, 'π (unit symbol) / Zurich city inhabitants (2019)');
+        // negative: an empty list has no group
+        $test_name = 'an empty value list has no group';
+        $t->assert($test_name, new value_list($t->usr1)->grp_ids()->count(), 0);
+        // the import sets the description and the given name on the group of a value, so the
+        // group that set_grp_ids builds from the phrases must keep them for the save
+        $test_name = 'setting the group ids keeps the description of the group';
+        $desc_lst = new value_list($t->usr1);
+        $desc_lst->add($t_val->value_with_description());
+        $desc_lst->set_grp_ids();
+        $desc_txt = $desc_lst->lst()[0]->get_description() ?? '';
+        $t->assert($test_name, $desc_txt, groups::TN_READ_COM);
+        $test_name = '... and the given name of the group';
+        $name_given = $desc_lst->lst()[0]->grp()->name_given();
+        $t->assert($test_name, $name_given, groups::TN_READ);
+        // negative: a value without a description and name gets none from the new group
+        $test_name = '... but adds no description to a group without one';
+        $plain_lst = new value_list($t->usr1);
+        $plain_lst->add($t_val->value_pi());
+        $plain_lst->set_grp_ids();
+        $plain_desc = $plain_lst->lst()[0]->get_description() ?? '';
+        $t->assert($test_name, $plain_desc, '');
 
         $t->subheader($ts . 'modify value list');
         $time_val_lst = $t_val->value_list($msg)->filter_by_time($msg, $t_phr->phrase_list());
 
+        // a value with a group is added
+        $test_name = 'add a value';
+        $val_lst = new value_list($t->usr1);
+        $added = $val_lst->add($t_val->value_pi());
+        $t->assert_true($test_name, $added);
+
+        // negative: a missing value is not added
+        $test_name = 'add no value for null';
+        $val_lst = new value_list($t->usr1);
+        $added = $val_lst->add(null);
+        $t->assert_false($test_name, $added);
+
         $t->subheader($ts . 'sort value list');
         // the factory adds the low impact value first and the high impact value second
+        $test_name = 'sort by impact descending puts the high impact value first';
         $impact_lst = $t_val->value_list_zh_impact();
         $impact_lst->sort();
-        $test_name = 'sort by impact descending puts the high impact value first';
         $t->assert($test_name, $impact_lst->lst()[0]->impact(), impacts::HIGH);
         $test_name = 'sort by impact descending keeps the low impact value last';
         $t->assert($test_name, $impact_lst->lst()[1]->impact(), impacts::LOW);
@@ -130,6 +166,12 @@ class value_list_tests
         $empty_lst = new value_list($t->usr1);
         $empty_lst->sort();
         $t->assert($test_name, $empty_lst->count(), 0);
+
+        $t->subheader($ts . 'numbers');
+        $test_name = 'the numbers of a value list are in the order of the list';
+        $t->assert($test_name, implode(',', $num_lst->numbers()), '8,2');
+        $test_name = '... and an empty value list has no number';
+        $t->assert($test_name, $empty_lst->numbers(), []);
 
         $t->subheader($ts . 'keep most relevant');
         // the factory adds the low impact value first and the high impact value second
@@ -170,6 +212,16 @@ class value_list_tests
         $api_json = $t_val->value_list($msg)->api_json();
         $val_lst_ui = new value_list_ui($api_json);
         $t->assert_json_string($test_name, $val_lst_ui->api_json(), $api_json);
+        $test_name = 'the api mapper adds every value of the api json';
+        $val_lst = new value_list($t->usr1);
+        $val_lst->api_mapper($t_val->value_list($msg)->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $val_lst->count(), $t_val->value_list($msg)->count());
+        $msg->reset();
+        $test_name = 'the api mapper refuses a value with a text as the number';
+        $val_lst = new value_list($t->usr1);
+        $api_json = [[json_fields::ID => values::PI_SYMBOL_ID, json_fields::NUMBER => values::TEXT]];
+        $t->assert_false($test_name, $val_lst->api_mapper($api_json, $msg));
+        $msg->reset();
 
         $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';
@@ -227,6 +279,22 @@ class value_list_tests
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/value/travel_scoring_value_list.json';
         $t->assert_json_file(new value_list($t->usr1), $json_file);
+
+        // a list of more than one value exports each value by its phrase that is not part of the context
+        $test_name = 'export the values of a list';
+        $val_lst = $t_val->value_list_math();
+        $exp = $val_lst->export_json($msg, [], false);
+        $exp_values = $exp[json_fields::VALUES];
+        $first = $exp_values[0];
+        $t->assert($test_name, $first[word_names::PI_SYMBOL], values::PI);
+        $msg->reset();
+
+        // negative: a list with only one value exports no values
+        $test_name = 'export no values of a single value list';
+        $val_lst = $t_val->list_pi();
+        $exp = $val_lst->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VALUES, $exp);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

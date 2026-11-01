@@ -55,9 +55,9 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use Zukunft\ZukunftCom\test\php\create\test_db_load;
 use Zukunft\ZukunftCom\test\php\unit\lib_tests;
 use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
-use Zukunft\ZukunftCom\test\php\unit_workflow\word_url_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
+use const Zukunft\ZukunftCom\test\php\utils\INTEGRATION_TEST;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_IMPORT . 'import_file.php';
@@ -146,6 +146,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 // run the general db write tests
                 new user_write_tests()->run($t);
+                new user_log_write_tests()->run($t);
                 new sys_log_write_tests()->run($t);
                 new db_cache_page_write_tests()->run($t);
                 // TODO Prio 0 activate
@@ -192,15 +193,17 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 new api_write_tests()->run($t);
                 new import_write_tests()->run($t);
-
-                // url tests
-                new word_url_tests()->run($t);
+                // reads the live wikidata and refreshes the captured json of the wikidata cache folder
+                if (INTEGRATION_TEST) {
+                    new wikidata_write_tests()->run($t);
+                }
+                new update_put_write_tests()->run($t);
 
                 // TODO Prio 2 activate
                 // run_export_test($t);
                 // run_permission_test ($t);
 
-                // TODO add a test the checks if import returns the expected error messages e.g. if a triple has the name of a word
+                // TODO Prio 2 add a test the checks if import returns the expected error messages e.g. if a triple has the name of a word
 
                 run_legacy_test($t);
                 run_math_test($t);
@@ -210,7 +213,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 // TODO Prio 2 activate
                 //$this->run_api_test();
                 //run_word_ui_test($t);
-                // TODO add a test to merge a separate opened phrase canton Zürich with Zurich (canton)
+                // TODO Prio 2 add a test to merge a separate opened phrase canton Zürich with Zurich (canton)
                 run_word_display_test($t);
 
                 // import_test_data() and import_base_data($usr) is intentionally not called here to keep test.php fast
@@ -232,7 +235,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
     /**
      * recreate the database to test the database setup script
-     * TODO make sure that this can never be called in PROD
+     * TODO Prio 1 make sure that this can never be called in PROD
      *
      * @param user_message $msg to collect the messages that should be shown to the user immediately
      * @return void
@@ -264,7 +267,7 @@ class all_unit_write_tests extends all_unit_read_tests
     }
 
     /**
-     * TODO fill a user_message with the warning and error messages and return true if successful
+     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
      * import all zukunft.com data via json files for the unit and db read testing
      * @param user $usr the user who should be owner of the data
      * @return string any error or warning message during import
@@ -298,7 +301,7 @@ class all_unit_write_tests extends all_unit_read_tests
     }
 
     /**
-     * TODO fill a user_message with the warning and error messages and return true if successful
+     * TODO Prio 2 fill a user_message with the warning and error messages and return true if successful
      * import all zukunft.com initial setup data vie json files
      * should not include data used for system testing to prevent volatile test data
      * @param user $usr the user who should be owner of the data

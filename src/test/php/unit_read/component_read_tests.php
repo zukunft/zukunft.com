@@ -71,6 +71,13 @@ class component_read_tests
         $test_name .= ' component id';
         $t->assert($test_name, $cmp_lnk->get_component()->id, $cmp->id);
 
+        // a view id of zero is never in the database, so no link is loaded
+        $test_name = 'load no component link of a view without id';
+        $lnk_none = new component_link($t->usr1);
+        $loaded = $lnk_none->load_by_link_and_type(0, 1, $cmp->id, $msg);
+        $t->assert_false($test_name, $loaded);
+        $msg->reset();
+
     }
 
 }

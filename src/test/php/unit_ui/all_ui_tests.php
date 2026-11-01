@@ -53,6 +53,7 @@ include_once test_paths::UNIT_UI . 'value_ui_tests.php';
 include_once test_paths::UNIT_UI . 'value_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'formula_ui_tests.php';
 include_once test_paths::UNIT_UI . 'formula_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'number_format_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_ui_tests.php';
 include_once test_paths::UNIT_UI . 'result_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'figure_ui_tests.php';
@@ -61,6 +62,10 @@ include_once test_paths::UNIT_UI . 'view_ui_tests.php';
 include_once test_paths::UNIT_UI . 'view_list_ui_tests.php';
 include_once test_paths::UNIT_UI . 'component_ui_tests.php';
 include_once test_paths::UNIT_UI . 'component_list_ui_tests.php';
+include_once test_paths::UNIT_UI . 'process_catch_ui_tests.php';
+include_once test_paths::UTILS . 'headless_browser.php';
+include_once test_paths::UNIT_UI . 'use_case_ui_tests.php';
+include_once test_paths::UNIT_UI . 'phrase_data_ui_tests.php';
 include_once test_paths::UNIT_UI . 'source_ui_tests.php';
 include_once test_paths::UNIT_UI . 'reference_ui_tests.php';
 include_once test_paths::UNIT_UI . 'reference_list_ui_tests.php';
@@ -124,6 +129,7 @@ class all_ui_tests extends all_unit_tests
         new start_page_ui_tests()->run($t);
         new formula_ui_tests()->run($t);
         new formula_list_ui_tests()->run($t);
+        new number_format_ui_tests()->run($t);
         new result_ui_tests()->run($t);
         new result_list_ui_tests()->run($t);
         new figure_ui_tests()->run($t);
@@ -134,6 +140,9 @@ class all_ui_tests extends all_unit_tests
         new view_list_ui_tests()->run($t);
         new component_ui_tests()->run($t);
         new component_list_ui_tests()->run($t);
+        new process_catch_ui_tests()->run($t);
+        new use_case_ui_tests()->run($t);
+        new phrase_data_ui_tests()->run($t);
         new language_ui_tests()->run($t);
         new change_log_ui_tests()->run($t);
         new sys_log_ui_tests()->run($t);
@@ -142,7 +151,7 @@ class all_ui_tests extends all_unit_tests
 
         new localhost_ui_tests()->run($t);
 
-        // TODO compare with run_ui_test in all_unit_read_tests
+        // TODO Prio 2 compare with run_ui_test in all_unit_read_tests
         //new start_ui_tests()->run($t);
         // test all relevant system views (to deprecate? - new in horizontal_test.php)
         new spacial_cases_ui_tests()->run($t, $ui);

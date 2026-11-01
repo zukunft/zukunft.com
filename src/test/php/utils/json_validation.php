@@ -121,6 +121,7 @@ class json_validation
         'files::FULL_LOAD_FILES' => cfg_files::FULL_LOAD_FILES,
         'files::USE_CASE_FILES' => cfg_files::USE_CASE_FILES,
         'files::SYSTEM_DATA_APPENDED_FILES' => cfg_files::SYSTEM_DATA_APPENDED_FILES,
+        'files::USE_CASE_FILES_APPENDED' => cfg_files::USE_CASE_FILES_APPENDED,
         'test_files::TEST_DATA_FILES' => test_files::TEST_DATA_FILES,
         'test_files::TEST_DATA_FILES_DIRECT' => test_files::TEST_DATA_FILES_DIRECT,
         'test_files::TEST_DATA_FILES_NOT_REVIEWED' => test_files::TEST_DATA_FILES_NOT_REVIEWED,
@@ -147,13 +148,19 @@ class json_validation
     // the reasons of a value source finding, the first part of the finding key
     const string SOURCE_MISSING = 'no source';
     const string SOURCE_NOT_IN_FILE = 'source not defined in the file';
-    // a value with one of these phrases states the uncertainty of another value and is an own
-    // assessment and not data, so it needs no source; a range factor cannot carry "assumed",
-    // because the range formula selects its target by that word
+    // a value with one of these phrases is an own estimate, the output of a model or a formula, a
+    // setting of an input field or states the uncertainty of another value, so it is not measured
+    // data and needs no source; a range factor cannot carry "assumed", because the range formula
+    // selects its target by that word
     const array SOURCE_EXEMPT_PHRASES = [
         words::ASSUMED,
+        words::MODELLED,
+        words::CALCULATED,
         words::CONFIDENCE,
         triples::PROBABILITY_RANGE_FACTOR,
+        triples::FIELD_LIMIT_DOWN,
+        triples::FIELD_LIMIT_UP,
+        triples::FIELD_STEP,
     ];
     const string CHK_NUMBER_TYPE = 'value with more than one measure unit, percent or factor phrase';
     // the phrase types that say how a number is stated, so a value has only one phrase of them
@@ -238,6 +245,7 @@ class json_validation
         json_fields::VALUES => 'value',
         json_fields::VALUE_LIST => 'value_list',
         json_fields::VIEWS => 'view',
+        json_fields::VIEW_RELATIONS => 'view_relation',
         json_fields::COMPONENTS => 'component',
         json_fields::CALC_VALIDATION => 'result',
         json_fields::RESULTS => 'result',
@@ -323,7 +331,8 @@ class json_validation
         $md_txt .= $this->section_md(self::CHK_SOURCE, $find_lst,
             'a measured value names the source it is taken from, so that a reader can check it;'
             . ' a value with one of the phrases "' . implode('", "', self::SOURCE_EXEMPT_PHRASES) . '"'
-            . ' is an own estimate or assesses the uncertainty of another value and needs none;'
+            . ' is an own estimate, the output of a model or a formula, a setting of an input field or assesses'
+            . ' the uncertainty of another value and needs none;'
             . ' the import resolves the source by its name within the file only (import_mapper'
             . ' reads the data object of the file), so a source that the file does not define in'
             . ' its "sources" section is reported as missing on import; the list shows the values'

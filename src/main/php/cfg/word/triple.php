@@ -94,6 +94,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_related.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -102,6 +103,8 @@ include_once paths::MODEL_FORMULA . 'formula_list.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
+// for sandbox_related::views_assigned; loaded via word.php like view.php, because term.php includes this file
+//include_once paths::MODEL_VIEW . 'term_view_list.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
@@ -153,6 +156,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_related;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -293,6 +297,9 @@ class triple extends sandbox_link_named
     // the views suggested for this triple (currently its own default view); populated lazily by
     // load_views_related() and only emitted via api_json_array() when the INCL_RELATED flag is set
     public ?view_list $views_related = null;
+    // the views assigned to this triple by the import, which the edit menu of the navbar offers
+    // first; populated lazily by load_views_assigned() like the views of a word
+    public ?view_list $views_assigned = null;
 
 
     /*
@@ -395,7 +402,7 @@ class triple extends sandbox_link_named
                     $this->set_verb_id($db_row[verb_db::FLD_ID]);
                 }
             }
-            // TODO use json_fields object
+            // TODO Prio 2 use json_fields object
             if (array_key_exists(triple_fields::FLD_NAME_GIVEN, $db_row)) {
                 $this->name_given = $db_row[triple_fields::FLD_NAME_GIVEN];
             }
@@ -404,6 +411,12 @@ class triple extends sandbox_link_named
             }
             if (array_key_exists(fields::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[fields::FLD_CODE_ID]);
+            }
+            // the default view e.g. of the triple "mathematical constant", like for a word
+            if (array_key_exists(fields::FLD_VIEW, $db_row)) {
+                if ($db_row[fields::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[fields::FLD_VIEW]);
+                }
             }
             if (array_key_exists(triple_fields::FLD_WIGHT, $db_row)) {
                 $this->weight = $db_row[triple_fields::FLD_WIGHT];
@@ -459,7 +472,7 @@ class triple extends sandbox_link_named
             $this->impact = $api_json[fields::FLD_IMPACT];
         }
 
-        // TODO move plural to language forms
+        // TODO Prio 2 move plural to language forms
         /*
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
@@ -573,7 +586,7 @@ class triple extends sandbox_link_named
                     if ($db_con->is_open()) {
                         $msg->add(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
                         $vrb->set_user($this->get_user());
-                        // TODO remove this exception
+                        // TODO Prio 2 remove this exception
                         $vrb->save($msg);
                     }
                     $dto?->add_verb($vrb, $msg);
@@ -622,7 +635,7 @@ class triple extends sandbox_link_named
             $value = $in_ex_json[json_fields::VIEW];
             $trp_view = new view($this->get_user());
             if ($db_con->is_open()) {
-                // TODO replace all load in the import mapper with get functions
+                // TODO Prio 2 replace all load in the import mapper with get functions
                 $trp_view->load_by_name($value, $msg);
                 if ($trp_view->id() == 0) {
                     $msg->add(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
@@ -792,21 +805,14 @@ class triple extends sandbox_link_named
      * load the views related to this triple into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; currently the triple's own
      * default view, loaded by id so that it carries the name the api and frontend name_link need
-     * TODO add the default views of the parent phrases once the triple exposes a parents() list,
+     * TODO Prio 2 add the default views of the parent phrases once the triple exposes a parents() list,
      *      mirroring word::load_views_related()
      */
     function load_views_related(user_message $msg): void
     {
         $msk_lst = new view_list($this->get_user());
-        if ($this->view != null and $this->get_view_id() > 0) {
-            $msk = new view($this->get_user());
-            $msk->load_by_id($this->get_view_id(), $msg);
-            // a view that cannot be loaded must not enter the list, because a list holding an
-            // unloaded entry is not empty and would suppress the system default view fallback
-            if ($msk->id() > 0) {
-                $msk_lst->add($msk);
-            }
-        }
+        // the own default view on top
+        $msk_lst->add_by_id($this->get_view_id(), $msg);
         // a triple without an own default view is shown with the system default triple view,
         // so the views tab of the triple page offers at least this view
         if ($msk_lst->is_empty()) {
@@ -817,6 +823,18 @@ class triple extends sandbox_link_named
             }
         }
         $this->views_related = $msk_lst;
+    }
+
+    /**
+     * load the views that the import has assigned to this triple into the in-memory views_assigned
+     * list, so that the edit menu of the navbar can offer them first like for a word
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_assigned(user_message $msg): void
+    {
+        $this->views_assigned = new sandbox_related()->views_assigned($this->term(), $msg);
     }
 
     function api_json_array(api_type_list|array $typ_lst, user_message $msg, user|null $usr = null): array
@@ -830,6 +848,10 @@ class triple extends sandbox_link_named
             if ($typ_lst->phrase_names()) {
                 $vars[json_fields::ID] = $this->id();
                 $vars[json_fields::NAME] = $this->name();
+                // e.g. so that the settings page finds the colour mode setting by the code id of its triple
+                if ($this->get_code_id() != null) {
+                    $vars[json_fields::CODE_ID] = $this->get_code_id();
+                }
             } else {
                 $vars = parent::api_json_array($typ_lst, $msg, $usr);
                 // the from, verb and to names are included for a page request (incl_related)
@@ -893,6 +915,11 @@ class triple extends sandbox_link_named
                 }
                 $vars[json_fields::USAGE] = $this->usage;
                 $vars[json_fields::IMPACT] = $this->impact;
+                // the default view of the triple, so that a link to it opens e.g. the calculator
+                // (json_fields::VIEW is the id here, like for the word)
+                if ($this->get_view_id() > 0) {
+                    $vars[json_fields::VIEW] = $this->get_view_id();
+                }
                 // related data is keyed by the triple's phrase id, so a fresh
                 // triple (id 0, e.g. the add form) has none to load
                 if ($typ_lst->incl_related() and $this->id() != 0) {
@@ -942,6 +969,11 @@ class triple extends sandbox_link_named
                         $vars[json_fields::VIEWS] = $this->views_related->api_json_array(
                             new api_type_list(), $msg, $usr);
                     }
+                    if ($this->views_assigned == null and !$typ_lst->test_mode()) {
+                        $this->load_views_assigned($msg);
+                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }
@@ -974,7 +1006,7 @@ class triple extends sandbox_link_named
             $phr->api_mapper($value, $msg);
         } elseif (is_int($value)) {
             if ($value != 0) {
-                // TODO use phrase cache
+                // TODO Prio 2 use phrase cache
                 $phr->set_id($value);
             }
         } else {
@@ -1345,6 +1377,15 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * @return bool true if the verb is one of verbs::PRELOAD_VERBS e.g. "is symbol for", so that the
+     *              triple is part of the system phrases of the cached types api message
+     */
+    function has_preload_verb(): bool
+    {
+        return in_array($this->get_verb_code_id(), verbs::PRELOAD_VERBS);
+    }
+
+    /**
      * set the "from" phrase of this triple
      * e.g. "city" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
      *
@@ -1507,7 +1548,7 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * TODO check where the function or the db value should be used
+     * TODO Prio 2 check where the function or the db value should be used
      */
     function name_generated(): ?string
     {
@@ -1731,6 +1772,14 @@ class triple extends sandbox_link_named
         return $result;
     }
 
+    /**
+     * @return bool false if this triple may be the reverse of an existing one, e.g. an order triple
+     */
+    function needs_reverse_check(): bool
+    {
+        return !in_array($this->get_verb_code_id(), verbs::WITHOUT_REVERSE_CHECK);
+    }
+
     function needs_from(): bool
     {
         $needs_from = true;
@@ -1878,7 +1927,7 @@ class triple extends sandbox_link_named
     function fill(triple|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $msg = parent::fill($obj, $usr_req);
-        // TODO use set and get function to enable phrase fill
+        // TODO Prio 2 use set and get function to enable phrase fill
         $trp = null;
         if ($obj::class == triple::class) {
             $trp = $obj;
@@ -1907,8 +1956,10 @@ class triple extends sandbox_link_named
                 $this->get_to()->fill($trp->get_to(), $usr_req);
             }
 
-            // fill the names
-            if ($this->name_given === null and $trp->name_given != null) {
+            // fill the names, but not the given name of the database if another name is requested,
+            // because it is the old name e.g. of the user overlay row on a rename back
+            $is_renamed = ($this->name !== null and $this->name != $trp->name(true));
+            if ($this->name_given === null and $trp->name_given != null and !$is_renamed) {
                 $this->name_given = $trp->name_given;
             }
             if ($this->name_generated === null and $trp->name_generated != '') {
@@ -1999,7 +2050,7 @@ class triple extends sandbox_link_named
         }
     }
 
-    // TODO add a function for each type and streamline the call
+    // TODO Prio 3 add a function for each type and streamline the call
 
 
     /*
@@ -2045,7 +2096,7 @@ class triple extends sandbox_link_named
 
     /**
      * @returns term the triple object cast into a term object
-     * TODO remove lines not needed any more
+     * TODO Prio 2 remove lines not needed any more
      */
     function term(): term
     {
@@ -2645,7 +2696,7 @@ class triple extends sandbox_link_named
             $this->set_to($this->get_from());
             $this->set_verb_id($this->get_verb_id() * -1);
             /*
-             * TODO remove
+             * TODO Prio 2 remove
             if ($this->has_verb()) {
                 $this->verb->set_name($this->verb->reverse());
             }
@@ -2747,6 +2798,12 @@ class triple extends sandbox_link_named
                 $result = true;
             }
         }
+        // e.g. the default view that assigned_views.json adds to the triple "mathematical constant"
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
+                $result = true;
+            }
+        }
         return $result;
     }
 
@@ -2845,7 +2902,7 @@ class triple extends sandbox_link_named
     {
         log_debug('triple->not_used (' . $this->id() . ')');
 
-        // TODO review: maybe replace by a database foreign key check
+        // TODO Prio 2 review: maybe replace by a database foreign key check
         return $this->not_changed($msg);
     }
 
@@ -3016,7 +3073,7 @@ class triple extends sandbox_link_named
 
         global $db_con;
 
-        // TODO review: do not set the generated name if it matches the name
+        // TODO Prio 2 review: do not set the generated name if it matches the name
         $this->set_names();
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc, $msg, new sql_type_list([sql_type::LOG]));
@@ -3041,7 +3098,7 @@ class triple extends sandbox_link_named
         $sim = parent::get_similar($msg);
 
         // check if the opposite triple already exists and if yes, ask for confirmation
-        if ($this->id() == 0) {
+        if ($this->id() == 0 and $this->needs_reverse_check()) {
             log_debug('check if a new triple for "' . $this->get_from()->name() . '" and "' . $this->get_to()->name() . '" needs to be created');
             // check if the reverse triple is already in the database
             $db_chk_rev = $this->clone_reset();
@@ -3256,7 +3313,7 @@ class triple extends sandbox_link_named
         } else {
             // add the from and to fields even if the objects are the same in case of an insert exclude to identify the rows
             if ($is_insert) {
-                // TODO check how to handle if the standard
+                // TODO Prio 2 check how to handle if the standard
                 // $sbx can in this case be e.g. the standard object and $this is the object updated by the user
                 if ($this->is_excluded() and !$obj->is_excluded()) {
                     // the verb field is added for triple exclude insert statements
@@ -3281,7 +3338,7 @@ class triple extends sandbox_link_named
                         $obj->get_verb_id(),
                         $sys->typ_lst->vrb
                     );
-                    // TODO check if the excluded field is not already added by the sandbox function
+                    // TODO Prio 2 check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
                         $lst->add_field(
                             sql::FLD_LOG_FIELD_PREFIX . fields::FLD_EXCLUDED,
@@ -3319,7 +3376,7 @@ class triple extends sandbox_link_named
                 }
             }
         }
-        // TODO check if the excluded field is not already added by the sandbox function
+        // TODO Prio 2 check if the excluded field is not already added by the sandbox function
         if ($obj->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
@@ -3350,7 +3407,7 @@ class triple extends sandbox_link_named
                 $obj->name_given()
             );
         }
-        // TODO add test case
+        // TODO Prio 2 add test case
         // if the user has not changed the name or the give name the generated name does not need to be taken into account
         if (!$usr_tbl and ($obj->name != '' or $obj->name_given() != '')) {
             if ($obj->name_generated() !== $this->name_generated()) {
@@ -3444,7 +3501,7 @@ class triple extends sandbox_link_named
                 $obj->view
             );
         }
-        // TODO add ref list
+        // TODO Prio 2 add ref list
         return $lst->merge($this->db_changed_sandbox_list($obj, $sc_par_lst));
     }
 
@@ -3457,7 +3514,7 @@ class triple extends sandbox_link_named
     /**
      * @return string with the unique id fields
      * TODO Prio 1 never use functions in dsp_id t avoid endless loops
-     * TODO check if $this->load_objects(); needs to be called from the calling function upfront
+     * TODO Prio 2 check if $this->load_objects(); needs to be called from the calling function upfront
      */
     function dsp_id(): string
     {

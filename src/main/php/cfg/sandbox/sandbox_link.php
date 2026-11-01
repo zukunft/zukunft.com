@@ -26,7 +26,7 @@
     TODO Prio 2 rename predicate to type
                 because predicate makes only sense for triples
                 where verb is the batter name for the reference to the object
-    TODO add weight with int and 100'000 as 100% because
+    TODO Prio 3 add weight with int and 100'000 as 100% because
          humans usually cannot handle more than 100'000 words
          so weight sorted list has a single place for each word
 
@@ -177,7 +177,7 @@ class sandbox_link extends sandbox
     public ?int $predicate_id = null;
 
     // database fields only used for objects that link two objects
-    // TODO create a more specific object that covers all the objects that could be linked e.g. linkable_object
+    // TODO Prio 2 create a more specific object that covers all the objects that could be linked e.g. linkable_object
     public ?string $from_name = null;  // the name of the from object type e.g. view for component_links
     public ?string $to_name = '';      // the name of the  to  object type e.g. view for component_links
 
@@ -1242,7 +1242,7 @@ class sandbox_link extends sandbox
         $log->new_to = $this->tob;
 
         $log->set_action(change_actions::ADD, $msg);
-        // TODO add the table exceptions from sql_db
+        // TODO Prio 2 add the table exceptions from sql_db
         $tbl_name = $lib->class_to_name($this::class);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION, $msg);
         $log->row_id = 0;
@@ -1275,7 +1275,7 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * TODO for normal fields use the change log, but for link changes use the link log
+     * TODO Prio 2 for normal fields use the change log, but for link changes use the link log
      * @param user_message $msg to report a change log entry that cannot be written
      * @return change|change_link the object that is used to log the user changes
      */
@@ -1291,7 +1291,7 @@ class sandbox_link extends sandbox
 
     /**
      * create a new link object and log the change
-     * TODO do a rollback in case of an error
+     * TODO Prio 1 do a rollback in case of an error
      * @param user_message $msg with status ok
      *                              or if something went wrong
      *                              the message that should be shown to the user
@@ -1318,7 +1318,7 @@ class sandbox_link extends sandbox
 
     /**
      * check if the id parameters are supposed to be changed
-     * TODO add the link type for word links
+     * TODO Prio 2 add the link type for word links
      * @param sandbox_link $db_rec the object data as it is now in the database
      * @return bool true if one of the object id fields have been changed
      */
@@ -1330,7 +1330,7 @@ class sandbox_link extends sandbox
         if ($db_rec->fob->id() <> $this->fob->id()
             or $db_rec->tob->id() <> $this->tob->id()) {
             $result = True;
-            // TODO check if next line is needed
+            // TODO Prio 2 check if next line is needed
             // $this->reset_objects();
         }
 
@@ -1484,8 +1484,8 @@ class sandbox_link extends sandbox
     /**
      * check if target key value already exists
      * overwritten in the word class for formula link words
-     * TODO load the user value not the standard value but also check the standard value
-     * TODO should not ADDITIONAL the user-specific load be called
+     * TODO Prio 2 load the user value not the standard value but also check the standard value
+     * TODO Prio 2 should not ADDITIONAL the user-specific load be called
      *
      * @return sandbox object with id zero if no object with the same id is found
      */
@@ -1509,7 +1509,7 @@ class sandbox_link extends sandbox
 
     /**
      * create the sql statement to add a new link sandbox object e.g. triple to the database
-     * TODO add qp merge
+     * TODO Prio 2 add qp merge
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
@@ -1903,7 +1903,7 @@ class sandbox_link extends sandbox
                     $from_fld = sql::FROM_FLD_PREFIX . $from_fld;
                     $to_fld = sql::TO_FLD_PREFIX . $to_fld;
                 }
-                // TODO check how to handle if the standard
+                // TODO Prio 2 check how to handle if the standard
                 if (($this->is_excluded() and !$obj->is_excluded()) or $is_delete) {
                     if ($do_log) {
                         $lst->add_field(
@@ -2035,7 +2035,7 @@ class sandbox_link extends sandbox
     /**
      * create the sql statement to add a new sandbox link object to the database
      * always all fields are included in the query to be able to remove overwrites with a null value
-     * TODO check first the query name and skip the sql building if not needed
+     * TODO Prio 2 check first the query name and skip the sql building if not needed
      *
      * @param sql_creator $sc with the target db_type set
      * @param user_message $msg the user message object that collects any issues during the sql creation

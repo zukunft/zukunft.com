@@ -135,6 +135,14 @@ class test_phrases
         return $t_trp->zh_city()->phrase();
     }
 
+    /**
+     * @return phrase_list without any phrase e.g. the phrases of names that the database does not have
+     */
+    function list_empty(): phrase_list
+    {
+        return new phrase_list($this->env->usr1);
+    }
+
     function phrase_list(): phrase_list
     {
         $t_wrd = new test_words($this->env);
@@ -166,6 +174,18 @@ class test_phrases
         $lst->add($t_wrd->word_one()->phrase());
         $lst->add($t_wrd->word_inhabitant()->phrase());
         return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the web mass units kg and tonne, which a number format converts into each other
+     */
+    function phrase_list_mass_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->kg()->phrase());
+        $lst->add($t_wrd->tonne()->phrase());
+        return $this->ui_list($lst);
     }
 
     /**
@@ -755,7 +775,7 @@ class test_phrases
 
     /**
      * @return phrase_list the request cache that knows the symbol of percent, so that a number
-     *                     with a percent phrase can be shown as e.g. "1.23%"
+     *                     with a percent phrase can be shown as e.g. "1.23 %"
      */
     function list_percent_symbol_cache(): phrase_list
     {
@@ -774,6 +794,28 @@ class test_phrases
     function list_percent_symbol_cache_ui(): phrase_list_ui
     {
         return $this->ui_list($this->list_percent_symbol_cache());
+    }
+
+    /**
+     * @return phrase_list the request cache that knows the symbol "share" of the percent unit share (ratio)
+     */
+    function list_share_symbol_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_share()->phrase());
+        $lst->add($t_trp->share_ratio()->phrase());
+        $lst->add($t_trp->share_symbol()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend request cache that knows the symbol of the share unit
+     */
+    function list_share_symbol_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_share_symbol_cache());
     }
 
     /**
@@ -818,6 +860,30 @@ class test_phrases
     function list_unit_symbol_cache_ui(): phrase_list_ui
     {
         return $this->ui_list($this->list_unit_symbol_cache());
+    }
+
+    /**
+     * @return phrase_list the unit, percent and scaling words of the system phrases with the hidden scaling
+     *                     word "one" and the word "mathematics" without a type to test which phrase is a unit
+     */
+    function list_units_cache(): phrase_list
+    {
+        $t_wrd = new test_words($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_kwh()->phrase());
+        $lst->add($t_wrd->word_percent()->phrase());
+        $lst->add($t_wrd->word_million()->phrase());
+        $lst->add($t_wrd->word_one()->phrase());
+        $lst->add($t_wrd->word_math()->phrase());
+        return $lst;
+    }
+
+    /**
+     * @return phrase_list_ui the frontend cache of the unit, percent and scaling words
+     */
+    function list_units_cache_ui(): phrase_list_ui
+    {
+        return $this->ui_list($this->list_units_cache());
     }
 
     function phrase_list_zh_mio(): phrase_list
@@ -1280,6 +1346,27 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the table editor example: "populism solution" with the link up to
+     *         "global problem", the mayor and the minor column tier of "column (system)" and one
+     *         column of each tier that is related to "populism solution" and one that is not
+     */
+    function list_column_tiers_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->populism_solution()->phrase());
+        $lst->add($t_trp->populism_problem()->phrase());
+        $lst->add($t_trp->global_problem()->phrase());
+        $lst->add($t_trp->column_system()->phrase());
+        $lst->add($t_trp->column_tier_mayor()->phrase());
+        $lst->add($t_trp->column_tier_minor()->phrase());
+        $lst->add($t_trp->column_problem()->phrase());
+        $lst->add($t_trp->column_solution()->phrase());
+        $lst->add($t_trp->column_cost()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * @return phrase_list_ui the "global problem" context for frontend unit testing
      */
     function list_global_problems_ui(): phrase_list_ui
@@ -1636,6 +1723,31 @@ class test_phrases
     }
 
     /**
+     * @return phrase_list_ui the "potential gain" column defined per unit like in solution_prio.json:
+     *         in EUR as a mayor and in htp as a minor column, without a definition for any unit
+     */
+    function list_columns_gain_units_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_potential_gain_in_eur()->phrase());
+        $lst->add($t_trp->column_potential_gain_in_htp()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the "potential gain" column defined for any unit only, so that the
+     *         unit of the most values fills the column
+     */
+    function list_columns_potential_gain_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_trp->column_potential_gain()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
      * a list of currencies and their common parent "currency" linked via the "is a" verb
      * e.g. to test word::similar where the similar words of "Swiss franc" are "Euro" and "US Dollar"
      *
@@ -1707,6 +1819,178 @@ class test_phrases
      * @param phrase_list $lst tbe backend list to convert
      * @return phrase_list_ui the converted frontend list
      */
+    /**
+     * @return phrase_list_ui the field types of process_catch_fields.json with the inhabitants as a
+     *         number field and the city as a phrase selector of the page Zurich, which uses Bern
+     */
+    function list_input_fields_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_city()->phrase());
+        $lst->add($t_wrd->word_bern()->phrase());
+        $lst->add($t_trp->field_number_with_limits()->phrase());
+        $lst->add($t_trp->field_phrase_selector_type()->phrase());
+        $lst->add($t_trp->field_inhabitants()->phrase());
+        $lst->add($t_trp->field_city()->phrase());
+        $lst->add($t_trp->zh_uses_bern()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * the phrases of the input fields with the year 2019 as the field value phrase of the inhabitants
+     * @return phrase_list_ui the input field phrases with the field value phrase triples
+     */
+    function list_input_field_value_phrases_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        $lst->add($t_wrd->word_zh()->phrase());
+        $lst->add($t_wrd->word_inhabitant()->phrase());
+        $lst->add($t_wrd->word_2019()->phrase());
+        $lst->add($t_wrd->word_2020()->phrase());
+        $lst->add($t_trp->field_number_with_limits()->phrase());
+        $lst->add($t_trp->field_inhabitants()->phrase());
+        $lst->add($t_trp->field_value_phrases()->phrase());
+        $lst->add($t_trp->inhabitants_input_year()->phrase());
+        $lst->add($t_trp->inhabitants_field_value_phrase()->phrase());
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculator reader test with the page phrase
+     *         Zurich (city), which is built from Zurich, the phrases of the calculator and Bern (city)
+     */
+    function list_calculator_ui(): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        foreach ([$t_wrd->word_zh(), $t_wrd->word_city(), $t_wrd->word_canton(), $t_wrd->word_bern(),
+                     $t_wrd->word_inhabitant(), $t_wrd->word_2019(), $t_wrd->word_2020(),
+                     $t_trp->zh_city(), $t_trp->triple_bern(), ...$t_trp->calculator_zh()] as $obj) {
+            $lst->add($obj->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculator input test: the reader test with
+     *         the inhabitants as a number field and the canton as a phrase selector
+     */
+    function list_calculator_input_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui([]);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the button test: the calculator input test with a download button
+     */
+    function list_calculator_button_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_button());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the check table test: the calculator input test with the check group
+     */
+    function list_calculator_check_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_check());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the warning test: the calculator input test with a warning of the inhabitants
+     */
+    function list_calculator_warning_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_warning());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the field type test: the calculator input test
+     *         with a read only, a checkbox and a repeated field
+     */
+    function list_calculator_fields_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_fields());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the test with two instances of a repeated field and the imports
+     */
+    function list_calculator_instances_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_instances());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculation result test: the calculator
+     *         input test with the result column, the signed row group and the detail table
+     */
+    function list_calculator_result_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_result());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculation result test with a colour and a hint of the detail table
+     */
+    function list_calculator_detail_style_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_detail_style());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the calculation result test with the sign flag on a row
+     */
+    function list_calculator_signed_row_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_signed_row());
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the number note test: the calculation result test
+     *         with a note behind the unit of the number of the row inhabitants
+     */
+    function list_calculator_number_note_ui(): phrase_list_ui
+    {
+        $t_trp = new test_triples($this->env);
+        return $this->calculator_input_ui([...$t_trp->calculator_zh_result(), ...$t_trp->calculator_zh_number_note()]);
+    }
+
+    /**
+     * @return phrase_list_ui the request cache of the proposed keyword test: the calculator input
+     *         test with a triple from the inputs to a keyword that the page does not show yet
+     */
+    function list_calculator_proposed_ui(): phrase_list_ui
+    {
+        return $this->calculator_input_ui(new test_triples($this->env)->calculator_zh_proposed());
+    }
+
+    /**
+     * @param array $extra the triples that a test adds to the calculator input test
+     * @return phrase_list_ui the request cache of the calculator input test with the given triples
+     */
+    private function calculator_input_ui(array $extra): phrase_list_ui
+    {
+        $t_wrd = new test_words($this->env);
+        $t_trp = new test_triples($this->env);
+        $lst = new phrase_list($this->env->usr1);
+        foreach ([$t_wrd->word_zh(), $t_wrd->word_city(), $t_wrd->word_canton(), $t_wrd->word_bern(),
+                     $t_wrd->word_inhabitant(), $t_wrd->word_2019(), $t_wrd->word_2020(),
+                     $t_trp->zh_city(), $t_trp->triple_bern(), ...$t_trp->calculator_zh(),
+                     $t_trp->field_number_with_limits(), $t_trp->field_phrase_selector_type(),
+                     $t_trp->field_inhabitants(), ...$t_trp->calculator_zh_input(), ...$extra] as $obj) {
+            $lst->add($obj->phrase());
+        }
+        return $this->ui_list($lst);
+    }
+
     private function ui_list(phrase_list $lst): phrase_list_ui
     {
         return new phrase_list_ui($lst->api_json([api_types::INCL_PHRASES]));

@@ -38,9 +38,13 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_log_sum.php';
+include_once html_paths::USER . 'user_log_sum_list.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
@@ -64,13 +68,16 @@ include_once paths::MODEL_VIEW . 'view_relation.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'word_names.php';
+include_once test_paths::CREATE . 'test_admin_dashboard.php';
+include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::CREATE . 'test_config_trees.php';
 include_once test_paths::CREATE . 'test_mappers.php';
 include_once test_paths::CREATE . 'test_mappers.php';
@@ -107,26 +114,34 @@ use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
 use Zukunft\ZukunftCom\main\php\shared\helper\MapObject;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_admin_dashboard;
 use Zukunft\ZukunftCom\test\php\create\test_config_trees;
 use Zukunft\ZukunftCom\test\php\create\test_const;
 use Zukunft\ZukunftCom\test\php\create\test_mappers;
@@ -136,17 +151,25 @@ use Zukunft\ZukunftCom\test\php\create\test_users;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_words;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\utils\test_lib;
+use DateTime;
+use DateTimeInterface;
 
 class system_view_ui_tests
 {
+
+    // the snapshot names of the admin dashboard with the three data sets of test_admin_dashboard
+    const string ADMIN_EMPTY_FILE = test_paths::HTML . test_paths::VIEWS_ADMIN . 'admin_main_empty';
+    const string ADMIN_MIXED_FILE = test_paths::HTML . test_paths::VIEWS_ADMIN . 'admin_main_mixed';
+    const string ADMIN_CRITICAL_FILE = test_paths::HTML . test_paths::VIEWS_ADMIN . 'admin_main_critical';
 
     // the snapshot folder and name of the start page
     const string START_PAGE_FILE_NAME = 'start_page';
     // added to the snapshot name of a view rendered with the more version of its list
     const string MORE_LIST_FILE_POSTFIX = '_more';
-    // added to the snapshot name of the start page with the main columns and the ranges of its table
+    // added to the snapshot name of the start page with the main columns and the variance of its table
     const string DETAILS_LIST_FILE_POSTFIX = '_details';
     // the start page details list shows the real ranking data of the pod, which the unit fixtures
     // do not carry, so localhost_ui_tests fetches its snapshot from the pod after the db recreate
@@ -157,8 +180,11 @@ class system_view_ui_tests
     function run(test_cleanup $t): void
     {
         global $mtr;
+        global $sys;
+        global $ui_sys;
 
         // init
+        $msg = new user_message();
         $lib = new library();
         $tl = new test_lib();
         $t_usr = new test_users($t);
@@ -213,31 +239,34 @@ class system_view_ui_tests
         $test_name = 'the body of a not yet implemented system view shows the hint';
         $page = new system_page();
         $t->assert_text_contains($test_name, $page->not_yet_available(), $mtr->txt(msg_id::INFO_VIEW_NOT_YET_AVAILABLE));
+        // negative: the data and actions are not implemented, so the hint offers no form
+        $test_name = '... and offers no form';
+        $t->assert_text_not_contains($test_name, $page->not_yet_available(), '<' . html_base::FORM);
 
-        // the "..." below the title of a default view opens the menu with the other three versions
-        $t->subheader($ts . 'related view selector');
-        $test_name = 'the default word view links to the detail version';
-        $wrd_ui = new test_words($t)->chf_ui();
-        $sel_html = $page->related_view_selector(views::WORD_ID, $wrd_ui);
-        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_ID);
-        $test_name = '... to the range version';
-        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_RANGE_ID);
-        $test_name = '... to the detail with range version';
-        $t->assert_text_contains($test_name, $sel_html, url_var::MASK . '=' . views::WORD_DEFAULT_DETAIL_RANGE_ID);
-        $test_name = '... for the same word';
-        $t->assert_text_contains($test_name, $sel_html, url_var::ID . '=' . words::CHF_ID);
-        $test_name = '... and offers only the three other versions';
-        $t->assert($test_name, substr_count($sel_html, '<' . html_base::LI . '>'), 3);
-        $test_name = 'the detail with range version links back to the default version';
-        $sel_html = $page->related_view_selector(views::WORD_DEFAULT_DETAIL_RANGE_ID, $wrd_ui);
-        $t->assert_text_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DEFAULT->text() . '<');
-        $test_name = '... but not to itself';
-        $t->assert_text_not_contains($test_name, $sel_html, '>' . msg_id::VIEW_VERSION_DETAIL_RANGE->text() . '<');
-        // negative: a view that is not a version of a default view e.g. an edit view has no menu
-        $test_name = 'the word edit view shows no view version menu';
-        $t->assert($test_name, $page->related_view_selector(views::WORD_EDIT_ID, $wrd_ui), '');
-        $test_name = 'without the object shown no view version menu is created';
-        $t->assert($test_name, $page->related_view_selector(views::WORD_ID, null), '');
+        // the edit menu of the navbar offers the four default views of the type of the shown object
+        $t->subheader($ts . 'view versions');
+        $msk_const = new views();
+        $test_name = 'the default word view is one of the four versions of the word';
+        $versions = $msk_const->default_versions(views::WORD_ID);
+        $t->assert($test_name, $versions, [views::WORD_ID, views::WORD_DEFAULT_DETAIL_ID,
+            views::WORD_DEFAULT_RANGE_ID, views::WORD_DEFAULT_DETAIL_RANGE_ID]);
+        $test_name = '... and the detail with range view of the word too';
+        $versions = $msk_const->default_versions(views::WORD_DEFAULT_DETAIL_RANGE_ID);
+        $t->assert_contains($test_name, $versions, views::WORD_ID);
+        // negative: a view that is not a version of a default view e.g. an edit view has none
+        $test_name = 'the word edit view has no versions';
+        $versions = $msk_const->default_versions(views::WORD_EDIT_ID);
+        $t->assert($test_name, $versions, []);
+        // a triple gets the default views of a triple and not the ones of a word
+        $test_name = 'the edit menu of a triple offers the detail view of a triple';
+        $trp_menu = new test_triples($t)->triple_impact_ui();
+        $menu_ids = $trp_menu->menu_views_ui($ui_sys->typ_lst_cache, $msg)->id_lst();
+        $t->assert_contains($test_name, $menu_ids, views::TRIPLE_DEFAULT_DETAIL_ID);
+        $msg->reset();
+        $test_name = '... but not the default views of a word';
+        $menu_ids = $trp_menu->menu_views_ui($ui_sys->typ_lst_cache, $msg)->id_lst();
+        $t->assert_contains_not($test_name, $menu_ids, views::WORD_DEFAULT_DETAIL_ID);
+        $msg->reset();
         // switch usr1 to the system test profile user (needed for the ui cache imports)
         // and remember the normal usr1 so the end of this run can restore it - otherwise every
         // later test would see a system-tier usr1 instead of the normal email profile user
@@ -258,7 +287,41 @@ class system_view_ui_tests
         $ui->set_cache($dto);
         // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($msg, file_get_contents(test_files::TYPE_LISTS_CACHE));
+        $t->assert_msg('the user and the type list cache of the page tests are loaded', $msg);
+        $msg->reset();
         $usr_sys_ui = $tl->cast_user($t->usr1);
+
+        $t->subheader($ts . 'phrase without a view');
+        // a url with a phrase id and without a view shows the phrase with its default view; a test
+        // render loads no phrase, so the word without an own view is shown with the word view
+        $test_name = 'a phrase url without a view shows the word with the word view';
+        $t->assert($test_name,
+            $ui->url_to_html([url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true),
+            $ui->url_to_html([url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true));
+        // negative: a url without a view and without an object still shows the start view
+        $test_name = 'a url without a view and without an object shows the start view';
+        $t->assert($test_name,
+            $ui->url_to_html([], new user_message(), $ui->dto, true),
+            $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true));
+        // the render of a page is counted as url to html and then the section of the caller continues,
+        // so that the time of a test that renders a page is not reported as not specified
+        $test_name = 'a page render is counted as url to html';
+        $sys->times->reset_section();
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $ui->url_to_html([url_var::MASK => views::WORD_ID, url_var::ID => word_names::ZH_ID], new user_message(), $ui->dto, true);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::URL_TO_HTML);
+        $test_name = '... and then returns to the time section around it';
+        $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
+        $sys->times->switch();
+        // the data of a page is loaded before its html is created, so that the html creation is
+        // frontend work only; the request cache keeps the data of the start page table
+        $test_name = 'the data of the start page is loaded before its html is created';
+        $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true);
+        $sys->times->reset_section();
+        $ui->url_to_html([url_var::MASK => views::START_ID], new user_message(), $ui->dto, true);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::LOAD_PAGE);
+        $test_name = '... so that a second render of the start page waits for no backend answer';
+        $t->assert_false($test_name, str_contains($sys->times->section_report(), system_time_type::API_WAIT));
 
         // the anti-csrf gate must fail closed for every form submit, not only the crud masks, so a
         // forged login/signup/import submit is rejected as well (see frontend::request_token_valid)
@@ -332,6 +395,20 @@ class system_view_ui_tests
         $t->assert_false($test_name, in_array(views::EXPORT_ID, views::IP_BLOCKED_MASKS_IDS));
         $test_name = 'the start view is not blocked for an ip user';
         $t->assert_false($test_name, in_array(views::START_ID, views::IP_BLOCKED_MASKS_IDS));
+        // the editors are blocked like the edit views, because their save changes the database
+        $test_name = 'the calculator editor is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::CALCULATOR_EDITOR_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the table editor is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::TABLE_EDITOR_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the formula editor is blocked for an ip user';
+        $t->assert_true($test_name, in_array(views::FORMULA_EDITOR_ID, views::IP_BLOCKED_MASKS_IDS));
+        $test_name = 'the calculator is not blocked for an ip user';
+        $t->assert_false($test_name, in_array(views::CALCULATOR_ID, views::IP_BLOCKED_MASKS_IDS));
+        // the calculator editor of a triple e.g. the example PV installation gets the phrase of the url
+        $test_name = 'the calculator editor shows a word or a triple';
+        $t->assert_true($test_name, in_array(views::CALCULATOR_EDITOR_ID, views::PHRASE_MASKS_IDS));
+        $test_name = 'the formula editor shows a word or a triple';
+        $t->assert_true($test_name, in_array(views::FORMULA_EDITOR_ID, views::PHRASE_MASKS_IDS));
 
         // a blocked change mask is answered with the calling page from the '9'-prefixed back
         // params or, if the request has no back e.g. a typed url, with the default view of
@@ -353,6 +430,12 @@ class system_view_ui_tests
         $t->assert_true($test_name, $msk->change_to_show_id(views::COMPONENT_LINK_EDIT_ID) == views::COMPONENT_LINK_DEFAULT_ID);
         $test_name = 'a blocked view relation edit shows the view relation default view';
         $t->assert_true($test_name, $msk->change_to_show_id(views::VIEW_RELATION_EDIT_ID) == views::VIEW_RELATION_DEFAULT_ID);
+        $test_name = 'a blocked calculator editor shows the calculator of the phrase';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::CALCULATOR_EDITOR_ID) == views::CALCULATOR_ID);
+        $test_name = 'a blocked formula editor shows the calculator of the phrase';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::FORMULA_EDITOR_ID) == views::CALCULATOR_ID);
+        $test_name = 'a blocked table editor shows the table of the phrase';
+        $t->assert_true($test_name, $msk->change_to_show_id(views::TABLE_EDITOR_ID) == views::TABLE_ID);
         $test_name = 'a blocked mask without an object view falls back to the start view';
         $t->assert_true($test_name, $msk->change_to_show_id(views::UNDO_ID) == views::START_ID);
 
@@ -421,6 +504,19 @@ class system_view_ui_tests
         $test_name = 'an unknown remote address is not from the own pod';
         $t->assert_false($test_name, server_guard::is_own_pod_call('', '', false));
 
+        // the data user of an own pod call is only taken from a url parameter that is a valid id
+        $t->subheader($ts . 'requested user id');
+        $test_name = 'a positive number is the requested user id';
+        $t->assert($test_name, server_guard::valid_user_id('7'), 7);
+        $test_name = 'a request without user parameter names no user';
+        $t->assert($test_name, server_guard::valid_user_id(0), 0);
+        $test_name = 'a negative number is no user id';
+        $t->assert($test_name, server_guard::valid_user_id('-7'), 0);
+        $test_name = 'a text is no user id';
+        $t->assert($test_name, server_guard::valid_user_id('7x'), 0);
+        $test_name = 'an array parameter e.g. u[]=7 is no user id';
+        $t->assert($test_name, server_guard::valid_user_id(['7']), 0);
+
         // test the notification component standalone
         $t->subheader($ts . 'notification');
         $html_base = new html_base();
@@ -443,6 +539,44 @@ class system_view_ui_tests
         $test_name = '... but in orange if the request has an issue';
         $saved_msg->add_id(msg_id::CONFIG_NOT_LOADED);
         $t->assert_text_contains($test_name, $ui->user_msg_html($saved_msg), html_base::CLASS_NOTIFICATION . '"');
+        // the confirmation of a done action is the last info
+        $test_name = 'the text of a done action is the last info';
+        $info_msg = new user_message();
+        $info_msg->add_info($saved_txt);
+        $t->assert($test_name, $info_msg->get_last_info(), $saved_txt);
+        // negative: an empty text is no info, so it never adds an empty success bar
+        $test_name = 'an empty text is not added as info';
+        $empty_msg = new user_message();
+        $empty_msg->add_info('');
+        $t->assert($test_name, $empty_msg->get_last_info(), '');
+        $test_name = 'an html info is the last html info';
+        // e.g. the confirmation of a calculator save, whose new number links to the value
+        $info_html = $html_base->ref($html_base->url_back(views::VALUE, values::PI_MATH_ID), $saved_txt);
+        $msg->add_info_html($info_html);
+        $t->assert($test_name, $msg->get_last_info_html(), $info_html);
+        $msg->reset();
+        // negative: an empty html is no info, so it never adds an empty success bar
+        $test_name = 'an empty html is not added as info';
+        $msg->add_info_html('');
+        $t->assert($test_name, $msg->get_last_info_html(), '');
+        $msg->reset();
+        $test_name = 'the html info of a done action is shown as html in green';
+        $msg->add_info_html($info_html);
+        $link_html = $ui->user_msg_html($msg);
+        $t->assert_text_contains($test_name, $link_html, $info_html);
+        $t->assert_text_contains($test_name, $link_html, html_base::CLASS_NOTIFICATION_SUCCESS);
+        $msg->reset();
+        // negative: a plain info is text, so a tag in it is escaped and never shown as html
+        $test_name = '... but a plain info is shown escaped';
+        $msg->add_info($info_html);
+        $t->assert_text_not_contains($test_name, $ui->user_msg_html($msg), $info_html);
+        $msg->reset();
+        // negative: an issue of the same request is shown instead of the confirmation
+        $test_name = '... and an issue of the request is shown instead of the html info';
+        $msg->add_info_html($info_html);
+        $msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        $t->assert_text_not_contains($test_name, $ui->user_msg_html($msg), $info_html);
+        $msg->reset();
         // e.g. the refused save of a setting of the pod, which the backend reports without vars
         $test_name = 'a message without vars of a write is kept when merged into the message of the request';
         $refused_msg = new user_message();
@@ -452,6 +586,13 @@ class system_view_ui_tests
         // escaped like dsp_notification, because the text quotes the key 'system'
         $refused_html = htmlspecialchars($mtr->txt(msg_id::CONFIG_SYSTEM_ADMIN_ONLY));
         $t->assert_text_contains($test_name, $ui->user_msg_html($request_msg), $refused_html);
+        // negative: e.g. the done of a successful write is an info without vars and never an error
+        $test_name = '... but an info without vars keeps the request ok';
+        $done_msg = new user_message();
+        $done_msg->add_info_id(msg_id::DONE);
+        $ok_msg = new user_message();
+        $ok_msg->merge($done_msg);
+        $t->assert_true($test_name, $ok_msg->is_ok());
 
         // test that a failed login renders the notification in the full page
         $_SESSION[url_var::SESSION_TOKEN] = test_const::DUMMY_SESSION_TOKEN;
@@ -467,6 +608,10 @@ class system_view_ui_tests
         $expected_msg = msg_id::PASSWORD_WRONG->value;
         $test_name = 'login page notification contains password wrong message';
         $t->assert_text_contains($test_name, $login_html, $expected_msg);
+        // the label of a login field is linked to the field, so a click on the label focuses the field
+        $test_name = 'login page links the username label to its field';
+        $t->assert_text_contains($test_name, $login_html, 'for="username_or_email"');
+        $t->assert_text_contains($test_name, $login_html, 'id="username_or_email"');
 
         // optional: only active when the login password field uses the css-only show-password toggle
         // (form_input_password) instead of the native type=password field that keeps the browser auto fill
@@ -534,8 +679,18 @@ class system_view_ui_tests
         $test_name = 'logout action resets backend user to anonymous';
         $t->assert($test_name, $logout_backend->has_db_id(), false);
 
+        $test_name = '... but the logged in user keeps the database id';
+        $logged_in = $t->usr1->has_db_id();
+        $t->assert_true($test_name, $logged_in);
+
         $test_name = 'logout action resets the message user to ip-only';
         $t->assert($test_name, $logout_msg->usr->is_ip_only(), true);
+
+        // negative: the logged in test user is known by more than the ip address
+        // (the normal profile of a new user is the ip-only profile)
+        $test_name = 'the logged in test user is not ip-only';
+        $usr1_ui = $tl->cast_user($t->usr1);
+        $t->assert($test_name, $usr1_ui->is_ip_only(), false);
 
         // test that the logout page shows the success message
         global $mtr;
@@ -632,10 +787,35 @@ class system_view_ui_tests
         $test_name = 'add view does not stamp the url id onto the new object';
         $t->assert_text_not_contains($test_name, $add_html, 'name="id" id="id" value="1"');
 
+        // the phrase selector of an editor sends the name of the selected phrase, so that the editor is
+        // shown again for that phrase (see frontend::url_with_selected_phrase)
+        $t->subheader($ts . 'editor phrase selector');
+        $t_trp = new test_triples($t);
+        $phr = $t_trp->populism_solution_ui()->phrase();
+        $dto = new data_object();
+        $dto->phr_lst->add($phr, $msg);
+        $sel_url = [url_var::MASK => views::TABLE_EDITOR, url_var::ID => -1, url_var::PHRASE => $phr->name()];
+        $test_name = 'the selected phrase replaces the phrase of the editor';
+        $sel_url_new = $ui->url_with_selected_phrase($sel_url, views::TABLE_EDITOR, $dto, $msg);
+        $t->assert($test_name, $sel_url_new[url_var::ID] ?? 0, $phr->id());
+        $test_name = '... and the name is not kept as an object value';
+        $t->assert_key_not_exists($test_name, url_var::PHRASE, $sel_url_new);
+        $msg->reset();
+        // negative: e.g. the phrase of a reference is not the selection of the page
+        $test_name = 'the phrase of another view does not switch the page';
+        $t->assert($test_name, $ui->url_with_selected_phrase($sel_url, views::START_CODE, $dto, $msg), $sel_url);
+        $msg->reset();
+        $test_name = 'an empty selection keeps the phrase of the editor';
+        $empty_url = [url_var::MASK => views::TABLE_EDITOR, url_var::ID => -1, url_var::PHRASE => ''];
+        $t->assert($test_name, $ui->url_with_selected_phrase($empty_url, views::TABLE_EDITOR, $dto, $msg), $empty_url);
+        $msg->reset();
+
         // the admin only masks (views::ADMIN_MASK_IDS) must be authorized centrally so the admin
         // content is not rendered to just anyone (see frontend::admin_mask_denied)
         $t->subheader($ts . 'admin mask authorization');
         $admin_url = [url_var::MASK => views::ADMIN_MAIN_ID];
+        // the translated title of the admin dashboard, which only the admin view shows
+        $admin_title = $html->text_h2($mtr->txt(msg_id::FORM_TITLE_ADMIN));
 
         // negative: an anonymous user is sent to the start view with a permission message and never
         // sees the admin content
@@ -643,7 +823,7 @@ class system_view_ui_tests
         $anon_html = $ui->url_to_html($admin_url, $anon_msg, $ui->dto, true);
         // the first assert after a page render carries the render time, so a page timeout is used
         $test_name = 'the admin main view is not rendered for an anonymous user';
-        $t->assert_text_not_contains($test_name, $anon_html, 'system_title_admin', $t::TIMEOUT_LIMIT_PAGE);
+        $t->assert_text_not_contains($test_name, $anon_html, $admin_title, $t::TIMEOUT_LIMIT_PAGE);
         $test_name = 'the anonymous user is told that the admin view needs an administrator';
         $t->assert_text_contains($test_name, $anon_html, msg_id::ADMIN_MASK_DENIED->value);
 
@@ -652,7 +832,7 @@ class system_view_ui_tests
         $adm_msg->usr = $usr_sys_ui;
         $adm_html = $ui->url_to_html($admin_url, $adm_msg, $ui->dto, true);
         $test_name = 'the admin main view is rendered for a system user';
-        $t->assert_text_contains($test_name, $adm_html, 'system_title_admin');
+        $t->assert_text_contains($test_name, $adm_html, $admin_title);
 
         // negative: url_to_action refuses an admin mask action for a non-admin user and returns the
         // start view instead of acting on it (a fresh frontend user has the ip-only profile)
@@ -663,12 +843,245 @@ class system_view_ui_tests
         $test_name = 'url_to_action sends a non-admin admin mask request to the start view';
         $t->assert($test_name, $act_url[url_var::MASK] ?? 0, views::START_ID);
 
+        // the admin dashboard with the critical entries shown directly and the others behind a plus sign
+        $this->assert_admin_dashboard($t, $ui, $usr_sys_ui);
+
         // loop over the system views
         $this->assert_views_by_id($t, $t_map, $ui, $usr_sys_ui, $msg, $lib);
 
         // restore the normal usr1 so the following tests run with the email profile user again
         $t->usr1 = $usr1_saved;
 
+    }
+
+    /**
+     * the admin dashboard with an empty, a mixed and a critical data set: each column shows its critical
+     * entries directly and the other entries behind a plus sign, and each data set is a page snapshot
+     *
+     * @param test_cleanup $t test runner for assertions and user fixtures
+     * @param frontend $ui renders HTML from a URL array
+     * @param user_ui $usr_sys_ui the admin (here the system user, see frontend::admin_mask_denied)
+     */
+    private function assert_admin_dashboard(test_cleanup $t, frontend $ui, user_ui $usr_sys_ui): void
+    {
+        global $mtr;
+        global $ui_sys;
+        $ts = 'unit ui system views ';
+        $t->subheader($ts . 'admin dashboard');
+        $t_adm = new test_admin_dashboard($t);
+        $page = new system_page();
+        $msg = new user_message();
+        $msg->usr = $usr_sys_ui;
+        $now = new DateTime(test_admin_dashboard::SNAP_TIME);
+        $no_critical = $mtr->txt(msg_id::ADMIN_NO_CRITICAL);
+
+        // the subtitle names the admin, the pod and the creation time of the page
+        $subtitle = $page->admin_subtitle($msg, $now);
+        $t->assert_text_contains('the admin dashboard subtitle names the admin', $subtitle, $usr_sys_ui->name());
+        $t->assert_text_contains('... the pod', $subtitle, POD_NAME);
+        $t->assert_text_contains('... and the time of the data snap', $subtitle, $now->format(Config::DEFAULT_DATE_TIME_FORMAT));
+        // negative: another time or a request without a user is not shown as the snap
+        $later = new DateTime(test_admin_dashboard::SNAP_TIME)->modify('+1 day');
+        $test_name = '... but not another time';
+        $t->assert_text_not_contains($test_name, $subtitle, $later->format(Config::DEFAULT_DATE_TIME_FORMAT));
+        $test_name = 'the subtitle of a request without a user names no admin';
+        $t->assert_text_not_contains($test_name, $page->admin_subtitle(new user_message(), $now), $usr_sys_ui->name());
+
+        // empty: every column says that it has no entry and has no plus sign
+        $dto = $t_adm->dto_empty($ui->dto);
+        $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_EMPTY_FILE, 'empty');
+        $test_name = 'an empty response time column says so';
+        $col = $page->admin_url_delay($msg, true, $dto->adm_sys_tim_lst);
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_SLOW_REQUESTS));
+        $test_name = '... and has no plus sign';
+        $t->assert_text_not_contains($test_name, $col, '<details');
+        $test_name = 'an empty failed login column says so';
+        $col = $page->admin_login_fails($msg, true, $dto->adm_sys_log);
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_LOGIN_FAILS));
+        $test_name = 'an empty error column says so';
+        $col = $page->admin_errors_unassigned($msg, true, $dto->adm_sys_log);
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_ERRORS));
+        $test_name = '... and has no plus sign';
+        $t->assert_text_not_contains($test_name, $col, '<details');
+        $test_name = 'an empty job column says so';
+        $col = $page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now);
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_DELAYED_JOBS));
+        $test_name = '... without a table like the other columns';
+        $t->assert_text_not_contains($test_name, $col, '<table');
+        $test_name = 'an empty server time column says so';
+        $col = $page->admin_user_load($msg, true, $dto->adm_usr_log_sum_lst);
+        $t->assert_text_contains($test_name, $col, $mtr->txt(msg_id::ADMIN_NO_USER_LOAD));
+        $test_name = '... and has no plus sign';
+        $t->assert_text_not_contains($test_name, $col, '<details');
+
+        // mixed: a column without a critical entry says so and shows its entries only behind the plus sign
+        $dto = $t_adm->dto_mixed($ui->dto, $msg);
+        $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_MIXED_FILE, 'mixed');
+        [$direct, $behind] = $this->admin_split($page->admin_errors_unassigned($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('the unassigned error is shown directly', $direct, test_admin_dashboard::ERR_ERROR_TEXT);
+        $t->assert_text_contains('... but the info is behind the plus sign', $behind, test_admin_dashboard::ERR_INFO_TEXT);
+        $t->assert_text_not_contains('... and not shown directly', $direct, test_admin_dashboard::ERR_INFO_TEXT);
+        [$direct, $behind] = $this->admin_split($page->admin_errors_delayed_fix($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('a pending fix column without an error says nothing critical', $direct, $no_critical);
+        $t->assert_text_contains('... and has the warning behind the plus sign', $behind, test_admin_dashboard::FIX_WARNING_TEXT);
+        [$direct, $behind] = $this->admin_split($page->admin_login_fails($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('a single failed login is not critical', $direct, $no_critical);
+        $t->assert_text_contains('... and is behind the plus sign', $behind, test_admin_dashboard::LOGIN_TYPO);
+        [$direct, $behind] = $this->admin_split($page->admin_url_delay($msg, true, $dto->adm_sys_tim_lst));
+        $t->assert_text_contains('a slow request is shown directly', $direct, test_admin_dashboard::URL_SLOW);
+        $t->assert_text_contains('... but a fast one is behind the plus sign', $behind, test_admin_dashboard::URL_FAST);
+        [$direct, $behind] = $this->admin_split($page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now));
+        $t->assert_text_contains('a job that waits less than the max delay is not critical', $direct, $no_critical);
+        $fresh_job = new DateTime(test_admin_dashboard::SNAP_TIME)->modify('-1 minute')->format(DateTimeInterface::ATOM);
+        $t->assert_text_contains('... and is behind the plus sign', $behind, $fresh_job);
+        [$direct, $behind] = $this->admin_split($page->admin_user_load($msg, true, $dto->adm_usr_log_sum_lst));
+        $t->assert_text_contains('a user below all thresholds is not critical', $direct, $no_critical);
+        $t->assert_text_contains('... and is behind the plus sign', $behind, test_admin_dashboard::LOAD_LIGHT_NAME);
+        $test_name = 'the failed logins are not listed as unassigned errors';
+        $col = $page->admin_errors_unassigned($msg, true, $dto->adm_sys_log);
+        $t->assert_text_not_contains($test_name, $col, test_admin_dashboard::LOGIN_TYPO);
+
+        // critical: every column shows its critical entries directly, the most critical first
+        $dto = $t_adm->dto_critical($ui->dto, $msg);
+        $this->assert_admin_page($t, $ui, $msg, $dto, self::ADMIN_CRITICAL_FILE, 'critical');
+        [$direct, $behind] = $this->admin_split($page->admin_errors_unassigned($msg, true, $dto->adm_sys_log));
+        $test_name = 'the fatal error is shown above the error';
+        $fatal_pos = strpos($direct, test_admin_dashboard::ERR_FATAL_TEXT);
+        $error_pos = strpos($direct, test_admin_dashboard::ERR_ERROR_TEXT);
+        $t->assert_true($test_name, $fatal_pos !== false and $error_pos !== false and $fatal_pos < $error_pos);
+        $t->assert_text_contains('the warning is behind the plus sign', $behind, test_admin_dashboard::ERR_WARNING_TEXT);
+        $t->assert_text_contains('... which names the number of the not critical entries', $behind,
+            '2 ' . $mtr->txt(msg_id::ADMIN_NOT_CRITICAL));
+        [$direct, $behind] = $this->admin_split($page->admin_errors_delayed_fix($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('the assigned error is shown directly', $direct, test_admin_dashboard::FIX_ERROR_TEXT);
+        $t->assert_text_contains('... but the resolved warning is behind the plus sign', $behind, test_admin_dashboard::FIX_WARNING_TEXT);
+        $groups = $dto->adm_sys_log->login_fail_groups();
+        $t->assert('the failed logins are grouped by the typed name', count($groups), 2);
+        $t->assert('... with the most often tried name first', $groups[0][sys_log_list::GROUP_NAME],
+            test_admin_dashboard::LOGIN_ATTACKED);
+        $t->assert('... which counts each try', $groups[0][sys_log_list::GROUP_COUNT], sys_log_list::login_fail_limit($msg));
+        $t->assert('the other entries are not failed logins', $dto->adm_sys_log->login_fails(false)->count(), 6);
+        // negative: the entries that are not failed logins contain no failed login and so no group
+        $test_name = 'the other entries contain no failed login';
+        $other_lst = $dto->adm_sys_log->login_fails(false);
+        $no_fail_lst = $other_lst->login_fails(true);
+        $t->assert($test_name, $no_fail_lst->count(), 0);
+        $test_name = '... and so no group of failed logins';
+        $no_fail_groups = $other_lst->login_fail_groups();
+        $t->assert($test_name, count($no_fail_groups), 0);
+        // negative: a pod without a config falls back to the shared limit of failed logins
+        $test_name = 'without a config the failed login limit is the fallback';
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = null;
+        $no_cfg_limit = sys_log_list::login_fail_limit($msg);
+        $ui_sys->cfg = $cfg_keep;
+        $t->assert($test_name, $no_cfg_limit, def::FALLBACK_MAX_LOGIN);
+        $msg->reset();
+        [$direct, $behind] = $this->admin_split($page->admin_login_fails($msg, true, $dto->adm_sys_log));
+        $t->assert_text_contains('the name with the limit of failed logins is shown directly', $direct, test_admin_dashboard::LOGIN_ATTACKED);
+        $t->assert_text_not_contains('... but not the typo', $direct, test_admin_dashboard::LOGIN_TYPO);
+        $t->assert_text_contains('... which is behind the plus sign', $behind, test_admin_dashboard::LOGIN_TYPO);
+        [$direct, $behind] = $this->admin_split($page->admin_url_delay($msg, true, $dto->adm_sys_tim_lst));
+        $test_name = 'the slowest request is shown above the slow request';
+        $slower_pos = strpos($direct, test_admin_dashboard::URL_SLOWER);
+        $slow_pos = strpos($direct, test_admin_dashboard::URL_SLOW);
+        $t->assert_true($test_name, $slower_pos !== false and $slow_pos !== false and $slower_pos < $slow_pos);
+        $t->assert_text_contains('the fast request is behind the plus sign', $behind, test_admin_dashboard::URL_FAST);
+        [$direct, $behind] = $this->admin_split($page->admin_jobs_delayed($msg, true, $dto->adm_job_lst, $now));
+        $delayed_job = new DateTime(sys_log_tests::TV_TIME)->format(DateTimeInterface::ATOM);
+        $t->assert_text_contains('the job that waits longer than the max delay is shown directly', $direct, $delayed_job);
+        $t->assert_text_contains('... but the fresh job is behind the plus sign', $behind, $fresh_job);
+        $t->assert_text_not_contains('... and not shown directly', $direct, $fresh_job);
+        [$direct, $behind] = $this->admin_split($page->admin_user_load($msg, true, $dto->adm_usr_log_sum_lst));
+        $t->assert_text_contains('the user with the request threshold is shown directly', $direct,
+            test_admin_dashboard::LOAD_HEAVY_NAME);
+        $t->assert_text_contains('... but the user below all thresholds is behind the plus sign', $behind,
+            test_admin_dashboard::LOAD_LIGHT_NAME);
+        $t->assert_text_not_contains('... and not shown directly', $direct, test_admin_dashboard::LOAD_LIGHT_NAME);
+        // one request less than the threshold is not critical, and a single threshold is enough
+        $limits = user_log_sum_list::critical_limits($msg);
+        $usr_log_sum = new user_log_sum();
+        $usr_log_sum->requests = $limits[json_fields::REQUESTS] - 1;
+        $t->assert_false('a user one request below the threshold is not critical', $usr_log_sum->is_critical($limits));
+        $usr_log_sum->update_ms = $limits[json_fields::UPDATE_MS];
+        $t->assert_true('... but a user with the update time threshold is', $usr_log_sum->is_critical($limits));
+
+        // negative: a pod without a config falls back to the shared thresholds of a critical user
+        $test_name = 'without a config the request threshold is the fallback';
+        $cfg_keep = $ui_sys->cfg;
+        $ui_sys->cfg = null;
+        $no_cfg_limits = user_log_sum_list::critical_limits($msg);
+        $ui_sys->cfg = $cfg_keep;
+        $t->assert($test_name, $no_cfg_limits[json_fields::REQUESTS], def::FALLBACK_USER_LOG_MAX_REQUESTS);
+        $msg->reset();
+
+        $test_name = 'the summed sessions mapper accepts the sessions of a user';
+        $usr_log_sum = new user_log_sum();
+        $api_json = [json_fields::ID => test_admin_dashboard::LOAD_LIGHT_ID, json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME];
+        $t->assert_true($test_name, $usr_log_sum->api_mapper($api_json));
+
+        // negative: summed sessions without a user id belong to no user
+        $test_name = 'the summed sessions mapper refuses sessions without a user id';
+        $usr_log_sum = new user_log_sum();
+        $api_json = [json_fields::NAME => test_admin_dashboard::LOAD_LIGHT_NAME];
+        $t->assert_false($test_name, $usr_log_sum->api_mapper($api_json));
+    }
+
+    /**
+     * render the admin dashboard with the given data set and compare it with the page snapshot
+     *
+     * @param test_cleanup $t test runner for assertions and the list of the written snapshots
+     * @param frontend $ui renders HTML from a URL array
+     * @param user_message $msg with the admin who requests the page
+     * @param data_object $dto the data set of the admin dashboard
+     * @param string $file_path the snapshot without the extension relative to the test resources
+     * @param string $case_name the name of the data set for the test name
+     */
+    private function assert_admin_page(
+        test_cleanup $t,
+        frontend     $ui,
+        user_message $msg,
+        data_object  $dto,
+        string       $file_path,
+        string       $case_name
+    ): void
+    {
+        $admin_url = [url_var::MASK => views::ADMIN_MAIN_ID];
+        $html = $ui->url_to_html($admin_url, $msg, $dto, true);
+        // remember the snapshot, so that the cleanup of the views_by_object snapshots keeps it
+        $t->updated_files[] = test_paths::RESOURCE . $file_path . test_files::HTML;
+        // link to the pod like the views_by_object snapshots (see test_base::link_to_pod)
+        $test_name = 'the admin dashboard ' . $case_name . ' matches the snapshot';
+        $t->assert_html_page($test_name, $t->link_to_pod($html, THIS_URL), $file_path);
+    }
+
+    /**
+     * @param string $col the html code of one admin dashboard column
+     * @return array the html code shown directly and the html code behind the plus sign, which is empty if there is none
+     */
+    /**
+     * @param type_lists $typ_lst the frontend type cache filled from the type_lists.json fixture
+     * @param int $id the database id that views::TEST_VIEW_IDS pins for the view
+     * @param string $code_id the code id of the pinned view
+     * @return string empty if the cache has the view with this id, else which view the id selects
+     *                and which id the pinned view has in the cache, which is the id to re-pin
+     */
+    private function stale_view(type_lists $typ_lst, int $id, string $code_id): string
+    {
+        $result = '';
+        $cached_code_id = $typ_lst->get_view_by_id($id)?->code_id;
+        if ($cached_code_id != $code_id) {
+            $cached_id = $typ_lst->get_view($code_id)?->id();
+            $result = 'view ' . $id . ' is ' . ($cached_code_id ?? 'missing') . ' instead of ' . $code_id
+                . ', which has the id ' . ($cached_id ?? 'missing') . ' in type_lists.json';
+        }
+        return $result;
+    }
+
+    private function admin_split(string $col): array
+    {
+        $parts = explode('<details', $col, 2);
+        return [$parts[0], $parts[1] ?? ''];
     }
 
     /**
@@ -694,14 +1107,16 @@ class system_view_ui_tests
         // regenerates only after the unit tests; if a view has been added to the seed views since, the cached ids
         // are shifted and a view would be rendered with the object of another view (a fatal type error), so the
         // loop and the snapshot cleanup are skipped until the fixture matches views::TEST_VIEW_IDS again
-        $test_name = 'the views of type_lists.json have the ids of views::TEST_VIEW_IDS (else reset the database)';
-        $stale = '';
+        $test_name = 'the views of type_lists.json have the ids of views::TEST_VIEW_IDS (else re-pin the views::*_ID'
+            . ' consts with test/test_re_pin.php and docs/pinned_id_findings.md, or reset the database if the consts are right)';
+        $stale_lst = [];
         foreach (views::TEST_VIEW_IDS as $id => $code_id) {
-            $cached_code_id = $ui->dto->typ_lst_cache->get_view_by_id($id)?->code_id;
-            if ($stale == '' and $cached_code_id != $code_id) {
-                $stale = 'view ' . $id . ' is ' . ($cached_code_id ?? 'missing') . ' instead of ' . $code_id;
+            $stale_txt = $this->stale_view($ui->dto->typ_lst_cache, $id, $code_id);
+            if ($stale_txt != '') {
+                $stale_lst[] = $stale_txt;
             }
         }
+        $stale = implode('; ', $stale_lst);
         $t->assert($test_name, $stale, '');
         if ($stale != '') {
             return;
@@ -755,13 +1170,17 @@ class system_view_ui_tests
                 } else {
                     $msg->usr = null;
                 }
-                // the start page, the table and the calculator show the values of the global
-                // problems, so they render with the start page cache that carries them
+                // the start page, the table and the comparison table show the values of the
+                // global problems, so they render with the start page cache that carries them
                 $dto = $ui->dto;
-                if (in_array($id, [views::START_ID, views::TABLE_ID, views::CALCULATOR_ID])) {
+                if (in_array($id, [views::START_ID, views::TABLE_ID, views::COMPARISON_TABLE_ID])) {
                     $dto = $dto_start;
                 } elseif ($dbo instanceof value or $dbo instanceof result) {
                     $dto = $dto_smp;
+                } elseif ($id == views::ADMIN_MAIN_ID) {
+                    // the subtitle of the admin dashboard shows the creation time, so the snapshot uses a fixed one
+                    $dto = clone $ui->dto;
+                    $dto->snap_time = new DateTime(test_admin_dashboard::SNAP_TIME);
                 }
                 $html = $ui->url_to_html($url_array, $msg, $dto, true);
                 [$folder, $dbo_name, $test_name] = $this->view_id_to_file_info($id, $dbo::class, $action, $url_array, $lib);
@@ -973,7 +1392,7 @@ class system_view_ui_tests
     private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object|combine_object|phrase_list
     {
         // select the backend object to display
-        // TODO add any missing system views like
+        // TODO Prio 2 add any missing system views like
         //      term_view_links, formula_link, component_links, styles, view_types,
         //      time_series, geo and text values, ip ranges, language, pod,
         //      add types (phrase_type, formula_type, formula_link_types, source_types,

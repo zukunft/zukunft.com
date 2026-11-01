@@ -132,7 +132,6 @@
     },
     {
       "name": "power",
-      "description": "the result of raising a number to an exponent",
       "refs": [
         {
           "name": "Exponentiation",

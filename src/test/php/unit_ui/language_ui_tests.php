@@ -48,6 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\language;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_languages;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
@@ -89,6 +90,24 @@ class language_ui_tests
             url_var::PRE . url_var::NAME => ''
         ], $src);
         $t->assert_text_contains($test_name, $chg_html, $src->name);
+
+        $t->subheader($ts . 'debug id');
+
+        // the type object debug text shows the name, the id and the code id of the language
+        $test_name = 'shows the name of the language';
+        $dsp = $src->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, languages::DEFAULT_NAME);
+        $test_name = '... its id';
+        $id_txt = '(' . languages::DEFAULT_ID . ')';
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+        $test_name = '... and its code id';
+        $t->assert_text_contains($test_name, $dsp, languages::DEFAULT);
+
+        // negative: a language without a name has no name to show
+        $test_name = 'shows no name for a language without a name';
+        $lan_no_name = new language(languages::DEFAULT_ID, languages::DEFAULT);
+        $dsp = $lan_no_name->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, languages::DEFAULT_NAME);
     }
 
 }

@@ -122,7 +122,6 @@
     },
     {
       "name": "EBITDA",
-      "description": "accounting measure: net earnings, before interest expenses, taxes, depreciation, and amortization are subtracted",
       "refs": [
         {
           "name": "EBITDA",
@@ -528,8 +527,7 @@
       "name": "chart"
     },
     {
-      "name": "trial",
-      "description": "a single presentation and judgment cycle in the task"
+      "name": "trial"
     },
     {
       "name": "transaction"

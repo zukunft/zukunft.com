@@ -1,16 +1,914 @@
 # pending - list of planned llm prompts with prio 1
 
-## admin dashboard
+## portfolio split page compared with its sample
 
-if an admin user is logged in add to the top right user menu a 'dashboard' entry that links to a admin dashboard view page. Leave the admin dashboard page for the moment almost empty and just display the title.
+The remaining steps fix src/test/resources/web/html/use_cases/portfolio_split_calculator_js.html 
+and the related reports.
 
-show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved show it on the top of the list and below not yet solved errors followed by warnings
+### import
+
+based on a csv and a list of context phrases e.g. 'example portfolio split' a zukunft import json should be created.
+
+additional to the json creation create test case files for this sample csv.
+The portfolio number 040270501213 and all other data of this csv are generated and have no connection to any real life case:
+
+Portfolio,040270501213,Date,06.02.26,,,,,,,,,,,,,,,,,,,
+List of Positions,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,
+Asset Class,Instrument Name,Instrument,Quantity,Region,Currency,Price,Price Curr,Quote Date,Maturity Date,Exchange Rate,Market Value,Ref. Curr,MV%,Cost Price,Ref. Curr,Exchange Rate,Net Cost Value,Ref. Curr,Capital P%L,Currency P&L,P&L(%),Indicative LTV (%)
+Cash and short-term investments , CH00 0000 0000 0000 0000 1,2120.001.01,484296.24,Other Region,CHF,1,CHF,,,1,484296.24,CHF,2.769954656,,CHF,1,424896.24,CHF,0,0,0,
+Cash and short-term investments , CH00 0000 0000 0000 0000 2,2120.814.01,209848.13,Other Region,EUR,1,EUR,,,0.9323,195641.41,CHF,1.275412178,,CHF,,,CHF,,,,
+Cash and short-term investments , TREUHAND CALLGELD - Deutsch Bank BONDS S.A.,N987272-,320000,Eurozone,EUR,1,EUR,,,0.9323,270571.28,CHF,1.763889878,1,CHF,0.93,297600.00,CHF,-9.33,0.25,-9.08,
+Cash and short-term investments , CH00 0000 0000 0000 0000 3,2120.333.01,205534.45,Other Region,USD,1,USD,,,0.8036,165167.48,CHF,1.076748623,,CHF,,,CHF,,,,
+Bonds and similar positions , Oak Lu Fd Gl RhC,LU0854923223,934.784,Eurozone,CHF,150.269,CHF,05.02.26,,1,140469.06,CHF,0.915736338,120.58,CHF,1,112713.36,CHF,24.63,0,24.63,70
+Bonds and similar positions , Oak Lu Fd Gl RhC,LU0854923140,200000,Eurozone,EUR,149.03,EUR,05.02.26,,0.9323,277881.34,CHF,1.811545111,,CHF,,,CHF,,,,90
+Bonds and similar positions , 4.1 PG 26 Bds,US742718FY05,150000,North America,USD,99.04,USD,05.02.26,,0.8036,119382.82,CHF,0.778272331,,CHF,,,CHF,,,,90
+Bonds and similar positions , 4.375 EBRD 28 Bds,US29874QEX88,200000,United Kingdom,USD,101.51,USD,05.02.26,09.03.28,0.8036,165659.9,CHF,1.079958748,100.28,CHF,0.8948,179467.46,CHF,1.1,-10.2,-9.1,90
+Bonds and similar positions , 4 Inter-Am 28 Bds,US4581X0EH74,250000,North America,USD,100.19,USD,05.02.26,,0.8036,201281.71,CHF,1.312182028,,CHF,,,CHF,,,,90
+Equities and similar positions , ABB Rg,CH0012221716,6000,Switzerland,CHF,61.74,CHF,05.02.26,,1,370440,CHF,2.414947242,17.34,CHF,1,104036.52,CHF,256.07,0,256.07,70
+Equities and similar positions , Accelleron Ind Rg,CH1169360919,3000,Switzerland,CHF,57.84,CHF,05.02.26,,1,173520.00,CHF,1.131199777,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Alcon Rg,CH0432492467,2500,Switzerland,CHF,77.13,CHF,05.02.26,,1,192825.00,CHF,1.257051620,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Amrize Rg,CH1430134226,5000,Switzerland,CHF,48.46,CHF,05.02.26,,1,242300.00,CHF,1.579585673,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , BB Biotech N,CH0038389992,3500,Switzerland,CHF,41.61,CHF,05.02.26,,1,145635.00,CHF,0.949413783,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , CieFinRichemont N,CH0210483332,1000,Switzerland,CHF,157.69,CHF,05.02.26,,1,157690.00,CHF,1.028001918,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Geberit N,CH0030170408,175,Switzerland,CHF,558.00,CHF,05.02.26,,1,97650.00,CHF,0.636593236,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Givaudan N,CH0010645932,35,Switzerland,CHF,3955.70,CHF,05.02.26,,1,138449.50,CHF,0.902570560,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Helvetia Bal Hl Rg,CH0466642201,700,Switzerland,CHF,160.39,CHF,05.02.26,,1,112273.00,CHF,0.731922502,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Holcim N,CH0012214059,1750,Switzerland,CHF,58.98,CHF,05.02.26,,1,103215.00,CHF,0.672872205,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Idorsia Rg,CH0363463438,40000,Switzerland,CHF,1.995,CHF,05.02.26,,1,79800.00,CHF,0.520226730,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Lindt & Spruengli N,CH0010570759,20,Switzerland,CHF,10448.32,CHF,05.02.26,,1,208966.40,CHF,1.362279536,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Nestle N,CH0038863350,2500,Switzerland,CHF,78.28,CHF,05.02.26,,1,195700.00,CHF,1.275794124,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Novartis N,CH0012005267,700,Switzerland,CHF,91.15,CHF,05.02.26,,1,63805.00,CHF,0.415953214,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Roche Hldg DR,CH0012032048,700,Switzerland,CHF,258.40,CHF,05.02.26,,1,180880.00,CHF,1.179180588,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Sandoz Group Rg,CH1243598427,5000,Switzerland,CHF,42.25,CHF,05.02.26,,1,211250.00,CHF,1.377166626,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , SGS Rg,CH1256740924,2000,Switzerland,CHF,96.48,CHF,05.02.26,,1,192960.00,CHF,1.257931702,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Sonova Hldg N,CH0012549785,300,Switzerland,CHF,257.67,CHF,05.02.26,,1,77301.00,CHF,0.503935419,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Straumann Hldg Rg,CH1175448666,1750,Switzerland,CHF,111.35,CHF,05.02.26,,1,194862.50,CHF,1.270334351,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Swisscom Rg,CH0008742519,400,Switzerland,CHF,569.00,CHF,05.02.26,,1,227600.00,CHF,1.483754433,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , UBS Group N,CH0244767585,6000,Switzerland,CHF,31.89,CHF,05.02.26,,1,191340.00,CHF,1.247370709,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , Zurich Insur Gr N,CH0011075394,400,Switzerland,CHF,557.05,CHF,05.02.26,,1,222820.00,CHF,1.452592983,,CHF,1,,CHF,,0.00,,70
+Equities and similar positions , AB InBev,BE0974293251,700,Eurozone,EUR,59.26,EUR,05.02.26,,0.9323,38673.67,CHF,0.252118758,42.84,CHF,1.0945,32823.9,CHF,32.65,-14.82,17.82,70
+Equities and similar positions , adidas N,DE000A1EWWW0,1000,Eurozone,EUR,162.35,EUR,05.02.26,,0.9323,151358.91,CHF,0.986728707,63.08,CHF,1.0945,69044.98,CHF,134.04,-14.82,119.22,70
+Equities and similar positions , Allianz Rg,DE0008404005,250,Eurozone,EUR,280.45,EUR,05.02.26,,0.9323,65365.88,CHF,0.426128822,,CHF,,,CHF,,,,70
+Equities and similar positions , AXA,FR0000120628,1750,Eurozone,EUR,36.84,EUR,05.02.26,,0.9323,60105.38,CHF,0.391834910,,CHF,,,CHF,,,,70
+Equities and similar positions , BASF N,DE000BASF111,4000,Eurozone,EUR,47.11,EUR,05.02.26,,0.9323,175682.61,CHF,1.145298130,,CHF,,,CHF,,,,70
+Equities and similar positions , Bayer N,DE000BAY0017,7000,Eurozone,EUR,25.33,EUR,05.02.26,,0.9323,165306.11,CHF,1.077652364,,CHF,,,CHF,,,,70
+Equities and similar positions , Daimler Tr Hldg Rg,DE000DTR0CK8,6000,Eurozone,EUR,42.07,EUR,05.02.26,,0.9323,235331.17,CHF,1.534154925,,CHF,,,CHF,,,,70
+Equities and similar positions , Danone,FR0000120644,1000,Eurozone,EUR,60.32,EUR,05.02.26,,0.9323,56236.34,CHF,0.366612095,,CHF,,,CHF,,,,70
+Equities and similar positions , E.ON N,DE000ENAG999,15000,Eurozone,EUR,13.81,EUR,05.02.26,,0.9323,193125.95,CHF,1.259013520,,CHF,,,CHF,,,,70
+Equities and similar positions , Fid Germany AD,LU0048580004,6000,Eurozone,EUR,30.72,EUR,05.02.26,,0.9323,171841.54,CHF,1.120257649,,CHF,,,CHF,,,,70
+Equities and similar positions , MEDICAL BioH IC,LU0294851513,6000,Eurozone,EUR,13.84,EUR,05.02.26,,0.9323,77418.19,CHF,0.504699409,,CHF,,,CHF,,,,70
+Equities and similar positions , Mercedes-BenzGr N,DE0007100000,3500,Eurozone,EUR,56.75,EUR,05.02.26,,0.9323,185178.09,CHF,1.207200388,,CHF,,,CHF,,,,70
+Equities and similar positions , RWE I,DE0007037129,7000,Eurozone,EUR,35.01,EUR,05.02.26,,0.9323,228478.76,CHF,1.489483192,,CHF,,,CHF,,,,70
+Equities and similar positions , Shell Rg,GB00BP6MXD84,7000,United Kingdom,EUR,32.25,EUR,05.02.26,,0.9323,210466.73,CHF,1.372060353,,CHF,,,CHF,,,,70
+Equities and similar positions , Siemens Energy Rg,DE000ENER6Y0,1500,Eurozone,EUR,90.96,EUR,05.02.26,,0.9323,127203.01,CHF,0.829253221,,CHF,,,CHF,,,,70
+Equities and similar positions , Siemens N,DE0007236101,800,Eurozone,EUR,206.61,EUR,05.02.26,,0.9323,154098.00,CHF,1.004585212,,CHF,,,CHF,,,,70
+Equities and similar positions , HSBC Hldg Rg,GB0005405286,15000,United Kingdom,GBP,10.38,GBP,05.02.26,,1.0895,169635.15,CHF,1.105873927,,CHF,,,CHF,,,,70
+Equities and similar positions , Vodafone Group Rg,GB00BH4HKS39,230000,United Kingdom,GBP,0.776,GBP,05.02.26,,1.0895,194453.96,CHF,1.267671025,,CHF,,,CHF,,,,70
+Equities and similar positions , Altria Group Rg,US02209S1033,3000,North America,USD,55.77,USD,05.02.26,,0.8036,134450.32,CHF,0.876499352,,CHF,,,CHF,,,,70
+Equities and similar positions , Amgen Rg,US0311621009,600,North America,USD,312.44,USD,05.02.26,,0.8036,150646.07,CHF,0.982081612,,CHF,,,CHF,,,,70
+Equities and similar positions , Boeing Co Rg,US0970231058,800,North America,USD,198.70,USD,05.02.26,,0.8036,127740.26,CHF,0.832755585,,CHF,,,CHF,,,,70
+Equities and similar positions , Carrier Global Rg,US14448C1045,1750,North America,USD,70.96,USD,05.02.26,,0.8036,99791.05,CHF,0.650551010,,CHF,,,CHF,,,,70
+Equities and similar positions , Citigroup Rg,US1729674242,1750,North America,USD,93.16,USD,05.02.26,,0.8036,131010.91,CHF,0.854077397,,CHF,,,CHF,,,,70
+Equities and similar positions , GE Aerospace Rg,US3696043013,400,North America,USD,243.89,USD,05.02.26,,0.8036,78396.00,CHF,0.511073879,,CHF,,,CHF,,,,70
+Equities and similar positions , Gen Digital Rg,US6687711084,7000,North America,USD,26.56,USD,05.02.26,,0.8036,149405.31,CHF,0.973992944,,CHF,,,CHF,,,,70
+Equities and similar positions , GE Vernova Rg,US36828A1016,500,North America,USD,484.58,USD,05.02.26,,0.8036,194704.24,CHF,1.269302659,,CHF,,,CHF,,,,70
+Equities and similar positions , iShs MSCI Au USD-Ac,IE00B5377D42,3000,Asia Pacific exJP,USD,40.94,USD,05.02.26,,0.8036,98698.15,CHF,0.643426277,,CHF,,,CHF,,,,70
+Equities and similar positions , iShs NASDAQ USD-Ac,IE00B53SZB19,125,North America,USD,1033.48,USD,05.02.26,,0.8036,103813.07,CHF,0.676771076,,CHF,,,CHF,,,,70
+Equities and similar positions , Johnson&Johnson Rg,US4781601046,1750,North America,USD,169.07,USD,05.02.26,,0.8036,237763.14,CHF,1.550009291,,CHF,,,CHF,,,,70
+Equities and similar positions , Otis Worldwide Rg,US68902V1070,2500,North America,USD,99.53,USD,05.02.26,,0.8036,199955.77,CHF,1.303538050,,CHF,,,CHF,,,,70
+Equities and similar positions , Pepsico Rg,US7134481081,1750,North America,USD,142.62,USD,05.02.26,,0.8036,200566.51,CHF,1.307519519,,CHF,,,CHF,,,,70
+Equities and similar positions , Pfizer Rg,US7170811035,6000,North America,USD,26.11,USD,05.02.26,,0.8036,125891.98,CHF,0.820706404,,CHF,,,CHF,,,,70
+Equities and similar positions , Philip Mrrs Int Rg,US7181721090,1250,North America,USD,158.53,USD,05.02.26,,0.8036,159243.39,CHF,1.038128640,,CHF,,,CHF,,,,70
+Equities and similar positions , Procter&Gamble Rg,US7427181091,1750,North America,USD,152.13,USD,05.02.26,,0.8036,213940.42,CHF,1.394705822,,CHF,,,CHF,,,,70
+Equities and similar positions , RTX Rg,US75513E1010,1250,North America,USD,155.86,USD,05.02.26,,0.8036,156561.37,CHF,1.020644230,,CHF,,,CHF,,,,70
+Equities and similar positions , Verizon Comm Rg,US92343V1044,2500,North America,USD,43.94,USD,05.02.26,,0.8036,88275.46,CHF,0.575479372,,CHF,,,CHF,,,,70
+Equities and similar positions , Xtr MSCI Jap 1CC,LU0274209740,1450,Japan,USD,106.7701,USD,05.02.26,,0.8036,124405.71,CHF,0.81101724,68.09,CHF,0.9137,90210.64,CHF,49.96,-12.05,37.91,70
+Alternative investments , SwCHGETF -EA (USD)-,CH0047533549,56,Switzerland,USD,4295.92,USD,05.02.26,,0.8036,193315.58,CHF,1.260249775,1805.68,CHF,0.9001,91011.61,CHF,123.13,-10.72,112.41,70
+
+so create the csv file and as a unit test result create or update a zukunft.com json that can be imported
+
+create a similar csv for the existing portfolio split test data that creates a new json with a different name that can be compare with the existing json
+
+### check
+
+Differences remaining
+
+- Button colours: the generated page uses the site's grey filled buttons, while the sample shows blue outlines. Those button rules are shared across the whole site and the sample doesn't load the site's stylesheet, so changing them here would affect every page.
+- Font: it differs for the same reason.
+- Button icons: these belong to step 7.
+- Import position: Import is below Save here and at the top in the sample. I didn't change this because it's page structure, not styling.
+- Walk table: it still scrolls sideways, so the last column is cut off until you scroll. The sample does the same.
+- Diagram scale font: the sample uses a monospace font for it, and I kept the normal one.
+
+### step 2: add a "Add child" and remove
+
+Add an add two children and remove one child test case similar to the high and low test cases 
+so that all main test cases are covered
+
+### step 3: the input fields (1), (2), (3), (4)
+
+- the formulas of the warnings name the first and the second child: 
+  a new child needs a sum over the instances, so update them with the add child task
+
+The buttons "Add child" and remove are a separate task after step 9, 
+because a new child has no allocation before the walk is calculated: 
+a new instance needs its own phrase, its "is a" triple and its target share through the logged save, 
+and the page needs the remove button per field. The button stays without a function until then.
+
+### step 4: the result table (9), (17)
+
+- the sample shows a positive deviation with a plus sign and a small negative one as -0.00, the generated page 0.00 and the sign only in the positive style; `calculator signed` is also used by other use cases, so check their samples first
+
+### step 5: the detail tables (5), (6), (7), (8), (14), (15), (16)
+
+- the number fields of the holdings (6): `calculator editable` has no renderer code yet, and the fields wait for step 9, because the page must show the walk of the saved quantity or price
+- the colours of the walk cells and the hint below the holdings
+
+### step 7: the buttons (13)
+
+- the buttons "Download", "Report", "Import", "Import portfolio", "Import FX rates", "Copy as zukunft.com JSON" and "Copy as CSV" have no function: each function is a task of its own, and an import is a write that needs the usual permission and log rules
+- the icons of the sample
+
+### step 8: decide what the generated page keeps
+
+- the section "Inputs from" exists only in the sample and holds the buttons "Import portfolio" and "Import FX rates", 
+- which the generated page shows at the assumptions and the holdings
+
+### step 9: calculate the split again in the browser (18)
+
+The rows of the walk are stored results of the formulas, and the browser calculates them again after an input change with the values of the rows from the phrase data. The summary rows stay modelled and the rounding of a tie differs, see part 3 and 5, so the numbers of the case reports can still differ from the sample. An operand with `prior` next to another phrase reads the row before in the `is follower of` chain (`prior_operand`) in `formula_calc`, `calculator.js`, `calculator_json.js`, `formula_editor.js` and the calc-validation. The round to a multiple needs nothing new, because it is `round( "x" / "lot size" ) * "lot size"`. The plan, each part with a positive and a negative test and a run before the next part:
+
+1. the previous row in the backend: `element_group::figures` reads it, but no test covers it with a database yet; add a write test with a follower chain, a first row and a row in the middle, and a negative test with two chains in the context. A figure selects its number by the exact phrase group of the context and the operand, so check with the formulas of part 3 that the context of a walk formula selects the stored numbers
+2. the walk order selector: the holdings have one follower chain, in the order of the largest lot value, and `is ranked by` also accepts a result; the option "Bank report order" needs its own order for the rows and for `prior`, because one phrase has one previous phrase per chain, so decide this with the formulas of part 3
+3. the formulas in `portfolio_split_calculator.json`: the unit value, the lot value, the target, the counts of the children and the parent and the cumulative deviation exist with a calc-validation of all 42 rows. Still open: the equal part of a position when the rounded counts exceed it, the second child without mirroring: `first child` and `second child` are named in the formulas, so a new child needs a formula by the instances, and a rounding rule for a tie: the sample rounds LISP 3.5 up but SCHP 420.5, STMN 874.5, ABBN 1925.5 and the cent of `CHF cash` down, only because its carried deviation has floating point noise. The stored numbers of these rows are just below the tie (e.g. 420.499999) to keep the counts of the sample, so a calculation from exact numbers rounds them up and the walk differs from there on
+4. the results of the rows in the phrase data: the from walk loads them for a table with `calculator page independent` and a cell of such a table reads the one result if no one value qualifies, so `calculator page independent` keeps its `PROPOSED` text only for the items and the check table. Still open: a unit test of a cell with a result
+5. add the number fields of the holdings and the add child task. The modelled realised value, the totals per kind of holding and the realised share stay, because a formula cannot sum over the rows yet
+
+## prime group id within 2^53
+
+limit the use of the prime value table to the javascript int limit of 9,007,199,254,740,991 (or 2^53 - 1)
+if a value id would be bigger than this limit, force the use of the alpha group_id as unique key for values
+and the use of the values table instead of values_prime
+
+## ID check
+
+include files like phrase_data_pv_install.json in the re-pin id check and if  AUTO_RE_PIN_OBJECT_ID is true update the id
+
+## Calculator editor
+
+## use cases
+
+### portfolio split calculator
+
+the files and the diff check exist (`docs/deployment.md` "use case pages and their samples"); next steps:
+- bring `portfolio_split_calculator_no_js.html` and `_js.html` closer to the sample with `portfolio_split_calculator_diff.md` and `_diff_high.md`
+- give both pages the same fields, then add more input cases and set `$all_fields` of `assert_sample_case` to true
+- add the same setup for the other samples of the table in `docs/deployment.md`
+
+### Swiss NPP
+
+based on the sample 'Calculator Editor' json detect which elements might be missing to recreated
+src/test/resources/web/html/use_cases/npp_ch_vote_sample.html based on existing a 'Calculator Editor' json
+
+add the missing elements and update the 'sample Calculator Editor json' and /docs/json_structure.md
+
+create a json that once imported would recreate src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+and add the json to the use case import and add tests that creates src/test/resources/web/html/use_cases/npp_ch_vote.html
+and compares it with src/test/resources/web/html/use_cases/npp_ch_vote_sample.html
+similar to the tests off src/test/resources/web/html/use_cases/pv_lifetime_balance_sample.html
+
+add costs of CO2-eq reduction to the npp
+
+add to the calculator a 'Share assumptions and vote' button
+and to the "Calculator Editor" a share Calculator vie Mastodon, email, Nostr, ...button
+
+### ahv vat 
+
+Add other targets e.g. distribution of money from the rich to the poor and from the old to the young and add the 
+possibility to set the weight of the targets and combine them with the personal gain to one index rating 
+
+## pure HTML ans JavaScript views
+
+add an url parameter for to use the pure HTML version of the view. If the parameter is not given and a JavaScript version exists use the javascrip version
+
+create a JavaScript version of the formula editor view
+
+## calculator
+
+### differences between the evaluators
+
+fix the edge cases that `docs/math.md` marks as a diff:
+- the backend loses precision, because it turns intermediate results into text with 14 digits: `( 1 / 3 ) * 3` gives 0.99999999999999 and the page 1
+- the page evaluators reject a number in scientific notation and a number without digits on both sides of the point (`5E3`, `1.5E-5 * 2`, `.5`, `2.`), so check if a page writes a small value in this form, which then gives no number
+- the backend rejects a double sign (`--3`), the page evaluators give 3
+- only the backend calculates the short if form `if( 1 ) 5`, all page evaluators and the formula editor give no number
+
+### list functions
+
+- the unit_read test of `formula::fill_list_element_group` has no stored value with a variance or a confidence, so the exclusion of `words::LIST_FUNCTION_EXCLUDED` is only tested on the page (`use_case_ui_tests`)
+- the import calc validation (`data_object::expression_with_values`) replaces an operand by one number, so a list formula in a calc validation needs the same list selection
+
+### functions used in the data but not calculated
+
+`docs/math.md` lists `C`, `IRF`, `d`, `integral` and `lim`. Except `IRF` they are in laws of `math.json`, where the letters stand for any number, so most of them are no calculation at all.
+
+Recommended, in this order:
+1. **Mark a law as not calculated** for `d`, `integral` and `lim`: add a formula type e.g. "law" (`formula_type`), which is shown with its latex and never calculated, so no user gets an error for a formula that only documents a rule. `math_function_report::used_functions` skips this type, so that the report lists only real gaps. This needs a data change of the math.json formulas and possibly a raise of the minor version, if the json format changes.
+2. **`IRF`**: rewrite the formula in the data with what is already calculated, because `exp` exists and the coefficients are values: `"IRF" = "IRF coefficient a0" + "IRF coefficient a1" * exp( 0 - "time" / "IRF time scale tau1" ) + ...`. Then it is a real result and the name IRF is a phrase instead of a function.
+3. **`C`**: add it as a function of two numbers to all five evaluators, because a binomial coefficient is a plain calculation of numbers: reject a negative or a non-integer argument with a message and take care of the overflow of a big `n`. The law of the binomial theorem in math.json still gets the type of step 1, because its `sum` runs over an index, which the list functions do not have.
+
+Alternatives, only if a real calculation needs them:
+- `integral` and `d` as numbers: a numeric calculation over a table of values, e.g. the trapezoid rule over the values of a time row, under a new name such as `area( "y" ; "x" )`; a symbolic calculation would need a computer algebra system, which is not worth the dependency
+- `lim`: no numeric form that is reliable, so it stays a law
+
+Keep the error message for a formula without the law type, because a function that does not exist must never give a wrong number.
+
+### formula editor
+
+- a function inserted by the "... more" buttons gives no number until its arguments are filled, and like a single open bracket such an expression can be saved: block the save of an expression that is no valid calculation
+- add a test of the "... more" buttons, which so far only the math report covers for the calculation
+
+### PV calculator page compared with its sample
+
+the remaining differences of `pv_lifetime_balance_diff.md`:
+- the numbers in a row sub text are not updated by `calculator.js` of the server page when an input changes, like the number in a row label; `calculator_json.js` builds them again
+
+### assert_contains names the wrong entry
+
+`test_base::assert_contains` compares by position, so one missing entry is reported as the last entry of the list e.g. "+zukunft.com" for a missing "modelled"; report the entries that are really missing
+
+### saved result of a failed calculation
+
+a failed formula calculation overwrites the stored result with nothing (`docs/json_structure.md`); add a test that `formula::calc_result` and `result::save_if_updated` really write the empty number, and fix the save path if they do not
+
+### compare
+
+add the other *_sample.html files in src/test/resources/web/html/use_cases in the compare and add a check script that
+all *_sample.html files are part of the compare and generation build
+
+### base on json
+
+the calculator page e.g. http://localhost/http/view.php?m=16&id=-2757 is built in the browser by
+`calculator_json.js` from one /api/phraseData answer (the seed) and the page settings
+(`system_page::calculator_json`, docs/llm/frontend.md "Javascript only for the calculator"); with
+`&sc=0` the page of the server is shown; the snapshots are `use_cases/pv_lifetime_balance_js.html`
+and `use_cases/pv_lifetime_balance_no_js.html`; every "which value, which format" decision lives in the
+data, the code only applies plain rules (phrase match, the arithmetic, the number format)
+
+open points of the review:
+1. `number_format::unit_conversions` has no unit test of its own: a conversion formula e.g.
+   "kg" = "tonne" * 1000 gives both directions, and a formula that is no conversion e.g.
+   "t" = ln( 2 ) / "η" is left out; the page settings (`system_page::calculator_page_settings`,
+   `calculator_type_names`) are only checked indirectly
+2. the open differences of the two snapshots: the server numbers the operand sources by the results
+   in the preferred order of numbers (`sandbox_value::sorted`, first by the `impact`), which the
+   phraseData answer does not carry, so the script numbers e.g. the monthly mixes of treeze 2025
+   before the Swissolar fact sheet 2024; for the same reason a field whose value no result uses
+   and that two values fit equally shows the first value of the preferred order on the server,
+   while the script leaves the field empty with a warning (`onlyOne`), until the ranking of
+   point 5 is replaced; the use case fixes such a tie by naming the field value
+3. `system_page::CALC_EDITOR_SEED_ID` and `CALC_EDITOR_TYPES_ID` are also the ids of the calculator
+   page, so a name without "editor" fits better (a rename is the developer's decision)
+4. the page object: the calculator view loads its phrase with the related objects
+   (`frontend::page_api_par`, `views::VIEWS_WITHOUT_RELATED`), which the page does not use; load it
+   without them or take it from the selection of the phraseData answer, and count the api calls of
+   the page in a database read test, so that the page needs only the view, one phraseData answer
+   and the typeLists and config of the session
+5. `calculator_json.js` repeats code: `evaluate` the arithmetic of `calculator.js`, `readJson` the
+   big id handling of `calculator_editor.js`, the reader of the calculator triples and the layout
+   the editor preview (`calculator_editor.js::previewPage`), and `fieldEntry` the ranking of
+   `ui_list::calculator_value`; share the script code in one file, and replace the ranking after
+   the first rank, the value that a result of the page uses, which the formulas of the data decide,
+   by a plain match of the data: where two values fit a field equally, the use case gets the missing
+   qualifier phrase or a calculator triple that names the used value, and a tie is reported by the
+   calc validation of the use case
+6. `calculator_json.js` has no test, because the repository has no javascript runtime; one json
+   test fixture per rule (seed and settings in, field values, cell texts, operand fields, notes and
+   sources out), read by the PHP unit test and by a check of the script, so that the PHP and the
+   javascript implementation of the plain rules cannot drift
+7. the page of the server (`sc=0`) embeds the seed and the verbs and units of the type cache
+   (`system_page::calculation_result` → `calculator_page_data`, about 100 KB), which its script
+   `calculator.js` never reads; the `fields` plan and the `digits` of the `calc-data`
+   (`ui_list::calculator_script`) are not read either; remove all three and move the test
+   "... the phrase data of the page as the seed" of `use_case_ui_tests` to the json page tests
+
+### load the phrase data once per step
+
+`cfg/export/phrase_data.php` collects the data by the phrase ids and loads it once per step, but two
+places load per object:
+- `value_phrase_ids` calls `load_phrases()` for each value; take the phrase ids from the group key
+  (`$val->grp()->id_lst()`) like `result_phrase_ids`, because `complete_phrases` loads them once with
+  all other phrases
+- `with_ids` calls `export_json($msg)` with the default `$do_load = true`, which reloads each value and
+  result by its id and loads its phrases; set the phrase lists of the value and result groups (incl. the
+  source group of a result, whose names `result::export_json` exports as context) from the completed
+  phrase list and export with `$do_load = false`
+
+`phrase_list::get_by_ids` reads each id from the new empty list instead of `$this`, so it always returns
+an empty list; fix it and add a unit test before it is used to set the group phrase lists
+
+## Calculator editor
+
+### add new words
+
+if with the load not matching word or triple is found, offer the user to add a word with the standard parameters.
+if the search pattern contains spaces suggest to add the single words separated by spaces and triples for the combined words.
+search in wikipedia for all words and triples and suggest to include these as references. 
+
+### power sign
+
+in the formula editor and all other places add the power sign '^' as an operator.
+
+add other usual math operators that are missing
+
+## external links
+
+create a script that collects or potential external links and dependencies and list the in '/docs/dependencies.md'
+
+## names that a user has given
+
+a user who renames a word, triple, formula, source, view or component sees the own name, so every load by
+name must find the object by that name: `(u.<x>_name = $2 OR (s.<x>_name = $2 AND u.<x>_name IS NULL))`
+(`sql_par_type::TEXT_USR`, see `sandbox_named::load_sql_by_name` and `phrase::load_sql_by_name`);
+the `*_norm_by_name` loads select the standard row by design and stay as they are
+
+- see /docs/llm/coding.md and let `term::load_sql_by_name` find a term by the name that the user has given it
+  like `phrase::load_sql_by_name` (`sql_par_type::TEXT_USR`); add a positive and a negative test in
+  `term_tests` like the phrase test; `term_by_name.sql` and its mysql twin are regenerated by the developer
+- see /docs/llm/coding.md and let the lists by names (`phrase_list_by_names`, `word_list_by_names`,
+  `formula_list_by_names`, `WHERE s.<x>_name = ANY ($2)`) find the names that the user has given: add a
+  user-specific list parameter type next to `sql_par_type::TEXT_USR` that creates
+  `(u.<x>_name = ANY ($2) OR (s.<x>_name = ANY ($2) AND u.<x>_name IS NULL))` and use it in the lists; e.g. a
+  value of an update put message that names a phrase renamed by the user is not found yet; tests first
+- see /docs/llm/coding.md and let the name searches (`*_names_like` and `*_list_by_name_like` of word, triple,
+  phrase, term, formula, source, view and component, `WHERE s.<x>_name ilike $2`) find the names that the user
+  has given, so that the selector of the calculator editor suggests a renamed phrase by its new name; the order
+  by name uses the shown name; tests first
+- see /docs/llm/coding.md and let `group::load_sql_by_name` find a group by the name that the user has given
+  it in `user_groups`, like the other named objects; tests first
+
+## settings
+
+for phrase names used in the settings page e.g. http://localhost/http/view.php?m=126&u=9 e.g. for  'user
+    default
+        backend
+            impact
+                phrase
+                    happy time points'
+
+use a pattern base phrase search for the 'happy time points' phrase and all other phrases. 
+Select it by triples linked to a triple 'phrase selector (system)' with the  code_id 'phrase_select'
+
+like for the phrase selector do the same for view selector and other fields where a db row should be selected
+
+### check past changes again
+
+dark / light mode switch, phrase selector, view selector, colour picker, font selector
+
+## calculation editor
+
+### update json message
+
+if in the 'Calculator editor' save is pressed a json should be created and send to the api endpoint /api/updateDrop, which needs to be created
+The json should be similar to the import json that is described in docs/llm/json_structure.md, but the 'api_json' differs in some ways
+1. it uses the api header including the execution time report if needed
+2. it contains the database id which is used as the prime key if given
+3. also for types the database id is preferred used  
+
+create some tests that adds / updates / compares message files in src/test/resources/api/calculator_editor
+
+### test case
+
+create test cased for all possible change types in the calculation editor.
+For each change type do the change in the frontend and write / compare the message that would be send to /api/updateDrop
+
+`src/test/js/calculator_editor_scenarios.js` acts like a user in a copy of the calculator editor snapshot in a
+headless LibreWolf, Firefox or chromium, the first one found, and `use_case_ui_tests` compares the sent message with `src/test/resources/web/calculator_editor/`
+for a formula expression, a description, a renamed, a new and a removed triple, a new word, a new, a changed and a
+removed value, an undo and an input, a row and a row group moved up or down. The write test saves and undoes the
+description, the formula, the renamed triple, the changed number, the new limit, the new input field and the moved
+row and row group. Open:
+- a cleared limit, a removed input and a moved input delete rows of the use case, which the write test does not
+  save yet; a moved row shows the way: the undo adds the removed rows again by their name and link
+- the editor sends a moved item as removed and added order triples, because the link of a triple is the same for
+  all users; an item dragged into another list changes the link of its own triple, which other triples name, so
+  it is still sent as a changed triple, which a user who does not own the triple can not save yet
+- the triples of a new input field are not in `triple_names::TEST_TRIPLES`, so the global cleanup does not remove
+  them if a run stops before the undo
+- scenarios for the sub-items: a row filter, a detail column, a side result, a value phrase and the options of a phrase selector
+
+for the backend test create workflow write tests that take each message that could be dropped to /api/updateDrop and execute it, check the result and execute a corresponding undo message.
+
+
+### general
+
+add to /docs/llm/* that no concrete word, triple, formula or any other name should be never part of the code.
+The ONLY link between production code and concrete database rows is the code_id. This is way it is named code id.
+This is a general rules that does not allow ANY exception. 
+
+For testing the name, id and other fields can be used. But ONLY for testing!
+
+### javascript
+
+add to /docs/llm/* that js files should not have any const that is not takes from a php const to fulfill the "on point of change" rule
+this implies that all js files must be written by a php script
+
+#### unitNames
+
+src/main/resources/script/calculator_editor.js contains unitNames (e.g. 'const unitNames = new Set(["kWh", "kWp", "kg", "gram", "t", "percent", "a", "kWh/a"]);')
+there should be no specific const in the js file. the unitNames should be taken either from the seed json 
+or if this takes too long by execution time a units json should be included
+or the script should be updated automatically by a php script every time a unit is updated 
+which can be detected by a parent phrase with a code_id
+for the moment the preferred option is to use the exists seed json, which might need to be extended
+but all other options with the pros and cons should be documented in /docs/*
+
+#### verb names
+
+src/main/resources/script/calculator_editor.js contains verb names (e.g. '        if (t.verb === "is symbol for") {')
+to cover the case that a verb name changes the js script should be created by a php script that updated the js script
+every time a verb is renamed. for the moment it is fine if the script is updated with the full test run because 
+adding or changing a verb is at the moment a code change which requires a full test run
+
+### api updatePut
+
+create a new api 'updatePut' that takes json messages and saves them in the database
+
+## api security
+
+if it does not yet exist create a test that checks if an api request is rejected if it is not part of a previous created session
+
+session can only be created either via a proper session start via gui
+or using a predefined api session login that uses e.g. a public / private key pair and other extra security 
+
+### relogin
+
+if the calculation editor gets a message from the backend that might indicate that e.g. the session id is missing or invalide
+suggest to the user to login again with a link in the message shown to the user
+
+## other editors
+
+be aware (or better create a solution concept) for the case that in production the id of system triples used for testing will differ from the id in the development databases
+
+### table editor
+
+uss the calculation editor as a base and create a similar table editor
+
+### view editor
+
+uss the calculation editor as a base and create a view and component editor
+
+### process editor
+
+uss the calculation editor as a base and process editor, so multi step input views
+
+## phrase data api
+
+### speed up user data creations
+
+include the phraseData calls in the api cache handling 
+
+if the phraseData for a user is requested and the cache contains the standard data already 
+get the standard data from the cache, read the user overwrites from the database 
+and overwrite the standard data with the user overwrites
+
+### open API update
+
+write a script that recreates the open API yaml based on the code and create a test that reports the differences between
+the created openAPI and src/main/resources/openapi/zukunft_com_api.yaml and writes the created to src/main/resources/openapi/zukunft_com_api_generated.yaml
+
+## cleanup
+
+### id usage
+
+create a code test script that checks that the pinned word, triple, ... id (*_ID) are never used in the real code and only used for testing
+
+### test coverage
+
+#### steps
+
+goal: every public function of `docs/code_test_coverage.md` has at least two unit test calls
+(a positive and a negative test, see `docs/llm/coding.md`); the report is generated by
+`bin/code_test_coverage.php` and is never edited by hand, so each step below changes the tests
+(or the counter) and the developer regenerates the report to see the gap shrink
+
+starting point: 1126 of 6200 public functions are covered; of the 4869 gaps 3275 are in the
+main backend, 1414 in the frontend and 180 in shared, 381 functions have one call (359 of
+them share their name and need two calls per class, see step 1), and the 205 functions
+that no code calls are listed in the
+section "never called" at the end of the report, for the developer to decide per function
+whether it is removed or kept
+
+rules for every step:
+- one class (or one shared function name) per prompt, so that each diff stays reviewable
+- the tests are added to the existing test file of the class (e.g. `unit/word_tests.php`,
+  `unit_ui/value_list_ui_tests.php`), the objects come from the test factories
+  (`test_words`, `test_values`, …) and the users from `$t->usr1`, `$t->usr2`
+- every feature gets a positive and a negative test, and the negative test asserts the
+  reported outcome (`msg_id`, empty or `false`)
+- a call counts only between a `$test_name = …` line and the last `$t->assert…` of the same
+  block, so the tested call stays inside that block and never inside a `$t->assert_…` helper;
+  the counter itself stays as simple as it is (`docs/llm/testing.md`, "The test coverage
+  counter stays simple"): a function that only a harness helper calls or that shares its
+  name with other classes gets its own explicit test instead of a smarter counter
+- no source function is changed to make it testable in the same prompt; a function that
+  cannot be tested without a change is listed in `docs/llm/pending_prio_2.md` instead
+- the LLM never runs the tests; the developer runs them and regenerates the report
+
+1. cover the functions that many classes share, in the order of the number of classes:
+   `default_id` (46 classes), `load_sql` (45),
+   `db_fields_changed` (44), `db_fields_all` (43), `import_mapper` (38), `load_dummy` and
+   `api_array` (37), `name_field` and `fill` (36), `delta` (32), `diff_msg` (28), `url_mapper`
+   and `save` (27); one prompt per function name, which adds one positive and one negative
+   block per class to the test file of that class; `reset` (67 classes) is not listed as a
+   gap, because the counter also counts every `$msg->reset()` of the test blocks, so the reset
+   of each class still gets its own positive and negative test
+2. cover the classes without database and frontend first, because their tests are fast and
+   need no fixture: `html_base` (114 gaps), `sql_creator` (80),
+   `sql_type_list` (50), then the frontend forms and lists (`system_form` 87, `db_object` 66,
+   `phrase_list` 53, `triple` 52, `phrase` 48)
+3. cover the backend model classes with the unit test factories (no database): `sandbox`
+   (134), `sandbox_multi` (123), `triple` (97), `user` (95), `phrase_list` (92), `phrase`
+   (78), `group` (72), `word` (69), `sandbox_value` (69), `sandbox_link` (69), `ref` (60),
+   `data_object` (58), `formula_map` (57), `component` (55), `value_base` (55)
+4. cover the functions that need the database in `unit_read` / `unit_write`: `sql_db` (122),
+   the `load_*` functions that are left after step 1 and the functions with one call that
+   need the database for the second: `value_base::save_as_default`, `view::load_by_term`, web
+   `db_object::add_via_api`, `component::log_link`, `config_numbers::load_cfg`,
+   `db_cache_page::del_all`, `type_lists::load_cached`, `system_object::system_user` and
+   `user_log`, and the `add` that writes the object to the database: `sandbox`,
+   `sandbox_named`, `sandbox_link`, `sandbox_multi`, `value_base`, `value_time_series`,
+   `triple`, `verb`, `group`, `ref`, `formula_map`, `ip_range`, `change_log` and `change_link`
+5. decide on the functions that a unit test cannot reach, e.g. the bootstrap of
+   `application` (`start`, `start_api`, `open_db`, `end`) and the functions with one call
+   that have no failure branch for a negative test (`frontend::activation_url`,
+   `html_base::p`, `import_convert_xbrl::instance_file_name`,
+   `change_log_list::load_sql_by_user_value`, `phrase::value_selection`): either a test of
+   the request lifecycle covers them, or the counter gets a named exception list with the
+   reason per function, which `docs/llm/testing.md` documents and which must stay short
+6. keep the gain: a test in `coding_rule_tests.php` compares the covered count of the report
+   with a const in `src/test/php/const/` and fails if it drops, so a new function without
+   tests is reported at once; the const is raised after each step
+
+### TODO
+
+goal: no `TODO Prio 0` is left in the code; each one is either solved (the comment is removed
+together with the fix) or, if the work shows that it is less urgent, given a Prio 1, 2 or 3
+with a concrete text
+
+starting point: 158 `TODO Prio 0` in src, test, http and api (the paths below are relative to
+`src/main/php/` resp. `src/test/php/`)
+
+rules for every step:
+- one step or one class per prompt, so that each diff stays reviewable
+- the test comes first: a fix gets a positive and a negative unit test (`docs/llm/coding.md`,
+  "Testing rules"); a fix that cannot be tested without the database goes to `unit_read` /
+  `unit_write`
+- a solved TODO is removed, never rewritten to "done"; a TODO that is only partly solved keeps
+  the open part with a new priority
+- an activated test that fails is not switched off again: the cause is fixed, or the test gets
+  a `TODO Prio 1` with the reported diff
+- the LLM never runs the tests; the developer runs them and reports the result
+
+1. triage the bare "review" TODOs, because they do not say what is wrong: read the code, then
+   replace each by a concrete TODO with a Prio 1, 2 or 3, or solve it if it is a one-line fix:
+   `cfg/db/sql_db.php:1282`, `cfg/phrase/phrase.php:931`, `cfg/phrase/term.php:1418`,
+   `cfg/result/result.php:2021` and `:2049`, `cfg/user/user.php:2213`,
+   `web/component/execute/system_form.php:2826`, `web/frontend.php:701`,
+   `unit_write/group_write_tests.php:130`, `unit_write/triple_write_tests.php:387`,
+   `unit_write/word_write_tests.php:403`, and `cfg/value/value_list.php:1309` ("review error")
+2. report every failure instead of failing silently (top rule 3):
+   - read an optional array key with `key_exists`: `cfg/result/result.php:1676`,
+     `cfg/sandbox/sandbox_multi.php:1667`, `cfg/system/ip_range.php:323`,
+     `cfg/verb/verb.php:706`, `cfg/view/view.php:565`
+   - turn the warnings back into errors: `cfg/phrase/phrase_list.php:2309`,
+     `web/phrase/phrase_list.php:2174`
+   - return or report the failure to the caller: `cfg/db/sql_db.php:3408` (return false),
+     `cfg/db/sql_db.php:4748` and `cfg/import/import_file.php:85` (take the `user_message` of
+     the caller), `cfg/sandbox/sandbox_typed.php:140` (a not mapped row on `$msg`),
+     `cfg/view/term_view.php:563` (use a `msg_id`), `cfg/formula/formula_map.php:698` and
+     `shared/calc/expression.php:214` (the ref text check with the user message)
+   - log a missing mapper overwrite: `web/sandbox/ListBase.php:121`, `utils/test_lib.php:311`
+   - one message per request: `http/about.php:45` (all frontend calls),
+     `cfg/component/component_link_list.php:479` (the reset of all lists),
+     `utils/test_cleanup.php:290` (a local message for each del call), and the shared message
+     status const of `cfg/db/sql_message.php:232` and `cfg/user/user_message.php:238`
+3. close the gaps in security and data correctness of the backend:
+   - `cfg/db/db_check.php:126`: in prod and test the setup runs only if the setup flag is on
+   - `cfg/db/sql_par.php:168`: the unique check includes the keys
+   - `cfg/user/user.php:237`: every user field is saved and in the api message, and
+     `:732` / `:2280` write each DateTime as `DateTimeInterface::ATOM` with `?` for null
+   - `cfg/word/triple.php:572`: the mapper does not save, the save moves to `import_obj`
+   - `cfg/sandbox/sandbox.php:1180`, `:1181`, `:1433`: the removed `load_owner` and the
+     component `reload_phrases` are called where the load needs them
+   - `cfg/helper/db_object_seq_id_user.php:143`, `cfg/helper/type_list.php:316` (save a new
+     type), `cfg/sandbox/sandbox_list.php:370` (fill), `cfg/phrase/phrase_list.php:1533` (the
+     time type check), `cfg/log/change_link.php:386` and `:412`,
+     `cfg/view/view_relation.php:571` (the export if requested), `cfg/sandbox/sandbox.php:3282`
+     (use it for the import)
+   - the usage field is maintained by the backend, so that the workaround of
+     `unit_workflow/triple_url_tests.php:494` and `unit_workflow/word_url_tests.php:758` is
+     removed
+   - the type cache: `cfg/formula/formula_link_type.php:199` and `:253`,
+     `cfg/helper/type_lists.php:288`, `web/sandbox/sandbox.php:123` (the dto cache in the api
+     mapper)
+4. activate the disabled tests, one test file per prompt, and fix what they report:
+   - the unit tests that only need a db write: `unit/group_tests.php:378`,
+     `unit/result_tests.php:179`, `:188`, `:199`, `unit/triple_tests.php:121`,
+     `unit/value_tests.php:580`
+   - `unit_write/triple_write_tests.php` (`:163`, `:208`, `:240`, `:262` "fix it" and `:364`),
+     `all_unit_write_tests.php:152`, `api_write_tests.php:88`, `element_group_write_tests.php:197`,
+     `element_write_tests.php:125`, `expression_write_tests.php:157`,
+     `formula_trigger_tests.php:137`, `formula_write_tests.php:110`, `import_write_tests.php:339`,
+     `term_write_tests.php:95`, `view_relation_write_tests.php:57` and `:76`,
+     `xbrl_write_tests.php:88` and `:95`
+   - `unit_read/formula_list_read_tests.php:83`, `unit_read/value_list_read_tests.php:79` (load
+     both values), `unit_api/api_tests.php:215`, `unit_ui/localhost_ui_tests.php:114`
+   - the disabled source parts: `cfg/const/files.php:317`, `web/component/component.php:994`,
+     `cfg/sandbox/sandbox.php:4523` (activate or remove)
+5. replace the frontend stubs by real code, so that each system page shows its content:
+   `web/component/execute/system_page.php` (the 14 "fill with real code" and `:561` the title
+   of a search result), `ui_base.php:117`, `ui_list.php:4000`, `ui_rank.php:61` and `:71`,
+   `system_form.php:3005` (wire up the request action) and `:672` (system to web language),
+   `web/formula/formula.php:911` (the formula links in the mask), `web/value/value.php:1372`
+   (the source selector) and `:1015` (the database part moves to the backend),
+   `web/view/view_exe.php:770` (tooltip and url), `web/system/sys_log.php:71` (the missing
+   backend fields), `web/helper/data_object.php:285` (the missing objects e.g. view_link_list),
+   `web/word/word.php:288` (all fields in the url); each page gets its html snapshot test
+6. add the missing unit tests (together with "test coverage"):
+   `cfg/phrase/phrase_list.php:2247` and `:2265`, `cfg/sandbox/sandbox.php:2539`,
+   `cfg/word/triple.php:2229` and `:2250`, `shared/helper/ListOfIdNamedCodeObjects.php:204` and
+   `:276`, `shared/helper/ListOfIdNamedObjects.php:206`, `shared/json_fields.php:63`,
+   `unit/base_object_tests.php:389` (add and unset), `unit/element_list_tests.php:95` (fail
+   cases), `unit/type_tests.php:402` and `:403` (language, position and system time types),
+   `utils/test_base.php:3259` (the test view relation)
+7. deprecate, merge and rename, each with the callers in the same prompt:
+   - deprecate: `web/frontend.php:839` (`$usr_backend`), `web/user/user.php:148`,
+     `cfg/formula/formula_map.php:224`, `cfg/formula/formula_list.php:847` (remove),
+     `web/html/html_base.php:939` (use `url_new`), `:2527`
+   - merge: `cfg/application.php:337` with `frontend.php`, `cfg/user/user.php:1586`
+   - one way for all: `web/html/html_base.php:1911` (all input fields),
+     `web/html/html_selector.php:118`, `web/types/type_list.php:529` (the var order of all
+     selectors), `cfg/helper/type_list.php:391` (the load_sql overwrites),
+     `cfg/phrase/phrase_type.php:143` (one field conversion), `cfg/user/user.php:627` (an object
+     mapper library), `cfg/component/component_type_list.php:53` (load_dummy)
+   - consts and config: `shared/const/views.php:1334` (a key value map),
+     `shared/helper/Config.php:77` and `:81` (only the fallback of config.yaml),
+     `shared/types/component_types.php:362`
+   - rename: `web/helper/data_object.php:213` (`$typ_lst`), `unit_write/expression_write_tests.php:114`
+     (`user_text`)
+   - the test factories: `create/test_formulas.php:335`, `create/test_triples.php:285` and
+     `:307` (a to_url function), `create/test_verbs.php:112` (a real filled verb),
+     `create/test_views.php:556`, `unit_read/all_unit_read_tests.php:97`,
+     `unit/coding_rule_tests.php:1073`
+   - the rule of `cfg/word/triple.php:375` ("explicit is better than implicit") is added to
+     `docs/llm/coding.md` with this case as the sample
+
+#### clean up
+
+1. The new 'assert should use most specific parameters' rule has no coded check. coding.md says every machine-checkable coding rule gets a check in unit/coding_rule_tests.php. "No assert_true / assert_false / assert(…, false) around array_key_exists" is machine-checkable, but there is no such test, so a new wrapped assert would go unnoticed.
+2. The assert-line rule is only partly applied. The new testing.md section says to read keys without ?? and to read nested values on the line before. About 80 asserts in the tests committed in 0dc5b8100 still break it, for example sys_log_tests.php:214 ($vars[json_fields::DESCRIPTION] ?? '') and component_tests.php (($vars[…] ?? null)?->value).
+3. Duplicated logic in the two new helpers. assert_key_exists and assert_key_not_exists in test_base.php share their first three steps (lookup, key list, diff). A small private function returning the key list would remove the copy. This is minor.
+4. The new helpers have no $exe_max_time parameter, unlike assert_text_contains and the other helpers. So they always use the default timeout, which is fine for array lookups but differs from their siblings. Low priority.
+5. Two consts hold the same text: test_const::TERM_VIEW_COM and VIEW_RELATION_COM are both 'add usage and log of a word'. Keeping them separate is right as long as the two fixtures are meant to be independent; just be aware of it.
+6. A second message is created mid-test in user_ui_tests.php ("the api url of the system user…"): $sys_msg = new user_message($sys_ui). This only names what was already inline before. The test needs a message for the system user, but the rule says to create $msg once.
+7. docs/llm/pending.md has a new "view edit" entry (move the "main + variance" entries to the navbar edit menu). It isn't part of this work; I assume it's yours. Commit it separately or name it in the message.
+
+### calculator
+
+goal: `view.php?m=16&id=-2573` (pv lifetime balance) is created in less than 3 seconds; the
+debug=9 log shows 59 seconds (77 before the request cache of the values, commit 5f63abe8b),
+of which about 52 are spent waiting for about 120 api calls
+
+where the time goes (debug=9 log):
+- 34 s: the 40 `api/valueList/?phrase_ids=…` calls of the cells (13.7 s → 47.5 s), each set
+  once now; the 14 sets that contain phrase 289 take 1.2 to 1.4 s each (18 s), the other 26
+  take 0.43 to 0.76 s each (16 s), while a `phraseList` call takes 0.13 s, so the value
+  query is slow on its own, not only with phrase 289
+- 11 s: the 13 input names are looked up three times with
+  `api/phraseList/?k=<input name>&pd=up&px=2` (6.9 s → 12.8 s with the 13 single `valueList`
+  calls of their values, 48.2 s → 50.6 s and 55.4 s → 57.7 s), because
+  `ui_list::add_field_links` loads the related phrases of a name without a cache check; the
+  values of the names are loaded once already
+- 6.5 s: frontend php between the calls: 3.6 s between "calculator input" rendered (51.7 s) and
+  the first call of "calculation result" (55.4 s), 1.1 s and 1.2 s after the last call of each
+  of the two components, 0.5 s before the second input name pass
+- 4.1 s: the frontend bootstrap: the components of the 195 system views (1.2 s),
+  `api/config/?1=frontend` (1.4 s) and `api/triple/?ir=1&id=2573` (1.0 s)
+- 2.5 s: the 6 `api/phraseList/?il=…&pd=up|down` calls of the phrase tree of the page, one per
+  level (4.2 s → 6.7 s)
+- 0.6 s: `api/resultList/?phrase_ids=-2573`
+- the page is written to the cache as `db_cache_page_id 0`
+
+rules for every step:
+- one step per prompt; measure before and after with the same debug=9 url and write the two
+  times into the commit message
+- every cache entry is keyed by the complete key (all sorted phrase ids, the full name), never
+  a prefix or a hash, and by the user; a known empty answer is cached too, so it is not asked
+  again (`docs/llm/coding.md`, cache rule)
+- the double calculation check stays: the cached numbers are the numbers of this request only,
+  a save still recalculates in the backend
+- a new api parameter gets its `url_var` with the `*_HUMAN` twin, an api fixture and a unit
+  test with a positive and a negative case
+- the LLM never runs the tests; the developer runs them and the debug=9 url
+
+done: request cache for the values of a phrase id set (`data_object::load_values_of`, key: the
+sorted ids), so each of the 40 sets is loaded once: 77 s → 59 s
+
+analysed: the value query (`api/valueList/index.php` → `value_list::load_by_phr_lst` with
+`$or = true` → `sandbox_value_list::load_sql_by_phr_lst_multi`, fixture
+`db/value/value_list_by_phr_lst_all_p5.sql`) returns every value of **any** of the given
+phrases, but `formula_calc::value_of` keeps only a value whose phrases are all in the context,
+so a set with `annual` (289, about 350 seeded values) loads, names, serialises and caches about
+400 rows for the handful the page uses; the statement is a union of 5 tables and the 3 group id
+tables (`values_standard`, `values`, `values_big`) are filtered with a regex (`group_id ~`), which
+no btree index serves, so they are scanned on every call; the api logs no step at debug level 9,
+so the split between query, phrase names, json and cache insert is not visible yet
+
+1. load only the values that the context can use: a new statement
+   `load_sql_by_phr_lst_subset` returns the values whose phrases are **all** in the given list:
+   prime tables `phrase_id_1 IN (ids) AND phrase_id_2 IN (ids, 0) AND …` (uses the existing
+   per-column indexes), group id tables one regex `^(key1|key2|…)+$` per row instead of one per
+   phrase; the api gets a url var for the subset mode (with its `*_HUMAN` twin, api fixture and
+   unit test), and only `ui_list::add_context_values` uses it, because the field values and the
+   table loads need any value of a phrase; the developer confirms the cause first with
+   `EXPLAIN (ANALYZE, BUFFERS)` of the prepared statement of the fixture with the ids
+   `289,-2573,807,-2529,-2542` and the row count of the result; expected: 34 s → about 10 s
+   1b. if the regex scans stay the bigger part of the plan: a trigram index
+   (`CREATE EXTENSION pg_trgm; CREATE INDEX … USING gin (group_id gin_trgm_ops)`) on the three
+   group id tables and their `user_values*` twins, which postgres uses for `~`; needs a database
+   upgrade script and the minor version raise (`docs/llm/versions.md`)
+   1c. api timing: `log_debug(…, url_var::DEBUG_LEVEL_MAIN_STEP)` after the load, the phrase
+   names, the json and the cache insert of `api/valueList/index.php`, so that
+   `api/valueList/?phrase_ids=…&debug=9` shows the split like `view.php` does
+2. request cache for the related phrases of a name: `data_object` keeps the phrase list of each
+   `phrase_list::load_related_by_name` call (key: the name, the direction and the levels, like
+   `load_values_of` for the values), and `ui_list::add_field_links` asks the cache first, so
+   the 13 input names are looked up once instead of three times; expected: 11 s → 4 s
+3. load all cells in one call: the calculation plan collects every phrase id set of the page
+   first and `api/valueList` gets a new parameter for a list of phrase id sets, so the 40
+   remaining calls become one; expected: the call overhead of 40 × 0.13 s is gone and the
+   query time of step 1 is paid once
+4. load the input names in one call: `api/phraseList` takes a list of names (`k`) instead of
+   one name per call, and the values of the found phrases come with the call of step 3;
+   expected: 4 s → 0.5 s
+5. frontend php: find out what the 3.6 s between "calculator input" rendered and the first
+   call of "calculation result" do (probably `calculator_numbers` and `calculation_table`
+   repeating the page calculation for the cells, `formula_calc::result` per cell) and the
+   1.1 s and 1.2 s after the last call of each component; a number that is calculated more
+   than once per page is calculated once; expected: 6.5 s → 1 s
+6. frontend bootstrap: load the components of the system view of the request only, not of all
+   195 system views, and find out why `api/config/?1=frontend` and `api/triple/?ir=1` take more
+   than 1 s each (the other calls take 0.13 s); expected: 4.1 s → 1 s
+7. load the phrase tree of the page in one call: `api/phraseList/?il=…&pd=up` takes the
+   levels (`px`) like the name lookup, so the 6 calls of the tree become one or two;
+   expected: 2.5 s → 0.5 s
+8. page cache: find out why the page is inserted as `db_cache_page_id 0` and whether the next
+   request of the same url gets the page from the cache; if not, fix the insert, so that a
+   second request takes less than 0.2 s
+
+## PV lifetime balance page
+
+### remaining
+
+the differences of `pv_lifetime_balance_no_js.html` to `pv_lifetime_balance_sample.html`, as steps in
+the order of the page; each step is fixed in the data of `pv_lifetime_balance.json` or in the
+renderer, never by adapting the sample
+
+1. save - the parts after the save of the changed numbers (docs/llm/frontend.md "The save of a
+   calculator page"):
+    - write test: a unit_write test that saves one changed calculator number of the pv page as
+      the overwrite of `$t->usr1`, checks the shown number, the "changes saved" info and the
+      change log, and removes the overwrite again by the logged `del()`
+    - api: the save writes through `db_object::update`, which converts the frontend value to the
+      backend object; the PUT api call is the open TODO of `db_object::update` for every edit
+    - user without login: the save is refused by the backend and the page shows the message; the
+      save button could instead say "login to save" before the user enters numbers
+    - the selected option of a phrase selector (e.g. the replacement mix) is not saved, because a
+      selector names a phrase and not a value; saving it needs a value or a triple of the user
+    - the confirmation names only the number of saved values, not which numbers have changed
+      from what, as the settings page does (`frontend::setting_saved_text`)
+2. monthly table: the twelve month rows Jan … Dec in their order with the short month names,
+   the numbers without decimals (701 instead of 701.23, 106 instead of 105.83) and the monthly
+   Swiss mix in the column "CH mix g/kWh" (151, 147, …), which has no page phrase today
+3. assumptions - the parts that the json cannot solve:
+    - the tags "assumed 0.5" of the battery production emissions and "assumed 0.6" of the
+      battery lifetime: the confidence value has the phrases of the value without its unit (a
+      value has one unit only), so the lookup of the confidence must ignore the unit phrase
+    - the source numbers in a hint: "Swiss 3 kWp mono-Si pitched roof, 2023 update [1];
+      converted to a fixed amount per kWp" with the number inside the hint, and the two sources
+      "[5][6]" of the battery production emissions
+    - replacement mix: the option labels with the number and the source ("European residual mix
+      — 523 g/kWh [4]", "ENTSO-E production mix 2022 — ~395 g/kWh (midpoint of 350–440) [3]")
+      and the residual mix as the first option: the triple "production mix order" (production
+      mix is follower of residual mix) is in the json, but the selector does not use it
+    - the three derived assumptions (production mix 395, residual mix 523, east-west yield
+      factor 0.85) are not shown, because they are options of the selectors already
+    - the input of the load share during PV hours has no `step="0.05" min="0" max="1"`, although
+      the json has the field step and both field limits of "day share"; the field steps of the
+      other inputs are shown, so the property lookup fails for the value group of the day share
+4. formula sample - add parameter 'show formula sample' to the field 
+   and create a sample based on the formula and the database values -   
+   table, sub texts: "10.0 kWp × 976 kWh/kWp × factor 0.85" for the PV production, "1'048
+   kg CO₂-eq/kWp → 42.1 g/kWh at this site" for the PV system, "2 × 10 kWh × 100 kg/kWh" for
+   the battery and "payback 12.1 a" / "14.7 a" / "3.0 a" for the three saving rows; the labels
+   of the saving rows name the mix: "(128 g/kWh)", "(106 g/kWh PV-weighted)", "(523 g/kWh)"
+5. notes: only the three notes of the page with their own titles and sources ("How the CO₂
+   saving is counted.", "Seasonal Swiss mix. … [3]", "Self-consumption model.") in `strong`,
+   instead of the description of every formula (19 notes with the formula name in `b`)
+6. sources - just add sources - more sources is an excepted difference:   
+   the seven sources of the sample in the order of their first use ([1] IEA PVPS,
+   [2] BAFU, [3] treeze, [4] Swissolar, [5] J. Industrial Ecology 2025, [6] HTW Berlin 2019,
+   [7] gruenes.haus) with their full citation as the link text and `target="_blank"
+   rel="noopener"`; today five sources with the short source name, gruenes.haus first and
+   the two battery sources missing
+7. the comparison: let the use case test assert the generated page against the sample with
+   a normalisation of the differences that are design and not content: the html ids and
+   names of the fields (`n-2526` instead of `kwp`), the hidden group ids, the `form`
+   attributes and the save form, the cell ids, and the calculator data with `calculator.js`
+   instead of the inline script of the sample
+
+### general
+
+the generated page `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html` should
+match the hand made sample `pv_lifetime_balance_sample.html` without hardcoding, generated
+from the database of the use case json; the calculation follows the double calculation check
+of `docs/llm/frontend.md`. the sample is the target and is never adapted to the renderer.
+
+the page is the system view `Calculator` with the components `title calculator`,
+`calculator input` and `calculation result` for `example PV installation`, configured by the
+calculator triples of `pv_lifetime_balance.json` (guide: `docs/llm/new_view_sample_pv_balance.md`).
+
+run the steps one at a time, each as its own commit with the tests written first, and ask for
+the test run after each step (an llm never runs test/*, docs/llm/coding.md).
+
+1. the values and results in `src/test/resources/web/html/use_cases/pv_lifetime_balance_no_js.html`:
+   when the page is created, all values and results of the page are already in the database
+   (imported from `pv_lifetime_balance.json` and calculated), so the page shows the numbers of
+   the input fields, the main result table, the detail tables and "PV life-cycle emissions"
+   from the database; each number in the html carries the database id or group id of its
+   value or result, so that the save action (step 4) knows which value to update and which
+   result to compare; the numbers, the hidden group id of each input and the cell ids are on
+   the page, still empty are the rows "Self-consumption rate", "Autarky" and "vs. replacement
+   mix" (the residual mix net avoided emission 113'805) and the assumption "PV life-cycle
+   emissions"; the lifetime column shows kg, the sample t
+2. delete `docs/llm/samples/new_view_sample_pv_balance.json` and point the links of the guide
+   and of `docs/llm/json_views.md` to `calculator_keywords.json` and
+   `pv_lifetime_balance.json`; decide whether the component types that only the old view used
+   (`view_title`, `name_sub_title`, `details_start`, `details_end`, `assumption_fields`,
+   `formula_notes`, `sources_used`, `table_with_own_columns`) are retired or kept for other
+   use case views, because retiring them shifts the component type ids
+3. the `Calculator editor` view with the components of section 6 of the guide and a snapshot
+   test of the editor for `example PV installation`
+4. the save: write the inputs as values by the ids of step 1, use the entered numbers as the
+   inputs of the page calculation, start the backend calculation job, compare the job results
+   with the frontend results and show every difference as a message
+5. when the generated page matches the sample up to the numbers, let the use case test assert
+   the generated page against the sample
+
+open for the calculator page:
+
+- judge the page only after a database recreation: `test_part.php` imports into the existing
+  database and never removes an object that a newer json left out
+- inputs: the maximum of the three number fields
+- monthly table, column "CH mix g/kWh", month rows: the monthly Swiss consumption mix values
+  (e.g. 150.8 for January) have no page phrase, so a month cell (page phrase, month, `consumption
+  mix`, `gram per kWh`) selects none of them; the column needs a way to select a general value,
+  e.g. a calculator keyword for a column without the page phrase
+- replacement mix selector: the options come from the `is a` triples instead of the values of
+  the selector phrase, and the gross formula uses the selected mix
+- context load: the derived assumptions and the sources are loaded by any phrase of a result,
+  so values and sources of other files show up (PVGIS 5.3, BEA US GDP 2023) and the field
+  definition values need a filter; e.g. the assumption "Swiss consumer mix, annual" shows the
+  79.2 of `pv_switzerland_co2.json` instead of the 128 (BAFU 2018) of `pv_lifetime_balance.json`,
+  and "PV life-cycle emissions" stays empty although the file has 35.8 (IEA PVPS 2023); a result whose values the page has not loaded keeps its
+  stored number; an api that answers with the values within a phrase set would be leaner
+- monthly table: the months in their order (January … December, not by number) and the short
+  names "Jan" … "Dec" (open point of the guide)
+- notes: only the notes meant for the page, with their own titles (open point of the guide:
+  a `calculator note` list or notes as descriptions of the row groups)
+- sources: numbered in the order of the first use and cited as [n] in the hints and notes
+- value ranking: `ui_list::context_count` has no unit test, only the `run_pv_lifetime_balance`
+  snapshot covers it; add a case in `use_case_ui_tests`: a general value against a value with a
+  place phrase
+- repeated loads: `view_exe::add_page_cache` runs twice per request (in `frontend::render_url`
+  and in `view_exe::show`); the `is_calculator()` guard stops the second run only if the first
+  has found calculator triples, so for a phrase without them that is opened with the
+  `Calculator` view all api loads run twice
+
+## view edit
+
+move the entries like 'main + variance' from the '...' menu in the table component to the 'edit icon' menu in the navbar
+if there are more than 5 (config.yaml value) entries in one group show a '... more' entry in the menu
+
+## import / export
+
+add to the user menu in the navbar an import and an export entry that links to the import and export view (id 145 and 150)
 
 ## start page
 
-review the data so that 'one-click-hide' if the number one solution for populism' and 'public CBAM calculation' is the number one solution for 'global warming'
-
-adjust the numbers in the json data files so that the gain of the solution is always smaller than the potential loss and add a formula that checks that this is always the case
+rename the '...'-menu entries like 'mayor + range' to 'mayor + variance' and 'main + range' to 'main + variance', ...
 
 adjust the numbers in the json data files so that the problem / solution are in this order
 
@@ -25,35 +923,7 @@ adjust the numbers in the json data files so that the problem / solution are in 
 9. Use smartvote for initiatives and build a liquid democracy
 10. Measure the economy’s actual benefit instead of relying on GDP
 
-## import times
-
-The import may create log entries like 
-
-890.8708 import system_views.json 0% 0.506s / 146450.885s  save single 120 components (239.7 components per sec)
-891.3716 import system_views.json 0% 1.006s / 146451.388s  save single 249 components (248.6 components per sec)
-891.8754 import system_views.json 0% 1.51s / 146451.894s  save single 374 components (248.5 components per sec)
-892.4037 import system_views.json 0% 2.039s / 146452.424s  save single 7 views (16.4 views per sec)
-892.9703 import system_views.json 0% 2.605s / 146452.993s  save single 23 views (23.2 views per sec)
-893.5451 import system_views.json 0% 3.18s / 146453.57s  save single 31 views (19.8 views per sec)
-894.0548 import system_views.json 0% 3.69s / 146454.082s  save single 38 views (18.3 views per sec)
-894.5667 import system_views.json 0% 4.202s / 146454.596s  save single 45 views (17.4 views per sec)
-895.1550 import system_views.json 0% 4.79s / 146455.186s  save single 50 views (15.7 views per sec)
-895.7393 import system_views.json 0% 5.374s / 146455.773s  save single 54 views (14.4 views per sec)
-896.2505 import system_views.json 0% 5.885s / 146456.286s  save single 59 views (13.8 views per sec)
-896.8586 import system_views.json 0% 6.493s / 146456.897s  save single 66 views (13.5 views per sec)
-897.3627 import system_views.json 0% 6.998s / 146457.403s  save single 71 views (13.2 views per sec)
-897.8832 import system_views.json 0% 7.518s / 146457.925s  save single 79 views (13.4 views per sec)
-898.4431 import system_views.json 0% 8.078s / 146458.487s  save single 85 views (13.1 views per sec)
-899.0160 import system_views.json 0% 8.651s / 146459.062s  save single 92 views (13.1 views per sec)
-899.5332 import system_views.json 0% 9.168s / 146459.582s  save single 98 views (13 views per sec)
-900.0464 import system_views.json 0% 9.681s / 146460.097s  save single 117 views (14.5 views per sec)
-900.5603 import system_views.json 0% 10.194s / 146460.612s  save single 137 views (16 views per sec)
-901.0896 import system_views.json 0% 10.723s / 146461.143s  save single 153 views (16.8 views per sec)
-901.5975 import system_views.json 0% 11.232s / 146461.654s  save single 174 views (18.1 views per sec)
-
-try to adjust the calculation and calculation parameter so that the estimated to time is a better predictor of the real time. Maybe create some test cases to validate the real times to have a base for adjusting the parameters and the calculation
-
-### PV calculator
+### PV installation calculator
 
 Catch process forms
 
@@ -95,6 +965,11 @@ for each field these triples should be created:
 - '... field limit down'
 - '... field limit steps'
 - '... field limit suggestion'
+- '... field phrase selector label' to describe what the selected phrase will be used for e.g. if the parent is 'main column (system)' the label could be 'Main table columns:' 
+- '... field phrase selector parent' to preselect the phrases that can be selected e.g. if the parent is 'column (system)' all columns related to the phrase are shown so that one can be selected to define the default sorting 
+- '... field phrase selector value based' to preselect the phrases that can be selected e.g. if the phrase for the table is 'global warming solution' the phrases of all values related to it are shown 
+- '... selection label' to describe what a sorted list of phrases mean e.g. if the parent is 'main column (system)' the label could be 'Main table columns:'
+- '... selection parent' to show the table columns of a phrase e.g. if the parent is ''
 - '... button next tooltip' with the text for the tooltip (the text in the button is a msg_id defined by the component not a triple)
 - '... button next view' with the view id for the step 
 - '... button refresh tooltip' with the view id for the
@@ -217,6 +1092,55 @@ after each step (an llm never runs test/*, docs/llm/coding.md).
 
 add CBAM calculation, portfolio split and company sheet use cases and pin them on the start page
 
+## clean up
+
+db row identification should not be based on the database id instead the code_id should be used. *_ID pinned db rows e.g. words should only be used for tests.
+
+### calculator data only with the numbers the page uses
+
+`ui_list::calculator_number_plan` writes every number of the request cache into the `calc-data` json of a calculator page, also the values of other use cases (e.g. solution priorities, city values). The PV lifetime balance page carries 467 numbers, but shows about 30 cells and has 75 inputs, which adds about 15 KB to each page.
+Suggestion: write only the numbers that a cell, an input or a result token of the page references (`cells`, `inputs`, `results`), and the results that a cell shows or another result uses. Test positive (a referenced number is in the data) and negative (a value of another phrase is not), then regenerate `pv_lifetime_balance_no_js.html`.
+
+### config value 0 is treated as missing
+
+`config_numbers::get_by` (backend) returns the fallback if the config value is 0, so an explicit 0 or `false` in `config.yaml` is ignored whenever the fallback is not null (e.g. a switch with a true fallback). The workaround is `get_by_names` (see `config_numbers::pod_switch`).
+Suggestion: only a missing value (null) is missing, so `get_by` uses the fallback only if the value is null and returns a configured 0 as 0. The guard against an unwanted 0 (e.g. a zero list limit) moves to the getters that need it. Align the frontend `web/helper/config::get_by` to the same rule. It already keeps 0 only by chance, because `$val->value($msg)` returns the formatted text "0" and PHP 8 does not treat "0" as equal to null. Then remove the workaround note in `docs/llm/architecture.md` (*Using a config.yaml setting in a script*, step 3).
+
+## unlink import chain time measurement
+
+If more than one json is imported make it optional either to count the percent load of all import files or per json file.
+As the log below shown it seems that at the moment the elapse time is nor resetted for each import json. In a first step reset all count parameters for each json import file so that the percent ist always the person of load per json file.
+
+455.2125 import time_definition.json (5 kBytes)
+455.7386 import time_definition.json 100% 18.77s / 18.77s  check 4739 formulas (42975.6 formulas per sec vs. 5)
+455.7386 import time_definition.json done: 4739 byte
+455.7397 import base_phrases.json (6 kBytes)
+456.1197 import base_phrases.json done: 6144 byte
+456.1209 import base_views.json (10 kBytes)
+456.4491 import base_views.json done: 9884 byte
+456.4501 import solution_prio.json (105 kBytes)
+456.9500 import solution_prio.json 54.6% 19.981s / 36.629s  count 9 results (665.8 results per sec vs. 480) e.g. poverty,reward ratio,trillion,EUR per person year,high: 0.025 (group_id ) for user 1 (zukunft.com system)
+457.7437 import solution_prio.json 60.3% 20.775s / 34.426s  Add 155 words (324.2 words per sec vs. 340)
+458.3303 import solution_prio.json 64.2% 21.361s / 33.279s  Add 68 triples (240.9 triples per sec vs. 300)
+458.8901 import solution_prio.json 67.7% 21.921s / 32.383s  Add 20 triples (314.7 triples per sec vs. 300)
+459.4951 import solution_prio.json 70% 22.526s / 32.192s  check 176 triples (38451.8 triples per sec)
+460.0975 import solution_prio.json 77.6% 23.129s / 29.795s  save 1 values (100.3 values per sec vs. 300) e.g. global,human,population,billion: 8.5 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 273,198,159,14) for user 1 (zukunft.com system)
+460.6002 import solution_prio.json 79.5% 23.631s / 29.709s  Add 4 words (429.6 words per sec vs. 340)
+461.1050 import solution_prio.json 79.6% 24.136s / 30.306s  save 33 results (214.1 results per sec vs. 210) e.g. citizen participation,reward ratio,trillion,EUR per person year,high: 0.225 (group_id 10-0M-06-2H+32+) for user 1 (zukunft.com system)
+461.1681 import solution_prio.json done: 104746 byte
+461.1695 import country.json (9 kBytes)
+461.8019 import country.json 100% 24.833s / 24.833s  load 9 formulas (2744 formulas per sec vs. 4000)
+462.3377 import country.json 100% 25.369s / 25.369s  load 1 components (1149.4 components per sec vs. 4000)
+462.3548 import country.json done: 8542 byte
+
+
+## to recheck
+
+1. Two steps in one commit. Steps 3 (calculator reader) and 4 (default view of a phrase) are uncommitted together, but pending.md asks for one commit per step. Splitting is possible because the step 4 changes are in separate files and hunks: cfg/word/triple.php, web/word/triple.php, web/phrase/phrase.php, frontend.php, horizontal_tests.php, triple_tests.php, phrase_ui_tests.php, system_view_ui_tests.php, the guide, the api fixtures and the snapshots.
+2. Unrelated pending.md section. The new "## speed up" section doesn't belong to either step; better as its own commit.
+3. Extra backend call. In normal mode, frontend::phrase_view_id loads the phrase from the backend for every url with id and without m. It isn't served from the request cache.
+4. Hard-to-read condition in dbo_for_url (frontend.php:2710). It reads the url id with ?? 0 and then also checks array_key_exists. It is correct, but a local $url_id would make it easier to read.
+
 ## job list
 
 add to the user submenu of the navbar an entry 'jobs' that links to a view that shows an overview of the jobs of an user
@@ -224,6 +1148,74 @@ add to the user submenu of the navbar an entry 'jobs' that links to a view that 
 ## phrase default view
 
 add e.g. a pie chart to the default phrase page with the top impact on the phrase e.g. for the 'global warming' default page show the 'co2-eq emissions by sector'
+
+## admin dashboard
+
+### system health
+
+add after each user of the admin dashboard column "Server time per user" (system_page::admin_user_load)
+a button that sets the user status to user_statuum::READ_ONLY: enforce the read only status in
+cfg user::is_blocked, add an admin only status change to api/user (refuse system users) and a frontend
+action like action_job; check before that the server-to-server put sends the csrf header
+(rest_call::set_session_token is only called in the tests)
+
+add to the admin dashboard a list of top 10 (config.yaml value) ip-address ranges that have done most requests
+and one list with ip-address ranges that have done most db updates (the threshold for a critical number is also a config.yaml value)
+after each user should be a button that moves the ip_address to the blacklist
+
+add to the admin dashboard a list of top 10 (config.yaml value) email servers that have done an account opening
+(the threshold for a critical number is also a config.yaml value)
+after each user should be a button that moves the email server to the blacklist
+
+add to the admin dashboard a system health section with the release number
+(read from the git versioned file of pending_prio_2.md "move the release number in a file"),
+the db version, the result of cfg/db/db_check, the age of the config cache
+and whether config.yaml is newer than the cache, and the number of cached pages;
+use the same data for an admin only sanity api that monitor tools like checkMK can call
+(docs/todo.md "create a sanity API for monitor tools")
+
+add to the admin dashboard the number of user sandbox rows that are equal to the standard value and can be removed (the del_usr_cfg() cleanup of the dsp_sandbox_* family that belongs to the system consistency checks, see pending_prio_2.md) and the number of possible duplicates (input of find_duplicates), each with a link to the cleanup job resp. the list
+
+### errors
+
+show in the admin dashboard the last and most relevant system errors e.g. if there is an fatal error not yet solved
+show it on the top of the list and below not yet solved errors followed by warnings
+
+move the selection of the unassigned errors and the pending error fixes from the frontend to the backend: add to cfg/system/sys_log_list::load_sql a filter by status and by solver (none = unassigned), let api/sysLogList use the requested type instead of ignoring it, add the sql fixture for each new query and replace in web/component/execute/system_page.php::admin_errors_unassigned() and admin_errors_delayed_fix() the client side filtered() on the newest sys_log_list::ADMIN_READ_SIZE entries by the backend selection, so that an older open error of a pod with many open errors is also shown
+
+fill the sys_log_detail view (the link target of error_log, error_update and the admin dashboard) and web/component/execute/system_page.php::error_log() with the page of one sys log entry: error_log() of the error log view (m=65, views::ERROR_LOG_ID, linked from the critical error message of cfg/log_text/text_log_functions.php as /http/view.php?m=65&id=<sys_log id>) returns only 'error_log placeholder' (snapshot src/test/resources/web/html/views_by_id/sys_log/65_sys_log_2.html), while web/system/sys_log.php::page_view already creates the page of one error entry and has no caller any more since http_old/error_log.php is retired; load the sys log entry by the id from the url, show it and add a page test; link each row of the dashboard error tables to it and allow the admin to assign the error to themselves, to set the status and to add a solution text; a normal user may only see their own errors
+
+add to the admin dashboard a small summary line above the error tables with the number of open errors per sys log level (fatal, error, warning), the number of new errors in the last 24 hours and the number of error emails sent and suppressed today (see the system@zukunft.com email account in the section 'email accounts', max 5 per day by config.yaml)
+
+### failed logins
+
+user::login writes each failed login as a forced warning to sys_log (text sys_log_functions::LOGIN_FAILED_TEXT, the typed name as description) and the admin dashboard groups them by the typed name; still missing: the ip address (sys_log has no field for it and user::login must not read $_SERVER, so the entry point has to pass it), a db test that a failed login writes the sys_log row, the increasing login retry delay of docs/todo.md ("add an increasing login retry delay to avoid brute force attacts") based on these rows, and a selection of the failed logins in the backend instead of the newest sys_log_list::ADMIN_READ_SIZE entries
+
+### jobs
+
+link each job of the delayed jobs column to the job_detail view
+
+fill the job control view (m=83, views::JOB_CONTROL_ID, process_list placeholder) and the job async view (m=82, views::JOB_ASYNC_ID, process_progress placeholder) in web/component/execute/system_page.php with the job list, the status of each job and the progress in percent of the running job (this replaces the ob_flush progress stream of the retired http_old/calculate.php), link them from the admin dashboard and add a page test
+
+add a job type that recalculates all formula results (shared/types/job_types.php has only the per object triggers like value_update and formula_update; the queue building of the retired http_old/calculate.php with result_list::frm_upd_lst and formula::calc can be taken over) and let the admin start it from the job control view (m=83); it must run as an async job and not block the http request; the old controller was a denial of service target, because any user, even an ip user without a login, could start it by a GET request, so the new job must be startable only by an admin and needs a test for the negative case
+
+add the 'reload the base configuration' action for an admin (import_file::import_system_data, the action of the retired http_old/async_process.php and the 'Force reloading the base configuration e.g. to check that the units definition are still OK' of http_old/user.php; see also the TODO in cfg/import/import_file.php) to http/server_admin.php or as a job type, with a confirm step, because the import overwrites the system objects; run it as an async job whose progress is shown in the job async view (m=82), not synchronously in the http request as the old page did, and add a test that a normal user cannot start it
+
+add to the admin dashboard the open 'config change request' jobs of the users (see the section 'fill the configuration and quarantine views') with the config phrase, the requested value, the current value and an accept and a reject button; an accepted request changes the default of all users like the admin setting change of the settings page
+
+add the calc_status view (outdated results and calculation progress) and show on the admin dashboard the number of outdated results with a link to it
+
+### usage and settings
+
+add to the admin dashboard a section with the x (config.yaml) most changed user settings: the config phrases with the most user overwrites, the number of users who changed it, the default and the most used user value, so that the admin can decide to change the default (docs/todo.md "the admin dashboard the x most changed user settings")
+
+add to the admin dashboard a usage section with the number of active users today, in the last 7 and 30 days, the new signups and the number of changes per day by object type, read from the change log by one backend load with its sql fixture
+
+add a section with the number of connected pods, their usage and the most likely and the latest SPAM posts (docs/todo.md "create an admin page with the numbner of connected pods, the usage an the most likely and latest SPAM posts"); show "not yet recorded" as long as the pod connection is not implemented
+
+### security
+
+add to the admin dashboard a security section that shows the state of the ip and user whitelist mode (server_admin/state.json), the newest entries of the database user and ip blacklist with the reason and the time and a remove button for each entry, and an input to add an ip address or range to the blacklist (docs/todo.md "allow admin users to change IP blacklist"); every change is written with the change log
 
 ## todo from group id change
 
@@ -276,8 +1268,9 @@ if in the component 'table with related columns' all values of the column are in
 add column 'reasons' with sub column to start page as a second column extensions option so click ... once add the 'reason' column and the next time it will add the minor columns
 
 the global warming row of `start_page/problem_global_warming.json` is done and is the pattern for
-the other twelve problem files: all eighteen numbers of the row are results, six target values and
-their twelve bounds, and the file states only the inputs behind them. a calc validation may use a
+the other twelve problem files: seventeen of the eighteen numbers of the row are results, five target
+values and their twelve bounds, and the file states only the inputs behind them; the loss reduction
+of the public CBAM calculation is an assumed input. a calc validation may use a
 result that the same file has reproduced before it, so the entries are ordered target first, range
 afterwards, and a result that did not reproduce is never an operand.
 
@@ -286,7 +1279,7 @@ the chain of the row, each step an own formula:
 | result | from |
 | --- | --- |
 | potential loss in trillion EUR | world GDP * annual damage share |
-| loss reduction in percent | minus the leakage rate that the carbon tariff avoids |
+| loss reduction in percent | an assumed input: 72.73 percent of the public CBAM calculation, so the gain is 1.6 trillion EUR |
 | potential loss in GDP percent | minus the annual damage share * the long run growth factor |
 | potential loss in htp percent | the GDP share * the htp to GDP damage factor |
 | initial effort in person year | the annual damage in money * the effort per trillion EUR |
@@ -420,7 +1413,7 @@ parts of the poverty research, the gain factor 17.92188 shared with the solution
 
 - the gain factor is tuned so that the 1 percent loss reduction of the research gives 34.1 billion
   htp, so the parts get gains far above every row of the ranking: economic growth 614, unconditional
-  cash transfers 273, vaccination 164 billion htp (global warming 35). this is the consequence of the
+  cash transfers 273, vaccination 164 billion htp (global warming 320). this is the consequence of the
   34.1 of the row, which is probably a copy of the populism gain (the htp share gives 13.6, see
   above); once the row is corrected the factor and all 34 gains follow from the regenerated chain
 - own estimates without a source; the potentials sum to about 2.6

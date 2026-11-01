@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'language_list.php';
 include_once html_paths::CONST . 'icons.php';
+include_once html_paths::HTML . 'view_menu.php';
 include_once html_paths::SHARED . 'group_id_url.php';
 //include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::SHARED_CONST . 'def.php';
@@ -81,7 +82,7 @@ use Zukunft\ZukunftCom\main\php\web\user\user_message;
 class html_base
 {
 
-    // TODO move all html const used in zukunft.com to html_names
+    // TODO Prio 2 move all html const used in zukunft.com to html_names
 
     // fixed elements
     const string TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
@@ -125,7 +126,7 @@ class html_base
     const string BS_BTN_IMPORT = 'btn-outline-secondary';
     const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
-    // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
+    // TODO Prio 3 move the user interface setting to the user page, so that he can define which UI he wants to use
     const int UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
     const string METHOD_POST = 'post';
@@ -157,6 +158,13 @@ class html_base
     const string SRC = 'src';
     const string ALT = 'alt';
     const string STYLE = 'style';
+    // the config.yaml keys of the layout settings font, mode and colours (see theme_style), top down
+    // as the confirmation of the mode switch names them
+    const array LAYOUT_PATH = [words::USER, words::DEFAULT, words::FRONTEND, words::LAYOUT];
+    // the config.yaml keys of the dark or light mode of the user (see theme_mode and theme_switch)
+    const array MODE_PATH = [...html_base::LAYOUT_PATH, triples::COLOUR_MODE];
+    // the config.yaml keys above the colour groups page, editor and chart (see theme_style)
+    const array COLOUR_PATH = [...html_base::LAYOUT_PATH, words::COLOURS];
     const string CLASS_HTML = 'class';
     const string TITLE_HTML = 'title'; // title attribute e.g. for tooltips
     const string TITLE = 'title';      // <title> element in <head>
@@ -166,7 +174,12 @@ class html_base
     const string MIDDLE_DOT = ' &middot; ';
     const string P = 'p';
     const string DIV = 'div';
+    // the parts of a use case page: the title on top, the input panel and the result panels
+    const string HEADER = 'header';
+    const string ASIDE = 'aside';
+    const string SECTION = 'section';
     const string UL = 'ul';
+    const string OL = 'ol';
     const string LI = 'li';
     const string BUTTON = 'button';
     const string HTML = 'html';
@@ -176,6 +189,16 @@ class html_base
     const string ENCTYPE = 'enctype';
     const string INPUT = 'input';
     const string LABEL = 'label';
+    // the size of a line diagram (line_diagram), the same in calculator_json.js
+    // TODO Prio 1 size the diagram relative to the column size and make the column width a parameter
+    const int DIAGRAM_WIDTH = 760;
+    const int DIAGRAM_HEIGHT = 200;
+    const int DIAGRAM_PAD_LEFT = 70;
+    const int DIAGRAM_PAD_RIGHT = 12;
+    const int DIAGRAM_PAD_TOP = 12;
+    const int DIAGRAM_PAD_BOTTOM = 24;
+    const string DIAGRAM_POINT_RADIUS = '2.4';
+    const string SVG_GROUP = 'g';
     const string FOR = 'for';
     const string VALUE = 'value';
     const string ID = 'id';
@@ -191,6 +214,9 @@ class html_base
     const string SMALL = 'small';
     const string SCOPE = 'scope';
     const string DETAILS = 'details';
+    // only for the calculator pages if config.yaml allows javascript for them (docs/llm/frontend.md)
+    const string SCRIPT = 'script';
+    const string JSON_TYPE = 'application/json';
     const string SUMMARY = 'summary';
     const string DL = 'dl';
     const string DT = 'dt';
@@ -214,6 +240,15 @@ class html_base
     // to sort
     const string CLASS_MAIN = 'main-container';
     const string CLASS_FOOTER = 'site-footer';
+    // the start of a page shown while the page is created (see loading_start)
+    const string CLASS_LOADING = 'page-loading';
+    const string LOADING_ANIMATION = 'page-loading-show';
+    const string CLASS_LOADING_SECONDS = 'page-loading-seconds';
+    const string LOADING_COUNTER = 'page-loading-sec';
+    const string LOADING_COUNT_ANIMATION = 'page-loading-count';
+    // the seconds up to which the loading text counts; not the php max_execution_time, because php
+    // counts only its own cpu time, so a request that waits for the database runs much longer
+    const int LOADING_COUNT_LIMIT = 3600;
     const string CLASS_NOTIFICATION = 'alert alert-warning ' . api::USER_MSG_CLASS;
     // green, so that the user sees at once that e.g. a save has worked
     const string CLASS_NOTIFICATION_SUCCESS = 'alert alert-success ' . api::USER_MSG_CLASS;
@@ -234,6 +269,8 @@ class html_base
     const string CLASS_LOGO_BIG = 'logo-big';
     const string CLASS_LOGO_FLEX = 'brand-logo';
     const string CLASS_LOGO_SECTION = 'logo-section';
+    // the links to the pinned views below the search field of the start page
+    const string CLASS_PINNED_SECTION = 'pinned-section';
     const string CLASS_CONTAINER = 'container';
     // the css-only tab box classes (see tab_box and the matching :target rules in style_html.css)
     const string CLASS_TABS = 'css-tabs';
@@ -249,6 +286,19 @@ class html_base
         . " location.replace('%1\$s' + p);</script>\n"
         . "<noscript><meta http-equiv=\"refresh\" content=\"0; url=%1\$s%2\$s=%3\$s\"></noscript>\n"
         . "</html>\n";
+    // the static forward page of a pinned view e.g. /pv with 1 the complete target url of config.yaml,
+    // which needs no javascript, because the url vars of the request are not kept
+    const string FORWARD_URL_PAGE = "<!DOCTYPE html>\n"
+        . "<meta http-equiv=\"refresh\" content=\"0; url=%1\$s\">\n"
+        . "</html>\n";
+    // the html comments around the links to the pinned views in the static start page index.html,
+    // between which the test run writes the links of config.yaml (see start_page)
+    const string PINNED_VIEWS_BEGIN = '<!-- pinned views: written by the test run from config.yaml -->';
+    const string PINNED_VIEWS_END = '<!-- pinned views end -->';
+    // the html comments in the head of index.html and the optional pages, between which the test run
+    // writes the font and the colours of config.yaml, because a static page has no php head (see static_page)
+    const string THEME_BEGIN = '<!-- font and colours: written by the test run from config.yaml -->';
+    const string THEME_END = '<!-- font and colours end -->';
 
 
     /*
@@ -277,6 +327,72 @@ class html_base
         return sprintf(self::FORWARD_PAGE, api::MAIN_SCRIPT . url_var::PAR, url_var::MASK, $msk_id);
     }
 
+    /**
+     * @param string $url the complete url that the forward page opens e.g. the url of a pinned view
+     * @return string the html code of the static forward page in the docroot e.g. of /pv
+     */
+    function forward_url_page(string $url): string
+    {
+        return sprintf(self::FORWARD_URL_PAGE, htmlspecialchars($url, ENT_QUOTES));
+    }
+
+    /**
+     * write the font and the colours and the links to the pinned views between the markers of the
+     * static start page, so that a changed config.yaml is shown after the next test run
+     * (see docs/llm/frontend.md)
+     *
+     * @param string $page the html code of the start page e.g. of index.html
+     * @param array $pin_lst the pinned views by url name, each with the url, name and tooltip of config.yaml
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the start page with the style and the links or the unchanged part if its markers are missing
+     */
+    function start_page(string $page, array $pin_lst, user_message|Message $msg): string
+    {
+        $links = '';
+        foreach ($pin_lst as $pin) {
+            $links .= $this->ref($pin[words::URL] ?? '', $pin[words::NAME] ?? '',
+                $pin[words::TOOLTIP] ?? '', with_user: false);
+        }
+        $pinned = $this->div($links, self::CLASS_PINNED_SECTION);
+        $result = $this->static_page($page, $msg);
+        return $this->static_block($result, self::PINNED_VIEWS_BEGIN, self::PINNED_VIEWS_END, $pinned);
+    }
+
+    /**
+     * write the font and the colours of config.yaml between the markers in the head of a static
+     * page e.g. of optional/ip_reject.html, because a static page has no php head
+     *
+     * @param string $page the html code of the static page
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the page with the style or the unchanged page if the markers are missing
+     */
+    function static_page(string $page, user_message|Message $msg): string
+    {
+        return $this->static_block($page, self::THEME_BEGIN, self::THEME_END, $this->theme_style($msg));
+    }
+
+    /**
+     * replace the html code between two markers of a static page e.g. of index.html
+     *
+     * @param string $page the html code of the static page
+     * @param string $begin_marker the html comment before the replaced code e.g. self::THEME_BEGIN
+     * @param string $end_marker the html comment after the replaced code e.g. self::THEME_END
+     * @param string $block the new html code between the markers
+     * @return string the page with the new code or the unchanged page if the markers are missing
+     */
+    private function static_block(string $page, string $begin_marker, string $end_marker, string $block): string
+    {
+        $begin = strpos($page, $begin_marker);
+        $end = strpos($page, $end_marker);
+        $result = $page;
+        if ($begin === false or $end === false or $end < $begin) {
+            log_err('the static page has no markers ' . $begin_marker . ' and ' . $end_marker);
+        } else {
+            $result = substr($page, 0, $begin) . $begin_marker . $block . substr($page, $end);
+        }
+        return $result;
+    }
+
 
     /*
      * header & footer
@@ -295,6 +411,7 @@ class html_base
         $txt .= $this->viewport();
         $txt .= $this->title($title, $pod_name, $msg);
         $txt .= $this->stylesheet();
+        $txt .= $this->theme_style($msg);
         return $this->head($txt);
     }
 
@@ -363,7 +480,128 @@ class html_base
         $txt .= $this->make_flood() . "\n";
         $txt .= $this->title($title, POD_NAME, $msg) . "\n";
         $txt .= $this->head_style($base_url) . "\n";
+        $txt .= $this->theme_style($msg);
         return $txt;
+    }
+
+    /**
+     * the font and the colours of config.yaml (frontend.layout) as the css variables of style_html.css
+     * and the editor styles, so that config.yaml is the only place of the font and the colours: the
+     * page colours and the light editor colours for every page, the dark editor colours if the browser
+     * asks for the dark mode; a setting that css could misread is reported and the fallback is used
+     *
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the html style element with the css variables
+     */
+    function theme_style(user_message|Message $msg): string
+    {
+        // only the chars of a font family list, so that a setting can end neither the css rule nor the style element
+        $font = $this->theme_value([...html_base::LAYOUT_PATH, words::FONT], def::FALLBACK_FONT,
+            '/^[A-Za-z0-9 ,"\'_-]+$/', msg_id::CONFIG_FONT_INVALID, $msg);
+        [$page_light, $page_dark] = $this->theme_colours(def::FALLBACK_PAGE_COLOURS, [words::PAGE, ...html_base::COLOUR_PATH], $msg);
+        [$edit_light, $edit_dark] = $this->theme_colours(def::FALLBACK_EDITOR_COLOURS, [words::EDITOR, ...html_base::COLOUR_PATH], $msg);
+        return '<' . self::STYLE . '>' . "\n"
+            . ':root { --font-page: ' . $font . '; }' . "\n"
+            . $this->theme_css($page_light . ' ' . $edit_light, $page_dark . ' ' . $edit_dark)
+            . '</' . self::STYLE . '>' . "\n";
+    }
+
+    /**
+     * the css of the colours for the dark or light mode of the user (config.yaml frontend.layout.colour mode):
+     * the light colours and if the browser asks for it the dark colours, always the light colours or
+     * always the dark colours; with the colour scheme, so that the browser shows its form elements
+     * and scroll bars in the same mode
+     *
+     * @param string $light the css variable definitions of the light mode e.g. "--bg: #eef2f8; ..."
+     * @param string $dark the css variable definitions of the dark mode e.g. "--bg: #0e1524; ..."
+     * @return string the css rules with the colours of the mode of the user
+     */
+    function theme_css(string $light, string $dark): string
+    {
+        $light_css = ':root { ' . $light . ' color-scheme: light; }' . "\n";
+        $dark_css = ':root { ' . $dark . ' color-scheme: dark; }' . "\n";
+        return match ($this->theme_mode()) {
+            def::MODE_LIGHT => $light_css,
+            def::MODE_DARK => $dark_css,
+            default => $light_css . '@media (prefers-color-scheme: dark) { ' . $dark_css . '}' . "\n",
+        };
+    }
+
+    /**
+     * @return int the dark or light mode of the user e.g. def::MODE_DARK (config.yaml frontend.layout.colour mode)
+     */
+    function theme_mode(): int
+    {
+        global $ui_sys;
+
+        $mode = (int)($ui_sys?->cfg?->value_by(html_base::MODE_PATH)?->number()
+            ?? def::FALLBACK_MODE);
+        if (!in_array($mode, [def::MODE_BROWSER, def::MODE_LIGHT, def::MODE_DARK])) {
+            $mode = def::FALLBACK_MODE;
+        }
+        return $mode;
+    }
+
+    /**
+     * the css variables of a colour group of config.yaml with a light and a dark colour per variable
+     *
+     * @param array $colours the css variable => the config key, the light and the dark fallback e.g. def::FALLBACK_EDITOR_COLOURS
+     * @param array $names the config.yaml keys of the colour group e.g. [words::EDITOR, ...html_base::COLOUR_PATH]
+     * @param user_message|Message $msg to report a configured colour that css could misread
+     * @return array the css variable definitions of the light and of the dark mode e.g. ['--bg: #eef2f8; ...', '--bg: #0e1524; ...']
+     */
+    function theme_colours(array $colours, array $names, user_message|Message $msg): array
+    {
+        $light = [];
+        $dark = [];
+        foreach ($colours as $css_var => [$key, $colour, $dark_colour]) {
+            // the dark colour has all names of the light colour, so it must not be taken for the light mode
+            $light[] = $css_var . ': ' . $this->theme_colour([$key, ...$names], $colour, $msg, [words::DARK]) . ';';
+            $dark[] = $css_var . ': ' . $this->theme_colour([$key, words::DARK, ...$names], $dark_colour, $msg) . ';';
+        }
+        return [implode(' ', $light), implode(' ', $dark)];
+    }
+
+    /**
+     * @param array $names the config.yaml keys of the colour e.g. [words::LINK, words::PAGE, words::COLOURS, ...]
+     * @param string $fallback the colour if the config has none or one that css could misread
+     * @param user_message|Message $msg to report a configured colour that css could misread
+     * @param array $without the config.yaml keys that the colour must not have e.g. [words::DARK] for a light colour
+     * @return string the css colour e.g. #385eb7, rgba(0, 0, 0, 0.1) or white
+     */
+    private function theme_colour(array $names, string $fallback, user_message|Message $msg, array $without = []): string
+    {
+        // a hex colour, a rgb or rgba function or a colour name, so that a setting can end neither the css rule nor the style element
+        return $this->theme_value($names, $fallback,
+            '/^(#[0-9A-Fa-f]{3,8}|rgba?\([0-9., ]+\)|[A-Za-z]+)$/', msg_id::CONFIG_COLOUR_INVALID, $msg, $without);
+    }
+
+    /**
+     * @param array $names the config.yaml keys of the setting
+     * @param string $fallback the value if the config has none or one that does not match the pattern
+     * @param string $pattern the regular expression of a value that css reads as intended
+     * @param msg_id $msg_id the message that names a value that does not match the pattern
+     * @param user_message|Message $msg to report a value that does not match the pattern
+     * @param array $without the config.yaml keys that the setting must not have
+     * @return string the configured value or the fallback
+     */
+    private function theme_value(
+        array                $names,
+        string               $fallback,
+        string               $pattern,
+        msg_id               $msg_id,
+        user_message|Message $msg,
+        array                $without = []
+    ): string
+    {
+        global $ui_sys;
+
+        $result = $ui_sys?->cfg?->text_by($names, $without) ?? $fallback;
+        if (preg_match($pattern, $result) !== 1) {
+            $msg->add($msg_id, [msg_id::VAR_VALUE => $result]);
+            $result = $fallback;
+        }
+        return $result;
     }
 
     /**
@@ -401,8 +639,17 @@ class html_base
      * @param array $url_array the current request parameters passed through for back-navigation
      * @param string|null $usr_name the logged-in username to display; null when not logged in
      * @param string|null $usr_role the profile/role name to display next to the username; null if not set
+     * @param bool $is_admin true to offer the admin dashboard in the user menu
+     * @param view_menu $mnu what the page knows for the edit menu e.g. the editor and the views of the shown word
      */
-    function navbar(int $msk_id = 0, array $url_array = [], ?string $usr_name = null, ?string $usr_role = null): string
+    function navbar(
+        int       $msk_id = 0,
+        array     $url_array = [],
+        ?string   $usr_name = null,
+        ?string   $usr_role = null,
+        bool      $is_admin = false,
+        view_menu $mnu = new view_menu()
+    ): string
     {
         global $ui_sys;
 
@@ -427,8 +674,7 @@ class html_base
         $result .= '<' . self::LI . ' ' . self::CLASS_HTML . '="active">' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="view-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-edit"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
-        // TODO switch the view mask to a suggested related view
-        $result .= $this->view_change_list($msk_id, $url_array) . "\n";
+        $result .= $this->view_change_list($msk_id, $url_array, $is_admin, $mnu) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="lang-menu">' . "\n";
         $result .= '<' . self::SUMMARY . '><' . self::I . ' ' . self::CLASS_HTML . '="fas fa-globe"></' . self::I . '></' . self::SUMMARY . '>' . "\n";
@@ -445,7 +691,7 @@ class html_base
             . ($usr_tooltip !== '' ? ' title="' . htmlspecialchars($usr_tooltip) . '"' : '')
             . '></' . self::I . '>';
         $result .= '<' . self::SUMMARY . '>' . $usr_icon . '</' . self::SUMMARY . '>' . "\n";
-        $result .= $this->user_login_list($url_array, $usr_name, $usr_tooltip) . "\n";
+        $result .= $this->user_login_list($url_array, $usr_name, $usr_tooltip, $is_admin) . "\n";
         $result .= '</' . self::DETAILS . '>' . "\n";
         $result .= '</' . self::LI . '>' . "\n";
         $result .= '</' . self::UL . '>' . "\n";
@@ -454,27 +700,87 @@ class html_base
         return $this->nav($result, self::CLASS_NAV);
     }
 
-    private function view_change_list(int $msk_id = 0, array $url_array = []): string
+    /**
+     * @param int $msk_id the current view id used to build the view change links
+     * @param array $url_array the current request parameters used to build back-navigation links
+     * @param bool $is_admin true to offer the server admin page at the end
+     * @param view_menu $mnu what the page knows for the edit menu e.g. the editor and the views of the shown word
+     */
+    private function view_change_list(
+        int       $msk_id = 0,
+        array     $url_array = [],
+        bool      $is_admin = false,
+        view_menu $mnu = new view_menu()
+    ): string
     {
-        global $mtr;
-        $result = $this->list_item($this->ref(api::MAIN_SCRIPT . '?' . url_var::MASK . '=view_change&id=2', $mtr->txt(msg_id::NAVBAR_ALTERNATIVE_VIEW))) . "\n";
-        $result .= $this->list_item($this->ref('?view=more', $mtr->txt(msg_id::AND_MORE))) . "\n";
+        $result = $mnu->page_items;
+        // the editor and the suggested views below one sub header like the entries of the page
+        if ($mnu->edt_id != 0 or $mnu->view_items != '') {
+            $result .= $this->list_item(msg_id::NAVBAR_ALTERNATIVE_VIEW->text(), styles::MENU_HEADER) . "\n";
+        }
+        if ($mnu->edt_id != 0) {
+            // the editor shows the same object, so it gets the page vars of the current page
+            $edt_par = [url_var::MASK => $mnu->edt_id] + self::page_url_array($url_array);
+            $url_edt = $this->url_with_back($this->page_url($edt_par), $url_array);
+            // like the edit icons behind the title grey with the request to log in if the user cannot save a change
+            // and for a user who can no tooltip, because ref() skips a title that repeats the name
+            [$edt_style, $edt_tip] = $this->change_style_and_tip('', $mnu->edt_name);
+            $result .= $this->list_item($this->ref($url_edt, $mnu->edt_name, $edt_tip, $edt_style)) . "\n";
+        }
+        // e.g. for a word its own and assigned views, the views of its parents and the default word views
+        $result .= $mnu->view_items;
+        $more_names = implode(', ', $mnu->more_names);
+        $more_tip = $this->tip_with_names(msg_id::NAVBAR_MORE_VIEWS_TIP, msg_id::NAVBAR_MORE_VIEWS_NAMES_TIP, $more_names);
+        $result .= $this->list_item($this->ref('?view=more', msg_id::AND_MORE->text(), $more_tip)) . "\n";
+        // changing or adding a view below one sub header like the entries of the page
+        $result .= $this->list_item(msg_id::NAVBAR_CUSTOMIZE->text(), styles::MENU_HEADER) . "\n";
         $url_msk_edit = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_EDIT_ID
             . '&' . url_var::ID . '=' . $msk_id, $url_array);
-        $result .= $this->list_item($this->ref($url_msk_edit, $mtr->txt(msg_id::NAVBAR_CHANGE_VIEW))) . "\n";
+        $result .= $this->list_item($this->ref($url_msk_edit, msg_id::NAVBAR_CHANGE_VIEW->text(),
+                msg_id::NAVBAR_CHANGE_VIEW_TIP->text())) . "\n";
         $url_msk_add = $this->url_with_back(api::MAIN_SCRIPT
             . '?' . url_var::MASK . '=' . views::VIEW_ADD_ID, $url_array);
-        $result .= $this->list_item($this->ref($url_msk_add, $mtr->txt(msg_id::NAVBAR_ADD_VIEW))) . "\n";
+        $add_tip = $this->tip_with_names(msg_id::NAVBAR_ADD_VIEW_TIP, msg_id::NAVBAR_ADD_VIEW_FOR_TIP, $mnu->obj_name);
+        $result .= $this->list_item($this->ref($url_msk_add, msg_id::NAVBAR_ADD_VIEW->text(), $add_tip)) . "\n";
+        // the server admin page checks the access itself, the link is just not offered to the others
+        if ($is_admin) {
+            $result .= $this->list_item($this->ref(api::SERVER_ADMIN_SCRIPT, msg_id::NAVBAR_SERVER_ADMIN->text())) . "\n";
+        }
         return $this->list_unsorted($result);
+    }
+
+    /**
+     * a tooltip that names examples behind its text, e.g. "show more views e.g. Word, Triple"
+     *
+     * @param msg_id $tip_id the tooltip itself e.g. "show more views"
+     * @param msg_id $names_tip_id the addition with the names e.g. "e.g. z$VarObjNameList$z"
+     * @param string $names the names for the addition e.g. "Word, Triple"; empty for the tooltip alone
+     * @return string the tooltip text in the language of the user
+     */
+    function tip_with_names(msg_id $tip_id, msg_id $names_tip_id, string $names): string
+    {
+        $lib = new library();
+        $result = $tip_id->text();
+        if ($names != '') {
+            $names_tip = $lib->msg_var_replace($names_tip_id->text(), msg_id::VAR_NAME_LIST, $names);
+            $result .= ' ' . $names_tip;
+        }
+        return $result;
     }
 
     /**
      * @param array $url_array the current request parameters used to build back-navigation links
      * @param string|null $usr_name the logged-in username; null shows login and signup, non-null shows logout
      * @param string $usr_label role and username combined e.g. "admin timon"; shown as the first non-link menu line when non-empty
+     * @param bool $is_admin true to offer the admin dashboard
      */
-    private function user_login_list(array $url_array = [], ?string $usr_name = null, string $usr_label = ''): string
+    private function user_login_list(
+        array   $url_array = [],
+        ?string $usr_name = null,
+        string  $usr_label = '',
+        bool    $is_admin = false
+    ): string
     {
         global $mtr;
         $result = '';
@@ -499,11 +805,89 @@ class html_base
             $url_signup = $this->url_with_back(api::SIGNUP_SCRIPT, $url_array);
             $result .= $this->list_item($this->ref($url_signup, $mtr->txt(msg_id::NAVBAR_SIGNUP))) . "\n";
         }
+        // only a logged-in user can keep the mode as an own setting, an ip user follows the browser
+        if ($usr_name !== null) {
+            $result .= $this->theme_switch($url_array);
+        }
         // also an ip user without login sees the settings, so the link opens the read only system configuration
         // by its forward page, which keeps the back target (see api::FORWARD_VIEWS)
         $url_settings = $this->url_with_back(api::SETTINGS_REL, $url_array);
         $result .= $this->list_item($this->ref($url_settings, $mtr->txt(msg_id::NAVBAR_SETTINGS))) . "\n";
+        // the view itself is admin only (views::ADMIN_MASK_IDS), the link is just not offered to the others
+        if ($is_admin) {
+            $url_dashboard = $this->url_with_back(api::MAIN_SCRIPT . '?' . url_var::MASK . '=' . views::ADMIN_MAIN_ID, $url_array);
+            $result .= $this->list_item($this->ref($url_dashboard, $mtr->txt(msg_id::NAVBAR_DASHBOARD))) . "\n";
+        }
         return $this->list_unsorted($result);
+    }
+
+    /**
+     * the entry of the user menu that switches to the other mode, saved as the overwrite of the user of the
+     * config value frontend.layout.colour mode through the value edit mask like a setting (see config_tree::edit_form),
+     * so that the next visits keep it; if the user follows the browser, both entries are in the menu and
+     * the css shows only the one to the other mode than the browser (theme-to-dark and theme-to-light)
+     *
+     * @param array $url_array the calling url, which is shown again after the switch
+     * @return string the html list items of the switch or '' if the config has no mode value to overwrite
+     */
+    private function theme_switch(array $url_array): string
+    {
+        global $ui_sys;
+
+        $result = '';
+        $val = $ui_sys?->cfg?->value_by(html_base::MODE_PATH);
+        if ($val !== null and $val->id() != 0) {
+            $mode = $this->theme_mode();
+            if ($mode != def::MODE_DARK) {
+                $result .= $this->theme_switch_item($val->id(), $mode, def::MODE_DARK,
+                    msg_id::NAVBAR_DARK_MODE, msg_id::NAVBAR_DARK_MODE_TIP, styles::THEME_TO_DARK, $url_array);
+            }
+            if ($mode != def::MODE_LIGHT) {
+                $result .= $this->theme_switch_item($val->id(), $mode, def::MODE_LIGHT,
+                    msg_id::NAVBAR_LIGHT_MODE, msg_id::NAVBAR_LIGHT_MODE_TIP, styles::THEME_TO_LIGHT, $url_array);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param int|string $val_id the id of the config value of the mode
+     * @param int $mode the mode of the shown page e.g. def::MODE_BROWSER
+     * @param int $to_mode the mode that the entry switches to e.g. def::MODE_DARK
+     * @param msg_id $name the text of the entry e.g. msg_id::NAVBAR_DARK_MODE
+     * @param msg_id $tip the tooltip of the entry
+     * @param string $style the class that hides the entry if the browser has already this mode
+     * @param array $url_array the calling url, which is shown again after the switch
+     * @return string the html list item with the post form that saves the mode
+     */
+    private function theme_switch_item(
+        int|string $val_id,
+        int        $mode,
+        int        $to_mode,
+        msg_id     $name,
+        msg_id     $tip,
+        string     $style,
+        array      $url_array
+    ): string
+    {
+        $txt = $this->form_session_token();
+        $txt .= $this->form_hidden(url_var::NUMERIC_VALUE, (string)$to_mode);
+        // the shown mode and the yaml keys of the mode, so that the confirmation can say what has changed from what
+        $txt .= $this->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, (string)$mode);
+        $txt .= $this->form_hidden(url_var::CONFIG_KEY, implode(' ', html_base::MODE_PATH));
+        $txt .= $this->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
+        $txt .= $this->form_hidden(url_var::ID, group_id_url::to_url($val_id));
+        $txt .= $this->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+        // a submit that reads like the links of the menu, named so that the entry point runs the save
+        $txt .= '<' . self::BUTTON . ' ' . self::TYPE . '="' . self::INPUT_SUBMIT . '" '
+            . self::CLASS_HTML . '="' . styles::TEXT_BUTTON . '" ' . self::NAME . '="' . url_var::POST_SUBMIT . '" '
+            . self::TITLE_HTML . '="' . $this->esc($tip->text()) . '">' . $this->esc($name->text())
+            . '</' . self::BUTTON . '>';
+        // the page is shown again after the save, so the post carries it as the back target
+        $url = $this->url_with_back(api::MAIN_SCRIPT, self::normal_page_array($url_array));
+        $form = $this->form_simple($url, self::METHOD_POST, $txt);
+        // a fixed mode shows only the entry to the other mode, so it is never hidden by the browser setting
+        return $this->list_item($form, $mode == def::MODE_BROWSER ? $style : '') . "\n";
     }
 
     /**
@@ -542,11 +926,87 @@ class html_base
      */
     function footer(bool $no_about = false): string
     {
-        global $mtr;
         // invisible placeholder so that a text replace can add a user message
         // to a html page loaded from the page cache (see api::USER_MSG_PLACEHOLDER)
         $result = api::USER_MSG_PLACEHOLDER . "\n";
-        $result .= '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
+        $result .= $this->site_footer($no_about);
+        $result .= '</' . self::BODY . '>' . "\n";
+        $result .= '</' . self::HTML . '>' . "\n";
+
+        return $result;
+    }
+
+    /**
+     * the start of a page that is sent before the page is created, because the creation can take
+     * longer than the expected response time; it becomes visible only after the delay, so for a
+     * fast page the browser keeps showing the previous page; it has no title and its header shows
+     * only the logo without the search form, so the page that follows names the document and no
+     * element id is used twice
+     *
+     * @param float $delay the seconds after which the loading text is shown
+     * @param int $since the seconds since the request start shown when the text appears; counted up each second
+     * @param user_message|Message $msg to report a configured font or colour that css could misread
+     * @return string the html code from the doctype to the loading text and the footer
+     */
+    function loading_start(float $delay, int $since, user_message|Message $msg): string
+    {
+        global $mtr;
+        $show = self::LOADING_ANIMATION . ' 0s ' . $delay . 's forwards';
+        $css = '.' . self::CLASS_LOADING . ' {visibility: hidden; animation: ' . $show . ';}';
+        $css .= ' @keyframes ' . self::LOADING_ANIMATION . ' {to {visibility: visible;}}';
+        $loading = $mtr->txt(msg_id::PAGE_LOADING);
+        if ($since < self::LOADING_COUNT_LIMIT) {
+            $css .= $this->loading_count_css($delay, $since, self::LOADING_COUNT_LIMIT);
+            $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SINCE);
+            $loading .= ' ' . $this->span('', self::CLASS_LOADING_SECONDS);
+            $loading .= ' ' . $mtr->txt(msg_id::PAGE_LOADING_SECONDS);
+        }
+        // with the font and the colours like every page
+        $head = $this->charset() . $this->head_style() . $this->theme_style($msg) . $this->style($css);
+        $txt = $this->nav($this->logo(), self::CLASS_NAV);
+        $txt .= $this->main($this->p($loading));
+        $txt .= $this->site_footer();
+        $result = $this->doctype() . '<' . self::HTML . '>' . $this->head($head);
+        return $result . '<' . self::BODY . '>' . $this->div($txt, self::CLASS_LOADING);
+    }
+
+    /**
+     * the css that counts the seconds of the loading text without javascript: a registered integer
+     * property is animated in one step per second and shown as a css counter
+     *
+     * @param float $delay the seconds after which the count starts
+     * @param int $since the first number shown
+     * @param int $limit the last number shown
+     * @return string the css rules of the count
+     */
+    private function loading_count_css(float $delay, int $since, int $limit): string
+    {
+        $var = '--' . self::LOADING_COUNTER;
+        $steps = $limit - $since;
+        $count = self::LOADING_COUNT_ANIMATION . ' ' . $steps . 's steps(' . $steps . ') ' . $delay . 's forwards';
+        $css = ' @property ' . $var . " {syntax: '<integer>'; inherits: false; initial-value: " . $since . ';}';
+        $css .= ' .' . self::CLASS_LOADING_SECONDS . ' {animation: ' . $count . ';';
+        $css .= ' counter-reset: ' . self::LOADING_COUNTER . ' var(' . $var . ');}';
+        $css .= ' .' . self::CLASS_LOADING_SECONDS . '::after {content: counter(' . self::LOADING_COUNTER . ');}';
+        return $css . ' @keyframes ' . self::LOADING_COUNT_ANIMATION . ' {to {' . $var . ': ' . $limit . ';}}';
+    }
+
+    /**
+     * @return string the html code that hides the start of the page sent by loading_start
+     */
+    function loading_end(): string
+    {
+        return $this->style('.' . self::CLASS_LOADING . ' {display: none;}');
+    }
+
+    /**
+     * @param bool $no_about true to omit the about link e.g. when already on the about page
+     * @return string the html footer element of a page
+     */
+    private function site_footer(bool $no_about = false): string
+    {
+        global $mtr;
+        $result = '<' . self::FOOTER . ' ' . self::CLASS_HTML . '="' . self::CLASS_FOOTER . '">' . "\n";
 
         // for the about page this does not make sense
         $result .= '<' . self::P . '> ' . "\n";
@@ -564,8 +1024,6 @@ class html_base
         $result .= '</' . self::P . '> ' . "\n";
 
         $result .= '</' . self::FOOTER . '>' . "\n";
-        $result .= '</' . self::BODY . '>' . "\n";
-        $result .= '</' . self::HTML . '>' . "\n";
 
         return $result;
     }
@@ -591,9 +1049,17 @@ class html_base
      * @param string $title the tooltip of the link
      * @param string $css_class the css class name of the link
      * @param bool $name_is_html true only if the calling function guarantees that the link text is safe html e.g. an icon
+     * @param bool $with_user false for a link of a static page e.g. index.html, which is the same for every user
      * @return string the html code of the link or just the text if the url scheme is not allowed
      */
-    function ref(string $url, string $name, string $title = '', string $css_class = '', bool $name_is_html = false): string
+    function ref(
+        string $url,
+        string $name,
+        string $title = '',
+        string $css_class = '',
+        bool   $name_is_html = false,
+        bool   $with_user = true
+    ): string
     {
         if (!$name_is_html) {
             $name = $this->esc($name);
@@ -603,7 +1069,10 @@ class html_base
             log_warning('link to "' . $url . '" is blocked due to the unexpected url scheme');
             $result = $name;
         } else {
-            $url = $this->url_with_user($this->url_with_id_var($url));
+            $url = $this->url_with_id_var($url);
+            if ($with_user) {
+                $url = $this->url_with_user($url);
+            }
             $result = '<' . self::A . ' ' . self::HREF . '="' . htmlspecialchars($url, ENT_QUOTES) . '"';
             if ($title != '' && $title != $name) {
                 $result .= ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
@@ -1739,13 +2208,18 @@ class html_base
      * add the hidden field
      * @param string $name the internal name of the field
      * @param string $value the value that should be returned
+     * @param string $form_name the form that the field joins although it is outside of it e.g. a calculator input, empty for the form around it
      * @return string the html code to add a hidden field
      */
-    function form_hidden(string $name, string $value): string
+    function form_hidden(string $name, string $value, string $form_name = ''): string
     {
+        $form = '';
+        if ($form_name != '') {
+            $form = ' ' . self::FORM . '="' . $form_name . '"';
+        }
         return '<' . self::INPUT . ' ' . self::TYPE . '="' . html_base::INPUT_HIDDEN .
             '" ' . self::NAME . '="' . $name .
-            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '">';
+            '" ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"' . $form . '>';
     }
 
     /**
@@ -1794,12 +2268,30 @@ class html_base
         return $txt;
     }
 
-    // TODO Prio 0 use this function for all html input fields
-    function form_input(string $type, string $name, string $value = ''): string
+    /**
+     * a plain input field of the simple html forms e.g. the login, with its label linked to the field
+     * TODO Prio 0 use this function for all html input fields
+     * @param string $type the input type e.g. self::INPUT_TEXT
+     * @param string $name the submitted field name, which is the url var e.g. url_var::USERNAME
+     * @param string $value the pre-filled value e.g. the username after a failed signup
+     * @param string $label the translated label shown above the field, '' for a field without a label
+     * @return string the html code of the label (if given) and the input field
+     */
+    function form_input(string $type, string $name, string $value = '', string $label = ''): string
     {
-        $txt = '<' . self::INPUT . ' ' . self::TYPE . '="' . $type . '" ' . self::NAME . '="' . $name . '"';
+        $txt = '';
+        $id = '';
+        if ($label != '') {
+            // the label is linked to the field by the id (like form_field), so a click on the label focuses the field
+            $id = $this->field_id($name, $label);
+            $txt .= $this->label($label, $id) . $this->br();
+        }
+        $txt .= '<' . self::INPUT . ' ' . self::TYPE . '="' . $type . '" ' . self::NAME . '="' . $name . '"';
         if ($value != '') {
             $txt .= ' ' . self::VALUE . '="' . htmlspecialchars($value, ENT_QUOTES) . '"';
+        }
+        if ($id != '') {
+            $txt .= ' ' . self::ID . '="' . $id . '"';
         }
         $txt .= ' ' . self::CLASS_HTML . '="' . self::CLASS_INPUT . '">';
         return $txt;
@@ -1887,12 +2379,16 @@ class html_base
     {
         global $mtr;
         $result = $this->header($mtr->txt(msg_id::SYSTEM_TITLE_ABOUT), $msg, "center_form");
-
         $result .= $this->about_body();
-
+        // the about page needs no link to itself in the footer
+        $result .= $this->footer(true);
         return $result;
     }
 
+    /**
+     * @return string the html code of the about text without the page footer, because the about view
+     *                shows it inside the main element and the page adds the footer (see about_page)
+     */
     function about_body(): string
     {
         global $mtr;
@@ -1914,8 +2410,6 @@ class html_base
         $tream_img = $this->img('/src/main/resources/images/TREAM_logo.jpg', 'TREAM', 'logo-tream');
         $result .= $this->ref(def::LINK_TREAM_DEMO, $tream_img, $mtr->txt(msg_id::ABOUT_TREAM_DEMO), '', true) . '<' . self::BR . '><' . self::BR . '>';
         $result .= '</' . self::DIV . '>   ';
-        $result .= $this->footer(true);
-
         return $result;
     }
 
@@ -2016,7 +2510,7 @@ class html_base
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
                 $url = $this->url_back($class_name . rest_ctrl::UPDATE, $item->id(), $url_arr);
-                $result .= $this->ref($url, $this->esc($item->name()));
+                $result .= $this->ref($url, $item->name());
                 $result .= '<' . self::BR . '>';
             }
         }
@@ -2127,16 +2621,14 @@ class html_base
         return $result;
     }
 
-// simply to display an error text interactively to the user; use this function always for easy redesign of the error messages
-    function dsp_err($err_text): string
+    /**
+     * display an error text to the user; use this function always for easy redesign of the error messages
+     * @param string $err_text the html code of the error text e.g. a translated message with <b> tags
+     * @return string the error text as a red inline text
+     */
+    function dsp_err(string $err_text): string
     {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= '<style class="text-danger">' . $err_text . '</style>';
-        } else {
-            $result .= '<style color="red">' . $err_text . '</style>';
-        }
-        return $result;
+        return $this->span($err_text, styles::TEXT_DANGER);
     }
 
 // display a box with the history and the links
@@ -2499,6 +2991,85 @@ class html_base
      */
 
     /**
+     * a line diagram of numbers per row without javascript, with a line at zero and at the biggest number
+     *
+     * @param array $lines per line its numbers in the order of the rows, its colour style ('' for none) and per number the text of the tooltip of its point
+     * @param string $first the text below the first number
+     * @param string $last the text below the last number
+     * @param string $max_text the biggest absolute number as a text
+     * @return string the html code of the svg image
+     */
+    function line_diagram(array $lines, string $first, string $last, string $max_text): string
+    {
+        $max = max(1, ...array_map('abs', array_merge(...array_column($lines, 0))));
+        $right = self::DIAGRAM_WIDTH - self::DIAGRAM_PAD_RIGHT;
+        $half = (self::DIAGRAM_HEIGHT - self::DIAGRAM_PAD_TOP - self::DIAGRAM_PAD_BOTTOM) / 2;
+        $y_of = fn(float $num) => self::DIAGRAM_PAD_TOP + $half * (1 - $num / $max);
+        $body = '';
+        foreach ([$max, 0, -$max] as $num) {
+            $y = number_format($y_of($num), 1, '.', '');
+            $body .= '<line x1="' . self::DIAGRAM_PAD_LEFT . '" x2="' . $right . '" y1="' . $y . '" y2="' . $y . '"/>';
+        }
+        $texts = ['+' . $max_text, '0', '-' . $max_text];
+        foreach ([$max, 0, -$max] as $k => $num) {
+            $body .= '<text x="' . (self::DIAGRAM_PAD_LEFT - 6) . '" y="' . number_format($y_of($num) + 4, 1, '.', '') . '" text-anchor="end">' . $this->esc($texts[$k]) . '</text>';
+        }
+        foreach ($lines as [$nums, $style, $titles]) {
+            $body .= $this->block(self::SVG_GROUP, $this->diagram_line($nums, $titles, $y_of), $style);
+        }
+        $body .= '<text x="' . self::DIAGRAM_PAD_LEFT . '" y="' . (self::DIAGRAM_HEIGHT - 6) . '">' . $this->esc($first) . '</text>'
+            . '<text x="' . $right . '" y="' . (self::DIAGRAM_HEIGHT - 6) . '" text-anchor="end">' . $this->esc($last) . '</text>';
+        return '<svg viewBox="0 0 ' . self::DIAGRAM_WIDTH . ' ' . self::DIAGRAM_HEIGHT . '" role="img">' . $body . '</svg>';
+    }
+
+    /**
+     * @param array $nums the numbers of the line in the order of the rows
+     * @param array $titles per number the text of the tooltip of its point
+     * @param callable $y_of the height in the diagram of a number
+     * @return string the svg code of the line with a point per number
+     */
+    private function diagram_line(array $nums, array $titles, callable $y_of): string
+    {
+        $wid = self::DIAGRAM_WIDTH - self::DIAGRAM_PAD_LEFT - self::DIAGRAM_PAD_RIGHT;
+        $points = [];
+        $circles = '';
+        foreach (array_values($nums) as $k => $num) {
+            $x = number_format(self::DIAGRAM_PAD_LEFT + $k * $wid / max(1, count($nums) - 1), 1, '.', '');
+            $y = number_format($y_of($num), 1, '.', '');
+            $points[] = $x . ',' . $y;
+            $circles .= '<circle cx="' . $x . '" cy="' . $y . '" r="' . self::DIAGRAM_POINT_RADIUS . '"><title>' . $this->esc($titles[$k]) . '</title></circle>';
+        }
+        return '<polyline points="' . implode(' ', $points) . '"/>' . $circles;
+    }
+
+    /**
+     * @param string $text the html code of the label: a text that has no form field e.g. of a read only number, or the text with the input that it wraps
+     * @param string $style the html class of the label, '' for none
+     * @return string the html code of a label without a for attribute
+     */
+    function label_no_for(string $text, string $style = ''): string
+    {
+        $class = $style == '' ? '' : ' ' . self::CLASS_HTML . '="' . $style . '"';
+        return '<' . self::LABEL . $class . '>' . $text . '</' . self::LABEL . '>';
+    }
+
+    /**
+     * a checkbox that sends the number 1 if it is checked; the id equals the name, so a label can point to it
+     *
+     * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
+     * @param bool $checked true to show the checkbox checked
+     * @param string $form_name the form that the input joins by its form attribute
+     * @return string the html code of the checkbox
+     */
+    function input_checkbox(string $name, bool $checked, string $form_name): string
+    {
+        $attr = ' ' . self::TYPE . '="' . self::INPUT_CHECKBOX . '" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
+        $form = ' ' . html_names::VALUE . '="1" ' . self::FORM . '="' . $this->esc($form_name) . '"';
+        $state = $checked ? ' checked' : '';
+        return '<' . self::INPUT . $attr . $form . $state . '>';
+    }
+
+    /**
      * create the html code for a label
      * TODO Prio 1
      * @param string $text the translated text to be shown as a label
@@ -2574,7 +3145,7 @@ class html_base
 
     /**
      * translate and create the html code for a label
-     * TODO use if if possible
+     * TODO Prio 3 use if if possible
      * @param msg_id $msg_id message id that should be translated to the text to be shown as a label
      * @param string $for the url id of the html form field
      * @return string the html code to show the label
@@ -2608,8 +3179,9 @@ class html_base
     private function field_id(string $url_id, string $label): string
     {
         if ($label != '') {
-            // a label may contain spaces ("Plural reverse"); an html id may not, so use '_'
-            $id = str_replace(' ', '_', strtolower($label));
+            // a label may contain spaces ("Plural reverse") or signs ("place name / post code"); an html
+            // id may not contain spaces and is easier to select without signs, so each run of them is one '_'
+            $id = trim(preg_replace('/[^\p{L}\p{N}_-]+/u', '_', strtolower($label)), '_');
             $sep = strpos($url_id, '_');
             if ($sep !== false) {
                 $id .= substr($url_id, $sep);
@@ -2672,6 +3244,74 @@ class html_base
             $form = ' ' . self::FORM . '="' . $form_name . '"';
         }
         return '<' . self::INPUT . $class . $type . $name . $id . $value . $placeholder . $form . '>';
+    }
+
+    /**
+     * a number input with the limits and the step that the browser enforces, e.g. an input field
+     * of a use case page; the id equals the name, so a label can point to it
+     *
+     * @param string $name the url var of the number e.g. url_var::NUMERIC_VALUE with the phrase id
+     * @param float|null $value the number shown, null for an empty field
+     * @param float|null $min the lowest number accepted, null for no limit
+     * @param float|null $max the highest number accepted, null for no limit
+     * @param float|null $step the increment of the number, null for any number
+     * @param string $form_name the form that the input joins by its form attribute, '' for the surrounding form
+     * @param int|null $decimals the minimum decimals of the shown number e.g. 2 for a share, null for the number as it is
+     * @return string the html code of the number input
+     */
+    function input_number(
+        string $name,
+        ?float $value,
+        ?float $min,
+        ?float $max,
+        ?float $step,
+        string $form_name = '',
+        ?int   $decimals = null
+    ): string
+    {
+        $attr = ' ' . self::TYPE . '="number" ' . self::NAME . '="' . $name . '" ' . self::ID . '="' . $name . '"';
+        foreach (['value' => $value, 'min' => $min, 'max' => $max, 'step' => $step] as $key => $num) {
+            if ($num !== null) {
+                // only the shown number gets the decimals e.g. 0.90 for a share
+                $attr .= ' ' . $key . '="' . $this->number_value($num, $key == 'value' ? $decimals : null) . '"';
+            }
+        }
+        if ($form_name != '') {
+            $attr .= ' ' . self::FORM . '="' . $form_name . '"';
+        }
+        return '<' . self::INPUT . $attr . '>';
+    }
+
+    /**
+     * the number as an html attribute needs it; the decimals are a minimum, so that a field or an
+     * option never holds a rounded copy of the number, which would be the input of the calculation
+     *
+     * @param float $num a number
+     * @param int|null $decimals the minimum number of decimals e.g. 2 for a share, null for the number as it is
+     * @return string the number with a point, with at least the decimals e.g. "1.00" and "0.855",
+     *                or else without trailing zeros e.g. "0.5"
+     */
+    function number_value(float $num, ?int $decimals = null): string
+    {
+        $result = rtrim(rtrim(sprintf('%.12F', $num), '0'), '.');
+        if ($decimals !== null and $this->decimals($result) < $decimals) {
+            $result = number_format($num, $decimals, '.', '');
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $num_txt a number with a point and without trailing zeros e.g. "0.855"
+     * @return int the number of decimals e.g. 3, 0 for a number without a point
+     */
+    private function decimals(string $num_txt): int
+    {
+        $pos = strpos($num_txt, '.');
+        $result = 0;
+        if ($pos !== false) {
+            $result = strlen($num_txt) - $pos - 1;
+        }
+        return $result;
     }
 
     function div_form(string $text, string $style = ''): string
@@ -2792,6 +3432,40 @@ class html_base
     }
 
     /**
+     * a form that only shows a page again with the entered values e.g. the refresh of a process catch
+     * page; the inputs of other components join it by their form attribute; it keeps the user id of
+     * form_user, so the user stays logged in, but it has no named submit, because it never changes data
+     *
+     * @param string $form_name the id of the form that the inputs of the page name in their form attribute
+     * @param string $txt the inner html code of the form e.g. the hidden page vars and the submit button
+     * @return string the HTML code of the form
+     */
+    function form_get(string $form_name, string $txt): string
+    {
+        $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
+        $id = ' ' . self::ID . '="' . $form_name . '"';
+        return '<' . self::FORM . $action . $id . '>' . $this->form_user() . $txt . '</' . self::FORM . '>';
+    }
+
+    /**
+     * a form that changes data and that the inputs of other components join by their form attribute
+     * e.g. the save of a calculator page; it posts the anti-csrf session token and the user id,
+     * and its submit button posts POST_SUBMIT, so that the entry point runs url_to_action
+     *
+     * @param string $form_name the id of the form that the inputs of the page name in their form attribute
+     * @param string $txt the inner html code of the form e.g. the hidden page vars and the submit button
+     * @return string the HTML code of the form
+     */
+    function form_post(string $form_name, string $txt): string
+    {
+        $action = ' ' . self::ACTION . '="' . api::HOST_SAME . api::MAIN_SCRIPT_EXT . '"';
+        $method = ' ' . self::METHOD . '="' . self::METHOD_POST . '"';
+        $id = ' ' . self::ID . '="' . $form_name . '"';
+        return '<' . self::FORM . $action . $method . $id . '>'
+            . $this->form_session_token() . $this->form_user() . $txt . '</' . self::FORM . '>';
+    }
+
+    /**
      * create the HTML code for an input field including the label
      * @param string $url_id the id of the input field e.g. n
      * @param msg_id $msg_id the msg_id of the title of the input field e.g. Name
@@ -2878,6 +3552,23 @@ class html_base
         return '</' . self::DIV . '>';
     }
 
+    /**
+     * @param string $summary the text of the always shown summary line
+     * @return string html code to start a collapsed block that details_end closes
+     */
+    function details_start(string $summary): string
+    {
+        return '<' . self::DETAILS . '><' . self::SUMMARY . '>' . $summary . '</' . self::SUMMARY . '>';
+    }
+
+    /**
+     * @return string html code to end a collapsed block that details_start has opened
+     */
+    function details_end(): string
+    {
+        return '</' . self::DETAILS . '>';
+    }
+
     /*
      * base
      */
@@ -2921,9 +3612,9 @@ class html_base
 
     /**
      *display a progress bar
-     * TODO create a auto refresh page for async processes and the HTML front end without JavaScript
-     * TODO create a db table, where the async process can drop the status
-     * TODO add the refresh frequency setting to the general and user settings
+     * TODO Prio 2 create a auto refresh page for async processes and the HTML front end without JavaScript
+     * TODO Prio 2 create a db table, where the async process can drop the status
+     * TODO Prio 3 add the refresh frequency setting to the general and user settings
      */
     function ui_progress($id, $value, $max, $text): string
     {
@@ -2938,7 +3629,7 @@ class html_base
 
     /**
      * wrap the html tag around html code
-     * TODO: to be adjusted depending on the display language
+     * TODO Prio 2 to be adjusted depending on the display language
      * @param string $txt the html code
      * @param string $lan the language code of the text
      * @return string the wrapped code
@@ -2956,6 +3647,16 @@ class html_base
     private function head(string $txt): string
     {
         return '<' . self::HEAD . '>' . $txt . '</' . self::HEAD . '>';
+    }
+
+    /**
+     * wrap the style tag around css code
+     * @param string $css the css rules
+     * @return string the style element
+     */
+    private function style(string $css): string
+    {
+        return '<' . self::STYLE . '>' . $css . '</' . self::STYLE . '>';
     }
 
     /**
@@ -2997,6 +3698,19 @@ class html_base
      */
     function div(string $txt, string $style = '', string $id = ''): string
     {
+        return $this->block(self::DIV, $txt, $style, $id);
+    }
+
+    /**
+     * wrap a block tag e.g. the header, aside or section of a use case page around html code
+     * @param string $tag the html block tag e.g. self::SECTION
+     * @param string $txt the html code
+     * @param string $style the html class name
+     * @param string $id the html id
+     * @return string the wrapped html code
+     */
+    function block(string $tag, string $txt, string $style = '', string $id = ''): string
+    {
         $attr = '';
         if ($style != '') {
             $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
@@ -3004,7 +3718,7 @@ class html_base
         if ($id != '') {
             $attr .= ' ' . self::ID . '="' . $id . '"';
         }
-        return '<' . self::DIV . $attr . '>' . $txt . '</' . self::DIV . '>';
+        return '<' . $tag . $attr . '>' . $txt . '</' . $tag . '>';
     }
 
     /**
@@ -3177,20 +3891,39 @@ class html_base
     }
 
     /**
+     * @param string $icon the html code of the icon
+     * @param string $title the text that names what the button does, as its tooltip and for a screen reader
+     * @param string $class additional CSS classes for the button
+     * @return string the html code of a button that shows only an icon
+     */
+    function button_icon(string $icon, string $title, string $class): string
+    {
+        $esc_title = $this->esc($title);
+        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . self::BUTTON . '" ' . self::CLASS_HTML . '="' . self::CLASS_BUTTON . ' ' . $class . '"'
+            . ' title="' . $esc_title . '" aria-label="' . $esc_title . '">' . $icon . '</' . self::BUTTON . '>';
+    }
+
+    /**
      * wrap the button tag around html code
      * @param string $txt the button label html code
      * @param string $typ the button type e.g. submit
      * @param string $class additional CSS classes for the button
+     * @param string $name the url key that the button posts e.g. url_var::POST_SUBMIT for a data-changing submit, '' for none
      * @return string the wrapped button code
      */
-    private function button(string $txt, string $typ, string $class = ''): string
+    function button(string $txt, string $typ, string $class = '', string $name = ''): string
     {
         if ($class != '') {
             $class = self::CLASS_BUTTON . ' ' . $class;
         } else {
             $class = self::CLASS_BUTTON;
         }
-        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '">' . $txt . '</' . self::BUTTON . '>';
+        $name_attr = '';
+        if ($name != '') {
+            $name_attr = ' ' . self::NAME . '="' . $name . '"';
+        }
+        return '<' . self::BUTTON . ' ' . self::TYPE . '="' . $typ . '" ' . self::CLASS_HTML . '="' . $class . '"'
+            . $name_attr . '>' . $txt . '</' . self::BUTTON . '>';
     }
 
     /**
@@ -3271,29 +4004,6 @@ class html_base
             $attr .= ' ' . self::CLASS_HTML . '="' . $style . '"';
         }
         return '<' . self::LI . $attr . '>' . $txt . '</' . self::LI . '>';
-    }
-
-    /**
-     * a popup menu that opens on a click without any javascript, because the html details
-     * element keeps the open state itself (docs/llm/frontend.md "Pure HTML, no JavaScript");
-     * the css class positions the entries below the label (see the menus of style_html.css)
-     *
-     * @param string $label the html code of the always shown part e.g. an icon or "..."
-     * @param string $items the html code of the list items of the menu
-     * @param string $style the css class of the menu e.g. styles::MENU_COLUMN
-     * @param string $title the mouseover text that says what the menu selects
-     * @return string the html code of the popup menu
-     */
-    function popup_menu(string $label, string $items, string $style, string $title = ''): string
-    {
-        $title_attr = '';
-        if ($title != '') {
-            $title_attr = ' ' . self::TITLE_HTML . '="' . htmlspecialchars($title, ENT_QUOTES) . '"';
-        }
-        $result = '<' . self::DETAILS . ' ' . self::CLASS_HTML . '="' . $style . '">';
-        $result .= '<' . self::SUMMARY . $title_attr . '>' . $label . '</' . self::SUMMARY . '>';
-        $result .= $this->list_unsorted($items);
-        return $result . '</' . self::DETAILS . '>';
     }
 
     /**
@@ -3434,7 +4144,13 @@ class html_base
      */
     private function lang(string $lan): string
     {
-        return '<' . self::HTML . ' ' . self::LANG . '="' . $lan . '">';
+        // the bootstrap components e.g. a table or an input follow the dark mode only if the user has
+        // chosen it, because without javascript the setting of the browser is known only to the css
+        $theme = '';
+        if ($this->theme_mode() == def::MODE_DARK) {
+            $theme = ' data-bs-theme="dark"';
+        }
+        return '<' . self::HTML . ' ' . self::LANG . '="' . $lan . '"' . $theme . '>';
     }
 
     /**
@@ -3516,13 +4232,37 @@ class html_base
     }
 
     /**
+     * the data of a page script as json, which the browser never runs as code; a "<" is written
+     * as its unicode escape, so a text in the data cannot close the script tag
+     *
+     * @param string $id the html id by which the script finds the data
+     * @param array $data the data of the script
+     * @return string the html code of the data block
+     */
+    function script_data(string $id, array $data): string
+    {
+        $json = json_encode($data, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES);
+        return '<' . self::SCRIPT . ' ' . self::TYPE . '="' . self::JSON_TYPE . '" ' . self::ID . '="' . $id . '">'
+            . $json . '</' . self::SCRIPT . '>';
+    }
+
+    /**
+     * @param string $url the path of the script file e.g. files::CALCULATOR_SCRIPT
+     * @return string the html code that loads the script
+     */
+    function script_src(string $url): string
+    {
+        return '<' . self::SCRIPT . ' ' . self::SRC . '="' . $url . '"></' . self::SCRIPT . '>';
+    }
+
+    /**
      * @param string $stylesheet path to the stylesheet file
      * @param string $base_url e.g. the pod url to turn the root relative path into an
      *                         absolute url, so that the stylesheet is also found by a page
      *                         that is not served by the pod (e.g. a html test snapshot)
      * @return string the HTML link element for the stylesheet
      */
-    private function link_style(string $stylesheet, string $base_url = ''): string
+    function link_style(string $stylesheet, string $base_url = ''): string
     {
         $url = $stylesheet;
         if ($base_url != '') {

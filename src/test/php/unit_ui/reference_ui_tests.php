@@ -36,6 +36,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\refs;
 use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
@@ -91,7 +92,8 @@ class reference_ui_tests
         $t->assert($test_name, $url_arr[url_var::PHRASE], $ref_filled->phrase()->id());
         $test_name = 'the url of an empty reference carries no external key';
         $ref_empty = new ref();
-        $t->assert_false($test_name, array_key_exists(url_var::EXTERNAL_KEY, $ref_empty->to_url_array($msg)));
+        $url_arr = $ref_empty->to_url_array($msg);
+        $t->assert_key_not_exists($test_name, url_var::EXTERNAL_KEY, $url_arr);
 
         $sfm = new system_form();
         $ttl_html = $sfm->title_named($ref_filled, $msg);
@@ -113,6 +115,36 @@ class reference_ui_tests
         $t->assert($test_name, $ref_new->phrase()->id(), 0);
         $test_name = 'the phrase of a linked reference is the linked phrase';
         $t->assert_true($test_name, $ref->phrase()->id() != 0);
+
+        $t->subheader($ts . 'api mapper');
+
+        // the frontend reference takes the external key of the api message
+        $test_name = 'the api mapper sets the external key of a reference';
+        $ref_map = new ref();
+        $ref_map->api_mapper(json_decode($t_ref->reference()->api_json(), true), $msg);
+        $t->assert($test_name, $ref_map->external_key(), refs::PI_KEY);
+        $msg->reset();
+
+        // the id is mandatory, because without it a save would add a new reference
+        $test_name = 'a reference json without an id is refused';
+        $t->assert_false($test_name, $ref_map->api_mapper([json_fields::EXTERNAL_KEY => refs::PI_KEY], $msg));
+        $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // a reference has no own debug text, so the db object debug text shows its id
+        $test_name = 'shows the id of the reference';
+        $ref_dsp = new ref($t_ref->reference()->api_json());
+        $id_txt = (string)refs::PI_ID;
+        $dsp = $ref_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a new reference has no database id to show
+        $test_name = 'shows no id for a new reference';
+        $ref_dsp = new ref();
+        $id_txt = (string)refs::PI_ID;
+        $dsp = $ref_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
         $t->subheader($ts . 'source select');
 
@@ -142,6 +174,11 @@ class reference_ui_tests
         $test_name = '... and sends no source as the pre value';
         $t->assert_text_contains($test_name, $sel_no_src,
             $html->form_hidden(url_var::PRE . url_var::SOURCE, '0'));
+
+        // negative: a reference whose api message names no source has no source object
+        $test_name = 'a reference without a source has no source';
+        $no_src = $ref->source();
+        $t->assert_null($test_name, $no_src?->name());
 
         $t->subheader($ts . 'view tab box');
 

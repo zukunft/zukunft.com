@@ -35,37 +35,89 @@ namespace Zukunft\ZukunftCom\test\php\unit;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once paths::API_OBJECT . 'ui_config.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_HELPER . 'db_cache_db.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'db_cache_types.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 
+use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_db;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_cache_page;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_ui;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_ui;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_ui;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\test\php\create\test_db_caches;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use DateTime;
+use DateTimeInterface;
 
 class db_cache_tests
 {
+
+    // the phrase ids of an api request and its cache key without the id of the requesting user
+    const string TV_PHRASE_IDS = '-134,-186';
+    const string TV_API_KEY = 'resultList?phrase_ids=-134%2C-186&u=';
+    const string TV_API_KEY_VALUE = 'valueList?phrase_ids=-134%2C-186&u=';
+    // a parameter value that tries to name another user in the cache key
+    const string TV_PHRASE_IDS_WITH_USER = '1&u=2';
+    const string TV_API_KEY_WITH_USER = 'resultList?phrase_ids=1%26u%3D2&u=';
+    // the related phrases of a system phrase selected by its name e.g. by the frontend for the sort order
+    const string TV_LEVELS = '2';
+    const string TV_API_KEY_PHRASE = 'phraseList?k=sort+order+%28system%29&pd=both&px=2&u=';
+    // a types api message and the time when its types have started to be read
+    const string TV_TYPES_JSON = '{"pod":"zukunft.com","body":{"cache_test":[1]}}';
+    const string TV_TYPES_SNAP_TIME = '2023-01-03T20:59:59+01:00';
+
     function run(test_cleanup $t): void
     {
 
         // init
         $sc = new sql_creator();
         $t_db_cache = new test_db_caches($t);
+        $msg = new user_message($t->usr1);
         $t->name = 'db_cache->';
         $t->resource_path = 'db/db_cache/';
 
@@ -129,6 +181,14 @@ class db_cache_tests
         $qp = $cac->del_sql_by_type_ids($sc, [db_cache_types::SYSTEM_CONFIG_ID]);
         $t->assert_qp($qp, $sc->db_type);
 
+        // sql to remove all cache entries e.g. if an admin clears the cache on the settings page
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $cac->del_sql_all($sc);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $cac->del_sql_all($sc);
+        $t->assert_qp($qp, $sc->db_type);
+
         // sql to load a list of open batch db_caches
         $t_usr = new test_users($t);
         $sys_usr = $t_usr->system_user();
@@ -159,6 +219,53 @@ class db_cache_tests
 
         $cac_page = $t_db_cache->db_cache_page();
         $t->assert_api($cac_page);
+
+        $t->subheader($ts . 'api json array');
+
+        // the status of a refreshed cache entry
+        $test_name = 'status of a filled cache';
+        $cac = $t_db_cache->db_cache_filled();
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::STATUS] ?? 0, db_cache_statuum::CLEAN_ID);
+        $msg->reset();
+
+        // negative: a new cache entry always has a status, so only a reset clears it
+        $test_name = 'no status of a reset cache';
+        $cac = $t_db_cache->db_cache();
+        $cac->reset();
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::STATUS]);
+        $msg->reset();
+
+        // the time of the last cache refresh
+        $test_name = 'last update of a filled cache';
+        $cac = $t_db_cache->db_cache_filled();
+        $upd = new DateTime(sys_log_tests::TV_TIME)->format(DateTimeInterface::ATOM);
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE] ?? '', $upd);
+        $msg->reset();
+
+        // negative: a never refreshed cache entry has no last update
+        $test_name = 'no last update of a new cache';
+        $cac = $t_db_cache->db_cache();
+        $vars = $cac->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LAST_UPDATE]);
+        $msg->reset();
+
+        // the time when the cached html page has last been rendered
+        $test_name = 'last update of a filled page';
+        $cac_page = $t_db_cache->db_cache_page_filled();
+        $upd = new DateTime(sys_log_tests::TV_TIME)->format(DateTimeInterface::ATOM);
+        $vars = $cac_page->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::LAST_UPDATE] ?? '', $upd);
+        $msg->reset();
+
+        // negative: a never rendered page has no last update
+        $test_name = 'no last update of a new page';
+        $cac_page = $t_db_cache->db_cache_page();
+        $vars = $cac_page->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::LAST_UPDATE]);
+        $msg->reset();
 
 
         $t->subheader($ts . 'update fields');
@@ -203,6 +310,128 @@ class db_cache_tests
         $test_name = 'a cache entry without update time is refilled';
         $t->assert_true($test_name, $cac->is_outdated());
 
+        $test_name = 'a just cached api message is used';
+        $cac_page = $t_db_cache->db_cache_page_up_to_date();
+        $t->assert_false($test_name, $cac_page->is_outdated());
+
+        $test_name = 'an api message older than the max cache age is created again';
+        $cac_page = $t_db_cache->db_cache_page_filled();
+        $t->assert_true($test_name, $cac_page->is_outdated());
+
+        $test_name = 'a cache row without content is created again';
+        $cac_page = $t_db_cache->db_cache_page_up_to_date();
+        $cac_page->html_page = null;
+        $t->assert_true($test_name, $cac_page->is_outdated());
+
+
+        $t->subheader($ts . 'api key');
+
+        // the user is the end of the key like of a personal page, so del_by_user drops it
+        $test_name = 'the api key names the api, every parameter and the user';
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS];
+        $cac_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY . $t->usr1->id());
+
+        $test_name = 'the api key of another user differs';
+        $cac_key_usr2 = db_cache_page::api_key(result_list::class, $par, $t->usr2->id());
+        $t->assert_not($test_name, $cac_key_usr2, $cac_key);
+
+        $test_name = 'the api key of the value list names the value list api';
+        $cac_key_val = db_cache_page::api_key(value_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key_val, self::TV_API_KEY_VALUE . $t->usr1->id());
+
+        $test_name = 'a parameter cannot name another user, because the values are url encoded';
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS_WITH_USER];
+        $cac_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY_WITH_USER . $t->usr1->id());
+
+        // the phrase list api has many selection parameters of which a request uses only a few
+        $test_name = 'the api key of the phrase list names only the used parameters';
+        $par = [
+            url_var::ID_LST => '',
+            url_var::PHRASE => '',
+            url_var::NAME => triples::SYSTEM_SORT_ORDER,
+            url_var::DIRECTION => foaf_direction::BOTH->value,
+            url_var::LEVELS => self::TV_LEVELS,
+            url_var::PATTERN => '',
+            url_var::VERB => ''
+        ];
+        $cac_key = db_cache_page::api_key(phrase_list::class, $par, $t->usr1->id());
+        $t->assert($test_name, $cac_key, self::TV_API_KEY_PHRASE . $t->usr1->id());
+
+        $test_name = '... but a zero is a used parameter that changes the key';
+        $par[url_var::VERB] = '0';
+        $cac_key_zero = db_cache_page::api_key(phrase_list::class, $par, $t->usr1->id());
+        $t->assert_not($test_name, $cac_key_zero, $cac_key);
+
+
+        $t->subheader($ts . 'drop by api object type');
+
+        // a delete selects the cached rows that start with the pattern, like sql_par_type::LIKE_R
+        $starts_like = fn(string $pattern, string $key): bool
+            => preg_match('/^' . str_replace('%', '.*', preg_quote($pattern, '/')) . '/', $key) === 1;
+        $par = [api::JSON_LIST_PHRASE_IDS => self::TV_PHRASE_IDS];
+        $res_key = db_cache_page::api_key(result_list::class, $par, $t->usr1->id());
+        $test_name = 'the cached result list of a user is dropped with the result lists of that user';
+        $t->assert_true($test_name, $starts_like(db_cache_page::api_key_pattern(result_list::class, $t->usr1->id()), $res_key));
+        $test_name = '... and with the result lists of all users';
+        $t->assert_true($test_name, $starts_like(db_cache_page::api_key_pattern(result_list::class), $res_key));
+        // negative: an outdated value list keeps the cached result lists
+        $test_name = '... but not with the value lists';
+        $t->assert_false($test_name, $starts_like(db_cache_page::api_key_pattern(value_list::class), $res_key));
+        $test_name = '... and not with the html pages';
+        $t->assert_false($test_name, $starts_like(db_cache_page::html_key_pattern(), $res_key));
+        $html_key = url_var::MASK . url_var::EQ . views::START_ID . url_var::ADD_ID . self::TV_LEVELS
+            . url_var::ADD . url_var::USER . url_var::EQ . $t->usr1->id();
+        $test_name = 'a cached html page of a user is dropped with the html pages of that user';
+        $t->assert_true($test_name, $starts_like(db_cache_page::html_key_pattern($t->usr1->id()), $html_key));
+
+        // a write outdates the cached api answers that can show the changed object
+        $test_name = 'a renamed word outdates the cached phrase, value and result lists';
+        $t->assert($test_name, frontend::api_lists_outdated_by(word_ui::class),
+            [phrase_list_ui::class, value_list_ui::class, result_list_ui::class]);
+        $test_name = 'a changed source outdates only the cached value lists';
+        $t->assert($test_name, frontend::api_lists_outdated_by(source_ui::class), [value_list_ui::class]);
+        // negative: the cached lists name no view, so a changed view keeps them
+        $test_name = 'a changed view keeps all cached api answers';
+        $t->assert($test_name, frontend::api_lists_outdated_by(view_ui::class), []);
+
+        // the cached config holds the values of the system configuration with their phrase names
+        $t_val = new test_values($t);
+        $test_name = 'a renamed word can outdate the cached config';
+        $t->assert_true($test_name, frontend::config_outdated_by(new word_ui()));
+        $test_name = 'a value of the system configuration outdates the cached config';
+        $cfg_trp = new triple($t->usr1);
+        $cfg_trp->set(triples::SYSTEM_CONFIG_ID, triples::SYSTEM_CONFIG);
+        $cfg_val = $t_val->value_for_phrases([$cfg_trp->phrase()]);
+        $t->assert_true($test_name, frontend::config_outdated_by(new value_ui($cfg_val->api_json([api_types::INCL_PHRASES]))));
+        $test_name = 'a value with unknown phrases outdates the cached config';
+        $t->assert_true($test_name, frontend::config_outdated_by(new value_ui()));
+        // negative: other objects are not part of the cached config, so that their write keeps it
+        $test_name = 'a value of another phrase keeps the cached config';
+        $t->assert_false($test_name, frontend::config_outdated_by($t_val->value_list_assumptions_ui()->lst()[0]));
+        $test_name = 'a changed view keeps the cached config';
+        $t->assert_false($test_name, frontend::config_outdated_by(new view_ui()));
+        $test_name = 'a changed source keeps the cached config';
+        $t->assert_false($test_name, frontend::config_outdated_by(new source_ui()));
+
+
+        $t->subheader($ts . 'types message');
+
+        // on a cache miss the types api message just sent is cached and not created a second time
+        $ui_cfg = new ui_config();
+        $snap_time = new DateTime(self::TV_TYPES_SNAP_TIME);
+        $cac = $ui_cfg->cache_entry(self::TV_TYPES_JSON, $snap_time);
+        $test_name = 'the cached types message is the api message just sent';
+        $t->assert($test_name, $cac->data, self::TV_TYPES_JSON);
+        $test_name = '... in the types cache row';
+        $t->assert($test_name, $cac->type_id, db_cache_types::TYPES_ID);
+        $test_name = '... aged from the start of the read';
+        $t->assert($test_name, $cac->last_update->format(DateTimeInterface::ATOM), $snap_time->format(DateTimeInterface::ATOM));
+        // negative: every user reads the row, so it is written as the system user and not as the requesting user
+        $test_name = 'the types cache row is not owned by the requesting user';
+        $t->assert_not($test_name, $cac->usr->id(), $t->usr1->id());
+
 
         $t->subheader($ts . 'session token swap');
 
@@ -231,6 +460,11 @@ class db_cache_tests
         // an empty session token must not corrupt the page (str_replace of '' would be destructive)
         $test_name = 'an empty token leaves the page unchanged on save';
         $t->assert($test_name, db_cache_page::strip_session_token($page, ''), $page);
+
+        // negative: only the token of the rendering session is replaced
+        $test_name = 'the token of another session leaves the page unchanged on save';
+        $stored_other = db_cache_page::strip_session_token($page, $other);
+        $t->assert($test_name, $stored_other, $page);
 
 
         $t->subheader($ts . 'user message swap');
@@ -274,6 +508,37 @@ class db_cache_tests
         $test_name = 'a save after adding a message restores the clean page';
         $t->assert($test_name,
             db_cache_page::strip_user_msg(db_cache_page::add_user_msg($clean_page, $msg_html)), $clean_page);
+
+
+        $t->subheader($ts . 'debug id');
+
+        // db_cache: the debug id shows the database id
+        $test_name = 'cache with id';
+        $cac = $t_db_cache->db_cache();
+        $dsp = $cac->dsp_id();
+        $id_txt = '=' . test_db_caches::ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a reset cache entry does not show the test id
+        $test_name = 'cache without id';
+        $cac = $t_db_cache->db_cache();
+        $cac->reset();
+        $dsp = $cac->dsp_id();
+        $id_txt = '=' . test_db_caches::ID;
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
+
+        // db_cache_page: the debug id shows the url of the cached page
+        $test_name = 'page with url';
+        $cac_page = $t_db_cache->db_cache_page();
+        $dsp = $cac_page->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, test_db_caches::PAGE_URL);
+
+        // negative: a page without url shows no url
+        $test_name = 'page without url';
+        $cac_page = $t_db_cache->db_cache_page();
+        $cac_page->reset();
+        $dsp = $cac_page->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, test_db_caches::PAGE_URL);
 
     }
 

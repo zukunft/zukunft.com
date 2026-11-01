@@ -2079,6 +2079,12 @@
       "to": "kilogram"
     },
     {
+      "name": "t (unit symbol)",
+      "from": "t",
+      "verb": "is symbol for",
+      "to": "tonne"
+    },
+    {
       "name": "A (unit symbol)",
       "from": "A",
       "verb": "is symbol for",

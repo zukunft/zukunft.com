@@ -126,6 +126,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -173,6 +176,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "ill health",
       "from": "health",
@@ -373,8 +388,8 @@
     {"words": ["GDP loss due to ill health", "non-communicable disease", "world", "2011-2030", "annual", "percent", "GDP"], "number": "0.05", "source": "Bloom et al. (2011) Global Economic Burden of Non-communicable Diseases", "description": "the cumulative output loss divided by the 20 years is about 5 percent of the global GDP of 2010"},
     {"words": ["GDP loss due to ill health", "mental disorder", "world", "2011-2030", "trillion", "EUR"], "number": "15.07", "source": "Bloom et al. (2011) Global Economic Burden of Non-communicable Diseases", "description": "16.3 trillion USD of 2010 at the ECB 2023 average of 1.0813 USD per EUR; part of the loss of the non-communicable diseases"},
     {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP"], "number": "0.0055", "source": "Chen et al. (2023)", "description": "the cost of 25.2 trillion international dollars of 2017 over 2020-2050 as an annual tax on the global GDP"},
-    {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP", "low"], "number": "0.00397", "source": "Chen et al. (2023)", "description": "lower bound of the 95 percent uncertainty interval; 18.2 trillion international dollars of 2017"},
-    {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP", "high"], "number": "0.00766", "source": "Chen et al. (2023)", "description": "upper bound of the 95 percent uncertainty interval; 35.1 trillion international dollars of 2017"},
+    {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP", "variance low (system)"], "number": "0.00397", "source": "Chen et al. (2023)", "description": "lower bound of the 95 percent uncertainty interval; 18.2 trillion international dollars of 2017"},
+    {"words": ["GDP loss due to ill health", "cancer", "world", "2020-2050", "annual", "percent", "GDP", "variance high (system)"], "number": "0.00766", "source": "Chen et al. (2023)", "description": "upper bound of the 95 percent uncertainty interval; 35.1 trillion international dollars of 2017"},
     {"words": ["GDP loss due to ill health", "cancer", "China", "2020-2050", "percent"], "number": "0.241", "source": "Chen et al. (2023)", "description": "the share of China in the global economic cost of the cancers; 6.1 trillion international dollars of 2017"},
     {"words": ["GDP loss due to ill health", "cancer", "United States", "2020-2050", "percent"], "number": "0.208", "source": "Chen et al. (2023)", "description": "the share of the United States in the global economic cost of the cancers; 5.3 trillion international dollars of 2017"},
     {"words": ["health spending due to ill health", "world", "2021", "trillion", "EUR"], "number": "9.063", "source": "WHO (2023) Global spending on health", "description": "9.8 trillion USD at the ECB 2023 average of 1.0813 USD per EUR"},

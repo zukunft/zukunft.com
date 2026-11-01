@@ -144,7 +144,7 @@ class component extends sandbox_code_id
     public ?phrase $wrd_col2 = null;    // the phrase to select the sub table columns
 
     // vars from the link
-    // TODO move these vars to the frontend component link object
+    // TODO Prio 2 move these vars to the frontend component link object
     public int $pos_type_id = position_types::DEFAULT_ID;
     public ?int $style_id = null;
     public ?int $row_phrase = null;
@@ -345,7 +345,7 @@ class component extends sandbox_code_id
      */
 
     /**
-     * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * TODO Prio 2 all set_from_json_array functions should only use json_fields not api::FLD
      * set the vars this component bases on the api json array
      * public because it is reused e.g. by the phrase group display object
      * @param array $json_array an api json message
@@ -444,7 +444,7 @@ class component extends sandbox_code_id
     }
 
     /**
-     * TODO all set_from_json_array functions should only use json_fields not api::FLD
+     * TODO Prio 2 all set_from_json_array functions should only use json_fields not api::FLD
      * TODO Prio 2 move $typ_lst array convert to one place
      * TODO Prio 2 review $typ_lst->flat_link() ID switches
      * create an array for the api json message
@@ -905,6 +905,39 @@ class component extends sandbox_code_id
     function text(): string
     {
         return $this->name();
+    }
+
+    /**
+     * @return string the name of the component as a sub title e.g. a section of a use case page
+     */
+    function name_sub_title(): string
+    {
+        // one size below the page title (see system_page::view_title)
+        return new html_base()->text_h3($this->name());
+    }
+
+    /**
+     * @return string the description of the component as a paragraph e.g. a note of a use case page
+     */
+    function description_text(): string
+    {
+        return new html_base()->p($this->get_description());
+    }
+
+    /**
+     * @return string the start of a collapsed block with the name of the component as the summary line
+     */
+    function details_start(): string
+    {
+        return new html_base()->details_start($this->name());
+    }
+
+    /**
+     * @return string the end of the collapsed block that details_start has opened
+     */
+    function details_end(): string
+    {
+        return new html_base()->details_end();
     }
 
     /**

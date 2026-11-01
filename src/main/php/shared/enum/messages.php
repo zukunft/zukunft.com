@@ -130,6 +130,10 @@ enum messages: string
     const string VAR_USER_CHK = 'VarUserCheck';
     // the name of a user
     const string VAR_USER_NAME = 'VarUserName';
+    // the name of the pod e.g. of the admin dashboard subtitle
+    const string VAR_POD_NAME = 'VarPodName';
+    // a formatted date and time e.g. of the creation of a page
+    const string VAR_TIME = 'VarTime';
     // the name, profile and permissions of a user
     const string VAR_USER_PROFILE = 'VarUserProfile';
     // the name of a user of a list
@@ -240,21 +244,34 @@ enum messages: string
     case TOTAL = 'total';
     case MORE = 'more';
     case AND_MORE = '... more';
-    // the tooltip and the entries of the "..." header menu of a table, which selects the
-    // column tiers to show and whether each number is shown with its probability range
-    case TABLE_COLUMNS_TIP = 'table_columns_tip';
+    // the entries of the edit menu of the navbar that select the column tiers of a table to show
+    // and whether each number is shown with its variance
     case TABLE_COLUMNS_MAYOR = 'table_columns_mayor';
     case TABLE_COLUMNS_MAIN = 'table_columns_main';
     case TABLE_COLUMNS_MINOR = 'table_columns_minor';
     case TABLE_COLUMNS_ALL = 'table_columns_all';
-    // added to the entry above for the same columns with the probability range of each number
-    case TABLE_COLUMNS_WITH_RANGE = 'table_columns_with_range';
-    // the sub headers of the "..." menu and the entries that select the form of the table (table_forms)
+    // added to the entry above for the same columns with the variance of each number
+    case TABLE_COLUMNS_WITH_VARIANCE = 'table_columns_with_variance';
+    // the tooltips of the column tier entries, each without and with the variance
+    case TABLE_COLUMNS_MAYOR_TIP = 'table_columns_mayor_tip';
+    case TABLE_COLUMNS_MAYOR_VARIANCE_TIP = 'table_columns_mayor_variance_tip';
+    case TABLE_COLUMNS_MAIN_TIP = 'table_columns_main_tip';
+    case TABLE_COLUMNS_MAIN_VARIANCE_TIP = 'table_columns_main_variance_tip';
+    case TABLE_COLUMNS_MINOR_TIP = 'table_columns_minor_tip';
+    case TABLE_COLUMNS_MINOR_VARIANCE_TIP = 'table_columns_minor_variance_tip';
+    case TABLE_COLUMNS_ALL_TIP = 'table_columns_all_tip';
+    case TABLE_COLUMNS_ALL_VARIANCE_TIP = 'table_columns_all_variance_tip';
+    // added to the tooltips above with the names of the columns of the tables of the page
+    case TABLE_COLUMNS_NAMES_TIP = 'table_columns_names_tip';
+    // the sub headers of the edit menu and the entries that select the form of the table (table_forms)
     case TABLE_MENU_COLUMNS = 'table_menu_columns';
     case TABLE_MENU_AS = 'table_menu_as';
     case TABLE_AS_TABLE = 'table_as_table';
     case TABLE_AS_CHART = 'table_as_chart';
     case TABLE_AS_TABLE_CHART = 'table_as_table_chart';
+    case TABLE_AS_TABLE_TIP = 'table_as_table_tip';
+    case TABLE_AS_CHART_TIP = 'table_as_chart_tip';
+    case TABLE_AS_TABLE_CHART_TIP = 'table_as_table_chart_tip';
     // the tooltips of the up / down icons behind a column header that sort the rows (table_orders)
     case TABLE_SORT_UP_TIP = 'table_sort_up_tip';
     case TABLE_SORT_DOWN_TIP = 'table_sort_down_tip';
@@ -269,13 +286,6 @@ enum messages: string
     case CHART_QUADRANT_HIGH = 'chart_quadrant_high';
     case CHART_QUADRANT_LOW = 'chart_quadrant_low';
     case CHART_PER = 'chart_per';
-    // the tooltip and the entries of the "..." menu below the title of a default view, which
-    // shows the same object in one of the versions of views::DEFAULT_VIEW_VERSIONS
-    case VIEW_VERSION_TIP = 'view_version_tip';
-    case VIEW_VERSION_DEFAULT = 'view_version_default';
-    case VIEW_VERSION_DETAIL = 'view_version_detail';
-    case VIEW_VERSION_RANGE = 'view_version_range';
-    case VIEW_VERSION_DETAIL_RANGE = 'view_version_detail_range';
     case EXAMPLE_SHORT = 'e.g.';
     case NO_PRIVILEGES = 'cannot be changed';
 
@@ -782,6 +792,14 @@ enum messages: string
         . ' does not match the result '
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
         . ' calculated based on the imported values';
+    // the page shows the number calculated with its own values (docs/llm/frontend.md "The frontend calculates, a save job verifies")
+    case RESULT_DIFFERS_FROM_PAGE = 'the stored result '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' differs from the result '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' calculated with the values of this page, which is shown instead';
     case XBRL_FACT_VALUE_CONFLICT = 'the XBRL fact "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" for the context "'
@@ -938,6 +956,16 @@ enum messages: string
     case IMPORT_FAILED = 'failed because '
         . self::VAR_START . self::VAR_SUMMARY . self::VAR_END
         . '.';
+    case WIKIDATA_UNIT_LABEL_MISSING = 'a value of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not imported, because the name of its wikidata unit "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" cannot be read';
+    case WIKIDATA_CRITERION_LABEL_MISSING = 'a value of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not imported, because the name of its wikidata criterion "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" cannot be read';
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
@@ -1136,6 +1164,11 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" to plot';
     case CHART_COLUMNS_MISSING = 'the table has not enough value columns for the chart';
+    case CALCULATOR_CELL_AMBIGUOUS = 'the calculator cell of "'
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END
+        . '" stays empty, because its phrases select the different numbers "'
+        . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
+        . '" equally; add the phrase that selects one of them to the calculator triples of the cell';
     case CHART_TYPE_UNKNOWN = 'the chart type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" has no code id of a known chart type, so the chart is not shown';
@@ -1369,6 +1402,12 @@ enum messages: string
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . ' with the expression '
         . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END;
+    case FORMULA_FUNCTION_MISSING = 'formula_function_missing';
+    case FORMULA_DIVISION_BY_ZERO = 'formula_division_by_zero';
+    case FORMULA_FUNCTION_NO_NUMBER = 'formula_function_no_number';
+    case FORMULA_NO_NUMBER = 'formula_no_number';
+    case FORMULA_LIST_ARGUMENT = 'formula_list_argument';
+    case FORMULA_LIST_TOO_LONG = 'formula_list_too_long';
     case FORMULA_WORD_RENAME_FAILED = 'formula "'
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END
         . '" cannot be renamed to '
@@ -1815,7 +1854,7 @@ enum messages: string
     case ADD_USER_CONFIG_FAILED = 'adding of user configuration failed';
 
     // text to be shown in frontend
-    // TODO add translation
+    // TODO Prio 2 add translation
     case AND_MORE_BEFORE = 'and';
     case OR = 'or';
     case SIGNUP = 'signup';
@@ -1829,6 +1868,378 @@ enum messages: string
     case QUALITY_MARK_ASSUMED = 'quality_mark_assumed';
     case QUALITY_MARK_NO_SOURCE = 'quality_mark_no_source';
     case QUALITY_MARK_PEER_REVIEWED = 'quality_mark_peer_reviewed';
+    // the tag behind the label of an assumption field: a number with a source or an estimate
+    case FIELD_TAG_MEASURED = 'field_tag_measured';
+    case FIELD_TAG_ASSUMED = 'field_tag_assumed';
+    // the texts of the calculator editor script, which gets all messages with the prefix calc_editor_
+    // (see system_page::calculator_editor_texts); the toolbar e.g. "Calculator editor for example PV installation"
+    case CALC_EDITOR_FOR = 'calc_editor_for';
+    case CALC_EDITOR_PHRASE_PLACEHOLDER = 'calc_editor_phrase_placeholder';
+    case CALC_EDITOR_LOAD = 'calc_editor_load';
+    case CALC_EDITOR_LOADING = 'calc_editor_loading';
+    case CALC_EDITOR_NO_CHANGES = 'calc_editor_no_changes';
+    case CALC_EDITOR_CHANGE = 'calc_editor_change';
+    case CALC_EDITOR_CHANGES = 'calc_editor_changes';
+    case CALC_EDITOR_WARNING = 'calc_editor_warning';
+    case CALC_EDITOR_WARNINGS = 'calc_editor_warnings';
+    case CALC_EDITOR_UNDO = 'calc_editor_undo';
+    case CALC_EDITOR_UNDO_TIP = 'calc_editor_undo_tip';
+    case CALC_EDITOR_REDO = 'calc_editor_redo';
+    case CALC_EDITOR_REDO_TIP = 'calc_editor_redo_tip';
+    case CALC_EDITOR_DISCARD_CHANGES = 'calc_editor_discard_changes';
+    case CALC_EDITOR_DISCARD_TIP = 'calc_editor_discard_tip';
+    case CALC_EDITOR_VIEW_PAGE = 'calc_editor_view_page';
+    // the button that saves the loaded phraseData answer of the page phrase as a json file on the device
+    case CALC_EDITOR_EXPORT = 'calc_editor_export';
+    case CALC_EDITOR_EXPORT_TIP = 'calc_editor_export_tip';
+    case CALC_EDITOR_EXPORTED = 'calc_editor_exported';
+    // the button that imports a json file into the pod and loads its page phrase into the editor
+    case CALC_EDITOR_IMPORT = 'calc_editor_import';
+    case CALC_EDITOR_IMPORT_TIP = 'calc_editor_import_tip';
+    case CALC_EDITOR_IMPORT_BLOCKED = 'calc_editor_import_blocked';
+    case CALC_EDITOR_IMPORTING = 'calc_editor_importing';
+    case CALC_EDITOR_IMPORTED = 'calc_editor_imported';
+    case CALC_EDITOR_IMPORT_FAILED = 'calc_editor_import_failed';
+    case CALC_EDITOR_IMPORT_NO_JSON = 'calc_editor_import_no_json';
+    case CALC_EDITOR_SAVING = 'calc_editor_saving';
+    case CALC_EDITOR_SAVE_TIP = 'calc_editor_save_tip';
+    case CALC_EDITOR_CHIP_DATABASE = 'calc_editor_chip_database';
+    // the three columns of the calculator editor and the tabs of the preview column
+    case CALC_EDITOR_PAGE_STRUCTURE = 'calc_editor_page_structure';
+    case CALC_EDITOR_ITEM_COUNT = 'calc_editor_item_count';
+    case CALC_EDITOR_SETTINGS = 'calc_editor_settings';
+    case CALC_EDITOR_TAB_PAGE = 'calc_editor_tab_page';
+    case CALC_EDITOR_TAB_TEXTS = 'calc_editor_tab_texts';
+    case CALC_EDITOR_TAB_CHANGES = 'calc_editor_tab_changes';
+    // the lists of a calculator page, the kinds of their items and the links to add an item
+    case CALC_EDITOR_LIST_COLUMNS = 'calc_editor_list_columns';
+    case CALC_EDITOR_LIST_ROWGROUPS = 'calc_editor_list_rowgroups';
+    case CALC_EDITOR_LIST_DETAILS = 'calc_editor_list_details';
+    case CALC_EDITOR_KIND_PAGE = 'calc_editor_kind_page';
+    case CALC_EDITOR_KIND_INPUT = 'calc_editor_kind_input';
+    case CALC_EDITOR_KIND_ASSUMPTION = 'calc_editor_kind_assumption';
+    case CALC_EDITOR_KIND_COLUMN = 'calc_editor_kind_column';
+    case CALC_EDITOR_KIND_ROWGROUP = 'calc_editor_kind_rowgroup';
+    case CALC_EDITOR_KIND_ROW = 'calc_editor_kind_row';
+    case CALC_EDITOR_KIND_FILTER = 'calc_editor_kind_filter';
+    case CALC_EDITOR_KIND_DETAIL = 'calc_editor_kind_detail';
+    case CALC_EDITOR_KIND_DCOL = 'calc_editor_kind_dcol';
+    case CALC_EDITOR_KIND_DEXTRA = 'calc_editor_kind_dextra';
+    case CALC_EDITOR_KIND_DFILTER = 'calc_editor_kind_dfilter';
+    case CALC_EDITOR_KIND_SUB = 'calc_editor_kind_sub';
+    case CALC_EDITOR_ADD_INPUT = 'calc_editor_add_input';
+    case CALC_EDITOR_ADD_ASSUMPTION = 'calc_editor_add_assumption';
+    case CALC_EDITOR_ADD_COLUMN = 'calc_editor_add_column';
+    case CALC_EDITOR_ADD_ROWGROUP = 'calc_editor_add_rowgroup';
+    case CALC_EDITOR_ADD_ROW = 'calc_editor_add_row';
+    case CALC_EDITOR_ADD_FILTER = 'calc_editor_add_filter';
+    case CALC_EDITOR_ADD_DETAIL = 'calc_editor_add_detail';
+    case CALC_EDITOR_ADD_DCOL = 'calc_editor_add_dcol';
+    case CALC_EDITOR_ADD_DEXTRA = 'calc_editor_add_dextra';
+    // where the shown label, hint or highlight of an item comes from e.g. "Empty: shows the phrase name."
+    case CALC_EDITOR_FROM_ITEM = 'calc_editor_from_item';
+    case CALC_EDITOR_FROM_NOTHING = 'calc_editor_from_nothing';
+    case CALC_EDITOR_FROM_PHRASE_NAME = 'calc_editor_from_phrase_name';
+    case CALC_EDITOR_FROM_PHRASE_LABEL = 'calc_editor_from_phrase_label';
+    case CALC_EDITOR_FROM_OTHER_LABEL = 'calc_editor_from_other_label';
+    case CALC_EDITOR_FROM_OTHER_NAME = 'calc_editor_from_other_name';
+    case CALC_EDITOR_FROM_PHRASE_HINT = 'calc_editor_from_phrase_hint';
+    case CALC_EDITOR_FROM_PHRASE = 'calc_editor_from_phrase';
+    case CALC_EDITOR_FROM_FILTER_PHRASE = 'calc_editor_from_filter_phrase';
+    case CALC_EDITOR_NO_PHRASE_YET = 'calc_editor_no_phrase_yet';
+    // the warnings of the changes before a save
+    case CALC_EDITOR_WARN_TRIPLE_TWICE = 'calc_editor_warn_triple_twice';
+    case CALC_EDITOR_WARN_NAME_TWICE = 'calc_editor_warn_name_twice';
+    case CALC_EDITOR_WARN_NO_PHRASE = 'calc_editor_warn_no_phrase';
+    // the page structure
+    case CALC_EDITOR_KEY_ROW_TIP = 'calc_editor_key_row_tip';
+    case CALC_EDITOR_CHIP_KEY = 'calc_editor_chip_key';
+    case CALC_EDITOR_SIGN_TIP = 'calc_editor_sign_tip';
+    case CALC_EDITOR_CHIP_SELECT = 'calc_editor_chip_select';
+    case CALC_EDITOR_PHRASE_SELECTOR = 'calc_editor_phrase_selector';
+    case CALC_EDITOR_CHIP_NEW = 'calc_editor_chip_new';
+    case CALC_EDITOR_CHIP_NO_PHRASE = 'calc_editor_chip_no_phrase';
+    case CALC_EDITOR_CHIP_CHANGED = 'calc_editor_chip_changed';
+    case CALC_EDITOR_CHIP_SHARED = 'calc_editor_chip_shared';
+    case CALC_EDITOR_MOVE_UP = 'calc_editor_move_up';
+    case CALC_EDITOR_MOVE_DOWN = 'calc_editor_move_down';
+    case CALC_EDITOR_REMOVE = 'calc_editor_remove';
+    case CALC_EDITOR_PAGE_NODE = 'calc_editor_page_node';
+    case CALC_EDITOR_LIST_EMPTY = 'calc_editor_list_empty';
+    // the settings of the page
+    case CALC_EDITOR_PAGE_PHRASE = 'calc_editor_page_phrase';
+    case CALC_EDITOR_READ_FROM = 'calc_editor_read_from';
+    case CALC_EDITOR_PAGE_TITLE = 'calc_editor_page_title';
+    case CALC_EDITOR_LEAD_TEXT = 'calc_editor_lead_text';
+    case CALC_EDITOR_LIST_HEADINGS = 'calc_editor_list_headings';
+    case CALC_EDITOR_NO_HEADING = 'calc_editor_no_heading';
+    case CALC_EDITOR_LABEL_OF = 'calc_editor_label_of';
+    case CALC_EDITOR_PAGE_HELP = 'calc_editor_page_help';
+    // the settings of an item
+    case CALC_EDITOR_PHRASE = 'calc_editor_phrase';
+    case CALC_EDITOR_PHRASE_SHORT_PLACEHOLDER = 'calc_editor_phrase_short_placeholder';
+    case CALC_EDITOR_NOT_IN_FILE = 'calc_editor_not_in_file';
+    case CALC_EDITOR_LABEL_OWN_NOTE = 'calc_editor_label_own_note';
+    case CALC_EDITOR_EMPTY_SHOWS = 'calc_editor_empty_shows';
+    case CALC_EDITOR_LABEL_PAGE = 'calc_editor_label_page';
+    case CALC_EDITOR_HINT_PAGE = 'calc_editor_hint_page';
+    case CALC_EDITOR_ALREADY_KEY_ROW = 'calc_editor_already_key_row';
+    case CALC_EDITOR_BOLD_ROW = 'calc_editor_bold_row';
+    case CALC_EDITOR_KEY_ROW_PAGE = 'calc_editor_key_row_page';
+    case CALC_EDITOR_SHOW_SIGN = 'calc_editor_show_sign';
+    case CALC_EDITOR_SIGN_NOTE = 'calc_editor_sign_note';
+    case CALC_EDITOR_TRIPLE_NAME = 'calc_editor_triple_name';
+    case CALC_EDITOR_FOLLOWS_PHRASE = 'calc_editor_follows_phrase';
+    case CALC_EDITOR_TRIPLE_NAME_NOTE = 'calc_editor_triple_name_note';
+    case CALC_EDITOR_REMOVE_ITEM = 'calc_editor_remove_item';
+    case CALC_EDITOR_SHOWN_NUMBER = 'calc_editor_shown_number';
+    case CALC_EDITOR_VALUE_NOTE = 'calc_editor_value_note';
+    // the shared settings of a phrase
+    case CALC_EDITOR_PHRASE_BOX = 'calc_editor_phrase_box';
+    case CALC_EDITOR_PHRASE_BOX_NOTE = 'calc_editor_phrase_box_note';
+    case CALC_EDITOR_GENERAL_LABEL = 'calc_editor_general_label';
+    case CALC_EDITOR_GENERAL_HINT = 'calc_editor_general_hint';
+    case CALC_EDITOR_KEY_FIGURE = 'calc_editor_key_figure';
+    case CALC_EDITOR_SIDE_RESULTS = 'calc_editor_side_results';
+    case CALC_EDITOR_SIDE_NOTE = 'calc_editor_side_note';
+    case CALC_EDITOR_SIDE_PHRASE = 'calc_editor_side_phrase';
+    case CALC_EDITOR_REMOVE_SIDE = 'calc_editor_remove_side';
+    case CALC_EDITOR_ADD_SIDE = 'calc_editor_add_side';
+    case CALC_EDITOR_FIELD_TYPE = 'calc_editor_field_type';
+    case CALC_EDITOR_TYPE_NUMBER = 'calc_editor_type_number';
+    case CALC_EDITOR_TYPE_LIMITS = 'calc_editor_type_limits';
+    case CALC_EDITOR_MINIMUM = 'calc_editor_minimum';
+    case CALC_EDITOR_MAXIMUM = 'calc_editor_maximum';
+    case CALC_EDITOR_STEP = 'calc_editor_step';
+    case CALC_EDITOR_VALUE_PHRASES = 'calc_editor_value_phrases';
+    case CALC_EDITOR_VALUE_PHRASES_NOTE = 'calc_editor_value_phrases_note';
+    case CALC_EDITOR_VALUE_PHRASE = 'calc_editor_value_phrase';
+    case CALC_EDITOR_REMOVE_VALUE_PHRASE = 'calc_editor_remove_value_phrase';
+    case CALC_EDITOR_ADD_VALUE_PHRASE = 'calc_editor_add_value_phrase';
+    case CALC_EDITOR_OPTIONS = 'calc_editor_options';
+    case CALC_EDITOR_OPTIONS_NOTE = 'calc_editor_options_note';
+    case CALC_EDITOR_OPTION_PHRASE = 'calc_editor_option_phrase';
+    case CALC_EDITOR_OPTION_LABEL = 'calc_editor_option_label';
+    case CALC_EDITOR_MOVE_OPTION_UP = 'calc_editor_move_option_up';
+    case CALC_EDITOR_REMOVE_OPTION = 'calc_editor_remove_option';
+    case CALC_EDITOR_ADD_OPTION = 'calc_editor_add_option';
+    case CALC_EDITOR_OPTIONS_ISA = 'calc_editor_options_isa';
+    case CALC_EDITOR_OPTIONS_ISA_NOTE = 'calc_editor_options_isa_note';
+    case CALC_EDITOR_ISA_OPTION_PHRASE = 'calc_editor_isa_option_phrase';
+    case CALC_EDITOR_ADD_ISA_OPTION = 'calc_editor_add_isa_option';
+    case CALC_EDITOR_VALUE_BASED = 'calc_editor_value_based';
+    case CALC_EDITOR_VALUE_BASED_NOTE = 'calc_editor_value_based_note';
+    case CALC_EDITOR_SELECTED_ON = 'calc_editor_selected_on';
+    case CALC_EDITOR_FIRST_OPTION = 'calc_editor_first_option';
+    case CALC_EDITOR_USES_NOTE = 'calc_editor_uses_note';
+    // the preview of the calculator page
+    case CALC_EDITOR_NO_OPTIONS = 'calc_editor_no_options';
+    case CALC_EDITOR_NO_VALUE = 'calc_editor_no_value';
+    case CALC_EDITOR_LEGEND_CLICK = 'calc_editor_legend_click';
+    case CALC_EDITOR_LEGEND_NUMBERS = 'calc_editor_legend_numbers';
+    case CALC_EDITOR_NO_INPUTS = 'calc_editor_no_inputs';
+    case CALC_EDITOR_NO_ASSUMPTIONS = 'calc_editor_no_assumptions';
+    case CALC_EDITOR_OTHER_OPERANDS = 'calc_editor_other_operands';
+    case CALC_EDITOR_NO_ROW_GROUPS = 'calc_editor_no_row_groups';
+    case CALC_EDITOR_NO_ROWS = 'calc_editor_no_rows';
+    case CALC_EDITOR_ROWS_NOTE = 'calc_editor_rows_note';
+    case CALC_EDITOR_FORMULAS_NOTE = 'calc_editor_formulas_note';
+    // the list of all texts
+    case CALC_EDITOR_LIST_HEADING = 'calc_editor_list_heading';
+    case CALC_EDITOR_KIND_HINT = 'calc_editor_kind_hint';
+    case CALC_EDITOR_PHRASE_LABEL = 'calc_editor_phrase_label';
+    case CALC_EDITOR_PHRASE_HINT = 'calc_editor_phrase_hint';
+    case CALC_EDITOR_OPTION_OF = 'calc_editor_option_of';
+    case CALC_EDITOR_TEXTS_INTRO = 'calc_editor_texts_intro';
+    case CALC_EDITOR_TEXTS_SHARED = 'calc_editor_texts_shared';
+    case CALC_EDITOR_COL_TRIPLE = 'calc_editor_col_triple';
+    case CALC_EDITOR_COL_TEXT = 'calc_editor_col_text';
+    // the list of the changes
+    case CALC_EDITOR_CHECK_BEFORE_SAVING = 'calc_editor_check_before_saving';
+    case CALC_EDITOR_NO_CHANGES_SINCE = 'calc_editor_no_changes_since';
+    case CALC_EDITOR_SAVE_SENDS = 'calc_editor_save_sends';
+    case CALC_EDITOR_ADDED_TRIPLES = 'calc_editor_added_triples';
+    case CALC_EDITOR_CHANGED_TRIPLES = 'calc_editor_changed_triples';
+    case CALC_EDITOR_REMOVED_TRIPLES = 'calc_editor_removed_triples';
+    case CALC_EDITOR_VALUES = 'calc_editor_values';
+    case CALC_EDITOR_NEW_WORDS = 'calc_editor_new_words';
+    case CALC_EDITOR_CHANGED_FORMULAS = 'calc_editor_changed_formulas';
+    // the notices and toasts of the load, the save, the undo and the draft
+    case CALC_EDITOR_REMOVED = 'calc_editor_removed';
+    case CALC_EDITOR_DISCARDED = 'calc_editor_discarded';
+    case CALC_EDITOR_POD_ANSWERED = 'calc_editor_pod_answered';
+    case CALC_EDITOR_POD_UNREACHABLE = 'calc_editor_pod_unreachable';
+    case CALC_EDITOR_SAVED_CHANGE = 'calc_editor_saved_change';
+    case CALC_EDITOR_SAVED_CHANGES = 'calc_editor_saved_changes';
+    case CALC_EDITOR_SAVE_REFUSED = 'calc_editor_save_refused';
+    case CALC_EDITOR_NO_ANSWER = 'calc_editor_no_answer';
+    case CALC_EDITOR_OWN_VERSION = 'calc_editor_own_version';
+    case CALC_EDITOR_SHARED_VERSION = 'calc_editor_shared_version';
+    case CALC_EDITOR_NOT_CONFIRMED = 'calc_editor_not_confirmed';
+    case CALC_EDITOR_SAVE_NOT_CONFIRMED = 'calc_editor_save_not_confirmed';
+    case CALC_EDITOR_NO_LISTS = 'calc_editor_no_lists';
+    case CALC_EDITOR_PHRASE_NOT_FOUND = 'calc_editor_phrase_not_found';
+    case CALC_EDITOR_VERB_UNKNOWN = 'calc_editor_verb_unknown';
+    case CALC_EDITOR_READ_FAILED = 'calc_editor_read_failed';
+    case CALC_EDITOR_ENTER_NAME = 'calc_editor_enter_name';
+    case CALC_EDITOR_UNSAVED_LOST = 'calc_editor_unsaved_lost';
+    case CALC_EDITOR_LOAD_ANYWAY = 'calc_editor_load_anyway';
+    case CALC_EDITOR_CANCEL = 'calc_editor_cancel';
+    case CALC_EDITOR_LOADED = 'calc_editor_loaded';
+    case CALC_EDITOR_OFFLINE_ONLY = 'calc_editor_offline_only';
+    case CALC_EDITOR_READING = 'calc_editor_reading';
+    case CALC_EDITOR_NOT_ON_POD = 'calc_editor_not_on_pod';
+    case CALC_EDITOR_READING_ID = 'calc_editor_reading_id';
+    case CALC_EDITOR_UNSAVED_FROM = 'calc_editor_unsaved_from';
+    case CALC_EDITOR_RESTORE = 'calc_editor_restore';
+    case CALC_EDITOR_DISCARD = 'calc_editor_discard';
+    case CALC_EDITOR_RESTORED = 'calc_editor_restored';
+    // the texts of the formula editor script, which gets all messages with the prefix formula_editor_
+    // (see system_page::formula_editor_texts); the hosts, the toolbar and the tabs
+    case FORMULA_EDITOR_TITLE = 'formula_editor_title';
+    case FORMULA_EDITOR_FORMULA = 'formula_editor_formula';
+    case FORMULA_EDITOR_RESULTS = 'formula_editor_results';
+    case FORMULA_EDITOR_FORMULAS = 'formula_editor_formulas';
+    case FORMULA_EDITOR_FORMULAS_OF_PAGE = 'formula_editor_formulas_of_page';
+    case FORMULA_EDITOR_PHRASE = 'formula_editor_phrase';
+    case FORMULA_EDITOR_OTHER_PAGE_PLACEHOLDER = 'formula_editor_other_page_placeholder';
+    case FORMULA_EDITOR_LOAD = 'formula_editor_load';
+    case FORMULA_EDITOR_FILTER_PLACEHOLDER = 'formula_editor_filter_placeholder';
+    case FORMULA_EDITOR_PAGE = 'formula_editor_page';
+    case FORMULA_EDITOR_NO_CHANGES = 'formula_editor_no_changes';
+    case FORMULA_EDITOR_DISCARD_ALL = 'formula_editor_discard_all';
+    case FORMULA_EDITOR_SAVE_COUNT = 'formula_editor_save_count';
+    case FORMULA_EDITOR_TAB_COMPARE = 'formula_editor_tab_compare';
+    case FORMULA_EDITOR_TAB_CHANGES = 'formula_editor_tab_changes';
+    // why an expression cannot be parsed
+    case FORMULA_EDITOR_ERR_QUOTES_EMPTY = 'formula_editor_err_quotes_empty';
+    case FORMULA_EDITOR_ERR_COMMA_JOIN = 'formula_editor_err_comma_join';
+    case FORMULA_EDITOR_ERR_COMMA_PLACE = 'formula_editor_err_comma_place';
+    case FORMULA_EDITOR_ERR_CHAR = 'formula_editor_err_char';
+    case FORMULA_EDITOR_ERR_COMMA_END = 'formula_editor_err_comma_end';
+    case FORMULA_EDITOR_ERR_NO_EQUAL = 'formula_editor_err_no_equal';
+    case FORMULA_EDITOR_ERR_LEFT = 'formula_editor_err_left';
+    case FORMULA_EDITOR_ERR_RIGHT = 'formula_editor_err_right';
+    case FORMULA_EDITOR_ERR_ARITHMETIC = 'formula_editor_err_arithmetic';
+    case FORMULA_EDITOR_ERR_COMPARE_NOTE = 'formula_editor_err_compare_note';
+    // the formula list, the editor of the expression and the phrase picker
+    case FORMULA_EDITOR_FORMULA_COUNT = 'formula_editor_formula_count';
+    case FORMULA_EDITOR_RESULT_ONE = 'formula_editor_result_one';
+    case FORMULA_EDITOR_RESULT_MANY = 'formula_editor_result_many';
+    case FORMULA_EDITOR_CHIP_CHANGED = 'formula_editor_chip_changed';
+    case FORMULA_EDITOR_REMOVE_NAME = 'formula_editor_remove_name';
+    case FORMULA_EDITOR_REPLACE_BY = 'formula_editor_replace_by';
+    case FORMULA_EDITOR_ADD_PHRASE_TO = 'formula_editor_add_phrase_to';
+    case FORMULA_EDITOR_PHRASE_COUNTS = 'formula_editor_phrase_counts';
+    case FORMULA_EDITOR_IN_CONTEXT = 'formula_editor_in_context';
+    case FORMULA_EDITOR_MORE_PHRASES = 'formula_editor_more_phrases';
+    case FORMULA_EDITOR_PHRASES_OF_OPERAND = 'formula_editor_phrases_of_operand';
+    case FORMULA_EDITOR_ADD_PHRASE = 'formula_editor_add_phrase';
+    case FORMULA_EDITOR_PICKER_NOTE = 'formula_editor_picker_note';
+    case FORMULA_EDITOR_SEARCH_PHRASE = 'formula_editor_search_phrase';
+    case FORMULA_EDITOR_NUMBER = 'formula_editor_number';
+    case FORMULA_EDITOR_OPERATOR = 'formula_editor_operator';
+    case FORMULA_EDITOR_EDIT_EXPRESSION = 'formula_editor_edit_expression';
+    case FORMULA_EDITOR_CLICK_TOKEN = 'formula_editor_click_token';
+    case FORMULA_EDITOR_INSERT_AFTER = 'formula_editor_insert_after';
+    case FORMULA_EDITOR_MORE_SYMBOLS = 'formula_editor_more_symbols';
+    case FORMULA_EDITOR_INS_PHRASE = 'formula_editor_ins_phrase';
+    case FORMULA_EDITOR_INS_NUMBER = 'formula_editor_ins_number';
+    case FORMULA_EDITOR_SELECTION = 'formula_editor_selection';
+    case FORMULA_EDITOR_MOVE_LEFT = 'formula_editor_move_left';
+    case FORMULA_EDITOR_MOVE_RIGHT = 'formula_editor_move_right';
+    case FORMULA_EDITOR_REMOVE = 'formula_editor_remove';
+    case FORMULA_EDITOR_SELECT_FORMULA = 'formula_editor_select_formula';
+    case FORMULA_EDITOR_DISCARD = 'formula_editor_discard';
+    case FORMULA_EDITOR_ADD_OPERAND_TIP = 'formula_editor_add_operand_tip';
+    case FORMULA_EDITOR_EXPRESSION = 'formula_editor_expression';
+    case FORMULA_EDITOR_EXPRESSION_TEXT = 'formula_editor_expression_text';
+    case FORMULA_EDITOR_EXPRESSION_TEXT_NOTE = 'formula_editor_expression_text_note';
+    // the compare of the results until now and after the save
+    case FORMULA_EDITOR_NO_VALUE_NAMES = 'formula_editor_no_value_names';
+    case FORMULA_EDITOR_KIND_VALUE = 'formula_editor_kind_value';
+    case FORMULA_EDITOR_KIND_RESULT = 'formula_editor_kind_result';
+    case FORMULA_EDITOR_OUTSIDE_TIP = 'formula_editor_outside_tip';
+    case FORMULA_EDITOR_OUTSIDE = 'formula_editor_outside';
+    case FORMULA_EDITOR_NOT_CALCULATED = 'formula_editor_not_calculated';
+    case FORMULA_EDITOR_CHIP_SAME = 'formula_editor_chip_same';
+    case FORMULA_EDITOR_CHIP_CHANGES = 'formula_editor_chip_changes';
+    case FORMULA_EDITOR_CHIP_MISSING = 'formula_editor_chip_missing';
+    case FORMULA_EDITOR_SELECT_COMPARE = 'formula_editor_select_compare';
+    case FORMULA_EDITOR_OWN_RESULT_ONE = 'formula_editor_own_result_one';
+    case FORMULA_EDITOR_OWN_RESULT_MANY = 'formula_editor_own_result_many';
+    case FORMULA_EDITOR_OWN_CHANGES_ONE = 'formula_editor_own_changes_one';
+    case FORMULA_EDITOR_OWN_CHANGES_MANY = 'formula_editor_own_changes_many';
+    case FORMULA_EDITOR_OWN_MISSING = 'formula_editor_own_missing';
+    case FORMULA_EDITOR_OTHER_CHANGES = 'formula_editor_other_changes';
+    case FORMULA_EDITOR_NO_RESULT_CHANGES = 'formula_editor_no_result_changes';
+    case FORMULA_EDITOR_NO_STORED_RESULT = 'formula_editor_no_stored_result';
+    case FORMULA_EDITOR_USES_CHANGED = 'formula_editor_uses_changed';
+    case FORMULA_EDITOR_COMPARE_NOTE = 'formula_editor_compare_note';
+    case FORMULA_EDITOR_COL_RESULT = 'formula_editor_col_result';
+    case FORMULA_EDITOR_UNTIL_NOW = 'formula_editor_until_now';
+    case FORMULA_EDITOR_AFTER_SAVE = 'formula_editor_after_save';
+    // the changes, the save, the copy and the load
+    case FORMULA_EDITOR_NO_FORMULA_CHANGED = 'formula_editor_no_formula_changed';
+    case FORMULA_EDITOR_ERR_FIX = 'formula_editor_err_fix';
+    case FORMULA_EDITOR_FORMULA_ONE = 'formula_editor_formula_one';
+    case FORMULA_EDITOR_FORMULA_MANY = 'formula_editor_formula_many';
+    case FORMULA_EDITOR_PAGE_RESULTS_ONE = 'formula_editor_page_results_one';
+    case FORMULA_EDITOR_PAGE_RESULTS_MANY = 'formula_editor_page_results_many';
+    case FORMULA_EDITOR_UPDATE_PUT = 'formula_editor_update_put';
+    case FORMULA_EDITOR_COPY = 'formula_editor_copy';
+    case FORMULA_EDITOR_APPLY_LOCAL_TIP = 'formula_editor_apply_local_tip';
+    case FORMULA_EDITOR_APPLY_LOCAL = 'formula_editor_apply_local';
+    case FORMULA_EDITOR_SAVE_POSTS = 'formula_editor_save_posts';
+    case FORMULA_EDITOR_SAVING = 'formula_editor_saving';
+    case FORMULA_EDITOR_POD_ANSWERED = 'formula_editor_pod_answered';
+    case FORMULA_EDITOR_SAVED = 'formula_editor_saved';
+    case FORMULA_EDITOR_NOT_SAVED = 'formula_editor_not_saved';
+    case FORMULA_EDITOR_CHANGED_ONE = 'formula_editor_changed_one';
+    case FORMULA_EDITOR_CHANGED_MANY = 'formula_editor_changed_many';
+    case FORMULA_EDITOR_INVALID_TIP = 'formula_editor_invalid_tip';
+    case FORMULA_EDITOR_COPIED = 'formula_editor_copied';
+    case FORMULA_EDITOR_COPY_BLOCKED = 'formula_editor_copy_blocked';
+    case FORMULA_EDITOR_LOADED = 'formula_editor_loaded';
+    case FORMULA_EDITOR_LOAD_FAILED = 'formula_editor_load_failed';
+    case FORMULA_EDITOR_APPLIED = 'formula_editor_applied';
+    // the headings of the calculator input if the calculator triples name no label, and its button
+    case CALCULATOR_INPUTS = 'calculator_inputs';
+    case CALCULATOR_ASSUMPTIONS = 'calculator_assumptions';
+    case CALCULATOR_SAVE = 'calculator_save';
+    // the confirmation of one saved number with its label, the new and the old number, or that no number has been changed
+    case CALCULATOR_SAVED = 'calculator_saved';
+    case CALCULATOR_NOTHING_CHANGED = 'calculator_nothing_changed';
+    // the first header of the result table, the default summary of the details and the sources heading
+    case CALCULATOR_RESULT = 'calculator_result';
+    case CALCULATOR_DETAILS = 'calculator_details';
+    case CALCULATOR_SOURCES = 'calculator_sources';
+    // the two copy buttons of a detail table of a calculator page
+    case CALCULATOR_COPY_JSON = 'calculator_copy_json';
+    case CALCULATOR_COPY_CSV = 'calculator_copy_csv';
+    case CALCULATOR_DIAGRAM_FINAL = 'calculator_diagram_final';
+    // the label of the field for the name of a case above the save button and the reason if the api does not name one
+    case CALCULATOR_CASE_NAME = 'calculator_case_name';
+    case CALCULATOR_CASE_FAILED = 'calculator_case_failed';
+    // the column headers of the target positions and the heading of the formulas of the pdf report of a calculator page
+    case CALCULATOR_REPORT_QUANTITY = 'calculator_report_quantity';
+    case CALCULATOR_REPORT_SECURITY = 'calculator_report_security';
+    case CALCULATOR_REPORT_ISIN = 'calculator_report_isin';
+    case CALCULATOR_REPORT_CURRENCY = 'calculator_report_currency';
+    case CALCULATOR_REPORT_PRICE = 'calculator_report_price';
+    case CALCULATOR_REPORT_FX_RATE = 'calculator_report_fx_rate';
+    case CALCULATOR_REPORT_VALUE_CHF = 'calculator_report_value_chf';
+    case CALCULATOR_REPORT_VALUE_EUR = 'calculator_report_value_eur';
+    case CALCULATOR_REPORT_FORMULAS = 'calculator_report_formulas';
+    // in front of the name of an instance on the button that removes it from a repeated input
+    case CALCULATOR_REMOVE = 'calculator_remove';
+    // the header and the status texts of the check table of a calculator page
+    case CALCULATOR_CHECK_VALUE = 'calculator_check_value';
+    case CALCULATOR_CHECK_EXPECTED = 'calculator_check_expected';
+    case CALCULATOR_CHECK_CALCULATED = 'calculator_check_calculated';
+    case CALCULATOR_CHECK_STATUS = 'calculator_check_status';
+    case CALCULATOR_CHECK_MATCH = 'calculator_check_match';
+    case CALCULATOR_CHECK_DIFFERS = 'calculator_check_differs';
 
     // text to be shown in buttons
     case ADD = 'add';
@@ -2028,6 +2439,30 @@ enum messages: string
     // fixed system page titles
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
+    case SYSTEM_TITLE_TABLE_EDITOR = 'system_title_table_editor';
+    case SYSTEM_TITLE_CALCULATION_EDITOR = 'system_title_calculation_editor';
+    // the text of the button that shows an editor again for the phrase selected in its phrase selector
+    case EDITOR_BUTTON_SHOW = 'editor_button_show';
+    // the titles, the explain texts and the tabs of the four process catch pages
+    case PROCESS_CATCH_TITLE_START = 'process_catch_title_start';
+    case PROCESS_CATCH_TITLE_MAIN = 'process_catch_title_main';
+    case PROCESS_CATCH_TITLE_DETAIL = 'process_catch_title_detail';
+    case PROCESS_CATCH_TITLE_RESULT = 'process_catch_title_result';
+    case PROCESS_CATCH_EXPLAIN_START = 'process_catch_explain_start';
+    case PROCESS_CATCH_EXPLAIN_MAIN = 'process_catch_explain_main';
+    case PROCESS_CATCH_EXPLAIN_DETAIL = 'process_catch_explain_detail';
+    case PROCESS_CATCH_EXPLAIN_RESULT = 'process_catch_explain_result';
+    case PROCESS_CATCH_TAB_ONE = 'process_catch_tab_one';
+    case PROCESS_CATCH_TAB_TWO = 'process_catch_tab_two';
+    case PROCESS_CATCH_TAB_THREE = 'process_catch_tab_three';
+    case PROCESS_CATCH_TAB_FOUR = 'process_catch_tab_four';
+    case PROCESS_CATCH_TAB_FIVE = 'process_catch_tab_five';
+    // shown until the fields of a process catch page are read from the triples of the question phrase
+    case PROCESS_CATCH_FIELDS_PENDING = 'process_catch_fields_pending';
+    // the text of the button that shows a process catch page again with the changed input
+    case PROCESS_CATCH_BUTTON_REFRESH = 'process_catch_button_refresh';
+    // the label of the geolocator input
+    case GEOLOCATOR_LABEL = 'geolocator_label';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
     case SIGNUP_ALPHA_NOTICE = 'signup_alpha_notice';
     case SIGNUP_DATA_WARNING = 'signup_data_warning';
@@ -2118,8 +2553,30 @@ enum messages: string
     case CONFIG_TREE_FILE_VALUE = 'config_tree_file_value';
     case CONFIG_TREE_VALUE_SAVED = 'config_tree_value_saved';
     case CONFIG_TREE_DEFAULT_SAVED = 'config_tree_default_saved';
+    // the button of an admin on the settings page that removes all cached data
+    case CONFIG_CACHE_CLEAR = 'config_cache_clear';
+    case CONFIG_CACHE_CLEAR_TIP = 'config_cache_clear_tip';
+    case CONFIG_CACHE_CLEARED = 'config_cache_cleared';
+    case CONFIG_CACHE_CLEAR_ADMIN_ONLY = 'config_cache_clear_admin_only';
     case VALUE_SET_DEFAULT_DENIED = 'value_set_default_denied';
     case CONFIG_SYSTEM_ADMIN_ONLY = 'config_system_admin_only';
+    // an empty text has nothing to store and its api message would have no text, so e.g. the config could not be read
+    case VALUE_TEXT_EMPTY = 'value_text_empty';
+    // the configured font of the pages (config.yaml frontend.layout.font) has a char that css could misread
+    case CONFIG_FONT_INVALID = 'config_font_invalid';
+    // the font selection of the settings page and its entries (see web/helper/config_tree::FONT_OPTIONS)
+    case CONFIG_FONT_SELECT = 'config_font_select';
+    case CONFIG_FONT_SANS_SERIF = 'config_font_sans_serif';
+    case CONFIG_FONT_SERIF = 'config_font_serif';
+    case CONFIG_FONT_MONOSPACE = 'config_font_monospace';
+    case CONFIG_FONT_SYSTEM_SANS = 'config_font_system_sans';
+    case CONFIG_FONT_SYSTEM_MONO = 'config_font_system_mono';
+    // the selection of the light or dark colours of the settings page (see web/helper/config_tree::MODE_OPTIONS)
+    case CONFIG_MODE_SELECT = 'config_mode_select';
+    case CONFIG_MODE_LIGHT = 'config_mode_light';
+    case CONFIG_MODE_DARK = 'config_mode_dark';
+    // a configured colour of the pages or the editors (config.yaml frontend.layout.colours) that css could misread
+    case CONFIG_COLOUR_INVALID = 'config_colour_invalid';
     case SYSTEM_TITLE_USER = 'system_title_user';
     case SYSTEM_TITLE_VERB = 'system_title_verb';
     // the class word in front of the object name of a page title e.g. view "Word"
@@ -2127,12 +2584,42 @@ enum messages: string
     case SYSTEM_TITLE_COMPONENT = 'system_title_component';
     case TITLE_LANGUAGE_SELECT = 'title_language_select';
     case ADMIN_NO_OPEN_JOBS = 'admin_no_open_jobs';
+    case ADMIN_NO_DELAYED_JOBS = 'admin_no_delayed_jobs';
+    // the sections of the admin dashboard
+    case ADMIN_TITLE_URL_DELAY = 'admin_title_url_delay';
+    case ADMIN_TITLE_LOGIN_FAILS = 'admin_title_login_fails';
+    case ADMIN_TITLE_ERRORS_UNASSIGNED = 'admin_title_errors_unassigned';
+    case ADMIN_TITLE_ERRORS_DELAYED_FIX = 'admin_title_errors_delayed_fix';
+    case ADMIN_TITLE_JOBS_DELAYED = 'admin_title_jobs_delayed';
+    case ADMIN_TITLE_USER_LOAD = 'admin_title_user_load';
+    // the admin, the pod and the creation time below the title of the admin dashboard
+    case ADMIN_SUBTITLE = 'admin_subtitle';
+    case ADMIN_NOT_YET_RECORDED = 'admin_not_yet_recorded';
+    case ADMIN_NO_ERRORS = 'admin_no_errors';
+    case ADMIN_NOT_CRITICAL = 'admin_not_critical';
+    case ADMIN_NO_CRITICAL = 'admin_no_critical';
+    case ADMIN_NO_SLOW_REQUESTS = 'admin_no_slow_requests';
+    case ADMIN_NO_LOGIN_FAILS = 'admin_no_login_fails';
+    case ADMIN_NO_USER_LOAD = 'admin_no_user_load';
+    case ADMIN_HEAD_URL = 'admin_head_url';
+    case ADMIN_HEAD_MILLISECONDS = 'admin_head_milliseconds';
+    case ADMIN_HEAD_TIME = 'admin_head_time';
+    case ADMIN_HEAD_USER_NAME = 'admin_head_user_name';
+    case ADMIN_HEAD_ATTEMPTS = 'admin_head_attempts';
+    case ADMIN_HEAD_LAST_TRY = 'admin_head_last_try';
+    case ADMIN_HEAD_REQUESTS = 'admin_head_requests';
+    case ADMIN_HEAD_UPDATES = 'admin_head_updates';
+    case ADMIN_HEAD_REQUEST_MS = 'admin_head_request_ms';
+    case ADMIN_HEAD_UPDATE_MS = 'admin_head_update_ms';
     case INFO_NO_JOBS = 'info_no_jobs';
     case JOB_CHANGE_NOT_PERMITTED = 'job_change_not_permitted';
     case JOB_UPGRADE_ONLY_ADMIN = 'job_upgrade_only_admin';
     case JOB_ALREADY_CLOSED = 'job_already_closed';
     case JOB_ACTION_UNKNOWN = 'job_action_unknown';
     case JOB_LIST_ALL_ONLY_ADMIN = 'job_list_all_only_admin';
+    case SYS_LOG_LIST_ONLY_ADMIN = 'sys_log_list_only_admin';
+    case SYSTEM_TIME_LIST_ONLY_ADMIN = 'system_time_list_only_admin';
+    case USER_LOG_SUM_LIST_ONLY_ADMIN = 'user_log_sum_list_only_admin';
     case SYSTEM_BUTTON_JOB_UPGRADE = 'system_button_job_upgrade';
     case SYSTEM_BUTTON_JOB_DOWNGRADE = 'system_button_job_downgrade';
     case SYSTEM_BUTTON_JOB_CANCEL = 'system_button_job_cancel';
@@ -2147,8 +2634,16 @@ enum messages: string
     case CHANGE_BLOCKED_FOR_IP_USER = 'change_blocked_for_ip_user';
     // shown if the url names another user than the one of the session e.g. a link shared by another user
     case URL_USER_NOT_SESSION_USER = 'url_user_not_session_user';
+    // shown if an api request is refused without a more specific reason e.g. a get to an api that only saves a post
+    case REQUEST_NOT_PERMITTED = 'request_not_permitted';
     // shown if an api write is rejected because it comes from a different origin (suspected csrf)
     case CHANGE_BLOCKED_CROSS_ORIGIN = 'change_blocked_cross_origin';
+    // shown if an update put message names another user than the one of the session e.g. a page loaded before a login
+    case UPDATE_PUT_OTHER_USER = 'update_put_other_user';
+    // shown if an update put stops at a problem, with the number of the changes that are not saved
+    case UPDATE_PUT_SKIPPED = 'update_put_skipped';
+    // shown if an object of an update put is not changed by the save, so that a lost change is never confirmed as saved
+    case UPDATE_PUT_UNCHANGED = 'update_put_unchanged';
 
     // the start page, which ranks the global problems by the potential loss they can avoid
     case SOLUTION_PRIO_TITLE = 'solution_prio_title';
@@ -2166,6 +2661,9 @@ enum messages: string
 
     // if a non admin user tries to set the admin protection (or higher) on an object
     case PROTECTION_RAISE_DENIED = 'protection_raise_denied';
+
+    // if a database row of a term misses the id that selects the word, triple, formula or verb
+    case TERM_ROW_ID_MISSING = 'term_row_id_missing';
 
     // if an import step has not been checked, because its errors would only be a consequence
     // of an error reported above, so they are not yet certain, see docs/llm/dependent-errors.md
@@ -2343,7 +2841,7 @@ enum messages: string
     case SHOW_FIELD_ORDER_NBR = 'show_field_order_nbr';
     case SHOW_FIELD_START_POS = 'show_field_start_pos';
 
-    // TODO review
+    // TODO Prio 2 review
     case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
     case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
@@ -2373,6 +2871,8 @@ enum messages: string
     // as the default view of the object and change the view itself (see view::open_link)
     case BUTTON_VIEW_SHOW_TIP = 'button_view_show_tip';
     case BUTTON_VIEW_SWITCH_TIP = 'button_view_switch_tip';
+    // the tooltip of the grey entry in the edit menu of the navbar of the view that shows the page
+    case BUTTON_VIEW_USED_TIP = 'button_view_used_tip';
     case BUTTON_VIEW_EDIT_TIP = 'button_view_edit_tip';
     case SYSTEM_BUTTON_IMPORT = 'system_button_import';
     case SYSTEM_BUTTON_EXPORT = 'system_button_export';
@@ -2384,6 +2884,8 @@ enum messages: string
     case SYSTEM_BUTTON_CHECK_AND_ADD = 'system_button_check_and_add';
     // the button that continues with the next step e.g. the value add form with the selected phrases
     case SYSTEM_BUTTON_NEXT = 'system_button_next';
+    // the button that returns to the step before e.g. from the process catch result to the detail page
+    case SYSTEM_BUTTON_BACK = 'system_button_back';
     // the button beside the phrase field of a new value that adds the named phrase or offers the matching phrases
     case SYSTEM_BUTTON_FIND_AND_NEXT = 'system_button_find_and_next';
     // the link that opens the detailed form of a simple add form e.g. the value add form with all fields
@@ -2403,6 +2905,11 @@ enum messages: string
 
     // footer text fragments
     case FOOTER_DATA_LICENCE = 'footer_data_licence';
+    // shown while a slow page is still being created
+    case PAGE_LOADING = 'page_loading';
+    // around the counted seconds of the loading text e.g. "since 3 sec"
+    case PAGE_LOADING_SINCE = 'page_loading_since';
+    case PAGE_LOADING_SECONDS = 'page_loading_seconds';
     case FOOTER_LICENCE_UNLESS = 'footer_licence_unless';
     case FOOTER_OF_VERSION = 'footer_of_version';
     case FOOTER_UNDER_THE = 'footer_under_the';
@@ -2413,11 +2920,26 @@ enum messages: string
     case NAVBAR_SEARCH_PLACEHOLDER = 'navbar_search_placeholder';
     case NAVBAR_GET_NUMBERS = 'navbar_get_numbers';
     case NAVBAR_ALTERNATIVE_VIEW = 'navbar_alternative_view';
+    case NAVBAR_MORE_VIEWS_TIP = 'navbar_more_views_tip';
+    // added to the tooltip above with the names of some views that the menu does not offer
+    case NAVBAR_MORE_VIEWS_NAMES_TIP = 'navbar_more_views_names_tip';
+    case NAVBAR_CUSTOMIZE = 'navbar_customize';
     case NAVBAR_CHANGE_VIEW = 'navbar_change_view';
+    case NAVBAR_CHANGE_VIEW_TIP = 'navbar_change_view_tip';
     case NAVBAR_ADD_VIEW = 'navbar_add_view';
+    case NAVBAR_ADD_VIEW_TIP = 'navbar_add_view_tip';
+    // added to the tooltip above with the name of the shown object
+    case NAVBAR_ADD_VIEW_FOR_TIP = 'navbar_add_view_for_tip';
+    case NAVBAR_SERVER_ADMIN = 'navbar_server_admin';
     case NAVBAR_LOGIN = 'navbar_login';
     case NAVBAR_SIGNUP = 'navbar_signup';
+    // the switch between the dark and the light mode of the user menu (see html_base::theme_switch)
+    case NAVBAR_DARK_MODE = 'navbar_dark_mode';
+    case NAVBAR_DARK_MODE_TIP = 'navbar_dark_mode_tip';
+    case NAVBAR_LIGHT_MODE = 'navbar_light_mode';
+    case NAVBAR_LIGHT_MODE_TIP = 'navbar_light_mode_tip';
     case NAVBAR_SETTINGS = 'navbar_settings';
+    case NAVBAR_DASHBOARD = 'navbar_dashboard';
     case NAVBAR_LOGOUT = 'navbar_logout';
 
     // about page text

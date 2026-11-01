@@ -34,20 +34,41 @@ namespace Zukunft\ZukunftCom\test\php\unit_read;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
+include_once paths::API_OBJECT . 'ui_config.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'system_time_slow_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED_TYPES . 'job_types.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
+include_once test_paths::UNIT . 'sys_log_tests.php';
 
+use Zukunft\ZukunftCom\main\php\api\ui_config;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_slow_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\job_types;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\test\php\const\formula_names;
+use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_read_tests
@@ -89,6 +110,35 @@ class system_read_tests
         $result = $sys->typ_lst->job_typ->id(job_types::VALUE_UPDATE);
         $t->assert('check batch job ' . job_types::VALUE_UPDATE, $result, 1);
 
+        $t->subheader($ts . 'system time type');
+
+        // the area of a slow api request has the id of the code link csv, so a slow request can be written
+        $test_name = 'the system time types load from the database';
+        $sys_tim_typ_lst = new system_time_type_list();
+        $t->assert_true($test_name, $sys_tim_typ_lst->load($db_con, $msg));
+        $test_name = '... with the id of the code link csv for a slow api request';
+        $sys_tim_typ_csv = new system_time_type_list();
+        $sys_tim_typ_csv->load_dummy();
+        $req_id = $sys_tim_typ_csv->id(system_time_type::API_REQUEST);
+        $t->assert($test_name, $sys_tim_typ_lst->id(system_time_type::API_REQUEST), $req_id);
+        $test_name = '... but no id for a step that has no system time type';
+        $t->assert($test_name, $sys_tim_typ_lst->id(sys_log_tests::TV_STEP_UNKNOWN, false), type_list::CODE_ID_NOT_FOUND);
+
+        // the table can be empty, so only the prepared select is checked against the database
+        $test_name = 'the slow requests of the last days load without database error';
+        $slw_lst = new system_time_slow_list();
+        $slw_lst->load($msg);
+        $t->assert_true($test_name, $msg->is_ok());
+
+        // a config load within a request ends its sections, so that the rest of the request is
+        // not counted as reading the config cache in the report of a slow request
+        $test_name = 'a config load returns to the time section around it';
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $cfg = new config_numbers($t->usr1);
+        $cfg->load_cfg($msg, null, $t->usr1);
+        $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
+        $sys->times->switch();
+
         $t->subheader($ts . 'type list cached load');
 
         // the type lists load with one read from the cached types json
@@ -100,6 +150,55 @@ class system_read_tests
         $t->assert_false($test_name, $typ_lst->phr_typ->is_empty());
         $test_name = 'the cached or fresh load fills the verbs';
         $t->assert_false($test_name, $typ_lst->vrb->is_empty());
+
+        // the types api message of the typeLists api is read from the types cache once it has been written
+        // (the cache switch config.yaml system > database > cache > type > allowed is on in the test pod)
+        $typ_msg = new user_message($t->usr1);
+        $ui_cfg = new ui_config();
+        $test_name = 'the types api message is not named as cached before it has been requested';
+        $t->assert_false($test_name, $ui_cfg->from_cache);
+        $ui_cfg->get([api_types::HEADER, api_types::INCL_COMPONENTS], $typ_msg);
+        $typ_json = $ui_cfg->get([api_types::HEADER, api_types::INCL_COMPONENTS], $typ_msg);
+        $test_name = 'the second request of the types api message is read from the cache';
+        $t->assert_true($test_name, $ui_cfg->from_cache);
+
+        // every user reads the same cached types message, so it must not name the user who has requested it first
+        $typ_header = json_decode($typ_json, true);
+        $test_name = 'the cached types api message has a header';
+        $t->assert_key_exists($test_name, json_fields::POD, $typ_header);
+        $test_name = '... but without the id of the requesting user';
+        $t->assert_key_not_exists($test_name, json_fields::USER_ID, $typ_header);
+        $test_name = '... and without the name of the requesting user';
+        $t->assert_key_not_exists($test_name, json_fields::USER_NAME, $typ_header);
+
+        $t->subheader($ts . 'system phrases');
+
+        // the words of the preload types are loaded also if no symbol triple links them
+        $cac_sys = new data_object($t->usr1); // not $cac, which would be mistaken for the global request cache
+        $test_name = 'the system phrases load from the database';
+        $t->assert_true($test_name, $cac_sys->load_system_phrases($msg));
+        $msg->reset();
+        $sys_names = $cac_sys->sys_phr->names();
+        $test_name = '... with a measure word without a symbol triple';
+        $t->assert_contains($test_name, $sys_names, word_names::KWH);
+        $test_name = '... and with the hidden scaling word, which the scaling formulas need';
+        $t->assert_contains($test_name, $sys_names, word_names::ONE);
+        // negative: a word of another type is not preloaded
+        $test_name = '... but without a word of another type';
+        $t->assert_contains_not($test_name, $sys_names, word_names::MATH);
+
+        // the formulas of the units and of the scaling words are loaded from the system phrases
+        $test_name = 'the system formulas load from the database';
+        $t->assert_true($test_name, $cac_sys->load_system_formulas($msg));
+        $msg->reset();
+        $frm_names = $cac_sys->sys_frm->names();
+        $test_name = '... with the formula of a scaling word';
+        $t->assert_contains($test_name, $frm_names, formula_names::SCALE_MIO_TO_ONE);
+        $test_name = '... and with the formula of a measure unit';
+        $t->assert_contains($test_name, $frm_names, formula_names::SCALE_TONNE);
+        // negative: a formula that is not linked to a unit or a scaling word is not preloaded
+        $test_name = '... but without a formula of another phrase';
+        $t->assert_contains_not($test_name, $frm_names, formula_names::PRIOR);
 
         /*
          * SQL database read unit tests

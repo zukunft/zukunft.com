@@ -207,7 +207,7 @@ class component_list extends sandbox_list_named
 
     /**
      * set the SQL query parameters to load a list of components by the names
-     * TODO use name_field() function to avoid overwrites
+     * TODO Prio 2 use name_field() function to avoid overwrites
      * @param sql_creator $sc with the target db_type set
      * @param array $names a list of strings with the word names
      * @param string $fld the name of the name field
@@ -377,7 +377,7 @@ class component_list extends sandbox_list_named
                 $msg->unset_added_depending();
 
                 // get the components that needs to be added
-                // TODO check if other list save function are using the cache instead of this here
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $chk_lst = clone $this;
                 $load_lst = $chk_lst->missing_ids($msg);
 
@@ -385,7 +385,7 @@ class component_list extends sandbox_list_named
                 $step_time = $load_lst->count() / $load_per_sec;
                 $imp->step_start(msg_id::LOAD, component::class, $load_lst->count(), $step_time);
                 // force to load all names including the components excluded by the user to potential include the components due to the import
-                // TODO add load_all = true also to the other objects
+                // TODO Prio 2 add load_all = true also to the other objects
                 $db_lst->load_by_names( $load_lst->names(true), $msg, true );
                 $imp->step_end($load_lst->count(), $load_per_sec);
 
@@ -399,7 +399,7 @@ class component_list extends sandbox_list_named
                 $load_lst = $load_lst->get_ready($msg, $imp->file_name);
 
                 // get the components that still needs to be added
-                // TODO check if other list save function are using the cache instead of this here
+                // TODO Prio 2 check if other list save function are using the cache instead of this here
                 $add_lst = $load_lst->missing_ids($msg);
 
                 // create any missing sql insert functions and insert the missing components

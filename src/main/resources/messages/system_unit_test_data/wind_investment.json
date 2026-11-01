@@ -443,9 +443,9 @@
     },
     {
       "name": "replacement mix",
-      "from": "replacement",
-      "verb": "can be",
-      "to": "mix"
+      "from": "mix",
+      "verb": "kind of",
+      "to": "replacement"
     },
     {
       "name": "climate gas",

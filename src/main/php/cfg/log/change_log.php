@@ -59,15 +59,15 @@ The normal word table contain the value, word, formula, verb or links that is us
 for each normal table there is an overwrite table with the user changes/overwrites
 maybe for each huge table is also a log table with the hist of the user changes
 
-TODO:
+TODO Prio 2
         cache table, field and action id to speed up, because this will never change
         auto archive the log if the number of changes gets too big
         only log the changes of this pod and used the pod distribution table to get changes from other pods
 
-TODO    if change table gets too big, rename the table to "_up_to_YYYY_MM_DD_HH:MM:SS.000"
+TODO Prio 3    if change table gets too big, rename the table to "_up_to_YYYY_MM_DD_HH:MM:SS.000"
         after that create a new table and start numbering from zero
 
-TODO    rename to change_base
+TODO Prio 2    rename to change_base
 
 */
 
@@ -816,7 +816,7 @@ class change_log extends db_object_seq_id_user
         if ($row_id != null) {
             $sc->add_where($this::FLD_ROW_ID, $row_id);
         }
-        // TODO check!
+        // TODO Prio 2 check!
         //$fields[] = user_db::FLD_ID;
         $sc->set_page();
         $qp->sql = $sc->sql();
@@ -963,7 +963,7 @@ class change_log extends db_object_seq_id_user
      * display the last change related to one object (word, formula, value, verb, ...)
      * mainly used for testing
      * must be overwritten by the named or link user log child class
-     * TODO if changes on table values are requested include also the table "user_values"
+     * TODO Prio 2 if changes on table values are requested include also the table "user_values"
      * @param user_message $msg to collect any problem while loading and mapping the last change
      * @param bool $ex_time true to exclude the change time from the returned text
      * @return string the human-readable text of the last change
@@ -1029,7 +1029,7 @@ class change_log extends db_object_seq_id_user
             $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
             $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
             $sc->set_class($this::class, $sc_par_lst_chg);
-            // TODO review temp solution to make query name unique
+            // TODO Prio 2 review temp solution to make query name unique
             if ($sc_par_lst_used->is_list_tbl()) {
                 $lib = new library();
                 $qp->name = $lib->class_to_name($this::class) . $ext;
@@ -1192,7 +1192,7 @@ class change_log extends db_object_seq_id_user
     /**
      * get a list of all database fields
      * list must be corresponding to the db_values fields
-     * TODO deprecate
+     * TODO Prio 2 deprecate
      *
      * @return array list of the database field names
      */

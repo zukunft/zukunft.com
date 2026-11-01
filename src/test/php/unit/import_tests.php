@@ -38,13 +38,21 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_IMPORT . 'import_convert_xbrl.php';
+include_once paths::MODEL_IMPORT . 'update_put.php';
 include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'files.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
+include_once paths::SHARED_TYPES . 'system_time_type.php';
+include_once paths::SHARED_TYPES . 'view_relation_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once test_paths::CONST . 'files.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
@@ -55,28 +63,49 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
 use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_convert_xbrl;
+use Zukunft\ZukunftCom\main\php\cfg\import\update_put;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\component_types;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_relation_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_triples;
+use Zukunft\ZukunftCom\test\php\create\test_words;
 use Zukunft\ZukunftCom\test\php\utils\test_base;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\main\php\cfg\const\files as cfg_files;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_tests
 {
+
+    // the group id of a value as the calculator editor sends it and as the database uses it
+    const string TV_GROUP_ID_TEXT = '81495585085949938';
+    const int TV_GROUP_ID = 81495585085949938;
+    // a text id like the one of a value with more than four phrases, which must not become a number
+    const string TV_GROUP_ID_KEY = '-2780+1295+1296+1297+1298';
+
     function run(test_cleanup $t): void
     {
+        global $sys;
+
         $sc = new sql_creator();
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
         // use the dev user, because the import files set code ids (e.g. of the sources) and
@@ -103,11 +132,43 @@ class import_tests
         // building the sql insert calls from the imported data takes longer than a normal unit function
         $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc, $msg)->count(), 1, $t::TIMEOUT_LIMIT_FILE);
 
+        $test_name = 'YAML that starts with a tooltip imports no word';
+        $yml_arr = [words::TOOLTIP_COMMENT => word_names::MATH_COM];
+        $dto = $imp->get_data_object_yaml($yml_arr, $msg);
+        $t->assert($test_name, $dto->word_list()->count(), 0);
+        $msg->reset();
+
+        $test_name = 'an empty word list creates no sql function';
+        $sql_lst = $dto->word_list()->sql_insert_call_with_par($sc, $msg);
+        $t->assert($test_name, $sql_lst->count(), 0);
+        $msg->reset();
+
+        // e.g. the url of a pinned view that is created from its view name and phrase name
+        $test_name = 'a YAML text imports a value';
+        $dto = $imp->get_data_object_yaml([words::SYSTEM => [words::URL => api::MAIN_SCRIPT]], $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 1);
+        // negative: an empty text would be sent without a text field, so the config could not be read
+        $test_name = '... but an empty YAML text imports no value';
+        $dto = $imp->get_data_object_yaml([words::SYSTEM => [words::URL => '']], $msg);
+        $t->assert($test_name, $dto->value_list()->count(), 0);
+        $msg->reset();
+
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
         $t->assert($test_name, $dto->word_list()->count(), 4);
+
+        // the import work is counted as import and then the section of the caller continues,
+        // so that e.g. the seed import of the database recreation is not reported as not specified
+        $test_name = 'the creation of an import data object is counted as import';
+        $sys->times->reset_section();
+        $sys->times->switch(system_time_type::LOAD_USER_DATA);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $sys->times->section_report(), system_time_type::IMPORT);
+        $test_name = '... and then returns to the time section around it';
+        $t->assert($test_name, $sys->times->current(), system_time_type::LOAD_USER_DATA);
+        $sys->times->switch();
 
         // beside the "words" with the parameters a file can name the words in a "word-list",
         // which is the compact format that convert_wikipedia_table creates for the countries
@@ -174,7 +235,236 @@ class import_tests
         $trp_missing->set_name(triple_names::MATH_CONST);
         $t->assert_null($test_name, $dto->get_object_by_name($trp_missing, $msg)?->name());
 
+        // a view relation names its views, which the import finds in the views of the same file
+        $test_name = 'JSON import view relation count';
+        $msg = new user_message($t->usr_dev);
+        $mrl_lst_json = [[
+            json_fields::PARENT => views::TABLE_NAME,
+            json_fields::CHILD => views::TABLE_EDITOR_NAME,
+            json_fields::TYPE_NAME => view_relation_types::EDITOR
+        ]];
+        $mrl_json = [
+            json_fields::VIEWS => [[json_fields::NAME => views::TABLE_NAME], [json_fields::NAME => views::TABLE_EDITOR_NAME]],
+            json_fields::VIEW_RELATIONS => $mrl_lst_json
+        ];
+        $dto = $imp->get_data_object($mrl_json, $msg);
+        $t->assert($test_name, $dto->view_relation_list()->count(), 1);
+        $test_name = '... and the relation is the editor of the view of the same file';
+        $mrl = $dto->view_relation_list()->lst()[0] ?? null;
+        $t->assert($test_name, $mrl?->get_predicate_code_id(), view_relation_types::EDITOR);
+        $t->assert_true($test_name, $mrl?->parent() === $dto->get_view_by_name(views::TABLE_NAME, $msg));
+        $test_name = 'a view relation whose views are missing in the import is reported';
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object([json_fields::VIEW_RELATIONS => $mrl_lst_json], $msg);
+        $t->assert_text_contains($test_name, $msg->text(), views::TABLE_EDITOR_NAME);
+        $test_name = '... and not added';
+        $t->assert($test_name, $dto->view_relation_list()->count(), 0);
+
+        // the keyword, the properties and the types of an input field of the process catch views
+        // are system phrases, so the code reads them by their code id (triples::FIELD_PROPERTIES)
+        $json_array = json_decode(file_get_contents(cfg_files::PROCESS_CATCH_FIELDS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the process catch field system file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        $trp_lst = $dto->triple_list();
+        $keywords = [
+            triples::SYSTEM_PROCESS_CATCH_FIELD => triples::SYSTEM_PROCESS_CATCH_FIELD_CODE_ID,
+            triples::SYSTEM_PROCESS_CATCH_PAGE => triples::SYSTEM_PROCESS_CATCH_PAGE_CODE_ID,
+            triples::SYSTEM_PROCESS_CATCH_BUTTON => triples::SYSTEM_PROCESS_CATCH_BUTTON_CODE_ID,
+        ];
+        foreach ([...$keywords, ...triples::FIELD_PROPERTIES, ...triples::FIELD_TYPES, ...triples::PROCESS_CATCH_PAGES,
+                     ...triples::BUTTON_PROPERTIES, ...triples::BUTTON_TYPES] as $name => $code_id) {
+            $test_name = 'the import sets the code id of the process catch phrase ' . $name;
+            $t->assert($test_name, $trp_lst->get_by_name($name, $msg)?->get_code_id(), $code_id);
+        }
+        // a property belongs to its keyword and a type to its keyword or type property, like the column tiers
+        $test_name = 'a property of a process catch field is linked to the field keyword';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::FIELD_UNIT, $msg)?->get_from()?->name(),
+            triples::SYSTEM_PROCESS_CATCH_FIELD);
+        $test_name = 'a field type is linked to the field type property';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::FIELD_LOCATION_SELECTOR, $msg)?->get_from()?->name(),
+            triples::FIELD_TYPE);
+        $test_name = 'the label of a phrase selector is a property of the phrase selector and not of the field';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::FIELD_PHRASE_SELECTOR_LABEL, $msg)?->get_from()?->name(),
+            triples::FIELD_PHRASE_SELECTOR);
+        $test_name = 'a page of a process catch is linked to the page keyword';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::PROCESS_CATCH_MAIN_PAGE, $msg)?->get_from()?->name(),
+            triples::SYSTEM_PROCESS_CATCH_PAGE);
+        $test_name = 'a button type is linked to the button keyword';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::BUTTON_NEXT, $msg)?->get_from()?->name(),
+            triples::SYSTEM_PROCESS_CATCH_BUTTON);
+        // each button type has its own properties, so a question phrase can give each button its own tooltip
+        $test_name = 'a button property is linked to its button type';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::BUTTON_BACK_TOOLTIP, $msg)?->get_from()?->name(),
+            triples::BUTTON_BACK);
+        // the same property of another button type is a triple of its own and not shared with the back button
+        $test_name = '... so the next button has its own tooltip';
+        $t->assert($test_name, $trp_lst->get_by_name(triples::BUTTON_NEXT_TOOLTIP, $msg)?->get_from()?->name(),
+            triples::BUTTON_NEXT);
+        // negative: the building blocks of the keywords are no system phrases, so they have no code id
+        // found first, because a missing triple would also return no code id
+        $test_name = 'the building block of the field keyword is imported';
+        $trp = $trp_lst->get_by_name(triple_names::PROCESS_CATCH_FIELD, $msg);
+        $t->assert($test_name, $trp?->name(), triple_names::PROCESS_CATCH_FIELD);
+        $test_name = '... without a code id';
+        $t->assert_null($test_name, $trp?->get_code_id());
+        // negative: only a system, system test or developer user may set a code id, so the import of
+        // the system file by a user with the normal profile is refused; the refused triple and every
+        // following one are not added to the data object, because the import mapper returns the
+        // verdict of the shared message (import::dto_get_triples)
+        $test_name = 'a normal user cannot import the code id of a process catch field phrase';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
+
+        // the four process catch pages are system views, which the next and the back button find by the code id
+        $json_array = json_decode(file_get_contents(cfg_files::PROCESS_CATCH_VIEWS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the process catch view file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        // the start and the main page have a title, an explain text, the fields and a button; the detail
+        // and the result page have five tabs and the fields of each tab instead of the fields and the
+        // detail page has the refresh button to calculate with the changed assumptions
+        $pages = [
+            views::PROCESS_CATCH_START_NAME => [views::PROCESS_CATCH_START, 4],
+            views::PROCESS_CATCH_MAIN_NAME => [views::PROCESS_CATCH_MAIN, 4],
+            views::PROCESS_CATCH_DETAIL_NAME => [views::PROCESS_CATCH_DETAIL, 14],
+            views::PROCESS_CATCH_RESULT_NAME => [views::PROCESS_CATCH_RESULT, 13],
+        ];
+        foreach ($pages as $name => [$code_id, $cmp_count]) {
+            $msk = $dto->get_view_by_name($name, $msg);
+            $test_name = 'the import sets the code id of the ' . $name;
+            $t->assert($test_name, $msk?->get_code_id(), $code_id);
+            $test_name = '... and links its components';
+            $t->assert($test_name, $msk?->component_links() ?? 0, $cmp_count);
+        }
+        // the geolocator keeps the entered place with its row phrase, which the system file defines
+        $cmp_geo = $dto->get_component_by_name(components::GEOLOCATOR_NAME, $msg);
+        $test_name = 'the geolocator component has the geolocator type';
+        $t->assert($test_name, $cmp_geo?->type_code_id(), component_types::GEOLOCATOR);
+        $test_name = '... and the place of the user as value phrase';
+        $t->assert($test_name, $cmp_geo?->row_phrase?->name(), triple_names::PLACE_OF_USER);
+        // negative: a component without a row in the json e.g. the refresh button has no value phrase
+        $test_name = 'the refresh button is imported';
+        $cmp_rfr = $dto->get_component_by_name(components::PROCESS_CATCH_REFRESH_NAME, $msg);
+        $t->assert($test_name, $cmp_rfr?->type_code_id(), component_types::PROCESS_CATCH_BUTTON_REFRESH);
+        $test_name = '... without a value phrase';
+        $t->assert_null($test_name, $cmp_rfr?->row_phrase?->name());
+        $test_name = 'a normal user cannot import the code id of a process catch view';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
+
+        // the keywords of the calculator view are system phrases, so the calculator reader finds the
+        // lists, the texts and the flags of a page by the code id (triples::CALCULATOR_LISTS)
+        $json_array = json_decode(file_get_contents(cfg_files::CALCULATOR_KEYWORDS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the calculator keyword system file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        $trp_lst = $dto->triple_list();
+        $keywords = [triples::SYSTEM_CALCULATOR => triples::SYSTEM_CALCULATOR_CODE_ID];
+        foreach ([...$keywords, ...triples::CALCULATOR_LISTS, ...triples::CALCULATOR_PROPERTIES] as $name => $code_id) {
+            $test_name = 'the import sets the code id of the calculator keyword ' . $name;
+            $t->assert($test_name, $trp_lst->get_by_name($name, $msg)?->get_code_id(), $code_id);
+            // every list and property hangs from the root, so one load of the root gives all keywords
+            if ($name != triples::SYSTEM_CALCULATOR) {
+                $test_name = '... and links it to the calculator keyword';
+                $t->assert($test_name, $trp_lst->get_by_name($name, $msg)?->get_from()?->name(),
+                    triples::SYSTEM_CALCULATOR);
+            }
+        }
+        // the from walk of a page finds these keywords by their code id
+        $by_code_id = [
+            ...triples::CALCULATOR_FIELD_KINDS,
+            ...triples::CALCULATOR_DETAIL_FLAGS,
+            ...triples::CALCULATOR_BLOCKS,
+            ...triples::CALCULATOR_BUTTONS,
+            triples::CALCULATOR_DECIMALS => triples::CALCULATOR_DECIMALS_CODE_ID,
+            triples::CALCULATOR_RESULT_WIDTH => triples::CALCULATOR_RESULT_WIDTH_CODE_ID
+        ];
+        foreach ($by_code_id as $name => $code_id) {
+            $test_name = 'the import sets the code id of the calculator keyword ' . $name;
+            $kwd_code_id = $trp_lst->get_by_name($name, $msg)?->get_code_id();
+            $t->assert($test_name, $kwd_code_id, $code_id);
+        }
+        // negative: only a system, system test or developer user may set a code id
+        $test_name = 'a normal user cannot import the code id of a calculator keyword';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
+
+        // the calculator is a system view with the three components that are the same for every
+        // calculator page; the url selects it by its code id and the edit menu offers the editor
+        $json_array = json_decode(file_get_contents(cfg_files::CALCULATOR_VIEWS_FILE), true);
+        $msg = new user_message($t->usr_dev);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $test_name = 'the calculator view file is imported without a message';
+        $t->assert($test_name, $msg->is_ok() ? '' : $msg->all_message_text(), '');
+        // the import with a database refuses the file if a view links a component that the file
+        // does not define, which the import without a database does not report
+        $cmp_names = array_column($json_array[json_fields::COMPONENTS], json_fields::NAME);
+        $missing = [];
+        foreach ($json_array[json_fields::VIEWS] as $msk_json) {
+            foreach ($msk_json[json_fields::COMPONENTS] ?? [] as $lnk_json) {
+                if (!in_array($lnk_json[json_fields::NAME], $cmp_names)) {
+                    $missing[] = $lnk_json[json_fields::NAME];
+                }
+            }
+        }
+        $test_name = 'every component of the calculator views is defined in the same file';
+        $t->assert($test_name, implode(', ', $missing), '');
+        // a view or a component of system_views.json that this file repeats must be repeated
+        // unchanged, because the import refuses a divergent field e.g. another description;
+        // only the components of the calculator view are added here
+        $sys_json = json_decode(file_get_contents(files_shared::SYSTEM_VIEWS), true);
+        $diff = [];
+        foreach ([json_fields::VIEWS, json_fields::COMPONENTS] as $key) {
+            $sys_lst = array_column($sys_json[$key], null, json_fields::NAME);
+            foreach ($json_array[$key] as $obj_json) {
+                $sys_obj = $sys_lst[$obj_json[json_fields::NAME]] ?? null;
+                unset($obj_json[json_fields::COMPONENTS]);
+                if ($sys_obj !== null and $obj_json != $sys_obj) {
+                    $diff[] = $obj_json[json_fields::NAME];
+                }
+            }
+        }
+        $test_name = 'the views and components of system_views.json are repeated unchanged';
+        $t->assert($test_name, implode(', ', $diff), '');
+        $msk = $dto->get_view_by_name(views::CALCULATOR_NAME, $msg);
+        $test_name = 'the import sets the code id of the calculator view';
+        $t->assert($test_name, $msk?->get_code_id(), views::CALCULATOR);
+        $test_name = '... and links the title, the input and the result component';
+        $t->assert($test_name, $msk?->component_links() ?? 0, 3);
+        $test_name = '... and sets the use case style for the header and the grid of the page';
+        $t->assert($test_name, $msk?->get_style()?->get_code_id(), view_styles::USE_CASE);
+        foreach ([
+                     components::CALCULATOR_TITLE_NAME => [components::CALCULATOR_TITLE, component_types::CALCULATOR_TITLE],
+                     components::CALCULATOR_INPUT_NAME => [components::CALCULATOR_INPUT, component_types::CALCULATOR_INPUT],
+                     components::CALCULATION_RESULT_NAME => [components::CALCULATION_RESULT, component_types::CALCULATION_RESULT],
+                 ] as $name => [$code_id, $type_code_id]) {
+            $cmp = $dto->get_component_by_name($name, $msg);
+            $test_name = 'the import sets the code id of the component ' . $name;
+            $t->assert($test_name, $cmp?->get_code_id(), $code_id);
+            $test_name = '... and its type';
+            $t->assert($test_name, $cmp?->type_code_id(), $type_code_id);
+        }
+        // the comparison table is created by this file, so that the calculator keeps the id of the former view
+        $test_name = 'the import sets the code id of the comparison table';
+        $t->assert($test_name, $dto->get_view_by_name(views::COMPARISON_TABLE_NAME, $msg)?->get_code_id(), views::COMPARISON_TABLE);
+        $mrl = $dto->view_relation_list()->lst()[0] ?? null;
+        $test_name = 'the edit menu of the calculator offers the calculator editor';
+        $t->assert($test_name, $mrl?->get_predicate_code_id(), view_relation_types::EDITOR);
+        $t->assert($test_name, $mrl?->child()?->name(), views::CALCULATOR_EDITOR_NAME);
+        $test_name = 'a normal user cannot import the code id of the calculator view';
+        $msg = new user_message($t->usr_normal);
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_false($test_name, $msg->is_ok());
+
         $test_name = 'JSON import source count';
+        $msg = new user_message($t->usr_dev);
         $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $msg);
@@ -407,6 +697,148 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
 
+        // the PV lifetime balance use case chains its results: the production, the dispatch, the
+        // embodied emissions, the gross and net avoided emission and the payback, so every
+        // pre-calculated result of the file must be reproduced from its values and formulas
+        $test_name = 'the import of the PV lifetime balance use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PV_LIFETIME_BALANCE_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // the page is the system view Calculator, so the use case brings no view and no component
+        $test_name = '... and brings no view of its own';
+        $t->assert($test_name, $dto->view_list()->count(), 0);
+        $test_name = '... but shows the worked example with the calculator view';
+        $trp = $dto->get_triple_by_name(triple_names::EXAMPLE_PV_INSTALLATION, $msg);
+        $t->assert($test_name, $trp?->get_view()?->name(), views::CALCULATOR_NAME);
+        // every installation built from PV installation gets the page, so the lists are triples of PV installation
+        $test_name = '... and PV installation has every list of the calculator';
+        $lists = [];
+        foreach ($dto->triple_list()->lst() as $trp) {
+            if ($trp->from_name() == triple_names::PV_INSTALLATION
+                and array_key_exists($trp->to_name(), triples::CALCULATOR_LISTS)) {
+                $lists[] = $trp->to_name();
+            }
+        }
+        $t->assert($test_name, $lists, array_keys(triples::CALCULATOR_LISTS));
+        // the import of a normal user finds a phrase only by the names of the file, so the file repeats the keywords
+        // a keyword that the page does not use e.g. the calculator warning is not needed in the file
+        $test_name = '... and repeats every calculator keyword that it uses without its code id';
+        $keywords = [...array_keys(triples::CALCULATOR_LISTS), ...array_keys(triples::CALCULATOR_PROPERTIES)];
+        $used = array_values(array_intersect($keywords, array_column($json_array[json_fields::TRIPLES], json_fields::EX_TO)));
+        $repeated = array_values(array_intersect($used, array_column($json_array[json_fields::TRIPLES], json_fields::NAME)));
+        $t->assert($test_name, $repeated, $used);
+        // negative: without a used keyword the comparison above would be empty and pass without a check
+        $test_name = '... and uses the keywords of the page';
+        $t->assert_true($test_name, in_array(triples::CALCULATOR_LABEL, $used));
+        // negative: a triple that the file does not define is not in the import
+        $test_name = '... but has no triple of another use case';
+        $trp_none = $dto->get_triple_by_name(triple_names::PI, $msg);
+        $t->assert_null($test_name, $trp_none?->name());
+
+        // the Swiss NPP vote use case chains the levelised cost of the new plant, the cost of the
+        // alternative and the average cost difference per kWh, so every pre-calculated result of
+        // the file must be reproduced from its values and formulas
+        $test_name = 'the import of the Swiss NPP vote use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::NPP_CH_VOTE_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+
+        // the CBAM calculator use case chains the embedded emission, the free allocation
+        // adjustment, the carbon price deduction, the obligation and the cost of an import, so
+        // every pre-calculated result of the file must be reproduced from its values and formulas
+        $test_name = 'the import of the CBAM calculator use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::CBAM_CALCULATOR_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: a changed certificate price breaks the pre-calculated deduction and cost
+        $test_name = '... and a changed certificate price is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::CBAM_CERTIFICATE_PRICE, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '90';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the calc validation of the portfolio split use case must reproduce the holding values, the
+        // target, the count and the deviation of every row of the split walk, the remainder of the
+        // parent in every holding, the target values and the final split deviation
+        $test_name = 'the import of the portfolio split use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::PORTFOLIO_SPLIT_CALCULATOR_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: another target share of the first child that does not fit the calculated walk
+        $test_name = '... and a target share that does not fit the walk is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::FIRST_CHILD_PORTFOLIO, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '1';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the Swiss AHV VAT vote use case chains the extra VAT revenue, its replacement by payroll
+        // and federal money and the annual cost of a household, so every pre-calculated result of
+        // the file must be reproduced from its values and formulas
+        $test_name = 'the import of the Swiss AHV VAT vote use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::AHV_VAT_VOTE_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: a changed VAT yield breaks the pre-calculated extra VAT revenue
+        $test_name = '... and a changed VAT yield is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::AHV_VAT_YIELD, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '4';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
+        // the ABB share use case derives the target price from several valuation methods and
+        // compares the weighted target with the price, so every pre-calculated result of the file
+        // must be reproduced from its values and formulas
+        $test_name = 'the import of the ABB share buy or sell use case reports no problem';
+        $msg = new user_message($t->usr1);
+        $json_str = file_get_contents(cfg_files::SHARE_BUY_SELL_ABB_FILE);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $msg);
+        $t->assert($test_name, $msg->all_message_text(), '');
+        $test_name = '... and its calc validation reproduces every result of the chain';
+        $t->assert($test_name, $dto->result_check_list()->count(), count($json_array[json_fields::CALC_VALIDATION]));
+        // negative: a changed fair P/E breaks the pre-calculated earnings multiple target
+        $test_name = '... and a changed fair P/E is reported';
+        $msg = new user_message($t->usr1);
+        foreach ($json_array[json_fields::VALUES] as $i => $val) {
+            if (in_array(triple_names::ABB_FAIR_PE, $val[json_fields::WORDS])) {
+                $json_array[json_fields::VALUES][$i][json_fields::NUMBER] = '30';
+            }
+        }
+        $imp->get_data_object($json_array, $msg);
+        $t->assert_text_contains($test_name, $msg->all_message_text(), 'does not match');
+
         // the unique keys use case is user data as well, so a normal user must import it
         $test_name = 'the import of the unique keys use case reports no problem';
         $msg = new user_message($t->usr1);
@@ -614,6 +1046,42 @@ class import_tests
         $imp->get_data_object($json_array, $msg);
         $t->assert_true($test_name, $msg->is_ok());
 
+
+        $t->subheader($ts . 'types cache clear');
+
+        // an imported symbol triple or unit word is part of the system phrases of the cached types
+        // api message, so saving it clears that cache (see data_object::save_triples and save_words)
+        $t_trp = new test_triples($t);
+        $t_wrd = new test_words($t);
+        $test_name = 'an alias triple clears the types cache';
+        $t->assert_true($test_name, $t_trp->triple_pi()->has_preload_verb());
+        $test_name = '... but an is a triple does not';
+        $t->assert_false($test_name, $t_trp->triple_gwp()->has_preload_verb());
+        $test_name = 'a triple list with an alias triple clears the types cache';
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->add($t_trp->triple_gwp());
+        $trp_lst->add($t_trp->triple_pi());
+        $t->assert_true($test_name, $trp_lst->has_preload_verb());
+        $test_name = '... but a triple list without one does not';
+        $trp_lst = new triple_list($t->usr1);
+        $trp_lst->add($t_trp->triple_gwp());
+        $t->assert_false($test_name, $trp_lst->has_preload_verb());
+        $test_name = 'a percent word clears the types cache';
+        $t->assert_true($test_name, $t_wrd->word_percent()->has_preload_type());
+        $test_name = '... and a scaling word too';
+        $t->assert_true($test_name, $t_wrd->word_billion()->has_preload_type());
+        $test_name = '... but a factor word does not';
+        $t->assert_false($test_name, $t_wrd->word_factor()->has_preload_type());
+        $test_name = 'a word list with a scaling word clears the types cache';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->add($t_wrd->word_factor());
+        $wrd_lst->add($t_wrd->word_billion());
+        $t->assert_true($test_name, $wrd_lst->has_preload_type());
+        $test_name = '... but a word list without one does not';
+        $wrd_lst = new word_list($t->usr1);
+        $wrd_lst->add($t_wrd->word_factor());
+        $t->assert_false($test_name, $wrd_lst->has_preload_type());
+
         $t->subheader($ts . 'convert');
 
         $test_name = 'wikipedia table to zukunft.com JSON string';
@@ -633,7 +1101,7 @@ class import_tests
         $json_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO);
         $context_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
-        // TODO review the parameter context
+        // TODO Prio 2 review the parameter context
         $msg->usr = $t->usr1;
         $conv_str = $conv_wiki->convert_wiki_json($in_table, $msg, test_base::TEST_TIMESTAMP, $context_str,
             ['country', 'ISO 3166'], [], 1,
@@ -738,6 +1206,49 @@ class import_tests
         $est = $imp->calc_total_time($base + $elapsed, 100);
         $test_name = 'import time estimate handles a zero original estimate';
         $t->assert_true($test_name, $est > 0);
+
+        // the factor compares the real time with the estimated time of the work done until now:
+        // half of a 10s estimate done after 10s means the rest also takes longer than estimated,
+        // which the factor based on the total estimate did not see
+        $imp->est_time_total = 10;
+        $imp->est_time_step = 0;
+        $imp->micro_steps = 0;
+        $imp->done_time_main_step = 5;
+        $imp->done_time_step = 0;
+        $test_name = 'import time estimate grows if the work done has taken longer than estimated';
+        $est = $imp->calc_total_time($base + 10, 0);
+        $t->assert_true($test_name, abs($est - 17.5) < 0.0001);
+        $test_name = '... but stays the original estimate if the work done has taken the estimated time';
+        $est = $imp->calc_total_time($base + 5, 0);
+        $t->assert_true($test_name, abs($est - 10) < 0.0001);
+
+        // the speeds of config.yaml are in MB per second, but the file size is in bytes
+        $test_name = 'the file size estimate converts the configured MB per second';
+        $t->assert_true($test_name, abs(import::est_time_by_size(2100000, 2.1) - 1) < 0.0001);
+        $test_name = '... so that a file of 300 kB is not expected to take more than a day';
+        $t->assert_true($test_name, import::est_time_by_size(310935, 2.1) < 1);
+        $test_name = '... and a speed of zero gives no estimate instead of a division by zero';
+        $t->assert_true($test_name, import::est_time_by_size(1000, 0) == 0);
+
+        // the direct import estimates the store time by the number of objects of each section
+        $imp_cnt = new import();
+        $test_name = 'the store time of an import is the sum of the store time of the sections';
+        $est_parts = $imp_cnt->est_time_save(json_fields::COMPONENTS, 100)
+            + $imp_cnt->est_time_save(json_fields::VIEWS, 10);
+        $est = $imp_cnt->est_time_put([
+            json_fields::VERSION => def::PRG_VERSION,
+            json_fields::COMPONENTS => array_fill(0, 100, []),
+            json_fields::VIEWS => array_fill(0, 10, [])
+        ]);
+        $t->assert_true($test_name, $est > 0 and abs($est - $est_parts) < 0.0001);
+        $test_name = '... and a section without objects to store adds no time';
+        $t->assert_true($test_name, $imp_cnt->est_time_put([json_fields::SELECTION => ['a', 'b']]) == 0);
+        $test_name = 'a view takes longer to store than a component, because it also links its components';
+        $t->assert_true($test_name,
+            $imp_cnt->est_time_save(json_fields::VIEWS, 1) > $imp_cnt->est_time_save(json_fields::COMPONENTS, 1));
+        $test_name = 'a section without a configured speed uses the fallback speed';
+        $t->assert_true($test_name,
+            abs($imp_cnt->est_time_save(json_fields::LIST_VERBS, def::FALLBACK_IMPORT_PER_SEC) - 1) < 0.0001);
 
 
         $t->subheader($ts . 'merge two import json');
@@ -868,6 +1379,54 @@ class import_tests
         $t->assert($test_name, $dto_merged->formula_list()->count(), $dto_expected->formula_list()->count());
         $test_name = '... and the merged calc validations match the merged file';
         $t->assert($test_name, $dto_merged->result_check_list()->count(), $dto_expected->result_check_list()->count());
+
+
+        $t->subheader($ts . 'export');
+        $t_trm = new test_terms($t);
+
+        // data_object: a word with only a name goes into the compact word list
+        $test_name = 'export a name only word in the word list';
+        $dto = $t_trm->dto_minute_and_second();
+        $exp = $dto->export_json($msg);
+        $wrd_names = $exp[json_fields::WORD_LIST];
+        $t->assert($test_name, $wrd_names[0], word_names::MINUTE);
+        $msg->reset();
+
+        // negative: a data object without words has no word list
+        $test_name = 'export no word list without words';
+        $dto = $t_trm->dto_scale_none();
+        $exp = $dto->export_json($msg);
+        $t->assert_key_not_exists($test_name, json_fields::WORD_LIST, $exp);
+        $msg->reset();
+
+        // data_object: a word with a config gets a full word entry
+        $test_name = 'export a word with config as full entry';
+        $dto = $t_trm->dto_scale_mio();
+        $exp = $dto->export_json($msg);
+        $wrd_entries = $exp[json_fields::WORDS];
+        $first = $wrd_entries[0];
+        $t->assert($test_name, $first[json_fields::NAME], word_names::ONE);
+        $msg->reset();
+
+        // negative: name only words get no full word entry
+        $test_name = 'export no full entry for name only words';
+        $dto = $t_trm->dto_minute_and_second();
+        $exp = $dto->export_json($msg);
+        $t->assert_key_not_exists($test_name, json_fields::WORDS, $exp);
+        $msg->reset();
+
+        $t->subheader($ts . 'update put');
+        $upd = new update_put();
+
+        $test_name = 'a group id as text, which the editor sends beyond the safe integer of javascript, is a number';
+        $grp_id = $upd->db_id(self::TV_GROUP_ID_TEXT);
+        $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID);
+        $test_name = '... and a number stays a number';
+        $grp_id = $upd->db_id(self::TV_GROUP_ID);
+        $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID);
+        $test_name = 'the text id of a value with more than four phrases stays a text';
+        $grp_id = $upd->db_id(self::TV_GROUP_ID_KEY);
+        $t->assert_same($test_name, $grp_id, self::TV_GROUP_ID_KEY);
 
     }
 

@@ -253,16 +253,16 @@ class view extends view_exe
             $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr);
             $url_edit = $html->url_old($class . rest_ctrl::UPDATE, $this->id());
-            // TODO fix for frontend based version
+            // TODO Prio 2 fix for frontend based version
             //echo 'button init';
             $result .= $this->btn_edit();
             //echo 'button_dsp init' . $url_edit;
             //$btn = new button_dsp($url_edit, '');
-            // TODO fix for frontend based version
+            // TODO Prio 2 fix for frontend based version
             //$result .= $btn->edit(messages::VIEW_EDIT);
             //$url_add = $html->url_back(views::VIEW_ADD_ID, 0, $url_arr);
             $url_add = $html->url_old($class . rest_ctrl::CREATE);
-            // TODO fix for frontend based version
+            // TODO Prio 2 fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
             $result .= $this->btn_add($url_arr);
             $result .= '      </li>';
@@ -411,7 +411,7 @@ class view extends view_exe
     }
 
     /**
-     * TODO fill
+     * TODO Prio 2 fill
      * @return string
      */
     private function dsp_logout(): string
@@ -420,7 +420,7 @@ class view extends view_exe
     }
 
     /**
-     * TODO fill
+     * TODO Prio 2 fill
      * @return string
      */
     private function dsp_view_name(array $url_arr = []): string
@@ -429,7 +429,7 @@ class view extends view_exe
     }
 
     /**
-     * TODO fill
+     * TODO Prio 2 fill
      * @return bool
      */
     private function is_system(): bool
@@ -438,7 +438,7 @@ class view extends view_exe
     }
 
     /**
-     * TODO fill
+     * TODO Prio 2 fill
      * @return string
      */
     protected function user(): string
@@ -626,7 +626,7 @@ class view extends view_exe
             } elseif ($add_cmp < 0) {
                 $result .= 'Name of the new component: ';
                 $result .= $html->input(url_var::NAME, msg_id::FORM_FIELD_NAME, '', html_base::INPUT_TEXT);
-                // TODO ??? should this not be the default entry type
+                // TODO Prio 2 ??? should this not be the default entry type
                 $result .= $this->component_selector($script, $msg, '', $this->type_id($msg), $ui_sys->component_list());
                 $result .= $html->dsp_form_end('',
                     $html->url_back(views::VIEW_EDIT_ID, $this->id(), $url_arr, 'word=' . $wrd->id()));
@@ -706,7 +706,8 @@ class view extends view_exe
 
         foreach ($msk_lst as $msk) {
             $view_id = $msk->id();;
-            $view_name = $html->esc($msk->name());
+            // the link escapes the name itself
+            $view_name = $msk->name();
             if ($view_id == $this->id()) {
                 $result .= '<b>' . $html->ref($call . '&' . $field . '=' . $view_id, $view_name) . '</b> ';
             } else {
@@ -742,11 +743,35 @@ class view extends view_exe
      */
     function open_link(int|string $dbo_id, string $dbo_name = ''): string
     {
+        return $this->show_link($dbo_id, $this->tip(msg_id::BUTTON_VIEW_SHOW_TIP, $dbo_name));
+    }
+
+    /**
+     * the grey link of the view that shows the page in the edit menu of the navbar, so the user
+     * sees which of the offered views is used at the moment
+     *
+     * @param int|string $dbo_id the id of the object that is shown with this view
+     * @param string $dbo_name the name of the object for the tooltip e.g. "mathematical constant"
+     * @return string the html link in grey with the tooltip
+     */
+    function used_link(int|string $dbo_id, string $dbo_name = ''): string
+    {
+        return $this->show_link($dbo_id, $this->tip(msg_id::BUTTON_VIEW_USED_TIP, $dbo_name), styles::STYLE_GREY);
+    }
+
+    /**
+     * @param int|string $dbo_id the id of the object to show with this view, a string for a value
+     * @param string $tip the tooltip of the link
+     * @param string $style the css class of the link e.g. grey for the view that shows the page
+     * @return string the html link with the view name that shows the object with this view
+     */
+    private function show_link(int|string $dbo_id, string $tip, string $style = ''): string
+    {
         $html = new html_base();
         $url = api::MAIN_SCRIPT . url_var::PAR . url_var::MASK . url_var::EQ . $this->id()
             . url_var::ADD . url_var::ID . url_var::EQ . $dbo_id;
         // a view without a name cannot be linked by it, and ref() would fatal on the null
-        return $html->ref($url, $this->name() ?? '', $this->tip(msg_id::BUTTON_VIEW_SHOW_TIP, $dbo_name));
+        return $html->ref($url, $this->name() ?? '', $tip, $style);
     }
 
     /**

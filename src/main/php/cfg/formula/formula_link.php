@@ -265,7 +265,7 @@ class formula_link extends sandbox_link
     {
         $result = parent::row_mapper_sandbox($db_row, $msg, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
-            // TODO load by if from cache?
+            // TODO Prio 2 load by if from cache?
             if (key_exists(formula_fields::FLD_ID, $db_row)) {
                 $this->formula()->id = $db_row[formula_fields::FLD_ID];
                 // set_obj_from_id (not set_id) so a negative phrase id is mapped to a triple
@@ -508,8 +508,8 @@ class formula_link extends sandbox_link
      * set and get
      */
 
-    // TODO add function "formula()" that returns the "From_OBject (fob)"
-    // TODO check that all link objects have a self speaking interface function for the "From_OBject (fob)" and "To_OBject (tob)"
+    // TODO Prio 2 add function "formula()" that returns the "From_OBject (fob)"
+    // TODO Prio 2 check that all link objects have a self speaking interface function for the "From_OBject (fob)" and "To_OBject (tob)"
 
     /**
      * set the main vars with one function
@@ -852,17 +852,17 @@ class formula_link extends sandbox_link
                 ]);
             }
         }
-        if ($msg->is_ok()) {
-            if ($this->phrase_id() <> 0) {
-                $phr = new phrase($this->get_user());
-                $phr->load_by_id($this->phrase_id(), $msg);
-                if ($phr->id() != 0) {
-                    $this->set_phrase($phr);
-                } else {
-                    $msg->add(msg_id::LOAD_PHRASE_BY_ID_FAILED, [
-                        msg_id::VAR_PHRASE => $this->phrase()->dsp_id()
-                    ]);
-                }
+        // the phrase is loaded even if the message already reports a problem, because e.g. the
+        // delete log names the phrase and its sql function is created only once per name
+        if ($this->phrase_id() <> 0) {
+            $phr = new phrase($this->get_user());
+            $phr->load_by_id($this->phrase_id(), $msg);
+            if ($phr->id() != 0) {
+                $this->set_phrase($phr);
+            } else {
+                $msg->add(msg_id::LOAD_PHRASE_BY_ID_FAILED, [
+                    msg_id::VAR_PHRASE => $this->phrase()->dsp_id()
+                ]);
             }
         }
         return parent::reload_objects($msg);

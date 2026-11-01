@@ -7,9 +7,9 @@
 
     $wrd is the suggested var name
 
-    TODO move plural to a linked word?
+    TODO Prio 3 move plural to a linked word?
 
-    TODO check if all objects follow these rules
+    TODO Prio 2 check if all objects follow these rules
         - database fields are defined within the object wit a const staring with FLD_
         - the object is as small as possible, means there are no redundant fields
         - for each selection and database reading function a separate load function with the search field is defined e.g. load_by_name(string name)
@@ -109,6 +109,8 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
+// for sandbox_related::views_assigned, which cannot include it itself
+include_once paths::MODEL_VIEW . 'term_view_list.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
@@ -284,6 +286,10 @@ class word extends sandbox_code_id
     // its parent words; populated lazily by load_views_related() and only emitted via
     // api_json_array() when the api_types::INCL_RELATED flag is set
     public ?view_list $views_related = null;
+    // the views assigned to this word by the import e.g. "Mathematical constant" to "Pi", which the
+    // edit menu of the navbar offers first; populated lazily by load_views_assigned() and only
+    // emitted via api_json_array() when the api_types::INCL_RELATED flag is set
+    public ?view_list $views_assigned = null;
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -375,7 +381,7 @@ class word extends sandbox_code_id
     /**
      * map a word api json to this model word object
      * similar to the import_obj function but using the database id instead of names as the unique key
-     * TODO add a test case to check if an import of a pure name overwrites the existing type setting
+     * TODO Prio 2 add a test case to check if an import of a pure name overwrites the existing type setting
      *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
      * @param array $api_json the api array with the word values that should be mapped
      * @param user_message $msg the message for the user why the action has failed and a suggested solution
@@ -387,7 +393,7 @@ class word extends sandbox_code_id
 
         // it is expected that the code id is set via import by an admin not via api
 
-        // TODO move plural to language forms
+        // TODO Prio 2 move plural to language forms
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
                 $this->plural = $api_json[json_fields::PLURAL];
@@ -462,7 +468,7 @@ class word extends sandbox_code_id
                         $ref_obj = new ref($this->get_user());
                         $ref_obj->set_phrase($this->phrase());
                         $ref_obj->import_mapper($ref_data, $msg, $dto);
-                        // TODO $dto should never be null if no direct import is used
+                        // TODO Prio 2 $dto should never be null if no direct import is used
                         $dto?->add_reference($ref_obj, $msg);
                         if ($msg->is_ok()) {
                             $this->ref_lst[] = $ref_obj;
@@ -472,7 +478,7 @@ class word extends sandbox_code_id
             }
         }
 
-        // TODO change to view object like in triple
+        // TODO Prio 2 change to view object like in triple
         if (key_exists(json_fields::VIEW, $in_ex_json)) {
             $msk_name = $in_ex_json[json_fields::VIEW];
             $wrd_view = new view($this->get_user());
@@ -510,7 +516,7 @@ class word extends sandbox_code_id
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
-     * TODO prio 2 review
+     * TODO Prio 2 review
      * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user_message $msg to collect the mapping error messages
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
@@ -527,6 +533,10 @@ class word extends sandbox_code_id
             if ($typ_lst->phrase_names()) {
                 $vars[json_fields::ID] = $this->id();
                 $vars[json_fields::NAME] = $this->name();
+                // e.g. so that the settings page finds the font setting by the code id of its word
+                if ($this->get_code_id() != null) {
+                    $vars[json_fields::CODE_ID] = $this->get_code_id();
+                }
             } else {
                 $vars = parent::api_json_array($typ_lst, $msg, $usr);
                 $vars[json_fields::PLURAL] = $this->plural;
@@ -616,6 +626,11 @@ class word extends sandbox_code_id
                     }
                     $vars = array_merge($vars,
                         new sandbox_related()->views_array($this->views_related, $msg, $usr));
+                    if ($this->views_assigned == null and !$typ_lst->test_mode()) {
+                        $this->load_views_assigned($msg);
+                    }
+                    $vars = array_merge($vars,
+                        new sandbox_related()->views_assigned_array($this->views_assigned, $msg, $usr));
                     $vars = array_merge($vars, $this->api_overwrites_array($typ_lst, $msg, $usr));
                 }
             }
@@ -678,7 +693,7 @@ class word extends sandbox_code_id
      */
     function load_values_related(user_message $msg): void
     {
-        $this->values_related = $this->reload_value_list($msg, 1, value_list::read_limit());
+        $this->values_related = $this->reload_value_list($msg, 0, value_list::read_limit());
     }
 
     /**
@@ -694,16 +709,15 @@ class word extends sandbox_code_id
     }
 
     /**
-     * load the formulas assigned to the ancestor phrases of this word (the full 'is a' / 'is symbol
-     * for' chain) into the in-memory parent_formulas_related list so that api_json_array() can emit
+     * load the formulas assigned to the ancestor phrases of this word (phrase::formula_ancestors)
+     * into the in-memory parent_formulas_related list so that api_json_array() can emit
      * them per ancestor under the INCL_RELATED flag; an ancestor without formulas is skipped
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function load_parent_formulas_related(user_message $msg): void
     {
         $result = [];
-        // all ancestors via any up-relation (is a, is symbol for, ...), nearest first
-        foreach ($this->phrase_list()->foaf_parents($msg)->lst() as $par_phr) {
+        foreach ($this->phrase()->formula_ancestors($msg)->lst() as $par_phr) {
             $frm_lst = new formula_list($this->get_user());
             $frm_lst->load_by_phr($par_phr, $msg);
             if (!$frm_lst->is_empty()) {
@@ -728,11 +742,12 @@ class word extends sandbox_code_id
     /**
      * load the views related to this word into the in-memory views_related list so that
      * api_json_array() can emit them under the INCL_RELATED flag; the list is the word's own
-     * default view plus the default views of its parent words (the phrases it "is a")
+     * default view on top, followed by the default views of its parent words and triples
+     * (the phrases it "is a", e.g. the triple "mathematical constant" of Pi)
      * each view is loaded by id because set_view_id() only stores the id, not the name that
      * the api export and the frontend name_link need
-     * TODO the parent loop loads each parent word and its view one by one; replace with a
-     *      single list load once a view_list->load_by_word_list() exists
+     * TODO Prio 2 the parent loop loads each parent phrase and its view one by one; replace with a
+     *      single list load once a view_list->load_by_phrase_list() exists
      */
     function load_views_related(user_message $msg): void
     {
@@ -743,6 +758,10 @@ class word extends sandbox_code_id
                 $par_wrd = new word($this->get_user());
                 $par_wrd->load_by_id($phr->id(), $msg);
                 $par_wrd->add_default_view_to($msk_lst, $msg);
+            } elseif ($phr->is_triple()) {
+                $par_trp = new triple($this->get_user());
+                $par_trp->load_by_id($phr->triple()->id(), $msg);
+                $msk_lst->add_by_id($par_trp->get_view_id(), $msg);
             }
         }
         // a word without an own default view and without parent views is shown with the system
@@ -758,6 +777,18 @@ class word extends sandbox_code_id
     }
 
     /**
+     * load the views that the import has assigned to this word into the in-memory views_assigned
+     * list, so that the edit menu of the navbar can offer them first e.g. "Mathematical constant" for "Pi"
+     *
+     * @param user_message $msg to collect any problem while loading the views
+     * @return void
+     */
+    function load_views_assigned(user_message $msg): void
+    {
+        $this->views_assigned = new sandbox_related()->views_assigned($this->term(), $msg);
+    }
+
+    /**
      * add the fully loaded default view of this word to the given list (skipping duplicates,
      * words without a default view and a view that cannot be loaded); the view is loaded by id
      * so that it carries its name
@@ -766,15 +797,7 @@ class word extends sandbox_code_id
      */
     private function add_default_view_to(view_list $msk_lst, user_message $msg): void
     {
-        if ($this->view != null and $this->view->id() > 0) {
-            $msk = new view($this->get_user());
-            $msk->load_by_id($this->view->id(), $msg);
-            // a view that cannot be loaded must not enter the list, because a list holding an
-            // unloaded entry is not empty and would suppress the system default view fallback
-            if ($msk->id() > 0) {
-                $msk_lst->add($msk);
-            }
-        }
+        $msk_lst->add_by_id($this->get_view_id(), $msg);
     }
 
     /**
@@ -962,6 +985,15 @@ class word extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the phrase type is one of phrase_types::PRELOAD_TYPES e.g. a unit or scaling
+     *              word, so that the word is part of the system phrases of the cached types api message
+     */
+    function has_preload_type(): bool
+    {
+        return in_array($this->type_code_id(), phrase_types::PRELOAD_TYPES);
+    }
+
+    /**
      * get the name of the phrase type
      * @return string the name of the phrase type of this word
      */
@@ -1027,7 +1059,7 @@ class word extends sandbox_code_id
 
     /**
      * load a word that represents a formula by the name
-     * TODO exclude the formula words in all other queries
+     * TODO Prio 2 exclude the formula words in all other queries
      *
      * @param string $name the name word
      * @return int the id of the object found and zero if nothing is found
@@ -1091,7 +1123,7 @@ class word extends sandbox_code_id
      */
     function load_sql(sql_creator $sc, string $query_name, string $class = self::class): sql_par
     {
-        // TODO check if and where it is needed to exclude the formula words
+        // TODO Prio 2 check if and where it is needed to exclude the formula words
         // global $sys;
         // $qp = parent::load_sql_usr_num($sc, $this, $query_name);
         // $sc->add_where(phrase::FLD_TYPE, $sys->typ_lst->phr_typ->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST_NOT);
@@ -1133,11 +1165,11 @@ class word extends sandbox_code_id
 
     /**
      * get a list of values related to this word
-     * @param int $page the offset / page
+     * @param int $page the page, starting with 0
      * @param int $size the number of values that should be returned
      * @return value_list a list object with the most relevant values related to this word
      */
-    function reload_value_list(user_message $msg, int $page = 1, int $size = sql_db::ROW_LIMIT): value_list
+    function reload_value_list(user_message $msg, int $page = 0, int $size = sql_db::ROW_LIMIT): value_list
     {
         $val_lst = new value_list($this->get_user());
         // the values of a symbol or alias belong to the page too (see phrase::value_selection),
@@ -1156,9 +1188,9 @@ class word extends sandbox_code_id
 
     /**
      * if there is just one formula linked to the word, get it
-     * TODO separate the query parameter creation and add a unit test
-     * TODO allow also to retrieve a list of formulas
-     * TODO get the user-specific list of formulas
+     * TODO Prio 2 separate the query parameter creation and add a unit test
+     * TODO Prio 2 allow also to retrieve a list of formulas
+     * TODO Prio 2 get the user-specific list of formulas
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function reload_formula(user_message $msg): formula
@@ -1267,6 +1299,12 @@ class word extends sandbox_code_id
         }
         if ($this->impact != null) {
             if ($this->impact != $db_obj->impact) {
+                $result = true;
+            }
+        }
+        // like for a triple, a default view of the import is written to the database
+        if ($this->get_view_id() > 0) {
+            if ($this->get_view_id() != $db_obj->get_view_id()) {
                 $result = true;
             }
         }
@@ -1470,7 +1508,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * TODO maybe collect the single words or this is a third case
+     * TODO Prio 3 maybe collect the single words or this is a third case
      * returns a list of words that are related to this word
      * e.g. for "Zurich" it will return "canton", "city" and "company" and "Zurich" itself
      *      to be able to collect all relations to the given word e.g. Zurich
@@ -1655,7 +1693,7 @@ class word extends sandbox_code_id
 
     /**
      * @return word the follow word id based on the predefined verb following
-     * TODO create unit tests
+     * TODO Prio 2 create unit tests
      */
     function next(user_message $msg): word
     {
@@ -1681,7 +1719,7 @@ class word extends sandbox_code_id
 
     /**
      * return the follow word id based on the predefined verb following
-     * TODO create unit tests
+     * TODO Prio 2 create unit tests
      */
     function prior(user_message $msg): word
     {
@@ -1736,7 +1774,7 @@ class word extends sandbox_code_id
 
     /**
      * calculate the suggested default view for this word
-     * TODO review, because is it needed? get the view used by most users for this word
+     * TODO Prio 2 review, because is it needed? get the view used by most users for this word
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
@@ -1763,7 +1801,7 @@ class word extends sandbox_code_id
     {
         global $db_con;
 
-        // TODO recreate based on the group
+        // TODO Prio 2 recreate based on the group
         /*
         $sql = 'UPDATE words t
              SET ' . $db_con->sf("values") . ' = (
@@ -1824,7 +1862,7 @@ class word extends sandbox_code_id
      */
 
     /**
-     * TODO review
+     * TODO Prio 2 review
      * true if the word has any none default settings such as a special type
      */
     function has_cfg(): bool
@@ -1864,7 +1902,7 @@ class word extends sandbox_code_id
             $result = true;
             // check if no value is related to the word
             // check if no phrase group is linked to the word
-            // TODO if a value or formula is linked to the word the user should see a warning message, which he can confirm
+            // TODO Prio 2 if a value or formula is linked to the word the user should see a warning message, which he can confirm
             return $result;
         } else {
             return false;
@@ -2146,7 +2184,7 @@ class word extends sandbox_code_id
                 $obj->view
             );
         }
-        // TODO move to language forms
+        // TODO Prio 2 move to language forms
         if ($obj->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(

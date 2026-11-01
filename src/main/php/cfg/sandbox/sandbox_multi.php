@@ -7,7 +7,7 @@
 
     This superclass is used by the classes values and results to enable user-specific changes
     similar to sandbox.php but for database objects that have custom prime id
-    TODO should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
+    TODO Prio 3 should be merged once php allows aggregating extends e.g. sandbox extends db_object, db_user_object
 
     The main sections of this object are
     - db const:          const for the database link
@@ -51,10 +51,10 @@
 
 */
 
-// TODO align the function return types with the source (ref) object
-// TODO use the user sandbox also for the word object
-// TODO check if handling of negative ids is correct
-// TODO split into a link and a named user sandbox object to always use the smallest possible object
+// TODO Prio 2 align the function return types with the source (ref) object
+// TODO Prio 2 use the user sandbox also for the word object
+// TODO Prio 2 check if handling of negative ids is correct
+// TODO Prio 2 split into a link and a named user sandbox object to always use the smallest possible object
 
 namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
@@ -129,6 +129,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED_TYPES . 'phrase_types.php';
@@ -215,6 +216,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 use Exception;
 
 class sandbox_multi extends db_object_multi_user
@@ -252,7 +254,7 @@ class sandbox_multi extends db_object_multi_user
     );
 
     // list of all user sandbox database types with a standard ID
-    // so exclude values and result TODO check missing owner for values and results
+    // so exclude values and result TODO Prio 2 check missing owner for values and results
     const array DB_TYPES = array(
         word::class,
         triple::class,
@@ -372,7 +374,7 @@ class sandbox_multi extends db_object_multi_user
         if ($result) {
             $this->set_owner_id($db_row[user_db::FLD_ID]);
             // e.g. the list of names does not include the field excluded
-            // TODO instead the excluded rows are filtered out on SQL level
+            // TODO Prio 2 instead the excluded rows are filtered out on SQL level
             if (array_key_exists(fields::FLD_EXCLUDED, $db_row)) {
                 $this->set_excluded($db_row[fields::FLD_EXCLUDED]);
             }
@@ -665,7 +667,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * TODO use a user list cache
+     * TODO Prio 2 use a user list cache
      * @return user|null the person who has the permission to change the standard object
      */
     function owner(user_message $msg): ?user
@@ -742,10 +744,13 @@ class sandbox_multi extends db_object_multi_user
     protected function load(sql_par $qp, user_message $msg): int|string
     {
         global $db_con;
+        global $sys;
 
         $db_row = $db_con->get1($qp, $msg);
         if ($db_row !== false and $db_row !== null and $db_row !== []) {
+            $sys->times->switch(system_time_type::DB_MAP);
             $this->row_mapper_sandbox_multi($db_row, $msg, $qp->ext);
+            $sys->times->switch();
             return $this->id;
         } else {
             return 0;
@@ -1243,7 +1248,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the SQL to load a single user-specific value
-     * TODO replace by load_sql_usr or load_sql_usr_num
+     * TODO Prio 2 replace by load_sql_usr or load_sql_usr_num
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $class the name of the child class from where the call has been triggered
@@ -1261,7 +1266,7 @@ class sandbox_multi extends db_object_multi_user
 
         if ($this->is_id_set()) {
 
-            // TODO: try to avoid using load_test_user
+            // TODO Prio 2 try to avoid using load_test_user
             if ($this->owner_id() > 0) {
                 $usr = new user;
                 if ($usr->load_by_id($this->owner_id(), $msg)) {
@@ -1458,7 +1463,7 @@ class sandbox_multi extends db_object_multi_user
      * model yet a group-shared object is treated like personal (owner only) - deny is the safe
      * direction. used at the api read boundary to close the idor read of another user's non-public
      * value by iterating the object id; internal flows (save, calculation) are not gated by this.
-     * TODO extend the group case with a real group-membership check once user groups exist
+     * TODO Prio 2 extend the group case with a real group-membership check once user groups exist
      *
      * @param user|null $usr the user who has requested to read this object
      * @return bool true if the object may be disclosed to the given user
@@ -1768,7 +1773,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * @param user_message $msg to enrich with problems and suggested solutions
      * @returns int the user id of the most often used link (position) beside the standard (position)
-     * TODO review, because the median is not taking into account the number of standard used values
+     * TODO Prio 1 review, because the median is not taking into account the number of standard used values
      */
     function median_user(user_message $msg): int
     {
@@ -1795,7 +1800,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * TODO review (add ...)
+     * TODO Prio 2 review (add ...)
      * @return bool true if no user has changed the value and no parameter beside the value is set
      */
     function is_standard(): bool
@@ -1841,7 +1846,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * if the user is an admin the user can force to be the owner of this object
-     * TODO review
+     * TODO Prio 2 review
      */
     function take_ownership(user_message $msg): bool
     {
@@ -1850,7 +1855,7 @@ class sandbox_multi extends db_object_multi_user
 
         if ($this->get_user()->is_admin()) {
             // TODO Prio 3 activate $result .= $this->usr_cfg_create_all();
-            $result = $this->set_owner($this->get_user()->id, $msg); // TODO remove double getting of the user object
+            $result = $this->set_owner($this->get_user()->id, $msg); // TODO Prio 2 remove double getting of the user object
             // TODO Prio 3 activate $result .= $this->usr_cfg_cleanup();
         }
 
@@ -1862,7 +1867,7 @@ class sandbox_multi extends db_object_multi_user
      * change the owner of the object
      * any calling function should make sure that taking setting the owner is allowed
      * and that all user values
-     * TODO review sql and object field compare of user and standard
+     * TODO Prio 2 review sql and object field compare of user and standard
      * @param bool $must_exist if false no error message is created if the value or result does not exist
      * @return bool true if the owner is succesful set
      */
@@ -1905,7 +1910,12 @@ class sandbox_multi extends db_object_multi_user
                     if (!$fvt_lst->is_empty_except_internal_fields()) {
                         $sc_par_lst->add(sql_type::UPDATE);
                         $qp = $std->sql_write($sc, $db_std, $std->db_fields_all(), $own_msg, $sc_par_lst);
-                        $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                        // no statement if only the key fields differ, like in save_fields_func
+                        if ($qp != null) {
+                            $db_con->update($qp, 'set owner of ' . $this->dsp_id(), $own_msg);
+                        } else {
+                            $this->report_empty_write('owner change', $own_msg);
+                        }
                     }
                 }
 
@@ -1947,7 +1957,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * true if no one has used the object
-     * TODO if this has been used for calculation, this is also used
+     * TODO Prio 1 if this has been used for calculation, this is also used
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function not_used(user_message $msg): bool
@@ -2088,7 +2098,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * true if no else one has used the object
-     * TODO if this should be true if no one else has been used this object e.g. for calculation
+     * TODO Prio 2 if this should be true if no one else has been used this object e.g. for calculation
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function used_by_someone_else(user_message $msg): bool
@@ -2193,7 +2203,8 @@ class sandbox_multi extends db_object_multi_user
 
         $db_con->set_class($this::class, true);
         try {
-            $qp = $this->sql_delete($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::USER]));
+            // with the change log entry (e.g. value_delete_log_user), like del_usr_cfg
+            $qp = $this->sql_delete_user_row($db_con->sql_creator(), $usr_msg, new sql_type_list([sql_type::LOG]));
             $db_con->delete($qp, $this::class . ' user exclusions', $usr_msg);
             $msg = $usr_msg->get_message();
             if ($msg == '') {
@@ -2226,7 +2237,7 @@ class sandbox_multi extends db_object_multi_user
 
         if ($this->is_id_set() and $this->get_user()->id() > 0) {
             $db_con->usr_id = $this->get_user()->id();
-            $qp = $this->sql_delete($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG, sql_type::USER]));
+            $qp = $this->sql_delete_user_row($db_con->sql_creator(), $msg, new sql_type_list([sql_type::LOG]));
             $db_con->delete($qp, 'del and log user ' . $this->dsp_id(), $msg);
             if ($msg->is_ok()) {
                 $this->usr_cfg_id = null;
@@ -2243,7 +2254,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create a database record to save user-specific settings for a user sandbox object
-     * TODO combine the reread and the adding in a commit transaction; same for all db change transactions
+     * TODO Prio 2 combine the reread and the adding in a commit transaction; same for all db change transactions
      * @return bool false if the creation has failed and true if it was successful or not needed
      */
     protected function add_usr_cfg(user_message $msg, string $class = self::class): bool
@@ -2328,7 +2339,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * check if the database record for the user-specific settings can be removed
-     * TODO separate the query parameter creation and add a unit test
+     * TODO Prio 2 separate the query parameter creation and add a unit test
      * @param user_message $msg to enrich with problems and suggested solutions
      * @return bool false if the deletion has failed and true if it was successful or not needed
      */
@@ -2338,7 +2349,7 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $result = true;
 
-        // TODO check if next line is working
+        // TODO Prio 2 check if next line is working
         //if ($this->has_usr_cfg) {
 
         // check again if there ist not yet a record
@@ -2389,7 +2400,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * remove all user setting that are not needed any more based on the new standard object
-     * TODO review
+     * TODO Prio 2 review
      * @param user_message $msg to enrich with problems and suggested solutions
      */
     function usr_cfg_cleanup(sandbox_multi $std, user_message $msg): string
@@ -2644,7 +2655,7 @@ class sandbox_multi extends db_object_multi_user
         $log->set_user($this->get_user());
         $log->set_action(change_actions::UPDATE, $msg);
         if ($this->can_change()) {
-            // TODO add the table exceptions from sql_db
+            // TODO Prio 2 add the table exceptions from sql_db
             $log->set_table($class . sql_db::TABLE_EXTENSION, $msg);
         } else {
             $log->set_table(sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION, $msg);
@@ -2751,8 +2762,8 @@ class sandbox_multi extends db_object_multi_user
     /**
      * create the sql statement to delete a value in the database
      * similar to sandbox/sql_delete, but additional for prime or big tables
-     * TODO check if user-specific overwrites can be deleted
-     * TODO check if can be moved to sandbox_value object
+     * TODO Prio 2 check if user-specific overwrites can be deleted
+     * TODO Prio 2 check if can be moved to sandbox_value object
      *
      * @param sql_creator $sc with the target db_type set
      * @param user_message $msg the user message object that collects any issues during the sql creation
@@ -2856,7 +2867,7 @@ class sandbox_multi extends db_object_multi_user
         }
 
         $sc_log = clone $sc;
-        // TODO replace dummy value table with an enum value
+        // TODO Prio 2 replace dummy value table with an enum value
         if ($this->is_named_obj()) {
             $qp_log = $log->sql_insert_log(
                 $sc_log, $msg, $sc_par_lst_log, $ext . '_' . $name_fld, '', $name_fld, $id_val);
@@ -2865,7 +2876,7 @@ class sandbox_multi extends db_object_multi_user
                 $sc_log, $msg, $sc_par_lst_log, $ext, '', '', $id_val);
         }
 
-        // TODO get the fields used in the change log sql from the sql
+        // TODO Prio 2 get the fields used in the change log sql from the sql
         $func_body_change .= ' ' . $qp_log->sql . ';';
 
         // add the user_id if needed
@@ -2952,7 +2963,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * the common part of the sql_insert, sql_update and sql_delete functions
      * in most cases overwritten by the child object
-     * TODO include the sql statements to log the changes
+     * TODO Prio 2 include the sql statements to log the changes
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -3024,7 +3035,7 @@ class sandbox_multi extends db_object_multi_user
     {
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = clone $this;
-        $db_chk->load_standard($this->id(), $msg); // TODO should not ADDITIONAL the user-specific load be called
+        $db_chk->load_standard($this->id(), $msg); // TODO Prio 2 should not ADDITIONAL the user-specific load be called
         return $db_chk;
     }
 
@@ -3209,7 +3220,7 @@ class sandbox_multi extends db_object_multi_user
 
     /*
      * save
-     * TODO review and combine with value and result save functions
+     * TODO Prio 2 review and combine with value and result save functions
      *
      */
 
@@ -3351,7 +3362,7 @@ class sandbox_multi extends db_object_multi_user
 
                     // if a problem has appeared up to here, don't try to save the values
                     // the problem is shown to the user by the calling interactive script
-                    // TODO add function based saving
+                    // TODO Prio 2 add function based saving
                     if ($msg->is_ok()) {
                         $this->save_fields_func($db_con, $db_rec, $std_rec, $msg);
                     }
@@ -3419,8 +3430,8 @@ class sandbox_multi extends db_object_multi_user
      *                                  with a phrase of its group (see word::del_links)
      * @return bool true if the value has been deleted without issues
      *
-     * TODO if the owner deletes it, change the owner to the new median user
-     * TODO check if all have deleted the object
+     * TODO Prio 2 if the owner deletes it, change the owner to the new median user
+     * TODO Prio 2 check if all have deleted the object
      *      does not remove the user excluding if no one else is using it
      */
     function del(
@@ -3445,8 +3456,8 @@ class sandbox_multi extends db_object_multi_user
         global $db_con;
         $msg_txt = '';
 
-        // refresh the object with the database to include all updates utils now (TODO start of lock for commit here)
-        // TODO it seems that the owner is not updated
+        // refresh the object with the database to include all updates utils now (TODO Prio 2 start of lock for commit here)
+        // TODO Prio 1 it seems that the owner is not updated
         $reloaded = false;
         $reloaded_id = $this->load_by_id($this->id(), $msg);
         if ($reloaded_id != 0) {
@@ -3496,7 +3507,7 @@ class sandbox_multi extends db_object_multi_user
                         } else {
                             log_debug('set owner for ' . $this->dsp_id() . ' to user id "' . $new_owner_id . '"');
 
-                            // TODO change the original object, so that it uses the configuration of the new owner
+                            // TODO Prio 2 change the original object, so that it uses the configuration of the new owner
 
                             // set owner
                             if (!$this->set_owner($new_owner_id, $msg, $must_exist)) {
@@ -3506,7 +3517,7 @@ class sandbox_multi extends db_object_multi_user
                             }
 
                             // delete all user records of the new owner
-                            // does not use del_usr_cfg because the deletion request has already been logged
+                            // with the change log entry of the removed user row (del_usr_cfg_exe)
                             if ($msg_txt == '') {
                                 if (!$this->del_usr_cfg_exe($db_con)) {
                                     $msg_txt .= 'Deleting of ' . $class_name . ' failed';
@@ -3516,7 +3527,7 @@ class sandbox_multi extends db_object_multi_user
                         }
                     }
                     // check again after the owner change if the object simply can be deleted, because it has never been used
-                    // TODO check if "if ($this->can_change() AND $this->not_used()) {" would be correct
+                    // TODO Prio 2 check if "if ($this->can_change() AND $this->not_used()) {" would be correct
                     if (!$this->used_by_someone_else($msg)) {
                         log_debug('can delete ' . $this->dsp_id() . ' after owner change');
                         $this->del_exe($msg);
@@ -3531,7 +3542,7 @@ class sandbox_multi extends db_object_multi_user
                         }
                         $this->exclude();
 
-                        // simple version TODO combine with save function
+                        // simple version TODO Prio 2 combine with save function
 
                         $db_rec = clone $this;
                         $db_rec->reset();
@@ -3559,7 +3570,7 @@ class sandbox_multi extends db_object_multi_user
                     }
                 }
             }
-            // TODO end of db commit and unlock the records
+            // TODO Prio 2 end of db commit and unlock the records
             log_debug('done');
         }
 
@@ -3596,27 +3607,33 @@ class sandbox_multi extends db_object_multi_user
 
         // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
         if ($this->can_change()) {
-            // TODO check if the update of the standard db row will lead to unexpected changes for other users
-            // TODO get a list of all user that have used the standard more than the threshold
-            // TODO create a user db row for all these users that undo the expected changes of the standard db row
+            // TODO Prio 1 check if the update of the standard db row will lead to unexpected changes for other users
+            // TODO Prio 1 get a list of all user that have used the standard more than the threshold
+            // TODO Prio 1 create a user db row for all these users that undo the expected changes of the standard db row
             // if there is no difference between the user row and the norm row remove all fields from the user row
             if ($this->no_diff($norm_obj, $msg)) {
                 if ($this->has_usr_cfg()) {
-                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER]));
+                    // logged with the user row as stored, so that the log shows the number that the user had
+                    $qp = $db_obj->sql_delete_user_row($sc, $msg, new sql_type_list([sql_type::LOG]));
                     $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
                 }
             } else {
                 // apply the changes directly to the norm db record
-                // TODO maybe check of other user have used the object and if yes keep or inform
+                // TODO Prio 3 maybe check of other user have used the object and if yes keep or inform
                 $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
                 if (!$fvt_lst->is_empty_except_internal_fields()) {
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
-                    $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    // no statement if only the key fields differ, like in the user row branches below
+                    if ($qp != null) {
+                        $db_con->update($qp, 'update ' . $obj_name . $this->dsp_id(), $msg);
+                    } else {
+                        $this->report_empty_write('update', $msg);
+                    }
                     if ($this->has_usr_cfg()) {
                         $sc_par_lst->add(sql_type::USER);
-                        $qp = $this->sql_delete($sc, $msg, $sc_par_lst);
+                        $qp = $this->sql_delete_user_row($sc, $msg, $sc_par_lst);
                         $db_con->delete($qp, 'del user ' . $obj_name, $msg);
                     }
                 }
@@ -3627,21 +3644,23 @@ class sandbox_multi extends db_object_multi_user
             }
         } else {
             $sc_par_lst->add(sql_type::USER);
-            // TODO review if $this or $db_obj must be used here because in sandbox $this is used
+            // TODO Prio 2 review if $this or $db_obj must be used here because in sandbox $this is used
             if ($db_obj->has_usr_cfg()) {
                 if ($this->no_diff($norm_obj, $msg)) {
-                    $qp = $this->sql_delete($sc, $msg, new sql_type_list([sql_type::USER]));
+                    // logged with the user row as stored, so that the log shows the number that the user had
+                    $qp = $db_obj->sql_delete_user_row($sc, $msg, new sql_type_list([sql_type::LOG]));
                     $db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id(), $msg);
                 } else {
                     // update the user row only if it does not yet match the requested state
                     // (e.g. a leftover user row of a previous test run can already match),
                     // because an update without any changed field would be an invalid sql
+                    $this->set_user_table_source();
                     $fvt_lst = $this->db_fields_changed($db_obj, $msg, $sc_par_lst);
                     if (!$fvt_lst->is_empty_except_internal_fields()) {
                         $sc_par_lst->add(sql_type::UPDATE);
                         // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
                         // for a new user record compare with the norm db_row
-                        // TODO compare sql_write with sql_update_switch
+                        // TODO Prio 2 compare sql_write with sql_update_switch
                         $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
                         if ($qp != null) {
                             $db_con->update($qp, 'update user ' . $obj_name, $msg);
@@ -3652,17 +3671,16 @@ class sandbox_multi extends db_object_multi_user
                 if (!$this->no_diff($norm_obj, $msg)) {
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
-                    // because one user can link a value to more than one source the source id is part of the user value prime key
-                    // and due to that the source id in the user table cannot be null instead 0 is used
-                    if ($this->source_id() == null) {
-                        $src = new source($this->get_user());
-                        $src->id = sources::TRUST_ME_BRO_ID;
-                        $this->set_source($src);
-                    }
+                    $this->set_user_table_source();
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $msg, $sc_par_lst);
-                    // TODO compare sql_write with sql_insert_switch
-                    $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+                    // TODO Prio 2 compare sql_write with sql_insert_switch
+                    // no statement if only the key fields differ e.g. the placeholder source of the user row
+                    if ($qp != null) {
+                        $db_con->insert($qp, 'add user ' . $obj_name, $msg, new sql_message(), true, true);
+                    } else {
+                        $this->report_empty_write('user overwrite', $msg);
+                    }
                 }
             }
         }
@@ -3672,9 +3690,53 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
+     * set the source that the user row is stored with, which only a value has (value_base)
+     */
+    protected function set_user_table_source(): void
+    {
+    }
+
+    /**
+     * @return bool true if a source is set, which only a value can have
+     */
+    function has_source(): bool
+    {
+        return $this->source_id() > 0;
+    }
+
+    /**
+     * @return bool true if the source is the placeholder that a user row without source is stored with
+     */
+    function has_placeholder_source(): bool
+    {
+        return $this->source_id() == sources::TRUST_ME_BRO_ID;
+    }
+
+    /**
+     * the delete of the user row of this object, which for a value names the source that the
+     * user row is stored with (set_user_table_source), because the source is part of its key
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user_message $msg to collect the problems of the sql creation
+     * @param sql_type_list $sc_par_lst e.g. with sql_type::LOG to log the delete
+     * @return sql_par the delete statement of the user row
+     */
+    function sql_delete_user_row(
+        sql_creator   $sc,
+        user_message  $msg,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        $this->set_user_table_source();
+        $del_par_lst = clone $sc_par_lst;
+        $del_par_lst->add(sql_type::USER);
+        return $this->sql_delete($sc, $msg, $del_par_lst);
+    }
+
+    /**
      * create a sql statement to insert or update a sandbox object in the database
      * similar to sandbox_multi->sql_insert_switch and ->sql_update_switch but as a combined function not to repeat the id field creation
-     * TODO move the code to an object used by sandbox and sandbox_value
+     * TODO Prio 2 move the code to an object used by sandbox and sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_multi|null $db_obj the user sandbox object with the database values before the update or the standard db_row
@@ -3744,6 +3806,20 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
+     * report a write without a statement, because the caller has found a change that sql_write
+     * does not see e.g. a field that is not part of the write, so the change is not saved
+     *
+     * @param string $write the name of the skipped write e.g. 'update'
+     * @param user_message $msg to show the link to the system log entry
+     * @return void
+     */
+    private function report_empty_write(string $write, user_message $msg): void
+    {
+        log_warning_msg('the ' . $write . ' of ' . $this->dsp_id()
+            . ' is not saved, because sql_write finds no changed field', $msg);
+    }
+
+    /**
      * create the sql statement to add a new value and log the changes
      *
      * @param sql_creator $sc sql creator with the target db_type already set
@@ -3783,7 +3859,7 @@ class sandbox_multi extends db_object_multi_user
         );
 
         // get the fields for the value log entry
-        // TODO review check why a different list for the log is needed; instead use the field names like in sandbox
+        // TODO Prio 2 review check why a different list for the log is needed; instead use the field names like in sandbox
         $fvt_lst_log = clone $fvt_lst;
         // the change log names the row by the same group id as the key fields of the data table
         // (see sandbox_value::id_fvt_lst and group::id_or_phrase_list_id)
@@ -3795,7 +3871,7 @@ class sandbox_multi extends db_object_multi_user
             $qp_log = $sc->sql_func_log_value($this, $this->get_user(), $fvt_lst_log, $sc_par_lst_log, $msg);
             $sql .= ' ' . $qp_log->sql;
         } else {
-            // TODO review
+            // TODO Prio 2 review
             $qp_name = $sc->name();
             $qp_log = $sc->sql_par($this::class, $sc_par_lst_log);
             $qp_log->par_fld_lst = new sql_par_field_list();
@@ -3850,7 +3926,7 @@ class sandbox_multi extends db_object_multi_user
         // collect the fields that should be written to the database
         $fvt_lst_write = new sql_par_field_list();
         // add the id to the changes
-        // TODO maybe net out with calling function and / or make list correct from beginning
+        // TODO Prio 3 maybe net out with calling function and / or make list correct from beginning
         $fvt_lst_all = clone $fvt_lst;
         if ($sc_par_lst->is_update()) {
             $fvt_lst_all->add_list($fvt_lst_id);
@@ -3979,6 +4055,11 @@ class sandbox_multi extends db_object_multi_user
         if ($chk_obj->id() == 0) {
             $chk_obj->set_id($db_obj->id());
         }
+        // the placeholder source of a user row (set_user_table_source) stands for no source,
+        // e.g. the undo of a change takes it over from the user row and matches the standard row again
+        if ($chk_obj->has_placeholder_source() and !$db_obj->has_source()) {
+            $chk_obj->set_source(null);
+        }
         $fvt_lst = $chk_obj->db_fields_changed($db_obj, $msg);
         return $fvt_lst->is_empty_except_internal_fields();
     }
@@ -4071,8 +4152,8 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the sql statement to add a new value or result to the database
-     * TODO review
-     * TODO check if it can be merged with the sandbox function
+     * TODO Prio 2 review
+     * TODO Prio 2 check if it can be merged with the sandbox function
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
@@ -4155,8 +4236,8 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the sql statement to add a new value or result to the database
-     * TODO review
-     * TODO add qp merge
+     * TODO Prio 2 review
+     * TODO Prio 2 add qp merge
      *
      * @param sql_creator $sc sql creator with the target db_type already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
@@ -4291,7 +4372,7 @@ class sandbox_multi extends db_object_multi_user
      * create the sql statement to update a value or result in the database
      * similar to sandbox->sql_update_named_and_log but for objects that are stored in several tables like values or results
      *
-     * TODO review
+     * TODO Prio 2 review
      * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
@@ -4389,7 +4470,7 @@ class sandbox_multi extends db_object_multi_user
 
         // add additional log entry if the row has been excluded
         if ($this->excluded) {
-            // TODO use a common function for this part with in sql_delete_and_log
+            // TODO Prio 2 use a common function for this part with in sql_delete_and_log
             $sc_par_lst_log = clone $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::EXCL_NAME_ONLY);
             $sc_par_lst_log->add(sql_type::SELECT_FOR_INSERT);
@@ -4408,7 +4489,7 @@ class sandbox_multi extends db_object_multi_user
                 /*
                 $qp_log = $sc->sql_func_log_link($this, $this, $this->get_user(), $par_lst_out, $sc_par_lst_log, $msg);
                 $par_lst_out->add_list($qp_log->par_fld_lst);
-                // TODO use these functions more often
+                // TODO Prio 2 use these functions more often
                 $par_lst_out->add_list($this->sql_key_fields_text_old($fvt_lst));
                 $par_lst_out->add_list($this->sql_key_fields_id_old($fvt_lst));
                 */
@@ -4456,8 +4537,8 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * create the sql statement to add a new value or result to the database
-     * TODO review
-     * TODO add qp merge
+     * TODO Prio 2 review
+     * TODO Prio 2 add qp merge
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp
@@ -4530,7 +4611,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * overwritten by the child objects
-     * TODO to be overwritten by the sandbox value function
+     * TODO Prio 2 to be overwritten by the sandbox value function
      * @return bool true if the db table for up to 4 phrases with a 8bit int key can be used
      */
     function is_prime(): bool
@@ -4541,7 +4622,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * overwritten by the child objects
-     * TODO to be overwritten by the sandbox value function
+     * TODO Prio 2 to be overwritten by the sandbox value function
      * @return bool true if the db table for up to 4 phrases with a 8bit int key can be used
      */
     function is_main(): bool
@@ -4552,7 +4633,7 @@ class sandbox_multi extends db_object_multi_user
 
     /**
      * overwritten by the child objects
-     * TODO to be overwritten by the sandbox value function
+     * TODO Prio 2 to be overwritten by the sandbox value function
      * @return bool true if the db table key of 512bit is not enough
      */
     function is_big(): bool
@@ -4562,7 +4643,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * TODO create a function max_phrases that is overwritten by the result object
+     * TODO Prio 2 create a function max_phrases that is overwritten by the result object
      * @param bool $all
      * @return array
      */
@@ -4657,7 +4738,10 @@ class sandbox_multi extends db_object_multi_user
                 $sbx->excluded
             );
         }
-        if ($sbx->share_id != $this->share_id) {
+        // an unset share or protection of e.g. an update put message does not remove the database setting
+        // and matches the defaults that the standard row is loaded with (row_mapper_std)
+        // to remove a share or protection setting the type e.g. no_protection must be given
+        if ($this->share_id != null and $sbx->share_id != $this->share_id) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_SHARE,
@@ -4672,7 +4756,7 @@ class sandbox_multi extends db_object_multi_user
                 $sbx->share_id
             );
         }
-        if ($sbx->protection_id <> $this->protection_id) {
+        if ($this->protection_id != null and $sbx->protection_id <> $this->protection_id) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . fields::FLD_PROTECT,
@@ -4743,14 +4827,15 @@ class sandbox_multi extends db_object_multi_user
                 sql_db::FLD_EXCLUDED_SQL_TYP
             ];
         }
-        if ($sbx->share_id <> $this->share_id) {
+        // an unset share or protection matches the defaults, like in db_changed_sandbox_list
+        if ($this->share_id != null and $sbx->share_id <> $this->share_id) {
             $lst[] = [
                 fields::FLD_SHARE,
                 $this->share_id,
                 self::FLD_SHARE_SQL_TYP
             ];
         }
-        if ($sbx->protection_id <> $this->protection_id) {
+        if ($this->protection_id != null and $sbx->protection_id <> $this->protection_id) {
             $lst[] = [
                 fields::FLD_PROTECT,
                 $this->protection_id,
@@ -4791,7 +4876,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * TODO review and add unit tests for all cases
+     * TODO Prio 2 review and add unit tests for all cases
      * @return sql_field_type with the type of the id
      */
     function id_field_type(): sql_field_type
@@ -4868,10 +4953,10 @@ class sandbox_multi extends db_object_multi_user
      */
 
     /**
-     * TODO deprecate because using the object const is actually faster in execution
+     * TODO Prio 2 deprecate because using the object const is actually faster in execution
      * return the expected database id field name of the object
      * should actually be static, but seems to be not yet possible
-     * TODO check if it can be combined with id_field()
+     * TODO Prio 2 check if it can be combined with id_field()
      */
     function fld_id(string $class = self::class): string
     {
@@ -4900,7 +4985,7 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * TODO deprecate
+     * TODO Prio 2 deprecate
      * fill a similar object that is extended with display interface functions
      *
      * @param object $dsp_obj the object that should be filled with all user sandbox values

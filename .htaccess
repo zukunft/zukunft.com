@@ -23,9 +23,9 @@ RedirectMatch 404 ^/src/test/
     Require all granted
 </FilesMatch>
 
-# the static offline fallback pages in the docroot have no file extension,
-# so they are allowed by their exact names
-<FilesMatch "^(login|login_activate|logout|signup|settings|find)$">
+# the static offline fallback pages and the short urls of the pinned views of config.yaml
+# in the docroot have no file extension, so they are allowed by their exact names
+<FilesMatch "^(login|login_activate|logout|signup|settings|find|problems|pv|panels|cbam|portfolio_split|company_sheet)$">
     Require all granted
 </FilesMatch>
 

@@ -14,11 +14,218 @@ client-side handler.
   `style_html.css` show the matched content **and** highlight its label, first tab
   default): a link to `…#changes` opens the "Changes" tab — no script needed.
 - A popup menu is the html `details` element, which keeps the open state itself:
-  `html_base::popup_menu` wraps the always shown label in the `summary` and the
-  entries in a list, and the `.<name>-menu` rules in `style_html.css` float the
-  list below the label (the header menus and the "…" column menu of a value table).
+  the header menus of `html_base::navbar` (edit, language and user) wrap the
+  always shown icon in the `summary` and the entries in a list, and the
+  `.<name>-menu` rules in `style_html.css` float the list below the icon. A page
+  has no menu of its own: its entries e.g. the columns of a value table are part
+  of the edit menu.
 - Never emit a `<script>` tag or an inline event handler (`onclick=…`, `data-toggle`
-  for a JS plugin, …) from a `web/` renderer.
+  for a JS plugin, …) from a `web/` renderer, except the calculator scripts below.
+
+### As few css entries as possible
+
+Every css rule is code that each page carries and that each layout change has to
+check, so the style files keep as few entries as possible. A new page or layout
+first reuses an existing class, also by putting the class on another element,
+before a rule is added; and a fix for one page never changes a rule that other
+pages share. E.g. the calculator page that the browser builds gets the width of
+the server page because its host element carries the existing `use-case` class
+(`system_page::calculator_json`), not by a new rule: a flex child of
+`.main-container` without a width of its own shrinks to its content.
+
+The font and every colour are config.yaml entries below user > default > frontend >
+layout: `font` and `colours` with the groups `page` (`--page-*` of `style_html.css`),
+`editor` (`--bg`, `--ink`, `--accent`, … of the calculator and the formula editor) and
+`chart` (`--chart-*` of the table charts, prefixed because the `:root` of a chart svg sets
+them for the whole page), each with a `dark` group for the dark mode. The entry
+`colour mode` (`triples::COLOUR_MODE`, a triple with its own code id, because the word
+`mode` alone is too generic to select the setting) decides which colours a page gets (`html_base::theme_css`): 1 is always light,
+which is the default (`def::FALLBACK_MODE`), so that a page looks the same for every user
+until the user switches, 2 is always dark, which also switches the bootstrap components by
+`data-bs-theme`, and 0 follows the setting of the browser by a media query. The user menu of a logged-in user offers the
+switch to the other mode with a tooltip (`html_base::theme_switch`); it saves the mode as
+the own overwrite of the config value like the settings page, and if the user follows the
+browser, both entries are in the menu and the css shows only the one to the other mode
+than the browser. The page head sets the colours as css variables
+(`html_base::theme_style`), so the css files hold no font and no colour value; a value
+that css could misread is reported and the fallback of `def::FALLBACK_FONT`,
+`def::FALLBACK_PAGE_COLOURS`, `def::FALLBACK_EDITOR_COLOURS` or
+`def::FALLBACK_CHART_COLOURS` is used, which has the value of config.yaml
+(`coding_rule_tests::config_yaml_theme_fallback_tests`). Every page, its buttons and the
+editors use the one font `--font-page`; the editors set only their font size, and their
+rules for the page body and the form elements are nested in the editor host, so the
+navbar keeps the font of the other pages.
+
+The buttons use as few colour sets as possible, each named by a comment in the css:
+the "main button" of `style_html.css` (grey, a grey blue when the mouse is over it,
+the variables `--btn-main`, `--btn-main-hover` and `--btn-main-ink`) for every button
+of the pages and for the main actions of the calculator and the formula editor e.g.
+load and save, and the "editor", "ghost" and "danger button" of
+`calculator_editor.css` for their other actions; `formula_editor.css` repeats the
+"editor" and the "danger button" inside its hosts. An inactive button keeps the colours of its set with a lower
+intensity. The generated `src/test/resources/web/html/object_pages/buttons.html`
+(`base_ui_tests::buttons_page`) shows a sample button of each set with its name.
+
+### Javascript only for the calculator
+
+The one exception is a calculator page and its editor: if `config.yaml` allows it (user > default >
+frontend > use javascript > for calculator; `use javascript` itself stays false for
+every other page), the result panel (`system_page::calculation_result`) adds the
+calculator script, so that the results change as soon as an input changes:
+
+- The page gives the browser its calculation as **data**, never as code
+  (`ui_list::calculator_script`, `html_base::script_data`): the numbers by their html
+  id (`sandbox_value::html_id`), only those that a result, an input or a cell reads
+  (`ui_list::calculator_used_ids`), so that a value of the request cache that the page
+  does not use never changes the page, the calculation of each result as tokens
+  (`formula_calc::tokens`: numbers, `+ - * /`, `^`, brackets, the math functions with their `;` and the html id of each
+  operand, for a list function of each of its values, the same operands that the page calculation of PHP uses), the number that
+  each input sets and the number and format of each cell. A formula text is never
+  written into the page as script, so a formula cannot inject code.
+- The data also names per input and assumption field the html id of its number, its
+  decimals and, for a number field, its unit and the save vars of
+  `ui_list::calculator_save_vars` (`ui_list::calculator_field_plan`); the page embeds the
+  phraseData answer of its cache (`data_object::$page_data`) and the verbs and units of the type
+  cache with the html ids of the editor (`system_page::calculator_page_data`), so that one
+  script can build the editor preview and the calculator page from the same data.
+- Only the results that a cell shows or that such a result uses are calculated
+  (`ui_list::calculator_needed_results`), so that a result of another phrase in the
+  request cache never changes the page.
+- The script is one static file, `src/main/resources/script/calculator.js`
+  (`files::CALCULATOR_SCRIPT`), loaded with `<script src>`; it has no inline handler
+  and evaluates only the tokens with the grammar of `shared/calc/arithmetic.php`.
+- The page stays complete without the script: the inputs are a normal form, the
+  cells show the numbers of the page calculation, and a browser without javascript
+  shows the same page as before.
+- Every cell of a number has a unique html id (a repeated number gets its count
+  behind the id), so the script can update each cell and the save can name it.
+
+The calculator page built in the browser (`system_page::calculator_json`) is the calculator page
+if the config allows javascript for the calculator and the phrase has calculator triples
+(`system_page::is_javascript_calculator`); the url asks for the page of the server with `sc=0`
+(`url_var::JAVASCRIPT`, human `javascript=0`, `view_exe::is_javascript_page`), which is never
+cached. The database read test writes both: `use_cases/pv_lifetime_balance_js.html` by default
+and `use_cases/pv_lifetime_balance_no_js.html` with `sc=0`. It has, like the
+editor, no html of its own: it renders the empty host, the seed and the types of the editor
+and the settings of the page (`system_page::calculator_page_settings`: the number format, the
+translated texts, the save form of the server and the names of the calculator keywords and
+of the verbs by their code id), and the static `src/main/resources/script/calculator_json.js`
+(`files::CALCULATOR_JSON_SCRIPT`) builds the page with the html and the styles of the server
+page from the seed only: the reader rules of `calculator.php`, a plain phrase match for each
+number (the fewest other phrases; several different numbers leave the number empty and warn in
+the console, because the data must name one number), the unit and the share by the phrase type
+of the seed (the type names by their code id in the settings), the unit conversion of a column by
+the system formulas (`number_format::unit_conversions`) and the operands of each result by
+`formula_calc::value_of` on the context of the result; so the script shows the operand fields, the
+formula notes and the sources of the server page, checks the stored results once like
+`ui_list::check_results` and calculates every result again when an input changes.
+
+The formula editor view (`views::FORMULA_EDITOR` of `calculator_views.json`, e.g.
+http://localhost/http/view.php?m=formula_editor&id=-2757, its symbol buttons show the basic arithmetic and
+after one press on "... more" the other math functions of `docs/math.md`) has three components side by side: the
+formula selector (`system_page::formula_editor_selector`, host `formulaSelector`), the formula editor
+(`system_page::formula_editor`, host `formulaEditor`) and the result compare
+(`system_page::formula_result_compare`, host `formulaCompare`). Only the formula editor component adds,
+like the calculator editor below, the phraseData answer of the page phrase with its results as the
+seed, the session token and the static `src/main/resources/script/formula_editor.js`, which fills
+every host that is on the page, so that a view can leave out the selector or the compare; the styles
+of `style/formula_editor.css` are nested in the hosts, so that the page keeps the standard css. The
+database read test writes `use_cases/formula_editor.html` next to the hand made
+`use_cases/formula_editor_sample.html`, which loads the same script and style with a fixed seed.
+
+The calculator editor (`system_page::calculator_editor`) has no page without the
+script: it renders the empty host, the answer of the phraseData api for the page
+phrase as json data (`web/phrase/phrase_data.php`, `html_base::script_data`) and the
+static files `src/main/resources/script/calculator_editor.js` and
+`style/calculator_editor.css` (`files::CALCULATOR_EDITOR_SCRIPT`,
+`files::CALCULATOR_EDITOR_STYLE`); the script builds the editor from that seed and
+reads another phrase with one phraseData call. A formula selected in the page structure is changed in
+the formula editor: the page also loads `formula_editor.js` and `formula_editor.css` before its own
+script, which starts the formula editor (`startFormulaEditor`) with its own hosts in the settings
+column and instead of the page preview and with the loaded data; the formula editor then has no
+toolbar, no selector and no draft of its own, reports every changed expression to the change list of
+the calculator editor and gets the changes back after an undo, so that one save stores all changes. The page also embeds the verbs and
+the unit and scaling phrases of the frontend type cache with their id and name in
+the format of the typeLists api (`system_page::calculator_editor_types`), so that
+the script finds the id of a verb and knows a unit without an api call; only
+these, because the whole typeLists answer is much larger than the page. The script has no text of its
+own: the page embeds the translated texts by their message id as json data too, i.e. all messages
+with the prefix `calc_editor_` and the texts of the calculator page that the preview shows
+(`system_page::calculator_editor_texts`); the script names each message id once (`TXT` in
+`calculator_editor.js`) and fills the variables of a message like the pod e.g. `z$VarPhraseName$z`.
+The formula editor gets its texts the same way with the prefix `formula_editor_`
+(`system_page::formula_editor_texts`), which the formula editor view and the calculator editor
+embed, because both start the formula editor. The export button saves the loaded data with the
+unsaved changes in the format of the seed as a json file on the device (`exportDoc` and `editedDoc`
+in `calculator_editor.js`): the triples as a save would store them, the new words, the changed,
+added and removed values and the changed expressions, of which a new object has no id yet; so the
+file can be the seed of a test or of a page without a pod. The import button, shown on a pod
+only, sends a json file to the standard json import of the pod (`PUT /api/json/`, `import::put_json`)
+without the parts of the phraseData answer that are no import data (`IMPORT_SKIP_KEYS`), and then
+loads the page phrase of the file with its new database id like the load button; it is grey with
+the tooltip "Save or discard changes before import" while the editor has unsaved changes. The save posts one update put
+message with the changes to `/api/updatePut/` (`cfg/import/update_put.php`, see
+`docs/llm/json_structure.md` "Update put message"), with the session token of
+the page (`html_base::form_session_token`) in the `X-CSRF-Token` header; an id
+beyond the safe integer of javascript e.g. the group id of a value is read and
+sent as text.
+
+A phraseData answer fills the request cache of a page with `phrase_data::fill`:
+each word, triple, formula, source, value and result of the answer becomes the
+api json that the frontend object maps, with the phrases of a triple, value or
+result found by their name within the answer (a triple without its own name by
+its generated name) and the types and verbs by their code id or name in the type
+cache; a name that the answer does not contain is reported and never loaded by
+another api call. A result carries its group id like in the result api. The
+calculator page loads one answer for its phrase (`view_exe::add_calculator_data`)
+and, if the answer names nothing that it does not contain, marks the cache as
+complete (`data_object::$page_data_complete`), so that the components load no
+values, results, sources and field triples of their own: the answer is the prime
+source of the page, and `phrase_data_ui_tests` renders the complete page from the
+sample answer alone and checks its parts; the snapshots of the page,
+`use_cases/pv_lifetime_balance_js.html` and `use_cases/pv_lifetime_balance_no_js.html`, are
+written by the database read test (`system_views_read_tests::run_pv_lifetime_balance`).
+
+The views that change data (`views::CHANGE_MASKS_IDS`, the add, change and delete
+views, and e.g. the undo or the paste table view) have the view type `mask_default`
+("edit"); the import views have the view type `import`; the editors
+(`views::EDITOR_MASKS_IDS`, the calculator and the table editor) change other views
+and have the view type `editor`. These and the `sub` views are system types
+(`view_types::SYSTEM_TYPES`), so a user cannot assign them to a word or triple. A view
+for a word or a triple, e.g. the calculator or the table, has the view type `phrase`,
+so that a view without a fixed view id gets the word or triple of the url
+(`frontend::dbo_ui_by_view_type`). The detail views of an object have the type of
+the object, e.g. `word` or `value`; the view type `detail_view` says nothing about
+the object, so a view of this type is not offered for a word or triple (`view_types::NON_PHRASE_TYPES`). The editors show the phrase of the
+url like the page they edit (`views::PHRASE_MASKS_IDS`). A user
+who may not change the database (`user::is_blocked`) is answered like on every
+other change view (`views::IP_BLOCKED_MASKS_IDS`, `http/view.php`): the message
+`CHANGE_BLOCKED_FOR_IP_USER` on the back page or, without one, on the page the
+editor edits (`views::change_to_show_id`), e.g. the calculator of the phrase.
+
+### The save of a calculator page
+
+The save button of a calculator page is a post form with the session token
+(`system_page::calculator_button_save`, `html_base::form_post`) that every number
+field joins by its form attribute. Each number field sends its number
+(`n<field>`), the group id of the value it shows (`g<field>`), the number it
+has shown (`8n<field>`), its label (`k<field>`) and its unit (`p<field>`,
+`ui_list::calculator_save_vars`); a phrase selector sends
+neither the group id nor the shown number, so it is never saved as a number. `frontend::action_calculator_save`
+writes only the numbers that differ from the shown one, as the change of the
+requesting user (`frontend::calculator_changes`, `db_object::update`), without a
+confirm view, and shows the page again: after a save with the saved numbers and
+one confirmation per saved number e.g. "System size changed to 9 kWp (from 10 kWp)",
+whose new number links to the default view of the value (`frontend::calculator_saved_text`,
+shown as safe html via `user_message::add_info_html`), after a failed save (e.g. a user without login) with the entered
+numbers and the message, so that no input is lost.
+
+The page that the browser builds also has a field for the name of a case above the save button. A new
+name does not submit the form: `saveCase` of `calculator_json.js` sends an update put message
+with the word of the name, the triple `<name> <base phrase>` (`<base phrase>` · `of` · `<name>`) and the
+values of the page phrase with this triple and the entered numbers, and then opens the page of
+the new triple, which loads the new database ids, so that the next save is the normal form. The
+results of a case are never sent, because the backend job calculates them.
 
 A separate JavaScript frontend (likely Vue.js or React) is planned for later as
 its own app consuming the same api; that is a future, additional client and does
@@ -97,6 +304,38 @@ return the shared defaults. A `config` constructed anywhere else is an *empty*
 value list: `get_by()` silently returns the fallback instead of the user setting,
 and the per-request load from the backend is bypassed. The rule is enforced by
 `coding_rule_tests::php_web_config_from_cache_tests`.
+The steps from a new `config.yaml` key to the backend and frontend getter are
+in *Using a config.yaml setting in a script* in `docs/llm/architecture.md`.
+
+### The pinned views of the static start page are written by the test run
+
+`/index.html` and the short urls in the docroot (`/pv`, `/cbam`, …) are static
+files, so no request reads the config for them. The pinned views of
+`config.yaml` (`system` → `view` → `startup` → `pinned views`) are keyed by
+their url name, and each has a `url`, a `name` and a `tooltip`. A pinned view
+with an empty `url`, which the import does not save as a value, and with a
+`view name` and a `phrase name` opens that view with
+that phrase e.g. the view `Calculator` with the triple `example PV installation`,
+whose negative phrase id names the triple, because the ids differ by pod.
+`system_views_read_tests::run_pinned_views` loads these ids from the database
+and writes the pages with `AUTO_UPDATE_TEST_FILES`; `base_ui_tests` writes the
+other static pages like the forward pages of `api::FORWARD_VIEWS`:
+
+- `html_base::start_page` writes the links between the
+  `PINNED_VIEWS_BEGIN` / `_END` comments of `index.html` and the font and the
+  colours of `html_base::theme_style` between its `THEME_BEGIN` / `_END`
+  comments; the rest of the page stays hand-written.
+- `html_base::static_page` writes the font and the colours between the same
+  comments of the other static pages of `test_files::STATIC_PAGES` e.g.
+  `optional/ip_reject.html`.
+- `html_base::forward_url_page` writes one forward page per url name of
+  `config.yaml` into `test_files::PINNED_PAGE_PATH`, a meta refresh without
+  javascript.
+
+A new pinned view therefore needs only its url name in the extensionless
+allow-list of the `.htaccess`, and the test fails until it is there. The url
+name is a name of the data, not a word, so it needs no const
+(`triples::CONFIG_DATA_KEYS`, see `config_yaml_word_triple_tests`).
 
 ## The frontend never accesses the database — load via the API
 
@@ -128,6 +367,17 @@ and is therefore the one file excluded from the coded check. It is being migrate
 to the API (`TODO Prio 1` in that test); once done, the exception is removed and
 no `web/` file touches the database at all.
 
+### An api url always ends with a slash
+
+Every api route is a directory with an `index.php` (e.g. `api/updatePut/index.php`),
+so every client writes the api url with the trailing slash, e.g. `/api/updatePut/`
+or `/api/phraseData/?id=-2757`: `html_base` and `rest_call` for the php frontend
+and `apiUrl` of `calculator_editor.js`. Without the slash the web server answers
+with a redirect to the directory (Apache `mod_dir`), and a browser repeats a
+redirected post as a get without its body, so a change is lost without a
+message. The slash makes the call independent of the web server, so no install
+needs a rewrite rule.
+
 The type preload of this bootstrap (and of `application::start_api`) uses the
 **cached types json**: `type_lists::load_cached` fills all type lists with one
 read of the `db_cache` `types` entry — the same api message that
@@ -141,6 +391,40 @@ config loads *after* the types, so the bootstrap calls
 `type_lists::reload_if_cache_denied` once the config is known. A caller that
 needs guaranteed fresh types (e.g. `ui_config::reload`, the test bootstrap)
 keeps using `load_type_lists` / `type_lists::load`.
+
+## The frontend calculates, a save job verifies — the double calculation check
+
+A page with inputs, e.g. the PV lifetime balance use case, calculates its
+results **in the frontend** from the values and formulas it has loaded via the
+api, so the user sees the effect of a changed input at once and without a
+write. The frontend never stores a result.
+
+When the user presses **save**, the inputs are written as values and a
+**backend job** repeats the calculation on the complete database. The job may
+use data the frontend did not have, e.g. a value of a phrase the page never
+loaded, a user overwrite or a newer measured number, and may collect missing
+data on the way. The results of the job are the ones stored.
+
+The frontend then **compares** the job results with its own. Every difference
+is shown to the user as a message that names the result and both numbers,
+never swallowed: a silent difference would hide either a value the frontend
+load missed or a formula the two sides evaluate differently, and both are
+defects to fix, not to average out. The same comparison is what a test
+asserts: the frontend numbers of a use case page and the stored results of
+its import must agree.
+
+The first half is in place: a value table loads the stored results of its
+phrase with the formulas that made them (`ui_list::add_phrase_results`) and
+repeats every calculation with the values and results of the page
+(`ui_list::check_results`, `formula_calc`): the phrase names of the formula
+are replaced by the numbers of the page the way the import validation does,
+values before results, within the context phrases that the result carries
+(`json_fields::CONTEXT`), and the text is calculated by the shared
+`arithmetic`. A stored number that differs from the page calculation is
+replaced on the page and reported with `msg_id::RESULT_DIFFERS_FROM_PAGE`; a
+result whose formula or values the page does not have keeps its stored number.
+The save with the backend job and its compare is the next step
+(`docs/llm/pending.md` "PV lifetime balance page").
 
 ## `frontend.php` boots the html frontend, `application.php` the api backend
 
@@ -294,9 +578,20 @@ Pick the key that matches the list's purpose and is reproducible:
   `phrase_list::sort_by_impact()`, `value_list::sort_by_impact()`; ties must
   still resolve deterministically, so fall back to name or id when impacts are
   equal.
+- **numbers** (values and results) unless the page names another order: the
+  bigger impact first, then the bigger number if the unit is the same, then the
+  name — `sandbox_value::sorted()`, used by `value_list::sort_by_impact()` and
+  `result_list::sort_by_impact()`; a list of only the names e.g.
+  `result_list::display_linked()` is a name list and sorted by name. Two numbers are compared only within
+  the same unit (unit, scaling and percent phrases), so the unit is a sort key
+  between the impact and the number, which keeps the order the same for every
+  compare. The name is the phrase names in alphabetic order, never the group
+  id, which is packed from the phrase database ids and changes with a new
+  database.
 - **name** for alphabetical pick lists and selectors.
 - **id** (or another stable unique field) as the last-resort tie-breaker so the
-  order is total, never partial.
+  order is total, never partial; not the group id of a value or a result (see
+  numbers above).
 
 ```php
 // right: sort, then render
@@ -334,6 +629,11 @@ only the page as a whole.
   literal, so an admin can tune how much a page shows.
 - The same holds for a new list component: if it can grow with the data, it needs
   a limit and a tail, even when it sits next to lists that already have one.
+- The one exception is the component style `all-rows` (`view_styles::ALL_ROWS`):
+  the author of a view sets it on a component whose rows are the content of the
+  page and cannot grow with the data, e.g. the result chain of a use case table,
+  and takes the responsibility for the page length. The renderer passes the list
+  size "all" to the component unless the url names a size (`component_exe`).
 
 When you add or change a page renderer, ask what the page looks like for the
 object with the *most* data, not for the test fixture.
@@ -389,18 +689,42 @@ the pod below `system` can only be changed by an admin
 shows the layout. Its search (`url_var::PATTERN`) and scope
 (`url_var::CONFIG_PART`) are no part of the page cache key, so a page with
 either is rendered for each request. For a logged-in user a click on a number
-with a database value opens an input with a small save icon (a `<details>`,
+or a text with a database value opens an input with a small save icon (a `<details>`,
 because a double click needs javascript); the post form uses the value edit
-mask with the confirmed step, so the number is saved as the user's own overwrite
+mask with the confirmed step, so the value is saved as the user's own overwrite
 without the confirm view, and the user's cached pages and config values are
-dropped (`frontend::drop_cached_pages`). The page after the save confirms in
+dropped (`frontend::drop_cached_pages`). A text without a database value, e.g.
+the empty `view name` of a pinned view, which the import does not save, shows
+the edit icon; the backend sends the phrase ids of its yaml path
+(`json_fields::CONFIG_PHRASE_IDS`), so its form uses the value add mask with
+these phrases. An empty text is never saved (`value_base::save`), because its
+api message would have no text and the config could not be read. The page after the save confirms in
 green which setting has changed from what to what
 (`frontend::setting_saved_text`, from `url_var::CONFIG_KEY` and the `'8'`
 value of the form). An admin's form also sends `url_var::SET_DEFAULT`, so the
 number becomes the default of all users without an own overwrite
 (`value_base::save_as_default`: the standard row with its change log, the owner
 stays, the admin's own overwrite is removed) and the cached pages and config
-values of all users are dropped.
+values of all users are dropped. An admin also has a "clear cache" button in the
+toolbar (`config_tree::clear_cache_form`), whose post with
+`url_var::ACTION_CLEAR_CACHE` removes all cached pages, api answers, types and
+configurations of all users without a confirm view (`frontend::action_clear_cache`,
+`db_cache_page::del_all`, `db_cache::del_all`); the next requests create them
+again. The cache rows are derived data, so they are removed without a change log.
+
+Each node names the code id of its word (`json_fields::CODE_ID`, from
+`config_numbers::phrase_code_ids`), so the page finds a setting by the code id
+and not by its name. The setting of the word with `words::FONT_CODE_ID` (set in
+`base_phrases.json`) is a selection instead of a text input
+(`config_tree::font_select`): the external libraries bring no text font,
+because fontawesome has only icon fonts and bootstrap no font file, so the
+selection offers the generic families sans-serif, serif and monospace and the
+bootstrap lists of fonts installed on the device (`config_tree::FONT_OPTIONS`);
+a font of `config.yaml` that is not in the list is offered too. The setting of the
+triple with `triples::COLOUR_MODE_CODE_ID` is a selection of "light color" and "dark
+color" (`config_tree::mode_select`, `config_tree::MODE_OPTIONS`), which saves 1 or 2
+(`def::MODE_LIGHT`, `def::MODE_DARK`) as the number of the setting; a mode of
+`config.yaml` that is not in the list is offered too.
 
 ## "… more" is always a link that shows more
 
@@ -430,14 +754,17 @@ and that is a gap to close by threading the context, not a licence to skip the
 link. When adding a new truncated list, pick (or create) the "show all" view
 first, then wire the tail to it.
 
-## The simple table and its "…" menu
+## The simple table and its versions in the edit menu
 
 A value table has a simple and a full version, like a list has a short and a
 more version. The simple version shows the columns of the mayor tier only, one
-unit per column — the unit that most numbers of the column have, so that one
-bigger number in another unit cannot hide the unit of every other row
-(`value_list::split_by_unit`) — and each cell the number without its probability range; the
-full version shows every tier, every unit and the range behind each number. A
+unit per column — the unit that a column definition per unit puts in the
+highest tier, e.g. `potential gain in EUR can be mayor column (system)` and
+`potential gain in htp can be minor column (system)` (`phrase_list::column_tier`),
+and among units of the same tier the unit that most numbers of the column have,
+so that one bigger number in another unit cannot hide the unit of every other row
+(`value_list::split_by_unit`) — and each cell the number without its variance; the
+full version shows every tier, every unit and the variance behind each number. A
 further unit of a column states the same measure a second way, so it is a minor
 column at most (`value_list::column_tier`), and it is shown only if it has a
 number in every row of its first unit, e.g. the potential loss of a problem in
@@ -453,11 +780,10 @@ lowest tier are left to the full version. So which version shows a column is
 decided by its tier in the definitions: e.g. on the start page the main version
 shows the reason and its loss, the minor version adds the loss in percent, the
 initial effort and the loss reduction, and the reward ratio, a marginal column,
-is shown by the full version only. The start page opens with the simple version. The last header cell of every table,
-the full one included, is the "…" menu (`value_list::columns_menu`, built with
-`html_base::popup_menu`), which lets the reader pick the version directly
-instead of stepping through them — and from the full table it is the only way
-back to the fewer columns.
+is shown by the full version only. The start page opens with the simple version. The edit
+menu of the navbar offers every version (`value_list::columns_menu_items`), so the
+reader picks the version directly instead of stepping through them, also from
+the full table back to the fewer columns.
 
 The menu sets `url_var::DISPLAY_LIST_COLUMNS` (`dlc`, human
 `display_list_columns`). That number says how many tiers of
@@ -467,12 +793,20 @@ out from the bottom, so it names one entry per tier
 `COLUMN_TIERS_EX_MINOR` (2, "main") → `COLUMN_TIERS_EX_MARGINAL` (1, "minor")
 → `COLUMN_TIERS_ALL` (0, "all"). The entry is named by the tier alone, because
 the menu header says what is selected. Each entry exists twice, once with
-`url_var::DISPLAY_LIST_RANGE` (`dlr`, `display_list_range`) off and once on
-(`msg_id::TABLE_COLUMNS_WITH_RANGE`), so every version of the table is one
+`url_var::DISPLAY_LIST_VARIANCE` (`dlv`, `display_list_variance`) off and once on
+(`msg_id::TABLE_COLUMNS_WITH_VARIANCE`), so every version of the table is one
 click away. Both vars are `url_var::PAGE_VARS` and part of the page cache key,
 so every selection is a cached page of its own like the more version of a list.
 A page that is not known renders the "…" as plain text, the same gap as for the
 list tail.
+
+The value and result lists of the word, triple, value, result and source pages
+(`value_list::list`, `list_most_relevant`, `columns_by_phrase`) follow the same
+`dlv` switch (`url_var::show_variance`), but default to off: without `dlv=1` the values
+tagged `variance low (system)` or `variance high (system)` are left out; with it
+each bound is shown behind its centre value in the format of the table cell,
+e.g. `-1.04% (-1.25% – -0.87%)`, and the "… and n more" link keeps `dlv=1`. A
+bound without a centre value is shown like a value, so that nothing is lost.
 
 A tier also says on which screen a column is shown: the css class of
 `value_list::column_style` hides a main column on a small screen
@@ -555,13 +889,13 @@ of the table.
 
 `value_list::table_to_svg` draws the table of `table_by_related_columns` as an
 inline svg. Both build the same `table_model` (`value_list::table_model`: the
-rows, columns, units and ranges before anything is rendered), so a chart never
+rows, columns, units and variance before anything is rendered), so a chart never
 shows a row or a number that the table does not have, and the parameters of the
 chart are the ones of the table. `chart_types` says only how the rows are drawn
 (`web/value/table_chart.php`):
 
 - `RANGE_BARS` — one row per table row, the biggest number on top, with a dot
-  for the number and a bar for its probability range; a log scale is used when
+  for the number and a bar for its variance; a log scale is used when
   the numbers differ by more than `table_chart::LOG_RATIO`, so the small
   problems stay visible beside the big ones.
 - `SCATTER` — one numbered point per table row placed by two numbers of the
@@ -644,14 +978,34 @@ order, so `view.php?m=1` shows the biggest potential loss on top and a url with
 an order wins. The orders shown are kept in `table_model::orders`, which marks
 the active sort icon and seeds the links of the other icons.
 
-The "…" menu of the table has two sub headers (`styles::MENU_HEADER`, not
-bold): "columns and values" above the column tier entries and "as" above the
-entries `table`, `chart` and `table + chart` (`table_forms`), which set
-`url_var::DISPLAY_LIST_AS` (`dla`, human `display_list_as`), a page var and part
-of the page cache key like the other list vars. Shown as a chart only, the
-table is replaced by its charts below a `styles::CHART_HEAD` line that keeps
-the header of the table centred and puts the "…" menu in the top right corner
-(`styles::CHART_CORNER`), because the menu is the only way back to the table.
+The edit menu of the navbar offers the column and form selection of the value
+table of the page (`value_list::columns_menu_items`, for a view with a component
+of `component_types::TABLE_MENU_TYPES`) with two sub headers
+(`styles::MENU_HEADER`, not bold): "columns and values" above the column tier
+entries and "as" above the entries `table`, `chart` and `table + chart`
+(`table_forms`), which set `url_var::DISPLAY_LIST_AS` (`dla`, human
+`display_list_as`), a page var and part of the page cache key like the other
+list vars. The tooltip of each entry says what it shows, and the one of a
+column entry names the columns of that selection, which the tables of the page
+collect while they are created (`table_model::tier_names`,
+`data_object::add_tier_names`), because the navbar is created after the views.
+Below the sub header "alternative views" (`html_base::view_change_list`,
+only if there is one) follow the editor of the view and the views of the shown
+object (`sandbox::menu_view_items_ui`): its own view, the views assigned to it, the
+views of its parents and then the four default views of its type (default,
+detail, range and detail with range, `views::default_versions`). Each view has
+the switch icon behind its name except the own view of the object, which already
+shows it always; the view that shows the page is grey with the tooltip "this view
+has been used to show …" (`view::used_link`). An object without an edit view of its
+own e.g. a group sets `HAS_EDIT_VIEW` to false and gets no switch icon, neither in
+the edit menu nor in the views tab, because the edit view it inherits from
+`db_object` is the one of a word; `coding_rule_tests::php_web_switch_edit_view_tests`
+reports a page class that forgets it. The tooltip
+of "... more" names some cached views that the menu does not offer
+(`sandbox::menu_more_names_ui`), and below the sub header "customize" follow
+"change this view" and "add view", whose tooltip names the shown object. Shown as a chart only, the table is
+replaced by its charts below a `styles::CHART_HEAD` line that keeps the header
+of the table centred; the way back to the table is the edit menu.
 
 ## The value quality is a mark behind the number, never a phrase before it
 
@@ -677,3 +1031,28 @@ value only). Every place that shows a number with its phrases calls the mark
 right behind the number (`value_edit`, `name_link`, `links_and_measure`), so a
 new display of a number reuses one of these instead of formatting the number
 itself.
+
+## The numbers of one unit in one column share the unit and the decimals
+
+The numbers of a calculator table column with the same unit are formatted as one
+group (`web\helper\number_format`), so that they can be compared at a glance. The
+largest number decides, with the target digits of `config.yaml` number format >
+digits (default 4; rough 3 for a detail table and for a number in a row label or
+sub text, because those are only an indication):
+
+- it has more integer digits than the target and a preloaded formula converts the
+  unit to a larger one, e.g. `"kg" = "tonne" * 1000`: the group is shown in the
+  larger unit, step by step to the nearest unit, e.g. 113'805 kg as 113.8 t
+- it is below one and a formula converts it to a smaller unit in which it keeps
+  the target digits: the group is shown in the smaller unit, e.g. 0.123456 t as
+  123.5 kg
+- the decimals of the group are the target digits minus the integer digits of its
+  largest number, never below zero, so 10'482 kg next to 113'805 kg is 10.5 t and
+  2'000 kg is 2.0 t
+
+A detail table names the unit in its header, so its columns share the decimals
+only. The formulas are the ones linked to the measure units and the scaling words of the system phrases
+(`data_object::load_system_formulas`, `system_formulas` of the ui config api), and
+the browser recalculation writes a cell with the factor and the decimals of its
+group (`ui_list::calculator_cell_format`, `calculator.js`). A percent symbol is a
+unit, so it follows the number after a blank, e.g. "49 %".

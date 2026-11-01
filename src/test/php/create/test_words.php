@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -51,17 +52,20 @@ include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once test_paths::CONST . 'triple_names.php';
 include_once test_paths::CONST . 'word_names.php';
 include_once test_paths::CREATE . 'test_const.php';
+include_once test_paths::CREATE . 'test_views.php';
 include_once test_paths::UTILS . 'test_cleanup.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -74,6 +78,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\protection_types;
 use Zukunft\ZukunftCom\main\php\shared\types\share_types;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
+use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_ui;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_ui;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -151,6 +156,29 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word_ui "mathematics" with the views that the edit menu of the navbar suggests:
+     *                 the own default view "Mathematical constant", the assigned view "science"
+     *                 and the parent views "Historic" and "Education", which also repeat "science"
+     */
+    function menu_views_ui(): word_ui
+    {
+        $t_msk = new test_views($this->env);
+        $wrd = new word_ui($this->word()->api_json());
+        $wrd->view_id = views::MATH_CONST_ID;
+        // the own default view and the views of the parents as the backend sends them
+        $rel_lst = new view_list($this->env->usr1);
+        $rel_lst->add($t_msk->view_math());
+        $rel_lst->add($t_msk->view_historic());
+        $rel_lst->add($t_msk->view_education());
+        $rel_lst->add($t_msk->view_science());
+        $wrd->view_lst = new view_list_ui($rel_lst->api_json());
+        $asg_lst = new view_list($this->env->usr1);
+        $asg_lst->add($t_msk->view_science());
+        $wrd->view_assigned_lst = new view_list_ui($asg_lst->api_json());
+        return $wrd;
+    }
+
+    /**
      * @return word "mathematics" without the id e.g. as given by the import
      */
     function word_name_only(): word
@@ -217,6 +245,17 @@ class test_words extends test_objects
         $wrd->exclude();
         $wrd->set_share_id($sys->typ_lst->shr_typ->id(share_types::GROUP));
         $wrd->set_protection_id($sys->typ_lst->ptc_typ->id(protection_types::USER));
+        return $wrd;
+    }
+
+    /**
+     * @return word "mathematics" with its wikidata reference e.g. to test the export of the references
+     */
+    function word_with_ref(): word
+    {
+        $t_ref = new test_refs($this->env);
+        $wrd = $this->word();
+        $wrd->ref_lst = [$t_ref->reference_math()];
         return $wrd;
     }
 
@@ -623,6 +662,13 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    function tonne(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::TONNE_ID, word_names::TONNE);
+        return $wrd;
+    }
+
     function definition(): word
     {
         $wrd = new word($this->env->usr1);
@@ -815,6 +861,26 @@ class test_words extends test_objects
     }
 
     /**
+     * @return word "share", the word of the share unit and its symbol (see test_triples::share_ratio)
+     */
+    function word_share(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::SHARE_ID, word_names::SHARE);
+        return $wrd;
+    }
+
+    /**
+     * @return word "ratio", the qualifier of the share unit (see test_triples::share_ratio)
+     */
+    function word_ratio(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::RATIO_ID, word_names::RATIO);
+        return $wrd;
+    }
+
+    /**
      * @return word of the master pod name
      */
     function word_zukunft_com(): word
@@ -892,8 +958,8 @@ class test_words extends test_objects
         return $wrd;
     }
 
-// TODO explain for each test object for which test it is used
-// TODO rename because in the test object "$t->" the prefix dummy is not needed
+// TODO Prio 3 explain for each test object for which test it is used
+// TODO Prio 2 rename because in the test object "$t->" the prefix dummy is not needed
     function word_this(): word
     {
         $wrd = new word($this->env->usr1);
@@ -1097,6 +1163,16 @@ class test_words extends test_objects
         return $wrd;
     }
 
+    /**
+     * @return word "expected", the word of a value of the check table of a calculator page
+     */
+    function word_expected(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::EXPECTED_TEST_ID, words::EXPECTED);
+        return $wrd;
+    }
+
     function word_inhabitant(): word
     {
         $wrd = new word($this->env->usr1);
@@ -1167,6 +1243,16 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::MAYOR_ID, word_names::MAYOR);
+        return $wrd;
+    }
+
+    /**
+     * @return word "minor" that names the column tier of the columns shown on a wide screen only
+     */
+    function word_minor(): word
+    {
+        $wrd = new word($this->env->usr1);
+        $wrd->set(word_names::MINOR_ID, word_names::MINOR);
         return $wrd;
     }
 
@@ -1332,26 +1418,6 @@ class test_words extends test_objects
     {
         $wrd = new word($this->env->usr1);
         $wrd->set(word_names::ASSUMED_ID, word_names::ASSUMED);
-        return $wrd;
-    }
-
-    /**
-     * @return word the tag of the lower bound of the probability range of a value
-     */
-    function word_low(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::LOW_ID, word_names::LOW);
-        return $wrd;
-    }
-
-    /**
-     * @return word the tag of the upper bound of the probability range of a value
-     */
-    function word_high(): word
-    {
-        $wrd = new word($this->env->usr1);
-        $wrd->set(word_names::HIGH_ID, word_names::HIGH);
         return $wrd;
     }
 
@@ -1623,6 +1689,16 @@ class test_words extends test_objects
         $lst->add($this->word_const());
         $lst->add($this->word_pi_symbol());
         $lst->add($this->word_e_symbol());
+        return $lst;
+    }
+
+    /**
+     * @return word_list with only a word without any configuration e.g. to test that the export leaves it out
+     */
+    function word_list_without_cfg(): word_list
+    {
+        $lst = new word_list($this->env->usr1);
+        $lst->add($this->word_name_only());
         return $lst;
     }
 

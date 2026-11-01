@@ -52,6 +52,10 @@ class test_const
     // a type name that no type list has, to test that an unknown type of an import is reported
     // with its name and does not end up as a not-found marker in the type field
     const string TYPE_NOT_IN_LIST = 'System Test type that does not exist';
+    // a phrase name that is never added, to test that an unknown name posted by a form is reported
+    const string PHRASE_NOT_EXISTING = 'System Test phrase that does not exist';
+    // a url key that no url mapper knows, to test that a missing mapping is reported
+    const string URL_KEY_UNKNOWN = 'zzz';
     // the id of the factory link objects e.g. formula link, component link, term view and view relation,
     // used by a page url of an existing link, which the url mapper needs to map the linked objects
     const int LINK_ID = 1;
@@ -63,8 +67,16 @@ class test_const
     const int COMPONENT_LINK_ORDER_NBR = 3;
     // the order number of the filled view link
     const int TERM_VIEW_ORDER_NBR = 4;
+    // the description of the filled view link
+    const string TERM_VIEW_COM = 'add usage and log of a word';
+    // the start position of the view relation
+    const int VIEW_RELATION_POS = 15;
     // the start position logged as a change of the filled view relation
     const int VIEW_RELATION_START_POS = 16;
+    // the description of the filled view relation
+    const string VIEW_RELATION_COM = 'add usage and log of a word';
+    // the fractional weight of a triple e.g. to test that it is not truncated to an int
+    const float TRIPLE_WEIGHT = 0.5;
     // impact used for unit testing
     const float DUMMY_IMPACT = 3.4;
     const float DUMMY_IMPACT_VERB = 123.4;

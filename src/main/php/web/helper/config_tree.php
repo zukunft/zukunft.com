@@ -44,9 +44,11 @@ include_once html_paths::CONST . 'icons.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'config_node.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_CONST . 'words.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
@@ -59,9 +61,12 @@ include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -97,6 +102,28 @@ class config_tree
     ];
     // the top level key of the settings of the pod, which only an admin can change (see value_base::is_pod_setting_denied)
     const string ADMIN_KEY = words::SYSTEM;
+    // the css font families of the font selection: the external libraries bring no text font, because
+    // fontawesome has only icon fonts and bootstrap no font file, so only the generic families and the
+    // font lists of bootstrap (--bs-font-sans-serif and --bs-font-monospace) of fonts installed on the
+    // device; with single quotes, so that a name with a space fits into the html value of the option
+    const string FONT_SERIF = 'serif';
+    const string FONT_MONOSPACE = 'monospace';
+    const string FONT_SYSTEM_SANS = "system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', "
+        . "'Liberation Sans', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'";
+    const string FONT_SYSTEM_MONO = "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+    // the font family => the message of its name in the selection
+    const array FONT_OPTIONS = [
+        def::FALLBACK_FONT => msg_id::CONFIG_FONT_SANS_SERIF,
+        self::FONT_SERIF => msg_id::CONFIG_FONT_SERIF,
+        self::FONT_MONOSPACE => msg_id::CONFIG_FONT_MONOSPACE,
+        self::FONT_SYSTEM_SANS => msg_id::CONFIG_FONT_SYSTEM_SANS,
+        self::FONT_SYSTEM_MONO => msg_id::CONFIG_FONT_SYSTEM_MONO,
+    ];
+    // the number of the colour mode => the message of its name in the selection
+    const array MODE_OPTIONS = [
+        def::MODE_LIGHT => msg_id::CONFIG_MODE_LIGHT,
+        def::MODE_DARK => msg_id::CONFIG_MODE_DARK,
+    ];
 
 
     /*
@@ -314,7 +341,31 @@ class config_tree
         $txt .= $html->div($search, styles::CONFIG_SEARCH);
         $txt .= $this->scope_links($pattern, $scope);
         $form = $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_GET, $txt);
-        return $html->div($form, styles::CONFIG_TOOLBAR);
+        return $html->div($form . $this->clear_cache_form(), styles::CONFIG_TOOLBAR);
+    }
+
+    /**
+     * the button of an admin that removes all cached data of all users (see frontend::action_clear_cache);
+     * a post form of its own, because the search form only reads
+     *
+     * @return string the html code of the post form or '' for a user who is no admin
+     */
+    function clear_cache_form(): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        if ($this->is_admin) {
+            $txt = $html->form_session_token();
+            $txt .= $html->form_hidden(url_var::MASK, (string)views::SYSTEM_CONFIG_ID);
+            $txt .= $html->form_hidden(url_var::ACTION, url_var::ACTION_CLEAR_CACHE);
+            $txt .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
+            $tip = $mtr->txt(msg_id::CONFIG_CACHE_CLEAR_TIP);
+            $txt .= $html->button_bs($mtr->txt(msg_id::CONFIG_CACHE_CLEAR), html_base::BS_BTN_CANCEL, '',
+                url_var::POST_SUBMIT, $tip);
+            $result = $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $txt);
+        }
+        return $result;
     }
 
     /**
@@ -386,11 +437,15 @@ class config_tree
         global $mtr;
         $html = new html_base();
         $result = '';
+        $is_editable = $this->is_editable($cfn, $names);
         if ($cfn->value != '') {
             $result = $this->with_unit($cfn->value, $cfn->unit);
+        } elseif ($is_editable) {
+            // a setting without a value needs something to click on to open the input
+            $result = $html->icon(icons::EDIT);
         }
         // a click and not a double click opens the input, because only a click works without javascript
-        if ($this->is_editable($cfn, $names)) {
+        if ($is_editable) {
             $result = $html->details($result, $this->edit_form($cfn, $names), styles::CONFIG_EDIT);
         }
         if ($cfn->file_value != '') {
@@ -419,21 +474,23 @@ class config_tree
     /**
      * @param config_node $cfn the setting to show
      * @param array $names the yaml keys of the setting, whose first key decides if only an admin can change it
-     * @return bool true if the user can change the setting, which needs a database value to overwrite;
-     *              only a number, because a boolean is shown as true or false and a text has no number input
+     * @return bool true if the user can change the setting: a number or a text with a database value to
+     *              overwrite or a text without one, which the save adds; not a boolean, which is shown as true or false
      */
     private function is_editable(config_node $cfn, array $names): bool
     {
         $is_allowed = (($names[0] ?? '') != self::ADMIN_KEY or $this->is_admin);
-        return ($this->can_edit and $is_allowed and $cfn->id != 0 and is_numeric($cfn->value));
+        $has_value = ($cfn->id != 0 and (is_numeric($cfn->value) or $cfn->is_text));
+        return ($this->can_edit and $is_allowed and ($has_value or $cfn->is_new()));
     }
 
     /**
-     * the input of the number with a small save button, which saves the number as the overwrite of the user
+     * the input of the number or the text with a small save button, which saves it as the overwrite of the user
      * or of an admin as the default of all users (see is_admin)
-     * through the value edit mask without the confirm view and then shows the settings page again
+     * through the value edit mask, or for a text without a database value through the value add mask
+     * with the phrases of the setting, without the confirm view and then shows the settings page again
      *
-     * @param config_node $cfn the setting with a database value
+     * @param config_node $cfn the setting with a database value or a text setting with its phrase ids
      * @param array $names the yaml keys of the setting, which name it in the confirmation of the change
      * @return string the html code of the post form
      */
@@ -441,21 +498,109 @@ class config_tree
     {
         global $mtr;
         $html = new html_base();
+        $val_var = url_var::NUMERIC_VALUE;
+        $input_type = html_base::INPUT_NUMBER;
+        if ($cfn->is_text) {
+            $val_var = url_var::VALUE_TEXT;
+            $input_type = html_base::INPUT_TEXT;
+        }
         $txt = $html->form_session_token();
-        $txt .= $html->form_input(html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE, $cfn->value);
+        if ($cfn->code_id == words::FONT_CODE_ID) {
+            $txt .= $this->font_select($cfn->value);
+        } elseif ($cfn->code_id == triples::COLOUR_MODE_CODE_ID) {
+            $txt .= $this->mode_select($cfn->value);
+        } else {
+            $txt .= $html->form_input($input_type, $val_var, $cfn->value);
+        }
         // the shown value and the name, so that the confirmation can say what has changed from what
-        $txt .= $html->form_hidden(url_var::PRE . url_var::NUMERIC_VALUE, $cfn->value);
+        $txt .= $html->form_hidden(url_var::PRE . $val_var, $cfn->value);
         $txt .= $html->form_hidden(url_var::CONFIG_KEY, implode(self::NAME_SEPARATOR, $names));
         if ($this->is_admin) {
             $txt .= $html->form_hidden(url_var::SET_DEFAULT, url_var::TRUE);
         }
-        $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
-        $txt .= $html->form_hidden(url_var::ID, group_id_url::to_url($cfn->id));
+        if ($cfn->is_new()) {
+            $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_ADD_ID);
+            $txt .= $html->form_hidden(url_var::PHRASE_LIST, implode(',', $cfn->phr_ids));
+        } else {
+            $txt .= $html->form_hidden(url_var::MASK, (string)views::VALUE_EDIT_ID);
+            $txt .= $html->form_hidden(url_var::ID, group_id_url::to_url($cfn->id));
+        }
         $txt .= $html->form_hidden(url_var::STEP, url_var::STEP_CONFIRMED);
         $txt .= $html->form_hidden(url_var::BACK . url_var::MASK, (string)views::SYSTEM_CONFIG_ID);
         $save_txt = $mtr->txt(msg_id::FORM_BUTTON_SAVE);
         $txt .= $html->button_bs($html->icon(icons::SAVE), styles::CONFIG_SAVE, '', url_var::POST_SUBMIT, $save_txt);
         return $html->form_simple(api::MAIN_SCRIPT, html_base::METHOD_POST, $txt);
+    }
+
+    /**
+     * the selection of the page font from FONT_OPTIONS, which is posted as the text of the setting;
+     * a font that is not in the list e.g. set in config.yaml is offered too, so that a save of the
+     * form never changes the font unnoticed
+     *
+     * @param string $font the css font family of the setting e.g. "sans-serif"
+     * @return string the html code of the select
+     */
+    function font_select(string $font): string
+    {
+        global $mtr;
+        $lst = [];
+        foreach (self::FONT_OPTIONS as $family => $label) {
+            $lst[$family] = $mtr->txt($label);
+        }
+        if (!array_key_exists($font, $lst)) {
+            $lst[$font] = $font;
+        }
+        $sel = new html_selector();
+        $sel->name = url_var::VALUE_TEXT;
+        $sel->label_id = msg_id::CONFIG_FONT_SELECT;
+        $sel->tooltip = $mtr->txt(msg_id::CONFIG_FONT_SELECT);
+        $sel->with_label = false;
+        $sel->with_group = false;
+        $sel->lst = $lst;
+        $sel->selected = $font;
+        return $sel->display();
+    }
+
+    /**
+     * the selection of the light or the dark colours of the pages, which is posted as the number of
+     * the setting e.g. 1 for light (see def::MODE_LIGHT); the mode 0 to follow the browser is shown as
+     * the "please select" entry of the selector, whose value is 0, so a save without a choice keeps it;
+     * a mode that is not in the list e.g. set in config.yaml is offered too, so that a save of the
+     * form never changes the mode unnoticed
+     *
+     * @param string $mode the number of the setting as text e.g. "1"
+     * @return string the html code of the select
+     */
+    function mode_select(string $mode): string
+    {
+        global $mtr;
+        $number = (int)$mode;
+        $lst = [];
+        foreach (self::MODE_OPTIONS as $option => $label) {
+            $lst[$option] = $mtr->txt($label);
+        }
+        if ($this->is_unknown_mode($number)) {
+            $lst[$number] = (string)$number;
+        }
+        $sel = new html_selector();
+        $sel->name = url_var::NUMERIC_VALUE;
+        $sel->label_id = msg_id::CONFIG_MODE_SELECT;
+        $sel->tooltip = $mtr->txt(msg_id::CONFIG_MODE_SELECT);
+        $sel->with_label = false;
+        $sel->with_group = false;
+        $sel->lst = $lst;
+        $sel->selected = $number;
+        return $sel->display();
+    }
+
+    /**
+     * @param int $number the number of the colour mode setting e.g. 3
+     * @return bool true if the mode is neither in MODE_OPTIONS nor the browser mode, which the selector
+     *              shows as its "please select" entry
+     */
+    private function is_unknown_mode(int $number): bool
+    {
+        return $number != def::MODE_BROWSER and !array_key_exists($number, self::MODE_OPTIONS);
     }
 
     /**

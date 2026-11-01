@@ -42,11 +42,13 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
 use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -64,6 +66,7 @@ class triple_list_tests
         $sc = new sql_creator();
         $t_trp = new test_triples($t);
         $t_vrb = new test_verbs($t);
+        $msg = new user_message();
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
 
@@ -115,6 +118,21 @@ class triple_list_tests
         $t->subheader($ts . 'im- and export');
         $json_file = 'unit/triple/triple_list.json';
         $t->assert_json_file(new triple_list($t->usr1), $json_file);
+
+        // the list exports one entry per triple
+        $test_name = 'export includes the triple';
+        $trp_lst = $t_trp->triple_list_one();
+        $exp = $trp_lst->export_json($msg, [], false);
+        $first = $exp[0];
+        $t->assert($test_name, $first[json_fields::NAME], triple_names::PI_SYMBOL_NAME);
+        $msg->reset();
+
+        // negative: an empty list exports no entry
+        $test_name = 'export of an empty list';
+        $trp_lst = $t_trp->list_empty();
+        $exp = $trp_lst->export_json($msg, [], false);
+        $t->assert($test_name, $exp, []);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');

@@ -120,7 +120,7 @@ class api_message
 
     }
 
-    // TODO call once in global $sys
+    // TODO Prio 2 call once in global $sys
     function api_site_name(sql_db $db_con = new sql_db()): string
     {
         $cfg = new config();
@@ -132,7 +132,7 @@ class api_message
             // TODO Prio o report the missing side name
             $sys_msg = new user_message(user::system()); // not reported: a missing site name falls back to the default pod name
             $site_name = $cfg->get_db(config::SITE_NAME, $db_con, $sys_msg, 'get pod name');
-            // TODO remove this fallback case
+            // TODO Prio 2 remove this fallback case
             if ($site_name == '') {
                 $site_name = POD_NAME;
             }

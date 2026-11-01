@@ -288,6 +288,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "centre"
     },
     {
@@ -343,6 +346,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "cause to effect",
       "from": "cause",
@@ -539,7 +554,7 @@
     {
       "name": "column low",
       "description": "the 'low' column of the chain link table, the lower bound of the range",
-      "from": "low",
+      "from": "variance low (system)",
       "verb": "can be",
       "to": "mayor column (system)"
     },
@@ -567,7 +582,7 @@
     {
       "name": "column high",
       "description": "the 'high' column of the chain link table, the upper bound of the range",
-      "from": "high",
+      "from": "variance high (system)",
       "verb": "can be",
       "to": "mayor column (system)"
     },
@@ -667,7 +682,7 @@
     {
       "words": [
         "bad steering fraction",
-        "low",
+        "variance low (system)",
         "assumed"
       ],
       "number": "0.005",
@@ -676,7 +691,7 @@
     {
       "words": [
         "bad steering fraction",
-        "high",
+        "variance high (system)",
         "assumed"
       ],
       "number": "0.05",
@@ -685,7 +700,7 @@
     {
       "words": [
         "bad steering loss",
-        "low",
+        "variance low (system)",
         "HTP",
         "year"
       ],
@@ -695,7 +710,7 @@
     {
       "words": [
         "bad steering loss",
-        "high",
+        "variance high (system)",
         "HTP",
         "year"
       ],
@@ -715,7 +730,7 @@
     {
       "words": [
         "complexity share",
-        "low",
+        "variance low (system)",
         "assumed"
       ],
       "number": "0.05",
@@ -724,7 +739,7 @@
     {
       "words": [
         "complexity share",
-        "high",
+        "variance high (system)",
         "assumed"
       ],
       "number": "0.15",
@@ -835,7 +850,7 @@
     {
       "words": [
         "distrust mediation share",
-        "low",
+        "variance low (system)",
         "assumed"
       ],
       "number": "0.3",
@@ -844,7 +859,7 @@
     {
       "words": [
         "distrust mediation share",
-        "high",
+        "variance high (system)",
         "assumed"
       ],
       "number": "0.7",
@@ -862,7 +877,7 @@
     {
       "words": [
         "avoidable share",
-        "low",
+        "variance low (system)",
         "assumed"
       ],
       "number": "0.2",
@@ -871,7 +886,7 @@
     {
       "words": [
         "avoidable share",
-        "high",
+        "variance high (system)",
         "assumed"
       ],
       "number": "0.6",
@@ -898,7 +913,7 @@
     {
       "words": [
         "chain HTP loss",
-        "low",
+        "variance low (system)",
         "HTP",
         "year"
       ],
@@ -908,7 +923,7 @@
     {
       "words": [
         "chain HTP loss",
-        "high",
+        "variance high (system)",
         "HTP",
         "year"
       ],
@@ -997,12 +1012,12 @@
       "context": [
         "global welfare baseline",
         "bad steering fraction",
-        "low"
+        "variance low (system)"
       ],
       "formula": "bad steering loss formula",
       "words": [
         "bad steering loss",
-        "low",
+        "variance low (system)",
         "HTP",
         "year"
       ],
@@ -1013,12 +1028,12 @@
       "context": [
         "global welfare baseline",
         "bad steering fraction",
-        "high"
+        "variance high (system)"
       ],
       "formula": "bad steering loss formula",
       "words": [
         "bad steering loss",
-        "high",
+        "variance high (system)",
         "HTP",
         "year"
       ],
@@ -1031,12 +1046,12 @@
         "complexity share",
         "distrust mediation share",
         "avoidable share",
-        "low"
+        "variance low (system)"
       ],
       "formula": "chain HTP loss formula",
       "words": [
         "chain HTP loss",
-        "low",
+        "variance low (system)",
         "HTP",
         "year"
       ],
@@ -1049,12 +1064,12 @@
         "complexity share",
         "distrust mediation share",
         "avoidable share",
-        "high"
+        "variance high (system)"
       ],
       "formula": "chain HTP loss formula",
       "words": [
         "chain HTP loss",
-        "high",
+        "variance high (system)",
         "HTP",
         "year"
       ],

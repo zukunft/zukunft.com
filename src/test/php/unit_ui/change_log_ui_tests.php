@@ -40,12 +40,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log_link_list as change_log_link_list_cfg;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_link_list as change_log_link_list_ui;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\test\php\const\word_names;
 use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -178,6 +180,49 @@ class change_log_ui_tests
         $log_no_id_ui->sort_by_time_and_what();
         $t->assert($test_name, $log_no_id_ui->lst()[0]->what_text(), $first_what);
 
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the change mapper sets the changed row';
+        $cng = new change_log();
+        $cng->api_mapper(json_decode($t_log->log_word_add()->api_json(), true), $msg);
+        $t->assert($test_name, $cng->row_id, word_names::MATH_ID);
+        $msg->reset();
+
+        // negative: the id is mandatory, so a change json without it is reported
+        $test_name = 'the change mapper reports a json without id';
+        $api_json = json_decode($t_log->log_word_add()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $cng = new change_log();
+        $t->assert_false($test_name, $cng->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $test_name = 'the named change mapper sets the new value';
+        $chg_ui = new change_log_named();
+        $chg_ui->api_mapper(json_decode($t_log->log_word_add()->api_json(), true), $msg);
+        $t->assert($test_name, $chg_ui->new_value, word_names::MATH);
+        $msg->reset();
+
+        // negative: a change json without the new value leaves the new value empty
+        $test_name = 'the named change mapper leaves a missing new value empty';
+        $api_json = json_decode($t_log->log_word_add()->api_json(), true);
+        unset($api_json[json_fields::NEW_VALUE]);
+        $chg_ui = new change_log_named();
+        $chg_ui->api_mapper($api_json, $msg);
+        $t->assert_null($test_name, $chg_ui->new_value);
+        $msg->reset();
+
+        $test_name = 'the change list mapper adds the changes';
+        $log_ui = new change_log_list();
+        $log_ui->api_mapper(json_decode($t_log->log_list_named()->api_json($api_typ_lst), true));
+        $t->assert($test_name, $log_ui->count(), $t_log->log_list_named()->count());
+
+        // negative: a change without id is reported via the returned message
+        $test_name = 'the change list mapper reports a change without id';
+        $api_json = json_decode($t_log->log_list_named()->api_json($api_typ_lst), true);
+        unset($api_json[0][json_fields::ID]);
+        $log_ui = new change_log_list();
+        $t->assert_false($test_name, $log_ui->api_mapper($api_json)->is_ok());
+
         // link change history rendering (e.g. the triples added to or removed from a word)
         // the link list classes are loaded here, not at the top of the file, because the frontend
         // change_log_link extends change_log_named which sits at the root of the bootstrap include chain
@@ -195,6 +240,18 @@ class change_log_ui_tests
         $t->assert_text_contains($test_name, $log_link_ui->tbl($url_arr), word_names::MATH);
         $test_name = 'an empty link change list renders no table row';
         $t->assert_text_not_contains($test_name, new change_log_link_list_ui()->tbl($url_arr), '<tr');
+
+        $test_name = 'the link change list mapper adds the link change';
+        $log_link_ui = new change_log_link_list_ui();
+        $log_link_ui->api_mapper(json_decode($cl_lst->api_json($api_typ_lst), true));
+        $t->assert($test_name, $log_link_ui->count(), $cl_lst->count());
+
+        // negative: a link change without id is reported via the returned message
+        $test_name = 'the link change list mapper reports a link change without id';
+        $api_json = json_decode($cl_lst->api_json($api_typ_lst), true);
+        unset($api_json[0][json_fields::ID]);
+        $log_link_ui = new change_log_link_list_ui();
+        $t->assert_false($test_name, $log_link_ui->api_mapper($api_json)->is_ok());
     }
 
 }

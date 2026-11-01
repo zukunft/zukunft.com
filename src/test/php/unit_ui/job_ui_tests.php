@@ -39,6 +39,8 @@ include_once html_paths::SYSTEM . 'job_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\job_statuum;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\job;
@@ -72,10 +74,11 @@ class job_ui_tests
         $page = new system_page();
         $job_lst = new job_list($t_job->job_list_delayed()->api_json());
         $test_page .= $html->text_h2('admin_jobs_delayed test');
+        $job_msg = new user_message();
         $test_page .= 'empty job list shows the no-open-jobs notice<br>';
-        $test_page .= $page->admin_jobs_delayed() . '<br>';
+        $test_page .= $page->admin_jobs_delayed($job_msg, true) . '<br>';
         $test_page .= 'job list with one open batch job sorted by request_time ascending<br>';
-        $test_page .= $page->admin_jobs_delayed($job_lst) . '<br>';
+        $test_page .= $page->admin_jobs_delayed($job_msg, true, $job_lst) . '<br>';
 
         // test the SYSTEM_BODY_USER_JOBS and SYSTEM_BODY_ALL_JOBS renderers (system_page::user_jobs and all_jobs)
         $t_usr = new test_users($t);
@@ -83,9 +86,13 @@ class job_ui_tests
         $msg_usr->usr = new user_ui($t_usr->user_sys_normal()->api_json());
         $msg_adm = new user_message();
         $msg_adm->usr = new user_ui($t_usr->user_sys_admin()->api_json());
-        $test_page .= $html->text_h2('user jobs and all jobs test');
-        $test_page .= 'the jobs of a user without the upgrade button<br>';
-        $test_page .= $page->user_jobs($msg_usr, 0, true, $job_lst) . '<br>';
+        // the jobs of a user and of all users have one form per job each, so they are two pages
+        // like in the frontend, because one page must not hold two forms with the same id
+        $usr_page = $html->text_h2('user jobs test');
+        $usr_page .= 'the jobs of a user without the upgrade button<br>';
+        $usr_page .= $page->user_jobs($msg_usr, 0, true, $job_lst) . '<br>';
+        $t->html_page_test($usr_page, 'user jobs', 'job_user', $msg);
+        $test_page .= $html->text_h2('all jobs test');
         $test_page .= 'the jobs of all users for an admin<br>';
         $test_page .= $page->all_jobs($msg_adm, 0, true, $job_lst) . '<br>';
         $test_page .= 'the hint for a user who is not an admin<br>';
@@ -120,9 +127,55 @@ class job_ui_tests
         $test_name = 'the jobs of a user have no upgrade button';
         $usr_html = $page->user_jobs($msg_usr, 0, true, $job_lst);
         $t->assert_text_not_contains($test_name, $usr_html, $upgrade_prefix . '1');
+        // negative: a user without a job gets the hint instead of an empty table
+        $test_name = 'a user without a job gets the no jobs hint';
+        $t->assert_text_contains($test_name, $page->user_jobs($msg_usr, 0, true, new job_list()), $mtr->txt(msg_id::INFO_NO_JOBS));
         $test_name = 'the open jobs are on top of the completed job';
         $open_first = array_map(fn(job $job) => $job->id(), $job_lst->pending_first());
         $t->assert($test_name, implode(',', $open_first), '2,1,3');
+        // negative: a user without a job has no job to put on top
+        $test_name = 'an empty job list has no open job on top';
+        $no_job_lst = new job_list();
+        $no_open_first = $no_job_lst->pending_first();
+        $t->assert($test_name, $no_open_first, []);
+
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the job mapper sets the priority';
+        $job = new job();
+        $job->api_mapper(json_decode($t_job->job()->api_json(), true), $msg);
+        $t->assert($test_name, $job->priority(), job_statuum::PRIO_HIGHEST);
+        $msg->reset();
+
+        // negative: a job json without a priority leaves the job without priority
+        $test_name = 'the job mapper sets no priority if the json has none';
+        $api_json = json_decode($t_job->job()->api_json(), true);
+        unset($api_json[json_fields::PRIORITY]);
+        $job = new job();
+        $job->api_mapper($api_json, $msg);
+        $job_prio = $job->priority();
+        $t->assert($test_name, $job_prio, 0);
+        $msg->reset();
+
+        // negative: the id is mandatory, so a job json without it is reported
+        $test_name = 'the job mapper reports a json without id';
+        $api_json = json_decode($t_job->job()->api_json(), true);
+        unset($api_json[json_fields::ID]);
+        $job = new job();
+        $t->assert_false($test_name, $job->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $test_name = 'the job list mapper adds the jobs';
+        $job_lst = new job_list();
+        $job_lst->api_mapper(json_decode($t_job->job_list()->api_json(), true));
+        $t->assert($test_name, $job_lst->count(), $t_job->job_list()->count());
+
+        // negative: a job without id is reported via the returned message
+        $test_name = 'the job list mapper reports a job without id';
+        $api_json = json_decode($t_job->job_list()->api_json(), true);
+        unset($api_json[0][json_fields::ID]);
+        $job_lst = new job_list();
+        $t->assert_false($test_name, $job_lst->api_mapper($api_json)->is_ok());
     }
 
 }

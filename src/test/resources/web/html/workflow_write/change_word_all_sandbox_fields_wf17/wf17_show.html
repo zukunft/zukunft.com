@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -34,23 +38,60 @@
                                 </i>
                             </summary>
                             <ul>
-                                <li>
-                                    <a href="http://localhost/http/view.php?m=view_change&amp;id=2">
-                                        alternative
+                                <li class="menu-header">
+                                    alternative views
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=3&amp;id=999" title="this view has been used to show &#039;System Test Word&#039;" class="grey">
+                                        Word (default)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;d=3" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (default)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=23&amp;id=999" title="show &#039;System Test Word&#039; with the &#039;Word (detail)&#039; view">
+                                        Word (detail)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;d=23" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (detail)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=31&amp;id=999" title="show &#039;System Test Word&#039; with the &#039;Word (range)&#039; view">
+                                        Word (range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;d=31" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
+                                    </a>
+                                </li>
+                                <li class="d-flex">
+                                    <a href="http://localhost/http/view.php?m=39&amp;id=999" title="show &#039;System Test Word&#039; with the &#039;Word (detail with range)&#039; view">
+                                        Word (detail with range)
+                                    </a>
+                                    <a href="http://localhost/http/view.php?m=48&amp;id=999&amp;d=39" title="adjust &#039;System Test Word&#039; so that it is always shown with the &#039;Word (detail with range)&#039; view">
+                                        <i class="fas fa-shuffle">
+                                        </i>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views e.g. Start view, Table, Triple (default)">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=85&amp;id=3&amp;9id=999&amp;9m=3">
-                                        change view
+                                    <a href="http://localhost/http/view.php?m=85&amp;id=3&amp;9id=999&amp;9m=3" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="http://localhost/http/view.php?m=84&amp;9id=999&amp;9m=3">
+                                    <a href="http://localhost/http/view.php?m=84&amp;9id=999&amp;9m=3" title="create a new named view editor for this System Test Word">
                                         add view
                                     </a>
                                 </li>
@@ -143,32 +184,6 @@
                     </div>
                 </div>
             </div>
-            <div class="row col-md-12">
-                <div class="view-version-corner">
-                    <details class="view-version-menu">
-                        <summary title="show this page in another version">
-                            ...
-                        </summary>
-                        <ul>
-                            <li>
-                                <a href="http://localhost/http/view.php?m=23&amp;id=999">
-                                    detail
-                                </a>
-                            </li>
-                            <li>
-                                <a href="http://localhost/http/view.php?m=31&amp;id=999">
-                                    range
-                                </a>
-                            </li>
-                            <li>
-                                <a href="http://localhost/http/view.php?m=39&amp;id=999">
-                                    detail + range
-                                </a>
-                            </li>
-                        </ul>
-                    </details>
-                </div>
-            </div>
             <div class="row ">
                 <div class="col" style="min-width: 700px">
                     <div class="text-left">
@@ -205,187 +220,226 @@
                                             <option value="0" selected>
                                                 please select ...
                                             </option>
-                                            <option value="613"  >
+                                            <option value="-2524"  >
+                                                CBAM good
+                                            </option>
+                                            <option value="-2549"  >
+                                                CN code
+                                            </option>
+                                            <option value="633"  >
                                                 Cooperative
                                             </option>
-                                            <option value="1735"  >
+                                            <option value="1806"  >
                                                 EAN
                                             </option>
-                                            <option value="-2342"  >
+                                            <option value="2152"  >
+                                                EPR
+                                            </option>
+                                            <option value="-2415"  >
                                                 GDP mismeasurement reason
                                             </option>
-                                            <option value="-2343"  >
+                                            <option value="-2416"  >
                                                 GDP mismeasurement solution
                                             </option>
-                                            <option value="1733"  >
+                                            <option value="1804"  >
                                                 ISBN
                                             </option>
-                                            <option value="1734"  >
+                                            <option value="1805"  >
                                                 ISIN
                                             </option>
-                                            <option value="-387"  >
+                                            <option value="-436"  >
                                                 ISO 4217 code
                                             </option>
                                             <option value="-7"  >
                                                 Physical constant
                                             </option>
-                                            <option value="-81"  >
+                                            <option value="-82"  >
                                                 SI base unit
                                             </option>
-                                            <option value="-388"  >
+                                            <option value="-437"  >
                                                 Symbol or abbreviation
                                             </option>
-                                            <option value="899"  >
+                                            <option value="975"  >
                                                 agglomeration
                                             </option>
-                                            <option value="-2335"  >
+                                            <option value="-2408"  >
                                                 biased information reason
                                             </option>
-                                            <option value="-1456"  >
+                                            <option value="-1528"  >
                                                 biased information solution
                                             </option>
-                                            <option value="-2337"  >
+                                            <option value="-2410"  >
                                                 black-box AI reason
                                             </option>
-                                            <option value="-1529"  >
+                                            <option value="-1601"  >
                                                 black-box AI solution
                                             </option>
-                                            <option value="190"  >
+                                            <option value="-3110"  >
+                                                bond (finance)
+                                            </option>
+                                            <option value="201"  >
                                                 canton
                                             </option>
-                                            <option value="-2339"  >
+                                            <option value="624"  >
+                                                cash
+                                            </option>
+                                            <option value="-3198"  >
+                                                child portfolio
+                                            </option>
+                                            <option value="-2412"  >
                                                 citizen participation reason
                                             </option>
-                                            <option value="-2340"  >
+                                            <option value="-2413"  >
                                                 citizen participation solution
                                             </option>
-                                            <option value="192"  >
+                                            <option value="203"  >
                                                 city
                                             </option>
-                                            <option value="-1073"  >
+                                            <option value="-1142"  >
                                                 climate solution
                                             </option>
-                                            <option value="193"  >
+                                            <option value="204"  >
                                                 company
                                             </option>
-                                            <option value="327"  >
+                                            <option value="348"  >
                                                 conjecture
                                             </option>
-                                            <option value="357"  >
+                                            <option value="378"  >
                                                 convention
                                             </option>
-                                            <option value="377"  >
+                                            <option value="397"  >
                                                 country
                                             </option>
-                                            <option value="-1972"  >
+                                            <option value="-2045"  >
                                                 country code
                                             </option>
-                                            <option value="397"  >
+                                            <option value="417"  >
                                                 currency
                                             </option>
-                                            <option value="-2331"  >
+                                            <option value="-2404"  >
                                                 disinformation reason
                                             </option>
-                                            <option value="-2332"  >
+                                            <option value="-2405"  >
                                                 disinformation solution
                                             </option>
-                                            <option value="-2327"  >
+                                            <option value="-2400"  >
                                                 education reason
                                             </option>
-                                            <option value="-2328"  >
+                                            <option value="-2401"  >
                                                 education solution
                                             </option>
-                                            <option value="-104"  >
+                                            <option value="-2948"  >
+                                                existing NPP
+                                            </option>
+                                            <option value="-139"  >
                                                 global problem
                                             </option>
-                                            <option value="-2319"  >
+                                            <option value="-2392"  >
                                                 global problem reason
                                             </option>
-                                            <option value="-2320"  >
+                                            <option value="-2393"  >
                                                 global problem solution
                                             </option>
-                                            <option value="-1631"  >
+                                            <option value="-1703"  >
                                                 global warming reason
                                             </option>
-                                            <option value="-1636"  >
+                                            <option value="-1708"  >
                                                 global warming solution
                                             </option>
-                                            <option value="-973"  >
+                                            <option value="-1041"  >
                                                 greenhouse gas
                                             </option>
-                                            <option value="-2325"  >
+                                            <option value="-2398"  >
                                                 health reason
                                             </option>
-                                            <option value="-2326"  >
+                                            <option value="-2399"  >
                                                 health solution
                                             </option>
-                                            <option value="-2333"  >
+                                            <option value="2218"  >
+                                                holding
+                                            </option>
+                                            <option value="-2406"  >
                                                 market power reason
                                             </option>
-                                            <option value="-2334"  >
+                                            <option value="-2407"  >
                                                 market power solution
                                             </option>
                                             <option value="-1"  >
                                                 mathematical constant
                                             </option>
-                                            <option value="-84"  >
+                                            <option value="-85"  >
                                                 mechanics SI derived unit
                                             </option>
-                                            <option value="-320"  >
+                                            <option value="104"  >
+                                                month
+                                            </option>
+                                            <option value="-369"  >
                                                 most relevant
                                             </option>
                                             <option value="-6"  >
                                                 natural science
                                             </option>
-                                            <option value="-2321"  >
+                                            <option value="-2947"  >
+                                                new NPP
+                                            </option>
+                                            <option value="-2394"  >
                                                 populism reason
                                             </option>
-                                            <option value="-1186"  >
+                                            <option value="-1257"  >
                                                 populism solution
                                             </option>
-                                            <option value="-1971"  >
+                                            <option value="-2044"  >
                                                 postal code
                                             </option>
-                                            <option value="-2323"  >
+                                            <option value="-2396"  >
                                                 poverty reason
                                             </option>
-                                            <option value="-1290"  >
+                                            <option value="-1362"  >
                                                 poverty solution
                                             </option>
-                                            <option value="372"  >
+                                            <option value="433"  >
+                                                price
+                                            </option>
+                                            <option value="392"  >
                                                 reason
                                             </option>
-                                            <option value="917"  >
+                                            <option value="993"  >
                                                 region
                                             </option>
-                                            <option value="335"  >
+                                            <option value="-2747"  >
+                                                replacement mix
+                                            </option>
+                                            <option value="356"  >
                                                 report
                                             </option>
-                                            <option value="615"  >
+                                            <option value="635"  >
                                                 scaling
                                             </option>
                                             <option value="8"  >
                                                 science
                                             </option>
-                                            <option value="218"  >
+                                            <option value="241"  >
                                                 solution
+                                            </option>
+                                            <option value="1686"  >
+                                                stock
                                             </option>
                                             <option value="20"  >
                                                 system
                                             </option>
-                                            <option value="231"  >
+                                            <option value="254"  >
                                                 warm
                                             </option>
-                                            <option value="-2329"  >
+                                            <option value="-2402"  >
                                                 wealth concentration reason
                                             </option>
-                                            <option value="-1367"  >
+                                            <option value="-1439"  >
                                                 wealth concentration solution
                                             </option>
                                             <option value="105"  >
                                                 year
                                             </option>
-                                            <option value="-54"  >
+                                            <option value="-55"  >
                                                 year of definition
                                             </option>
                                         </select>

@@ -41,11 +41,14 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::CONST . 'icons.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_calc.php';
 include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_log.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HELPER . 'number_format.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::LOG . 'change_log_list.php';
@@ -55,6 +58,7 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::REF . 'source_list.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::TYPES . 'type_object.php';
@@ -69,6 +73,10 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::SHARED_CALC . 'prior_operand.php';
+include_once html_paths::SHARED_CONST . 'files.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
 include_once html_paths::SHARED_TYPES . 'verbs.php';
@@ -83,10 +91,12 @@ include_once html_paths::SHARED_ENUM . 'table_forms.php';
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\const\icons;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_calc;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_link_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\number_format;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
@@ -96,7 +106,9 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\result\result_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -109,10 +121,13 @@ use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\shared\calc\prior_operand;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
@@ -122,6 +137,92 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class ui_list extends ui_base
 {
+
+    // put between the html id of a number and the count of a cell that shows the number again,
+    // e.g. the year of a detail table, so that every cell id is unique on a page
+    const string CALC_CELL_REPEAT = '-';
+    // between the label of a selector option and its number e.g. European residual mix — 523 g/kWh [3]
+    const string CALC_OPTION_SEP = ' — ';
+    // the header of the row number of a detail table
+    const string CALC_ROW_NUMBER_HEAD = '#';
+    // the icon of the button to remove an instance of a repeated field and the instances that a field keeps
+    const string CALC_REMOVE_ICON = 'fas fa-times';
+    const int CALC_MIN_INSTANCES = 1;
+    // a warning ignores only the float noise of a calculation e.g. 0.7 + 0.3 - 1, but no real excess
+    const int CALC_WARNING_DECIMALS = 12;
+    // a check row ignores only the float noise of a calculation, relative to the size of the numbers
+    const float CALC_CHECK_TOLERANCE = 1e-9;
+    // in front of the phrase id of a selector option without a number, so that the option value can never be read as a number
+    const string CALC_OPTION_PHRASE = 'phrase';
+    // in the hint of a field where the number of its source is shown; without it the number follows the hint
+    const string CALC_HINT_SOURCE = '[n]';
+    // in the hint of a row a phrase in curly brackets is shown as its number with the unit e.g. {PV capacity}
+    // or as the plain number e.g. {yield factor|number}, so that a sub text shows the live numbers of the page
+    const string CALC_HINT_NUMBER_PATTERN = '/\{([^{}|]+)(\|number)?\}/';
+    // the html id and the keys of the calculation data of a calculator page, which the browser
+    // script reads to repeat the calculation (see calculator_script and calculator.js)
+    const string CALC_DATA_ID = 'calc-data';
+    const string CALC_NUMBERS = 'numbers';
+    const string CALC_RESULTS = 'results';
+    const string CALC_INPUTS = 'inputs';
+    // per field the html id of its number, its unit and decimals with the keys of a cell and the save vars of a number field
+    const string CALC_FIELDS = 'fields';
+    const string CALC_FIELD_SAVE = 'save';
+    const string CALC_CELLS = 'cells';
+    // what the script updates besides the cells; a page without them has no such key
+    const string CALC_WARNINGS = 'warnings';
+    const string CALC_WARNINGS_ID = 'calc-warnings';
+    const string CALC_WARNING_TEXT = 'text';
+    const string CALC_CHECKS = 'checks';
+    const string CALC_CHECK_EXPECTED = 'expected';
+    const string CALC_CHECK_STATUS_SUFFIX = '-status';
+    const string CALC_CHECK_ID = 'id';
+    const string CALC_CHECK_MATCH = 'match';
+    const string CALC_CHECK_DIFFERS = 'differs';
+    const string CALC_DIAGRAMS = 'diagrams';
+    const string CALC_DIAGRAM_ID = 'calc-diagram-';
+    const string CALC_DIAGRAM_LEGEND_SUFFIX = '-legend';
+    const string CALC_DIAGRAM_LABEL = 'label';
+    const string CALC_DIAGRAM_NUMBERS = 'numbers';
+    const string CALC_DIAGRAM_LINES = 'lines';
+    const string CALC_DIAGRAM_UNIT = 'unit';
+    const string CALC_DIAGRAM_TITLES = 'titles';
+    const string CALC_DIAGRAM_MARK = '●';
+    const string CALC_DIAGRAM_TEXT_TAG = 'span';
+    const string CALC_FORMAT = 'format';
+    const string CALC_CELL_NUMBER = 'number';
+    const string CALC_CELL_UNIT = 'unit';
+    const string CALC_CELL_PERCENT = 'percent';
+    const string CALC_CELL_SIGNED = 'signed';
+    const string CALC_CELL_FACTOR = 'factor';
+    const string CALC_CELL_DECIMALS = 'decimals';
+    const string CALC_CELL_PERCENT_DECIMALS = 'percent_decimals';
+    const string CALC_CELL_PLUS = 'plus';
+    const string CALC_CELL_SUB = 'sub';
+    const string CALC_DEC_POINT = 'dec_point';
+    const string CALC_UNIT_SEP = 'unit_sep';
+    const string CALC_THOUSAND_SEP = 'thousand_sep';
+    const string CALC_PERCENT_DECIMALS = 'percent_decimals';
+    const string CALC_DIGITS = 'digits';
+    const string CALC_ROUGH_DIGITS = 'rough_digits';
+    // the phrases of a value that make it a property of a calculator field and not the number of the field
+    const array CALC_FIELD_PROPERTIES = [triples::FIELD_LIMIT_DOWN, triples::FIELD_LIMIT_UP, triples::FIELD_STEP, words::CONFIDENCE, triples::CALCULATOR_DECIMALS, triples::CALCULATOR_RESULT_WIDTH];
+    const string CALC_POSITIVE = 'positive';
+    const string CALC_NEGATIVE = 'negative';
+
+    // per html id of a number how often a calculator cell of this renderer has shown it (see calculator_cell_id)
+    private array $cell_counts = [];
+    // per calculator cell id that this renderer has written the number and the format of the cell
+    private array $cell_plan = [];
+    // per phrase id of a calculator page the request cache and the values and results that the results of the page use (see page_operands)
+    private array $operands_by_page = [];
+    // per value object the value itself and per phrase if the value has it, because each cell of a
+    // calculator page searches all numbers of the page, but the phrases of a number do not change;
+    // the value is kept, so that a new object with a reused object id is not mixed up
+    private array $has_phrase_by_val = [];
+    // per check row and per diagram of the page what the browser script updates (see calculator_script)
+    private array $check_plan = [];
+    private array $diagram_plan = [];
 
     /**
      * HTML for a list of words or triples
@@ -142,39 +243,93 @@ class ui_list extends ui_base
      */
     function children_of_word(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
     {
-        global $ui_sys;
-        $result = '';
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children);
+    }
+
+    /**
+     * HTML for the children of a phrase that are words, e.g. "Euro" of the children of currency
+     * @param word|db_object $wrd the phrase whose children are shown e.g. the triple "mathematical constant"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code of the child words or an empty string if there are none
+     */
+    function child_words(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    {
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children->only_words($msg));
+    }
+
+    /**
+     * HTML for the children of a phrase that are triples, e.g. "Swiss franc" of the children of currency
+     * @param word|db_object $wrd the phrase whose children are shown e.g. the word "currency"
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return string the html code of the child triples or an empty string if there are none
+     */
+    function child_triples(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst = null): string
+    {
+        $children = $this->children($wrd, $msg, $phr_lst);
+        return $this->children_html($wrd, $children->only_triples($msg));
+    }
+
+    /**
+     * @param word|db_object $wrd the phrase whose children are selected
+     * @param phrase_list|null $phr_lst the cached list of phrases for initial display without backend call
+     * @return phrase_list the subclasses of the phrase, i.e. the phrases that "are a" this phrase
+     */
+    private function children(word|db_object $wrd, user_message $msg, ?phrase_list $phr_lst): phrase_list
+    {
+        $result = new phrase_list;
         $phr_cac = $this->related_list($wrd, $phr_lst);
-        $is_vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
+        $is_vrb = $this->is_verb();
         if ($phr_cac != null and $is_vrb != null) {
+            $result = $phr_cac->parents($wrd->phrase(), $msg, $is_vrb);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|db_object $wrd the phrase whose children are shown
+     * @param phrase_list $children the selected children e.g. only the words
+     * @return string the html code of the children with the header or an empty string if there are no children
+     */
+    private function children_html(word|db_object $wrd, phrase_list $children): string
+    {
+        $result = '';
+        $is_vrb = $this->is_verb();
+        if (!$children->is_empty() and $is_vrb != null) {
             $phr = $wrd->phrase();
-            // the children of a word are its subclasses, i.e. the phrases that "are a" this word
-            $children = $phr_cac->parents($phr, $msg, $is_vrb);
-            if (!$children->is_empty()) {
-                $html = new html_base();
-                if ($children->count() == 1) {
-                    // a single child reads as the full statement, e.g. "Euro is a currency";
-                    // name_link() is already safe html, the verb and phrase names are user input
-                    // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
-                    $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
-                } else {
-                    // several children get a header of the word plural and the verb plural,
-                    // e.g. "currencies are", followed by the list of the child phrases
-                    $plural = $wrd->get_plural();
-                    if ($plural == null or $plural == '') {
-                        $plural = $phr->name();
-                    }
-                    $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
+            $html = new html_base();
+            if ($children->count() == 1) {
+                // a single child reads as the full statement, e.g. "Euro is a currency";
+                // name_link() is already safe html, the verb and phrase names are user input
+                // rendered raw by dsp_text_h2 below, so escape them (stored xss via the name)
+                $header = $children->name_link() . ' ' . $html->esc($is_vrb->name()) . ' ' . $html->esc($phr->name());
+            } else {
+                // several children get a header of the word plural and the verb plural,
+                // e.g. "currencies are", followed by the list of the child phrases
+                $plural = $wrd->get_plural();
+                if ($plural == null or $plural == '') {
+                    $plural = $phr->name();
                 }
-                // start with a line break and the header as an h4 subtitle, then (for several
-                // children) the linked child phrases
-                $result = $html->br() . $html->dsp_text_h2($header);
-                if ($children->count() > 1) {
-                    $result .= $children->name_link();
-                }
+                $header = $html->esc($plural) . ' ' . $html->esc($is_vrb->plural_reverse());
+            }
+            // start with a line break and the header as an h4 subtitle, then (for several
+            // children) the linked child phrases
+            $result = $html->br() . $html->dsp_text_h2($header);
+            if ($children->count() > 1) {
+                $result .= $children->name_link();
             }
         }
         return $result;
+    }
+
+    /**
+     * @return verb|null the verb "is a" of the frontend cache, which links a child to its parent
+     */
+    private function is_verb(): ?verb
+    {
+        global $ui_sys;
+        return $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::IS);
     }
 
     /**
@@ -514,7 +669,7 @@ class ui_list extends ui_base
      * the triples that use the given verb as a blank separated list of the triple names with a
      * link to each triple, used by the verb default page and the verb edit and delete pages
      *
-     * TODO move to a component exe part class
+     * TODO Prio 2 move to a component exe part class
      *
      * @param db_object|null $dbo the verb whose triples should be listed
      * @param user_message $msg to report a missing cache or an unexpected selection object
@@ -522,10 +677,10 @@ class ui_list extends ui_base
      * @return string the linked triple names or the message that the verb is not used for triples
      */
     function triple_list(
-        ?db_object $dbo = null,
+        ?db_object   $dbo = null,
         user_message $msg,
         ?data_object $cfg = null,
-        array $url_arr = [],
+        array        $url_arr = [],
     ): string
     {
         global $mtr;
@@ -875,7 +1030,7 @@ class ui_list extends ui_base
         if ($phr->id() != 0) {
             $html = new html_base();
             if ($blocked) {
-                $pane =$html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
+                $pane = $html->dsp_notification($mtr->txt(msg_id::CHANGE_BLOCKED_FOR_IP_USER));
             } elseif ($frm_lst->is_empty()) {
                 // an empty selector would post a link without a formula, which can only fail, so
                 // the pane says why nothing can be selected instead of a form that never saves
@@ -1180,16 +1335,21 @@ class ui_list extends ui_base
     {
         $result = '';
         $html = new html_base();
+        // e.g. a new word has no name yet
+        $obj_name = $dbo->name() ?? '';
         foreach ($dbo->view_lst?->lst() ?? [] as $msk) {
             $preview = $html->div('view preview', view_styles::COL_SM_12);
             // the view name links to the object shown with the view, the switch icon opens the
             // edit view of the shown object with this view preselected as its default view, and
             // the edit icon changes the view itself; the edit view of the object differs per
-            // class, so its id is passed to the link builder. the links escape the names (stored
-            // xss via a user given name), so the div gets already-built html only
-            $links = $msk->open_link($dbo->id(), $dbo->name())
-                . ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $dbo->name())
-                . ' ' . $msk->edit_link();
+            // class, so its id is passed to the link builder, and an object without an edit view
+            // of its own gets no switch icon. the links escape the names (stored xss via a user
+            // given name), so the div gets already-built html only
+            $links = $msk->open_link($dbo->id(), $obj_name);
+            if ($dbo::HAS_EDIT_VIEW) {
+                $links .= ' ' . $msk->switch_link($dbo->id(), $dbo::VIEW_EDIT_ID, $obj_name);
+            }
+            $links .= ' ' . $msk->edit_link();
             $result .= $html->div($preview . $links);
         }
         return $result;
@@ -1233,14 +1393,14 @@ class ui_list extends ui_base
      */
     function link_list_word(db_object $dbo, ?data_object $cfg): string
     {
-        // TODO review
+        // TODO Prio 2 review
         // escape the object name (user input rendered raw by the component arm; stored xss)
         $html = new html_base();
         return 'list of phrases related to ' . $html->esc($dbo->name()) . ' ';
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
     function num_list(): string
@@ -1343,13 +1503,15 @@ class ui_list extends ui_base
      *
      * @param word|db_object|type_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the list of values
      */
     function values_by_word(
         word|db_object|type_object|null $dbo,
         user_message                    $msg,
         ?data_object                    $dto = null,
-        ?int                            $style_id = null
+        ?int                            $style_id = null,
+        array                           $url_arr = []
     ): string
     {
         $val_lst = $this->value_related_list($dbo, $msg, $dto);
@@ -1358,7 +1520,7 @@ class ui_list extends ui_base
         // values" component that the default word view uses
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true, $url_arr);
     }
 
     /**
@@ -1369,19 +1531,21 @@ class ui_list extends ui_base
      * @param word|db_object|type_object|null $dbo the object the values are related to
      * @param data_object|null $dto the data cache used to fill the value list until the backend answers
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the grouped list of values
      */
     function values_most_relevant(
         word|db_object|type_object|null $dbo,
         user_message                    $msg,
         ?data_object                    $dto = null,
-        ?int                            $style_id = null
+        ?int                            $style_id = null,
+        array                           $url_arr = []
     ): string
     {
         $val_lst = $this->value_related_list($dbo, $msg, $dto);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true, $url_arr);
     }
 
     /**
@@ -1391,12 +1555,14 @@ class ui_list extends ui_base
      *
      * @param word|db_object|type_object|null $dbo the phrase the values are related to
      * @param data_object|null $dto the data cache used until the backend has returned the values
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code of the value columns or '' if the phrase has no values
      */
     function values_in_columns(
         word|db_object|type_object|null $dbo,
         user_message                    $msg,
-        ?data_object                    $dto = null
+        ?data_object                    $dto = null,
+        array                           $url_arr = []
     ): string
     {
         $result = '';
@@ -1407,7 +1573,8 @@ class ui_list extends ui_base
             if ($val_lst != null) {
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
-                $result = $val_lst->columns_by_phrase($msg, $phr_lst);
+                $with_variance = url_var::show_variance($url_arr);
+                $result = $val_lst->columns_by_phrase($msg, $phr_lst, [], $with_variance);
             }
         }
         return $result;
@@ -1429,24 +1596,27 @@ class ui_list extends ui_base
      * @param bool $col_values_only true to leave out the values that share no column phrase, so
      *                              that the table stays a grid of its columns (see value_list)
      * @param int $col_tiers the number of column tiers left out by default (see value_list)
-     * @param bool $with_range true to show the probability ranges by default (see value_list)
+     * @param bool $with_variance true to show the variance by default (see value_list)
      * @param bool $value_rows_only true to leave out the rows without a number (see value_list)
      * @param phrase_list|null $add_lst phrases that only the cells need, e.g. the list children
      *                                  that ", ..." counts; null if the cached phrases are enough
+     * @param array $col_names the own column phrase names of the table, e.g. lifetime and annual
+     *                         of a use case page; empty for the system column tiers
      * @return string the html code of the value table or '' if the phrase has no values
      */
     function table_with_related_columns(
         word|triple|db_object|type_object|null $dbo,
-        user_message                          $msg,
-        ?data_object                          $dto = null,
-        bool                                  $with_header = false,
-        bool                                  $with_border = true,
-        array                                 $url_array = [],
-        bool                                  $col_values_only = false,
-        int                                   $col_tiers = value_list::COLUMN_TIERS_ALL,
-        bool                                  $with_range = true,
-        bool                                  $value_rows_only = false,
-        ?phrase_list                          $add_lst = null
+        user_message                           $msg,
+        ?data_object                           $dto = null,
+        bool                                   $with_header = false,
+        bool                                   $with_border = true,
+        array                                  $url_array = [],
+        bool                                   $col_values_only = false,
+        int                                    $col_tiers = value_list::COLUMN_TIERS_ALL,
+        bool                                   $with_variance = true,
+        bool                                   $value_rows_only = false,
+        ?phrase_list                           $add_lst = null,
+        array                                  $col_names = []
     ): string
     {
         $result = '';
@@ -1472,9 +1642,13 @@ class ui_list extends ui_base
                 // a calculated number of a row is a result and not a value, e.g. the reward ratio
                 // of a problem, and it is shown in the same table as the measured numbers; the
                 // results are added to a copy, so that the value cache of the page stays unchanged
+                if ($dto != null) {
+                    $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+                }
                 $tbl_lst = clone $val_lst;
                 $tbl_lst->add_results(
                     $this->result_related_list($dbo, $dto, $dto?->phr_lst), $msg);
+                $this->check_results($tbl_lst, $dto, $msg);
                 $phr_lst = new phrase_list();
                 $phr_lst->add_phrase($dbo->phrase());
                 // the system column tiers decide which phrase heads a column and in which order;
@@ -1483,8 +1657,12 @@ class ui_list extends ui_base
                     $this->add_column_definitions($dto, $msg);
                     $this->add_sort_definitions($dto, $msg);
                 }
-                $col_order = $dto?->phr_lst?->column_names() ?? [];
-                // the "as" entry of the "..." menu says whether the rows are shown as a table,
+                // the time of this message is mainly the merge of the definitions into the request cache
+                log_debug('column and sort definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+                // own columns of the table win, so that they never show up in other tables
+                $col_order = $col_names ?: ($dto?->phr_lst?->column_names() ?? []);
+                log_debug('column order of ' . count($col_order) . ' columns', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+                // the "as" entry of the edit menu says whether the rows are shown as a table,
                 // as the default charts of the table or as both
                 $form = table_forms::by_url($url_array);
                 if ($form->with_table()) {
@@ -1499,27 +1677,32 @@ class ui_list extends ui_base
                     // same page with the next list size
                     $result = $tbl_lst->table_by_related_columns(
                         $msg, $phr_lst, $col_order, $with_header, $with_border, $rel_lst,
-                        null, $url_array, $col_values_only, $col_tiers, $with_range,
+                        null, $url_array, $col_values_only, $col_tiers, $with_variance,
                         $value_rows_only);
+                    log_debug('table of ' . $tbl_lst->count() . ' numbers created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                 } else {
-                    // without the table its header says what the charts are about and its "..."
-                    // menu is the only way back to the table, so the header is centred above the
-                    // charts with the menu in the top right corner
+                    // without the table its header says what the charts are about, centred above
+                    // the charts; the way back to the table is the edit menu of the navbar
                     $html = new html_base();
                     $head = '';
                     if ($with_header) {
                         $head = $tbl_lst->table_header_by_related_columns($msg, $phr_lst, $col_order,
                             $dto?->phr_lst, null, $url_array, $col_values_only, $value_rows_only);
                     }
-                    $head .= $html->div($tbl_lst->columns_menu($url_array), styles::CHART_CORNER);
                     $result = $html->div($head, styles::CHART_HEAD);
                 }
                 if ($form->with_chart()) {
                     if ($dto != null) {
                         $this->add_chart_definitions($dto, $msg);
                     }
+                    log_debug('chart definitions added', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
                     $result .= $this->table_charts($tbl_lst, $msg, $phr_lst, $col_order,
                         $dto?->phr_lst, $url_array, $col_values_only, $value_rows_only, $col_tiers);
+                }
+                // the column menu of the navbar is created after the views, so the names of the
+                // columns of each selection are kept for its tooltips
+                if ($dto != null) {
+                    $dto->add_tier_names($tbl_lst->tier_names);
                 }
             }
         }
@@ -1559,9 +1742,20 @@ class ui_list extends ui_base
         $charts = '';
         // the url names the column tiers like for the table (see value_list::table_model)
         $mayor_only = ((int)($url_array[url_var::DISPLAY_LIST_COLUMNS] ?? $col_tiers) == value_list::COLUMN_TIERS_EX_MAIN);
-        foreach ($rel_lst?->chart_definitions($msg, $mayor_only) ?? [] as [$type, $chart_cols]) {
-            $charts .= $tbl_lst->table_to_svg($type, $msg, $phr_lst, $col_order, $rel_lst, null,
-                $url_array, $col_values_only, $value_rows_only, $chart_cols);
+        $chart_defs = $rel_lst?->chart_definitions($msg, $mayor_only) ?? [];
+        log_debug(count($chart_defs) . ' chart definitions selected', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        // the table model is the same for every chart of the table and the slow part, so it is created once
+        $model = null;
+        if ($chart_defs != []) {
+            $model = $tbl_lst->chart_model($msg, $phr_lst, $col_order, $rel_lst, null,
+                $url_array, $col_values_only, $value_rows_only);
+            log_debug('table model of the charts created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+        }
+        if ($model != null) {
+            foreach ($chart_defs as [$type, $chart_cols]) {
+                $charts .= value_list::model_to_svg($model, $type, $msg, $phr_lst, $chart_cols);
+                log_debug('chart ' . $type->value . ' created', url_var::DEBUG_LEVEL_COMPLEX_FUNCTION);
+            }
         }
         return ($charts == '') ? '' : $html->div($charts, styles::CHART_ROW);
     }
@@ -1653,6 +1847,3211 @@ class ui_list extends ui_base
     }
 
     /**
+     * add the results of the page phrase to the request cache, e.g. the production and the
+     * avoided emission of a PV installation, so that the table shows the calculated numbers
+     * next to the measured ones; the stored results are shown until the frontend calculates
+     * them itself (docs/llm/frontend.md "The frontend calculates, a save job verifies")
+     *
+     * an offline cache is never filled from the api, like add_column_definitions, so a unit
+     * test shows only the results it has cached upfront
+     *
+     * @param data_object $dto the request cache to fill
+     * @param phrase $phr the phrase of the page
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_phrase_results(data_object $dto, phrase $phr, user_message $msg): void
+    {
+        // the cache can hold the results of another phrase e.g. of a table on the same page
+        if ($dto->online and !$dto->page_data_complete and !$dto->has_results_of($phr->id())) {
+            $phr_lst = new phrase_list();
+            $phr_lst->add_phrase($phr);
+            $res_lst = new result_list();
+            if ($res_lst->load_by_phrase_list($phr_lst, $msg)) {
+                $dto->add_results_of($phr->id(), $res_lst);
+                $this->add_result_formulas($dto, $res_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the formulas of the results to the request cache, so that the page can repeat the
+     * calculation of the results (formula_calc); only the formulas the cache lacks are loaded
+     *
+     * @param data_object $dto the request cache to fill
+     * @param result_list $res_lst the results of the page with the id of their formula
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_result_formulas(data_object $dto, result_list $res_lst, user_message $msg): void
+    {
+        $ids = [];
+        foreach ($res_lst->lst() as $res) {
+            $id = $res->frm?->id() ?? 0;
+            if ($id != 0 and !$dto->frm_lst->has_id($id)) {
+                $ids[$id] = $id;
+            }
+        }
+        if ($ids != []) {
+            $frm_lst = new formula_list();
+            if ($frm_lst->load_by_ids(array_values($ids), $msg)) {
+                $dto->frm_lst->merge($frm_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * repeat the calculation of each result of a table with the values of the page and show the
+     * calculated number in place of a stored number that differs, with a warning to the user, so
+     * that a stale stored result is never shown silently (docs/llm/frontend.md "The frontend
+     * calculates, a save job verifies"); a result whose formula or values the page does not have
+     * keeps its stored number
+     *
+     * @param value_list $tbl_lst the values and results of the table
+     * @param data_object|null $dto the data cache of the page with the formulas of the results
+     * @param user_message $msg to report a stored result that differs from the calculation
+     * @return void
+     */
+    private function check_results(value_list $tbl_lst, ?data_object $dto, user_message $msg): void
+    {
+        $calc = new formula_calc($this->prior_names($dto));
+        $frm_lst = $dto?->formula_list() ?? new formula_list();
+        foreach ($tbl_lst->lst() as $res) {
+            if ($res instanceof result) {
+                $num = $calc->result($res, $tbl_lst, $frm_lst);
+                if ($num !== null and round($num, formula_calc::DECIMALS) != round($res->number(), formula_calc::DECIMALS)) {
+                    $msg->add_warning_with_vars(msg_id::RESULT_DIFFERS_FROM_PAGE, [
+                        msg_id::VAR_NAME => $res->name(),
+                        msg_id::VAR_VALUE => $res->number(),
+                        msg_id::VAR_VALUE_CHK => $num
+                    ]);
+                    $res->number = $num;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param data_object|null $dto the request cache with the triples of the page
+     * @return array per phrase name the name of the phrase before it in its "is follower of" chain (shared\calc\prior_operand)
+     */
+    function prior_names(?data_object $dto): array
+    {
+        $result = [];
+        foreach ($dto?->phr_lst?->lst() ?? [] as $phr) {
+            $is_follower = ($phr->is_triple() and $phr->get_verb()?->id() == verbs::FOLLOW_ID);
+            if ($is_follower and $phr->get_from() != null and $phr->get_to() != null) {
+                $result = prior_operand::with_link($result, $phr->get_from()->name(), $phr->get_to()->name());
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the values of the page phrase as number input fields, e.g. the inputs of a use case page: the
+     * other phrases of the value are the label, so the user sees which number is asked for, and the
+     * fields are sorted by the label, because the value list has no order of its own
+     *
+     * @param word|triple|db_object|type_object|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the value load
+     * @param data_object|null $dto the data cache of the page with the values
+     * @return string the html code of the input fields or an empty string if the phrase has no value
+     */
+    function value_input_fields(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto = null
+    ): string
+    {
+        $html = new html_base();
+        $fields = [];
+        foreach ($this->phrase_values($dbo, $msg, $dto) as $val) {
+            $label = implode(' ', array_diff($val->phr_lst()->names(), [$dbo->phrase()->name()]));
+            $fields[$label . $val->id()] = $html->form_input(
+                html_base::INPUT_NUMBER, url_var::NUMERIC_VALUE . $val->id(), (string)$val->number(), $label);
+        }
+        ksort($fields);
+        return implode('', $fields);
+    }
+
+    /**
+     * the input fields of a page (process_catch_fields.json): a phrase of the values of the page
+     * phrase that is assigned a field type is a field of the page; a number field shows the number
+     * of the page with the limits and the step that the values of the field phrase state, and a
+     * phrase selector offers the phrases of the values of the field phrase with the one selected
+     * that the page phrase uses; a number or phrase of the url wins, so the page shows the input
+     * again after the refresh, and every input joins the refresh form by its form attribute
+     *
+     * @param word|triple|db_object|type_object|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $dto the data cache of the page with the values and the field triples
+     * @param string $form_name the name of the refresh form that the fields join
+     * @param array $url_arr the url parameters of the page with the entered numbers and phrases
+     * @return string the html code of the fields sorted by name or an empty string if the page has no field
+     */
+    function input_fields(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto,
+        string                                 $form_name,
+        array                                  $url_arr
+    ): string
+    {
+        $fields = [];
+        if ($dto != null and $dbo != null) {
+            $this->add_field_definitions($dto, $msg);
+            $field_phr = [];
+            $field_val = [];
+            $linked = [];
+            foreach ($this->phrase_values($dbo, $msg, $dto) as $val) {
+                foreach ($val->phr_lst()->lst() as $phr) {
+                    $name = $phr->name();
+                    if ($this->field_type($phr, $dto, $msg) == triples::FIELD_NUMBER_WITH_LIMITS) {
+                        if (!in_array($name, $linked)) {
+                            $this->add_field_links($phr, $dto, $msg);
+                            $linked[] = $name;
+                        }
+                        if ($this->has_field_value_phrases($phr, $val, $dto, $msg)
+                            and (!array_key_exists($name, $field_val)
+                                or count($val->phr_lst()->lst()) < count($field_val[$name]->phr_lst()->lst()))) {
+                            $field_phr[$name] = $phr;
+                            $field_val[$name] = $val;
+                        }
+                    }
+                }
+            }
+            foreach ($field_val as $name => $val) {
+                $this->add_field_values($field_phr[$name], $dto, $msg);
+                $fields[$name] = $this->number_field($field_phr[$name], $val, $dto, $form_name, $url_arr, $msg);
+            }
+            foreach ($this->selector_fields($dto, $msg) as $phr) {
+                $this->add_field_values($phr, $dto, $msg);
+                $field = $this->selector_field($phr, $dbo, $dto, $form_name, $url_arr, $msg);
+                if ($field != '') {
+                    $fields[$phr->name()] = $field;
+                }
+            }
+        }
+        ksort($fields);
+        return implode('', $fields);
+    }
+
+    /**
+     * add the field types and properties of process_catch_fields.json to the request cache, so
+     * that the page knows which of its phrases are fields; an offline cache has them from its fixture
+     *
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_field_definitions(data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and !$dto->page_data_complete
+            and $dto->phr_lst->get_by_name(triples::FIELD_NUMBER_WITH_LIMITS, $msg) == null) {
+            $lst = new phrase_list();
+            if ($lst->load_related_by_name(triples::SYSTEM_PROCESS_CATCH_FIELD, foaf_direction::BOTH, $msg, 3)) {
+                $dto->add_phrases($lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the triples of a field phrase and the triples of these triples to the request cache,
+     * so that the field value phrases are known e.g. "household consumption input period"
+     * (household consumption has a annual) that "can be field value phrases"
+     *
+     * @param phrase $phr the field phrase e.g. "household consumption"
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_field_links(phrase $phr, data_object $dto, user_message $msg): void
+    {
+        if ($dto->online and !$dto->page_data_complete) {
+            $lst = new phrase_list();
+            if ($lst->load_related_by_name($phr->name(), foaf_direction::UP, $msg, 2)) {
+                $dto->add_phrases($lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * add the values of a field phrase to the request cache, which state the limits and the step
+     * of a number field or the phrases of a selector; loaded once per field phrase
+     *
+     * @param phrase $phr the field phrase e.g. "PV capacity"
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_field_values(phrase $phr, data_object $dto, user_message $msg): void
+    {
+        if ($dto->val_lst->get_by_names([$phr->name()]) == null) {
+            $phr_lst = new phrase_list();
+            $phr_lst->add_phrase($phr);
+            $dto->load_values_of($phr_lst, $msg);
+        }
+    }
+
+    /**
+     * @param phrase $phr a phrase of a value of the page
+     * @param data_object $dto the request cache with the field triples
+     * @param user_message $msg to report a problem of the cache
+     * @return string the name of the field type that the phrase is assigned to, or '' if it is no field
+     */
+    private function field_type(phrase $phr, data_object $dto, user_message $msg): string
+    {
+        $result = '';
+        $types = [triples::FIELD_NUMBER_WITH_LIMITS, triples::FIELD_PHRASE_SELECTOR_TYPE, triples::CALCULATOR_CHECKBOX];
+        foreach ($dto->phr_lst->children($phr, $msg)->lst() as $trp) {
+            $to_name = $trp->obj()?->get_to()?->name() ?? '';
+            if (in_array($to_name, $types)) {
+                $result = $to_name;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * true if the value has all field value phrases of the field phrase, so that a field shows
+     * the input value e.g. 4500 kWh annual and not a monthly value of the same field phrase;
+     * a field value phrase is the "to" of a triple of the field phrase that "can be" a field value phrase
+     *
+     * @param phrase $phr the field phrase e.g. "household consumption"
+     * @param sandbox_value $val a value of the page with the field phrase
+     * @param data_object $dto the request cache with the field triples
+     * @param user_message $msg to report a problem of the cache
+     * @return bool true if the value has every field value phrase or if the field has none
+     */
+    private function has_field_value_phrases(phrase $phr, sandbox_value $val, data_object $dto, user_message $msg): bool
+    {
+        $result = true;
+        foreach ($dto->phr_lst->children($phr, $msg)->lst() as $trp) {
+            foreach ($dto->phr_lst->children($trp, $msg)->lst() as $prop) {
+                $to_name = $prop->obj()?->get_to()?->name() ?? '';
+                $val_phr = $trp->obj()?->get_to();
+                if ($to_name == triples::FIELD_VALUE_PHRASES and $val_phr != null and !$val->has_phrase($val_phr, $msg)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param data_object $dto the request cache with the field triples
+     * @param user_message $msg to report a problem of the cache
+     * @return array the phrases that are assigned the phrase selector type e.g. "yield factor"
+     */
+    private function selector_fields(data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        $type = $dto->phr_lst->get_by_name(triples::FIELD_PHRASE_SELECTOR_TYPE, $msg);
+        if ($type != null) {
+            foreach ($dto->phr_lst->parents($type, $msg)->lst() as $phr) {
+                $result[] = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the number of a property of a field phrase, which a value with the field phrase and the
+     * property phrase states e.g. 0.5 with "PV capacity" and "field step"
+     *
+     * @param phrase $phr the field phrase
+     * @param string $prop_name the name of the property triple e.g. triples::FIELD_STEP
+     * @param data_object $dto the request cache with the values of the field phrase
+     * @return float|null the number or null if the field has no such property
+     */
+    private function field_property(phrase $phr, string $prop_name, data_object $dto): ?float
+    {
+        return $dto->val_lst->get_by_names([$phr->name(), $prop_name])?->number();
+    }
+
+    /**
+     * a number field of the page with its label, the number of the page or of the url, the limits
+     * and the step of the field and the unit of the number behind the input
+     *
+     * @param phrase $phr the field phrase e.g. "PV capacity"
+     * @param sandbox_value $val the value of the page phrase with the field phrase
+     * @param data_object $dto the request cache with the property values of the field
+     * @param string $form_name the refresh form that the input joins
+     * @param array $url_arr the url parameters with the entered number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field
+     */
+    private function number_field(
+        phrase        $phr,
+        sandbox_value $val,
+        data_object   $dto,
+        string        $form_name,
+        array         $url_arr,
+        user_message  $msg
+    ): string
+    {
+        $html = new html_base();
+        $name = url_var::NUMERIC_VALUE . $phr->id();
+        $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $this->field_shown($val->number(), $val, $msg);
+        $input = $html->input_number($name, $num,
+            $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg),
+            $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg),
+            $this->field_shown($this->field_property($phr, triples::FIELD_STEP, $dto), $val, $msg), $form_name);
+        $unit = $this->field_unit($val, $msg);
+        if ($unit != '') {
+            $input .= $html->span($unit, styles::INPUT_UNIT);
+        }
+        return $html->div($html->label($phr->name(), $name) . $input, styles::INPUT_FIELD);
+    }
+
+    /**
+     * @param sandbox_value $val a value of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the symbol of the unit phrase of the value e.g. "kWh/a", else its name, or '' if the value has no unit
+     */
+    function unit_name(sandbox_value $val, user_message $msg): string
+    {
+        $result = '';
+        foreach ($val->phr_lst()->lst() as $phr) {
+            if ($result == '' and ($phr->is_measure($msg) or $phr->is_ratio_unit($msg))) {
+                $result = $phr->unit_text($msg);
+            } elseif ($result == '' and $phr->is_percent($msg)) {
+                // not the symbol "%" of the percent word, because the unit of a table cell is the name; a field uses field_unit
+                $result = $phr->name();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a phrase selector field of the page: the phrases of the values of the field phrase are the
+     * options e.g. the orientations of the yield factor, and the one the page phrase uses or the
+     * one of the url is selected; a selector none of whose options the page phrase uses is no
+     * field of this page
+     *
+     * @param phrase $phr the field phrase e.g. "yield factor"
+     * @param word|triple|db_object|type_object $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values of the field phrase and the triples of the page phrase
+     * @param string $form_name the refresh form that the selector joins
+     * @param array $url_arr the url parameters with the selected phrase
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field or an empty string if the page phrase uses no option
+     */
+    private function selector_field(
+        phrase                            $phr,
+        word|triple|db_object|type_object $dbo,
+        data_object                       $dto,
+        string                            $form_name,
+        array                             $url_arr,
+        user_message                      $msg
+    ): string
+    {
+        $result = '';
+        $options = $this->selector_options($phr, $dto, $msg);
+        $used = [];
+        foreach ($dto->phr_lst->children($dbo->phrase(), $msg)->lst() as $trp) {
+            $used[] = $trp->obj()?->get_to()?->id();
+        }
+        $selected = array_values(array_intersect(array_keys($options), $used))[0] ?? null;
+        if ($selected !== null) {
+            $html = new html_base();
+            $sel = new html_selector();
+            $sel->name = url_var::PHRASE . $phr->id();
+            $sel->form = $form_name;
+            $sel->lst = $options;
+            $sel->selected = $url_arr[$sel->name] ?? $selected;
+            $sel->with_label = false;
+            // the label points to the id that the selector builds from its name and its label message
+            $dom_id = $sel->name . '_' . strtolower($sel->label_id->name);
+            $result = $html->div($html->label($phr->name(), $dom_id) . $sel->display(), styles::INPUT_FIELD);
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the field phrase e.g. "yield factor"
+     * @param data_object $dto the request cache with the values of the field phrase
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the option names by phrase id: the phrases of the values of the field phrase
+     *               without the field phrase and the units, sorted by name
+     */
+    private function selector_options(phrase $phr, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        foreach ($dto->val_lst->lst() as $val) {
+            $names = $val->phr_lst()->names();
+            if (in_array($phr->name(), $names)) {
+                foreach ($val->phr_lst()->lst() as $opt) {
+                    $is_unit = ($opt->is_measure($msg) or $opt->is_percent($msg) or $opt->is_scaling($msg));
+                    if ($opt->id() != $phr->id() and !$is_unit) {
+                        $result[$opt->id()] = $opt->name();
+                    }
+                }
+            }
+        }
+        asort($result);
+        return $result;
+    }
+
+    /**
+     * the values that the calculation of the results of the page uses, e.g. for the assumptions
+     * and the sources of a use case page; the results of the page and their formulas are loaded
+     * if the cache lacks them, and so are the values of the context of each result
+     *
+     * @param word|triple|db_object|type_object $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object $dto the data cache of the page with the values, the results and the formulas
+     * @return array the values and results that the results of the page use, each once
+     */
+    private function operand_values(
+        word|triple|db_object|type_object $dbo,
+        user_message                      $msg,
+        data_object                       $dto
+    ): array
+    {
+        $result = [];
+        $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+        $calc = new formula_calc($this->prior_names($dto));
+        // in a fixed order, because the order of the operands is the order of their sources on the page
+        foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->sorted_by_impact($msg) as $res) {
+            $this->add_context_values($res, $dto, $msg);
+            $operands = $calc->operands($res, $this->values_and_results($dto, $msg), $dto->formula_list());
+            foreach ($operands as $val) {
+                $result[$val->id()] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * complete the source of each value that knows its source only by the id (the value api
+     * message carries the source id, not the name), from the source cache of the page or else
+     * loaded from the backend once for all values, so that the page can show the source names
+     *
+     * @param array $vals the values of the page
+     * @param data_object $dto the data cache of the page with the sources
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_sources(array $vals, data_object $dto, user_message $msg): void
+    {
+        $ids = [];
+        foreach ($vals as $val) {
+            $id = $this->source_id_without_name($val);
+            if ($id != 0 and !$dto->src_lst->has_id($id)) {
+                $ids[$id] = $id;
+            }
+        }
+        if ($ids != [] and $dto->online and !$dto->page_data_complete) {
+            $src_lst = new source_list();
+            if ($src_lst->load_by_ids(array_values($ids), $msg)) {
+                $dto->src_lst->merge($src_lst, $msg);
+            }
+        }
+        foreach ($vals as $val) {
+            $id = $this->source_id_without_name($val);
+            if ($id != 0 and $dto->src_lst->has_id($id)) {
+                $val->src = $dto->src_lst->get($id);
+            }
+        }
+    }
+
+    /**
+     * @param value|result $val a value of the page
+     * @return int the id of the source of the value if the value lacks the source name, else zero
+     */
+    private function source_id_without_name(value|result $val): int
+    {
+        $id = 0;
+        if ($val instanceof value and $val->src != null and ($val->src->name() ?? '') == '') {
+            $id = $val->src->id() ?? 0;
+        }
+        return $id;
+    }
+
+    /**
+     * the notes of a page: the descriptions of the formulas that calculate the results of the
+     * page, each as a paragraph with the formula name in front, sorted by the name, so the notes
+     * are the formula descriptions of the use case file and not a text of their own
+     *
+     * @param word|triple|db_object|type_object|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $dto the data cache of the page with the results and the formulas
+     * @return string the html code of the notes or an empty string if no formula of the page has a description
+     */
+    function formula_notes(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto = null
+    ): string
+    {
+        $html = new html_base();
+        $notes = [];
+        if ($dto != null and $dbo != null and ($dbo::class == word::class or $dbo::class == triple::class)) {
+            $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+            foreach ($this->result_related_list($dbo, $dto, $dto->phr_lst)->lst() as $res) {
+                $id = $res->frm?->id() ?? 0;
+                if ($id != 0 and $dto->frm_lst->has_id($id)) {
+                    $frm = $dto->frm_lst->get($id);
+                    if ($frm->get_description() != '') {
+                        $notes[$frm->name()] = $html->p($html->bold($frm->name()) . ' ' . $html->esc($frm->get_description()));
+                    }
+                }
+            }
+        }
+        ksort($notes);
+        return implode('', $notes);
+    }
+
+    /**
+     * the assumptions of a page: the values that the calculation of the results of the page uses
+     * and that the page phrase does not carry, e.g. the yield, the lifetime and the reference mixes
+     * of the PV balance, each as a number field with the tag "measured" for a value with a source,
+     * with the source as the hint, or "assumed" with the confidence that a value with the same
+     * phrases and the confidence word states; an entered number of the url is shown again
+     *
+     * @param word|triple|db_object|type_object|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $dto the data cache of the page with the values, the results and the formulas
+     * @param string $form_name the name of the refresh form that the fields join
+     * @param array $url_arr the url parameters of the page with the entered numbers
+     * @param array $skip the names of the phrases whose values are shown already e.g. the
+     *                    assumptions that the calculator lists
+     * @return string the html code of the fields sorted by label or an empty string if the page has no assumption
+     */
+    function assumption_fields(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto,
+        string                                 $form_name,
+        array                                  $url_arr,
+        array                                  $skip = []
+    ): string
+    {
+        $fields = [];
+        if ($dto != null and $dbo != null and ($dbo::class == word::class or $dbo::class == triple::class)) {
+            $vals = $this->operand_values($dbo, $msg, $dto);
+            $this->add_sources($vals, $dto, $msg);
+            foreach ($vals as $val) {
+                $names = $val->phr_lst()->names();
+                if ($val instanceof value and !in_array($dbo->phrase()->name(), $names)
+                    and array_intersect($skip, $names) == []) {
+                    $label = $this->assumption_label($val, $msg);
+                    $fields[$label . $val->id()] = $this->assumption_field($val, $label, $dto, $form_name, $url_arr, $msg);
+                }
+            }
+        }
+        ksort($fields);
+        return implode('', $fields);
+    }
+
+    /**
+     * add the values that a result may use to the request cache: the values of the phrases of
+     * the context of the result, without the units, the times and the quality words, whose values
+     * are too many to load and never an operand on their own; each context is loaded once
+     *
+     * @param result $res a result of the page with the phrases of the values used
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return void
+     */
+    private function add_context_values(result $res, data_object $dto, user_message $msg): void
+    {
+        $ctx = $res->src_grp?->phr_lst();
+        if ($ctx != null) {
+            $phr_lst = new phrase_list();
+            foreach ($ctx->lst() as $phr) {
+                if (!$this->is_marker($phr, $msg)) {
+                    $phr_lst->add_phrase($phr);
+                }
+            }
+            if (!$phr_lst->is_empty()) {
+                $dto->load_values_of($phr_lst, $msg);
+            }
+        }
+    }
+
+    /**
+     * @param data_object $dto the request cache of the page
+     * @param user_message $msg to report a problem of the merge
+     * @return value_list the values of the page followed by its results, as the calculation resolves its operands
+     */
+    private function values_and_results(data_object $dto, user_message $msg): value_list
+    {
+        $lst = clone $dto->val_lst;
+        $lst->add_results($dto->res_lst, $msg);
+        return $lst;
+    }
+
+    /**
+     * @param phrase $phr a phrase of a value
+     * @param user_message $msg to report a problem of the phrase types
+     * @return bool true if the phrase is a unit, a scaling, a time or a quality word, which says
+     *              how a number is stated but not what it measures
+     */
+    private function is_marker(phrase $phr, user_message $msg): bool
+    {
+        return $phr->is_measure($msg) or $phr->is_percent($msg) or $phr->is_scaling($msg)
+            or $phr->is_time($msg) or $phr->is_quality($msg) or in_array($phr->name(), words::VALUE_MARKERS);
+    }
+
+    /**
+     * @param value $val a value used by the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the label of the assumption: the phrases of the value that say what it measures
+     */
+    private function assumption_label(value $val, user_message $msg): string
+    {
+        $names = [];
+        foreach ($val->phr_lst()->lst() as $phr) {
+            if (!$this->is_marker($phr, $msg)) {
+                $names[] = $phr->name();
+            }
+        }
+        return implode(' ', $names);
+    }
+
+    /**
+     * an assumption as a number field with the label, the measured or assumed tag, the unit of
+     * the number and the source as the hint
+     *
+     * @param value $val the value used by a result of the page
+     * @param string $label the label of the assumption
+     * @param data_object $dto the request cache with the confidence values
+     * @param string $form_name the refresh form that the input joins
+     * @param array $url_arr the url parameters with the entered number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field
+     */
+    private function assumption_field(
+        value        $val,
+        string       $label,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $name = url_var::NUMERIC_VALUE . $val->id();
+        $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $this->field_shown($val->number(), $val, $msg);
+        $text = $label . ' ' . $html->span($this->assumption_tag($val, $dto, $msg), styles::INPUT_TAG);
+        $unit = $this->field_unit($val, $msg);
+        $input = $html->input_number($name, $num, null, null, null, $form_name)
+            . $this->calculator_save_vars((string)$val->id(), $val, $label, $unit, $form_name);
+        if ($unit != '') {
+            $input .= $html->span($unit, styles::INPUT_UNIT);
+        }
+        $hint = $val->src?->name() ?? '';
+        if ($hint != '') {
+            $input .= $html->span($hint, styles::INPUT_HINT);
+        }
+        return $html->div($html->label($text, $name) . $input, styles::INPUT_FIELD);
+    }
+
+    /**
+     * @param value $val the value used by a result of the page
+     * @param data_object $dto the request cache with the confidence values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string "measured" for a value with a source, else "assumed" with the confidence if one is stated
+     */
+    function assumption_tag(value $val, data_object $dto, user_message $msg): string
+    {
+        global $mtr;
+        $result = $mtr->txt(msg_id::FIELD_TAG_MEASURED);
+        if ($val->source_id() == null) {
+            $result = $mtr->txt(msg_id::FIELD_TAG_ASSUMED);
+            $conf = $dto->val_lst->get_by_names([...$this->names_without_unit($val, $msg), words::CONFIDENCE]);
+            if ($conf != null) {
+                $result .= ' ' . $conf->number();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param value $val a value of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the phrase names of the value without its unit, because a confidence has its own unit e.g. percent for a value in kg per kWh
+     */
+    private function names_without_unit(value $val, user_message $msg): array
+    {
+        $result = [];
+        foreach ($val->phr_lst()->lst() as $phr) {
+            if (!$phr->is_measure($msg) and !$phr->is_ratio_unit($msg) and !$phr->is_percent($msg)) {
+                $result[] = $phr->name();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the fields of a calculator list (docs/llm/new_view_sample_pv_balance.md section 3.2): one
+     * field per item in the order of the calculator, a phrase selector if the phrase of the item
+     * is one, else a number field with the number of the item phrase; the label and the hint are
+     * the calculator texts of the item or of its phrase (rule 6) and an assumption gets the
+     * measured or assumed tag; an entered number of the url is shown again
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase[] $items the items of the list e.g. the inputs
+     * @param word|triple $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param string $form_name the refresh form that the fields join
+     * @param array $url_arr the url parameters with the entered numbers
+     * @param bool $assumption true for the assumptions, which show the measured or assumed tag
+     * @return string the html code of the fields
+     */
+    function calculator_fields(
+        calculator   $calc,
+        array        $items,
+        word|triple  $dbo,
+        user_message $msg,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        bool         $assumption = false
+    ): string
+    {
+        $result = '';
+        // the numbers of the sources of the whole page, so that a hint names the same [n] as the source list
+        $src_ids = $this->calculator_source_ids($calc, $dbo, $dto, $msg);
+        foreach ($items as $item) {
+            $phr = $calc->item_phrase($item);
+            if ($phr != null) {
+                $type = $this->field_type($phr, $dto, $msg);
+                if ($calc->has_flag($item, triples::CALCULATOR_READ_ONLY)) {
+                    $result .= $this->calculator_read_only($calc, $item, $phr, $dbo, $dto, $src_ids, $msg);
+                } elseif ($calc->has_flag($item, triples::CALCULATOR_REPEAT)) {
+                    $result .= $this->calculator_repeat($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
+                } elseif ($type == triples::CALCULATOR_CHECKBOX) {
+                    $result .= $this->calculator_checkbox($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $msg);
+                } elseif ($type == triples::FIELD_PHRASE_SELECTOR_TYPE) {
+                    $result .= $this->calculator_selector($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $src_ids, $msg);
+                } else {
+                    $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, $assumption, $src_ids, $msg);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a number field of a calculator with the input and its unit on one line
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. PV installation input PV capacity
+     * @param phrase $phr the phrase of the item e.g. PV capacity
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the input joins
+     * @param array $url_arr the url parameters with the entered number
+     * @param bool $assumption true to add the measured or assumed tag and the description of the value as the hint
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @param phrase|null $instance the instance of a repeated field, which gets its own number and name behind the label
+     * @return string the html code of the field
+     */
+    private function calculator_number(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        bool         $assumption,
+        array        $src_ids,
+        user_message $msg,
+        ?phrase      $instance = null
+    ): string
+    {
+        $html = new html_base();
+        $field_phr = $instance ?? $phr;
+        $name = url_var::NUMERIC_VALUE . $field_phr->id();
+        $val = $instance == null
+            ? $this->calculator_value($phr, $dbo, $dto, $msg)
+            : $this->calculator_repeat_value($calc, $phr, $instance, $dbo, $dto, $msg);
+        $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $this->field_shown($val?->number(), $val, $msg);
+        $label = $calc->label($item);
+        if ($instance != null) {
+            $label .= ' ' . $calc->phrase_label($instance);
+        }
+        $text = $html->esc($label);
+        $hint = $calc->hint($item);
+        if ($assumption and $val instanceof value) {
+            $tag_style = $val->source_id() == null ? styles::INPUT_TAG_ASSUMED : styles::INPUT_TAG_MEASURED;
+            $text .= ' ' . $html->span($this->assumption_tag($val, $dto, $msg), $tag_style);
+            if ($hint == '') {
+                $hint = $val->get_description();
+            }
+        }
+        $input = $html->input_number($name, $num,
+            $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_DOWN, $dto), $val, $msg),
+            $this->field_shown($this->field_property($phr, triples::FIELD_LIMIT_UP, $dto), $val, $msg),
+            $this->field_shown($this->field_property($phr, triples::FIELD_STEP, $dto), $val, $msg), $form_name);
+        $unit = $val == null ? '' : $this->field_unit($val, $msg);
+        if ($val != null) {
+            $input .= $this->calculator_save_vars((string)$field_phr->id(), $val, $label, $unit, $form_name);
+        }
+        if ($unit != '') {
+            $input .= $html->span($unit, styles::INPUT_UNIT);
+        }
+        $input .= $this->calculator_remove_button($calc, $phr, $instance);
+        $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
+        return $html->div($html->label($text, $name) . $html->div($input, styles::INPUT_ROW)
+            . $this->calculator_hint($hint, $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * the button to remove an instance of a repeated field at its place, without a function so far (docs/llm/pending.md)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr the phrase of the field e.g. child portfolio
+     * @param phrase|null $instance the instance of the field e.g. first child portfolio, null for a field that is not repeated
+     * @return string the html code of the button or an empty string if the field needs at least this instance
+     */
+    function calculator_remove_button(calculator $calc, phrase $phr, ?phrase $instance): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        if ($instance != null and count($calc->kinds($phr)) > self::CALC_MIN_INSTANCES) {
+            $title = $mtr->txt(msg_id::CALCULATOR_REMOVE) . ' ' . $calc->phrase_label($instance);
+            $result = $html->button_icon($html->icon(self::CALC_REMOVE_ICON), $title, styles::CALC_BUTTON_REMOVE);
+        }
+        return $result;
+    }
+
+    /**
+     * the section with the import buttons of the page at their place, without a function so far (docs/llm/pending.md)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @return string the html code of the section or an empty string if the page has no such list
+     */
+    function calculator_imports(calculator $calc): string
+    {
+        $html = new html_base();
+        $buttons = '';
+        foreach ($calc->items(triples::CALCULATOR_FILE_IMPORT) as $item) {
+            $buttons .= $html->button($html->esc($calc->label($item)), html_base::BUTTON, styles::CALC_BUTTON);
+        }
+        $summary = $calc->own_label($calc->group(triples::CALCULATOR_FILE_IMPORT));
+        return $buttons == '' ? '' : $html->details($html->esc($summary), $html->div($buttons, styles::CALC_IMPORTS));
+    }
+
+    /**
+     * the warnings of a calculator whose result of the page phrase is above zero e.g. the excess of the target shares
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values and the results
+     * @param user_message $msg to report a problem of the load
+     * @return string the html code of the warnings or an empty string if no warning applies
+     */
+    function calculator_warnings(calculator $calc, word|triple $dbo, data_object $dto, user_message $msg): string
+    {
+        $html = new html_base();
+        $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+        $lst = $this->values_and_results($dto, $msg);
+        $result = '';
+        foreach ($calc->warnings() as [$phr, $text]) {
+            $val = $this->calculator_result([$dbo->phrase(), $phr], $lst, $msg);
+            if (round((float)$val?->number(), self::CALC_WARNING_DECIMALS) > 0) {
+                $result .= $html->div($html->esc($text), styles::INPUT_WARNING);
+            }
+        }
+        // also without an active warning, because the script shows a warning after an input change
+        return $calc->warnings() == [] ? '' : $html->div($result, styles::INPUT_WARNINGS, self::CALC_WARNINGS_ID);
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per warning of the page the html id of its number and its text
+     */
+    private function calculator_warning_plan(calculator $calc, word|triple $dbo, value_list $lst, user_message $msg): array
+    {
+        $result = [];
+        foreach ($calc->warnings() as [$phr, $text]) {
+            $val = $this->calculator_result([$dbo->phrase(), $phr], $lst, $msg);
+            if ($val != null) {
+                $result[] = [self::CALC_CELL_NUMBER => $val->html_id(), self::CALC_WARNING_TEXT => $text];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a number of a calculator that a user cannot change e.g. the target weight of the parent
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split input parent portfolio
+     * @param phrase $phr the phrase of the item e.g. parent portfolio
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field
+     */
+    private function calculator_read_only(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        $number = $val == null ? '' : $this->calculator_rough_text($val, $msg, 1);
+        $refs = $this->field_source_refs($phr, $val, $dto, $src_ids, $msg);
+        return $html->div($html->label_no_for($html->esc($calc->label($item)))
+            . $html->div($html->esc($number), styles::INPUT_READ_ONLY)
+            . $this->calculator_hint($calc->hint($item), $refs), styles::INPUT_FIELD);
+    }
+
+    /**
+     * a checkbox of a calculator: checked is the number 1 and unchecked the number 0, which the
+     * hidden field in front of the checkbox sends, because a browser sends no unchecked checkbox
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split input mirror
+     * @param phrase $phr the phrase of the item e.g. mirror
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the input joins
+     * @param array $url_arr the url parameters with the entered number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the field
+     */
+    private function calculator_checkbox(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $name = url_var::NUMERIC_VALUE . $phr->id();
+        $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+        $num = array_key_exists($name, $url_arr) ? (float)$url_arr[$name] : $val?->number();
+        $label = $calc->label($item);
+        $input = $html->form_hidden($name, '0', $form_name) . $html->input_checkbox($name, $num == 1, $form_name);
+        $vars = $val == null ? '' : $this->calculator_save_vars((string)$phr->id(), $val, $label, '', $form_name);
+        $text = $html->esc($label) . $this->calculator_hint($calc->hint($item));
+        return $html->label_no_for($input . $html->span($text), styles::INPUT_CHECK) . $vars;
+    }
+
+    /**
+     * a field per instance of a repeated input e.g. the target weight of each child and the button to add an instance
+     * the button has no function yet, because a new instance needs its own phrase
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. portfolio split input child portfolio
+     * @param phrase $phr the phrase of the item e.g. child portfolio
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param string $form_name the refresh form that the inputs join
+     * @param array $url_arr the url parameters with the entered numbers
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the fields and the button
+     */
+    private function calculator_repeat(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($calc->kinds($phr) as $instance) {
+            $result .= $this->calculator_number($calc, $item, $phr, $dbo, $dto, $form_name, $url_arr, false, $src_ids, $msg, $instance);
+        }
+        $add = $calc->repeat_label($item);
+        if ($add != '') {
+            $result .= $html->button($html->esc($add), html_base::BUTTON, styles::CALC_BUTTON_ADD);
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr the phrase of a repeated field e.g. child portfolio
+     * @param phrase $instance an instance of the field e.g. first child portfolio
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the cache
+     * @return sandbox_value|null the value of the instance and the phrase that the repeated phrase has e.g. target share
+     */
+    private function calculator_repeat_value(
+        calculator   $calc,
+        phrase       $phr,
+        phrase       $instance,
+        word|triple  $dbo,
+        data_object  $dto,
+        user_message $msg
+    ): ?sandbox_value
+    {
+        $has = $calc->sub_items($phr, verbs::HAS_ID)[0] ?? null;
+        $has_phr = $calc->item_phrase($has) ?? $phr;
+        return $this->calculator_option_value($has_phr, $instance, $dbo, $dto, $msg);
+    }
+
+    /**
+     * @param phrase $phr the phrase of the field e.g. battery production emission
+     * @param sandbox_value|null $val the value that the field shows
+     * @param data_object $dto the request cache with the values
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the numbers of the source of the field value, else of the values it is based on, e.g. "[5][6]"
+     */
+    private function field_source_refs(phrase $phr, ?sandbox_value $val, data_object $dto, array $src_ids, user_message $msg): string
+    {
+        $refs = [$this->source_ref($val, $src_ids)];
+        foreach ($this->calculator_basis_values($phr, $val, $dto, $msg) as $basis) {
+            $refs[] = $this->source_ref($basis, $src_ids);
+        }
+        return implode('', array_unique($refs));
+    }
+
+    /**
+     * the measured values that an assumed field value is based on e.g. the literature values of a
+     * battery production emission: the values of the field phrase with the same unit and a source,
+     * but no property of the field; a measured field value names its own source and has none;
+     * ordered by their phrase names, which the calculator script has as well (calculator_json.js basisEntries)
+     *
+     * @param phrase $phr the phrase of the field e.g. battery production emission
+     * @param sandbox_value|null $val the value that the field shows
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the values with a source that the field value is based on
+     */
+    private function calculator_basis_values(phrase $phr, ?sandbox_value $val, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        if ($val instanceof value and $val->source_id() == null) {
+            $unit = $val->unit_key($msg);
+            foreach ($dto->val_lst->lst() as $other) {
+                if ($this->is_basis_value($other, $phr, $unit, $msg)) {
+                    $result[$other->name_key()] = $other;
+                }
+            }
+        }
+        ksort($result, SORT_STRING);
+        return array_values($result);
+    }
+
+    /**
+     * @param sandbox_value $val a value of the request cache
+     * @param phrase $phr the phrase of the field
+     * @param string $unit the unit key of the field value (sandbox_value::unit_key)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return bool true if the value has a source, the field phrase and the unit, but no property of the field
+     */
+    private function is_basis_value(sandbox_value $val, phrase $phr, string $unit, user_message $msg): bool
+    {
+        $is_measured = ($val instanceof value and $val->source_id() != null);
+        $no_property = array_intersect($val->phr_lst()->names(), self::CALC_FIELD_PROPERTIES) == [];
+        return $is_measured and $no_property and $val->has_phrase($phr, $msg) and $val->unit_key($msg) == $unit;
+    }
+
+    /**
+     * the hidden vars that the save of a calculator page needs for one number field: the group id of
+     * the value that the field shows and the number of the value, so that the save writes only a
+     * changed number (see frontend::calculator_changes), and the label and the unit of the field,
+     * so that the save names what it has saved (see frontend::calculator_saved_text);
+     * a field without them e.g. a selector is never saved
+     *
+     * @param string $field the url key of the field behind the number var e.g. "-2757" for "n-2757"
+     * @param sandbox_value $val the value that the field shows
+     * @param string $label the label of the field e.g. "System size"
+     * @param string $unit the unit of the field e.g. "kWp" or an empty string for a number without unit
+     * @param string $form_name the save form that the field joins
+     * @return string the html code of the hidden vars
+     */
+    private function calculator_save_vars(
+        string        $field,
+        sandbox_value $val,
+        string        $label,
+        string        $unit,
+        string        $form_name
+    ): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($this->calculator_save_map($field, $val, $label, $unit) as $var => $var_val) {
+            $result .= $html->form_hidden($var, $var_val, $form_name);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $field the url key of the field behind the number var e.g. "-2757" for "n-2757"
+     * @param sandbox_value $val the value that the field shows
+     * @param string $label the label of the field e.g. "System size"
+     * @param string $unit the unit of the field e.g. "kWp" or an empty string for a number without unit
+     * @return array the save vars of the field by their url var (see calculator_save_vars), the
+     *               group id as text, because it can be beyond the safe integer of javascript
+     */
+    private function calculator_save_map(string $field, sandbox_value $val, string $label, string $unit): array
+    {
+        $html = new html_base();
+        $result = [url_var::GROUP . $field => (string)$val->id()];
+        if ($val->number() !== null) {
+            // the number that the field has shown, so that the save sees only what the user has changed
+            $shown = $unit == sandbox_value::UNIT_PERCENT ? $val->number() * 100 : $val->number();
+            $result[url_var::PRE . url_var::NUMERIC_VALUE . $field] = $html->number_value($shown);
+        }
+        $result[url_var::NAME . $field] = $label;
+        if ($unit != '') {
+            $result[url_var::PHRASE . $field] = $unit;
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value that a field shows
+     * @param user_message $msg to report a problem of the phrase types
+     * @return int|null the minimum decimals of the number in the field: the percent decimals of the
+     *                  user for a share e.g. 0.90, null for another number, which is shown as it is
+     */
+    function field_decimals(sandbox_value $val, user_message $msg): ?int
+    {
+        global $ui_sys;
+        $result = null;
+        if ($val->is_percent($msg)) {
+            $result = $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS;
+        }
+        return $result;
+    }
+
+    /**
+     * @param float|null $num a number of the field e.g. its value or a limit
+     * @param sandbox_value|null $val the value that the field shows
+     * @param user_message $msg to report a problem of the phrase types
+     * @return float|null the number as the field shows it: a share in percent e.g. 35 for the stored ratio 0.35, else the number itself
+     */
+    function field_shown(?float $num, ?sandbox_value $val, user_message $msg): ?float
+    {
+        $result = $num;
+        if ($num !== null and $this->shows_percent($val, $msg)) {
+            $result = $num * 100;
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value|null $val the value that a number field shows
+     * @param user_message $msg to report a problem of the phrase types
+     * @return bool true if the field shows the number in percent, but not for a ratio unit e.g. share (ratio), whose number is never shown times 100
+     */
+    private function shows_percent(?sandbox_value $val, user_message $msg): bool
+    {
+        $result = false;
+        if ($val != null and $val->is_percent($msg)) {
+            $ratio_units = array_filter($val->phr_lst()->lst(), fn($phr) => $phr->is_ratio_unit($msg));
+            $result = $ratio_units == [];
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value that a number field shows
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the unit behind the field: % for a share, which the field shows in percent, else the unit of the value
+     */
+    function field_unit(sandbox_value $val, user_message $msg): string
+    {
+        return $this->shows_percent($val, $msg) ? sandbox_value::UNIT_PERCENT : $this->unit_name($val, $msg);
+    }
+
+    /**
+     * a phrase selector of a calculator: the options of the field phrase (calculator::options)
+     * with the number of each option as the value e.g. 0.85 for east-west, so the entered number
+     * is the input of the calculation, and the option that the page phrase uses is selected; the
+     * hint names no source, because an option is chosen and not measured on the page
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. PV installation input yield factor
+     * @param phrase $phr the field phrase e.g. yield factor
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values of the options
+     * @param string $form_name the refresh form that the selector joins
+     * @param array $url_arr the url parameters with the selected number
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the cache
+     * @return string the html code of the field
+     */
+    private function calculator_selector(
+        calculator   $calc,
+        phrase       $item,
+        phrase       $phr,
+        word|triple  $dbo,
+        data_object  $dto,
+        string       $form_name,
+        array        $url_arr,
+        array        $src_ids,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $opts = $calc->options($phr);
+        $used = $calc->used(array_column($opts, 0));
+        $sel = new html_selector();
+        $sel->name = url_var::NUMERIC_VALUE . $phr->id();
+        $sel->form = $form_name;
+        $sel->with_label = false;
+        // the field gives the selector its layout like the row of a number field
+        $sel->with_group = false;
+        $sel->lst = [];
+        foreach ($opts as [$opt, $opt_label]) {
+            $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+            // an option without a number selects only the phrase e.g. the walk order bank statement
+            $key = self::CALC_OPTION_PHRASE . $opt->id();
+            $opt_text = $opt_label;
+            if ($val?->number() !== null) {
+                $key = $html->number_value($val->number(), $this->field_decimals($val, $msg));
+                $opt_text = $this->calculator_option_text($opt_label, $val, $src_ids, $msg);
+            }
+            $sel->lst[$key] = $opt_text;
+            if ($used?->id() == $opt->id()) {
+                $sel->selected = $key;
+            }
+        }
+        $sel->selected = $url_arr[$sel->name] ?? $sel->selected;
+        // the label points to the id that the selector builds from its name and its label message
+        $dom_id = $sel->name . '_' . strtolower($sel->label_id->name);
+        return $html->div($html->label($html->esc($calc->label($item)), $dom_id) . $sel->display()
+            . $this->calculator_hint($calc->hint($item)), styles::INPUT_FIELD);
+    }
+
+    /**
+     * @param phrase $phr the field phrase e.g. yield factor
+     * @param phrase $opt an option of the field e.g. south
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values of the options
+     * @param user_message $msg to report a problem of the cache
+     * @return sandbox_value|null the value of the field phrase for the option e.g. (yield factor,
+     *                            south) = 1.00, else the value of the option itself e.g. (residual mix) = 523
+     */
+    private function calculator_option_value(
+        phrase       $phr,
+        phrase       $opt,
+        word|triple  $dbo,
+        data_object  $dto,
+        user_message $msg
+    ): ?sandbox_value
+    {
+        $names = [$phr->name(), $opt->name()];
+        $matches = array_values(array_filter($dto->val_lst->lst(), fn($val) => $val->match_all($names)));
+        // in the preferred order of numbers, because the backend returns the values in any order
+        $result = sandbox_value::sorted($matches, $msg)[0] ?? null;
+        // several numbers of the option phrase are numbers of other phrases e.g. the lot value per holding, so none is the number of the option
+        return $result ?? $this->calculator_value($opt, $dbo, $dto, $msg, true);
+    }
+
+    /**
+     * @param string $label the label of the option
+     * @param sandbox_value $val the value of the option
+     * @param array $src_ids the sources of the page in the order of their number
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the label; for a number with a unit also the number and its source, so that the user sees what is
+     *                selected e.g. European residual mix — 523 g/kWh [3], but not for a plain factor or a count
+     */
+    function calculator_option_text(string $label, sandbox_value $val, array $src_ids, user_message $msg): string
+    {
+        $result = $label;
+        if ($this->unit_phrase($val, $msg) != null) {
+            $num_txt = $this->calculator_rough_text($val, $msg);
+            $result = trim($label . self::CALC_OPTION_SEP . $num_txt . ' ' . $this->source_ref($val, $src_ids));
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr a selector field e.g. replacement mix
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values of the options
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the values of the options that name their source (calculator_option_text)
+     */
+    private function calculator_option_values(calculator $calc, phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        foreach (array_column($calc->options($phr), 0) as $opt) {
+            $val = $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+            if ($val != null and $this->unit_phrase($val, $msg) != null) {
+                $result[] = $val;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the sources of a calculator page in the order of their first use on the page: the values
+     * of the number fields of the inputs, the options of a selector with a unit and the listed
+     * assumptions in their order, then the other values that the results of the page use
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the field triples, the values and the sources
+     * @param user_message $msg to report a problem of the load
+     * @return array the sources by id in the order of their number
+     */
+    private function calculator_source_ids(
+        calculator   $calc,
+        word|triple  $dbo,
+        data_object  $dto,
+        user_message $msg
+    ): array
+    {
+        $this->add_field_definitions($dto, $msg);
+        $vals = [];
+        foreach ([...$calc->items(triples::CALCULATOR_INPUT), ...$calc->items(triples::CALCULATOR_ASSUMPTION)] as $item) {
+            $phr = $calc->item_phrase($item);
+            if ($phr != null) {
+                $this->add_field_links($phr, $dto, $msg);
+                $this->add_field_values($phr, $dto, $msg);
+                if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
+                    $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+                    $vals = [...$vals, $val, ...$this->calculator_basis_values($phr, $val, $dto, $msg)];
+                } else {
+                    $vals = [...$vals, ...$this->calculator_option_values($calc, $phr, $dbo, $dto, $msg)];
+                }
+            }
+        }
+        $vals = [...array_filter($vals), ...array_values($this->page_operands($dbo, $dto, $msg))];
+        $this->add_sources($vals, $dto, $msg);
+        $result = [];
+        foreach ($vals as $val) {
+            $id = $val instanceof value ? ($val->src?->id() ?? 0) : 0;
+            if ($id != 0 and ($val->src->name() ?? '') != '' and !array_key_exists($id, $result)) {
+                $result[$id] = $val->src;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value|null $val the value shown by a field
+     * @param array $src_ids the sources of the page in the order of their number
+     * @return string the number of the source of the value e.g. [1] or an empty string if it has none
+     */
+    private function source_ref(?sandbox_value $val, array $src_ids): string
+    {
+        $id = $val instanceof value ? ($val->src?->id() ?? 0) : 0;
+        $pos = array_search($id, array_keys($src_ids));
+        return ($id == 0 or $pos === false) ? '' : '[' . ($pos + 1) . ']';
+    }
+
+    /**
+     * the value that a calculator field shows: a value of the item phrase with the field value
+     * phrases, the one that a result of the page uses first, so that a changed field changes the
+     * results, then the one with the page phrase, then the one with a phrase that the page triple
+     * is built from e.g. PV installation of example PV installation, so that the value of another
+     * use case with the same field phrase e.g. the lifetime of a new NPP is not shown, else the one
+     * with the fewest context phrases, so the general value of a use case wins over the value of a
+     * place e.g. PV yield of Switzerland over the PV yield of a municipality, and else the one with
+     * the fewest phrases, but never a property of the field e.g. its step or the confidence of a value
+     *
+     * @param phrase $phr the phrase of the field e.g. PV capacity
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values
+     * @param user_message $msg to report a problem of the cache
+     * @param bool $only_one true for no value if the values that rank the same have different numbers (calculator_json.js onlyOne)
+     * @return sandbox_value|null the value or null if the cache has none
+     */
+    private function calculator_value(phrase $phr, word|triple $dbo, data_object $dto, user_message $msg, bool $only_one = false): ?sandbox_value
+    {
+        $properties = self::CALC_FIELD_PROPERTIES;
+        $page_phr = $dbo->phrase();
+        $page_parts = array_filter([$page_phr->get_from(), $page_phr->get_to()]);
+        // before the loop, because the operands may add the values of the result context to the cache
+        $operands = $this->page_operands($dbo, $dto, $msg);
+        $best_vals = [];
+        $best = null;
+        foreach ($dto->val_lst->lst() as $val) {
+            $names = $val->phr_lst()->names();
+            if ($val->has_phrase($phr, $msg) and array_intersect($names, $properties) == []
+                and $this->has_field_value_phrases($phr, $val, $dto, $msg)) {
+                $page_rank = 2;
+                if ($val->has_phrase($page_phr, $msg)) {
+                    $page_rank = 0;
+                } elseif (array_filter($page_parts, fn($part) => $val->has_phrase($part, $msg)) != []) {
+                    $page_rank = 1;
+                }
+                $operand_rank = 1;
+                if (in_array($val, $operands, true)) {
+                    $operand_rank = 0;
+                }
+                $rank = [$operand_rank, $page_rank, $this->context_count($phr, $val, $msg), count($names)];
+                if ($best == null or $rank < $best) {
+                    $best_vals = [$val];
+                    $best = $rank;
+                } elseif ($rank == $best) {
+                    $best_vals[] = $val;
+                }
+            }
+        }
+        // values that rank the same are picked by the preferred order of numbers and not by the
+        // order of the list, which the backend returns in any order (docs/llm/frontend.md)
+        $result = sandbox_value::sorted($best_vals, $msg)[0] ?? null;
+        if ($only_one and $best_vals != [] and !$this->is_one_number($best_vals)) {
+            $result = null;
+        }
+        return $result;
+    }
+
+    /**
+     * the values and results that the results of the page use (operand_values), found once per
+     * page phrase and request cache, because every field, option, source and row of a calculator
+     * page asks for them; another request cache e.g. of another test finds them again
+     *
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page with the values, the results and the formulas
+     * @param user_message $msg to report a problem of the load
+     * @return array the values and results that the results of the page use, each once
+     */
+    private function page_operands(word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $key = $dbo->phrase()->id();
+        if (!$this->has_operands_of($key, $dto)) {
+            $this->operands_by_page[$key] = [$dto, $this->operand_values($dbo, $msg, $dto)];
+        }
+        return $this->operands_by_page[$key][1];
+    }
+
+    /**
+     * @param int $phr_id the id of the page phrase
+     * @param data_object $dto the request cache of the page
+     * @return bool true if the operands of this page are already found with this request cache
+     */
+    private function has_operands_of(int $phr_id, data_object $dto): bool
+    {
+        $result = false;
+        if (array_key_exists($phr_id, $this->operands_by_page)) {
+            // the same object and not another request cache of the same page
+            $result = $this->operands_by_page[$phr_id][0] === $dto;
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $phr the phrase of the field e.g. PV yield
+     * @param sandbox_value $val a value of the field phrase
+     * @param user_message $msg to report a problem of the phrase types
+     * @return int the number of phrases of the value that narrow its context e.g. a municipality,
+     *             so not the field phrase and no unit, percent, scaling or time phrase
+     */
+    private function context_count(phrase $phr, sandbox_value $val, user_message $msg): int
+    {
+        $result = 0;
+        foreach ($val->phr_lst()->lst() as $val_phr) {
+            if ($val_phr->id() != $phr->id() and !$val_phr->is_measure($msg) and !$val_phr->is_percent($msg)
+                and !$val_phr->is_scaling($msg) and !$val_phr->is_time($msg)) {
+                $result++;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $hint the hint of a calculator field
+     * @param string $ref the number of the source of the shown value e.g. [1]
+     * @return string the html code of the hint below the field or an empty string if there is none
+     */
+    function calculator_hint(string $hint, string $ref = ''): string
+    {
+        $html = new html_base();
+        $txt = $html->esc($hint);
+        $ref_txt = $ref == '' ? '' : ' ' . $ref;
+        $mark = ' ' . self::CALC_HINT_SOURCE;
+        if (str_contains($txt, $mark)) {
+            $txt = str_replace($mark, $ref_txt, $txt);
+        } else {
+            $txt .= $ref_txt;
+        }
+        $txt = trim($txt);
+        return $txt == '' ? '' : $html->span($txt, styles::INPUT_HINT);
+    }
+
+    /**
+     * @param string $hint the hint of a row, which may name phrases e.g. "{PV capacity} × factor {yield factor|number}"
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the hint with the numbers or an empty string if a number is missing, because half a calculation is misleading
+     */
+    function calculator_hint_numbers(string $hint, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): string
+    {
+        $missing = false;
+        $result = preg_replace_callback(self::CALC_HINT_NUMBER_PATTERN, function (array $found) use ($dbo, $dto, $lst, $msg, &$missing) {
+            $val = $this->calculator_hint_value($found[1], $dbo, $dto, $lst, $msg);
+            $missing = ($missing or $val == null);
+            return $val == null ? '' : $this->calculator_hint_number($val, count($found) > 2, $msg);
+        }, $hint);
+        return $missing ? '' : $result;
+    }
+
+    /**
+     * @param string $name the name of a phrase of the hint
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the value that a field of the phrase would show, else the result of the page, else null
+     */
+    private function calculator_hint_value(string $name, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): ?sandbox_value
+    {
+        $result = null;
+        $phr = $dto->phr_lst->get_by_name($name, $msg);
+        if ($phr != null) {
+            $result = $this->calculator_value($phr, $dbo, $dto, $msg);
+            if ($result == null) {
+                $result = $this->calculator_result([$dbo->phrase(), $phr], $lst, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value or result of a phrase of a hint
+     * @param bool $plain true for the number as a field shows it but with the thousands separator, false for the rough number with its unit
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the text of the number
+     */
+    private function calculator_hint_number(sandbox_value $val, bool $plain, user_message $msg): string
+    {
+        $result = $this->calculator_rough_text($val, $msg, 1);
+        if ($plain) {
+            global $ui_sys;
+            $thousand_sep = $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP;
+            $number = new html_base()->number_value($val->number(), $this->field_decimals($val, $msg));
+            $result = preg_replace_callback('/^\d+/',
+                fn(array $int) => preg_replace('/\B(?=(\d{3})+(?!\d))/', $thousand_sep, $int[0]), $number);
+        }
+        return $result;
+    }
+
+    /**
+     * the main table of a calculation result (docs/llm/new_view_sample_pv_balance.md section
+     * 3.2): one column per result column, one section row per row group and one row per item of
+     * the group in their order, with the label, the hint or else the side results as sub text,
+     * the key row style of a highlight and the sign of the numbers of a signed group; a cell is
+     * the result or value with the page phrase, the row phrase, its filter phrase and the column phrase;
+     * the row phrase of a selector is the option that the page phrase uses e.g. residual mix
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param data_object $dto the request cache with the values and the field triples of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the table or an empty string if the calculator has no columns and no rows
+     */
+    function calculation_table(calculator $calc, word|triple $dbo, value_list $lst, data_object $dto, user_message $msg): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        $cols = $calc->columns($calc->items(triples::CALCULATOR_RESULT_COLUMN));
+        $grps = $calc->items(triples::CALCULATOR_ROW_GROUP);
+        if ($cols != [] or $grps != []) {
+            $vals = $this->calculation_table_values($calc, $dbo, $cols, $grps, $lst, $msg);
+            // one unit of all numbers is named by the first header instead of each cell
+            $unit = $this->calculation_table_unit($vals, $msg);
+            $with_unit = $unit == '';
+            $head = $html->block(html_base::TH, $html->esc($with_unit ? $mtr->txt(msg_id::CALCULATOR_RESULT) : $unit));
+            foreach ($cols as [$col_label, , , $col_colour]) {
+                $head .= $html->block(html_base::TH, $html->esc($col_label), trim(styles::CALC_NUMBER . ' ' . $col_colour));
+            }
+            $fmts = $this->calculator_formats(array_merge(...array_values($vals)), $with_unit, $this->calculator_digits(words::DEFAULT), $msg);
+            $rows = '';
+            foreach ($grps as $g => $grp) {
+                $sec = '<' . html_base::TD . ' colspan="' . (count($cols) + 1) . '">'
+                    . $html->esc($calc->label($grp)) . '</' . html_base::TD . '>';
+                $rows .= $html->block(html_base::TR, $sec, styles::CALC_SECTION);
+                $grp_signed = $calc->has_flag($grp, triples::CALCULATOR_SIGNED);
+                foreach ($calc->sub_items($grp, verbs::HAS_ID) as $r => $row) {
+                    $ctx = $this->calculation_row_context($calc, $dbo, $row);
+                    // a flagged row shows the plus sign like a flagged column, a flagged group only the style of the sign
+                    $plus = $calc->has_flag($row, triples::CALCULATOR_SIGNED);
+                    $signed = ($grp_signed and !$plus);
+                    $decimals = $this->row_decimals($calc->item_phrase($row), $dto->val_lst);
+                    $cells = '';
+                    foreach (array_keys($cols) as $c) {
+                        $cells .= $this->calculator_cell($vals[$g][$r][$c], $fmts[$c] ?? [], $signed, $with_unit, $msg, $decimals, $plus);
+                    }
+                    $first = $html->esc($calc->label($row, $grp) . $this->calculator_row_number($calc, $row, $dbo, $dto, $msg))
+                        . $this->calculator_sub($calc, $row, $dbo, $dto, $lst, $msg);
+                    $rows .= $this->calculator_row($first, $cells, $calc->has_flag($row, triples::CALCULATOR_HIGHLIGHT));
+                }
+            }
+            $result = $this->calculator_table($head, $rows);
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $vals per row group, row and column the number of the cell or null (calculation_table_values)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the unit if all numbers except the shares have one unit, else an empty string
+     */
+    function calculation_table_unit(array $vals, user_message $msg): string
+    {
+        $units = [];
+        foreach (array_merge(...array_values($vals)) as $cells) {
+            foreach ($cells as $val) {
+                if ($val != null and !$val->is_null() and !$val->is_percent($msg)) {
+                    $units[$this->unit_name($val, $msg)] = true;
+                }
+            }
+        }
+        return count($units) == 1 ? (string)array_key_first($units) : '';
+    }
+
+    /**
+     * @param phrase|null $phr the phrase of a row of the result table or of a column of a detail table
+     * @param value_list $lst the values with the property values
+     * @return int|null the decimals that the phrase sets by the keyword calculator decimals, null for the decimals of the column
+     */
+    private function row_decimals(?phrase $phr, value_list $lst): ?int
+    {
+        return $phr == null ? null : $this->decimals_of([$phr], $lst);
+    }
+
+    /**
+     * @param array $phrases the phrases that set the decimals e.g. lot value in CHF and cash
+     * @param value_list $lst the values with the property values
+     * @return int|null the decimals of the value with exactly these phrases and the keyword calculator decimals, null if there is none
+     */
+    private function decimals_of(array $phrases, value_list $lst): ?int
+    {
+        return $this->keyword_number($phrases, triples::CALCULATOR_DECIMALS, $lst);
+    }
+
+    /**
+     * @param phrase $phr the phrase of the calculator page
+     * @param value_list $lst the values with the property values
+     * @return int|null the width in pixels that the page sets for its result panel, null for the standard width
+     */
+    function result_width(phrase $phr, value_list $lst): ?int
+    {
+        return $this->keyword_number([$phr], triples::CALCULATOR_RESULT_WIDTH, $lst);
+    }
+
+    /**
+     * @param array $phrases the phrases that set the number e.g. lot value in CHF and cash
+     * @param string $keyword the name of the calculator keyword of the number
+     * @param value_list $lst the values with the property values
+     * @return int|null the number of the value with exactly these phrases and the keyword, null if there is none
+     */
+    private function keyword_number(array $phrases, string $keyword, value_list $lst): ?int
+    {
+        $names = [...array_map(fn(phrase $phr) => $phr->name(), $phrases), $keyword];
+        $result = null;
+        foreach ($lst->lst() as $val) {
+            $is_exact = ($val instanceof value and count($val->phr_lst()->names()) == count($names) and $val->match_all($names));
+            if ($result === null and $is_exact) {
+                $result = (int)$val->number();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $row_phr the phrase of the row e.g. CHF cash
+     * @param array $col the column (calculator::columns)
+     * @param value_list $lst the values with the property values
+     * @return int|null the decimals that the column phrase or its filter set for a kind of the row e.g. for cash, else for all rows, null for the decimals of the column
+     */
+    private function cell_decimals(calculator $calc, ?phrase $row_phr, array $col, value_list $lst): ?int
+    {
+        $col_phrases = array_filter([$col[1], $col[2]]);
+        $result = null;
+        foreach ($row_phr == null ? [] : $calc->row_kinds($row_phr) as $kind) {
+            foreach ($col_phrases as $phr) {
+                $result ??= $this->decimals_of([$phr, $kind], $lst);
+            }
+        }
+        foreach ($col_phrases as $phr) {
+            $result ??= $this->decimals_of([$phr], $lst);
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value|null $val the number of a cell
+     * @param phrase|null $row_phr the phrase of the row
+     * @param array $col the column (calculator::columns)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the unit of the number for the sub text of a column with the flag: the name of the measure e.g. EUR and not its symbol, else the one phrase besides the row and the column e.g. shares
+     */
+    private function calculator_column_unit(?sandbox_value $val, ?phrase $row_phr, array $col, user_message $msg): string
+    {
+        $result = '';
+        if ($col[7] and $val != null) {
+            foreach ($val->phr_lst()->lst() as $phr) {
+                if ($result == '' and $phr->is_measure($msg)) {
+                    $result = $phr->name();
+                }
+            }
+            $others = array_diff($val->phr_lst()->names(), [$row_phr?->name(), $col[1]?->name(), $col[2]?->name()]);
+            if ($result == '' and count($others) == 1) {
+                $result = reset($others);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param array $cols the result columns of the calculation table (calculator::columns)
+     * @param array $grps the row groups of the calculation table
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per row group, row and column the number of the cell or null, so that the format of each column is known before its cells are written
+     */
+    private function calculation_table_values(
+        calculator   $calc,
+        word|triple  $dbo,
+        array        $cols,
+        array        $grps,
+        value_list   $lst,
+        user_message $msg
+    ): array
+    {
+        $result = [];
+        foreach ($grps as $g => $grp) {
+            foreach ($calc->sub_items($grp, verbs::HAS_ID) as $r => $row) {
+                $ctx = $this->calculation_row_context($calc, $dbo, $row);
+                foreach ($cols as $c => [, $col_phr]) {
+                    $result[$g][$r][$c] = $this->calculator_result([...$ctx, $col_phr], $lst, $msg);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param phrase $row a row item of the calculation table
+     * @return array the phrases that every cell of the row has: the page phrase, the chosen phrase of the row and its filter
+     */
+    function calculation_row_context(calculator $calc, word|triple $dbo, phrase $row): array
+    {
+        return [...$this->calculation_side_context($calc, $dbo, $row), $calc->filter($row)];
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param phrase $row a row item of the calculation table
+     * @return array the page phrase and the chosen phrase of the row without the filter, because a side result is a
+     *               number of its own e.g. the emission payback of a mix does not name the net avoided emission
+     */
+    function calculation_side_context(calculator $calc, word|triple $dbo, phrase $row): array
+    {
+        return [$dbo->phrase(), $calc->chosen($calc->item_phrase($row))];
+    }
+
+    /**
+     * the formats of the number cells of a table: per column the numbers with the same unit share
+     * the unit and the decimals, decided by the largest of them (see number_format)
+     *
+     * @param array $rows per row the number of each column or null for an empty cell
+     * @param bool $with_unit true to convert the unit, false if the header names the unit, so that only the decimals are shared
+     * @param int $digits the number of digits shown (calculator_digits)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per column and unit name the format of the cells
+     */
+    private function calculator_formats(array $rows, bool $with_unit, int $digits, user_message $msg): array
+    {
+        $groups = [];
+        foreach ($rows as $cells) {
+            foreach ($cells as $c => $val) {
+                if ($val != null and !$val->is_null()) {
+                    $groups[$c][$this->unit_name($val, $msg)][] = $val;
+                }
+            }
+        }
+        $result = [];
+        foreach ($groups as $c => $units) {
+            foreach ($units as $unit_name => $vals) {
+                $result[$c][$unit_name] = $this->calculator_group_format($vals, $with_unit, $digits, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $vals the values or results of a column with the same unit
+     * @param bool $with_unit true to convert the unit, false to keep it
+     * @param int $digits the number of digits shown, which decide the decimals and the unit conversion (calculator_digits)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return number_format the unit and the decimals of the numbers
+     */
+    private function calculator_group_format(array $vals, bool $with_unit, int $digits, user_message $msg): number_format
+    {
+        $unit = $with_unit ? $this->unit_phrase($vals[0], $msg) : null;
+        $nums = array_map(fn(sandbox_value $val) => $val->number(), $vals);
+        return new number_format()->group($nums, $unit, $digits, $msg);
+    }
+
+    /**
+     * @param string $tier the config.yaml key of the precision tier e.g. words::ROUGH
+     * @return int the digits of the tier from the frontend config, without a loaded config its fallback
+     */
+    private function calculator_digits(string $tier): int
+    {
+        global $ui_sys;
+        return $ui_sys?->cfg?->digits($tier) ?? config::DIGITS_FALLBACK[$tier];
+    }
+
+    /**
+     * the detail tables of a calculation result: per table its label as the heading, the table
+     * phrase as the first header, one column per sub-item, one row per phrase that is a table
+     * phrase in their order e.g. January to December and an extra row per "with" sub-item e.g.
+     * the year; a cell is the result or value with the page phrase, the row and the column phrase
+     * and the "with" filter of the column, e.g. the unit gram per kWh
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param user_message $msg to report a problem of the phrase types
+     * @param bool $sections true for the tables with a collapsed section of their own, false for the other tables
+     * @return string the html code of the tables or an empty string if the calculator has none
+     */
+    function calculation_detail_tables(calculator $calc, word|triple $dbo, value_list $lst, user_message $msg, bool $sections = false): string
+    {
+        $html = new html_base();
+        $result = '';
+        foreach ($calc->items(triples::CALCULATOR_DETAIL_TABLE) as $tbl) {
+            $tbl_phr = $calc->item_phrase($tbl);
+            if ($tbl_phr != null and $calc->has_flag($tbl, triples::CALCULATOR_SECTION) == $sections) {
+                $table = $this->calculation_detail_table($calc, $dbo, $tbl, $tbl_phr, $lst, $msg)
+                    . $this->calculator_table_hint($calc, $tbl)
+                    . $this->calculator_buttons($calc, $tbl);
+                $label = $html->esc($calc->label($tbl));
+                $result .= $sections ? $html->details($label, $table) : $html->block(html_base::H2, $label) . $table;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $item the item of the table e.g. a detail table or the check list
+     * @return string the html code of the own hint of the item below its table, empty if it has none
+     */
+    private function calculator_table_hint(calculator $calc, ?phrase $item): string
+    {
+        $html = new html_base();
+        $hint = $calc->own_hint($item);
+        return $hint == '' ? '' : $html->block(html_base::P, $html->esc($hint), styles::INPUT_HINT);
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param phrase $tbl the item of the table
+     * @param phrase $tbl_phr the phrase of the table e.g. split walk
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the table
+     */
+    private function calculation_detail_table(
+        calculator   $calc,
+        word|triple  $dbo,
+        phrase       $tbl,
+        phrase       $tbl_phr,
+        value_list   $lst,
+        user_message $msg
+    ): string
+    {
+        $html = new html_base();
+        $cols = $calc->columns($calc->sub_items($tbl, verbs::HAS_ID));
+        $numbered = $calc->has_flag($tbl, triples::CALCULATOR_ROW_NUMBER);
+        $head = $numbered ? $html->block(html_base::TH, self::CALC_ROW_NUMBER_HEAD, styles::CALC_NUMBER) : '';
+        $head .= $html->block(html_base::TH, $html->esc($calc->phrase_label($tbl_phr)));
+        foreach ($cols as [$col_label, , , $col_colour]) {
+            $head .= $html->block(html_base::TH, $html->esc($col_label), trim(styles::CALC_NUMBER . ' ' . $col_colour));
+        }
+        // per row the label, the phrases of its cells and if it is a key row
+        $rows = [];
+        foreach ($this->ranked_rows($calc, $tbl, $tbl_phr, $lst, $msg) as $row_phr) {
+            $rows[] = [$calc->phrase_label($row_phr), [$dbo->phrase(), $row_phr], false];
+        }
+        foreach ($calc->sub_items($tbl, verbs::WITH_ID) as $extra) {
+            $rows[] = [$calc->label($extra), [$dbo->phrase(), $calc->item_phrase($extra)],
+                $calc->has_flag($extra, triples::CALCULATOR_HIGHLIGHT)];
+        }
+        $vals = [];
+        foreach ($rows as $row) {
+            $vals[] = $this->calculator_detail_values($calc, $row[1], $cols, $lst, $msg, $calc->has_flag($tbl, triples::CALCULATOR_PAGE_INDEPENDENT));
+        }
+        // the header names the unit, so only the decimals are shared by a column, and a detail shows rough numbers
+        $fmts = $this->calculator_formats($vals, false, $this->calculator_digits(words::ROUGH), $msg);
+        $body = '';
+        foreach ($rows as $i => $row) {
+            $texts = $this->calculator_phrase_cells($calc, $row[1][1], $cols, $lst, $msg);
+            $number = $numbered ? (string)($i + 1) : '';
+            // a column can show more than the rough digits e.g. the target 3.5, which is rounded to the count 4 next to it
+            $col_decimals = array_map(fn($col) => $this->cell_decimals($calc, $row[1][1], $col, $lst), $cols);
+            $units = [];
+            foreach ($cols as $c => $col) {
+                $units[$c] = $this->calculator_column_unit($vals[$i][$c], $row[1][1], $col, $msg);
+            }
+            $sub = ($numbered and $row[1][1] != null) ? $calc->phrase_hint($row[1][1]) : '';
+            $body .= $this->calculator_detail_row($row[0], $vals[$i], $fmts, $row[2], $msg, $texts, $number, $col_decimals,
+                array_column($cols, 6), $units, $sub, array_column($cols, 3));
+        }
+        return $this->calculator_table($head, $body);
+    }
+
+    /**
+     * the buttons of a list or a detail table at their place: the report is a link to the pdf, which also
+     * works without javascript, and the others have no function so far (docs/llm/pending.md)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $item the list or the detail table e.g. portfolio split inputs
+     * @return string the html code of the buttons or an empty string if the item has none
+     */
+    function calculator_buttons(calculator $calc, ?phrase $item): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $labels = [$calc->button_label($item, triples::CALCULATOR_FILE_IMPORT), $calc->button_label($item, triples::CALCULATOR_DOWNLOAD)];
+        $copy = [];
+        if ($item != null and $calc->has_flag($item, triples::CALCULATOR_COPY)) {
+            $copy = [$mtr->txt(msg_id::CALCULATOR_COPY_JSON), $mtr->txt(msg_id::CALCULATOR_COPY_CSV)];
+        }
+        $result = '';
+        foreach (array_filter($labels) as $label) {
+            $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
+        }
+        $report = $calc->button_label($item, triples::CALCULATOR_REPORT);
+        if ($report != '') {
+            $result .= $html->ref($this->calculator_report_url($calc->phrase_id()), $report, '', styles::CALC_BUTTON, false, false);
+        }
+        foreach ($copy as $label) {
+            $result .= $html->button($html->esc($label), html_base::BUTTON, styles::CALC_BUTTON);
+        }
+        return $result;
+    }
+
+    /**
+     * @param int $phr_id the phrase id of the page, which is negative for a triple
+     * @return string the url of the pdf report of the page with the user
+     */
+    function calculator_report_url(int $phr_id): string
+    {
+        $html = new html_base();
+        $url = [url_var::MASK => views::CALCULATOR_ID, url_var::ID => $phr_id, url_var::REPORT => url_var::TRUE];
+        return $html->url_with_user($html->page_url($url));
+    }
+
+    /**
+     * the check table of a calculator: a row per value with the word expected with the expected number, the number
+     * with the same phrases without expected and if the two are the same; a missing number differs
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param data_object $dto the request cache with the sources of the expected values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the section with the table or an empty string if the page has no check
+     */
+    function calculator_check(calculator $calc, value_list $lst, data_object $dto, user_message $msg): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $grp = $calc->group(triples::CALCULATOR_CHECK);
+        // the source of an expected value is the sub text of its row
+        $this->add_sources($lst->lst(), $dto, $msg);
+        $rows = [];
+        foreach ($grp == null ? [] : $lst->lst() as $val) {
+            if ($val instanceof value and in_array(words::EXPECTED, $val->phr_lst()->names())) {
+                $label = $val->get_description() ?: implode(', ', $val->phr_lst()->names());
+                // with the id, because two values can have the same description
+                $rows[$label . ' ' . $val->id()] = $this->calculator_check_row($label, $val, $lst, $msg);
+            }
+        }
+        $result = '';
+        if ($rows != []) {
+            ksort($rows);
+            $head = $html->block(html_base::TH, $html->esc($mtr->txt(msg_id::CALCULATOR_CHECK_VALUE)));
+            foreach ([msg_id::CALCULATOR_CHECK_EXPECTED, msg_id::CALCULATOR_CHECK_CALCULATED, msg_id::CALCULATOR_CHECK_STATUS] as $txt_id) {
+                $head .= $html->block(html_base::TH, $html->esc($mtr->txt($txt_id)), styles::CALC_NUMBER);
+            }
+            $table = $this->calculator_table($head, implode('', $rows)) . $this->calculator_table_hint($calc, $grp);
+            $result = $html->details($html->esc($calc->own_label($grp)), $table);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $label the label of the row
+     * @param value $exp the expected value
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the row of the check table
+     */
+    private function calculator_check_row(string $label, value $exp, value_list $lst, user_message $msg): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $is_exp = fn(phrase $phr) => $phr->name() == words::EXPECTED;
+        $phr_lst = $exp->phr_lst()->lst();
+        $other = array_filter($phr_lst, fn(phrase $phr) => !$is_exp($phr));
+        $got = $this->calculator_general_value($other, $lst, $msg, [], true);
+        // a number that is missing differs and has no text, also an expected value without a number
+        $got_num = $got?->number();
+        $exp_num = $exp->number();
+        $same = ($got_num !== null and $exp_num !== null and $this->calculator_check_same($got_num, $exp_num));
+        $status = $mtr->txt($same ? msg_id::CALCULATOR_CHECK_MATCH : msg_id::CALCULATOR_CHECK_DIFFERS);
+        $src = $exp->src?->name() ?? '';
+        $first = $html->esc($label) . ($src == '' ? '' : $html->span($html->esc($src), styles::CALC_SUB));
+        $got_txt = $got_num === null ? '' : $this->calculator_cell_text($got, new number_format(), false, $msg);
+        $exp_txt = $exp_num === null ? '' : $this->calculator_cell_text($exp, new number_format(), false, $msg);
+        $got_id = '';
+        $status_id = '';
+        if ($got_num !== null) {
+            $got_id = $this->calculator_cell_id($got);
+            $this->cell_plan[$got_id] = $this->calculator_cell_format($got, new number_format(), false, false, $msg);
+        }
+        // without an expected number the status stays the same, so the script has nothing to update
+        if ($got_num !== null and $exp_num !== null) {
+            $status_id = $got_id . self::CALC_CHECK_STATUS_SUFFIX;
+            $this->check_plan[] = [
+                self::CALC_CHECK_ID => $status_id,
+                self::CALC_CELL_NUMBER => $got->html_id(),
+                self::CALC_CHECK_EXPECTED => $exp_num,
+                self::CALC_CHECK_MATCH => [$mtr->txt(msg_id::CALCULATOR_CHECK_MATCH), styles::CALC_STATUS_OK],
+                self::CALC_CHECK_DIFFERS => [$mtr->txt(msg_id::CALCULATOR_CHECK_DIFFERS), styles::CALC_STATUS_FAIL],
+            ];
+        }
+        $cells = $html->block(html_base::TD, $html->esc($exp_txt), styles::CALC_NUMBER)
+            . $html->block(html_base::TD, $html->esc($got_txt), styles::CALC_NUMBER, $got_id)
+            . $html->block(html_base::TD, $html->span($html->esc($status), $same ? styles::CALC_STATUS_OK : styles::CALC_STATUS_FAIL), styles::CALC_NUMBER, $status_id);
+        return $this->calculator_row($first, $cells, false);
+    }
+
+    /**
+     * @param float $got the calculated number of a check row
+     * @param float $expected the expected number of the check row
+     * @return bool true if the numbers differ only by the float noise of a calculation
+     */
+    function calculator_check_same(float $got, float $expected): bool
+    {
+        return abs($got - $expected) <= self::CALC_CHECK_TOLERANCE * max(1, abs($got), abs($expected));
+    }
+
+    /**
+     * a section with a diagram per detail table column with the flag calculator diagram: the numbers of the column along the rows of its table
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the sections or an empty string if the page has no diagram
+     */
+    function calculator_diagrams(calculator $calc, value_list $lst, user_message $msg): string
+    {
+        $result = '';
+        foreach ($calc->items(triples::CALCULATOR_DETAIL_TABLE) as $tbl) {
+            foreach ($calc->sub_items($tbl, verbs::HAS_ID) as $col) {
+                $title = $calc->diagram_title($col);
+                $tbl_phr = $calc->item_phrase($tbl);
+                if ($title != '' and $tbl_phr != null) {
+                    $rows = $this->ranked_rows($calc, $tbl, $tbl_phr, $lst, $msg);
+                    $result .= $this->calculator_diagram($calc, $col, $title, $rows, $lst, $msg);
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $col the column with the diagram
+     * @param string $title the summary of the section of the diagram
+     * @param phrase[] $rows the rows of the table of the column
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the section, empty with less than two rows that have a number of every line
+     */
+    private function calculator_diagram(calculator $calc, phrase $col, string $title, array $rows, value_list $lst, user_message $msg): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $fmt = new number_format();
+        $fmt->decimals = 2;
+        $lines = [];
+        foreach ($calc->diagram_lines($col) as [$flt, $colour, $label]) {
+            $vals = [];
+            foreach ($rows as $row) {
+                $val = $this->calculator_general_value([$row, $calc->item_phrase($col), $flt], $lst, $msg, [], true);
+                if ($val != null) {
+                    $vals[$row->name()] = $val;
+                }
+            }
+            $lines[] = [$vals, $colour, $label];
+        }
+        $names = array_map('strval', array_keys(array_intersect_key(...array_column($lines, 0))));
+        $result = '';
+        if (count($names) > 1) {
+            $id = self::CALC_DIAGRAM_ID . count($this->diagram_plan);
+            $svg_lines = [];
+            $plan = [];
+            $legend = '';
+            $all = [];
+            foreach ($lines as $pos => [$vals, $colour, $label]) {
+                $nums = array_map(fn($name) => $vals[$name]->number(), $names);
+                $all = [...$all, ...$nums];
+                $unit = $this->unit_name($vals[end($names)], $msg);
+                $unit_txt = $unit == '' ? '' : ' ' . $unit;
+                $titles = array_map(fn($name) => $label . ', ' . $name . ': ', $names);
+                $svg_lines[] = [$nums, $colour, array_map(fn($txt, $num) => $txt . $fmt->text($num) . $unit_txt, $titles, $nums)];
+                $final = $label . ' ' . $mtr->txt(msg_id::CALCULATOR_DIAGRAM_FINAL) . ' ';
+                $text_id = $id . self::CALC_DIAGRAM_LEGEND_SUFFIX . $pos;
+                $legend .= $html->span($html->span(self::CALC_DIAGRAM_MARK, $colour) . ' '
+                    . $html->block(self::CALC_DIAGRAM_TEXT_TAG, $html->esc($final . $fmt->text(end($nums)) . $unit_txt), '', $text_id));
+                $plan[] = [
+                    self::CALC_DIAGRAM_LABEL => $final,
+                    self::CALC_DIAGRAM_UNIT => $unit_txt,
+                    self::CALC_DIAGRAM_TITLES => $titles,
+                    self::CALC_DIAGRAM_NUMBERS => array_map(fn($name) => $vals[$name]->html_id(), $names),
+                ];
+            }
+            $this->diagram_plan[] = [self::CALC_CHECK_ID => $id, self::CALC_DIAGRAM_LINES => $plan];
+            $max = new number_format()->text(max(1, ...array_map('abs', $all)));
+            $svg = $html->line_diagram($svg_lines, $names[0], end($names), $max);
+            $body = $html->div($svg, styles::CALC_CHART, $id) . $html->div($legend, styles::CALC_LEGEND);
+            $result = $html->details($html->esc($title), $body);
+        }
+        return $result;
+    }
+
+    /**
+     * the notes of a calculator: per item of the list the label in bold in front of the description
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @return string the html code of the section with the notes or an empty string if the page has none
+     */
+    function calculator_notes(calculator $calc): string
+    {
+        $html = new html_base();
+        $notes = '';
+        foreach ($calc->items(triples::CALCULATOR_NOTE) as $note) {
+            $notes .= $html->p($html->bold($html->esc($calc->label($note))) . ' ' . $html->esc($note->get_description()));
+        }
+        $result = '';
+        if ($notes != '') {
+            $summary = $calc->own_label($calc->group(triples::CALCULATOR_NOTE));
+            $result = $html->details($html->esc($summary), $html->div($notes, styles::CALC_NOTES));
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $tbl the item of the table
+     * @param phrase $tbl_phr the phrase of the table e.g. split walk
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return phrase[] the row phrases of the table, by the biggest number of the phrase that the table "is ranked by" if it has one, a tie in the order of the follower chain
+     */
+    function ranked_rows(calculator $calc, phrase $tbl, phrase $tbl_phr, value_list $lst, user_message $msg): array
+    {
+        $result = $calc->row_phrases($tbl_phr);
+        $rank = $calc->sub_items($tbl, verbs::RANK_ID)[0] ?? null;
+        $rank_phr = $calc->item_phrase($rank);
+        if ($rank_phr != null) {
+            // usort keeps the order of a tie
+            $ranks = array_map(fn(phrase $row) => $this->rank_number($row, $rank_phr, $lst, $msg), $result);
+            // sorted by the position, because a list of the rows would mix up the rows when the numbers are sorted
+            $order = array_keys($ranks);
+            usort($order, fn(int $a, int $b) => $ranks[$b] <=> $ranks[$a]);
+            $result = array_map(fn(int $pos) => $result[$pos], $order);
+        }
+        return $result;
+    }
+
+    /**
+     * @param phrase $row the phrase of a row e.g. LISP
+     * @param phrase $rank_phr the phrase that the table is ranked by e.g. lot value in CHF
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return float the one stored value of the row, else its one result; a row without one number is the last row
+     */
+    function rank_number(phrase $row, phrase $rank_phr, value_list $lst, user_message $msg): float
+    {
+        $val = $this->calculator_general_value([$row, $rank_phr], $lst, $msg);
+        $results = array_filter($lst->lst(), fn($res) => $res instanceof result and $this->has_all_phrases($res, [$row, $rank_phr], $msg));
+        $result = $val?->number();
+        if ($val == null and count($results) == 1) {
+            $result = reset($results)->number();
+        }
+        return $result ?? -INF;
+    }
+
+    /**
+     * the text of a column with the flag calculator phrase column: the phrase of a stored number with a source
+     * of the row that is a column phrase, because e.g. a calculated deviation of a EUR bond is in CHF
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase|null $row_phr the phrase of the row e.g. BundDE30
+     * @param array $cols the columns of the table (calculator::columns)
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per phrase column its text e.g. EUR
+     */
+    function calculator_phrase_cells(calculator $calc, ?phrase $row_phr, array $cols, value_list $lst, user_message $msg): array
+    {
+        $result = [];
+        foreach ($cols as $c => [, $col_phr, , , , $is_phrase]) {
+            if ($is_phrase and $row_phr != null and $col_phr != null) {
+                $kinds = array_map(fn(phrase $phr) => $phr->name(), $calc->kinds($col_phr));
+                $found = [];
+                foreach ($lst->lst() as $val) {
+                    if ($val instanceof value and $val->source_id() != null and $this->value_has_phrase($val, $row_phr, $msg)) {
+                        $found = [...$found, ...array_intersect($val->phr_lst()->names(), $kinds)];
+                    }
+                }
+                sort($found);
+                $result[$c] = $found[0] ?? '';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the sources of a calculator page as a numbered list in the order of their first use, so
+     * that the [n] of a hint names the entry of the list
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object $dto the request cache with the values and the sources of the page
+     * @return string the html code of the sources with the heading or an empty string if no value has a source
+     */
+    function calculator_sources(calculator $calc, word|triple $dbo, user_message $msg, data_object $dto): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $items = '';
+        foreach ($this->calculator_source_ids($calc, $dbo, $dto, $msg) as $src) {
+            // the link escapes the name itself
+            $name = $src->name();
+            $items .= $html->list_item($src->url() == null ? $html->esc($name) : $html->ref($src->url(), $name));
+        }
+        $result = '';
+        if ($items != '') {
+            $result = $html->div($html->block(html_base::H2, $html->esc($mtr->txt(msg_id::CALCULATOR_SOURCES)))
+                . $html->block(html_base::OL, $items), styles::CALC_SOURCES);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache of the page
+     * @param user_message $msg to report a problem of the load or a stored result that differs
+     * @return value_list the values and the results of the page, each result checked once by the
+     *                    calculation of the page, so that a stored result that differs is reported once
+     */
+    function calculator_numbers(word|triple $dbo, data_object $dto, user_message $msg): value_list
+    {
+        $this->add_phrase_results($dto, $dbo->phrase(), $msg);
+        $lst = $this->values_and_results($dto, $msg);
+        $this->check_results($lst, $dto, $msg);
+        return $lst;
+    }
+
+    /**
+     * the number of a calculator cell: the value or result with all the phrases of the cell and
+     * the fewest other phrases; if the phrases select two different numbers equally, the shown
+     * number would depend on the order of the list, so the cell stays empty and the user is told
+     *
+     * @param array $phrases the phrases that the number must have; null entries are ignored
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase compare or an ambiguous cell
+     * @return sandbox_value|null the value or result of the cell or null if the phrases select none or not one number
+     */
+    function calculator_result(array $phrases, value_list $lst, user_message $msg): ?sandbox_value
+    {
+        $phrases = array_filter($phrases);
+        $best = [];
+        foreach ($lst->lst() as $val) {
+            if ($this->has_all_phrases($val, $phrases, $msg)) {
+                $count = count($val->phr_lst()->names());
+                $best_count = count(($best[0] ?? $val)->phr_lst()->names());
+                if ($best == [] or $count < $best_count) {
+                    $best = [$val];
+                } elseif ($count == $best_count) {
+                    $best[] = $val;
+                }
+            }
+        }
+        $result = $best[0] ?? null;
+        if ($result != null and !$this->is_one_number($best)) {
+            $msg->add_warning_with_vars(msg_id::CALCULATOR_CELL_AMBIGUOUS, [
+                msg_id::VAR_NAME_LIST => implode(', ', array_map(fn($phr) => $phr->name(), $phrases)),
+                msg_id::VAR_VALUE_LIST => implode(', ', array_map(fn($val) => $val->number(), $best))]);
+            $result = null;
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val a value or result of the page
+     * @param array $phrases the phrases of a calculator cell
+     * @param user_message $msg to report a problem of the phrase compare
+     * @return bool true if the number has all the phrases of the cell
+     */
+    private function has_all_phrases(sandbox_value $val, array $phrases, user_message $msg): bool
+    {
+        $result = true;
+        foreach ($phrases as $phr) {
+            if (!$this->value_has_phrase($val, $phr, $msg)) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val a value or result of the page
+     * @param phrase $phr a phrase of a calculator cell
+     * @param user_message $msg to report a problem of the phrase compare
+     * @return bool true if the number has the phrase, compared once per value object and phrase
+     */
+    private function value_has_phrase(sandbox_value $val, phrase $phr, user_message $msg): bool
+    {
+        $key = spl_object_id($val);
+        // the same object and not a new one that got the id of a freed object
+        if (($this->has_phrase_by_val[$key][0] ?? null) !== $val) {
+            $this->has_phrase_by_val[$key] = [$val, []];
+        }
+        // a phrase without an id is compared by its name, like phrase::is_same
+        $phr_key = $phr->id() ?: 'name ' . $phr->name();
+        if (!array_key_exists($phr_key, $this->has_phrase_by_val[$key][1])) {
+            $this->has_phrase_by_val[$key][1][$phr_key] = $val->has_phrase($phr, $msg);
+        }
+        return $this->has_phrase_by_val[$key][1][$phr_key];
+    }
+
+    /**
+     * @param array $vals the values and results that a calculator cell selects equally
+     * @return bool true if they all have the same number, so the cell shows the same number whichever is taken
+     */
+    private function is_one_number(array $vals): bool
+    {
+        $numbers = array_map(fn($val) => $val->number(), $vals);
+        return count(array_unique($numbers, SORT_REGULAR)) == 1;
+    }
+
+    /**
+     * @param sandbox_value|null $val the number of the cell or null if the page has none
+     * @param array $fmts per unit name the format of the cells of the column (see calculator_formats)
+     * @param bool $signed true to show the sign of the number as the positive or negative style
+     * @param bool $with_unit true to add the unit e.g. in the main table, but not in a detail table whose header names the unit
+     * @param user_message $msg to report a problem of the phrase types
+     * @param int|null $decimals the decimals that the row sets, null for the decimals of the column
+     * @param bool $plus true to show the sign with the plus sign, the style of the sign only for a number that does not round to zero
+     * @param string $sub the sub text behind the number e.g. the unit shares
+     * @param string $colour the colour style of the column of a detail table, '' for none
+     * @return string the html code of the number cell, empty if the page has no number
+     */
+    private function calculator_cell(
+        ?sandbox_value $val,
+        array          $fmts,
+        bool           $signed,
+        bool           $with_unit,
+        user_message   $msg,
+        ?int           $decimals = null,
+        bool           $plus = false,
+        string         $sub = '',
+        string         $colour = ''
+    ): string
+    {
+        $html = new html_base();
+        $txt = '';
+        $id = '';
+        if ($val != null and !$val->is_null()) {
+            $fmt = $fmts[$this->unit_name($val, $msg)];
+            if ($decimals !== null) {
+                $fmt = clone $fmt;
+                $fmt->decimals = $decimals;
+            }
+            $txt = $html->esc($this->calculator_cell_text($val, $fmt, $with_unit, $msg, $decimals));
+            if ($signed) {
+                $txt = $html->span($txt, $val->number() < 0 ? styles::CALC_NEGATIVE : styles::CALC_POSITIVE);
+            } elseif ($plus) {
+                $shown = round(round($val->number() * $fmt->factor, number_format::NOISE_DECIMALS), $fmt->decimals);
+                $txt = $html->span(($shown > 0 ? '+' : '') . $txt,
+                    $shown > 0 ? styles::CALC_POSITIVE : ($shown < 0 ? styles::CALC_NEGATIVE : ''));
+            }
+            if ($sub != '') {
+                $txt .= $html->span($html->esc($sub), styles::CALC_SUB);
+            }
+            $id = $this->calculator_cell_id($val);
+            $this->cell_plan[$id] = $this->calculator_cell_format($val, $fmt, $signed, $with_unit, $msg, $decimals);
+            $this->cell_plan[$id][self::CALC_CELL_PLUS] = $plus;
+            $this->cell_plan[$id][self::CALC_CELL_SUB] = $sub;
+        }
+        return $html->block(html_base::TD, $txt, trim(styles::CALC_NUMBER . ' ' . $colour), $id);
+    }
+
+    /**
+     * @param sandbox_value $val the number of the cell
+     * @param number_format $fmt the unit and the decimals that the column shows the numbers of this unit with
+     * @param bool $with_unit true to add the unit behind the number
+     * @param user_message $msg to report a problem of the phrase types
+     * @param int|null $pct_decimals the decimals of a percent that the row sets, null for the percent decimals of the user
+     * @return string the text of the cell e.g. "10.5 t" for 10'482 kg in a column of tonnes
+     */
+    function calculator_cell_text(sandbox_value $val, number_format $fmt, bool $with_unit, user_message $msg, ?int $pct_decimals = null): string
+    {
+        global $ui_sys;
+        $dec_point = $ui_sys?->cfg?->dec_point() ?? shared_config::DEFAULT_DEC_POINT;
+        $thousand_sep = $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP;
+        if ($val->is_percent($msg) and $pct_decimals !== null) {
+            $result = number_format($val->number() * 100, $pct_decimals, $dec_point, $thousand_sep);
+            $symbol = $val->percent_symbol($msg);
+            $result .= $symbol == '' ? '' : sandbox_value::UNIT_SEPARATOR . $symbol;
+        } elseif ($val->is_percent($msg)) {
+            // a percent is formatted with its symbol already
+            $result = $val->val_formatted($msg);
+        } else {
+            $result = $fmt->text($val->number(), $dec_point, $thousand_sep);
+            $unit = $this->calculator_cell_unit($val, $fmt, $with_unit, $msg);
+            if ($unit != '') {
+                $result .= sandbox_value::UNIT_SEPARATOR . $unit;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the number of the cell
+     * @param number_format $fmt the format of the column for the unit of the number
+     * @param bool $with_unit false if the header names the unit
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the unit shown behind the number e.g. "t" if the column shows the kg in tonne
+     */
+    private function calculator_cell_unit(sandbox_value $val, number_format $fmt, bool $with_unit, user_message $msg): string
+    {
+        $result = '';
+        if ($with_unit and $fmt->unit != null) {
+            $result = $fmt->unit_text($msg);
+        } elseif ($with_unit) {
+            // a ratio unit e.g. "share" is no measure, so it is never converted
+            $result = $this->unit_name($val, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val a value or result of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return phrase|null the measure unit of the number e.g. "kg", which a column can convert, or null if it has none
+     */
+    private function unit_phrase(sandbox_value $val, user_message $msg): ?phrase
+    {
+        $result = null;
+        foreach ($val->phr_lst()->lst() as $phr) {
+            if ($result == null and $phr->is_measure($msg)) {
+                $result = $phr;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the id of a number cell, so that the save can compare the results of the page by their
+     * group id and the browser can update the cell; an id is unique on a page, so a number that
+     * a detail table shows again gets its count behind the id
+     *
+     * @param sandbox_value $val the value or result of the cell
+     * @return string the html id e.g. "res-5-0M-06+" or "res-5-0M-06+-2" for the second cell of the number
+     */
+    private function calculator_cell_id(sandbox_value $val): string
+    {
+        $result = $val->html_id();
+        $count = ($this->cell_counts[$result] ?? 0) + 1;
+        $this->cell_counts[$val->html_id()] = $count;
+        if ($count > 1) {
+            $result .= self::CALC_CELL_REPEAT . $count;
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val the value or result of a cell
+     * @param number_format $fmt the unit and the decimals that the column shows the number with
+     * @param bool $signed true if the cell shows the sign of the number as the positive or negative style
+     * @param bool $with_unit true if the cell shows the unit behind the number
+     * @param user_message $msg to report a problem of the phrase types
+     * @param int|null $pct_decimals the decimals of a percent that the row sets, null for the percent decimals of the user
+     * @return array how the browser writes a new number into the cell like calculator_cell does
+     */
+    private function calculator_cell_format(
+        sandbox_value $val,
+        number_format $fmt,
+        bool          $signed,
+        bool          $with_unit,
+        user_message  $msg,
+        ?int          $pct_decimals = null
+    ): array
+    {
+        $is_percent = $val->is_percent($msg);
+        $unit = '';
+        if (!$is_percent) {
+            $unit = $this->calculator_cell_unit($val, $fmt, $with_unit, $msg);
+        }
+        $percent = null;
+        if ($is_percent) {
+            $percent = $val->percent_symbol($msg);
+        }
+        return [
+            self::CALC_CELL_NUMBER => $val->html_id(),
+            self::CALC_CELL_UNIT => $unit,
+            self::CALC_CELL_PERCENT => $percent,
+            self::CALC_CELL_PERCENT_DECIMALS => $pct_decimals,
+            self::CALC_CELL_SIGNED => $signed,
+            self::CALC_CELL_FACTOR => $fmt->factor,
+            self::CALC_CELL_DECIMALS => $fmt->decimals,
+        ];
+    }
+
+    /**
+     * the calculation of a calculator page as data and the script that repeats it in the browser
+     * when an input changes (docs/llm/frontend.md "Javascript only for the calculator"): the
+     * numbers of the page by their html id, the results as tokens of their formula, the number
+     * that each input field and each cell shows and the number format of the user; called after
+     * the tables of the page, because the cells are known only then
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param value_list $lst the values and the results of the page (calculator_numbers)
+     * @param data_object $dto the request cache with the formulas and the field triples
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the data and of the script
+     */
+    function calculator_script(calculator $calc, word|triple $dbo, value_list $lst, data_object $dto, user_message $msg): string
+    {
+        $html = new html_base();
+        $all_plan = $this->calculator_result_plan($lst, $dto);
+        $wrn_plan = $this->calculator_warning_plan($calc, $dbo, $lst, $msg);
+        // the numbers that the script shows: of the cells, the warnings and the diagrams
+        $shown = [...array_values($this->cell_plan), ...$wrn_plan];
+        foreach ($this->diagram_plan as $diagram) {
+            foreach (array_merge(...array_column($diagram[self::CALC_DIAGRAM_LINES], self::CALC_DIAGRAM_NUMBERS)) as $num_id) {
+                $shown[] = [self::CALC_CELL_NUMBER => $num_id];
+            }
+        }
+        $res_plan = $this->calculator_needed_results($all_plan, $shown);
+        $fld_plan = $this->calculator_field_plan($calc, $dbo, $dto, $msg);
+        $inp_plan = $this->calculator_input_plan($dbo, $fld_plan, $dto, $msg);
+        $used_ids = $this->calculator_used_ids($res_plan, $inp_plan, $shown);
+        $plan = [
+            self::CALC_NUMBERS => $this->calculator_number_plan($lst, $used_ids),
+            self::CALC_RESULTS => $res_plan,
+            self::CALC_INPUTS => $inp_plan,
+            self::CALC_FIELDS => $fld_plan,
+            self::CALC_CELLS => $this->cell_plan,
+            self::CALC_FORMAT => $this->calculator_number_format(),
+        ];
+        foreach ([self::CALC_WARNINGS => $wrn_plan, self::CALC_CHECKS => $this->check_plan, self::CALC_DIAGRAMS => $this->diagram_plan] as $key => $part) {
+            if ($part != []) {
+                $plan[$key] = $part;
+            }
+        }
+        return $html->script_data(self::CALC_DATA_ID, $plan) . $html->script_src(files::CALCULATOR_SCRIPT);
+    }
+
+    /**
+     * @return array the number format of the user for the calculator scripts: the decimal point,
+     *               the thousand separator, the separator before the unit, the decimals of a share
+     *               and the styles of a positive and a negative number
+     */
+    function calculator_number_format(): array
+    {
+        global $ui_sys;
+        return [
+            // without a loaded config the format of the page cells, the shared defaults
+            self::CALC_DEC_POINT => $ui_sys?->cfg?->dec_point() ?? shared_config::DEFAULT_DEC_POINT,
+            self::CALC_THOUSAND_SEP => $ui_sys?->cfg?->thousand_sep() ?? shared_config::DEFAULT_THOUSAND_SEP,
+            self::CALC_UNIT_SEP => sandbox_value::UNIT_SEPARATOR,
+            self::CALC_PERCENT_DECIMALS => $ui_sys?->cfg?->percent_decimals() ?? shared_config::DEFAULT_PERCENT_DECIMALS,
+            // the digits that a column of numbers shows, which decide its decimals (number_format)
+            self::CALC_DIGITS => $this->calculator_digits(words::DEFAULT),
+            // the digits of the number in the label of a row, which is only an indication (calculator_row_number)
+            self::CALC_ROUGH_DIGITS => $this->calculator_digits(words::ROUGH),
+            self::CALC_POSITIVE => styles::CALC_POSITIVE,
+            self::CALC_NEGATIVE => styles::CALC_NEGATIVE,
+        ];
+    }
+
+    /**
+     * the results that the calculator script calculates: the result of each cell and the results
+     * that these use, also over several steps; the request cache holds also results that no cell
+     * shows e.g. of another phrase, which are left out, so that the page depends only on the
+     * results that it shows
+     *
+     * @param array $res_plan per html id of a result the tokens of its calculation (see calculator_result_plan)
+     * @param array $cell_plan per html id of a cell its number and format (see calculator_cell_format)
+     * @return array the part of the result plan that the cells need, sorted by the html id
+     */
+    function calculator_needed_results(array $res_plan, array $cell_plan): array
+    {
+        $needed = [];
+        $open = array_column($cell_plan, self::CALC_CELL_NUMBER);
+        while ($open != []) {
+            $num_id = array_pop($open);
+            if ($this->calculator_is_new_result($num_id, $res_plan, $needed)) {
+                $needed[$num_id] = true;
+                $open = array_merge($open, $this->calculator_token_refs($res_plan[$num_id]));
+            }
+        }
+        // the result plan is sorted by the html id, which the intersection keeps
+        return array_intersect_key($res_plan, $needed);
+    }
+
+    /**
+     * @param string $num_id the html id of a number that a cell shows or a result uses
+     * @param array $res_plan per html id of a result the tokens of its calculation
+     * @param array $needed the html ids of the results found so far, so that a cycle ends
+     * @return bool true if the number is a result that has not been found yet
+     */
+    private function calculator_is_new_result(string $num_id, array $res_plan, array $needed): bool
+    {
+        return array_key_exists($num_id, $res_plan) and !array_key_exists($num_id, $needed);
+    }
+
+    /**
+     * @param array $tokens the tokens of the calculation of one result (see formula_calc::tokens)
+     * @return array the html ids of the values and results that the calculation uses
+     */
+    private function calculator_token_refs(array $tokens): array
+    {
+        $result = [];
+        foreach ($tokens as $token) {
+            if (array_key_exists(formula_calc::TOKEN_REF, $token)) {
+                $result[] = $token[formula_calc::TOKEN_REF];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the html ids of the numbers that the calculator script reads: each result, each operand of
+     * a result, the number of each input and the number of each cell; the request cache holds
+     * also values that the page does not use e.g. of a related phrase, which are left out, so
+     * that the page depends only on the numbers it shows or calculates
+     *
+     * @param array $res_plan per html id of a result the tokens of its calculation (see calculator_result_plan)
+     * @param array $inp_plan per name of an input field the html id of its number (see calculator_input_plan)
+     * @param array $cell_plan per html id of a cell its number and format (see calculator_cell_format)
+     * @return array the used html ids as keys
+     */
+    private function calculator_used_ids(array $res_plan, array $inp_plan, array $cell_plan): array
+    {
+        $result = [];
+        foreach ($res_plan as $res_id => $tokens) {
+            $result[$res_id] = true;
+            foreach ($this->calculator_token_refs($tokens) as $ref_id) {
+                $result[$ref_id] = true;
+            }
+        }
+        foreach ($inp_plan as $num_id) {
+            $result[$num_id] = true;
+        }
+        foreach ($cell_plan as $cell) {
+            $result[$cell[self::CALC_CELL_NUMBER]] = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @param value_list $lst the values and the results of the page
+     * @param array $used_ids the html ids of the numbers that the script reads as keys (see calculator_used_ids)
+     * @return array per html id the number of the value or result, without a value that has no
+     *               number or that the script does not read
+     */
+    private function calculator_number_plan(value_list $lst, array $used_ids): array
+    {
+        $result = [];
+        foreach ($lst->lst() as $val) {
+            if ($val->number() !== null and array_key_exists($val->html_id(), $used_ids)) {
+                $result[$val->html_id()] = $val->number();
+            }
+        }
+        // sorted by the html id, so that the page does not depend on the load order of the values
+        ksort($result);
+        return $result;
+    }
+
+    /**
+     * @param value_list $lst the values and the results of the page
+     * @param data_object $dto the request cache with the formulas of the results
+     * @return array per html id of a result the tokens of its calculation, without a result that the page cannot calculate
+     */
+    private function calculator_result_plan(value_list $lst, data_object $dto): array
+    {
+        $calc = new formula_calc($this->prior_names($dto));
+        $result = [];
+        foreach ($lst->lst() as $res) {
+            if ($res instanceof result) {
+                $tokens = $calc->tokens($res, $lst, $dto->formula_list());
+                if ($tokens !== null) {
+                    $result[$res->html_id()] = $tokens;
+                }
+            }
+        }
+        // sorted by the html id, so that the page does not depend on the load order of the results
+        ksort($result);
+        return $result;
+    }
+
+    /**
+     * the number that each input of the page sets: a number field the value that it shows, a
+     * phrase selector the value of the option that the calculation of the page uses, and an
+     * assumption that a result uses the value itself (see assumption_fields)
+     *
+     * @param word|triple $dbo the phrase of the page
+     * @param array $fld_plan per name of an input field its number and format (see calculator_field_plan)
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per name of an input field the html id of its number
+     */
+    private function calculator_input_plan(word|triple $dbo, array $fld_plan, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        foreach ($this->operand_values($dbo, $msg, $dto) as $val) {
+            if ($val instanceof value) {
+                $result[url_var::NUMERIC_VALUE . $val->id()] = $val->html_id();
+            }
+        }
+        foreach ($fld_plan as $name => $fld) {
+            $result[$name] = $fld[self::CALC_CELL_NUMBER];
+        }
+        return $result;
+    }
+
+    /**
+     * the number and the format of each input and assumption field, so that a page that the script
+     * builds shows and saves each field like the page of the server (see calculator_number and
+     * calculator_selector)
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array per name of an input field its number and format (see calculator_field_format)
+     */
+    private function calculator_field_plan(calculator $calc, word|triple $dbo, data_object $dto, user_message $msg): array
+    {
+        $result = [];
+        foreach ([...$calc->items(triples::CALCULATOR_INPUT), ...$calc->items(triples::CALCULATOR_ASSUMPTION)] as $item) {
+            $phr = $calc->item_phrase($item);
+            $val = null;
+            if ($phr != null) {
+                $val = $this->calculator_field_value($calc, $phr, $dbo, $dto, $msg);
+            }
+            if ($val != null) {
+                $result[url_var::NUMERIC_VALUE . $phr->id()] = $this->calculator_field_format($calc, $item, $phr, $val, $dto, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $item the item of the field e.g. PV installation input PV capacity
+     * @param phrase $phr the phrase of the item e.g. PV capacity
+     * @param sandbox_value $val the value that the field sets (see calculator_field_value)
+     * @param data_object $dto the request cache with the field triples
+     * @param user_message $msg to report a problem of the phrase types
+     * @return array the html id of the number and its decimals, and of a number field also the unit and the save vars
+     */
+    private function calculator_field_format(
+        calculator    $calc,
+        phrase        $item,
+        phrase        $phr,
+        sandbox_value $val,
+        data_object   $dto,
+        user_message  $msg
+    ): array
+    {
+        $result = [
+            self::CALC_CELL_NUMBER => $val->html_id(),
+            self::CALC_CELL_DECIMALS => $this->field_decimals($val, $msg),
+        ];
+        // a phrase selector shows no unit and is never saved as a number (see calculator_selector)
+        if ($this->field_type($phr, $dto, $msg) != triples::FIELD_PHRASE_SELECTOR_TYPE) {
+            $unit = $this->field_unit($val, $msg);
+            $result[self::CALC_CELL_UNIT] = $unit;
+            $result[self::CALC_FIELD_SAVE] = $this->calculator_save_map((string)$phr->id(), $val, $calc->label($item), $unit);
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $phr the field phrase e.g. yield factor
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the field triples and the values
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the value that the field sets: the shown value of a number field or
+     *                            the value of the option that the page phrase uses of a phrase selector
+     */
+    private function calculator_field_value(calculator $calc, phrase $phr, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
+    {
+        $result = null;
+        if ($this->field_type($phr, $dto, $msg) == triples::FIELD_PHRASE_SELECTOR_TYPE) {
+            $used = $calc->used(array_column($calc->options($phr), 0));
+            if ($used != null) {
+                $result = $this->calculator_option_value($phr, $used, $dbo, $dto, $msg);
+                // a used option without a number: the first option with a number takes the number of the selected option
+                foreach (array_column($calc->options($phr), 0) as $opt) {
+                    $result ??= $this->calculator_option_value($phr, $opt, $dbo, $dto, $msg);
+                }
+            }
+        } else {
+            $result = $this->calculator_value($phr, $dbo, $dto, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $row a row of the main table
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the phrases and the values
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the html code of the sub text: the hint of the row with its numbers, else its side results with their number
+     */
+    private function calculator_sub(calculator $calc, phrase $row, word|triple $dbo, data_object $dto, value_list $lst, user_message $msg): string
+    {
+        $html = new html_base();
+        $ctx = $this->calculation_side_context($calc, $dbo, $row);
+        $sub = $this->calculator_hint_numbers($calc->hint($row), $dbo, $dto, $lst, $msg);
+        if ($sub == '') {
+            $parts = [];
+            foreach ($calc->side_results($row) as $side) {
+                $val = $this->calculator_result([...$ctx, $side], $lst, $msg);
+                if ($val != null and !$val->is_null()) {
+                    $parts[] = $calc->phrase_label($side) . ' ' . $this->calculator_rough_text($val, $msg);
+                }
+            }
+            $sub = implode(', ', $parts);
+        }
+        return $sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB);
+    }
+
+    /**
+     * the number of the row phrase after the label of a row with a filter, because its cells show
+     * the numbers of the filter e.g. the net avoided emission against the consumption mix and not
+     * the consumption mix itself; it is the value that a field of the row phrase would show, with
+     * the digits of the rough tier, because the number in a label is only an indication
+     *
+     * @param calculator $calc the calculator reader of the page
+     * @param phrase $row a row of the main table e.g. PV installation row saving consumption mix
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the values and the field triples of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the number with its unit in brackets e.g. " (128 g/kWh)" or an empty string
+     *                for a row without filter or if the row phrase has no value
+     */
+    private function calculator_row_number(calculator $calc, phrase $row, word|triple $dbo, data_object $dto, user_message $msg): string
+    {
+        $result = '';
+        $phr = $calc->chosen($calc->item_phrase($row));
+        $flt = $calc->filter($row);
+        if ($flt != null and $phr != null) {
+            $val = $this->calculator_value($phr, $dbo, $dto, $msg);
+            if ($val == null) {
+                $val = $this->calculator_phrase_result($phr, $flt, $dbo, $dto, $msg);
+            }
+            if ($val != null and !$val->is_null()) {
+                $txt = $this->calculator_rough_text($val, $msg, 0);
+                $note = $calc->number_note($row);
+                if ($note != '') {
+                    $txt .= ' ' . $note;
+                }
+                $result = ' (' . $txt . ')';
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param sandbox_value $val a number in a label or a sub text, which is only an indication
+     * @param user_message $msg to report a problem of the phrase types
+     * @param int|null $whole_decimals the most decimals of a whole number, because e.g. 60.0 suggests a precision that an input does not have
+     * @return string the number with the digits of the rough tier and its unit e.g. "12.1 a"
+     */
+    private function calculator_rough_text(sandbox_value $val, user_message $msg, ?int $whole_decimals = null): string
+    {
+        $fmt = $this->calculator_group_format([$val], true, $this->calculator_digits(words::ROUGH), $msg);
+        $shown = (float)$val->number() * $fmt->factor;
+        if ($whole_decimals !== null and $shown == floor($shown)) {
+            $fmt->decimals = min($fmt->decimals, $whole_decimals);
+        }
+        return $this->calculator_cell_text($val, $fmt, true, $msg);
+    }
+
+    /**
+     * the number of a row phrase that a formula calculates instead of a stored value e.g. the PV-weighted consumption mix
+     *
+     * @param phrase $phr the row phrase
+     * @param phrase $flt the filter of the row, because a result that names it is the number of the cells e.g. the battery effect
+     * @param word|triple $dbo the phrase of the page
+     * @param data_object $dto the request cache with the results and the formulas
+     * @param user_message $msg to report a problem of the phrase types
+     * @return sandbox_value|null the one result of the page that its formula calculates for the row phrase; null if there is
+     *                            none or several e.g. one per month, because a label shows one number and never picks one
+     */
+    private function calculator_phrase_result(phrase $phr, phrase $flt, word|triple $dbo, data_object $dto, user_message $msg): ?sandbox_value
+    {
+        $calc = new formula_calc();
+        $found = [];
+        foreach ($dto->res_lst->lst() as $res) {
+            $of_page = $res->has_phrase($dbo->phrase(), $msg);
+            $is_cell = $res->has_phrase($flt, $msg);
+            $of_phrase = $calc->calculates_phrase($res, $phr->name(), $dto->formula_list());
+            if ($of_page and !$is_cell and $of_phrase) {
+                $found[] = $res;
+            }
+        }
+        $result = null;
+        if (count($found) == 1) {
+            $result = $found[0];
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $label the label of the row
+     * @param array $vals per column the number of the cell or null
+     * @param array $fmts per column and unit name the format of the cells (see calculator_formats)
+     * @param bool $key true for a key row e.g. the year
+     * @param user_message $msg to report a problem of the phrase types
+     * @param array $texts per phrase column its text instead of a number (calculator_phrase_cells)
+     * @param string $number the position of the row in front of its label, '' for a table without row numbers
+     * @param array $col_decimals per column the decimals that its phrase sets, null for the decimals of the column
+     * @param array $plus per column if it shows the plus sign
+     * @param array $units per column the unit that a cell shows as sub text, '' for none
+     * @param string $sub the sub text of the label e.g. the full name of a ticker
+     * @param array $colours per column its colour style, '' for none
+     * @return string the html code of the row of a detail table
+     */
+    private function calculator_detail_row(
+        string       $label,
+        array        $vals,
+        array        $fmts,
+        bool         $key,
+        user_message $msg,
+        array        $texts = [],
+        string       $number = '',
+        array        $col_decimals = [],
+        array        $plus = [],
+        array        $units = [],
+        string       $sub = '',
+        array        $colours = []
+    ): string
+    {
+        $html = new html_base();
+        $cells = '';
+        foreach ($vals as $c => $val) {
+            $cells .= array_key_exists($c, $texts)
+                ? $html->block(html_base::TD, $html->esc($texts[$c]))
+                : $this->calculator_cell($val, $fmts[$c] ?? [], false, false, $msg, $col_decimals[$c] ?? null, $plus[$c] ?? false, $units[$c] ?? '', $colours[$c] ?? '');
+        }
+        $first = $html->esc($label) . ($sub == '' ? '' : $html->span($html->esc($sub), styles::CALC_SUB));
+        if ($number != '') {
+            $cells = $html->block(html_base::TD, $first) . $cells;
+            $first = $number;
+        }
+        return $this->calculator_row($first, $cells, $key, $number == '' ? '' : styles::CALC_NUMBER);
+    }
+
+    /**
+     * @param calculator $calc the calculator reader of the page
+     * @param array $ctx the phrases of the row e.g. the page phrase and the month
+     * @param array $cols the columns of the detail table (calculator::columns)
+     * @param value_list $lst the values and the results of the page
+     * @param user_message $msg to report a problem of the phrase types
+     * @param bool $with_results true for a page independent table, whose cell also reads a result without the page phrase
+     * @return array per column the number of the cell of the row or null
+     */
+    private function calculator_detail_values(calculator $calc, array $ctx, array $cols, value_list $lst, user_message $msg, bool $with_results = false): array
+    {
+        $result = [];
+        $row_phr = array_slice($ctx, 1);
+        // the phrases of the other single columns, so that the count of a child is not taken for its cumulative deviation
+        $single = array_column(array_filter($cols, fn($col) => !$col[4] and $col[1] != null), 1);
+        foreach ($cols as $c => [, $col_phr, $col_flt, , $repeated, $is_phrase]) {
+            $result[$c] = null;
+            // a column also selects the kinds of its phrase e.g. the stock price and the bond price for the price
+            $kinds = ($col_phr == null or $repeated) ? [] : $calc->kinds($col_phr);
+            $skip = array_filter($single, fn(phrase $phr) => $phr->id() != $col_phr?->id());
+            foreach ($is_phrase ? [] : [$col_phr, ...$kinds] as $cell_phr) {
+                // the filter of a column e.g. the unit gram per kWh selects its numbers like the filter of a row
+                $result[$c] ??= $this->calculator_result([...$ctx, $cell_phr, $col_flt], $lst, $msg)
+                    ?? $this->calculator_general_value([...$row_phr, $cell_phr, $col_flt], $lst, $msg, $skip, $with_results);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * a fact that does not name the page e.g. the Swiss consumption mix of a month in the table of one PV installation;
+     * only a stored value, because a result belongs to its page, and only if one value qualifies, so that a value
+     * of another place is never picked by the order of the list
+     *
+     * @param array $phrases the phrases of the cell without the page phrase; null entries are ignored
+     * @param value_list $lst the values and results of the page
+     * @param user_message $msg to report a problem of the phrase compare
+     * @param array $skip the phrases that the value must not have e.g. those of the other columns of a table
+     * @param bool $with_results true to take the one result if no one value qualifies, for a table whose rows belong to no page
+     * @return sandbox_value|null the one value with all the phrases or null if there is none or several
+     */
+    function calculator_general_value(array $phrases, value_list $lst, user_message $msg, array $skip = [], bool $with_results = false): ?sandbox_value
+    {
+        $phr_lst = array_filter($phrases);
+        $found = [];
+        $found_res = [];
+        foreach ($lst->lst() as $val) {
+            // an expected number is what the check table compares with, so it is never the fact itself
+            if ($this->has_all_phrases($val, $phr_lst, $msg)
+                and !in_array(words::EXPECTED, $val->phr_lst()->names())
+                and array_filter($skip, fn(phrase $phr) => $this->value_has_phrase($val, $phr, $msg)) == []) {
+                if ($val instanceof value) {
+                    $found[] = $val;
+                } else {
+                    $found_res[] = $val;
+                }
+            }
+        }
+        $result = null;
+        if (count($found) == 1) {
+            $result = $found[0];
+        } elseif ($with_results and count($found_res) == 1) {
+            $result = $found_res[0];
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $first the html code of the first cell e.g. the label with the sub text
+     * @param string $cells the html code of the number cells
+     * @param bool $key true to show the row as a key row
+     * @return string the html code of the table row
+     */
+    private function calculator_row(string $first, string $cells, bool $key, string $first_style = ''): string
+    {
+        $html = new html_base();
+        return $html->block(html_base::TR, $html->block(html_base::TD, $first, $first_style) . $cells,
+            $key ? styles::CALC_KEY : '');
+    }
+
+    /**
+     * @param string $head the html code of the header cells
+     * @param string $rows the html code of the rows
+     * @return string the html code of the table in the frame that scrolls a wide table on a phone
+     */
+    private function calculator_table(string $head, string $rows): string
+    {
+        $html = new html_base();
+        return $html->div($html->block(html_base::TABLE,
+            $html->block(html_base::THEAD, $html->block(html_base::TR, $head))
+            . $html->block(html_base::TBODY, $rows)), styles::CALC_SCROLL);
+    }
+
+    /**
+     * the sources of the values of the page phrase as a list with a link to the source url, e.g. the
+     * sources of a use case page; each source once, sorted by name
+     *
+     * @param word|triple|db_object|type_object|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the value load
+     * @param data_object|null $dto the data cache of the page with the values
+     * @return string the html code of the source list or an empty string if no value has a source
+     */
+    function sources_used(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto = null
+    ): string
+    {
+        $html = new html_base();
+        $vals = $this->phrase_values($dbo, $msg, $dto);
+        if ($dto != null and $vals != []) {
+            $vals = array_merge($vals, $this->operand_values($dbo, $msg, $dto));
+            $this->add_sources($vals, $dto, $msg);
+        }
+        $src_lst = [];
+        foreach ($vals as $val) {
+            // only a value has a source, a result has the formula instead
+            if ($val instanceof value and $val->src != null and ($val->src->name() ?? '') != '') {
+                $src_lst[$val->src->name()] = $val->src;
+            }
+        }
+        ksort($src_lst);
+        $items = '';
+        foreach ($src_lst as $src) {
+            $link = $src->url() == null ? $src->name() : $html->ref($src->url(), $src->name());
+            $items .= $html->list_item($link);
+        }
+        $result = '';
+        if ($items != '') {
+            $result = $html->list_unsorted($items);
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple|db_object|type_object|null $dbo the object of the page
+     * @param user_message $msg to report a problem of the value load
+     * @param data_object|null $dto the data cache of the page with the values
+     * @return array the values of the page phrase, which only a word or a triple has
+     */
+    private function phrase_values(
+        word|triple|db_object|type_object|null $dbo,
+        user_message                           $msg,
+        ?data_object                           $dto
+    ): array
+    {
+        $result = [];
+        if ($dbo != null and ($dbo::class == word::class or $dbo::class == triple::class)) {
+            $result = $this->value_related_list($dbo, $msg, $dto, $dto?->phr_lst)?->lst() ?? [];
+        }
+        return $result;
+    }
+
+    /**
      * the results shown by a value table, e.g. the reward ratio of each global problem
      *
      * a number of a child phrase belongs to the page of the parent too (like in
@@ -1686,13 +5085,15 @@ class ui_list extends ui_base
      *
      * @param triple|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the list of values
      */
     function values_by_triple(
         triple|db_object|null $dbo,
         user_message          $msg,
         ?data_object          $dto = null,
-        ?int                  $style_id = null
+        ?int                  $style_id = null,
+        array                 $url_arr = []
     ): string
     {
         $val_lst = $dto->val_lst?->filter($msg, $dbo);
@@ -1703,7 +5104,7 @@ class ui_list extends ui_base
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
         // show the grouped list (list_most_relevant) like the default word view
-        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true);
+        return $this->value_list($val_lst, $phr_lst, $msg, $style_id, true, $url_arr);
     }
 
     /**
@@ -1718,13 +5119,15 @@ class ui_list extends ui_base
      * @param user_message $msg to report an unexpected selection object
      * @param data_object|null $dto the data cache used if the value has not been loaded for its page
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the similar values or the message that the value has no similar values
      */
     function values_similar(
         value|db_object|null $dbo,
         user_message         $msg,
         ?data_object         $dto = null,
-        ?int                 $style_id = null
+        ?int                 $style_id = null,
+        array                $url_arr = []
     ): string
     {
         global $mtr;
@@ -1746,7 +5149,7 @@ class ui_list extends ui_base
                 log_err_msg_ui('the value cache is missing to select the similar values', $msg);
             } else {
                 // the value itself is the context of the column, so its phrases are left out
-                $result = $this->value_list($val_lst, $dbo->grp->phr_lst(), $msg, $style_id, true);
+                $result = $this->value_list($val_lst, $dbo->grp->phr_lst(), $msg, $style_id, true, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NO_SIMILAR_VALUES);
                 }
@@ -1765,9 +5168,15 @@ class ui_list extends ui_base
      * @param value|db_object|null $dbo the value whose results should be listed
      * @param user_message $msg to report an unexpected selection object
      * @param data_object|null $dto the data cache used if the value has not been loaded for its page
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the results of the value or the message that the value is not used for results
      */
-    function results_by_value(value|db_object|null $dbo, user_message $msg, ?data_object $dto = null): string
+    function results_by_value(
+        value|db_object|null $dbo,
+        user_message         $msg,
+        ?data_object         $dto = null,
+        array                $url_arr = []
+    ): string
     {
         global $mtr;
 
@@ -1786,7 +5195,7 @@ class ui_list extends ui_base
                 log_err_msg_ui('the result cache is missing to select the results', $msg);
             } else {
                 // the value itself is the context of the column, so its phrases are left out
-                $result = $this->result_list_grouped($res_lst, $dbo->grp->phr_lst(), $msg);
+                $result = $this->result_list_grouped($res_lst, $dbo->grp->phr_lst(), $msg, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_RESULTS);
                 }
@@ -1805,9 +5214,15 @@ class ui_list extends ui_base
      * @param result|db_object|null $dbo the result whose used values should be listed
      * @param user_message $msg to report a missing list or an unexpected selection object
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the used values or the message that no value has been used
      */
-    function values_used(result|db_object|null $dbo, user_message $msg, ?int $style_id = null): string
+    function values_used(
+        result|db_object|null $dbo,
+        user_message          $msg,
+        ?int                  $style_id = null,
+        array                 $url_arr = []
+    ): string
     {
         global $mtr;
 
@@ -1821,7 +5236,7 @@ class ui_list extends ui_base
             // column of a word, see formula_list)
             if ($dbo->values_used != null) {
                 // the result itself is the context of the column, so its phrases are left out
-                $result = $this->value_list($dbo->values_used, $dbo->grp->phr_lst(), $msg, $style_id, true);
+                $result = $this->value_list($dbo->values_used, $dbo->grp->phr_lst(), $msg, $style_id, true, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NO_VALUES_USED);
                 }
@@ -1869,9 +5284,10 @@ class ui_list extends ui_base
      *
      * @param result|db_object|null $dbo the result whose used results should be listed
      * @param user_message $msg to report a missing list or an unexpected selection object
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the used results or the message that no other result has been used
      */
-    function results_used(result|db_object|null $dbo, user_message $msg): string
+    function results_used(result|db_object|null $dbo, user_message $msg, array $url_arr = []): string
     {
         global $mtr;
 
@@ -1883,7 +5299,7 @@ class ui_list extends ui_base
             // result shows no column instead of a message about a list that is not known here
             if ($dbo->results_used != null) {
                 // the result itself is the context of the column, so its phrases are left out
-                $result = $this->result_list_grouped($dbo->results_used, $dbo->grp->phr_lst(), $msg);
+                $result = $this->result_list_grouped($dbo->results_used, $dbo->grp->phr_lst(), $msg, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NO_RESULTS_USED);
                 }
@@ -1902,13 +5318,15 @@ class ui_list extends ui_base
      * @param user_message $msg to report a missing cache or an unexpected selection object
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
      * @param int|null $style_id the optional list column style
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the values of the source or the message that the source is not used for values
      */
     function values_by_source(
         source|db_object|null $dbo,
         user_message          $msg,
         ?data_object          $dto = null,
-        ?int                  $style_id = null
+        ?int                  $style_id = null,
+        array                 $url_arr = []
     ): string
     {
         global $mtr;
@@ -1930,7 +5348,7 @@ class ui_list extends ui_base
                 log_err_msg_ui('the value cache is missing to select the values of a source', $msg);
             } else {
                 // the source is the context of the page, so no phrase is left out of the value lines
-                $result = $this->value_list($val_lst, new phrase_list(), $msg, $style_id, true);
+                $result = $this->value_list($val_lst, new phrase_list(), $msg, $style_id, true, $url_arr);
                 if ($result == '') {
                     $result = $mtr->txt(msg_id::INFO_NOT_USED_FOR_VALUES);
                 }
@@ -1973,6 +5391,7 @@ class ui_list extends ui_base
      * @param value_list $val_lst
      * @param phrase_list $phr_lst
      * @param int|null $style_id id
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code to show the list of values
      */
     private function value_list(
@@ -1980,7 +5399,8 @@ class ui_list extends ui_base
         phrase_list  $phr_lst,
         user_message $msg,
         ?int         $style_id = null,
-        bool         $most_relevant = false
+        bool         $most_relevant = false,
+        array        $url_arr = []
     ): string
     {
         global $ui_sys;
@@ -1989,11 +5409,12 @@ class ui_list extends ui_base
         if ($style_id != null) {
             $style_txt = $ui_sys->typ_lst_cache->msk_sty->get_code_id($style_id);
         }
+        $with_variance = url_var::show_variance($url_arr);
         // the "most relevant" component groups the values, the plain one just sorts them by impact
         if ($most_relevant) {
-            $result = $val_lst->list_most_relevant($msg, $phr_lst, [], $style_txt);
+            $result = $val_lst->list_most_relevant($msg, $phr_lst, [], $style_txt, null, $with_variance);
         } else {
-            $result = $val_lst->list($msg, $phr_lst, [], $style_txt);
+            $result = $val_lst->list($msg, $phr_lst, [], $style_txt, null, null, $with_variance);
         }
         // wrap the value lines in a block div so each value stays on one line;
         // as a LIST_GROUP component the related-value list is emitted without an
@@ -2088,7 +5509,7 @@ class ui_list extends ui_base
     }
 
     /**
-     * TODO move code from component_dsp_old
+     * TODO Prio 2 move code from component_dsp_old
      * @return string a dummy text
      */
     function results(): string
@@ -2104,12 +5525,14 @@ class ui_list extends ui_base
      * @param db_object|combine_named|null $dbo the term whose related results should be listed
      * @param user_message $msg to report a problem of reading the config or a symbol
      * @param data_object|null $cfg the request cache with the preloaded results
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code of the grouped results or '' if the cache has no result
      */
     function results_related(
         db_object|combine_named|null $dbo,
         user_message                 $msg,
-        ?data_object                 $cfg = null
+        ?data_object                 $cfg = null,
+        array                        $url_arr = []
     ): string
     {
         $result = '';
@@ -2119,7 +5542,7 @@ class ui_list extends ui_base
             if ($dbo::class == word::class or $dbo::class == triple::class) {
                 $phr_lst->add_phrase($dbo->phrase());
             }
-            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg);
+            $result = $this->result_list_grouped($cfg->res_lst, $phr_lst, $msg, $url_arr);
         }
         return $result;
     }
@@ -2132,17 +5555,123 @@ class ui_list extends ui_base
      *
      * @param result_list $res_lst the results to show
      * @param phrase_list $phr_lst the phrases assumed by the reader e.g. the phrases of the page
+     * @param array $url_arr the url parameters of the page, which say whether the variance is shown
      * @return string the html code of the grouped results, '' if the list is empty
      */
-    private function result_list_grouped(result_list $res_lst, phrase_list $phr_lst, user_message $msg): string
+    private function result_list_grouped(
+        result_list  $res_lst,
+        phrase_list  $phr_lst,
+        user_message $msg,
+        array        $url_arr = []
+    ): string
     {
         $html = new html_base();
-        $result = $res_lst->list_most_relevant($msg, $phr_lst);
+        $with_variance = url_var::show_variance($url_arr);
+        $result = $res_lst->list_most_relevant($msg, $phr_lst, [], '', $with_variance);
         // the same block div as the value list, so that each result stays on one line
         if ($result != '') {
             $result = $html->div($result, view_styles::COL_SM_12);
         }
         return $result;
+    }
+
+    /**
+     * the triples that point to the given type, one column per sub type of the type below its name,
+     * e.g. for "column (system)" the triple "column problem (high prio)" below "mayor column (system)";
+     * the sub types are shown side by side in up to four columns, which wrap on a narrow screen
+     *
+     * TODO Prio 2 list only the triples related to the phrase of the page again
+     *      (phrase_list::related_triples_to); switched off, because the walk of parents_all
+     *      reaches most of the graph and the page did not respond (docs/llm/pending_prio_2.md)
+     *
+     * @param db_object|type_object|combine_named|null $dbo the base phrase e.g. "populism solution"
+     * @param int|null $typ_id the phrase id of the type e.g. of "column (system)", which is the column phrase of the component
+     * @param user_message $msg to report a component without a known type
+     * @param data_object|null $dto the request cache, which is filled from the api if online; null for no list
+     * @param array $url_arr the url vars of the shown page as back target of the delete and the add icons
+     * @return string the html code of the labelled triple lists or '' if the page shows no phrase
+     */
+    function triples_of_types(
+        db_object|type_object|combine_named|null $dbo,
+        ?int                                     $typ_id,
+        user_message                             $msg,
+        ?data_object                             $dto,
+        array                                    $url_arr = []
+    ): string
+    {
+        $result = '';
+        // e.g. the editor opened without a phrase has nothing to list yet
+        if (!($dbo instanceof word or $dbo instanceof triple) or $dbo->id() == 0 or $dto == null) {
+            return $result;
+        }
+        if ($dto->online and $typ_id != null) {
+            $this->add_triple_list_cache($typ_id, $dto, $msg);
+        }
+        $typ = $typ_id == null ? null : $dto->phr_lst->get($typ_id);
+        if ($typ == null) {
+            log_err_msg_ui('the type phrase ' . $typ_id . ' of the triple list is missing', $msg);
+        } else {
+            $col_lst = [];
+            foreach ($dto->phr_lst->sub_types($typ, $msg) as $sub) {
+                $col_lst[] = $this->triples_of_type($sub, $dto->phr_lst, $msg, $url_arr);
+            }
+            $result = new html_base()->div_row_wrapping_cols($col_lst, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the type followed by its triples separated by a comma, each with a delete icon,
+     * and in the next line the add icon of a new triple that points to the type
+     *
+     * @param phrase $typ the type phrase that the listed triples point to e.g. "mayor column (system)"
+     * @param phrase_list $phr_lst the request cache with the triples
+     * @param user_message $msg to report a problem of reading a triple of the cache
+     * @param array $url_arr the url vars of the shown page as back target of the delete and the add icons
+     * @return string the html code of the type name followed by the list of its triples
+     */
+    private function triples_of_type(phrase $typ, phrase_list $phr_lst, user_message $msg, array $url_arr): string
+    {
+        global $mtr;
+        global $ui_sys;
+
+        $html = new html_base();
+        $trp_lst = $phr_lst->parent_triples($typ, $msg);
+        $trp_lst->sort_by_name();
+        $items = [];
+        foreach ($trp_lst->lst() as $phr) {
+            // the list has phrases, so the delete view gets the triple id and not the negative phrase id
+            $items[] = $phr->name_link()
+                . $html->icon_link(views::TRIPLE_DEL_ID, $phr->obj_id(), icons::DEL, $mtr->txt(triple::MSG_DEL), $url_arr);
+        }
+        // the new triple is preset with the type and the verb of the listed triples
+        // e.g. "can be" "mayor column (system)", so that the user only selects the from phrase
+        $preset = [url_var::PHRASE_TO => $typ->id()];
+        $vrb = $ui_sys?->typ_lst_cache?->vrb?->get_by_code_id(verbs::CAN_BE);
+        if ($vrb != null) {
+            $preset[url_var::VERB] = $vrb->id();
+        }
+        $url = $html->url_back(views::TRIPLE_ADD_ID, 0, $url_arr, http_build_query($preset));
+        $add = $html->change_icon($url, icons::ADD, $mtr->txt(msg_id::TRIPLE_ADD));
+        return $html->text_h4($typ->name_link()) . $html->div(implode(', ', $items)) . $html->div($add);
+    }
+
+    /**
+     * add the type of a triple list, its sub types and the triples that point to them to the request cache
+     *
+     * @param int $typ_id the phrase id of the type e.g. of "column (system)"
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return void
+     */
+    private function add_triple_list_cache(int $typ_id, data_object $dto, user_message $msg): void
+    {
+        $typ_lst = new phrase_list();
+        $typ_lst->load_by_ids([$typ_id], $msg);
+        // a sub type is linked from the type and a listed triple points to the type or a sub type
+        $typ_lst->load_related_by_ids($typ_lst, foaf_direction::UP, $msg);
+        $typ_lst->load_related_by_ids($typ_lst, foaf_direction::DOWN, $msg);
+        $dto->add_phrases($typ_lst, $msg);
     }
 
     /**
@@ -2194,18 +5723,43 @@ class ui_list extends ui_base
         array        $url_array = []
     ): string
     {
-        $phr = $this->start_page_phrase($dto, $msg);
-        $this->add_start_page_cache($dto, $phr, $msg);
-        $child_lst = $this->start_page_children($dto, $msg);
+        // the data is loaded already by the page cache step (see view_exe::add_page_cache), so
+        // this only fills what a caller without that step has not loaded
+        $phr = $this->add_start_page_data($dto, $msg);
+        $child_lst = $dto->start_lst_children ?? new phrase_list();
         // the page already says what the table is about, so it is shown without the border; the
         // ranking is a grid of the defined columns, so a measured figure of a problem that fits
         // no column stays on the page of the problem instead of adding a row here; by default
-        // only the mayor columns with the numbers are shown and the "..." header leads to the
-        // full table with every column and the range of each number; a row whose numbers are
+        // only the mayor columns with the numbers are shown and the edit menu leads to the
+        // full table with every column and the variance of each number; a row whose numbers are
         // all in a column left out is no part of the ranking either, e.g. the reward ratio row
         // of a problem, so the ranking shows the rows with a number only
         return $this->table_with_related_columns($phr->obj(), $msg, $dto, true, false, $url_array,
             true, value_list::COLUMN_TIERS_EX_MAIN, false, true, $child_lst);
+    }
+
+    /**
+     * load all data of the start view table into the request cache, so that the creation of the
+     * html needs no backend call: the page phrase, the values and results of its children with
+     * their links and the children of the list triples; each part is loaded only once per cache
+     *
+     * @param data_object $dto the request cache to fill
+     * @param user_message $msg to report a problem of an api message to the user
+     * @return phrase the page phrase of the start view
+     */
+    function add_start_page_data(data_object $dto, user_message $msg): phrase
+    {
+        $phr = $this->start_page_phrase($dto, $msg);
+        // the children are loaded last, so with them all data of the table is in the cache and
+        // the checks of the other parts are not repeated for each render; without the api the
+        // children cannot be loaded, so an offline cache keeps none
+        if ($dto->start_lst_children == null) {
+            $this->add_start_page_cache($dto, $phr, $msg);
+            if ($dto->online) {
+                $dto->start_lst_children = $this->start_page_children($dto, $msg);
+            }
+        }
+        return $phr;
     }
 
     /**
@@ -2369,8 +5923,9 @@ class ui_list extends ui_base
     private function column_links_loaded(data_object $dto): bool
     {
         $result = false;
+        $col_phr_lst = $dto->phr_lst->column_phrases();
         foreach ($dto->phr_lst->column_names() as $name) {
-            $col_phr = $dto->phr_lst->column_phrase($name);
+            $col_phr = $col_phr_lst[$name] ?? null;
             if ($col_phr != null and !$dto->phr_lst->child_phrases($col_phr)->is_empty()) {
                 $result = true;
             }

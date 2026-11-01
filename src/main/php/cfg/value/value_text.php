@@ -203,6 +203,14 @@ class value_text extends value_base
     }
 
     /**
+     * @return bool true if the text is missing or empty, which is not saved (see value_base::save)
+     */
+    function is_empty_text(): bool
+    {
+        return ($this->txt_val ?? '') === '';
+    }
+
+    /**
      * accept only strings as value
      * @param string|null $txt_val a general text string not used for searching
      * @return void
@@ -234,7 +242,7 @@ class value_text extends value_base
 
         return $vars;
     }
-    // TODO test set_by_api_json
+    // TODO Prio 2 test set_by_api_json
 
 
     /*

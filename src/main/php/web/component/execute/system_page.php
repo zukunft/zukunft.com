@@ -40,10 +40,16 @@ namespace Zukunft\ZukunftCom\main\php\web\component\execute;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'calculator.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'config_tree.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HELPER . 'number_format.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_data.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -51,46 +57,207 @@ include_once html_paths::SANDBOX . 'sandbox_list.php';
 include_once html_paths::SYSTEM . 'job.php';
 include_once html_paths::SYSTEM . 'job_list.php';
 include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::SYSTEM . 'system_time_list.php';
+include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_log_sum_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WEB . 'frontend.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once html_paths::SHARED . 'api.php';
+include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'library.php';
 include_once html_paths::SHARED . 'url_var.php';
+include_once html_paths::SHARED_CONST . 'components.php';
+include_once html_paths::SHARED_CONST . 'files.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'words.php';
+include_once html_paths::SHARED_TYPES . 'phrase_types.php';
+include_once html_paths::SHARED_TYPES . 'verbs.php';
+include_once html_paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SHARED_HELPER . 'Config.php';
 include_once html_paths::SHARED_HELPER . 'Translator.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\config_tree;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\number_format;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_data;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\web\system\job;
 use Zukunft\ZukunftCom\main\php\web\system\job_list;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\web\system\system_time_list;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuum;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
+use DateTimeInterface;
 
 class system_page extends component
 {
 
-    // the menu name of each view version in the order of views::DEFAULT_VIEW_VERSIONS
-    const array VIEW_VERSION_NAMES = [
-        msg_id::VIEW_VERSION_DEFAULT,
-        msg_id::VIEW_VERSION_DETAIL,
-        msg_id::VIEW_VERSION_RANGE,
-        msg_id::VIEW_VERSION_DETAIL_RANGE,
+    // the labels of the tabs of a process catch page; the position in the list is the tab number - 1
+    // (components::PROCESS_CATCH_TAB_NBR), so the label is not a ui message of the tab component,
+    // which must be unique for each component
+    const array PROCESS_CATCH_TABS = [
+        msg_id::PROCESS_CATCH_TAB_ONE,
+        msg_id::PROCESS_CATCH_TAB_TWO,
+        msg_id::PROCESS_CATCH_TAB_THREE,
+        msg_id::PROCESS_CATCH_TAB_FOUR,
+        msg_id::PROCESS_CATCH_TAB_FIVE,
+    ];
+    // the tab that a process catch page shows if the url selects none
+    const int PROCESS_CATCH_TAB_DEFAULT = 1;
+    // the html ids of the hosts that the formula editor script fills (script/formula_editor.js)
+    const string FORMULA_EDITOR_HOST_ID = 'formulaEditor';
+    const string FORMULA_SELECTOR_HOST_ID = 'formulaSelector';
+    const string FORMULA_COMPARE_HOST_ID = 'formulaCompare';
+    const string FORMULA_EDITOR_TEXTS_ID = 'formulaEditorTexts';
+    // the formula editor script gets all messages with this prefix (see formula_editor_texts)
+    const string FORMULA_EDITOR_TEXT_PREFIX = 'formula_editor_';
+    // the texts of the formula editor without the prefix
+    const array FORMULA_EDITOR_TEXT_IDS = [
+        msg_id::CALCULATOR_SAVE,
+    ];
+    // the html ids that the calculator editor script reads (script/calculator_editor.js)
+    const string CALC_EDITOR_HOST_ID = 'calcEditor';
+    const string CALC_EDITOR_SEED_ID = 'seed';
+    const string CALC_EDITOR_TYPES_ID = 'calcEditorTypes';
+    const string CALC_EDITOR_TEXTS_ID = 'calcEditorTexts';
+    // the calculator editor script gets all messages with this prefix (see calculator_editor_texts)
+    const string CALC_EDITOR_TEXT_PREFIX = 'calc_editor_';
+    // the texts of the editor without the prefix, which the calculator page uses too
+    const array CALC_EDITOR_TEXT_IDS = [
+        msg_id::SYSTEM_TITLE_CALCULATION_EDITOR,
+        msg_id::CALCULATOR_SAVE,
+    ];
+    // the html ids and the keys of the settings that the calculator page script reads (script/calculator_json.js)
+    const string CALC_PAGE_HOST_ID = 'calcPage';
+    const string CALC_PAGE_SETTINGS_ID = 'calcPageSettings';
+    const string CALC_PAGE_FORMAT = 'format';
+    const string CALC_PAGE_FORM = 'form';
+    const string CALC_PAGE_SAVE = 'save';
+    const string CALC_PAGE_REPORT = 'report';
+    const string CALC_PAGE_TEXTS = 'texts';
+    const string CALC_PAGE_KEYWORDS = 'keywords';
+    const string CALC_PAGE_VERBS = 'verbs';
+    const string CALC_PAGE_PHRASE_TYPES = 'phrase_types';
+    const string CALC_PAGE_CONVERSIONS = 'conversions';
+    // the code ids of the phrase types that decide the unit and the format of a number by the key that the script reads
+    const array CALC_PAGE_PHRASE_TYPE_CODE_IDS = [
+        'measure' => phrase_types::MEASURE,
+        'percent' => phrase_types::PERCENT,
+        'scaling' => phrase_types::SCALING,
+        'scaling_hidden' => phrase_types::SCALING_HIDDEN,
+        'time' => phrase_types::TIME,
+    ];
+    // the names of the calculator and field keywords by the key that the script reads
+    const array CALC_PAGE_KEYWORD_NAMES = [
+        // every keyword is a triple from it, so a proposed keyword is never shown as an item
+        'root' => triples::SYSTEM_CALCULATOR,
+        'input' => triples::CALCULATOR_INPUT,
+        'assumption' => triples::CALCULATOR_ASSUMPTION,
+        'column' => triples::CALCULATOR_RESULT_COLUMN,
+        'rowgroup' => triples::CALCULATOR_ROW_GROUP,
+        'detail' => triples::CALCULATOR_DETAIL_TABLE,
+        'label' => triples::CALCULATOR_LABEL,
+        'hint' => triples::CALCULATOR_HINT,
+        'highlight' => triples::CALCULATOR_HIGHLIGHT,
+        'signed' => triples::CALCULATOR_SIGNED,
+        'number_note' => triples::CALCULATOR_NUMBER_NOTE,
+        'warning' => triples::CALCULATOR_WARNING,
+        'colour' => triples::CALCULATOR_COLOUR,
+        'file_import' => triples::CALCULATOR_FILE_IMPORT,
+        'download' => triples::CALCULATOR_DOWNLOAD,
+        'report' => triples::CALCULATOR_REPORT,
+        'copy' => triples::CALCULATOR_COPY,
+        'note' => triples::CALCULATOR_NOTE,
+        'check' => triples::CALCULATOR_CHECK,
+        'diagram' => triples::CALCULATOR_DIAGRAM,
+        'section' => triples::CALCULATOR_SECTION,
+        'page_independent' => triples::CALCULATOR_PAGE_INDEPENDENT,
+        'row_number' => triples::CALCULATOR_ROW_NUMBER,
+        'phrase_column' => triples::CALCULATOR_PHRASE_COLUMN,
+        'column_unit' => triples::CALCULATOR_COLUMN_UNIT,
+        'decimals' => triples::CALCULATOR_DECIMALS,
+        'result_width' => triples::CALCULATOR_RESULT_WIDTH,
+        'read_only' => triples::CALCULATOR_READ_ONLY,
+        'checkbox' => triples::CALCULATOR_CHECKBOX,
+        'repeat' => triples::CALCULATOR_REPEAT,
+        'selector' => triples::FIELD_PHRASE_SELECTOR_TYPE,
+        'limit_down' => triples::FIELD_LIMIT_DOWN,
+        'limit_up' => triples::FIELD_LIMIT_UP,
+        'step' => triples::FIELD_STEP,
+        'value_phrases' => triples::FIELD_VALUE_PHRASES,
+        'confidence' => words::CONFIDENCE,
+    ];
+    // the code ids of the verbs by the key that the script reads, which gets their names from the type cache
+    const array CALC_PAGE_VERB_CODE_IDS = [
+        'is' => verbs::IS,
+        'has' => verbs::HAS,
+        'of' => verbs::OF,
+        'with' => verbs::WITH,
+        'uses' => verbs::USES,
+        'follow' => verbs::FOLLOW,
+        'part' => verbs::PART,
+        'rank' => verbs::RANK,
+        'symbol' => verbs::SYMBOL,
+        'acronym' => verbs::ACRONYM,
+    ];
+    // the translated texts of the calculator page script by their message id
+    const array CALC_PAGE_TEXT_IDS = [
+        msg_id::CALCULATOR_INPUTS,
+        msg_id::CALCULATOR_ASSUMPTIONS,
+        msg_id::CALCULATOR_RESULT,
+        msg_id::CALCULATOR_DETAILS,
+        msg_id::CALCULATOR_SOURCES,
+        msg_id::CALCULATOR_COPY_JSON,
+        msg_id::CALCULATOR_COPY_CSV,
+        msg_id::CALCULATOR_DIAGRAM_FINAL,
+        msg_id::CALCULATOR_CASE_NAME,
+        msg_id::CALCULATOR_CASE_FAILED,
+        msg_id::CALCULATOR_REMOVE,
+        msg_id::CALCULATOR_CHECK_VALUE,
+        msg_id::CALCULATOR_CHECK_EXPECTED,
+        msg_id::CALCULATOR_CHECK_CALCULATED,
+        msg_id::CALCULATOR_CHECK_STATUS,
+        msg_id::CALCULATOR_CHECK_MATCH,
+        msg_id::CALCULATOR_CHECK_DIFFERS,
+        msg_id::FIELD_TAG_MEASURED,
+        msg_id::FIELD_TAG_ASSUMED,
     ];
 
     /**
@@ -146,49 +313,29 @@ class system_page extends component
     }
 
     /**
-     * the "..." in the right corner below the title of a default, detail, range or detail with
-     * range view that opens the menu to show the same object in one of the other three versions
+     * HTML for a page title that names the phrase the page works on e.g. Table editor for populism solution
      *
-     * @param int $msk_id the database id of the view that shows the object e.g. views::WORD_ID
-     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object shown on the page
-     * @return string the html code of the menu or '' if the view is not a version of a default view
+     * @param msg_id|null $ui_msg_code_id the message id of the title in the user-specific frontend language
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page; without a name only the title is shown
+     * @return string the html code of the page title
      */
-    function related_view_selector(
-        int                                                   $msk_id,
-        db_object|type_object|combine_named|sandbox_list|null $dbo
+    function title_for_phrase(
+        ?msg_id                                               $ui_msg_code_id = null,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null
     ): string
     {
+        global $mtr;
+
         $html = new html_base();
         $result = '';
-        $versions = $this->view_versions($msk_id);
-        // only an object with a db id can be shown in another view
-        if ($versions != [] and $dbo instanceof db_object) {
-            $items = '';
-            foreach ($versions as $pos => $view_id) {
-                if ($view_id != $msk_id) {
-                    $url = html_base::url($view_id, $dbo->id());
-                    $items .= $html->list_item($html->ref($url, self::VIEW_VERSION_NAMES[$pos]->text()));
-                }
+        if ($ui_msg_code_id != null) {
+            $title = $mtr->txt($ui_msg_code_id);
+            $name = $dbo?->name() ?? '';
+            if ($name != '') {
+                // escape the user settable name, because the title is shown as raw html
+                $title .= $mtr->txt(msg_id::FOR) . $html->esc($name);
             }
-            $menu = $html->popup_menu(msg_id::THREE_POINTS->text(), $items,
-                styles::MENU_VIEW_VERSION, msg_id::VIEW_VERSION_TIP->text());
-            $result = $html->div($menu, styles::VIEW_VERSION_CORNER);
-        }
-        return $result;
-    }
-
-    /**
-     * @param int $msk_id the database id of a view e.g. views::WORD_DEFAULT_DETAIL_ID
-     * @return array the ids of the four versions of the default view that the given view is one of
-     *               or an empty array if the view is not a version of a default view
-     */
-    private function view_versions(int $msk_id): array
-    {
-        $result = [];
-        foreach (views::DEFAULT_VIEW_VERSIONS as $versions) {
-            if (in_array($msk_id, $versions)) {
-                $result = $versions;
-            }
+            $result = $html->text_h2($title);
         }
         return $result;
     }
@@ -770,84 +917,1088 @@ class system_page extends component
         return 'process_list placeholder';
     }
 
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that contains the most relevant user response delay within a time period defined in the system configuration
-     */
-    function admin_url_delay(): string
-    {
-        return 'admin_url_delay placeholder';
-    }
-
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that contains the last failed user logins
-     */
-    function admin_login_fails(): string
-    {
-        return 'admin_login_fails placeholder';
-    }
-
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that all internal system errors that are not yet assigned to a developer
-     */
-    function admin_errors_unassigned(): string
-    {
-        return 'admin_errors_unassigned placeholder';
-    }
-
-    // TODO Prio 0 fill with real code
-
-    /**
-     * @return string with the HTML code that all internal system errors that have not been updated since a some time (as defined in the system config)
-     */
-    function admin_errors_delayed_fix(): string
-    {
-        return 'admin_errors_delayed_fix placeholder';
-    }
-
-    /**
-     * render an HTML table of all not-yet-closed system jobs ordered by the longest delay first;
-     * "delay" is the time elapsed between request_time and now, and a job is "not yet closed" when end_time is null;
-     * sorting by request_time ascending puts the longest-waiting job at the top of the table
+    /*
+     * admin dashboard
      *
-     * @param job_list|null $jobs the open-jobs list to render; when null or empty an empty-state row is shown
-     *                            so the column headers stay visible to the admin
-     * @return string the HTML code of the delayed-jobs table
+     * each column shows its critical entries directly and the other entries behind a plus sign,
+     * like a node of the settings tree, so that the admin sees at once what needs an action
      */
-    function admin_jobs_delayed(?job_list $jobs = null): string
+
+    /**
+     * the subtitle of the admin dashboard with the requesting admin, the pod and the creation time of the page,
+     * so that a printed or shared dashboard shows from where and from when the entries are
+     *
+     * @param user_message $msg with the requesting admin
+     * @param DateTime|null $now the time of the data snap e.g. fixed by a test; null for the time of the request
+     * @return string the html code of the subtitle
+     */
+    function admin_subtitle(user_message $msg, ?DateTime $now = null): string
     {
         global $mtr;
-
+        global $ui_sys;
+        $lib = new library();
         $html = new html_base();
+        $now = $now ?? new DateTime();
+        $format = $ui_sys?->cfg?->date_time_format() ?? shared_config::DEFAULT_DATE_TIME_FORMAT;
+        $txt = $mtr->txt(msg_id::ADMIN_SUBTITLE);
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_USER_NAME, $html->esc($msg->usr?->name() ?? ''));
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_POD_NAME, $html->esc(POD_NAME));
+        $txt = $lib->msg_var_replace($txt, msg_id::VAR_TIME, $now->format($format));
+        return $html->text_h3($txt);
+    }
 
-        // keep only jobs that have not yet ended and sort by request_time ascending so the longest-waiting job is first
-        $open = [];
-        if ($jobs !== null and !$jobs->is_empty()) {
-            foreach ($jobs->lst() as $job_obj) {
-                if ($job_obj->end_time() === null) {
-                    $open[] = $job_obj;
+    /**
+     * the slowest user requests of the configured last days: a request that took at least the configured
+     * warning time is critical and the other written requests are shown behind the plus sign
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load or the config lookup
+     * @param bool $test_mode true to show the given request times without a backend call
+     * @param system_time_list $times the request times to show in the test mode
+     * @return string the html code of the slowest user requests of the admin dashboard
+     */
+    function admin_url_delay(user_message $msg, bool $test_mode, system_time_list $times = new system_time_list()): string
+    {
+        global $mtr;
+        if (!$test_mode) {
+            $times = new system_time_list();
+            $times->load($msg);
+        }
+        $limit = system_time_list::critical_limit($msg);
+        $size = sys_log_list::display_limit($msg);
+        $sorted = $times->slowest_first();
+        $critical = $sorted->critical(true, $limit);
+        $more = $sorted->critical(false, $limit);
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_URL_DELAY,
+            $critical->is_empty() ? '' : $critical->head($size)->display(),
+            $more->is_empty() ? '' : $more->head($size)->display(),
+            $more->count(),
+            $mtr->txt(msg_id::ADMIN_NO_SLOW_REQUESTS));
+    }
+
+    /**
+     * the users with the most server time of the configured last days: a user that has reached at least one
+     * of the configured thresholds is critical and the other top users are shown behind the plus sign
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load or the config lookup
+     * @param bool $test_mode true to show the given summed sessions without a backend call
+     * @param user_log_sum_list $usr_log_sum_lst the summed sessions per user to show in the test mode
+     * @return string the html code of the users with the most server time of the admin dashboard
+     */
+    function admin_user_load(
+        user_message      $msg,
+        bool              $test_mode,
+        user_log_sum_list $usr_log_sum_lst = new user_log_sum_list()
+    ): string
+    {
+        global $mtr;
+        if (!$test_mode) {
+            $usr_log_sum_lst = new user_log_sum_list();
+            $usr_log_sum_lst->load($msg);
+        }
+        $limits = user_log_sum_list::critical_limits($msg);
+        $sorted = $usr_log_sum_lst->most_first();
+        $critical = $sorted->critical(true, $limits);
+        $more = $sorted->critical(false, $limits);
+        // the backend sends only the configured top users, so all of them are shown
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_USER_LOAD,
+            $critical->is_empty() ? '' : $critical->display(),
+            $more->is_empty() ? '' : $more->display(),
+            $more->count(),
+            $mtr->txt(msg_id::ADMIN_NO_USER_LOAD));
+    }
+
+    /**
+     * the failed logins grouped by the typed name: a name with at least the configured number of failed logins
+     * is critical, because it can be a brute force attack
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load
+     * @param bool $test_mode true to show the given log entries without a backend call
+     * @param sys_log_list $errors the not closed log entries to show in the test mode
+     * @return string the html code of the failed logins of the admin dashboard
+     */
+    function admin_login_fails(user_message $msg, bool $test_mode, sys_log_list $errors = new sys_log_list()): string
+    {
+        global $mtr;
+        if (!$test_mode) {
+            // a fresh list, because the given list is shared by the columns of the page
+            $errors = new sys_log_list();
+            $errors->load_by_user(sys_log_list::DSP_ALL, $msg, sys_log_list::ADMIN_READ_SIZE);
+        }
+        log_debug('admin login fails of ' . $errors->count() . ' log entries', url_var::DEBUG_LEVEL_MAIN_STEP);
+        $limit = sys_log_list::login_fail_limit($msg);
+        $size = sys_log_list::display_limit($msg);
+        $critical = [];
+        $more = [];
+        foreach ($errors->login_fail_groups() as $group) {
+            if ($group[sys_log_list::GROUP_COUNT] >= $limit) {
+                $critical[] = $group;
+            } else {
+                $more[] = $group;
+            }
+        }
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_LOGIN_FAILS,
+            $this->admin_login_fail_table(array_slice($critical, 0, $size)),
+            $this->admin_login_fail_table(array_slice($more, 0, $size)),
+            count($more),
+            $mtr->txt(msg_id::ADMIN_NO_LOGIN_FAILS));
+    }
+
+    /**
+     * the new system errors without a solver, the most critical and then the newest first;
+     * the failed logins have their own column
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load
+     * @param bool $test_mode true to show the given errors without a backend call
+     * @param sys_log_list $errors the not closed errors to show in the test mode
+     * @return string the html code of the unassigned errors of the admin dashboard
+     */
+    function admin_errors_unassigned(user_message $msg, bool $test_mode, sys_log_list $errors = new sys_log_list()): string
+    {
+        if (!$test_mode) {
+            // a fresh list, because the given list is shared by the columns of the page
+            $errors = new sys_log_list();
+            $errors->load_by_user(sys_log_list::DSP_ALL, $msg, sys_log_list::ADMIN_READ_SIZE);
+        }
+        $err_lst = $errors->login_fails(false)->filtered([sys_log_statuum::OPEN], true)->critical_first(true);
+        return $this->admin_errors(msg_id::ADMIN_TITLE_ERRORS_UNASSIGNED, $err_lst, $msg);
+    }
+
+    /**
+     * the system errors that a developer has taken or marked as solved but that are not yet closed,
+     * the most critical and then the longest not updated first
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the load
+     * @param bool $test_mode true to show the given errors without a backend call
+     * @param sys_log_list $errors the not closed errors to show in the test mode
+     * @return string the html code of the pending error fixes of the admin dashboard
+     */
+    function admin_errors_delayed_fix(user_message $msg, bool $test_mode, sys_log_list $errors = new sys_log_list()): string
+    {
+        if (!$test_mode) {
+            // a fresh list, because the given list is shared by the columns of the page
+            $errors = new sys_log_list();
+            $errors->load_by_user(sys_log_list::DSP_ALL, $msg, sys_log_list::ADMIN_READ_SIZE);
+        }
+        $pending = [sys_log_statuum::ASSIGNED, sys_log_statuum::RESOLVED];
+        $err_lst = $errors->login_fails(false)->filtered($pending, false)->critical_first(false);
+        return $this->admin_errors(msg_id::ADMIN_TITLE_ERRORS_DELAYED_FIX, $err_lst, $msg);
+    }
+
+    /**
+     * the open system jobs with the longest waiting first: a job that has waited longer than the configured
+     * max delay is critical
+     *
+     * @param user_message $msg with the requesting admin to report a problem of the job load
+     * @param bool $test_mode true to show the given jobs without a backend call
+     * @param job_list $jobs the jobs to show in the test mode; without an open job the column shows only
+     *                       a text without a table like the other columns
+     * @param DateTime|null $now the time of the data snap e.g. fixed by a test; null for the time of the request
+     * @return string the HTML code of the delayed-jobs column
+     */
+    function admin_jobs_delayed(
+        user_message $msg,
+        bool         $test_mode,
+        job_list     $jobs = new job_list(),
+        ?DateTime    $now = null
+    ): string
+    {
+        global $mtr;
+        $html = new html_base();
+        if (!$test_mode) {
+            // a fresh list, because the given list is part of the page context
+            $jobs = new job_list();
+            $jobs->load_all($msg);
+        }
+        $now = $now ?? new DateTime();
+        $max_delay = job_list::max_delay($msg);
+        $critical = '';
+        $more = '';
+        $more_count = 0;
+        foreach ($jobs->open_oldest_first() as $job_obj) {
+            if ($job_obj->is_delayed($now, $max_delay)) {
+                $critical .= $html->tr($job_obj->display());
+            } else {
+                $more .= $html->tr($job_obj->display());
+                $more_count++;
+            }
+        }
+        // job::header() already returns a full <tr><th>…</th></tr> row, so a fresh job instance renders the header
+        $header = new job()->header();
+        return $this->admin_split(
+            msg_id::ADMIN_TITLE_JOBS_DELAYED,
+            $critical == '' ? '' : $html->tbl($header . $critical),
+            $more == '' ? '' : $html->tbl($header . $more),
+            $more_count,
+            $mtr->txt(msg_id::ADMIN_NO_DELAYED_JOBS));
+    }
+
+    /**
+     * @param msg_id $title the headline of the section
+     * @param sys_log_list $err_lst the selected and sorted errors
+     * @param user_message $msg to report a problem of the config lookup
+     * @return string the html code of the error column with the critical errors and the others behind a plus sign
+     */
+    private function admin_errors(msg_id $title, sys_log_list $err_lst, user_message $msg): string
+    {
+        global $mtr;
+        $size = sys_log_list::display_limit($msg);
+        $critical = $err_lst->critical(true);
+        $more = $err_lst->critical(false);
+        return $this->admin_split(
+            $title,
+            $critical->is_empty() ? '' : $critical->head($size)->display(),
+            $more->is_empty() ? '' : $more->head($size)->display(),
+            $more->count(),
+            $mtr->txt(msg_id::ADMIN_NO_ERRORS));
+    }
+
+    /**
+     * @param array $groups the failed logins grouped by the typed name (see sys_log_list::login_fail_groups)
+     * @return string the html table of the failed logins or an empty string if there is none
+     */
+    private function admin_login_fail_table(array $groups): string
+    {
+        global $mtr;
+        $html = new html_base();
+        $result = '';
+        if (count($groups) > 0) {
+            $rows = $html->tr($html->th($mtr->txt(msg_id::ADMIN_HEAD_USER_NAME))
+                . $html->th($mtr->txt(msg_id::ADMIN_HEAD_ATTEMPTS))
+                . $html->th($mtr->txt(msg_id::ADMIN_HEAD_LAST_TRY)));
+            foreach ($groups as $group) {
+                $rows .= $html->tr($html->td($html->esc($group[sys_log_list::GROUP_NAME]))
+                    . $html->td((string)$group[sys_log_list::GROUP_COUNT])
+                    . $html->td($group[sys_log_list::GROUP_LAST]?->format(DateTimeInterface::ATOM) ?? ''));
+            }
+            $result = $html->tbl($rows);
+        }
+        return $result;
+    }
+
+    /**
+     * one column of the admin dashboard with the critical entries shown directly and the other entries behind
+     * a plus sign, which opens without javascript like a node of the settings tree
+     *
+     * @param msg_id $title the headline of the column
+     * @param string $critical the html code of the critical entries or an empty string if there is none
+     * @param string $more the html code of the not critical entries or an empty string if there is none
+     * @param int $more_count the number of the not critical entries, which can be more than the shown entries
+     * @param string $none the html code shown if the column has no entry at all
+     * @return string the html code of the column
+     */
+    private function admin_split(msg_id $title, string $critical, string $more, int $more_count, string $none): string
+    {
+        global $mtr;
+        // one debug line per finished column to see with '&debug=9' which column stops the admin page
+        log_debug('admin column ' . $title->value . ' done', url_var::DEBUG_LEVEL_MAIN_STEP);
+        $html = new html_base();
+        $body = $critical;
+        if ($body == '' and $more_count > 0) {
+            $body = $mtr->txt(msg_id::ADMIN_NO_CRITICAL);
+        } elseif ($body == '') {
+            $body = $none;
+        }
+        if ($more_count > 0) {
+            $summary = $more_count . ' ' . $mtr->txt(msg_id::ADMIN_NOT_CRITICAL);
+            $body .= $html->details($summary, $more, styles::ADMIN_MORE);
+        }
+        return $this->admin_section($title, $body);
+    }
+
+    /**
+     * @param msg_id $title the headline of the section
+     * @param string $body the html code of the section
+     * @return string the html code of one column of the admin dashboard
+     */
+    private function admin_section(msg_id $title, string $body): string
+    {
+        global $mtr;
+        $html = new html_base();
+        // the column limits its tables to its width, so that e.g. a long url does not widen the column
+        return $html->div($html->text_h4($mtr->txt($title)) . $body, styles::ADMIN_COLUMN);
+    }
+
+
+    /*
+     * process catch
+     */
+
+    /**
+     * @param msg_id|null $ui_msg_code_id the message id of the text e.g. the explain text of a process catch page
+     * @return string the translated text as a paragraph or an empty string if the component has no text
+     */
+    function text_explain(?msg_id $ui_msg_code_id): string
+    {
+        global $mtr;
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $result = new html_base()->p($mtr->txt($ui_msg_code_id));
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the view as the page title and its description as the lead text, e.g. of a use
+     * case page; the view of the page is in the request cache (see view_exe::show)
+     *
+     * @param int $msk_id the database id of the view that shows the component
+     * @param data_object|null $cfg the request cache with the view of the page
+     * @return string the html code of the title and the lead text or an empty string if the view is unknown
+     */
+    function view_title(int $msk_id, ?data_object $cfg): string
+    {
+        $result = '';
+        $msk = $cfg?->msk;
+        if ($msk != null and $msk->id() == $msk_id) {
+            $html = new html_base();
+            // the same heading as the phrase title, so the page title is bigger than its sections
+            $result = $html->text_h2($msk->name()) . $html->p($msk->get_description());
+        }
+        return $result;
+    }
+
+    /**
+     * the title of a calculator page: the calculator label of the page phrase, or of the phrase it
+     * is built from, else the phrase name, and the calculator hint as the lead text
+     * (rule 6 of docs/llm/new_view_sample_pv_balance.md)
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param data_object|null $cfg the request cache with the calculator triples of the page
+     * @return string the html code of the title or an empty string if the page has no phrase
+     */
+    function calculator_title(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        if (($dbo instanceof word or $dbo instanceof triple) and $dbo->name() != '') {
+            $html = new html_base();
+            $calc = new calculator($dbo->phrase(), $cfg?->phr_lst ?? new phrase_list());
+            // escape the user settable texts, because the title is shown as raw html;
+            // a h4, because the use case style of style_html.css formats the h4 of the header
+            $result = $html->block(html_base::H4, $html->esc($calc->title()));
+            if ($calc->lead() != '') {
+                $result .= $html->p($html->esc($calc->lead()));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the input panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+     * the heading, the input fields and the save button in the inputs frame, then a collapsed
+     * block with the assumptions that the calculator lists and after them the other values that
+     * the results of the page use; the headings are the labels of the groups, else the default text
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load
+     * @param data_object|null $cfg the request cache with the calculator triples and the values of the page
+     * @param string $form_name the name of the save form that the fields join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @param array $url_arr the url parameters of the page with the entered numbers
+     * @return string the html code of the inputs or an empty string if the calculator has no input and no assumption
+     */
+    function calculator_input(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg,
+        string                                                $form_name,
+        string|int                                            $msk_key,
+        array                                                 $url_arr
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $html = new html_base();
+            $list = new ui_list();
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+            $inputs = $calc->items(triples::CALCULATOR_INPUT);
+            $assumptions = $calc->items(triples::CALCULATOR_ASSUMPTION);
+            if ($inputs != [] or $assumptions != []) {
+                $heading = $calc->own_label($calc->group(triples::CALCULATOR_INPUT))
+                    ?: $mtr->txt(msg_id::CALCULATOR_INPUTS);
+                $result = $html->div($html->block(html_base::H2, $html->esc($heading))
+                    . $list->calculator_fields($calc, $inputs, $dbo, $msg, $cfg, $form_name, $url_arr)
+                    . $list->calculator_warnings($calc, $dbo, $cfg, $msg)
+                    . $this->calculator_button_save($form_name, $msk_key, $dbo)
+                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_INPUT)),
+                    styles::INPUTS);
+                $listed = array_map(fn($item) => $calc->item_phrase($item)?->name(), $assumptions);
+                $fields = $list->calculator_fields($calc, $assumptions, $dbo, $msg, $cfg, $form_name, $url_arr, true)
+                    . $list->assumption_fields($dbo, $msg, $cfg, $form_name, $url_arr, $listed)
+                    . $list->calculator_buttons($calc, $calc->group(triples::CALCULATOR_ASSUMPTION));
+                if ($fields != '') {
+                    $summary = $calc->own_label($calc->group(triples::CALCULATOR_ASSUMPTION))
+                        ?: $mtr->txt(msg_id::CALCULATOR_ASSUMPTIONS);
+                    $result .= $html->details($html->esc($summary), $fields);
                 }
             }
-            usort($open, fn(job $a, job $b) => $a->request_time() <=> $b->request_time());
         }
+        return $result;
+    }
 
-        // build the body: one row per open job, or a single empty-state cell when no open jobs are available
-        $body = '';
-        foreach ($open as $job_obj) {
-            $body .= $html->tr($job_obj->display());
+    /**
+     * the button that saves the changed numbers of a calculator page and then shows the page again
+     * (see frontend::action_calculator_save); a post form, because it changes data, which every
+     * number field joins by its form attribute
+     *
+     * @param string $form_name the id of the form that the fields of the page join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @return string the html code of the save form or an empty string if the component is shown on no page
+     */
+    private function calculator_button_save(
+        string                                                $form_name,
+        string|int                                            $msk_key,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        // e.g. a preview of the component has no page to save
+        if ($msk_key != '' and $msk_key != 0) {
+            $html = new html_base();
+            $page_vars = $html->form_hidden(url_var::MASK, (string)$msk_key);
+            $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
+            $page_vars .= $html->form_hidden(url_var::ACTION, url_var::ACTION_SAVE);
+            // not button_bs, whose bootstrap column would cut the button to a twelfth of the form
+            $button = $html->button($html->esc($mtr->txt(msg_id::CALCULATOR_SAVE)), html_base::INPUT_SUBMIT,
+                styles::CALC_BUTTON_SAVE, url_var::POST_SUBMIT);
+            $result = $html->form_post($form_name, $page_vars . $button);
         }
-        if ($body === '') {
-            $body = $html->tr($html->td($mtr->txt(msg_id::ADMIN_NO_OPEN_JOBS)));
-        }
+        return $result;
+    }
 
-        // TODO Prio 1 wire the data source: load via web/system/job_list with the cut_off_time from the system config
-        // job::header() already returns a full <tr><th>…</th></tr> row, so a fresh job instance is used to render the header
-        $result = $html->tbl(new job()->header() . $body);
+    /**
+     * the calculator editor of the page phrase (docs/llm/new_view_sample_pv_balance.md section 6):
+     * the script builds the editor from the phrase data of the phrase, which the page embeds as
+     * the seed, so that the editor starts without an api call; a selected formula is changed in the
+     * formula editor, whose script and style are added before the script of the calculator editor,
+     * so that the calculator editor can start it with its own hosts
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function calculator_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            // the session token, which the save of the editor sends to the api in the csrf header
+            $result = $html->link_style(files::CALCULATOR_EDITOR_STYLE)
+                . $html->link_style(files::FORMULA_EDITOR_STYLE)
+                . $html->div('', styles::CALC_EDITOR, self::CALC_EDITOR_HOST_ID)
+                . $html->form_session_token()
+                . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg))
+                . $html->script_data(self::CALC_EDITOR_TEXTS_ID, $this->calculator_editor_texts())
+                . $html->script_data(self::FORMULA_EDITOR_TEXTS_ID, $this->formula_editor_texts())
+                . $html->script_src(files::FORMULA_EDITOR_SCRIPT)
+                . $html->script_src(files::CALCULATOR_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * the formula editor of the page phrase: the script builds the expression of the selected formula
+     * from the phrase data of the phrase with its results, which the page embeds as the seed like the
+     * calculator editor, so that the editor starts without an api call; the script also fills the
+     * hosts of the formula selector and the result compare if the view has these components
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache, which says if the phrase data may be read from the api
+     * @return string the html code of the editor or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_editor(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = $this->formula_editor_host($dbo, $msg, self::FORMULA_EDITOR_HOST_ID);
+        if ($result != '') {
+            $html = new html_base();
+            $seed = $this->calculator_editor_seed($dbo->phrase(), $msg, $cfg);
+            // the session token, which the save of the editor sends to the api in the csrf header
+            $result = $html->link_style(files::FORMULA_EDITOR_STYLE)
+                . $result
+                . $html->form_session_token()
+                . $html->script_data(self::CALC_EDITOR_SEED_ID, $seed)
+                . $html->script_data(self::FORMULA_EDITOR_TEXTS_ID, $this->formula_editor_texts())
+                . $html->script_src(files::FORMULA_EDITOR_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * the formulas of the page phrase to select the formula that the formula editor shows;
+     * the script of the formula editor fills the host, so the view needs the formula editor too;
+     * not formula_selector, which is the formula select field of a component form
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @return string the empty host or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_editor_selector(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg
+    ): string
+    {
+        return $this->formula_editor_host($dbo, $msg, self::FORMULA_SELECTOR_HOST_ID);
+    }
+
+    /**
+     * the results of the page phrase until now against the results after the save of the formula
+     * editor and the changes; the script of the formula editor fills the host
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @return string the empty host or an empty string if the page has no phrase or no javascript is allowed
+     */
+    function formula_result_compare(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg
+    ): string
+    {
+        return $this->formula_editor_host($dbo, $msg, self::FORMULA_COMPARE_HOST_ID);
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user
+     * @param string $host_id the html id of the host e.g. FORMULA_SELECTOR_HOST_ID
+     * @return string the empty host in which formula_editor.css nests its rules or an empty string
+     *                if the page has no phrase or no javascript is allowed
+     */
+    private function formula_editor_host(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        string                                                $host_id
+    ): string
+    {
+        $result = '';
+        $is_phrase = ($dbo instanceof word or $dbo instanceof triple);
+        if ($is_phrase and $dbo->name() != '' and $this->calculator_uses_javascript($msg)) {
+            $html = new html_base();
+            $result = $html->div('', styles::FORMULA_EDITOR, $host_id);
+        }
+        return $result;
+    }
+
+    /**
+     * the verbs and the unit and scaling phrases of the type lists in the format of the typeLists
+     * api, so that the editor finds the id of a verb and knows a unit without an api call; only these
+     * with their id and name, because the whole typeLists answer is much larger than the page
+     *
+     * @param user_message $msg with the requesting user to read the phrase types
+     * @return array the verbs and the unit phrases of the frontend type cache
+     *               e.g. ["verbs" => [["id" => 2, "name" => "is a"], ...], "system_phrases" => [["id" => 28, "name" => "kg"], ...]]
+     */
+    private function calculator_editor_types(user_message $msg): array
+    {
+        global $ui_sys;
+        $vrb_lst = [];
+        foreach ($ui_sys?->typ_lst_cache?->vrb?->lst() ?? [] as $vrb) {
+            $vrb_lst[] = [json_fields::ID => $vrb->id(), json_fields::NAME => $vrb->name()];
+        }
+        // keyed by the name, because the editor knows a unit by its name only
+        $unit_lst = [];
+        $sys_lst = $ui_sys?->typ_lst_cache?->phr_sys;
+        foreach ($sys_lst?->lst() ?? [] as $phr) {
+            if ($phr->is_shown_unit($msg)) {
+                $unit_lst[$phr->name()] = [json_fields::ID => $phr->id(), json_fields::NAME => $phr->name()];
+            }
+        }
+        return [
+            api::JSON_LIST_VERBS => $vrb_lst,
+            api::JSON_LIST_SYSTEM_PHRASES => array_values($unit_lst)
+        ];
+    }
+
+    /**
+     * @param phrase $phr the phrase of the page e.g. example PV installation
+     * @param user_message $msg with the requesting user and to report an api answer without the phrase data
+     * @param data_object|null $cfg the request cache; offline e.g. in a unit test no api is called
+     * @return array the phrase data of the phrase as the phraseData api sends it, empty if offline
+     */
+    private function calculator_editor_seed(phrase $phr, user_message $msg, ?data_object $cfg): array
+    {
+        $result = [];
+        if ($cfg != null and $cfg->online) {
+            $phd = new phrase_data();
+            $result = $phd->load_from_walk($phr, $msg);
+        }
+        return $result;
+    }
+
+    /**
+     * the result panel of a calculator page (docs/llm/new_view_sample_pv_balance.md section 3.1):
+     * the label of the result columns as the heading, the main table and then a collapsed block
+     * with the detail tables, the notes of the formulas and the numbered sources; the summary of
+     * the block is the label of the detail tables, else the default text
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg to report a problem of the load or a stored result that differs
+     * @param data_object|null $cfg the request cache with the calculator triples, the values and the results of the page
+     * @return string the html code of the results or an empty string if the calculator has no result
+     */
+    function calculation_result(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        $calc = null;
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+        }
+        // a phrase without calculator triples loads no result, because it shows none
+        if ($calc?->is_calculator()) {
+            $html = new html_base();
+            $list = new ui_list();
+            $lst = $list->calculator_numbers($dbo, $cfg, $msg);
+            $table = $list->calculation_table($calc, $dbo, $lst, $cfg, $msg);
+            if ($table != '') {
+                $heading = $calc->own_label($calc->group(triples::CALCULATOR_RESULT_COLUMN));
+                $result = ($heading == '' ? '' : $html->block(html_base::H2, $html->esc($heading))) . $table;
+            }
+            $result .= $list->calculator_check($calc, $lst, $cfg, $msg)
+                . $list->calculator_diagrams($calc, $lst, $msg)
+                . $list->calculation_detail_tables($calc, $dbo, $lst, $msg, true)
+                . $list->calculator_notes($calc)
+                . $list->calculator_imports($calc);
+            $notes = $list->formula_notes($dbo, $msg, $cfg);
+            $more = $list->calculation_detail_tables($calc, $dbo, $lst, $msg)
+                . ($notes == '' ? '' : $html->div($notes, styles::CALC_NOTES))
+                . $list->calculator_sources($calc, $dbo, $msg, $cfg);
+            if ($more != '') {
+                $summary = $calc->own_label($calc->group(triples::CALCULATOR_DETAIL_TABLE))
+                    ?: $mtr->txt(msg_id::CALCULATOR_DETAILS);
+                $result .= $html->details($html->esc($summary), $html->div($more, styles::CALC_MORE));
+            }
+            // the only page with javascript: it repeats the calculation when an input changes
+            if ($this->calculator_uses_javascript($msg)) {
+                $result .= $this->calculator_page_data($cfg, $msg)
+                    . $list->calculator_script($calc, $dbo, $lst, $cfg, $msg);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the phraseData answer of the page and the verbs and units of the type cache with the html ids
+     * of the editor, so that one script can build the editor preview and the calculator page
+     *
+     * @param data_object $cfg the request cache with the phraseData answer of the page
+     * @param user_message $msg with the requesting user to read the phrase types
+     * @return string the html code of the seed and of the types as json data
+     */
+    private function calculator_page_data(data_object $cfg, user_message $msg): string
+    {
+        $html = new html_base();
+        return $html->script_data(self::CALC_EDITOR_SEED_ID, $cfg->page_data)
+            . $html->script_data(self::CALC_EDITOR_TYPES_ID, $this->calculator_editor_types($msg));
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
+     * @param data_object|null $cfg the request cache with the values of the page
+     * @return string the style with the result panel width of the calculator page, empty for the standard width
+     */
+    function calculator_result_width_style(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        ?data_object                                          $cfg
+    ): string
+    {
+        $result = '';
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $width = new ui_list()->result_width($dbo->phrase(), $cfg->val_lst);
+            if ($width > 0) {
+                $rule = '.' . view_styles::USE_CASE . '{' . styles::CALC_RESULT_WIDTH_VAR . ':' . $width . 'px}';
+                $result = new html_base()->block(html_base::STYLE, $rule);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the calculator page that the browser builds from the phraseData answer of the page
+     * (docs/llm/frontend.md "Javascript only for the calculator"): the empty host, the answer as the
+     * seed, the verbs and units of the type cache, the settings of the page and the script; without
+     * javascript for the calculator nothing, because the page has no html of its own
+     *
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the phrase of the page
+     * @param user_message $msg with the requesting user to read the phrase types
+     * @param data_object|null $cfg the request cache with the phraseData answer of the page
+     * @param string $form_name the id of the save form that the fields of the page join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @return string the html code of the host, the json data and the script
+     */
+    function calculator_json(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg,
+        string                                                $form_name,
+        string|int                                            $msk_key
+    ): string
+    {
+        $result = '';
+        if ($this->is_javascript_calculator($dbo, $msg, $cfg)) {
+            $html = new html_base();
+            // the host is the use case page itself, so that it has the width of the page of the server
+            $result = $html->div('', view_styles::USE_CASE, self::CALC_PAGE_HOST_ID)
+                . $this->calculator_page_data($cfg, $msg)
+                . $html->script_data(self::CALC_PAGE_SETTINGS_ID, $this->calculator_page_settings($dbo, $form_name, $msk_key, $msg))
+                . $html->script_src(files::CALCULATOR_JSON_SCRIPT);
+        }
+        return $result;
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the object of the page
+     * @param user_message $msg to report a problem of the config value
+     * @param data_object|null $cfg the request cache with the calculator triples of the page
+     * @return bool true if the browser builds the page: the page shows a phrase with calculator
+     *              triples and config.yaml allows javascript for the calculator
+     */
+    private function is_javascript_calculator(
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        user_message                                          $msg,
+        ?data_object                                          $cfg
+    ): bool
+    {
+        $result = false;
+        if (($dbo instanceof word or $dbo instanceof triple) and $cfg != null) {
+            $calc = new calculator($dbo->phrase(), $cfg->phr_lst);
+            $result = ($calc->is_calculator() and $this->calculator_uses_javascript($msg));
+        }
+        return $result;
+    }
+
+    /**
+     * @param word|triple $dbo the phrase of the page
+     * @param string $form_name the id of the save form that the fields of the page join
+     * @param string|int $msk_key the code id or the id of the view that the save shows again
+     * @param user_message $msg to report a problem of the unit lookup
+     * @return array the number format of the user, the id and the html of the save form, the
+     *               translated texts of the page by their message id, the names of the keywords,
+     *               the verbs and the phrase types and the unit conversions of the system formulas
+     */
+    private function calculator_page_settings(word|triple $dbo, string $form_name, string|int $msk_key, user_message $msg): array
+    {
+        global $ui_sys;
+        return [
+            self::CALC_PAGE_FORMAT => new ui_list()->calculator_number_format(),
+            self::CALC_PAGE_FORM => $form_name,
+            self::CALC_PAGE_SAVE => $this->calculator_button_save($form_name, $msk_key, $dbo),
+            self::CALC_PAGE_REPORT => new ui_list()->calculator_report_url($dbo->phrase()->id()),
+            self::CALC_PAGE_TEXTS => $this->message_texts(self::CALC_PAGE_TEXT_IDS),
+            self::CALC_PAGE_KEYWORDS => self::CALC_PAGE_KEYWORD_NAMES,
+            self::CALC_PAGE_VERBS => $this->calculator_type_names($ui_sys?->typ_lst_cache?->vrb, self::CALC_PAGE_VERB_CODE_IDS),
+            self::CALC_PAGE_PHRASE_TYPES => $this->calculator_type_names($ui_sys?->typ_lst_cache?->phr_typ, self::CALC_PAGE_PHRASE_TYPE_CODE_IDS),
+            self::CALC_PAGE_CONVERSIONS => new number_format()->unit_conversions($msg),
+        ];
+    }
+
+    /**
+     * @return array the translated texts of the calculator editor by their message id: all messages with the
+     *               editor prefix and the texts of the calculator page, which the preview of the editor shows too
+     */
+    private function calculator_editor_texts(): array
+    {
+        $editor_ids = $this->message_ids_by_prefix(self::CALC_EDITOR_TEXT_PREFIX);
+        return $this->message_texts(array_merge(self::CALC_PAGE_TEXT_IDS, self::CALC_EDITOR_TEXT_IDS, $editor_ids));
+    }
+
+    /**
+     * @return array the translated texts of the formula editor by their message id, which the formula editor
+     *               view and the calculator editor, which starts the formula editor itself, embed
+     */
+    private function formula_editor_texts(): array
+    {
+        $editor_ids = $this->message_ids_by_prefix(self::FORMULA_EDITOR_TEXT_PREFIX);
+        return $this->message_texts(array_merge(self::FORMULA_EDITOR_TEXT_IDS, $editor_ids));
+    }
+
+    /**
+     * @param string $prefix the start of the message ids of a script e.g. self::FORMULA_EDITOR_TEXT_PREFIX
+     * @return array the message ids that start with the prefix, so that a new text of a script needs no list
+     */
+    private function message_ids_by_prefix(string $prefix): array
+    {
+        return array_filter(msg_id::cases(), fn(msg_id $txt_id) => str_starts_with($txt_id->value, $prefix));
+    }
+
+    /**
+     * @param array $txt_ids the message ids of the texts that a script shows e.g. self::CALC_PAGE_TEXT_IDS
+     * @return array the translated text by its message id, so that a script shows the language of the user
+     */
+    private function message_texts(array $txt_ids): array
+    {
+        global $mtr;
+        $texts = [];
+        foreach ($txt_ids as $txt_id) {
+            $texts[$txt_id->value] = $mtr->txt($txt_id);
+        }
+        return $texts;
+    }
+
+    /**
+     * @param type_list|null $lst the verbs or the phrase types of the type cache
+     * @param array $code_ids the code ids by the key that the calculator page script reads
+     * @return array the name of each type by its key, because the seed names a verb or a phrase type
+     *               by its name e.g. "has a" or "measure unit"
+     */
+    private function calculator_type_names(?type_list $lst, array $code_ids): array
+    {
+        $result = [];
+        foreach ($code_ids as $key => $code_id) {
+            $typ = $lst?->get_by_code_id($code_id);
+            $result[$key] = $typ?->name() ?? '';
+        }
+        return $result;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the config value
+     * @return bool true if config.yaml allows javascript for the calculator pages (user > default >
+     *              frontend > use javascript > for calculator), the default of config.yaml if the value is missing
+     */
+    private function calculator_uses_javascript(user_message $msg): bool
+    {
+        global $ui_sys;
+        $default = (int)shared_config::DEFAULT_CALCULATOR_JAVASCRIPT;
+        $flag = $ui_sys?->cfg?->get_by([triples::USE_JAVASCRIPT, triples::FOR_CALCULATOR], $msg, $default) ?? $default;
+        return (bool)(float)$flag;
+    }
+
+    /**
+     * the input fields of a process catch page or of one of its tabs; a placeholder with the name of
+     * the component until the fields are read from the field triples of the question phrase
+     *
+     * @param string $cmp_name the name of the component that names the page or the tab of the fields
+     * @param string|null $cmp_code_id the code id of the component that names the tab of the fields
+     *                                 e.g. components::PROCESS_CATCH_DETAIL_TAB_TWO_FIELDS or null on a page without tabs
+     * @param array $url_arr the url vars of the page with the selected tab
+     * @return string the html code of the fields or an empty string if the fields belong to a tab that is not selected
+     */
+    function process_catch_fields(
+        string                                                $cmp_name,
+        ?string                                               $cmp_code_id,
+        array                                                 $url_arr,
+        db_object|type_object|combine_named|sandbox_list|null $dbo = null,
+        ?data_object                                          $dto = null,
+        string                                                $form_name = '',
+        user_message                                          $msg = new user_message()
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        $nbr = $this->process_catch_tab_nbr($cmp_code_id);
+        // the fields of a tab are only shown if the tab is selected, so the page shows one tab at a time
+        if ($nbr == 0 or $nbr == $this->process_catch_tab_selected($url_arr)) {
+            $html = new html_base();
+            $result = new ui_list()->input_fields($dbo, $msg, $dto, $form_name, $url_arr);
+            // a page whose phrase has no field yet says so instead of showing nothing
+            if ($result == '') {
+                $result = $html->p($mtr->txt(msg_id::PROCESS_CATCH_FIELDS_PENDING) . ' ' . $html->esc($cmp_name));
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * one tab of a process catch page: the selected tab as text and every other tab as a link to the
+     * same page and question phrase with the tab selected, so the page needs no javascript
+     *
+     * @param string|null $cmp_code_id the code id of the tab component e.g. components::PROCESS_CATCH_DETAIL_TAB_TWO
+     * @param string $msk_code_id the code id of the process catch page that shows the tab
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @param array $url_arr the url vars of the page with the selected tab
+     * @return string the html code of the tab or an empty string if the component names no tab
+     */
+    function process_catch_tab(
+        ?string                                               $cmp_code_id,
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        array                                                 $url_arr
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        $nbr = $this->process_catch_tab_nbr($cmp_code_id);
+        if ($nbr > 0) {
+            $html = new html_base();
+            $label = $mtr->txt(self::PROCESS_CATCH_TABS[$nbr - 1]);
+            if ($nbr == $this->process_catch_tab_selected($url_arr)) {
+                $result = $html->span($html->esc($label), styles::PROCESS_CATCH_TAB_SELECTED);
+            } else {
+                $url = $html->url_back($msk_code_id, $this->process_catch_phrase_id($dbo), [],
+                    url_var::TAB . url_var::EQ . $nbr);
+                $result = $html->ref($url, $label, '', styles::PROCESS_CATCH_TAB);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param string $msk_code_id the code id of the process catch page that shows the button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @return string the html code of the button that opens the next page or an empty string on the last page
+     */
+    function process_catch_button_next(
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        return $this->process_catch_button(views::PROCESS_CATCH_NEXT, msg_id::SYSTEM_BUTTON_NEXT,
+            styles::PROCESS_CATCH_BUTTON_NEXT, $msk_code_id, $dbo);
+    }
+
+    /**
+     * @param string $msk_code_id the code id of the process catch page that shows the button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @return string the html code of the button that opens the page before or an empty string on the first page
+     */
+    function process_catch_button_back(
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        return $this->process_catch_button(views::PROCESS_CATCH_BACK, msg_id::SYSTEM_BUTTON_BACK,
+            styles::PROCESS_CATCH_BUTTON_BACK, $msk_code_id, $dbo);
+    }
+
+    /**
+     * the button that shows the process catch page again with the entered values e.g. to calculate the
+     * result with the changed assumptions; a form submit, because only a submit sends the inputs
+     *
+     * @param msg_id $label the text of the button e.g. msg_id::PROCESS_CATCH_BUTTON_REFRESH
+     * @param string $form_name the id of the form that the inputs of the page join e.g. the code id of the page
+     * @param string $msk_code_id the code id of the process catch page that is shown again
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @param array $url_arr the url vars of the page with the selected tab, which the refresh keeps if the user has selected one
+     * @return string the html code of the button or an empty string if the component is shown on no page
+     */
+    function process_catch_button_refresh(
+        msg_id                                                $label,
+        string                                                $form_name,
+        string|int                                            $msk_key,
+        db_object|type_object|combine_named|sandbox_list|null $dbo,
+        array                                                 $url_arr
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        // e.g. a preview of the component has no page to show again
+        if ($msk_key != '' and $msk_key != 0) {
+            $html = new html_base();
+            $page_vars = $html->form_hidden(url_var::MASK, (string)$msk_key);
+            $page_vars .= $html->form_hidden(url_var::ID, (string)$this->process_catch_phrase_id($dbo));
+            // the tab is only kept if the user has selected one, so a page without tabs gets no tab var
+            if (array_key_exists(url_var::TAB, $url_arr)) {
+                $page_vars .= $html->form_hidden(url_var::TAB, (string)$this->process_catch_tab_selected($url_arr));
+            }
+            $button = $html->button($html->esc($mtr->txt($label)), html_base::INPUT_SUBMIT,
+                styles::PROCESS_CATCH_BUTTON_REFRESH);
+            $result = $html->form_get($form_name, $page_vars . $button);
+        }
+        return $result;
+    }
+
+    /**
+     * the input of a place by its name or postal code; it joins the form of the refresh button by the
+     * form attribute, so the entered place is shown again after the refresh
+     *
+     * @param msg_id $label the label of the input e.g. msg_id::GEOLOCATOR_LABEL
+     * @param string $form_name the id of the form that sends the input e.g. the code id of the page
+     * @param array $url_arr the url vars of the page with the place entered before
+     * @return string the html code of the place input with its label
+     */
+    function geolocator(msg_id $label, string $form_name, array $url_arr): string
+    {
+        $place = $url_arr[url_var::PLACE] ?? '';
+        return new html_base()->form_field(url_var::PLACE, $label, $place, form_name: $form_name);
+    }
+
+    /**
+     * the button that opens the next or the page before of a process catch for the same question phrase
+     *
+     * @param array $targets the page that the button opens by the code id of the page e.g. views::PROCESS_CATCH_NEXT
+     * @param msg_id $label the text of the button e.g. msg_id::SYSTEM_BUTTON_NEXT
+     * @param string $style the css class of the button e.g. styles::PROCESS_CATCH_BUTTON_NEXT
+     * @param string $msk_code_id the code id of the process catch page that shows the button
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of the page
+     * @return string the html code of the button or an empty string if the page has no page to open
+     */
+    private function process_catch_button(
+        array                                                 $targets,
+        msg_id                                                $label,
+        string                                                $style,
+        string                                                $msk_code_id,
+        db_object|type_object|combine_named|sandbox_list|null $dbo
+    ): string
+    {
+        global $mtr;
+        $result = '';
+        // e.g. the result page has no next page, so a misplaced next button is not shown
+        if (array_key_exists($msk_code_id, $targets)) {
+            $html = new html_base();
+            $url = $html->url_back($targets[$msk_code_id], $this->process_catch_phrase_id($dbo));
+            $result = $html->ref($url, $mtr->txt($label), '', $style);
+        }
+        return $result;
+    }
+
+    /**
+     * @param string|null $cmp_code_id the code id of a tab component or of the fields of a tab
+     * @return int the number of the tab starting with 1 or 0 if the component belongs to no tab
+     */
+    private function process_catch_tab_nbr(?string $cmp_code_id): int
+    {
+        return components::PROCESS_CATCH_TAB_NBR[$cmp_code_id ?? ''] ?? 0;
+    }
+
+    /**
+     * @param array $url_arr the url vars of the page
+     * @return int the number of the tab that the url selects or the first tab if the url selects none or an unknown tab
+     */
+    private function process_catch_tab_selected(array $url_arr): int
+    {
+        $result = (int)($url_arr[url_var::TAB] ?? self::PROCESS_CATCH_TAB_DEFAULT);
+        // e.g. an edited link with tab 9 would else hide the fields of every tab
+        if ($result < 1 or $result > count(self::PROCESS_CATCH_TABS)) {
+            $result = self::PROCESS_CATCH_TAB_DEFAULT;
+        }
+        return $result;
+    }
+
+    /**
+     * @param db_object|type_object|combine_named|sandbox_list|null $dbo the question phrase of a process catch page
+     * @return int the phrase id that selects the question phrase in the url, which is negative for a triple
+     */
+    private function process_catch_phrase_id(db_object|type_object|combine_named|sandbox_list|null $dbo): int
+    {
+        $result = 0;
+        if ($dbo instanceof word or $dbo instanceof triple) {
+            $result = $dbo->phrase()->id();
+        }
         return $result;
     }
 

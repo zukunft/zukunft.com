@@ -54,6 +54,12 @@ use DateTime;
 class test_db_caches
 {
 
+    // the database id of the cache entry and of the cached page for unit tests
+    const int ID = 1;
+    // the url of the cached page for unit tests
+    const string PAGE_URL = 'http://zukunft.com/';
+
+
     /*
      * init
      */
@@ -78,7 +84,7 @@ class test_db_caches
     {
         $t_usr = new test_users();
         $db_cache = new db_cache($t_usr->user_ip());
-        $db_cache->id = 1;
+        $db_cache->id = self::ID;
         $db_cache->type_id = db_cache_types::SYSTEM_CONFIG_ID;
         $db_cache->data = [];
         return $db_cache;
@@ -113,8 +119,8 @@ class test_db_caches
     function db_cache_page(): db_cache_page
     {
         $db_cache_page = new db_cache_page();
-        $db_cache_page->id = 1;
-        $db_cache_page->url = 'http://zukunft.com/';
+        $db_cache_page->id = self::ID;
+        $db_cache_page->url = self::PAGE_URL;
         return $db_cache_page;
     }
 
@@ -126,6 +132,16 @@ class test_db_caches
         $db_cache_page = $this->db_cache_page();
         $db_cache_page->html_page = '<html><body>zukunft.com</body></html>';
         $db_cache_page->last_update = new DateTime(sys_log_tests::TV_TIME);
+        return $db_cache_page;
+    }
+
+    /**
+     * @return db_cache_page a cache row that has just been filled and is therefore expected to be used
+     */
+    function db_cache_page_up_to_date(): db_cache_page
+    {
+        $db_cache_page = $this->db_cache_page_filled();
+        $db_cache_page->last_update = new DateTime();
         return $db_cache_page;
     }
 

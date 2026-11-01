@@ -5,8 +5,8 @@
     test_lib.php - general functions used in several unit, read or write tests
     ------------
 
-    TODO move all test resource file reading to this class
-    TODO create a update_test_result function to overwrite a test file if confirmed by a developer
+    TODO Prio 2 move all test resource file reading to this class
+    TODO Prio 2 create a update_test_result function to overwrite a test file if confirmed by a developer
 
 
     This file is part of zukunft.com - calc with words
@@ -186,7 +186,7 @@ class test_lib
 
     /**
      * create the frontend cache and fill it with all entries for the unit tests
-     * TODO use it for the global ui_cac var
+     * TODO Prio 2 use it for the global ui_cac var
      * @param user $usr the user that imports the views of the cache
      *                  for unit tests a user that is allowed to import code-ids should be used
      * @param test_cleanup $t the test environment e.g. the collect the errors
@@ -307,7 +307,7 @@ class test_lib
     }
 
     /**
-     * TODO add missing frontend objects like
+     * TODO Prio 2 add missing frontend objects like
      * TODO Prio 0 easy add missing mapping error log message to all other object mapper
      * get the *empty* frontend object related to the given backend object:
      * only the class is selected, no vars are filled, so the caller must follow up with

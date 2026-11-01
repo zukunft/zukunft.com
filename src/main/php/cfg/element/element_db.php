@@ -70,7 +70,7 @@ class element_db
     const string FLD_REF_ID_COM = 'either a term, verb or formula id';
     const string FLD_REF_ID = 'ref_id';
     const string FLD_TEXT = 'resolved_text';
-    // TODO: is resolved text needed?
+    // TODO Prio 3 is resolved text needed?
 
     // all database field names excluding the id, standard name and user-specific fields
     const array FLD_NAMES = array(

@@ -226,7 +226,7 @@ class figure extends combine_named
      */
     function display_linked(user_message $msg, array $url_arr = []): string
     {
-        // TODO check if $result .= $this->obj->display_linked($url_arr) can be used
+        // TODO Prio 3 check if $result .= $this->obj->display_linked($url_arr) can be used
         $html = new html_base();
         if ($this->is_result()) {
             $url = $html->url_back(views::VALUE_EDIT_ID, $this->obj_id(), $url_arr);

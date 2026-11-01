@@ -368,7 +368,7 @@ class ref_list extends sandbox_list
         $load_per_sec = $cfg->get_by([words::REFERENCES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
         $save_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], def::FALLBACK_IMPORT_PER_SEC);
 
-        // TODO replace this slow solution
+        // TODO Prio 2 replace this slow solution
         foreach ($this->lst() as $ref) {
             // TODO Prio 1 avoid this workaround
             if ($ref->get_user()->id <= 0) {
@@ -400,7 +400,7 @@ class ref_list extends sandbox_list
             $imp->step_end($this->count(), $save_per_sec);
 
             // update the existing references
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+            // TODO Prio 2 create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
             // loop over the references and check if all needed functions exist
             // create the missing functions
             // create blocks of update function calls

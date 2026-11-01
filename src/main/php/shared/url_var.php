@@ -45,8 +45,8 @@ class url_var
 
     // TODO Prio 1 use be default the *_LONG url_var
     // TODO Prio 2 based on the config setting switch the the short or pod exchangeable url
-    // TODO always use these const instead e.g. of the controller const
-    // TODO allow to use the object names instead of the id for human readable urls
+    // TODO Prio 2 always use these const instead e.g. of the controller const
+    // TODO Prio 2 allow to use the object names instead of the id for human readable urls
     // the parameter names used in the url or in the result json
     const string PAR = '?';
     const string ADD = '&';
@@ -125,9 +125,11 @@ class url_var
     const string VIEW_TERM_LINK = 'dl'; // to link a view to a term
     const string DISPLAY_LIST_PAGE = 'dlp'; // the page of a list that is longer than the display list size, starting with 0
     const string DISPLAY_LIST_SIZE = 'dls'; // the number of rows of a list shown on a page, which a "... more" link raises to the next level (docs/llm/frontend.md "Short, more and all")
-    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the "..." header lowers step by step from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
-    const string DISPLAY_LIST_RANGE = 'dlr'; // 1 to show the probability range behind each number of a table, 0 for the numbers only
-    const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the "..." header
+    const string DISPLAY_LIST_COLUMNS = 'dlc'; // the number of column tiers of a table left out, which the edit menu of the navbar selects from the mayor columns (3, ex main) over ex minor (2) and ex marginal (1) to every column (0)
+    const string DISPLAY_LIST_VARIANCE = 'dlv'; // 1 to show the variance low and high behind each number of a list or table, 0 for the numbers only
+    const string DISPLAY_LIST_AS = 'dla'; // how a value table is shown: as a table, as its default charts or both (table_forms), selected by the "as" entries of the edit menu of the navbar
+    const string TAB = 'tb'; // the number of the selected tab of a page with tabs e.g. of the process catch detail page, starting with 1
+    const string PLACE = 'loc'; // the place name or postal code entered in the geolocator e.g. 8000
     const string DISPLAY_LIST_ORDER = 'dlo'; // the prime order of the rows of a table: the phrase id of a column and the condition (table_orders) e.g. 123.numeric_desc; without it the rows follow the impact
     const string DISPLAY_LIST_ORDER_SUB = 'dlo2'; // the sub order, which sorts the rows that the prime order leaves equal
     const string DISPLAY_LIST_ORDER_SUB_SUB = 'dlo3'; // the sub sub order, which sorts the rows that the prime and the sub order leave equal
@@ -159,7 +161,8 @@ class url_var
     const string LATEX = 'fx'; // the formula in latex format
     const string FORMULA_TYPE = 'fy';
     const string GROUP = 'g';
-    const string GROUP_NAME = 'gn'; // TODO maybe it is possible to use NAME
+    const string GROUP_NAME = 'gn'; // TODO Prio 3 maybe it is possible to use NAME
+    const string SOURCE_GROUP_NAME = 'gs'; // the group of the numbers that a result is calculated from
     const string LOG = 'h'; // h for history of the object
     const string LOG_STATUS = 'ha'; // the stAtus of a system log entry
     const string LOG_PAGE = 'hb'; // the page Block of the system log list to show
@@ -179,6 +182,10 @@ class url_var
     const string WITH_PHRASES = 'iw'; // include the phrases in the values or result messages
     const string INCL_RELATED = 'ir'; // include the related phrases (api_types::INCL_RELATED) in a word/triple api response
     const string INCL_USED = 'iu'; // include the values, formulas and results used (api_types::INCL_USED) in a result api response
+    const string INCL_RESULTS = 'is'; // 1 to include the results of the phrases in the phrase data api response
+    const string PHRASE_DATA_WALK = 'pw'; // how the phrase data api collects the data of a phrase, one of the PHRASE_DATA_WALK_* values
+    const string PHRASE_DATA_WALK_VALUE = 'pwv'; // the values of the phrase with their phrases (the default)
+    const string PHRASE_DATA_WALK_FROM = 'pwf'; // the triples on the from side of the phrase e.g. the calculator tree
     const string JOB = 'j'; // for system batch jobs
     const string JOB_PARAMETER = 'ja'; // pArameter passed to a job e.g. the id of the phrase set
     const string JOB_START_TIME = 'jb'; // Begin time of the job execution
@@ -208,6 +215,10 @@ class url_var
     // const string MASK = 'm'; // just the placeholder to remember that the char m is used for the url type selection
     const string NUMERIC_VALUE = 'n';
     const string NO_CACHE = 'nc'; // to bypass the html page cache read and write of a view-only request
+    const string REPORT = 'rp'; // 1 to answer with the pdf report of a calculator page instead of the page
+    // 0 to show the page of the server instead of the page that the browser builds from its json data,
+    // which a calculator page shows by default if config.yaml allows javascript for the calculator
+    const string JAVASCRIPT = 'sc';
     const string DESCRIPTION = 'o'; // the description of a word, verb, triple, ... of a form field
     const string OWNER = 'ow'; // the name of the user who owns the object, for display on the default page
     const string PHRASE = 'p'; // the id or name of one phrase
@@ -293,7 +304,7 @@ class url_var
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
     const string TRUE = '1';
-    // the switched off value of a url flag e.g. DISPLAY_LIST_RANGE for a table without the ranges
+    // the switched off value of a url flag e.g. DISPLAY_LIST_VARIANCE for a table without the variance
     const string FALSE = '0';
 
     // enum for self::STEP and the next step of the action
@@ -305,7 +316,7 @@ class url_var
     const string STEP_CANCELED = '-2'; // the process has been canceled
     const string STEP_FAILED = '-3'; // the process cannot be processed
 
-    // TODO move to workflows
+    // TODO Prio 2 move to workflows
     // user reaction actions: the first parameter of frontend::url_user_reaction and the
     // cumulative segment of a unit workflow snapshot filename (see docs/llm/testing.md)
     const string ACTION_SHOW = 'show'; // display the requested object e.g. the test word in its default view
@@ -321,6 +332,7 @@ class url_var
     const string ACTION_JOB_UPGRADE = 'aju'; // an admin increases the priority of a batch job
     const string ACTION_JOB_DOWNGRADE = 'ajd'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL = 'ajc'; // cancel a batch job
+    const string ACTION_CLEAR_CACHE = 'acc'; // an admin removes all cached data on the settings page
 
     // the actions of the job list buttons that change a batch job directly without a confirm view
     const array JOB_ACTIONS = [
@@ -339,8 +351,11 @@ class url_var
     const string CONFIG_KEY_HUMAN = 'setting';
     const string DEBUG = 'debug'; // to force the output of debug messages
     const string NO_CACHE_HUMAN = 'nocache'; // the long form of self::NO_CACHE to bypass the html page cache
+    const string REPORT_HUMAN = 'report'; // the long form of self::REPORT
     const string NO_CACHE_ON = '1'; // the value that switches the html page cache off e.g. view.php?m=1&nc=1
+    const string JAVASCRIPT_HUMAN = 'javascript'; // the long form of self::JAVASCRIPT e.g. view.php?m=calculator&id=-2757&sc=0
     const int DEBUG_EXE_TIME_REPORT = -1; // show the execution time report in the frontend
+    const int DEBUG_LEVEL_SWITCHED = 0; // a debug message switched on by a const in the code e.g. def::DEBUG_API_CACHE, so shown at every level
     const int DEBUG_LEVEL_EXTERNAL_CALLS = 1; // the first debug level is to show only the calls of external systems such as wikipedia
     const int DEBUG_LEVEL_POD_READS = 2; // the second debug level is to show data calls from other zukunft.com pods
     const int DEBUG_LEVEL_POD_PUSH = 3; // the third debug level is to show push messages to other zukunft.com pods
@@ -359,6 +374,7 @@ class url_var
     // repeated in the back part and the url stays short
     const array PAGE_VARS = [
         self::MASK,
+        self::REPORT,
         self::ID,
         self::USER_TO_EDIT,
         self::ID_LST,
@@ -367,22 +383,23 @@ class url_var
         self::DISPLAY_LIST_SIZE,
         self::DISPLAY_LIST_PAGE,
         self::DISPLAY_LIST_COLUMNS,
-        self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_VARIANCE,
         self::DISPLAY_LIST_AS,
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
+        self::TAB,
     ];
 
     // the page vars where a zero is a value and not the "not set" default, so that
     // page_url_array keeps them: a list size of zero is value_list::LIMIT_ALL, i.e. the user
     // has expanded the list to every row, which a back link must repeat, and the same holds for
-    // every column tier and for the ranges switched off; for every other page var a zero names
+    // every column tier and for the variance switched off; for every other page var a zero names
     // nothing (no view, no object, the first list page) and is dropped
     const array PAGE_VARS_KEEP_ZERO = [
         self::DISPLAY_LIST_SIZE,
         self::DISPLAY_LIST_COLUMNS,
-        self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_VARIANCE,
     ];
 
     // the prefix chars that move a normal url key into another part of the url: the vars of the link
@@ -431,16 +448,24 @@ class url_var
         self::POST_SUBMIT,
         self::DEBUG,
         self::NO_CACHE,
+        // the page that the browser builds is a render mode of the same page
+        self::JAVASCRIPT,
+        self::REPORT,
         // how much of a list is shown is a render mode, so e.g. the "... more" link of the start
         // page must not turn the url into a form submit of an object without an id
         self::DISPLAY_LIST_SIZE,
         self::DISPLAY_LIST_PAGE,
         self::DISPLAY_LIST_COLUMNS,
-        self::DISPLAY_LIST_RANGE,
+        self::DISPLAY_LIST_VARIANCE,
         self::DISPLAY_LIST_AS,
         self::DISPLAY_LIST_ORDER,
         self::DISPLAY_LIST_ORDER_SUB,
         self::DISPLAY_LIST_ORDER_SUB_SUB,
+        // the selected tab is a render mode like the list display
+        self::TAB,
+        // the place of the geolocator is an assumption of the process catch page and never a field of
+        // the question phrase, so the refresh of the page must not turn the url into a form submit
+        self::PLACE,
         // the search and the scope select what a page shows e.g. one top level key of the settings,
         // so they never turn the url into a form submit of an object without an id
         self::PATTERN,
@@ -467,6 +492,7 @@ class url_var
     const string ACTION_JOB_UPGRADE_HUMAN = 'job_upgrade'; // an admin increases the priority of a batch job
     const string ACTION_JOB_DOWNGRADE_HUMAN = 'job_downgrade'; // reduce the priority of a batch job
     const string ACTION_JOB_CANCEL_HUMAN = 'job_cancel'; // cancel a batch job
+    const string ACTION_CLEAR_CACHE_HUMAN = 'clear_cache'; // an admin removes all cached data
 
     // enum for self::STEP and the next step of the action
     const string STEP_BASE_HUMAN = 'no'; // no action process has been started
@@ -545,8 +571,10 @@ class url_var
     const string DISPLAY_LIST_SIZE_HUMAN = 'display_list_size'; // the number of list rows shown on a page
     const string DISPLAY_LIST_PAGE_HUMAN = 'display_list_page'; // the page of a list longer than the size
     const string DISPLAY_LIST_COLUMNS_HUMAN = 'display_list_columns'; // the number of column tiers of a table shown
-    const string DISPLAY_LIST_RANGE_HUMAN = 'display_list_range'; // 1 to show the probability ranges of a table
+    const string DISPLAY_LIST_VARIANCE_HUMAN = 'display_list_variance'; // 1 to show the variance of the numbers of a list or table
     const string DISPLAY_LIST_AS_HUMAN = 'display_list_as'; // the form of a table: table, chart or table_chart
+    const string TAB_HUMAN = 'tab'; // the number of the selected tab of a page
+    const string PLACE_HUMAN = 'place'; // the place name or postal code entered in the geolocator
     const string DISPLAY_LIST_ORDER_HUMAN = 'display_list_order'; // the prime order of the rows of a table
     const string DISPLAY_LIST_ORDER_SUB_HUMAN = 'display_list_order_sub'; // the sub order of the rows of a table
     const string DISPLAY_LIST_ORDER_SUB_SUB_HUMAN = 'display_list_order_sub_sub'; // the sub sub order of the rows of a table
@@ -570,6 +598,7 @@ class url_var
     // group
     const string GROUP_HUMAN = 'group_ig';
     const string GROUP_NAME_HUMAN = 'group_name';
+    const string SOURCE_GROUP_NAME_HUMAN = 'source_group_name';
 
     // value
     const string VALUE_HUMAN = 'value_id';
@@ -611,6 +640,10 @@ class url_var
     const string WITH_PHRASES_HUMAN = 'incl_phrases';
     const string INCL_RELATED_HUMAN = 'incl_related';
     const string INCL_USED_HUMAN = 'incl_used';
+    const string INCL_RESULTS_HUMAN = 'incl_results';
+    const string PHRASE_DATA_WALK_HUMAN = 'phrase_data_walk';
+    const string PHRASE_DATA_WALK_VALUE_HUMAN = 'values_of_phrase';
+    const string PHRASE_DATA_WALK_FROM_HUMAN = 'triples_from_phrase';
 
     // view
     const string VIEW_HUMAN = 'view_id';
@@ -708,7 +741,7 @@ class url_var
      */
 
     // TODO Prio 1 complete all url vars mappings for $pod_url
-    // TODO use the mapping table also to create the human url
+    // TODO Prio 2 use the mapping table also to create the human url
     // mapping of a human-readable url to the standard url
     // first entry is the from array key,
     // second is the target array key
@@ -731,6 +764,8 @@ class url_var
         [self::LINK_HUMAN, self::LINK],
         [self::MSG_HUMAN, self::MSG],
         [self::NO_CACHE_HUMAN, self::NO_CACHE],
+        [self::JAVASCRIPT_HUMAN, self::JAVASCRIPT],
+        [self::REPORT_HUMAN, self::REPORT],
 
         // user
         [self::USER_HUMAN, self::USER],
@@ -798,8 +833,10 @@ class url_var
         [self::DISPLAY_LIST_SIZE_HUMAN, self::DISPLAY_LIST_SIZE],
         [self::DISPLAY_LIST_PAGE_HUMAN, self::DISPLAY_LIST_PAGE],
         [self::DISPLAY_LIST_COLUMNS_HUMAN, self::DISPLAY_LIST_COLUMNS],
-        [self::DISPLAY_LIST_RANGE_HUMAN, self::DISPLAY_LIST_RANGE],
+        [self::DISPLAY_LIST_VARIANCE_HUMAN, self::DISPLAY_LIST_VARIANCE],
         [self::DISPLAY_LIST_AS_HUMAN, self::DISPLAY_LIST_AS],
+        [self::TAB_HUMAN, self::TAB],
+        [self::PLACE_HUMAN, self::PLACE],
         [self::DISPLAY_LIST_ORDER_HUMAN, self::DISPLAY_LIST_ORDER],
         [self::DISPLAY_LIST_ORDER_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB],
         [self::DISPLAY_LIST_ORDER_SUB_SUB_HUMAN, self::DISPLAY_LIST_ORDER_SUB_SUB],
@@ -823,6 +860,7 @@ class url_var
         // group
         [self::GROUP_HUMAN, self::GROUP],
         [self::GROUP_NAME_HUMAN, self::GROUP_NAME],
+        [self::SOURCE_GROUP_NAME_HUMAN, self::SOURCE_GROUP_NAME],
 
         // value
         [self::VALUE_HUMAN, self::VALUE],
@@ -857,6 +895,8 @@ class url_var
         [self::WITH_PHRASES_HUMAN, self::WITH_PHRASES],
         [self::INCL_RELATED_HUMAN, self::INCL_RELATED],
         [self::INCL_USED_HUMAN, self::INCL_USED],
+        [self::INCL_RESULTS_HUMAN, self::INCL_RESULTS],
+        [self::PHRASE_DATA_WALK_HUMAN, self::PHRASE_DATA_WALK],
 
         // view
         [self::VIEW_HUMAN, self::VIEW],
@@ -937,6 +977,7 @@ class url_var
         self::ACTION_JOB_UPGRADE => self::ACTION_JOB_UPGRADE_HUMAN,
         self::ACTION_JOB_DOWNGRADE => self::ACTION_JOB_DOWNGRADE_HUMAN,
         self::ACTION_JOB_CANCEL => self::ACTION_JOB_CANCEL_HUMAN,
+        self::ACTION_CLEAR_CACHE => self::ACTION_CLEAR_CACHE_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -945,6 +986,12 @@ class url_var
         self::REFRESH_LATEX => self::REFRESH_LATEX_HUMAN,
         self::REFRESH_TERMS => self::REFRESH_TERMS_HUMAN,
         self::REFRESH_PHRASES => self::REFRESH_PHRASES_HUMAN,
+    ];
+
+    // map human-readable url values to standard url values
+    const array HUMAN_TO_STD_PHRASE_DATA_WALK_VAL = [
+        self::PHRASE_DATA_WALK_VALUE => self::PHRASE_DATA_WALK_VALUE_HUMAN,
+        self::PHRASE_DATA_WALK_FROM => self::PHRASE_DATA_WALK_FROM_HUMAN,
     ];
 
     // map human-readable url values to standard url values
@@ -1104,6 +1151,22 @@ class url_var
     {
         $id_var = self::id_var($url_array[self::MASK] ?? 0);
         return $url_array[$id_var] ?? $url_array[self::ID] ?? 0;
+    }
+
+    /**
+     * true if the page should show the variance behind each number (see DISPLAY_LIST_VARIANCE)
+     *
+     * @param array $url_array the url of a request e.g. [DISPLAY_LIST_VARIANCE => TRUE]
+     * @param bool $default the result if the url does not say whether to show the variance
+     * @return bool true if the url switches the variance on, false if it switches it off
+     */
+    static function show_variance(array $url_array, bool $default = false): bool
+    {
+        $result = $default;
+        if (array_key_exists(self::DISPLAY_LIST_VARIANCE, $url_array)) {
+            $result = ($url_array[self::DISPLAY_LIST_VARIANCE] == self::TRUE);
+        }
+        return $result;
     }
 
     /**

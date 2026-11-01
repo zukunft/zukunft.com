@@ -5,7 +5,7 @@
     model/system/sys_log_level.php - to link coded functionality to a system log status
     ---------------------------
 
-    TODO to be combined with sys_log_level
+    TODO Prio 2 to be combined with sys_log_level
 
     This file is part of zukunft.com - calc with words
 

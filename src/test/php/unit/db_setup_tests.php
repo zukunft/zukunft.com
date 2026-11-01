@@ -113,6 +113,15 @@ class db_setup_tests
             $t->assert($test_name, $sql_fixed_trim, '');
 
         }
+
+        // negative: the header and footer of the MySQL setup are not used for Postgres
+        $test_name = 'Postgres header without the MySQL header';
+        $db->db_type = sql_db::POSTGRES;
+        $header_pg = $db->sql_setup_header();
+        $t->assert_text_not_contains($test_name, $header_pg, sql_db::SETUP_HEADER_MYSQL);
+        $test_name = 'Postgres footer without the MySQL footer';
+        $footer_pg = $db->sql_setup_footer();
+        $t->assert_text_not_contains($test_name, $footer_pg, sql_db::SETUP_FOOTER_MYSQL);
     }
 
 }

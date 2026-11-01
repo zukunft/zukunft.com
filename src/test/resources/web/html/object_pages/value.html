@@ -9,6 +9,10 @@
         <link rel="stylesheet" href="http://localhost/external_lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="http://localhost/external_lib/fontawesome/css/all.css">
         <link rel="stylesheet" href="http://localhost/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
     </head>
     <body>
         <nav  class="navbar site-header fixed-top">
@@ -35,22 +39,20 @@
                             </summary>
                             <ul>
                                 <li>
-                                    <a href="/http/view.php?m=view_change&amp;id=2">
-                                        alternative
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="?view=more">
+                                    <a href="?view=more" title="show more views">
                                         ... more
                                     </a>
                                 </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
                                 <li>
-                                    <a href="/http/view.php?m=85&amp;id=1">
-                                        change view
+                                    <a href="/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/http/view.php?m=84">
+                                    <a href="/http/view.php?m=84" title="create a new named view editor">
                                         add view
                                     </a>
                                 </li>
@@ -173,33 +175,33 @@
             <br>
             with linked names and separate measure:
             <div class="value-row">
-                <span class="value-name text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a>, <a href="/http/view.php?m=3&amp;id=190">canton</a>, <a href="/http/view.php?m=3&amp;id=201">inhabitants</a></span>
-                <span class="value-num text-nowrap"><a href="/http/view.php?m=5&amp;id=05_0S_0y_17_1N_&amp;9m=3&amp;9id=217">1.55</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+                <span class="value-name text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a>, <a href="/http/view.php?m=3&amp;id=201">canton</a>, <a href="/http/view.php?m=3&amp;id=212">inhabitants</a></span>
+                <span class="value-num text-nowrap"><a href="/http/view.php?m=5&amp;id=05_0S_17_1I_1Y_&amp;9m=3&amp;9id=228">1.55</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
                 <span class="value-unit text-nowrap"><a href="/http/view.php?m=3&amp;id=158">mio</a></span>
             </div>
             <br>
             with linked names and separate measure (ex canton):
             <div class="value-row">
-                <span class="value-name text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a>, <a href="/http/view.php?m=3&amp;id=201">inhabitants</a></span>
-                <span class="value-num text-nowrap"><a href="/http/view.php?m=5&amp;id=05_0S_0y_17_1N_&amp;9m=3&amp;9id=217">1.55</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+                <span class="value-name text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a>, <a href="/http/view.php?m=3&amp;id=212">inhabitants</a></span>
+                <span class="value-num text-nowrap"><a href="/http/view.php?m=5&amp;id=05_0S_17_1I_1Y_&amp;9m=3&amp;9id=228">1.55</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
                 <span class="value-unit text-nowrap"><a href="/http/view.php?m=3&amp;id=158">mio</a></span>
             </div>
             <br>
             with the tooltips from the cache:
             <div class="value-row">
-                <span class="value-name text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=217">Zurich</a>, <a href="/http/view.php?m=3&amp;id=190">canton</a>, <a href="/http/view.php?m=3&amp;id=201">inhabitants</a></span>
-                <span class="value-num text-nowrap"><a href="/http/view.php?m=5&amp;id=05_0y_17_1N_2I_&amp;9m=3&amp;9id=217">1.55</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
-                <span class="value-unit text-nowrap"><a href="/http/view.php?m=3&amp;id=276" title="10⁶">mio</a></span>
+                <span class="value-name text-nowrap"><a href="/http/view.php?m=3&amp;id=135">2019</a>, <a href="/http/view.php?m=3&amp;id=228">Zurich</a>, <a href="/http/view.php?m=3&amp;id=201">canton</a>, <a href="/http/view.php?m=3&amp;id=212">inhabitants</a></span>
+                <span class="value-num text-nowrap"><a href="/http/view.php?m=5&amp;id=05_17_1I_1Y_2f_&amp;9m=3&amp;9id=228">1.55</a><sup><span class="grey" title="the source of this number is missing" data-toggle="tooltip">-</span></sup></span>
+                <span class="value-unit text-nowrap"><a href="/http/view.php?m=3&amp;id=299" title="10⁶">mio</a></span>
             </div>
             <br>
             with measure type:
-            <a href="/http/view.php?m=4&amp;id=29" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">
+            <a href="/http/view.php?m=4&amp;id=30" title="The speed of light in a vacuum is a universal physical constant defined exactly by the distance light travels in a specific fraction of a second.">
                 speed of light
             </a>
-            <a href="/http/view.php?m=value&amp;id=140864194576462" title="1983 (year of definition)">
+            <a href="/http/view.php?m=value&amp;id=140868489609295" title="1983 (year of definition)">
                 299'792'458
             </a>
-            <a href="/http/view.php?m=4&amp;id=71" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">
+            <a href="/http/view.php?m=4&amp;id=72" title="The metre per second is the unit of both speed (a scalar quantity) and velocity (a vector quantity, which has direction and magnitude) in the International System of Units (SI), equal to the speed of a body covering a distance of one metre in a time of one second.">
                 m/s
             </a>
             <br>
@@ -207,19 +209,19 @@
                 buttons
             </h4>
             add button:
-            <a href="http://localhost/http/view.php?m=53&amp;id=5&amp;9m=3&amp;9id=217" title="add new value">
+            <a href="http://localhost/http/view.php?m=53&amp;id=5&amp;9m=3&amp;9id=228" title="add new value">
                 <i class="far fa-plus-square">
                 </i>
             </a>
             <br>
             edit button:
-            <a href="http://localhost/http/view.php?m=54&amp;id=5&amp;9m=3&amp;9id=217" title="change value">
+            <a href="http://localhost/http/view.php?m=54&amp;id=5&amp;9m=3&amp;9id=228" title="change value">
                 <i class="far fa-edit">
                 </i>
             </a>
             <br>
             del button:
-            <a href="http://localhost/http/view.php?m=55&amp;id=5&amp;9m=3&amp;9id=217" title="delete value">
+            <a href="http://localhost/http/view.php?m=55&amp;id=5&amp;9m=3&amp;9id=228" title="delete value">
                 <i class="far fa-times-circle">
                 </i>
             </a>

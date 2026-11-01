@@ -45,6 +45,7 @@ class files
     const string YAML = '.yaml';
     const string CSS = '.css';
     const string SVG = '.svg';
+    const string JS = '.js';
 
 
     /*
@@ -57,6 +58,7 @@ class files
     const string REL_MAIN_PATH = self::REL_SOURCE_PATH . 'main' . DIRECTORY_SEPARATOR;
     const string REL_RESOURCE_PATH = self::REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
     const string STYLE_PATH = self::REL_RESOURCE_PATH . 'style' . DIRECTORY_SEPARATOR;
+    const string SCRIPT_PATH = self::REL_RESOURCE_PATH . 'script' . DIRECTORY_SEPARATOR;
 
 
     /*
@@ -82,5 +84,17 @@ class files
     const string STYLE_BS = paths::EXT_LIB_BS_CSS . 'bootstrap' . self::CSS;
     const string STYLE_FONT = paths::EXT_LIB_FONT_CSS . 'all' . self::CSS;
     const string LOGO = paths::IMAGE_RES . 'ZUKUNFT_logo' . self::SVG;
+    // the images on the server e.g. the logo of a report, which is a jpeg because a pdf can embed it as it is
+    const string IMAGE_PATH = self::RESOURCE_PATH . 'images' . DIRECTORY_SEPARATOR;
+    const string REPORT_LOGO_DEFAULT = self::IMAGE_PATH . 'logo_xs.jpg';
+    // the only scripts of the html frontend: the calculator pages repeat their calculation in the
+    // browser, the calculator and the formula editor build the editor and the json calculator page the
+    // page from the phrase data, if config.yaml allows javascript for the calculator (see docs/llm/frontend.md)
+    const string CALCULATOR_SCRIPT = self::SCRIPT_PATH . 'calculator' . self::JS;
+    const string CALCULATOR_EDITOR_SCRIPT = self::SCRIPT_PATH . 'calculator_editor' . self::JS;
+    const string CALCULATOR_JSON_SCRIPT = self::SCRIPT_PATH . 'calculator_json' . self::JS;
+    const string FORMULA_EDITOR_SCRIPT = self::SCRIPT_PATH . 'formula_editor' . self::JS;
+    const string FORMULA_EDITOR_STYLE = self::STYLE_PATH . 'formula_editor' . self::CSS;
+    const string CALCULATOR_EDITOR_STYLE = self::STYLE_PATH . 'calculator_editor' . self::CSS;
 
 }

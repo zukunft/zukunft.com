@@ -84,6 +84,7 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'api_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -140,6 +141,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use Exception;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\formula_fields;
@@ -169,7 +171,7 @@ class sandbox_value extends sandbox_multi
     const string TBL_COMMENT_BIG_CONT = 's related to more than 16 phrases';
     const string TBL_COMMENT_BIG_USER = 'to store the user-specific changes of ';
     const string TBL_COMMENT_BIG_USER_CONT = 's related to more than 16 phrases';
-    // TODO review the time series comments
+    // TODO Prio 3 review the time series comments
     const string TBL_COMMENT_TS = 'for the common parameters for a list of numbers that differ only by the timestamp';
     const string TYPE_NUMBER = 'numeric';
     const string TYPE_TEXT = 'text';
@@ -190,8 +192,8 @@ class sandbox_value extends sandbox_multi
     const array FLD_KEY_USER = array(
         [group_fields::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user -=class=-'],
     );
-    // TODO use not null for all keys if a separate table for each number of phrase is implemented
-    // TODO FLD_KEY_PRIME and FLD_KEY_PRIME_USER are not the same only if just one phrase is the key
+    // TODO Prio 2 use not null for all keys if a separate table for each number of phrase is implemented
+    // TODO Prio 2 FLD_KEY_PRIME and FLD_KEY_PRIME_USER are not the same only if just one phrase is the key
     const array FLD_KEY_PRIME = array(
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
@@ -243,7 +245,7 @@ class sandbox_value extends sandbox_multi
     const array FLD_ALL_SOURCE = array(
         [source_fields::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
     );
-    // TODO use this for the user tables
+    // TODO Prio 2 use this for the user tables
     const array FLD_USER_SOURCE = array(
         [source_fields::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
     );
@@ -340,15 +342,24 @@ class sandbox_value extends sandbox_multi
      * @param user_message $msg to report a key that cannot be decoded
      * @param string $id_fld the name of the text group key field
      * @param array $phr_id_flds the names of the phrase id fields of the prime and main tables
+     * @param bool $with_names false if the caller loads the phrase names of many rows with one query
      * @return bool true if the row carries the text group key
      */
-    function set_grp_by_row(array $db_row, user_message $msg, string $id_fld, array $phr_id_flds): bool
+    function set_grp_by_row(
+        array        $db_row,
+        user_message $msg,
+        string       $id_fld,
+        array        $phr_id_flds,
+        bool         $with_names = true
+    ): bool
     {
         $key = $db_row[$id_fld] ?? null;
         $has_key = ($key !== null and $key !== '' and $key !== 'null');
         $grp = new group($this->get_user());
         if ($has_key) {
-            $grp->set_phrase_list_by_id($key, $msg);
+            if ($with_names) {
+                $grp->set_phrase_list_by_id($key, $msg);
+            }
             $grp->set_id($key);
         } else {
             $phr_lst = new phrase_list($this->get_user());
@@ -437,7 +448,7 @@ class sandbox_value extends sandbox_multi
 
     /**
      * remember the description of the value in the related phrase group object
-     * TODO check if the null value should be used to avoid overwriting the db value
+     * TODO Prio 2 check if the null value should be used to avoid overwriting the db value
      * @param string $txt the description of the value or null if
      */
     function set_description(string $txt): void
@@ -831,7 +842,7 @@ class sandbox_value extends sandbox_multi
     /**
      * create the sql statements for a set (standard, prime and big) tables
      * for one field type e.g. numeric value, text values
-     * TODO move the table types to an const array
+     * TODO Prio 2 move the table types to an const array
      *
      * @param sql_creator $sc
      * @param array $fld_par the parameters for the value field e.g. for a numeric field, text, time or geo
@@ -1075,7 +1086,7 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create an SQL statement to get all the users that have changed this value
-     * TODO overwrites the sandbox function
+     * TODO Prio 3 overwrites the sandbox function
      *
      * @param sql_creator $sc with the target db_type set
      * @return sql_par the SQL statement, the name of the SQL statement, and the parameter list
@@ -1229,15 +1240,6 @@ class sandbox_value extends sandbox_multi
             }
         }
         return $result;
-    }
-
-    /**
-     * @param array $names list of phrase names e.g. the context phrases of a result validation
-     * @return bool true if all phrases of this value are part of the given phrase names
-     */
-    function matches_context(array $names): bool
-    {
-        return empty(array_diff($this->grp()->phrase_list()->names(), $names));
     }
 
 
@@ -1439,7 +1441,7 @@ class sandbox_value extends sandbox_multi
         }
         // for standard values the user id of the creator is taken from the change log
         if (!$sc_par_lst->is_standard()) {
-            // TODO add the test case to change the user of a normal value
+            // TODO Prio 2 add the test case to change the user of a normal value
             if ($sc_par_lst->is_insert() or $sc_par_lst->is_usr_tbl()) {
                 $lst->add_field(
                     user_db::FLD_ID,
@@ -1475,7 +1477,7 @@ class sandbox_value extends sandbox_multi
         $result = $this->id_field_group();
         if ($this->is_prime()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
-                // TODO merge with result_db::FLD_KEY_PRIME ?
+                // TODO Prio 2 merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
                 $result = array_merge([formula_fields::FLD_ID], $id_fields);
             } else {
@@ -1487,7 +1489,7 @@ class sandbox_value extends sandbox_multi
             }
         } elseif ($this->is_main()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
-                // TODO merge with result_db::FLD_KEY_PRIME ?
+                // TODO Prio 2 merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_main(1, group_id::MAIN_PHRASES_STD);
                 $result = array_merge([formula_fields::FLD_ID], $id_fields);
             } else {
@@ -1613,7 +1615,15 @@ class sandbox_value extends sandbox_multi
                 $load_lst->add($phr);
             }
         }
-        return $this->load_by_grp($load_lst->get_grp_id(), $msg);
+        $grp = $load_lst->get_grp_id();
+        // a value without phrases has no group, so the user is told which names are not found
+        if ($grp === null) {
+            $msg->add(msg_id::PHRASE_NAME_NOT_FOUND, [msg_id::VAR_NAME => implode(', ', $names)]);
+            $result = 0;
+        } else {
+            $result = $this->load_by_grp($grp, $msg);
+        }
+        return $result;
     }
 
 
@@ -1652,11 +1662,30 @@ class sandbox_value extends sandbox_multi
                 $this->grp()->phrase_list()->load_triple_sides($msg);
             }
             $phr_lst = $this->grp()->phrase_list();
-            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst, $msg);
+            $vars[json_fields::PHRASES] = $phr_lst->api_json_array($this->phrase_typ_lst($typ_lst), $msg);
         }
 
         return $vars;
 
+    }
+
+    /**
+     * the api message configuration for the phrases of this value: a page request (incl_related)
+     * is for this value and not for its phrases, so the phrases are sent with their names and
+     * the names of the triple sides, but without e.g. the related values of each phrase, which
+     * for a common phrase like EUR are a big part of all values of the pod
+     *
+     * @param api_type_list $typ_lst the configuration of the api message of this value
+     * @return api_type_list the configuration for the phrases of this value
+     */
+    protected function phrase_typ_lst(api_type_list $typ_lst): api_type_list
+    {
+        $phr_typ_lst = clone $typ_lst;
+        if ($phr_typ_lst->remove(api_types::INCL_RELATED)) {
+            // the page shows the phrase names and the sides of the triples like a phrase request
+            $phr_typ_lst->add(api_types::INCL_PHRASES);
+        }
+        return $phr_typ_lst;
     }
 
 
@@ -1675,9 +1704,10 @@ class sandbox_value extends sandbox_multi
     {
         $vars = parent::export_json($msg, $exp_typ, $do_load);
 
-        // reload the value parameters
+        // reload the value parameters by the own id, which is the group id of a value, but not of a
+        // result: a result is one of the results of its group and has its own key and table
         if ($do_load) {
-            $this->load_by_grp($this->grp(), $msg);
+            $this->load_by_id($this->id(), $msg);
             $this->load_phrases($msg);
         }
 
@@ -1729,7 +1759,7 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * TODO create and use change_log_value
+     * TODO Prio 2 create and use change_log_value
      * @return change
      */
     function log_add_value(): change
@@ -1773,7 +1803,7 @@ class sandbox_value extends sandbox_multi
         $qp->name .= sql::NAME_SEP . sql_creator::FILE_UPDATE;
         $sc->set_name($qp->name);
         // get the fields and values that have been changed and needs to be updated in the database
-        // TODO fix it
+        // TODO Prio 1 fix it
         $fld_val_typ_lst = $this->db_changed($db_obj);
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set($fld_val_typ_lst);
@@ -1815,7 +1845,7 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create the sql statement to update a value or result in the database
-     * TODO move the code to an object used by sandbox and sandbox_value
+     * TODO Prio 2 move the code to an object used by sandbox and sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
      * @param sandbox_value $db_row the sandbox object with the database values before the update
@@ -1864,7 +1894,7 @@ class sandbox_value extends sandbox_multi
         $id_ext = $this->table_extension();
 
         // get the sql name extension to make the name unique based on the fields that should be updated
-        // TODO replace with the number base notation
+        // TODO Prio 2 replace with the number base notation
         $lib = new library();
         $ext = implode(sql::NAME_SEP, $lib->sql_name_shorten($fvt_lst->names()));
         if ($ext != '') {
@@ -1898,7 +1928,7 @@ class sandbox_value extends sandbox_multi
 
     /**
      * create the sql statement to delete a value in the database
-     * TODO check if user-specific overwrites can be deleted
+     * TODO Prio 2 check if user-specific overwrites can be deleted
      *
      * @param sql_creator $sc with the target db_type set
      * @param user_message $msg the user message object that collects any issues during the sql creation
@@ -1932,7 +1962,7 @@ class sandbox_value extends sandbox_multi
             $sc_par_lst_used->add(sql_type::NAMED_PAR);
             $qp = $this->sql_delete_and_log($sc, $qp, $fvt_lst_id, $msg, $sc_par_lst_used);
         } else {
-            // TODO add test fpr !$sc_par_lst_used->exclude_sql()
+            // TODO Prio 2 add test fpr !$sc_par_lst_used->exclude_sql()
             $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
             // and remember the parameters used
             $qp->par = $sc->par_values();
@@ -2157,7 +2187,7 @@ class sandbox_value extends sandbox_multi
         $table_id = $sc->table_id($this::class, $sc_par_lst);
 
         /*
-         * TODO check if sandbox named function match this logic
+         * TODO Prio 2 check if sandbox named function match this logic
          * if insert always add user as long as not standard
          * on update the user is only used for the where condition
          */
@@ -2173,7 +2203,7 @@ class sandbox_value extends sandbox_multi
                 $lst->add_user($this, $sbx, $do_log, $table_id);
             }
         }
-        // TODO check that all numeric fields are checked with !== to force writing the value zero
+        // TODO Prio 1 check that all numeric fields are checked with !== to force writing the value zero
         if ($this->is_numeric()) {
             if ($sbx->get_value() !== $this->get_value()) {
                 if ($do_log) {

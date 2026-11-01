@@ -33,19 +33,30 @@
 namespace Zukunft\ZukunftCom\test\php\unit;
 
 use DateTime;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log_sum_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_types;
+use Zukunft\ZukunftCom\test\php\create\test_terms;
+use Zukunft\ZukunftCom\test\php\create\test_types;
 use Zukunft\ZukunftCom\test\php\create\test_users;
+use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_tests
@@ -61,6 +72,7 @@ class user_tests
         $db_con = new sql_db();
         $sc = new sql_creator();
         $t_usr = new test_users($t);
+        $t_val = new test_values($t);
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
         $t->usr_admin = $t_usr->user_sys_admin();
@@ -75,6 +87,141 @@ class user_tests
         $t->assert_sql_table_create($usr_test);
         $t->assert_sql_index_create($usr_test);
         $t->assert_sql_foreign_key_create($usr_test);
+
+        $t->subheader($ts . 'log sql setup');
+        $usr_log = new user_log();
+        $t->assert_sql_table_create($usr_log);
+        $t->assert_sql_index_create($usr_log);
+        $t->assert_sql_foreign_key_create($usr_log);
+
+        $t->subheader($ts . 'log sql');
+        $usr_log = $t_usr->user_log();
+        $t->assert_sql_insert($sc, $usr_log);
+        // the counts of a request are added to the database values, so a request written at the same time is not lost
+        $usr_log_db = $t_usr->user_log_open();
+        $usr_log = clone $usr_log_db;
+        $start = (float)strtotime(test_users::TV_USER_LOG_START) + 1;
+        $usr_log->count_request(users::SYSTEM_TEST_ID, $start, $start + test_users::TV_USER_LOG_SEC, true);
+        $t->assert_sql_update($sc, $usr_log, $usr_log_db);
+        $usr_log = new user_log();
+        $since = new DateTime(test_users::TV_USER_LOG_START);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->load_sql_open($sc, users::SYSTEM_TEST_ID, $since);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->load_sql_open($sc, users::SYSTEM_TEST_ID, $since);
+        $t->assert_qp($qp, $sc->db_type);
+        // the oldest sessions are moved to the archive and removed without change log
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->load_sql_old($sc, $since, user_log::ARCHIVE_LIMIT);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->load_sql_old($sc, $since, user_log::ARCHIVE_LIMIT);
+        $t->assert_qp($qp, $sc->db_type);
+        // the sessions of the dashboard days summed per user for the users with the most server time
+        $usr_log_sum_lst = new user_log_sum_list();
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log_sum_lst->load_sql($sc, $since, def::FALLBACK_USER_LOG_DASHBOARD_TOP);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log_sum_lst->load_sql($sc, $since, def::FALLBACK_USER_LOG_DASHBOARD_TOP);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->del_sql_without_log($sc, [1, 2]);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->del_sql_without_log($sc, [1, 2]);
+        $t->assert_qp($qp, $sc->db_type);
+        // the sessions of a user are removed before the user is deleted
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_log->del_sql_by_user_without_log($sc, users::SYSTEM_TEST_ID);
+        $t->assert_qp($qp, $sc->db_type);
+        $sc->reset(sql_db::MYSQL);
+        $qp = $usr_log->del_sql_by_user_without_log($sc, users::SYSTEM_TEST_ID);
+        $t->assert_qp($qp, $sc->db_type);
+
+        $t->subheader($ts . 'log count');
+        $test_name = 'the first request starts the session with one request';
+        $usr_log = $t_usr->user_log();
+        $t->assert($test_name, $usr_log->requests, 1);
+        $test_name = '... and its milliseconds';
+        $t->assert($test_name, $usr_log->request_time, test_users::TV_USER_LOG_MS);
+        $test_name = '... but a read request is not counted as update';
+        $t->assert($test_name, $usr_log->updated, 0);
+        $test_name = '... and its time neither';
+        $t->assert($test_name, $usr_log->update_time, 0);
+        $test_name = 'a write request is counted as update';
+        $usr_log = $t_usr->user_log_open();
+        $usr_log->count_request(users::SYSTEM_TEST_ID, $start, $start + test_users::TV_USER_LOG_SEC, true);
+        $t->assert($test_name, $usr_log->updated, 1);
+        $test_name = '... with its milliseconds';
+        $t->assert($test_name, $usr_log->update_time, test_users::TV_USER_LOG_MS);
+        $test_name = '... and as the second request of the open session';
+        $t->assert($test_name, $usr_log->requests, 2);
+        $test_name = '... which keeps the start of the session';
+        $first_start = new DateTime(test_users::TV_USER_LOG_START);
+        $t->assert($test_name, $usr_log->session_start->getTimestamp(), $first_start->getTimestamp());
+        $test_name = '... but moves the end to the second request';
+        $t->assert($test_name, $usr_log->session_end->getTimestamp(), (int)($start + test_users::TV_USER_LOG_SEC));
+        // negative: a read request of the open session leaves the update count unchanged
+        $test_name = 'a read request of the open session is not counted as update';
+        $usr_log_read = $t_usr->user_log_open();
+        $usr_log_read->count_request(users::SYSTEM_TEST_ID, $start, $start + test_users::TV_USER_LOG_SEC, false);
+        $t->assert($test_name, $usr_log_read->updated, 0);
+
+        $t->subheader($ts . 'log session gap');
+        // the config.yaml gap is the same as the fallback
+        $test_name = 'a request continues the session that has ended within the configured gap';
+        $end = (float)strtotime(test_users::TV_USER_LOG_START);
+        $since = user_log::since($end);
+        $t->assert($test_name, $since->getTimestamp(), (int)$end - def::FALLBACK_USER_LOG_SESSION_GAP);
+        $test_name = '... so a session that has ended before the request is not always continued';
+        $t->assert_true($test_name, $since->getTimestamp() < (int)$end);
+
+        $t->subheader($ts . 'log switches');
+        $usr_normal = $t_usr->user_sys_normal();
+        // the counted user is the session user, so no user is loaded
+        // not user_sys_normal, because the normal profile is the ip only profile of a user without login
+        $usr_login = $t_usr->user_sys_admin();
+        $msg_login = new user_message($usr_login); // the request message of a user with login
+        $usr_ip = $t_usr->user_ip_loaded();
+        $msg_ip = new user_message($usr_ip); // the request message of a user without login
+        $all_off = $t_val->config_cache_switch(config_numbers::USER_LOG_ALLOWED_NAMES, false);
+        $ip_off = $t_val->config_cache_switch(config_numbers::IP_USER_LOG_ALLOWED_NAMES, false);
+        $test_name = 'the user log is written during the setup without config';
+        $t->assert_true($test_name, user_log::allowed($msg_login, $usr_login->id(), null));
+        $test_name = 'the user log is written if no switch is set';
+        $t->assert_true($test_name, user_log::allowed($msg_ip, $usr_ip->id(), $t_val->config_empty()));
+        $test_name = 'the user log is not written if it is switched off for all users';
+        $t->assert_false($test_name, user_log::allowed($msg_login, $usr_login->id(), $all_off));
+        $test_name = 'the user log of a user with login is written if it is switched off for ip users';
+        $t->assert_true($test_name, user_log::allowed($msg_login, $usr_login->id(), $ip_off));
+        $test_name = 'the user log of an ip user is not written if it is switched off for ip users';
+        $t->assert_false($test_name, user_log::allowed($msg_ip, $usr_ip->id(), $ip_off));
+
+        $t->subheader($ts . 'log archive');
+        $test_name = 'the archive is outside the web root by default';
+        $t->assert($test_name, user_log::archive_dir(null), rtrim(paths::USER_LOG_ARCHIVE, DIRECTORY_SEPARATOR));
+        $test_name = 'a pod without the archive path uses the default';
+        $t->assert($test_name, user_log::archive_dir($t_val->config_empty()), user_log::archive_dir(null));
+        $test_name = 'a session is archived after the default max age';
+        $max_age = new DateTime()->modify('-' . def::FALLBACK_USER_LOG_MAX_AGE_DAYS . ' days');
+        $diff = abs(user_log::archive_before(null)->getTimestamp() - $max_age->getTimestamp());
+        // a few seconds can pass between the two times
+        $t->assert_true($test_name, $diff < test_users::TV_USER_LOG_TOLERANCE_SEC);
+        $test_name = 'a session that has ended one day within the max age is not archived';
+        $young_end = new DateTime()->modify('-' . (def::FALLBACK_USER_LOG_MAX_AGE_DAYS - 1) . ' days');
+        $t->assert_false($test_name, $young_end < user_log::archive_before(null));
+
+        $t->subheader($ts . 'data user id');
+        $test_name = 'an own pod call is counted for the browsing user';
+        $t->assert($test_name, $usr_normal->data_user_id(users::SYSTEM_TEST_PARTNER_ID, true), users::SYSTEM_TEST_PARTNER_ID);
+        $test_name = 'an admin may name the data user';
+        $t->assert($test_name, $t->usr_admin->data_user_id(users::SYSTEM_TEST_PARTNER_ID), users::SYSTEM_TEST_PARTNER_ID);
+        $test_name = 'a normal user cannot name another data user';
+        $t->assert($test_name, $usr_normal->data_user_id(users::SYSTEM_TEST_PARTNER_ID), users::SYSTEM_TEST_NORMAL_ID);
+        $test_name = 'a request without data user is counted for the session user';
+        $t->assert($test_name, $usr_normal->data_user_id(0, true), users::SYSTEM_TEST_NORMAL_ID);
 
 
         $t->subheader($ts . 'sql read');
@@ -109,7 +256,7 @@ class user_tests
         $t->assert_sql_delete($sc, $usr_test, [sql_type::LOG]);
 
         $test_usr_list = new user_list($usr_test);
-        // TODO include all value tables
+        // TODO Prio 2 include all value tables
         $this->assert_sql_count_changes($t, $db_con, $test_usr_list);
         $this->assert_sql_count_user_rows($t, $db_con, $test_usr_list);
 
@@ -144,6 +291,70 @@ class user_tests
         $t->assert($test_name, $usr_core_api[json_fields::NAME] ?? '', users::TEST_USER_NAME);
         $test_name = 'the public core api json does not contain the email';
         $t->assert_false($test_name, key_exists(json_fields::EMAIL, $usr_core_api));
+        // negative: an ip user has no name, and the api message drops the empty name
+        $test_name = 'the public core api json of an ip user has no name';
+        $usr_ip_core = $t_usr->user_ip();
+        $usr_ip_core_api = json_decode($usr_ip_core->api_json_core([], $msg), true);
+        $t->assert_false($test_name, key_exists(json_fields::NAME, $usr_ip_core_api));
+        $msg->reset();
+
+        // the name of a user is exported
+        $test_name = 'export name';
+        $usr_exp = $t_usr->user_ip_loaded();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert($test_name, $exp[json_fields::NAME], users::TEST_USER_NAME);
+        $msg->reset();
+
+        // negative: an empty field is left out e.g. the missing name of an ip user
+        $test_name = 'export no empty name';
+        $usr_exp = $t_usr->user_ip();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::NAME, $exp);
+        $msg->reset();
+
+        // a user that uses the sandbox exports the flag
+        $test_name = 'export sandbox usage';
+        $usr_exp = $t_usr->sandbox_user();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_true($test_name, $exp[json_fields::USES_SANDBOX]);
+        $msg->reset();
+
+        // negative: the default false of the sandbox usage is not exported
+        $test_name = 'export no default sandbox usage';
+        $usr_exp = $t_usr->non_sandbox_user();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::USES_SANDBOX, $exp);
+        $msg->reset();
+
+        // the last used source of a user is exported as a nested object
+        $test_name = 'export last source';
+        $usr_exp = $t_usr->user_filled($t);
+        $exp = $usr_exp->export_json($msg, [], false);
+        $src_exp = $exp[json_fields::SOURCE];
+        $t->assert($test_name, $src_exp[json_fields::NAME], sources::SIB);
+        $msg->reset();
+
+        // negative: a user without last used source exports no source
+        $test_name = 'export no last source';
+        $usr_exp = $t_usr->user_ip_loaded();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::SOURCE, $exp);
+        $msg->reset();
+
+        // the last used view of a user is exported as a nested object
+        $test_name = 'export last view';
+        $usr_exp = $t_usr->user_filled($t);
+        $exp = $usr_exp->export_json($msg, [], false);
+        $msk_exp = $exp[json_fields::VIEW];
+        $t->assert($test_name, $msk_exp[json_fields::NAME], views::START_NAME);
+        $msg->reset();
+
+        // negative: a user without last used view exports no view
+        $test_name = 'export no last view';
+        $usr_exp = $t_usr->user_ip_loaded();
+        $exp = $usr_exp->export_json($msg, [], false);
+        $t->assert_key_not_exists($test_name, json_fields::VIEW, $exp);
+        $msg->reset();
 
 
         $t->subheader($ts . 'change permission');
@@ -280,6 +491,12 @@ class user_tests
         $chg_lst = $upd_usr->db_fields_changed($db_usr, $msg);
         $test_name = 'a new password hash is saved';
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_PASSWORD));
+        // negative: the stored hash set again is no change
+        $test_name = 'the stored password hash set again is not saved';
+        $same_pw_usr = $t_usr->sandbox_user();
+        $same_pw_usr->set_password_hash(user::DUMMY_PW_HASH);
+        $chg_lst_same = $same_pw_usr->db_fields_changed($db_usr, $msg);
+        $t->assert_false($test_name, $chg_lst_same->has_name(user_db::FLD_PASSWORD));
 
         // a used activation key is cleared with '' (see frontend::action_login_activate),
         // so the clearing is still detected and written
@@ -321,6 +538,139 @@ class user_tests
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_TYPE_ID));
         $test_name = 'a changed status is saved';
         $t->assert_true($test_name, $chg_lst->has_name(user_db::FLD_STATUS));
+
+
+        $t->subheader($ts . 'api mapper');
+
+        $test_name = 'the user mapper sets the name';
+        $json_usr = new user();
+        $json_usr->api_mapper(json_decode($t_usr->user_sys_normal()->api_json(), true), $msg);
+        $t->assert($test_name, $json_usr->name(), users::SYSTEM_TEST_NORMAL_NAME);
+        $msg->reset();
+
+        // negative: the profile is a critical field, so a json without it never keeps a higher profile
+        $test_name = 'the user mapper sets the normal profile if the json has none';
+        $api_json = json_decode($t_usr->user_sys_admin()->api_json(), true);
+        unset($api_json[json_fields::PROFILE_ID]);
+        $json_usr = new user();
+        $json_usr->api_mapper($api_json, $msg);
+        $t->assert($test_name, $json_usr->profile_id, user_profiles::NORMAL_ID);
+        $msg->reset();
+
+        $test_name = 'the message mapper sets the user';
+        $map_msg = new user_message();
+        $map_msg->api_mapper([json_fields::USER => json_decode($t->usr1->api_json(), true)]);
+        $t->assert($test_name, $map_msg->usr?->name(), $t->usr1->name());
+
+        // negative: a json without a user leaves the message without a user
+        $test_name = 'the message mapper leaves a missing user empty';
+        $map_msg = new user_message();
+        $map_msg->api_mapper([]);
+        $t->assert_null($test_name, $map_msg->usr?->name());
+
+
+        $t->subheader($ts . 'api json array');
+
+        // the email is sent to the user himself or an admin
+        $test_name = 'email';
+        $usr_arr = $t_usr->user_filled($t);
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::EMAIL] ?? null, users::TEST_USER_MAIL);
+        $msg->reset();
+
+        // negative: the activation key and the ip address are never sent over the api
+        $test_name = 'no activation key';
+        $usr_arr = $t_usr->user_filled($t);
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::ACTIVATION_KEY, $vars);
+        $t->assert_key_not_exists($test_name . ' and no ip', json_fields::IP_ADDR, $vars);
+        $msg->reset();
+
+        // negative: an empty field is not sent at all
+        $test_name = 'no empty email';
+        $usr_arr = $t_usr->user_add();
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert_key_not_exists($test_name, json_fields::EMAIL, $vars);
+        $msg->reset();
+
+        // the last used view of a user is sent by its id
+        $test_name = 'view id';
+        $usr_arr = $t_usr->user_filled($t);
+        $trm = new test_terms($t)->term();
+        $vars = $usr_arr->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW_ID] ?? null, views::START_ID);
+        $t->assert($test_name . ' term', $vars[json_fields::TERM_ID], $trm->id());
+        $t->assert($test_name . ' source', $vars[json_fields::SOURCE_ID] ?? null, sources::SIB_ID);
+        $msg->reset();
+
+        // negative: with the objects included the last used view is nested instead of its id
+        $test_name = 'nested view';
+        $usr_arr = $t_usr->user_filled($t);
+        $typ_lst = [api_types::INCL_VIEWS, api_types::INCL_TERMS, api_types::INCL_SOURCES];
+        $vars = $usr_arr->api_json_array($typ_lst, $msg);
+        $t->assert($test_name, $vars[json_fields::VIEW][json_fields::ID] ?? null, views::START_ID);
+        $t->assert_key_not_exists($test_name . ' without id', json_fields::VIEW_ID, $vars);
+        $t->assert_key_not_exists($test_name . ' term without id', json_fields::TERM_ID, $vars);
+        $t->assert_key_not_exists($test_name . ' source without id', json_fields::SOURCE_ID, $vars);
+        $msg->reset();
+
+        // the right level of a user profile is part of the api message
+        $test_name = 'profile right level';
+        $t_typ = new test_types($t);
+        $usr_prf = $t_typ->user_profile();
+        $vars = $usr_prf->api_json_array([], $msg);
+        $t->assert($test_name, $vars[json_fields::RIGHT_LEVEL] ?? null, user_profiles::NORMAL_LEVEL);
+        $msg->reset();
+
+        // negative: a profile without a right level sends an empty right level
+        $test_name = 'profile without right level';
+        $usr_prf = $t_typ->user_profile();
+        $usr_prf->right_level = null;
+        $vars = $usr_prf->api_json_array([], $msg);
+        $t->assert_null($test_name, $vars[json_fields::RIGHT_LEVEL] ?? null);
+        $msg->reset();
+
+        // the summed sessions of a user are sent with the user and the number of requests
+        $test_name = 'log sum requests';
+        $sum = $t_usr->log_sum();
+        $vars = $sum->api_json_array();
+        $t->assert($test_name, $vars[json_fields::REQUESTS] ?? null, test_users::TV_USER_LOG_REQUESTS);
+        $t->assert($test_name . ' user', $vars[json_fields::ID] ?? null, users::SYSTEM_TEST_ID);
+        $msg->reset();
+
+        // negative: a sum row without a user sends no user and no requests
+        $test_name = 'log sum without user';
+        $sum = $t_usr->log_sum();
+        $sum->row_mapper([]);
+        $vars = $sum->api_json_array();
+        $t->assert($test_name, $vars[json_fields::ID] ?? null, 0);
+        $t->assert($test_name . ' and no requests', $vars[json_fields::REQUESTS] ?? null, 0);
+        $msg->reset();
+
+        // the list of the summed sessions sends one entry per user
+        $test_name = 'log sum list';
+        $sum_lst = $t_usr->log_sum_list();
+        $vars = $sum_lst->api_json_array();
+        $t->assert($test_name, $vars[0][json_fields::ID] ?? null, users::SYSTEM_TEST_ID);
+        $msg->reset();
+
+        // negative: an empty list of summed sessions sends an empty list
+        $test_name = 'empty log sum list';
+        $sum_lst = $t_usr->log_sum_list_empty();
+        $vars = $sum_lst->api_json_array();
+        $t->assert($test_name, $vars, []);
+        $msg->reset();
+
+
+        $t->subheader($ts . 'log sum add');
+
+        // the summed sessions of a user are added to the list
+        $test_name = 'add a log sum';
+        $sum_lst = $t_usr->log_sum_list_empty();
+        $sum_lst->add($t_usr->log_sum());
+        $vars = $sum_lst->api_json_array();
+        $first = $vars[0];
+        $t->assert($test_name, $first[json_fields::ID], users::SYSTEM_TEST_ID);
 
 
         $t->subheader($ts . 'last used ip saved on login');
@@ -532,6 +882,23 @@ class user_tests
         $msg = $usr_chg->diff_msg($t_usr->sandbox_user());
         $t->assert_false($test_name, str_contains(
             $msg->all_message_text(), users::TEST_USER_PASSWORD_FIX_HASH));
+
+
+        $t->subheader($ts . 'debug id');
+
+        // the debug id of a loaded user shows the database id
+        $test_name = 'user with id';
+        $usr = $t_usr->user_filled_loaded($t);
+        $dsp = $usr->dsp_id();
+        $id_txt = (string)users::TEST_USER_ID;
+        $t->assert_text_contains($test_name, $dsp, $id_txt);
+
+        // negative: a user that is not yet saved has no database id
+        $test_name = 'user without id';
+        $usr = $t_usr->user_filled($t);
+        $dsp = $usr->dsp_id();
+        $id_txt = (string)users::TEST_USER_ID;
+        $t->assert_text_not_contains($test_name, $dsp, $id_txt);
 
     }
 

@@ -83,6 +83,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
@@ -184,6 +185,9 @@ class library
     // to separate two string for the human-readable format
     const string SEPARATOR = ',';
 
+    // the tables named by the singular class name, because a log is already a collection
+    const array SINGULAR_TABLES = ['user_log'];
+
     // display array truncation thresholds
     const int DSP_ALL_DEBUG = 10;  // debug level above which all entries are shown
     const int DSP_MAX = 7;         // max entries before truncation kicks in
@@ -260,6 +264,23 @@ class library
             $msg .= ', because ' . $e;
             $msg .= ' reset to now';
             log_err($msg);
+        }
+        return $result;
+    }
+
+    /**
+     * @param DateTime $time e.g. the time of the data snap of a cache entry
+     * @return bool true if the time is before the max cache age, so the cache entry needs to be refilled
+     */
+    function is_older_than_cache_max_age(DateTime $time): bool
+    {
+        $result = true;
+        $cut_time = new DateTime();
+        try {
+            $cut_time->modify($this->unquote(CACHE_MAX_AGE));
+            $result = $time < $cut_time;
+        } catch (Exception $e) {
+            log_err('cannot apply the max cache age ' . CACHE_MAX_AGE . ': ' . $e->getMessage());
         }
         return $result;
     }
@@ -1544,6 +1565,44 @@ class library
         $on = $prt[2];
         $where = $prt[4] ?? '';
         $order = $prt[6] ?? '';
+        if (str_contains($sub, ' FROM ( ')) {
+            $result = $this->sql_format_count_union($outer_tbl, $sub, $out_alias, $on);
+        } else {
+            // a sub query without a union e.g. the summed user log sessions is shown on one line
+            $result = '          FROM ' . $outer_tbl;
+            $result .= "\n" . '     LEFT JOIN (' . $sub . ') ' . $out_alias;
+            $result .= "\n" . '            ON ' . $on;
+        }
+        if ($where != '') {
+            $result .= "\n" . '         WHERE ' . $where;
+        }
+        if ($order != '') {
+            // the paging of e.g. a top list follows the order and gets an own line per clause
+            [$order, $offset] = $this->sql_split_clause($order, ' OFFSET ');
+            [$order, $limit] = $this->sql_split_clause($order, ' LIMIT ');
+            $result .= "\n" . '      ORDER BY ' . $order;
+            if ($limit != '') {
+                $result .= "\n" . '         LIMIT ' . $limit;
+            }
+            if ($offset != '') {
+                $result .= "\n" . '        OFFSET ' . $offset;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * format the from and the left join sub query of a user change count select, which sums up
+     * the union of the per-table counts, so the union is shown one table per line
+     *
+     * @param string $outer_tbl the outer table with its alias e.g. "users s"
+     * @param string $sub the content of the joined sub query without the outer brackets
+     * @param string $out_alias the alias of the joined sub query e.g. "l"
+     * @param string $on the join condition
+     * @return string the formatted from, join sub query and on lines
+     */
+    private function sql_format_count_union(string $outer_tbl, string $sub, string $out_alias, string $on): string
+    {
         // split the wrapping sum sub query into its select part and the counted union
         $from_pos = strpos($sub, ' FROM ( ');
         $sum = substr($sub, strlen('SELECT '), $from_pos - strlen('SELECT '));
@@ -1563,12 +1622,6 @@ class library
         }
         $result .= "\n" . '               GROUP BY ' . $sub_group . ' ) ' . $out_alias;
         $result .= "\n" . '            ON ' . $on;
-        if ($where != '') {
-            $result .= "\n" . '         WHERE ' . $where;
-        }
-        if ($order != '') {
-            $result .= "\n" . '      ORDER BY ' . $order;
-        }
         return $result;
     }
 
@@ -2438,7 +2491,7 @@ class library
                 $target = round($target, self::DIFF_NUM_PRECISION);
                 if ($result != $target) {
                     $msg .= 'number ' . $result . ' != ' . $target;
-                    // TODO add this message on level info
+                    // TODO Prio 3 add this message on level info
                     // } else {
                     //    $msg = 'number ' . $result . ' ≈ ' . $target;
                 }
@@ -3991,11 +4044,7 @@ class library
             }
             if ($long_text) {
                 if ($type != self::STR_DIFF_UNCHANGED) {
-                    if (is_array($diff_val[$i])) {
-                        $msg .= $this->implode_recursive(',', $diff_val[$i]);
-                    } else {
-                        $msg .= $diff_val[$i];
-                    }
+                    $msg .= $this->str_diff_part_text($diff_val[$i]);
                 }
                 if ($type != self::STR_DIFF_DEL) {
                     $diff_val_used = $diff_val[$i];
@@ -4005,7 +4054,7 @@ class library
                     $pos = $pos + strlen($diff_val_used);
                 }
             } else {
-                $msg .= $diff_val[$i];
+                $msg .= $this->str_diff_part_text($diff_val[$i]);
             }
 
             $prev_type = $type;
@@ -4064,46 +4113,17 @@ class library
         $to_keys = array_keys($to);
         $from_pos = 0;
         $to_pos = 0;
-        $to_last_match_pos = 0;
-
-        // if to is empty from is always a diff
-        if (count($to_keys) == 0) {
-            if ($from_pos < count($from)) {
-                $diff_part[] = $from_sep[$from_keys[$from_pos]];
-                $diff_type[] = self::STR_DIFF_DEL;
-                $from_pos = $from;
-            }
-        }
 
         // check if the from parts are also part of to
-        while ($from_pos < count($from)) {
-            if (!array_key_exists($to_pos, $to_keys)) {
-                $to_pos = $to_last_match_pos;
-            }
-            if (!array_key_exists($from_pos, $from_keys)) {
-                log_err($from_pos . ' does not exist in ' . $this->dsp_array($from_keys));
-            } else {
-                if (!array_key_exists($from_keys[$from_pos], $from)) {
-                    log_err($from_keys[$from_pos] . ' does not exist in ' . $this->dsp_array($from));
-                }
-            }
-            if (!array_key_exists($to_pos, $to_keys)) {
-                log_err($to_pos . ' does not exist in ' . $this->dsp_array($to_keys));
-            } else {
-                if (!array_key_exists($to_keys[$to_pos], $to)) {
-                    log_err($to_keys[$to_pos] . ' does not exist in ' . $this->dsp_array($to));
-                }
-            }
+        while ($from_pos < count($from) and $to_pos < count($to)) {
             if ($from[$from_keys[$from_pos]] == $to[$to_keys[$to_pos]]) {
                 $diff_part[] = $to_sep[$to_keys[$to_pos]];
                 $diff_type[] = self::STR_DIFF_UNCHANGED;
-                if ($to_pos < count($to)) {
-                    $to_last_match_pos = $to_pos;
-                    $to_pos++;
-                }
+                $to_pos++;
                 $from_pos++;
             } else {
-                if (is_array($from[$from_keys[$from_pos]])) {
+                // only the same entry of both e.g. the same json key is compared part by part
+                if ($this->is_same_array_entry($from, $from_keys[$from_pos], $to_keys[$to_pos])) {
                     $from_key = $from_keys[$from_pos];
                     $to_key = $to_keys[$to_pos];
                     $from_part = $from[$from_key];
@@ -4129,15 +4149,13 @@ class library
                         $to_sep_part,
                         $str_type
                     );
-                    array_walk_recursive($sub_diff[self::STR_DIFF_VAL], function ($diff, $key) use (&$diff_part) {
-                        $diff_part[$key] = $diff;
-                    });
-                    array_walk_recursive($sub_diff[self::STR_DIFF_TYP], function ($type, $key) use (&$diff_type) {
-                        $diff_type[$key] = $type;
-                    });
-                    if ($to_pos < count($to)) {
-                        $to_pos++;
+                    // appended in their order, because the keys of the sub diff start again at zero
+                    // and would overwrite the parts before, so that a part would miss its type
+                    foreach ($sub_diff[self::STR_DIFF_VAL] as $sub_pos => $sub_part) {
+                        $diff_part[] = $sub_part;
+                        $diff_type[] = $sub_diff[self::STR_DIFF_TYP][$sub_pos];
                     }
+                    $to_pos++;
                     $from_pos++;
                 } else {
                     if ($str_type == self::STR_TYPE_CODE) {
@@ -4160,6 +4178,14 @@ class library
                     }
                 }
             }
+        }
+
+        // the from parts after the last to part are not part of to
+        // and are never compared again with a to part already used
+        while ($from_pos < count($from)) {
+            $diff_part[] = $from_sep[$from_keys[$from_pos]];
+            $diff_type[] = self::STR_DIFF_DEL;
+            $from_pos++;
         }
 
         // add the parts extra in to at the end
@@ -4208,14 +4234,41 @@ class library
     }
 
     /**
-     * @param string|null $from the part of the target string that should be found in the $to string array
+     * @param string|int|float|bool|array|null $part a part of the diff e.g. a json object of a list
+     * @return string the part as text for the diff message
+     */
+    private
+    function str_diff_part_text(string|int|float|bool|array|null $part): string
+    {
+        if (is_array($part)) {
+            $result = $this->implode_recursive(',', $part);
+        } else {
+            $result = (string)$part;
+        }
+        return $result;
+    }
+
+    /**
+     * @param array $from the result string converted to an array
+     * @param int|string $from_key the key of the part of the result that differs
+     * @param int|string $to_key the key of the part of the target at the same position
+     * @return bool true if the part of the result is an array with the same key as the part of the target
+     */
+    private
+    function is_same_array_entry(array $from, int|string $from_key, int|string $to_key): bool
+    {
+        return is_array($from[$from_key]) and $from_key === $to_key;
+    }
+
+    /**
+     * @param string|array|null $from the part of the target string that should be found in the $to string array e.g. a json object
      * @param array $to the result string converted to an array
      * @param array $to_keys the array keys to the to array for the case they are not integer
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
      */
     private
-    function str_diff_list_next_match(string|null $from, array $to, array $to_keys, int $start_pos): int
+    function str_diff_list_next_match(string|array|null $from, array $to, array $to_keys, int $start_pos): int
     {
         $check_pos = $start_pos;
         $found_pos = -1;
@@ -4368,6 +4421,10 @@ class library
             $result = $this->str_split_add_sep($text, $result, $with_sep);
         } elseif ($type == self::STR_TYPE_JSON) {
             $result = json_decode($text, true);
+            // a json scalar e.g. the quoted text "sys_log" decodes to a string, which is one part
+            if (!is_array($result) and $result !== null) {
+                $result = [$text];
+            }
         } elseif ($type == self::STR_TYPE_HTML) {
             $result = preg_split("/[\s,<>]+/", $text);
             $result = $this->str_split_add_sep($text, $result, $with_sep);
@@ -4521,7 +4578,7 @@ class library
     /**
      * remove the namespace from the class name
      * same as class_to_name but without backend exceptions
-     * TODO make it static
+     * TODO Prio 2 make it static
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -4532,7 +4589,7 @@ class library
 
     /**
      * remove the namespace from the class name
-     * TODO avoid these exception
+     * TODO Prio 2 avoid these exception
      *
      * @param string $class including the namespace
      * @return string class name without the namespace
@@ -4561,7 +4618,7 @@ class library
 
     function class_to_resource_path(string $class): string
     {
-        // TODO avoid and remove exception
+        // TODO Prio 2 avoid and remove exception
         if ($class == source::class) {
             $class = ref::class;
         } elseif ($class == formula_link::class) {
@@ -4577,7 +4634,7 @@ class library
 
     /**
      * get the id field related to a class
-     * TODO avoid these exception
+     * TODO Prio 2 avoid these exception
      *
      * @param string $class including the namespace
      * @return string the name of the id field
@@ -4754,6 +4811,22 @@ class library
     }
 
     /**
+     * the single place of the exception that some tables keep the singular class name
+     * @param string $tbl_name the table name with the plural extension e.g. user_logs
+     * @return string the table name without the plural extension e.g. user_log, if listed in SINGULAR_TABLES
+     */
+    function singular_table(string $tbl_name): string
+    {
+        $result = $tbl_name;
+        $singular = substr($tbl_name, 0, -strlen(sql_db::TABLE_EXTENSION));
+        $is_plural = str_ends_with($tbl_name, sql_db::TABLE_EXTENSION);
+        if ($is_plural and in_array($singular, self::SINGULAR_TABLES, true)) {
+            $result = $singular;
+        }
+        return $result;
+    }
+
+    /**
      * remove the namespace from the class name and adds the name extension for the table
      * TODO Prio 2 check if the code_id or the name is returned and clean this up
      * @param string $class including the namespace
@@ -4770,7 +4843,7 @@ class library
             and $class != change_values_big::class) {
             $result .= sql_db::TABLE_EXTENSION;
         }
-        // TODO remove these exception
+        // TODO Prio 2 remove these exception
         if ($result == 'values_primes') {
             $result = 'values_prime';
         }
@@ -4810,6 +4883,7 @@ class library
         if ($result == 'sys_logs') {
             $result = 'sys_log';
         }
+        $result = $this->singular_table($result);
         if ($result == 'configs') {
             $result = 'config';
         }
@@ -4936,6 +5010,9 @@ class library
             case $this->class_to_name(term_view::class):
                 $result = $this->class_to_name(view::class);
                 break;
+            case $this->class_to_name(user_log::class):
+                $result = $this->class_to_name(user::class);
+                break;
             case $this->class_to_name(component_link_type::class):
             case $this->class_to_name(position_type::class):
             case $this->class_to_name(component_type::class):
@@ -4971,7 +5048,7 @@ class library
 
     /**
      * create a short string that indicates, which fields of all fields have been changed
-     * TODO combine with the sql_name_shorten function
+     * TODO Prio 2 combine with the sql_name_shorten function
      *
      * @param sql_par_field_list $fvt_lst list of fields that have been changed
      * @param array $fld_lst_all list of all fields of the given object

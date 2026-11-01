@@ -6,10 +6,33 @@ Detail for the structure rules in `CLAUDE.md` → "Structure & style".
 
 Write code a human reads at a glance. A line carries **one logical element —
 three at most**: one assignment, one call, one condition. When a line packs more,
-split it into named steps. Fewer lines is still better (don't pad a simple
-expression across many lines), so the goal is the *fewest* lines on which *each*
-line still reads at a glance — minimise lines subject to that limit, never by
-cramming.
+split it into named steps. Fewer lines are not better in themselves: one clear task
+per line beats a shorter function that the reader has to unpack. Don't pad a simple
+expression across many lines either, but never save a line by cramming.
+
+A named function is preferred to a short logical symbol: `$this->is_word()` or
+`$this->qualifies($conf_val, $val, $msg)` says what is checked, while a compound
+expression with `!==`, `::class`, `?->`, `??` or a ternary makes the reader decode
+the meaning from the symbols.
+
+Wrong — a short but dense line that combines a null check and a class compare into
+one return value:
+
+```php
+return $obj !== null and $obj::class == word::class;
+```
+
+Right — each line is one step of the check:
+
+```php
+$result = false;
+if ($this->obj() != null) {
+    if ($this->obj()::class == word::class) {
+        $result = true;
+    }
+}
+return $result;
+```
 
 Wrong — five logical elements on one line (ternary, two getters, two calls, a
 concat); the reader has to unpack it:

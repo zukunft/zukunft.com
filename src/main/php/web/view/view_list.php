@@ -102,7 +102,7 @@ class view_list extends ListBase
 
     function get_by_code_id(string $code_id): view|sandbox|IdObject|TextIdObject|CombineObject|null
     {
-        // TODO use a hash list
+        // TODO Prio 2 use a hash list
         $result = new view();
         foreach ($this->lst() as $dsp) {
             if ($dsp->code_id == $code_id) {
@@ -178,6 +178,18 @@ class view_list extends ListBase
     }
 
     /**
+     * @return array the names of the views of this list in the list order
+     */
+    function names(): array
+    {
+        $result = [];
+        foreach ($this->lst() as $msk) {
+            $result[] = $msk->name();
+        }
+        return $result;
+    }
+
+    /**
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
@@ -198,6 +210,17 @@ class view_list extends ListBase
     function name_link(array $url_arr = []): string
     {
         return implode(', ', $this->names_linked($url_arr));
+    }
+
+    /**
+     * sort the views by name like the named lists (natural and case-insensitive), so that e.g. the
+     * edit menu of the navbar does not depend on the api/db row order
+     */
+    function sort_by_name(): void
+    {
+        $sorted = $this->lst();
+        usort($sorted, fn($msk_a, $msk_b) => strnatcasecmp($msk_a->name() ?? '', $msk_b->name() ?? ''));
+        $this->set_lst($sorted);
     }
 
     /**
@@ -223,7 +246,7 @@ class view_list extends ListBase
 
     /**
      * get the default view
-     * TODO if a phrase can be ranked use the ranking view
+     * TODO Prio 2 if a phrase can be ranked use the ranking view
      * @param sandbox $sbx the object to which the default view should be found
      * @return int the view id if no view has been selected until now
      */

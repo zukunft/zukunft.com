@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        new nuclear power plant vote 2027 - Decision calculator - zukunft.com
+    </title>
+    <!--
+        Prototype of a zukunft.com "decision calculator" view for the Swiss vote of 28 February 2027
+        on the amendment of the Nuclear Energy Act (indirect counter-proposal to the Blackout initiative).
+        Self-contained: the stylesheet below replaces style_html.css and the script at the end replaces
+        calculator.js so that the page also works outside the zukunft.com server. The numbers, the
+        formulas and the sources are the ones of npp_vote_switzerland.json.
+    -->
+    <style>
+        :root {
+            --ink: #1f2a37;
+            --muted: #5b6776;
+            --line: #d9dee5;
+            --panel: #ffffff;
+            --page: #f4f6f8;
+            --accent: #0b5fff;
+            --pro: #1a7f4b;
+            --pro-bg: #e8f5ee;
+            --contra: #b3261e;
+            --contra-bg: #fbeae9;
+            --open: #8a6d00;
+            --open-bg: #fff6d6;
+            --measured: #e6eef9;
+            --assumed: #fff1cc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--ink);
+            background: var(--page);
+            line-height: 1.45;
+        }
+
+        .site-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: .5rem 1rem;
+            background: #fff;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--ink);
+            white-space: nowrap;
+        }
+
+        .site-header form {
+            flex: 1;
+            display: flex;
+            gap: .5rem;
+        }
+
+        .site-header input[type=search] {
+            flex: 1;
+            max-width: 800px;
+            padding: .4rem .6rem;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+        }
+
+        .site-header button, .btn {
+            padding: .4rem .8rem;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .main-container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .use-case header h4 {
+            font-size: 1.5rem;
+            margin: .5rem 0 .25rem;
+        }
+
+        .use-case header p {
+            margin: 0 0 1rem;
+            color: var(--muted);
+            max-width: 70rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: minmax(300px, 400px) 1fr;
+            gap: 1rem;
+            align-items: start;
+        }
+
+        @media (max-width: 860px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .panel h2 {
+            font-size: 1.05rem;
+            margin: 0 0 .75rem;
+        }
+
+        .panel h3 {
+            font-size: .95rem;
+            margin: 1rem 0 .5rem;
+        }
+
+        /* arguments */
+        .arguments {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 860px) {
+            .arguments {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .argument-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .argument-list li {
+            padding: .45rem 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .argument-list li:first-child {
+            border-top: 0;
+        }
+
+        .argument-list b {
+            display: block;
+        }
+
+        .argument-list .num {
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+
+        .argument-list .ref {
+            color: var(--muted);
+            font-size: .85em;
+        }
+
+        .pro h2 {
+            color: var(--pro);
+        }
+
+        .contra h2 {
+            color: var(--contra);
+        }
+
+        .open h2 {
+            color: var(--open);
+        }
+
+        /* fields */
+        .field {
+            margin-bottom: .8rem;
+        }
+
+        .field label {
+            display: flex;
+            justify-content: space-between;
+            gap: .5rem;
+            font-weight: 600;
+            font-size: .9rem;
+        }
+
+        .field .row {
+            display: grid;
+            grid-template-columns: 1fr 6.5rem auto;
+            gap: .5rem;
+            align-items: center;
+        }
+
+        .field input[type=range] {
+            width: 100%;
+        }
+
+        .field input[type=number], .field select {
+            width: 100%;
+            padding: .25rem .4rem;
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .field .unit {
+            color: var(--muted);
+            font-size: .85rem;
+            white-space: nowrap;
+        }
+
+        .field .hint {
+            display: block;
+            color: var(--muted);
+            font-size: .8rem;
+            margin-top: .15rem;
+        }
+
+        .tag {
+            font-size: .7rem;
+            font-weight: 500;
+            padding: .05rem .4rem;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .tag.m {
+            background: var(--measured);
+        }
+
+        .tag.a {
+            background: var(--assumed);
+        }
+
+        .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin: .25rem 0 1rem;
+        }
+
+        .presets button {
+            font-size: .8rem;
+            padding: .25rem .5rem;
+        }
+
+        details {
+            margin-top: .5rem;
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: .5rem;
+        }
+
+        /* verdict */
+        .verdict {
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid var(--line);
+        }
+
+        .verdict.yes {
+            border-color: var(--pro);
+            background: var(--pro-bg);
+        }
+
+        .verdict.no {
+            border-color: var(--contra);
+            background: var(--contra-bg);
+        }
+
+        .verdict.open {
+            border-color: var(--open);
+            background: var(--open-bg);
+        }
+
+        .verdict .headline {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 .25rem;
+        }
+
+        .verdict p {
+            margin: .25rem 0;
+        }
+
+        .verdict .meter {
+            position: relative;
+            height: 10px;
+            background: linear-gradient(90deg, var(--pro) 0 45%, #ddd 45% 55%, var(--contra) 55% 100%);
+            border-radius: 5px;
+            margin: .75rem 0 .25rem;
+        }
+
+        .verdict .needle {
+            position: absolute;
+            top: -5px;
+            width: 4px;
+            height: 20px;
+            background: var(--ink);
+            border-radius: 2px;
+        }
+
+        .verdict .scale {
+            display: flex;
+            justify-content: space-between;
+            font-size: .75rem;
+            color: var(--muted);
+        }
+
+        /* tables */
+        .scroll {
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: .92rem;
+        }
+
+        th, td {
+            padding: .35rem .5rem;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th.n, td.n {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        tr.sec td {
+            background: #f0f3f7;
+            font-weight: 600;
+        }
+
+        tr.key td {
+            font-weight: 600;
+        }
+
+        td .sub {
+            display: block;
+            font-weight: 400;
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        .pos {
+            color: var(--pro);
+        }
+
+        .neg {
+            color: var(--contra);
+        }
+
+        .notes p {
+            margin: .4rem 0;
+            font-size: .9rem;
+        }
+
+        .src ol {
+            padding-left: 1.2rem;
+            font-size: .9rem;
+        }
+
+        .site-footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: .8rem;
+            padding: 1.5rem;
+        }
+
+        .site-footer a {
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar site-header">
+    <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+        zukunft.com
+    </a>
+    <form action="/http/view.php">
+        <input type="hidden" name="m" value="107">
+        <label for="kp" class="visually-hidden" style="display:none">
+            Search
+        </label>
+        <input type="search" name="pattern" id="kp" placeholder="word or formula">
+        <button type="submit">
+            Get numbers
+        </button>
+    </form>
+</nav>
+<main class="main-container">
+    <div class="use-case">
+        <header>
+            <h4>
+                New nuclear power plants in Switzerland: the vote of 28 February 2027
+            </h4>
+            <p>
+                The Swiss electorate decides whether the ban on building new nuclear power plants (NPP), in force since
+                2018, is lifted again. Parliament passed the amendment of the Nuclear Energy Act as the indirect
+                counter-proposal to the "Blackout stoppen" initiative; the referendum against it was filed with about
+                132'000 signatures in October 2026 [1][2]. A yes only allows new plants; the build decision would follow
+                in the 2030s and a plant would run from about 2050 [3][5]. Below are the arguments of both sides with
+                their numbers, then a calculator: set your own assumptions with the sliders and see whether a new plant,
+                under these assumptions, lowers or raises the average electricity cost in 2050 - and what that suggests
+                for your vote.
+            </p>
+        </header>
+
+        <div class="arguments">
+            <section class="panel pro">
+                <h2>
+                    Arguments for lifting the ban (yes)
+                </h2>
+                <ul class="argument-list">
+                    <li>
+                        <b>
+                            Winter supply gap
+                        </b>
+                        The four existing plants deliver <span class="num">36 %</span> of Swiss electricity and almost
+                        half of the winter electricity; the last one (Leibstadt) is expected to stop around 2044, while
+                        demand rises to about <span class="num">76 TWh</span> by 2050. Without new plants the winter net
+                        import grows to <span class="num">7.5 TWh</span> in 2050; one EPR cuts it to <span class="num">3.2 TWh</span>.
+                        <span class="ref">[5]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Competitive if the construction cost stays moderate
+                        </b>
+                        With state support and financing at <span class="num">5 %</span> instead of 8 %, two of four
+                        ETH/PSI models build <span class="num">2 GW</span> at <span class="num">8'000 CHF/kW</span>, and
+                        all four build <span class="num">2.6 to 4.9 GW</span> at 5'000 CHF/kW. <span
+                            class="ref">[3]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Lower and steadier wholesale prices
+                        </b>
+                        A new plant lowers the average wholesale price by <span class="num">7 to 9 CHF/MWh</span> and
+                        dampens winter peaks of <span class="num">130 to 135 CHF/MWh</span>; the avoided price
+                        volatility, outage and shortage risks are valued at about <span
+                            class="num">520 million CHF</span> per year. <span class="ref">[5]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Generation cost in the range of renewables
+                        </b>
+                        Levelised cost 2050 of a new plant <span class="num">80 to 155 CHF/MWh</span> versus <span
+                            class="num">60 to 130 CHF/MWh</span> for rooftop PV and <span
+                            class="num">60 to 100 CHF/MWh</span> for Swiss onshore wind - before the storage, backup and
+                        grid cost that intermittent sources add. <span class="ref">[5]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Climate and land
+                        </b>
+                        <span class="num">10 to 20 g CO₂-eq/kWh</span> over the life cycle against about <span
+                            class="num">198 g</span> for today's winter import mix; about <span class="num">7'500 GWh per km²</span>
+                        and year, 54 times the density of rooftop PV. <span class="ref">[5]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Value added and jobs
+                        </b>
+                        About <span class="num">1.6 billion CHF</span> value added and <span class="num">2'900 full-time jobs</span>
+                        per year over 60 years of operation (study commissioned by economiesuisse). <span class="ref">[5]</span>
+                    </li>
+                    <li>
+                        <b>
+                            An option, not an obligation
+                        </b>
+                        Lifting the ban keeps the nuclear option open; whether a plant is built is decided later on cost
+                        and demand. <span class="ref">[3][4]</span>
+                    </li>
+                </ul>
+            </section>
+            <section class="panel contra">
+                <h2>
+                    Arguments for keeping the ban (no)
+                </h2>
+                <ul class="argument-list">
+                    <li>
+                        <b>
+                            Not competitive under present conditions
+                        </b>
+                        19 energy experts of ETH Zurich and PSI, four models: new plants are too expensive without
+                        subsidies and state-borne financing risk, even at <span class="num">5'000 to 8'000 CHF/kW</span>.
+                        At <span class="num">12'000 CHF/kW</span>, the level of recent projects in Europe and the US,
+                        three of four models build none even with support. <span class="ref">[3]</span>
+                    </li>
+                    <li>
+                        <b>
+                            14 to 43 billion CHF
+                        </b>
+                        The Swiss Academies of Sciences put the cost of one plant at <span
+                            class="num">14 billion CHF</span> (Westinghouse AP1000) or <span
+                            class="num">21 billion CHF</span> (EDF EPR) in the optimistic case, <span
+                            class="num">25</span> or <span class="num">43 billion CHF</span> if the overruns of
+                        Olkiluoto, Flamanville, Hinkley Point and Vogtle repeat. <span class="ref">[4]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Permanent subsidies
+                        </b>
+                        Even the pro study calculates a levelised cost of <span class="num">115.5 CHF/MWh</span> against
+                        a market price of <span class="num">64 CHF/MWh</span>: the market pays 55 %, the state about
+                        <span class="num">625 million CHF</span> per year. No Western new build of the last twenty years
+                        was financed without state support. <span class="ref">[5]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Too late for the gap it is meant to close
+                        </b>
+                        About <span class="num">23 years</span> from the vote to commercial operation (2050); the
+                        existing plants stop in the 2030s and 2040s. The head of the largest nuclear operator fears ten
+                        years of debate with nothing built. <span class="ref">[5][8]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Net zero is reachable without
+                        </b>
+                        All four models reach net zero 2050 with <span class="num">36 to 43 TWh</span> of solar and
+                        <span class="num">0.3 to 8.6 TWh</span> of wind; hydro and PV form three quarters of the supply.
+                        Winter imports stay in every scenario, with or without new plants. <span class="ref">[3]</span>
+                    </li>
+                    <li>
+                        <b>
+                            No cheaper electricity bill
+                        </b>
+                        The models do not show a lower energy part of the tariff with new plants than with renewables;
+                        subsidies paid through the grid surcharge raise the bill. <span class="ref">[6]</span>
+                    </li>
+                    <li>
+                        <b>
+                            Accident, waste and cluster risk
+                        </b>
+                        A residual risk and a single large unit (1.6 GW, about 16 % of demand) whose outage must be
+                        covered - the pro study leaves the risk side out; an insurance study prices the risk below
+                        0.0001 Rp/kWh, the opponents call it uninsurable. <span class="ref">[5][7]</span>
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="grid">
+            <aside class="panel">
+                <div class="inputs">
+                    <h2>
+                        Your assumptions
+                    </h2>
+                    <div class="presets">
+                        <button type="button" data-preset="eth_low"
+                                title="ETH/PSI white paper: optimistic construction cost of 5'000 CHF/kW">
+                            Optimistic (5'000 CHF/kW)
+                        </button>
+                        <button type="button" data-preset="bak_base"
+                                title="BAK Economics base case: EPR, 8'826 CHF/kW, 5 % WACC, 10 years construction">
+                            BAK base case
+                        </button>
+                        <button type="button" data-preset="eth_high"
+                                title="ETH/PSI white paper: recent European and US projects, 12'000 CHF/kW">
+                            Recent projects (12'000 CHF/kW)
+                        </button>
+                        <button type="button" data-preset="academies_high"
+                                title="Swiss Academies: 43 billion CHF for one EPR incl. financing, 17 years construction as in Olkiluoto">
+                            Academies pessimistic
+                        </button>
+                    </div>
+
+                    <div class="field">
+                        <label for="n-occ">
+                            Construction cost (overnight)
+                            <span class="tag m">measured range 5'000-12'000</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-occ" min="3000" max="20000" step="100">
+                            <input type="number" id="n-occ" value="8826" min="3000" max="20000" step="100">
+                            <span class="unit">CHF/kW</span>
+                        </div>
+                        <span class="hint">
+                                    Olkiluoto 3: 6'875 EUR/kW nominal; Flamanville 3: about 10'000 CHF/kW; BAK base case 8'826 CHF/kW incl. 11 % Swiss surcharge [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wacc">
+                            Cost of capital (WACC, real)
+                            <span class="tag m">measured 5-8 %</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wacc" min="1" max="12" step="0.5">
+                            <input type="number" id="n-wacc" value="5" min="1" max="12" step="0.5">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    8 % market rate for nuclear, 5 % if the state bears part of the risk [3]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-build">
+                            Construction time
+                            <span class="tag m">measured 10-18 a</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-build" min="5" max="20" step="1">
+                            <input type="number" id="n-build" value="10" min="5" max="20" step="1">
+                            <span class="unit">a</span>
+                        </div>
+                        <span class="hint">
+                                    Olkiluoto 3 took 18 years, Flamanville 3 about 17; BAK assumes 10 [4][5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-cap">
+                            New nuclear capacity
+                            <span class="tag m">measured 1.157-2.314 GW</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-cap" min="0.5" max="5" step="0.1">
+                            <input type="number" id="n-cap" value="1.63" min="0.5" max="5" step="0.01">
+                            <span class="unit">GW</span>
+                        </div>
+                        <span class="hint">
+                                    One EPR 1.63 GW, one AP1000 1.157 GW, two AP1000 2.314 GW [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-alt">
+                            Cost of the renewable alternative
+                            <span class="tag m">measured 60-130</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-alt" min="30" max="200" step="5">
+                            <input type="number" id="n-alt" value="80" min="30" max="200" step="5">
+                            <span class="unit">CHF/MWh</span>
+                        </div>
+                        <span class="hint">
+                                    Levelised cost 2050 of the PV and wind that would replace the nuclear kilowatt-hours: rooftop PV 50-130, wind 60-100 CHF/MWh [5]; Fraunhofer: PV 41-50, wind 43-92 EUR/MWh in Germany [9]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-sys">
+                            System cost of intermittent supply
+                            <span class="tag a">assumed 0.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-sys" min="0" max="80" step="5">
+                            <input type="number" id="n-sys" value="20" min="0" max="80" step="5">
+                            <span class="unit">CHF/MWh</span>
+                        </div>
+                        <span class="hint">
+                                    Storage, backup and grid cost per renewable MWh beyond the plant itself; no Swiss figure exists [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-sec">
+                            Value of secured winter supply
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-sec" min="0" max="200" step="10">
+                            <input type="number" id="n-sec" value="0" min="0" max="200" step="10">
+                            <span class="unit">CHF/MWh</span>
+                        </div>
+                        <span class="hint">
+                                    Per MWh of avoided winter import: 0 counts only the cost; BAK's 520 million CHF per year for 4.3 TWh is about 120 CHF/MWh [5]
+                                </span>
+                    </div>
+                </div>
+                <details>
+                    <summary>
+                        Assumptions
+                    </summary>
+                    <div class="field">
+                        <label for="n-cf">
+                            Capacity factor
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-cf" min="60" max="95" step="1">
+                            <input type="number" id="n-cf" value="85" min="60" max="95" step="1">
+                            <span class="unit">%</span>
+                        </div>
+                        <span class="hint">
+                                    Swiss plants 85-90 % historically, OECD median 88 %; BAK uses 85 % [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-life">
+                            Economic lifetime
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-life" min="30" max="80" step="5">
+                            <input type="number" id="n-life" value="60" min="30" max="80" step="5">
+                            <span class="unit">a</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="n-opex">
+                            Operating cost incl. fuel, decommissioning, waste
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-opex" min="20" max="70" step="1">
+                            <input type="number" id="n-opex" value="39.3" min="20" max="70" step="0.1">
+                            <span class="unit">CHF/MWh</span>
+                        </div>
+                        <span class="hint">
+                                    BAK: 39.3 CHF/MWh for the EPR, 37 for the AP1000; existing plants produce at 44 to 49 CHF/MWh all-in [5][10]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-idc">
+                            Interest-during-construction factor
+                            <span class="tag a">assumed 0.6</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-idc" min="0.2" max="0.6" step="0.05">
+                            <input type="number" id="n-idc" value="0.4" min="0.2" max="0.6" step="0.05">
+                            <span class="unit">share</span>
+                        </div>
+                        <span class="hint">
+                                    Share of the construction time over which the full capital is on average financed (S-curve); 0.4 reproduces BAK's 2'868 million CHF of interest [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-demand">
+                            Electricity demand 2050
+                            <span class="tag m">measured 76-90</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-demand" min="55" max="100" step="1">
+                            <input type="number" id="n-demand" value="76" min="55" max="100" step="1">
+                            <span class="unit">TWh</span>
+                        </div>
+                        <span class="hint">
+                                    Energy Perspectives 2050+ ZERO basis: 76 TWh; VSE: up to 90 TWh [4][5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wsn">
+                            Winter share of nuclear output
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wsn" min="0.4" max="0.7" step="0.01">
+                            <input type="number" id="n-wsn" value="0.55" min="0.4" max="0.7" step="0.01">
+                            <span class="unit">share</span>
+                        </div>
+                        <span class="hint">
+                                    Revisions fall into summer, so 55 % of the output is winter output (October to March) [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wsa">
+                            Winter share of the renewable alternative
+                            <span class="tag a">assumed 0.6</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wsa" min="0.2" max="0.6" step="0.01">
+                            <input type="number" id="n-wsa" value="0.3" min="0.2" max="0.6" step="0.01">
+                            <span class="unit">share</span>
+                        </div>
+                        <span class="hint">
+                                    Rooftop PV on the Swiss plateau yields about 30 % in the winter half-year; alpine PV and wind raise the share
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-pimp">
+                            Winter import price 2050
+                            <span class="tag a">assumed 0.5</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-pimp" min="50" max="250" step="5">
+                            <input type="number" id="n-pimp" value="110" min="50" max="250" step="5">
+                            <span class="unit">CHF/MWh</span>
+                        </div>
+                        <span class="hint">
+                                    Winter peaks of 130-135 CHF/MWh against an annual average of about 90 CHF/MWh in the model year 2050 without new plants [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-pexp">
+                            Summer export price 2050
+                            <span class="tag a">assumed 0.5</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-pexp" min="0" max="120" step="5">
+                            <input type="number" id="n-pexp" value="50" min="0" max="120" step="5">
+                            <span class="unit">CHF/MWh</span>
+                        </div>
+                        <span class="hint">
+                                    What the summer surplus earns abroad; low when all neighbours export PV at noon
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-mkt">
+                            Market price 2050 (real)
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-mkt" min="30" max="150" step="1">
+                            <input type="number" id="n-mkt" value="64" min="30" max="150" step="1">
+                            <span class="unit">CHF/MWh</span>
+                        </div>
+                        <span class="hint">
+                                    Axpo market simulation in prices of 2024; only used for the subsidy need, not for the verdict [5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-wimp">
+                            Winter net import 2050 without new plants
+                            <span class="tag m">measured 5.4-12.4</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-wimp" min="0" max="15" step="0.1">
+                            <input type="number" id="n-wimp" value="7.5" min="0" max="15" step="0.1">
+                            <span class="unit">TWh</span>
+                        </div>
+                        <span class="hint">
+                                    BAK balance model 7.5 TWh; the four ETH/PSI models 5.4 to 12.4 TWh [3][5]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-grid">
+                            Grid, metering and levies per kWh
+                            <span class="tag m">measured</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-grid" min="8" max="25" step="0.1">
+                            <input type="number" id="n-grid" value="15.6" min="8" max="25" step="0.1">
+                            <span class="unit">Rp/kWh</span>
+                        </div>
+                        <span class="hint">
+                                    ElCom median 2026 for an H4 household: 27.7 Rp total, of which energy 12.11 Rp [11]
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-energy">
+                            Energy tariff 2050 without new plants
+                            <span class="tag a">assumed 0.3</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-energy" min="6" max="25" step="0.1">
+                            <input type="number" id="n-energy" value="12.1" min="6" max="25" step="0.1">
+                            <span class="unit">Rp/kWh</span>
+                        </div>
+                        <span class="hint">
+                                    Taken as today's median energy tariff in real terms; only shifts the absolute level, not the difference
+                                </span>
+                    </div>
+                    <div class="field">
+                        <label for="n-thr">
+                            Decision threshold
+                            <span class="tag a">assumed</span>
+                        </label>
+                        <div class="row">
+                            <input type="range" id="r-thr" min="0" max="1" step="0.05">
+                            <input type="number" id="n-thr" value="0.25" min="0" max="1" step="0.05">
+                            <span class="unit">Rp/kWh</span>
+                        </div>
+                        <span class="hint">
+                                    Below this difference the cost argument is called undecided and the vote should rest on the other arguments
+                                </span>
+                    </div>
+                </details>
+            </aside>
+
+            <section class="panel">
+                <div class="verdict open" id="verdict">
+                    <p class="headline" id="verdict-headline">
+                        Undecided on cost
+                    </p>
+                    <p id="verdict-text">
+                    </p>
+                    <div class="meter">
+                        <div class="needle" id="verdict-needle" style="left: 50%"></div>
+                    </div>
+                    <div class="scale">
+                        <span>new plant cheaper: vote yes</span>
+                        <span>-1 ... 0 ... +1 Rp/kWh</span>
+                        <span>new plant dearer: vote no</span>
+                    </div>
+                    <p class="sub" id="verdict-note">
+                        The vote lifts the ban only; the build decision would follow in the 2030s. A yes on cost grounds
+                        therefore means: keep the option, because under your assumptions it would pay off.
+                    </p>
+                </div>
+
+                <h2>
+                    Main results for the year 2050
+                </h2>
+                <div class="scroll">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>
+                                Result
+                            </th>
+                            <th class="n">
+                                with new plant
+                            </th>
+                            <th class="n">
+                                without new plant
+                            </th>
+                            <th class="n">
+                                difference
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="sec">
+                            <td colspan="4">
+                                New nuclear plant
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Annual production
+                            </td>
+                            <td class="n" id="res-production"></td>
+                            <td class="n">0 TWh</td>
+                            <td class="n" id="res-production-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Investment incl. interest during construction
+                            </td>
+                            <td class="n" id="res-capex"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Levelised cost of electricity
+                                <span class="sub" id="res-lcoe-sub">
+                                                capital + operation
+                                            </span>
+                            </td>
+                            <td class="n" id="res-lcoe"></td>
+                            <td class="n" id="res-alt-lcoe"></td>
+                            <td class="n" id="res-lcoe-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Subsidy need above the market price
+                            </td>
+                            <td class="n" id="res-subsidy"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="sec">
+                            <td colspan="4">
+                                Winter balance
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Winter net import
+                            </td>
+                            <td class="n" id="res-wimp-with"></td>
+                            <td class="n" id="res-wimp-without"></td>
+                            <td class="n" id="res-wimp-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Net value of the shifted trade
+                                <span class="sub">
+                                                avoided winter imports minus lost summer exports
+                                            </span>
+                            </td>
+                            <td class="n" id="res-trade"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Value of secured winter supply
+                            </td>
+                            <td class="n" id="res-security"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        <tr class="sec">
+                            <td colspan="4">
+                                Cost for the consumers
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Annual cost of the compared kilowatt-hours
+                                <span class="sub">
+                                                generation, trade effect and security value
+                                            </span>
+                            </td>
+                            <td class="n" id="res-cost-with"></td>
+                            <td class="n" id="res-cost-without"></td>
+                            <td class="n" id="res-cost-diff"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Average electricity cost
+                                <span class="sub">
+                                                energy part, over all consumption
+                                            </span>
+                            </td>
+                            <td class="n" id="res-energy-with"></td>
+                            <td class="n" id="res-energy-without"></td>
+                            <td class="n" id="res-energy-diff"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Household price
+                                <span class="sub">
+                                                energy + grid + levies, H4 profile
+                                            </span>
+                            </td>
+                            <td class="n" id="res-price-with"></td>
+                            <td class="n" id="res-price-without"></td>
+                            <td class="n" id="res-price-diff"></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Household bill at 4'500 kWh
+                            </td>
+                            <td class="n" id="res-bill-with"></td>
+                            <td class="n" id="res-bill-without"></td>
+                            <td class="n" id="res-bill-diff"></td>
+                        </tr>
+                        <tr class="key">
+                            <td>
+                                Break-even construction cost
+                                <span class="sub">
+                                                at which both options cost the same
+                                            </span>
+                            </td>
+                            <td class="n" id="res-breakeven"></td>
+                            <td class="n"></td>
+                            <td class="n"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>
+                    Sensitivity: levelised cost of the new plant and verdict
+                </h3>
+                <div class="scroll">
+                    <table id="sensitivity">
+                        <thead>
+                        <tr>
+                            <th>
+                                Construction cost
+                            </th>
+                            <th class="n">
+                                WACC 3 %
+                            </th>
+                            <th class="n">
+                                WACC 5 %
+                            </th>
+                            <th class="n">
+                                WACC 8 %
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="sensitivity-body">
+                        </tbody>
+                    </table>
+                </div>
+                <p class="hint">
+                    Each cell: levelised cost in CHF/MWh and the sign of the verdict with all other assumptions as set
+                    on the left (green: new plant cheaper, red: dearer, grey: within the threshold).
+                </p>
+
+                <details>
+                    <summary>
+                        Formulas and sources
+                    </summary>
+                    <div class="more">
+                        <div class="notes">
+                            <p>
+                                <b>
+                                    annual production formula
+                                </b>
+                                the electricity of the new plant: the capacity times the capacity factor times 8760
+                                hours; GW times hours gives GWh, divided by 1000 TWh
+                            </p>
+                            <p>
+                                <b>
+                                    investment formula
+                                </b>
+                                the overnight construction cost per kW times the capacity, plus the interest during
+                                construction: the overnight cost times the cost of capital times the construction time
+                                times the interest-during-construction factor (the share of the construction time over
+                                which the capital is on average outstanding, 0.4 for an S-curve of the payments)
+                            </p>
+                            <p>
+                                <b>
+                                    annuity factor formula
+                                </b>
+                                the share of the investment to be recovered each year: r / (1 - (1 + r)^-n) with the
+                                cost of capital r and the lifetime n in years; the only formula of this page that needs
+                                a power
+                            </p>
+                            <p>
+                                <b>
+                                    levelised cost formula
+                                </b>
+                                the investment times the annuity factor divided by the annual production, plus the
+                                operating cost per MWh (personnel, maintenance, fuel, decommissioning fund and waste
+                                fund)
+                            </p>
+                            <p>
+                                <b>
+                                    subsidy need formula
+                                </b>
+                                what the market does not pay: the annual production times the levelised cost minus the
+                                market price, zero if the plant covers its cost; this is the amount a contract for
+                                difference or a grid surcharge would carry
+                            </p>
+                            <p>
+                                <b>
+                                    alternative cost formula
+                                </b>
+                                the cost of the same kilowatt-hours from the renewable alternative: the levelised cost
+                                of PV and wind plus the system cost of intermittent supply (storage, backup, grid)
+                            </p>
+                            <p>
+                                <b>
+                                    shifted trade formula
+                                </b>
+                                the nuclear output has a higher winter share than the renewable output, so the plant
+                                replaces winter imports and gives up summer exports of the same amount: the annual
+                                production times the difference of the winter shares is the shifted energy; its value is
+                                the shifted energy times the winter import price minus the shifted energy times the
+                                summer export price
+                            </p>
+                            <p>
+                                <b>
+                                    winter net import formula
+                                </b>
+                                the winter net import with the new plant: the winter net import without it minus the
+                                shifted energy
+                            </p>
+                            <p>
+                                <b>
+                                    security value formula
+                                </b>
+                                the value of the secured winter supply: the shifted energy times the value per MWh set
+                                by the user; zero if only the cost counts
+                            </p>
+                            <p>
+                                <b>
+                                    cost difference formula
+                                </b>
+                                the annual cost of the scenario with the new plant minus the scenario without: the
+                                production times the levelised cost, minus the production times the alternative cost,
+                                minus the value of the shifted trade, minus the security value; a negative difference
+                                means the new plant is cheaper
+                            </p>
+                            <p>
+                                <b>
+                                    average cost difference formula
+                                </b>
+                                the cost difference spread over all consumption: the annual cost difference divided by
+                                the electricity demand; million CHF per TWh equals 0.1 Rp per kWh
+                            </p>
+                            <p>
+                                <b>
+                                    household price formula
+                                </b>
+                                the energy tariff plus grid, metering and levies; the energy tariff with the new plant
+                                is the energy tariff without it plus the average cost difference; the bill is the price
+                                times 4'500 kWh
+                            </p>
+                            <p>
+                                <b>
+                                    break-even construction cost formula
+                                </b>
+                                the overnight cost at which the cost difference is zero: the levelised cost that makes
+                                both options equal (the alternative cost plus the trade and security value per nuclear
+                                MWh) minus the operating cost, divided by the capital cost per MWh of one CHF per kW
+                            </p>
+                            <p>
+                                <b>
+                                    verdict formula
+                                </b>
+                                yes if the average cost difference is below minus the threshold, no if it is above plus
+                                the threshold, undecided in between; the threshold is an assumption of the reader
+                            </p>
+                            <p>
+                                <b>
+                                    model limits
+                                </b>
+                                annual balance in prices of 2024 for one year of operation around 2050, no hourly
+                                dispatch, no learning or escalation of costs over time, no construction delay beyond the
+                                construction time set, no risk cost, no CO₂ price, no grid expansion difference between
+                                central and decentral supply; the ETH/PSI models and the BAK balance model are the
+                                places to look for these effects
+                            </p>
+                        </div>
+                        <div class="src">
+                            <h2>
+                                Sources
+                            </h2>
+                            <ol>
+                                <li>
+                                    <a href="https://www.srf.ch/news/schweiz/diskurs-um-akw-neubauten-initiative-blackout-stoppen-ist-vorerst-vom-tisch">
+                                        SRF, June 2026: "Blackout stoppen" initiative conditionally withdrawn, vote on
+                                        the counter-proposal expected on 28 February 2027
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.20min.ch/story/132-000-unterschriften-schweiz-stimmt-im-februar-ueber-akw-neubauverbot-ab-103645222">
+                                        20 Minuten, October 2026: referendum filed with 131'793 signatures
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://doi.org/10.3929/ethz-c-000801809">
+                                        Bardow A. et al., Nuclear Power and the Future Swiss Energy System: A
+                                        Techno-Economic Modelling Analysis, joint white paper ETH Zurich and PSI, 29
+                                        June 2026, DOI 10.3929/ethz-c-000801809
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.suedostschweiz.ch/schweiz-und-welt/14-bis-43-milliarden-franken-so-teuer-waere-ein-neues-schweizer-akw-2129904">
+                                        Swiss Academies of Arts and Sciences, report of 21 August 2026 on the cost of a
+                                        new plant, as reported by sda
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://backend.economiesuisse.ch/sites/default/files/2026-07/BAK_Economics_ecnoomiesuisse_Impact-Analyse_KKW-Ersatzneubau.pdf">
+                                        BAK Economics, Volkswirtschaftliche Auswirkungen eines Ersatzneubaus der
+                                        Schweizer Kernkraftwerke, study commissioned by economiesuisse, July 2026
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://energiestiftung.ch/files/energiestiftung/Medienmitteilungen/Beilagen/20260629_Fact-Sheet_ETH-Studie_AKW-Kosten.pdf">
+                                        Schweizerische Energie-Stiftung SES, fact sheet on the ETH white paper, 29 June
+                                        2026
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://sses.ch/wp-content/uploads/SSES-Positionspapier-AKW_v08.pdf">
+                                        SSES position paper on nuclear power, March 2025
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.srf.ch/news/schweiz/axpo-studie-zur-energiepolitik-axpo-chef-ein-neues-kernkraftwerk-ist-im-bau-sehr-teuer">
+                                        SRF, 25 March 2026: Axpo CEO on the Axpo energy report
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://faktenfackel.de/faktenchecks/politik/energie/akw-fast-gratis-manera">
+                                        Fraunhofer ISE levelised cost 2024 as cited by Faktenfackel, July 2026
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.nuklearforum.ch/de/stromzukunft/wirtschaftlichkeit">
+                                        Nuklearforum: production cost of Leibstadt 2025 (4.9 Rp/kWh) and Gösgen 2024
+                                        (4.44 Rp/kWh)
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://www.admin.ch/de/newnsb/8nuE_fvwnfqCu8OHNOwKu">
+                                        ElCom, September 2025: median tariff 2026 of an H4 household 27.7 Rp/kWh, energy
+                                        12.11 Rp/kWh
+                                    </a>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </details>
+
+                <script type="application/json" id="calc-data">
+                    {
+                        "inputs": {
+                            "occ": {
+                                "unit": "CHF/kW",
+                                "default": 8826,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "wacc": {
+                                "unit": "percent",
+                                "default": 5,
+                                "quality": "measured",
+                                "source": 3
+                            },
+                            "build": {
+                                "unit": "a",
+                                "default": 10,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "cap": {
+                                "unit": "GW",
+                                "default": 1.63,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "alt": {
+                                "unit": "CHF/MWh",
+                                "default": 80,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "sys": {
+                                "unit": "CHF/MWh",
+                                "default": 20,
+                                "quality": "assumed",
+                                "confidence": 0.4
+                            },
+                            "sec": {
+                                "unit": "CHF/MWh",
+                                "default": 0,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "cf": {
+                                "unit": "percent",
+                                "default": 85,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "life": {
+                                "unit": "a",
+                                "default": 60,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "opex": {
+                                "unit": "CHF/MWh",
+                                "default": 39.3,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "idc": {
+                                "unit": "share",
+                                "default": 0.4,
+                                "quality": "assumed",
+                                "confidence": 0.6
+                            },
+                            "demand": {
+                                "unit": "TWh",
+                                "default": 76,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "wsn": {
+                                "unit": "share",
+                                "default": 0.55,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "wsa": {
+                                "unit": "share",
+                                "default": 0.3,
+                                "quality": "assumed",
+                                "confidence": 0.6
+                            },
+                            "pimp": {
+                                "unit": "CHF/MWh",
+                                "default": 110,
+                                "quality": "assumed",
+                                "confidence": 0.5
+                            },
+                            "pexp": {
+                                "unit": "CHF/MWh",
+                                "default": 50,
+                                "quality": "assumed",
+                                "confidence": 0.5
+                            },
+                            "mkt": {
+                                "unit": "CHF/MWh",
+                                "default": 64,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "wimp": {
+                                "unit": "TWh",
+                                "default": 7.5,
+                                "quality": "measured",
+                                "source": 5
+                            },
+                            "grid": {
+                                "unit": "Rp/kWh",
+                                "default": 15.6,
+                                "quality": "measured",
+                                "source": 11
+                            },
+                            "energy": {
+                                "unit": "Rp/kWh",
+                                "default": 12.1,
+                                "quality": "assumed",
+                                "confidence": 0.3
+                            },
+                            "thr": {
+                                "unit": "Rp/kWh",
+                                "default": 0.25,
+                                "quality": "assumed"
+                            }
+                        },
+                        "presets": {
+                            "eth_low": {
+                                "occ": 5000,
+                                "wacc": 5,
+                                "build": 8
+                            },
+                            "bak_base": {
+                                "occ": 8826,
+                                "wacc": 5,
+                                "build": 10,
+                                "cap": 1.63,
+                                "cf": 85,
+                                "life": 60,
+                                "opex": 39.3
+                            },
+                            "eth_high": {
+                                "occ": 12000,
+                                "wacc": 5,
+                                "build": 12
+                            },
+                            "academies_high": {
+                                "occ": 19500,
+                                "wacc": 5,
+                                "build": 17,
+                                "cap": 1.63
+                            }
+                        },
+                        "format": {
+                            "dec_point": ".",
+                            "thousand_sep": "'",
+                            "unit_sep": " ",
+                            "positive": "pos",
+                            "negative": "neg"
+                        }
+                    }
+                </script>
+                <script>
+                    (function () {
+                        "use strict";
+
+                        var calc_data = JSON.parse(document.getElementById("calc-data").textContent);
+                        var input_ids = Object.keys(calc_data.inputs);
+                        var format = calc_data.format;
+
+                        function read_number(id) {
+                            var field = document.getElementById("n-" + id);
+                            var result = parseFloat(field.value);
+                            if (isNaN(result)) {
+                                result = calc_data.inputs[id]["default"];
+                            }
+                            return result;
+                        }
+
+                        function read_inputs() {
+                            var result = {};
+                            var i;
+                            for (i = 0; i < input_ids.length; i++) {
+                                result[input_ids[i]] = read_number(input_ids[i]);
+                            }
+                            return result;
+                        }
+
+                        function annuity_factor(rate, years) {
+                            var result;
+                            if (rate <= 0) {
+                                result = 1 / years;
+                            } else {
+                                var discount = Math.pow(1 + rate, -years);
+                                result = rate / (1 - discount);
+                            }
+                            return result;
+                        }
+
+                        function capital_cost_per_mwh(occ, rate, build, idc, cf, life) {
+                            // CHF per MWh of capital cost for an overnight cost of occ CHF per kW
+                            var idc_factor = 1 + rate * build * idc;
+                            var investment_per_kw = occ * idc_factor;
+                            var annual_capital_per_kw = investment_per_kw * annuity_factor(rate, life);
+                            var annual_kwh_per_kw = cf * 8760;
+                            var result = annual_capital_per_kw / annual_kwh_per_kw * 1000;
+                            return result;
+                        }
+
+                        function calculate(inp) {
+                            var r = {};
+                            var rate = inp.wacc / 100;
+                            var cf = inp.cf / 100;
+                            r.production = inp.cap * cf * 8760 / 1000;
+                            r.idc_factor = 1 + rate * inp.build * inp.idc;
+                            r.capex = inp.occ * inp.cap * 1000000 * r.idc_factor / 1000000000;
+                            r.annuity = annuity_factor(rate, inp.life);
+                            r.capital_per_mwh = capital_cost_per_mwh(inp.occ, rate, inp.build, inp.idc, cf, inp.life);
+                            r.lcoe = r.capital_per_mwh + inp.opex;
+                            r.subsidy = r.production * Math.max(0, r.lcoe - inp.mkt);
+                            r.alt_cost = inp.alt + inp.sys;
+                            r.shifted = r.production * (inp.wsn - inp.wsa);
+                            r.trade = r.shifted * inp.pimp - r.shifted * inp.pexp;
+                            r.security = r.shifted * inp.sec;
+                            r.wimp_with = inp.wimp - r.shifted;
+                            r.cost_with = r.production * r.lcoe;
+                            r.cost_without = r.production * r.alt_cost + r.trade + r.security;
+                            r.cost_diff = r.cost_with - r.cost_without;
+                            r.avg_diff_rp = r.cost_diff / inp.demand / 10;
+                            r.energy_without = inp.energy;
+                            r.energy_with = inp.energy + r.avg_diff_rp;
+                            r.price_without = r.energy_without + inp.grid;
+                            r.price_with = r.energy_with + inp.grid;
+                            r.bill_without = r.price_without * 4500 / 100;
+                            r.bill_with = r.price_with * 4500 / 100;
+                            var lcoe_even = r.alt_cost + (inp.wsn - inp.wsa) * (inp.pimp - inp.pexp + inp.sec);
+                            var capital_per_mwh_per_chf = capital_cost_per_mwh(1, rate, inp.build, inp.idc, cf, inp.life);
+                            r.breakeven_occ = (lcoe_even - inp.opex) / capital_per_mwh_per_chf;
+                            if (r.avg_diff_rp < -inp.thr) {
+                                r.verdict = "yes";
+                            } else if (r.avg_diff_rp > inp.thr) {
+                                r.verdict = "no";
+                            } else {
+                                r.verdict = "open";
+                            }
+                            return r;
+                        }
+
+                        function fmt(number, decimals) {
+                            var fixed = Math.abs(number).toFixed(decimals);
+                            var parts = fixed.split(".");
+                            var int_part = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, format.thousand_sep);
+                            var result = int_part;
+                            if (parts.length > 1) {
+                                result = result + format.dec_point + parts[1];
+                            }
+                            if (number < 0) {
+                                result = "-" + result;
+                            }
+                            return result;
+                        }
+
+                        function fmt_unit(number, decimals, unit) {
+                            var result = fmt(number, decimals) + format.unit_sep + unit;
+                            return result;
+                        }
+
+                        function fmt_signed(number, decimals, unit) {
+                            var cls = format.positive;
+                            var sign = "+";
+                            if (number < 0) {
+                                cls = format.negative;
+                                sign = "";
+                            }
+                            // for a cost difference a negative number is the good case for the yes side
+                            var result = "<span class=\"" + cls + "\">" + sign + fmt_unit(number, decimals, unit) + "</span>";
+                            return result;
+                        }
+
+                        function set_text(id, html) {
+                            document.getElementById(id).innerHTML = html;
+                        }
+
+                        function render(inp, r) {
+                            set_text("res-production", fmt_unit(r.production, 2, "TWh"));
+                            set_text("res-production-diff", fmt_unit(r.production, 2, "TWh"));
+                            set_text("res-capex", fmt_unit(r.capex, 1, "billion CHF"));
+                            set_text("res-lcoe", fmt_unit(r.lcoe, 1, "CHF/MWh"));
+                            set_text("res-lcoe-sub", fmt(r.capital_per_mwh, 1) + " capital + " + fmt(inp.opex, 1) + " operation");
+                            set_text("res-alt-lcoe", fmt_unit(r.alt_cost, 1, "CHF/MWh"));
+                            set_text("res-lcoe-diff", fmt_signed(r.lcoe - r.alt_cost, 1, "CHF/MWh"));
+                            set_text("res-subsidy", fmt_unit(r.subsidy, 0, "million CHF/a"));
+                            set_text("res-wimp-with", fmt_unit(r.wimp_with, 1, "TWh"));
+                            set_text("res-wimp-without", fmt_unit(inp.wimp, 1, "TWh"));
+                            set_text("res-wimp-diff", fmt_signed(-r.shifted, 1, "TWh"));
+                            set_text("res-trade", fmt_unit(r.trade, 0, "million CHF/a"));
+                            set_text("res-security", fmt_unit(r.security, 0, "million CHF/a"));
+                            set_text("res-cost-with", fmt_unit(r.cost_with, 0, "million CHF/a"));
+                            set_text("res-cost-without", fmt_unit(r.cost_without, 0, "million CHF/a"));
+                            set_text("res-cost-diff", fmt_signed(r.cost_diff, 0, "million CHF/a"));
+                            set_text("res-energy-with", fmt_unit(r.energy_with, 2, "Rp/kWh"));
+                            set_text("res-energy-without", fmt_unit(r.energy_without, 2, "Rp/kWh"));
+                            set_text("res-energy-diff", fmt_signed(r.avg_diff_rp, 2, "Rp/kWh"));
+                            set_text("res-price-with", fmt_unit(r.price_with, 2, "Rp/kWh"));
+                            set_text("res-price-without", fmt_unit(r.price_without, 2, "Rp/kWh"));
+                            set_text("res-price-diff", fmt_signed(r.avg_diff_rp, 2, "Rp/kWh"));
+                            set_text("res-bill-with", fmt_unit(r.bill_with, 0, "CHF/a"));
+                            set_text("res-bill-without", fmt_unit(r.bill_without, 0, "CHF/a"));
+                            set_text("res-bill-diff", fmt_signed(r.bill_with - r.bill_without, 0, "CHF/a"));
+                            set_text("res-breakeven", fmt_unit(r.breakeven_occ, 0, "CHF/kW"));
+                            render_verdict(inp, r);
+                            render_sensitivity(inp);
+                        }
+
+                        function render_verdict(inp, r) {
+                            var box = document.getElementById("verdict");
+                            var headline;
+                            var text;
+                            var diff = fmt(Math.abs(r.avg_diff_rp), 2);
+                            var bill = fmt(Math.abs(r.bill_with - r.bill_without), 0);
+                            if (r.verdict === "yes") {
+                                headline = "Yes - under your assumptions a new plant lowers the cost";
+                                text = "The electricity of the new plant costs " + fmt(r.lcoe, 0) + " CHF/MWh; the renewable alternative with its system cost and the shifted winter trade cost more. The average electricity cost falls by " + diff + " Rp/kWh, an H4 household saves about " + bill + " CHF per year.";
+                            } else if (r.verdict === "no") {
+                                headline = "No - under your assumptions a new plant raises the cost";
+                                text = "The electricity of the new plant costs " + fmt(r.lcoe, 0) + " CHF/MWh; the renewable alternative with its system cost and the shifted winter trade cost less. The average electricity cost rises by " + diff + " Rp/kWh, an H4 household pays about " + bill + " CHF more per year.";
+                            } else {
+                                headline = "Undecided on cost - decide on the other arguments";
+                                text = "The difference of " + fmt(r.avg_diff_rp, 2) + " Rp/kWh is within your threshold of " + fmt(inp.thr, 2) + " Rp/kWh: the cost argument does not settle the vote; weigh supply security, risk, waste, land and timing instead. The break-even construction cost is " + fmt(r.breakeven_occ, 0) + " CHF/kW.";
+                            }
+                            box.className = "verdict " + r.verdict;
+                            set_text("verdict-headline", headline);
+                            set_text("verdict-text", text);
+                            var position = 50 + r.avg_diff_rp * 50;
+                            position = Math.max(1, Math.min(99, position));
+                            document.getElementById("verdict-needle").style.left = position + "%";
+                        }
+
+                        function render_sensitivity(inp) {
+                            var occ_levels = [5000, 8000, 8826, 12000, 16000];
+                            var wacc_levels = [3, 5, 8];
+                            var html = "";
+                            var i;
+                            var j;
+                            for (i = 0; i < occ_levels.length; i++) {
+                                html = html + "<tr><td>" + fmt(occ_levels[i], 0) + " CHF/kW</td>";
+                                for (j = 0; j < wacc_levels.length; j++) {
+                                    var scenario = Object.assign({}, inp);
+                                    scenario.occ = occ_levels[i];
+                                    scenario.wacc = wacc_levels[j];
+                                    var res = calculate(scenario);
+                                    var cls = "";
+                                    if (res.verdict === "yes") {
+                                        cls = "pos";
+                                    } else if (res.verdict === "no") {
+                                        cls = "neg";
+                                    }
+                                    html = html + "<td class=\"n\"><span class=\"" + cls + "\">" + fmt(res.lcoe, 0) + " (" + fmt_signed_plain(res.avg_diff_rp) + ")</span></td>";
+                                }
+                                html = html + "</tr>";
+                            }
+                            set_text("sensitivity-body", html);
+                        }
+
+                        function fmt_signed_plain(number) {
+                            var result = fmt(number, 2);
+                            if (number > 0) {
+                                result = "+" + result;
+                            }
+                            return result;
+                        }
+
+                        function sync_from_number(id) {
+                            var number = document.getElementById("n-" + id);
+                            var range = document.getElementById("r-" + id);
+                            range.value = number.value;
+                        }
+
+                        function sync_from_range(id) {
+                            var number = document.getElementById("n-" + id);
+                            var range = document.getElementById("r-" + id);
+                            number.value = range.value;
+                        }
+
+                        function recalculate() {
+                            var inp = read_inputs();
+                            var r = calculate(inp);
+                            render(inp, r);
+                        }
+
+                        function apply_preset(name) {
+                            var preset = calc_data.presets[name];
+                            var keys = Object.keys(preset);
+                            var i;
+                            for (i = 0; i < keys.length; i++) {
+                                document.getElementById("n-" + keys[i]).value = preset[keys[i]];
+                                sync_from_number(keys[i]);
+                            }
+                            recalculate();
+                        }
+
+                        function bind() {
+                            var i;
+                            for (i = 0; i < input_ids.length; i++) {
+                                (function (id) {
+                                    var number = document.getElementById("n-" + id);
+                                    var range = document.getElementById("r-" + id);
+                                    sync_from_number(id);
+                                    range.addEventListener("input", function () {
+                                        sync_from_range(id);
+                                        recalculate();
+                                    });
+                                    number.addEventListener("input", function () {
+                                        sync_from_number(id);
+                                        recalculate();
+                                    });
+                                }(input_ids[i]));
+                            }
+                            var buttons = document.querySelectorAll("[data-preset]");
+                            for (i = 0; i < buttons.length; i++) {
+                                (function (button) {
+                                    button.addEventListener("click", function () {
+                                        apply_preset(button.getAttribute("data-preset"));
+                                    });
+                                }(buttons[i]));
+                            }
+                        }
+
+                        bind();
+                        recalculate();
+                    }());
+                </script>
+            </section>
+        </div>
+    </div>
+</main>
+<footer class="site-footer">
+    <p>
+        <a href="/http/about.php">
+            About
+        </a>
+        &middot;
+        <a href="/http/privacy_policy.html">
+            Privacy Policy
+        </a>
+        &middot;
+        All structured data is available under the
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+            Creative Commons CC0
+        </a>
+        Licence unless otherwise stated and the
+        <a href="https://github.com/zukunft/zukunft.com">
+            program code
+        </a>
+        of this version 0.0.3 under the
+        <a href="https://www.gnu.org/licenses/agpl.html">
+            AGPL3
+        </a>
+        Licence.
+    </p>
+</footer>
+</body>
+</html>

@@ -44,6 +44,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
+include_once paths::MODEL_CONST . 'def.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -52,10 +53,15 @@ include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'server_guard.php';
 include_once paths::MODEL_HELPER . 'system_object.php';
 include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_log.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
@@ -64,6 +70,7 @@ include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
@@ -72,10 +79,15 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\server_guard;
 use Zukunft\ZukunftCom\main\php\cfg\helper\system_object;
 use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
 use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
@@ -130,6 +142,7 @@ class application
         server_guard::enforce();
 
         // link to database
+        $sys->times->switch(system_time_type::DB_OPEN);
         $db_con = new sql_db;
         $db_con->db_type = SQL_DB_TYPE;
         $db_con->open();
@@ -139,6 +152,7 @@ class application
 
         // preload all types, with one database read from the cached types json when available
         // or with one select per type list if the cache is missing or outdated
+        $sys->times->switch(system_time_type::LOAD_TYPES);
         $sys->typ_lst->load_cached($db_con, $msg);
 
         $this->load_system_config($msg);
@@ -147,6 +161,8 @@ class application
         global $cfg;
         $sys->typ_lst->reload_if_cache_denied($db_con, $msg, $cfg->cache_allowed(db_cache_types::TYPES));
 
+        // the rest of the request is the work of the api controller
+        $sys->times->switch(system_time_type::API_CTRL);
         return $db_con;
     }
 
@@ -169,9 +185,13 @@ class application
 
         $code_name = 'api/' . $code_name;
         $sys = new system_object($code_name);
+        // the includes of the api script are done before the timing starts
+        $sys->times->add_script_loading(server_guard::request_start_time(), $sys->start_time);
         // show the main processing steps from '&debug=9' upward (url_var::DEBUG_LEVEL_MAIN_STEP)
         // to see the request lifecycle without the message flood of the levels above
         log_debug('start script ' . $code_name, url_var::DEBUG_LEVEL_MAIN_STEP);
+        // without a section the time of a step is not counted, so a slow request would not show it
+        $sys->times->switch(system_time_type::INIT);
 
         // resume session (based on cookies); harden the api entry like the html frontend bootstrap:
         // upgrade a plain-http request to https (prod/test), harden the session cookie before it is
@@ -190,6 +210,7 @@ class application
         server_guard::enforce();
 
         // link to database
+        $sys->times->switch(system_time_type::DB_OPEN);
         $db_con = new sql_db;
         $db_con->db_type = SQL_DB_TYPE;
         $db_con->open();
@@ -201,6 +222,7 @@ class application
 
         // preload all types, with one database read from the cached types json when available
         // or with one select per type list if the cache is missing or outdated
+        $sys->times->switch(system_time_type::LOAD_TYPES);
         $sys->load_type_lists_cached($db_con, $msg);
 
         $this->load_system_config($msg);
@@ -209,6 +231,8 @@ class application
         global $cfg;
         $sys->typ_lst->reload_if_cache_denied($db_con, $msg, $cfg->cache_allowed(db_cache_types::TYPES));
 
+        // the rest of the request is the work of the api controller
+        $sys->times->switch(system_time_type::API_CTRL);
         return $db_con;
     }
 
@@ -242,6 +266,7 @@ class application
 
         // writing the end time is always done by a system user
         $this->write_time($db_con, $msg);
+        $this->write_user_log($db_con, $msg);
 
         // report even closing error to be on the save side, but only an internal error: a problem
         // of the request data (e.g. a formula expression that names no term) is answered to the
@@ -260,7 +285,7 @@ class application
     /**
      * should be called from all code that can be accessed by an url
      * return null if the db connection fails or the db is not compatible
-     * TODO create a separate class for starting the backend and frontend
+     * TODO Prio 2 create a separate class for starting the backend and frontend
      *
      * @param string $code_name the place that is displayed to the user e.g. add word
      * @param bool $echo_env if true log the environment
@@ -381,7 +406,7 @@ class application
                 // load system configuration
                 $sys->times->switch(system_time_type::LOAD_SYS_CONFIG);
                 $sys->load_cache_type($db_con, $msg);
-                // TODO cache the system config json and detect
+                // TODO Prio 2 cache the system config json and detect
                 $cfg = new config_numbers($usr_sys);
                 $cfg->load_cfg($msg, null, $usr_sys);
                 $mtr = new Translator($cfg->language());
@@ -423,53 +448,54 @@ class application
     }
 
     /**
-     * write the execution time to the database if it is long
+     * write the time of the api request to the system times if it has been slower than the configured log limit
+     * and the time of each step if it has been slower than the detail limit (config.yaml: user > default >
+     * frontend > behaviour > response time > log / detail), so that the admin can find and optimize slow calls
+     *
+     * @param sql_db $db_con the open database connection to write the times
+     * @param user_message $msg to report why the times could not be written
      */
     private function write_time(sql_db $db_con, user_message $msg): void
     {
         global $sys;
+        global $cfg;
 
-        $sys_time_end = microtime(true);
-        if ($sys_time_end > $sys->time_limit) {
-            $db_con->usr_id = users::SYSTEM_ID;
-            $db_con->set_class(system_time_type::class);
-            $fnc_lst = $sys->typ_lst->sys_log_fnc;
-            // TODO Prio 1 use an object and add tests
-            $sys_script_id = $fnc_lst->id_by_name($sys->script);
-            if ($sys_script_id <= 0) {
-                $sys_script = new system_time_type();
-                $sys_script->name = $sys->script;
-                $sys_script->code_id = $sys->script;
-                $sys_usr = new user();
-                $sys_usr->load_by_id(users::SYSTEM_ID, $msg);
-                $msg_sys = new user_message($sys_usr); // the system user saves the script type, merged below
-                $sys_script->save($msg_sys);
-                if ($msg_sys->is_ok()) {
-                    $sys_script_id = $sys_script->id();
-                    $sys->typ_lst->sys_log_fnc->add($sys_script);
-                }
-                $msg->merge($msg_sys);
+        $end = microtime(true);
+        $detail_names = [triples::RESPONSE_TIME, words::DETAIL, words::FRONTEND, words::BEHAVIOUR];
+        // without a loaded config e.g. if the config load has failed the fallback limits are used
+        $log_limit = system_time_list::log_limit();
+        $detail_limit = $cfg?->get_by($detail_names, def::FALLBACK_RESPONSE_TIME_DETAIL) ?? def::FALLBACK_RESPONSE_TIME_DETAIL;
+        if ($db_con->is_open() and $end - $sys->start_time > $log_limit) {
+            // loaded only for a slow request, because it is not part of the cached type lists
+            $sys_tim_typ_lst = new system_time_type_list();
+            $sys_tim_typ_lst->load($db_con, $msg);
+            $url = server_guard::request_url();
+            $rows = $sys->times->slow_request_rows($sys->start_time, $end, $url, $log_limit, $detail_limit, $sys_tim_typ_lst);
+            foreach ($rows as $sys_tim) {
+                $sys_tim->insert($msg);
             }
-            $start_time_sql = date("Y-m-d H:i:s", $sys->start_time);
-            $end_time_sql = date("Y-m-d H:i:s", $sys_time_end);
-            $interval = $sys_time_end - $sys->start_time;
-            $milliseconds = $interval;
-
-            //$db_con->insert();
-            if (in_array(rest_ctrl::REQUEST_URI, $_SERVER)) {
-                $calling_uri = $_SERVER[rest_ctrl::REQUEST_URI];
-            } else {
-                $calling_uri = 'localhost';
-            }
-            // TODO Prio 1 add time report to database and calling uri
-            $time_report = $sys->times->report();
-            $sql = "INSERT INTO system_times (start_time, system_time_type_id, end_time, milliseconds) "
-                . "VALUES ('" . $start_time_sql . "'," . $sys_script_id . ",'" . $end_time_sql . "', " . $milliseconds . ");";
-            $db_con->exe($sql);
         }
+    }
 
-        // free the global vars
-        unset($sys);
+    /**
+     * count the api request in the session of the user it has been made for, which is the browsing
+     * user of an own pod call (see user::data_user_id), so that the admin can see how the pod is used;
+     * unless the pod has switched off the user log for all users or for the users without login
+     *
+     * @param sql_db $db_con the open database connection to write the session
+     * @param user_message $msg with the session user of the request and to report why the request could not be counted
+     */
+    private function write_user_log(sql_db $db_con, user_message $msg): void
+    {
+        global $sys;
+        global $cfg;
+
+        $usr_id = $msg->usr?->data_user_id(server_guard::requested_user_id(), server_guard::from_own_pod()) ?? 0;
+        if ($db_con->is_open() and $usr_id > 0 and user_log::allowed($msg, $usr_id, $cfg)) {
+            $is_update = server_guard::request_method() != rest_ctrl::GET;
+            $usr_log = new user_log();
+            $usr_log->log_request($usr_id, $sys->start_time, microtime(true), $is_update, $msg);
+        }
     }
 
 }

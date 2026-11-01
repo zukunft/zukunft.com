@@ -51,9 +51,11 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_ui;
+use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\triple_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_types as phrase_type_shared;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
@@ -72,8 +74,8 @@ class phrase_list_tests
 
     /**
      * execute all phrase list unit tests and return the test result
-     * TODO create a common test result object to return
-     * TODO capsule all unit tests in a class like this example
+     * TODO Prio 2 create a common test result object to return
+     * TODO Prio 2 capsule all unit tests in a class like this example
      */
     function run(test_cleanup $t): void
     {
@@ -165,7 +167,7 @@ class phrase_list_tests
         $wrd_lst = $phr_lst->wrd_lst_all($msg);
         $t->assert($test_name, $wrd_lst->count(), 4);
 
-        // TODO add assume time sql statement test
+        // TODO Prio 2 add assume time sql statement test
 
         $test_name = 'get this year from a list of years';
         $phr_lst = $t_phr->years();
@@ -173,7 +175,42 @@ class phrase_list_tests
         $msg = new user_message();
         $phr = $phr_lst->best_matching_time($t_wrd->word_year()->phrase(), $msg, $fix_now);
         $t->assert_text_contains($test_name, $phr->name(), $t_wrd->word_2022()->name());
-        // TODO mix it with months and quarters to select the best matching and automatic estimations
+        // negative: a phrase that is no time period selects no time and the user is told why
+        $test_name = '... but no time for a phrase that is no time period';
+        $no_time = $phr_lst->best_matching_time($t_wrd->word()->phrase(), $msg, $fix_now);
+        $t->assert_null($test_name, $no_time?->name());
+        $test_name = '... which is reported';
+        $t->assert_false($test_name, $msg->is_ok());
+        $msg->reset();
+        // TODO Prio 3 mix it with months and quarters to select the best matching and automatic estimations
+
+        // the triples of a phrase list are the phrases that are no word
+        $test_name = 'the triples of a phrase list are selected';
+        $t->assert($test_name, $t_phr->phrase_list()->triples()->count(), 2);
+        $test_name = '... and a list of words has no triple';
+        $wrd_only_lst = new phrase_list($t->usr1);
+        $wrd_only_lst->add($t_wrd->word()->phrase());
+        $t->assert($test_name, $wrd_only_lst->triples()->count(), 0);
+
+        // a list is loaded if every phrase has an id and a name and every asked id is in the list
+        $test_name = 'a list of phrases with id and name is loaded';
+        $t->assert_true($test_name, $t_phr->phrase_list()->loaded());
+        $test_name = '... but not if an asked phrase is missing';
+        $t->assert_false($test_name, $t_phr->phrase_list()->loaded(new phr_ids([word_names::LOSS_ID])));
+
+        // a phrase id smaller than the number of phrases before it is not mistaken for a position
+        $test_name = 'the id list contains a small word id after more phrases than its id';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase($t, word_names::PI_ID, word_names::PI));
+        $phr_lst->add($this->get_phrase($t, word_names::FLOW_ID, word_names::FLOW));
+        $phr_lst->add($this->get_phrase($t, word_names::LOSS_ID, word_names::LOSS));
+        $phr_lst->add($this->get_phrase($t, word_names::CONST_ID, word_names::CONST_NAME));
+        $phr_ids = $phr_lst->id_lst();
+        $t->assert_contains($test_name, $phr_ids, [word_names::CONST_ID]);
+        $test_name = '... but a phrase without an id adds no id';
+        $phr_lst = new phrase_list($t->usr1);
+        $phr_lst->add($this->get_phrase($t, 0, word_names::PI));
+        $t->assert($test_name, $phr_lst->id_lst(), []);
 
 
         $t->subheader($ts . 'remove_terms');
@@ -216,6 +253,22 @@ class phrase_list_tests
 
         $phr_lst = $t_phr->phrase_list_api();
         $t->assert_api($phr_lst);
+
+        $t->subheader($ts . 'api mapper');
+
+        // each phrase of the api json is added to the list
+        $test_name = 'the api mapper adds the phrases of the api json';
+        $phr_lst_map = new phrase_list($t->usr1);
+        $phr_lst_map->api_mapper($t_phr->phrase_list_one()->api_json_array([], $msg), $msg);
+        $t->assert($test_name, $phr_lst_map->names(), $t_phr->phrase_list_one()->names());
+        $msg->reset();
+
+        // a phrase that cannot be mapped e.g. a triple without the from phrase is not added
+        $test_name = 'the api mapper does not add a phrase that cannot be mapped';
+        $phr_lst_map = new phrase_list($t->usr1);
+        $phr_lst_map->api_mapper([[json_fields::ID => -triple_names::MATH_CONST_ID, json_fields::FROM => null]], $msg);
+        $t->assert($test_name, $phr_lst_map->count(), 0);
+        $msg->reset();
 
 
         $t->subheader($ts . 'html frontend');
@@ -271,6 +324,22 @@ class phrase_list_tests
         $phr_lst_ui = $t_phr->phrase_list_ui();
         $t->assert($test_name, $phr_lst_ui->column_names(), []);
 
+        // a table asks for the phrase of each column in several steps, so it gets all column
+        // phrases with one walk over the list, keyed by the column name
+        $test_name = 'the column phrases are keyed by the column names';
+        $col_phrs = $t_phr->list_columns_partly_explained_ui()->column_phrases();
+        $col_names = $t_phr->list_columns_partly_explained_ui()->column_names();
+        sort($col_names);
+        $col_keys = array_keys($col_phrs);
+        sort($col_keys);
+        $t->assert($test_name, $col_keys, $col_names);
+        $test_name = '... and a column built from a triple is the triple';
+        $col_phr = $t_phr->list_columns_potential_loss_ui()->column_phrases()[triple_names::POTENTIAL_LOSS] ?? null;
+        $t->assert_true($test_name, $col_phr?->is_triple() ?? false);
+        // negative: a list without a column definition has no column phrase
+        $test_name = 'a list without a column definition has no column phrase';
+        $t->assert($test_name, $t_phr->phrase_list_ui()->column_phrases(), []);
+
         // the tier of a column says on which screens it is shown, so the table can hide a column
         // per screen size instead of dropping it; the "loss" and the "potential loss" column are
         // defined as mayor columns, the "reason" column as a main and the "cost" column as a
@@ -292,6 +361,26 @@ class phrase_list_tests
         // no tier and the caller shows it on every screen
         $test_name = 'a phrase that is no column has no tier';
         $t->assert($test_name, $phr_lst_ui->column_tier(word_names::GAIN), '');
+
+        // a column can be defined per unit, e.g. the potential gain in EUR as a mayor and in htp
+        // as a minor column, where the unit names the measure whatever the scaling
+        $phr_lst_ui = $t_phr->list_columns_gain_units_ui();
+        $test_name = 'the tier of a column in a unit is the tier of its unit definition';
+        $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_GAIN,
+            [word_names::TRILLION, word_names::EUR]), triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = '... also for the other unit';
+        $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_GAIN,
+            [word_names::BILLION, word_names::HTP]), triple_names::SYSTEM_COLUMN_MINOR);
+        // negative: a unit that no definition names has no tier, if no definition is for any unit
+        $test_name = 'a column in a unit without a definition has no tier';
+        $t->assert($test_name, $phr_lst_ui->column_tier(triple_names::POTENTIAL_GAIN,
+            [words::PERCENT]), '');
+        // negative: a definition for any unit is the fallback for a unit without a definition
+        $test_name = 'a column in an undefined unit has the tier of the definition for any unit';
+        $t->assert($test_name, $t_phr->list_columns_potential_gain_ui()->column_tier(
+            triple_names::POTENTIAL_GAIN, [words::PERCENT]), triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = 'the definitions per unit name the column phrase once';
+        $t->assert($test_name, $phr_lst_ui->column_names(), [triple_names::POTENTIAL_GAIN]);
 
 
         $t->subheader($ts . 'child phrases');
@@ -332,6 +421,62 @@ class phrase_list_tests
         $t->assert($test_name, $phr_lst_ui->column_list_phrases([word_names::SOLUTION])->names(), []);
 
 
+        $t->subheader($ts . 'triple list');
+
+        // the table editor lists the columns related to "populism solution", which is related to
+        // "problem", because "populism is a global problem" and "global problem" is built from "problem"
+        $test_name = 'the parents follow the sides and the links up to the top';
+        $msg_ui = new user_message_ui();
+        $phr_lst_ui = $t_phr->list_column_tiers_ui();
+        $phr = $t_trp->populism_solution_ui()->phrase();
+        $t->assert_contains($test_name, $phr_lst_ui->parents_all($phr, $msg_ui)->names(),
+            [word_names::SOLUTION, word_names::POPULISM, triple_names::GLOBAL_PROBLEM, word_names::PROBLEM]);
+        $msg_ui->reset();
+        $test_name = '... but not to a phrase that links to a parent';
+        $t->assert_text_not_contains($test_name,
+            implode(', ', $phr_lst_ui->parents_all($phr, $msg_ui)->names()), triple_names::COLUMN_PROBLEM);
+        $msg_ui->reset();
+        $test_name = 'the sides only are not linked up';
+        $t->assert_text_not_contains($test_name,
+            implode(', ', $phr_lst_ui->parents_all($phr, $msg_ui, true)->names()), triple_names::GLOBAL_PROBLEM);
+        $msg_ui->reset();
+        $test_name = 'the sub types of a type are in the order of their definition';
+        $typ = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN, $msg_ui);
+        $sub_names = array_map(fn($sub) => $sub->name(), $phr_lst_ui->sub_types($typ, $msg_ui));
+        $t->assert($test_name, $sub_names, [triple_names::SYSTEM_COLUMN_MAYOR, triple_names::SYSTEM_COLUMN_MINOR]);
+        $msg_ui->reset();
+        // the name of a phrase in the list is found without a backend call, e.g. the selected phrase of an editor
+        $test_name = 'a phrase of the list is found by its name';
+        $phr_found = $phr_lst_ui->load_or_get_by_name(triple_names::SYSTEM_COLUMN, $msg_ui);
+        $t->assert($test_name, $phr_found?->name(), triple_names::SYSTEM_COLUMN);
+        $test_name = '... without a message';
+        $t->assert($test_name, $msg_ui->is_ok(), true);
+        $msg_ui->reset();
+        // an unknown name would ask the backend, which a unit test has not, so only names of the list are tested
+        $test_name = '... and another phrase of the list too';
+        $mayor_found = $phr_lst_ui->load_or_get_by_name(triple_names::SYSTEM_COLUMN_MAYOR, $msg_ui);
+        $t->assert($test_name, $mayor_found?->name(), triple_names::SYSTEM_COLUMN_MAYOR);
+        $msg_ui->reset();
+        $test_name = 'a type without sub types is its own sub type';
+        $tier = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN_MAYOR, $msg_ui);
+        $sub_names = array_map(fn($sub) => $sub->name(), $phr_lst_ui->sub_types($tier, $msg_ui));
+        $t->assert($test_name, $sub_names, [triple_names::SYSTEM_COLUMN_MAYOR]);
+        $msg_ui->reset();
+        $test_name = 'the triples of a type that are built from a parent are listed';
+        $par_lst = $phr_lst_ui->parents_all($phr, $msg_ui);
+        $t->assert($test_name, $phr_lst_ui->related_triples_to($tier, $par_lst, $msg_ui)->names(),
+            [triple_names::COLUMN_PROBLEM, triple_names::COLUMN_SOLUTION]);
+        $msg_ui->reset();
+        $test_name = 'a triple of a type that is built from no parent is not listed';
+        $minor = $phr_lst_ui->get_by_name(triple_names::SYSTEM_COLUMN_MINOR, $msg_ui);
+        $t->assert($test_name, $phr_lst_ui->related_triples_to($minor, $par_lst, $msg_ui)->names(), []);
+        $msg_ui->reset();
+        $test_name = 'a list has any of the given phrases';
+        $t->assert_true($test_name, $par_lst->has_any_of($phr_lst_ui));
+        $test_name = 'a list has none of the phrases of an empty list';
+        $t->assert_false($test_name, $par_lst->has_any_of(new phrase_list_ui()));
+
+
         $t->subheader($ts . 'parent names');
 
         // the mirror of child_names: the names of the phrases that the given phrase links to,
@@ -347,6 +492,20 @@ class phrase_list_tests
         // list links other phrases to it
         $test_name = 'a phrase that links to no phrase of the list has no parent';
         $t->assert($test_name, $phr_lst_ui->parent_names($t_trp->global_problem_ui()->phrase()), []);
+
+        // the copy with the link index for the build of one table returns the same names as
+        // the list, because the index is created by the same rules in one pass over the list
+        $test_name = 'the copy with the link index returns the same parents';
+        $idx_lst = $phr_lst_ui->with_link_index();
+        $t->assert($test_name, $idx_lst->parent_names($phr), [triple_names::GLOBAL_PROBLEM, word_names::POTENTIAL]);
+        $test_name = '... and the same children';
+        $t->assert($test_name, $idx_lst->child_names($t_trp->global_problem_ui()->phrase()),
+            $phr_lst_ui->child_names($t_trp->global_problem_ui()->phrase()));
+        $test_name = '... and no parent for a phrase that links to nothing';
+        $t->assert($test_name, $idx_lst->parent_names($t_trp->global_problem_ui()->phrase()), []);
+        // negative: the index of an empty list knows no link
+        $test_name = 'the copy of an empty list with the link index has no parents';
+        $t->assert($test_name, new phrase_list_ui()->with_link_index()->parent_names($phr), []);
 
 
 

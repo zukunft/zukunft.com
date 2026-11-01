@@ -43,7 +43,9 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::SHARED_ENUM . 'messages.php';
+include_once html_paths::SHARED_CONST . 'def.php';
 include_once html_paths::SHARED_CONST . 'views.php';
+include_once html_paths::SHARED_CONST . 'triples.php';
 include_once html_paths::SHARED . 'json_fields.php';
 include_once html_paths::SHARED . 'url_var.php';
 include_once test_paths::CREATE . 'test_config_trees.php';
@@ -57,7 +59,9 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_names;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\def;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -84,6 +88,28 @@ class config_tree_ui_tests
         $cfn = new config_node([json_fields::NAME => test_config_trees::RETRY,
             json_fields::CONFIG_CHILDREN => [test_config_trees::SEC, [json_fields::NAME => test_config_trees::MAX_DELAY]]]);
         $t->assert($test_name, array_map(fn(config_node $child) => $child->name, $cfn->children), [test_config_trees::MAX_DELAY]);
+
+        $test_name = 'the node mapper sets the value id';
+        $cfn = new config_node();
+        $cfn->api_mapper([json_fields::NAME => test_config_trees::MAX_DELAY, json_fields::ID => test_config_trees::MAX_DELAY_ID]);
+        $t->assert($test_name, $cfn->id, test_config_trees::MAX_DELAY_ID);
+
+        // negative: a malformed id names no value to overwrite, so the node has the id 0 of no value
+        $test_name = 'the node mapper ignores a malformed value id';
+        $cfn = new config_node();
+        $cfn->api_mapper([json_fields::NAME => test_config_trees::MAX_DELAY, json_fields::ID => [test_config_trees::MAX_DELAY_ID]]);
+        $t->assert($test_name, $cfn->id, 0);
+
+        $test_name = 'the tree mapper adds the top level keys';
+        $cft = new config_tree();
+        $cft->api_mapper([[json_fields::NAME => test_config_trees::SYSTEM], [json_fields::NAME => test_config_trees::USER]]);
+        $t->assert($test_name, array_map(fn(config_node $node) => $node->name, $cft->nodes), [test_config_trees::SYSTEM, test_config_trees::USER]);
+
+        // negative: a top level entry that is no node is skipped instead of stopping the page
+        $test_name = 'the tree mapper skips an entry that is no node';
+        $cft = new config_tree();
+        $cft->api_mapper([test_config_trees::SEC, [json_fields::NAME => test_config_trees::USER]]);
+        $t->assert($test_name, array_map(fn(config_node $node) => $node->name, $cft->nodes), [test_config_trees::USER]);
 
         $t->subheader($ts . 'search');
 
@@ -134,6 +160,10 @@ class config_tree_ui_tests
         $test_name = 'the columns are select, user and system';
         $col_names = array_map(fn(array $col) => array_map(fn($cfn) => $cfn->name, $col), $cft->columns($cft->nodes));
         $t->assert($test_name, $col_names, [[test_config_trees::SELECT], [test_config_trees::USER], [test_config_trees::SYSTEM]]);
+        // negative: an unknown scope has no top level node, so every column is empty
+        $test_name = 'an unknown scope leaves all columns empty';
+        $cols_unknown = $cft->columns($cft->branch(test_config_trees::RETRY));
+        $t->assert($test_name, $cols_unknown, [[], [], []]);
         $test_name = '... and the page shows the three columns';
         $col_class = html_base::CLASS_HTML . '="' . styles::CONFIG_COLUMN . '"';
         $t->assert($test_name, substr_count($cft->html('', ''), $col_class), 3);
@@ -206,9 +236,35 @@ class config_tree_ui_tests
         $test_name = '... which a screen reader names';
         $save_label = html_base::ARIA_LABEL . '="' . $mtr->txt(msg_id::FORM_BUTTON_SAVE) . '"';
         $t->assert_text_contains($test_name, $page_edit, $save_label);
-        // negative: a boolean is shown as true or false, so it has no number input, and a setting without an id has nothing to overwrite
-        $test_name = '... but only for a number with a database value';
-        $t->assert($test_name, substr_count($page_edit, $submit_field), 1);
+        // negative: a boolean is shown as true or false, so it has no input, and a setting without an id has nothing to overwrite
+        $test_name = '... but only for a number or a text with a database value e.g. the initial entries, the font and the colour mode';
+        $t->assert($test_name, substr_count($page_edit, $submit_field), 3);
+        // the setting of the triple with the colour mode code id offers the light and the dark colours
+        $test_name = 'the colour mode is selected as light or dark colours';
+        $t->assert_text_contains($test_name, $page_edit, '>' . $mtr->txt(msg_id::CONFIG_MODE_LIGHT) . '<');
+        $t->assert_text_contains($test_name, $page_edit, '>' . $mtr->txt(msg_id::CONFIG_MODE_DARK) . '<');
+        $test_name = '... which saves 1 or 2 as the number of the setting';
+        $t->assert_text_contains($test_name, $page_edit, html_base::VALUE . '="' . def::MODE_DARK . '"  selected');
+        // negative: the mode has no free number input, so no mode is saved that the pages do not know
+        $test_name = '... and not entered as number';
+        $mode_input = html_base::NAME . '="' . url_var::NUMERIC_VALUE . '" ' . html_base::VALUE . '="' . def::MODE_DARK . '"';
+        $t->assert_text_not_contains($test_name, $page_edit, $mode_input);
+        // the setting of the word with the font code id offers the fonts that can be used
+        $test_name = 'the font is selected from the generic fonts and the font lists of bootstrap';
+        $mono_option = html_base::VALUE . '="' . htmlspecialchars(config_tree::FONT_SYSTEM_MONO, ENT_QUOTES) . '"';
+        $t->assert_text_contains($test_name, $page_edit, $mono_option);
+        $t->assert_text_contains($test_name, $page_edit, html_base::VALUE . '="' . test_config_trees::FONT_VALUE . '"');
+        // negative: the font has no free text input, so no font is entered that the pages cannot show
+        $test_name = '... and not entered as text';
+        $font_input = html_base::NAME . '="' . url_var::VALUE_TEXT . '" ' . html_base::VALUE . '="' . test_config_trees::FONT_VALUE . '"';
+        $t->assert_text_not_contains($test_name, $page_edit, $font_input);
+        $test_name = '... but a font of config.yaml that is not in the list is offered too';
+        $t->assert_text_contains($test_name, $cft->font_select(test_config_trees::FONT_UNKNOWN),
+            html_base::VALUE . '="' . test_config_trees::FONT_UNKNOWN . '"');
+        $test_name = '... and a mode of config.yaml that is not in the list too, so a save never changes it unnoticed';
+        $mode_unknown = (string)test_config_trees::COLOUR_MODE_UNKNOWN;
+        $t->assert_text_contains($test_name, $cft->mode_select($mode_unknown),
+            html_base::VALUE . '="' . $mode_unknown . '"  selected');
         $default_field = html_base::NAME . '="' . url_var::SET_DEFAULT . '" ' . html_base::VALUE . '="' . url_var::TRUE . '"';
         // negative: a normal user saves the own overwrite and never the default of all users
         $test_name = '... as the own overwrite';
@@ -219,6 +275,12 @@ class config_tree_ui_tests
         $t->assert_text_contains($test_name, $page_admin, $default_field);
         $test_name = '... also of a setting of the pod';
         $t->assert_text_contains($test_name, $page_admin, $max_id_field);
+        $clear_field = html_base::NAME . '="' . url_var::ACTION . '" ' . html_base::VALUE . '="' . url_var::ACTION_CLEAR_CACHE . '"';
+        $test_name = 'an admin can clear the cache of all users';
+        $t->assert_text_contains($test_name, $page_admin, $clear_field);
+        // negative: clearing the cache slows down the next requests of every user, so a normal user has no button
+        $test_name = '... but a normal user cannot';
+        $t->assert_text_not_contains($test_name, $page_edit, $clear_field);
         $cft->is_admin = false;
         $cft->can_edit = false;
         $test_name = '... with the shown number and the name of the setting for the confirmation';
@@ -258,6 +320,42 @@ class config_tree_ui_tests
         $default_url[url_var::NUMERIC_VALUE] = (string)$old_val;
         $t->assert_text_contains($test_name, $ui->setting_saved_text($default_url), $setting_key);
 
+        // a text e.g. the view name of a pinned view, which an admin changes, because it is a setting of the pod
+        // the text input and not the font selection, which posts the same url var
+        $text_field = html_base::TYPE . '="' . html_base::INPUT_TEXT . '" ' . html_base::NAME . '="' . url_var::VALUE_TEXT . '"';
+        $test_name = 'an admin can change a text setting with a text input';
+        $cft->can_edit = true;
+        $cft->is_admin = true;
+        $page_text = $cft->html('', '');
+        $t->assert_text_contains($test_name, $page_text, $text_field);
+        $test_name = '... and add a text setting without a database value with the phrases of its yaml path';
+        // the keys above the tree, which the backend tree also puts first (cfg/helper/config_tree::ROOT_KEYS)
+        $view_names = array_merge(triples::CONFIG_ROOT,
+            [test_config_trees::SYSTEM, test_config_trees::STARTUP, test_config_trees::PV, test_config_trees::VIEW_NAME]);
+        $phr_ids = implode(',', array_map([$t_cft, 'phrase_id'], $view_names));
+        $t->assert_text_contains($test_name, $page_text, html_base::NAME . '="' . url_var::PHRASE_LIST . '" ' . html_base::VALUE . '="' . $phr_ids . '"');
+        $t->assert_text_contains($test_name, $page_text, html_base::NAME . '="' . url_var::MASK . '" ' . html_base::VALUE . '="' . views::VALUE_ADD_ID . '"');
+        $cft->is_admin = false;
+        // negative: the pinned views are a setting of the pod, so a normal user gets no text input
+        $test_name = '... but a normal user cannot change a text setting of the pod';
+        $t->assert_text_not_contains($test_name, $cft->html('', ''), $text_field);
+        // negative: the edit icon of an empty text only opens the input, so a read only page never shows it
+        $test_name = '... and sees no edit icon of an empty text';
+        $t->assert_text_not_contains($test_name, $cft->html('', ''), icons::EDIT);
+        $cft->can_edit = false;
+        $test_name = 'the confirmation names the setting and the new text';
+        $text_key = implode(config_tree::NAME_SEPARATOR, [test_config_trees::PV, test_config_trees::VIEW_NAME]);
+        $text_url = [
+            url_var::VALUE_TEXT => test_config_trees::VIEW_NAME_VALUE,
+            url_var::PRE . url_var::VALUE_TEXT => '',
+            url_var::CONFIG_KEY => $text_key,
+        ];
+        $t->assert_text_contains($test_name, $ui->setting_saved_text($text_url), test_config_trees::VIEW_NAME_VALUE);
+        // negative: an empty text is not saved, so it is not confirmed either
+        $test_name = '... but nothing is confirmed for an empty text';
+        $text_url[url_var::VALUE_TEXT] = '';
+        $t->assert($test_name, $ui->setting_saved_text($text_url), '');
+
         $t->subheader($ts . 'page cache');
 
         // the search and the scope are not part of the cache key, so such a page is rendered for each request
@@ -275,12 +373,16 @@ class config_tree_ui_tests
         $sys_page = new system_page();
         $test_page = $html->text_h2('config tree');
         $test_page .= $sys_page->config_tree($msg, [], true, $t_cft->tree_ui());
-        $test_page .= $html->text_h2('config tree search');
-        $test_page .= $sys_page->config_tree($msg, [url_var::PATTERN => 'delay'], true, $t_cft->tree_ui());
-        $test_page .= $html->text_h2('config tree scope');
-        $url_scope = [url_var::CONFIG_PART => test_config_trees::USER];
-        $test_page .= $sys_page->config_tree($msg, $url_scope, true, $t_cft->tree_ui());
         $t->html_page_test($test_page, 'config tree', 'config_tree', $msg);
+        // the search and the scope are own pages like in the frontend, because each page has the
+        // search list and the tree nodes with fixed ids, which one page must not hold twice
+        $search_page = $html->text_h2('config tree search');
+        $search_page .= $sys_page->config_tree($msg, [url_var::PATTERN => 'delay'], true, $t_cft->tree_ui());
+        $t->html_page_test($search_page, 'config tree search', 'config_tree_search', $msg);
+        $scope_page = $html->text_h2('config tree scope');
+        $url_scope = [url_var::CONFIG_PART => test_config_trees::USER];
+        $scope_page .= $sys_page->config_tree($msg, $url_scope, true, $t_cft->tree_ui());
+        $t->html_page_test($scope_page, 'config tree scope', 'config_tree_scope', $msg);
 
         // the read only settings page as view 126 shows it, which the developer opens to check the layout
         $settings_page = $sys_page->system_tile(msg_id::SYSTEM_TITLE_SYSTEM_CONFIG);

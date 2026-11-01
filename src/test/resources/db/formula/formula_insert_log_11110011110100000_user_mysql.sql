@@ -48,7 +48,7 @@ SELECT formula_insert_log_11110011110100000_user
         636,
         1,
         632,
-        '{t64}={w100}*60',
+        '{t65}={w100}*60',
         633,
         '"second (time)" = "minute" * 60',
         634,

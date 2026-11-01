@@ -95,7 +95,7 @@ parseArguments() {
 }
 
 initEnvironment() {
-    # TODO modify to environment base on the given parameters e.g. -docker
+    # TODO Prio 2 modify to environment base on the given parameters e.g. -docker
     echo -e "\n${GREEN}Create environment...${NC}"
     if [ ! -f .env ]; then
         if [ -f .env.example ]; then
@@ -169,7 +169,7 @@ checkDb() {
     fi
 }
 
-# TODO add other linux distributions such as Fedora
+# TODO Prio 3 add other linux distributions such as Fedora
 updateDebian() {
     echo -e "\n${GREEN}Updating debian...${NC}"
 
@@ -184,28 +184,28 @@ installAndConfigurePostgresql() {
     echo -e "\n${GREEN}Installing postgres ...${NC}"
 
     # Install postgres
-    # TODO check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
+    # TODO Prio 2 check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
     apt-get install -y postgresql postgresql-contrib
 
     # Initialize database
-    # TODO if no password is given just create on and write it to the .env secrets
-    # TODO use the generated or give db password in the php code
-    # TODO add postgres admin username and password if postgres is ready running and the standard user name is changed
-    # TODO secure the standard postgres user name after install
+    # TODO Prio 1 if no password is given just create on and write it to the .env secrets
+    # TODO Prio 1 use the generated or give db password in the php code
+    # TODO Prio 2 add postgres admin username and password if postgres is ready running and the standard user name is changed
+    # TODO Prio 1 secure the standard postgres user name after install
     # create the user
     sudo -u postgres psql -d postgres -U postgres -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
     # drop any old database with the same name
     sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE $PGSQL_DATABASE"
     # create the database
     sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
-    # TODO if the database existed change the owner of the tables or drop all tables
+    # TODO Prio 2 if the database existed change the owner of the tables or drop all tables
 
     echo -e "Installed postgres: \n$(psql --version)"
 
     sleep 3
 }
 
-# TODO add a nginx based installation
+# TODO Prio 3 add a nginx based installation
 installAndConfigureApache() {
     echo -e "\n${GREEN}Installing Apache...${NC}"
 
@@ -260,7 +260,7 @@ installZukunft() {
     systemctl restart apache2
 
     # create the zukunft.com database tables
-    # TODO remove or deactivate the reset_db.php script in prod after successful install
+    # TODO Prio 1 remove or deactivate the reset_db.php script in prod after successful install
     php "$WWW_ROOT/test/reset_db.php"
 
     # the initial users now exist in the database with a bcrypt-hashed password, so the cleartext
@@ -269,14 +269,14 @@ installZukunft() {
     # ZUKUNFT_ALLOW_SETUP is blanked too so that http/setup.php refuses after the initial setup
     sed -i -E 's/^(ADMIN_PW|CO_ADMIN_PW|USER_PW|CO_USER_PW|ZUKUNFT_ALLOW_SETUP)=.*/\1=/' "${WWW_ROOT%/}/../.env"
 
-    # TODO check result and create warning if it does not end with
-    # TODO fix the errors on the first run that are caused e.g. by the missing db rows
+    # TODO Prio 1 check result and create warning if it does not end with
+    # TODO Prio 1 fix the errors on the first run that are caused e.g. by the missing db rows
     #      0 test errors
     #      0 internal errors
 
     cd "$CURRENT_DIR" || exit
 
-    # TODO maybe remove to git clone in the local folder to avoid confusion
+    # TODO Prio 3 maybe remove to git clone in the local folder to avoid confusion
     #      this maybe depending on the update and upgrade process
     #      e.g. if this is done via git clone to the webserver folder
     #      and how the .env file can be kept
@@ -357,15 +357,15 @@ testZukunft() {
     # test the zukunft.com
     php "$WWW_ROOT/test/test.php"
 
-    # TODO remove the test again the zukunft.com by fixing the errors in the first run
+    # TODO Prio 2 remove the test again the zukunft.com by fixing the errors in the first run
     php "$WWW_ROOT/test/test.php"
 
-    # TODO check result and create warning if it does not end with
+    # TODO Prio 1 check result and create warning if it does not end with
     #      0 test errors
     #      0 internal errors
 
-    # TODO if ENV is prod, remove the test script to avoid database reset by mistake
-    # TODO if ENV is release add und use a script to clone the database from prod
+    # TODO Prio 1 if ENV is prod, remove the test script to avoid database reset by mistake
+    # TODO Prio 2 if ENV is release add und use a script to clone the database from prod
 
     sleep 3
 }

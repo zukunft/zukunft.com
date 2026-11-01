@@ -82,10 +82,16 @@ use DateTimeInterface;
 class sandbox_value extends sandbox
 {
 
+    // put before the group id in the html id of a number (see html_id), a result has its own
+    const string HTML_ID_PREFIX = 'val-';
     // the format of a time value in a form field and in the api message to the backend
     const string TIME_FORMAT = DateTimeInterface::ATOM;
     // the key of the date text in the json of a DateTime object
     const string JSON_DATETIME_DATE = 'date';
+    // between a number and its unit symbol e.g. "49 %"
+    const string UNIT_SEPARATOR = ' ';
+    // the unit of a number field that shows a stored ratio in percent e.g. 35 for 0.35
+    const string UNIT_PERCENT = '%';
     // the grey superscript behind a number that shows how the number has been found
     // TODO Prio 3 move the config.yaml
     const string QUALITY_MARK_ASSUMED = 'a';
@@ -400,6 +406,71 @@ class sandbox_value extends sandbox
     }
 
     /**
+     * @return string the html id of the number e.g. "val-5-0M-06+", so that a calculator page names
+     *                the value of a cell or a field by its group id and a value and a result with
+     *                the same group id stay apart
+     */
+    function html_id(): string
+    {
+        return static::HTML_ID_PREFIX . $this->id();
+    }
+
+    /**
+     * the values or results in the preferred order (docs/llm/frontend.md): the bigger impact
+     * first, then within the same unit the bigger number, then by name; the unit is part of the
+     * order, so that two numbers are only compared if they have the same unit and the order stays
+     * the same for every compare; the name is never the group id, which shifts between database rebuilds
+     *
+     * @param sandbox_value[] $lst the values or results to sort
+     * @param user_message $msg to report a problem of the phrase types that name the unit
+     * @return sandbox_value[] the values or results sorted
+     */
+    static function sorted(array $lst, user_message $msg): array
+    {
+        // the keys of each number are created once and not in each compare
+        $impact = [];
+        $unit = [];
+        $name = [];
+        foreach ($lst as $val) {
+            $impact[spl_object_id($val)] = $val->impact();
+            $unit[spl_object_id($val)] = $val->unit_key($msg);
+            $name[spl_object_id($val)] = $val->name_key();
+        }
+        usort($lst, fn(sandbox_value $a, sandbox_value $b) => $impact[spl_object_id($b)] <=> $impact[spl_object_id($a)]
+            ?: strcmp($unit[spl_object_id($a)], $unit[spl_object_id($b)])
+                ?: $b->number() <=> $a->number()
+                    ?: strcmp($name[spl_object_id($a)], $name[spl_object_id($b)]));
+        return $lst;
+    }
+
+    /**
+     * @param user_message $msg to report a problem of the phrase types
+     * @return string the names of the unit, scaling and percent phrases of the number in alphabetic order
+     */
+    function unit_key(user_message $msg): string
+    {
+        $names = [];
+        foreach ($this->grp->phr_lst()->lst() as $phr) {
+            if ($phr->is_measure($msg) or $phr->is_scaling($msg) or $phr->is_percent($msg)) {
+                $names[] = $phr->name();
+            }
+        }
+        sort($names, SORT_STRING);
+        return implode(', ', $names);
+    }
+
+    /**
+     * @return string the phrase names of the number in alphabetic order, because the order of the
+     *                phrases in a group follows their database id
+     */
+    function name_key(): string
+    {
+        $names = $this->grp->phr_lst()->names();
+        sort($names, SORT_STRING);
+        return implode(', ', $names);
+    }
+
+    /**
      * to select a value or a result by a phrase
      * @param phrase $phr the phrase to select the number
      * @param user_message $msg to report a problem of reading a phrase type
@@ -463,7 +534,7 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * the number as a link without the quality mark, e.g. for a bound of a probability range,
+     * the number as a link without the quality mark, e.g. for a variance bound,
      * which has the quality of its centre value, so that the mark is shown only once behind
      * the centre value (see value_list::cell); not named value_link, because value::value_link
      * links the class name page and would overwrite it
@@ -631,7 +702,7 @@ class sandbox_value extends sandbox
 
     /**
      * @returns string the html code to display the value with reference links
-     * TODO create a popup with the details e.g. the values of other users
+     * TODO Prio 3 create a popup with the details e.g. the values of other users
      */
     function value_linked(): string
     {
@@ -650,11 +721,16 @@ class sandbox_value extends sandbox
         $cfg = $ui_sys->cfg;
         $result = '';
 
-        // TODO check that the phrases are set
+        // TODO Prio 1 check that the phrases are set
 
         if (!$this->is_null()) {
             if ($this->is_percent($msg)) {
-                $result = round($this->number() * 100, $cfg->percent_decimals()) . $this->percent_symbol($msg);
+                $result = (string)round($this->number() * 100, $cfg->percent_decimals());
+                $symbol = $this->percent_symbol($msg);
+                // the symbol is a unit, so it is shown with a blank like any other unit e.g. "49 %"
+                if ($symbol != '') {
+                    $result .= self::UNIT_SEPARATOR . $symbol;
+                }
             } else {
                 if ($this->number() >= 1000 or $this->number() <= -1000) {
                     $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
@@ -693,7 +769,13 @@ class sandbox_value extends sandbox
      */
     function percent_symbol(user_message $msg): string
     {
-        return $this->grp->phr_lst()->percent_phrase($msg)?->symbol_name($msg) ?? '';
+        $pct_phr = $this->grp->phr_lst()->percent_phrase($msg);
+        $result = '';
+        // the symbol of a ratio unit e.g. "share" is not for the number times 100
+        if ($pct_phr != null and !$pct_phr->is_ratio_unit($msg)) {
+            $result = $pct_phr->symbol_name($msg);
+        }
+        return $result;
     }
 
     /**

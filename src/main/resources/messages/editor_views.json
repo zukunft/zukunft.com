@@ -1,0 +1,132 @@
+{
+  "version": "0.0.3",
+  "data_version": "0.0.1",
+  "time": "2026-10-13 12:00:00",
+  "user": "timon",
+  "selection": [
+    "the placeholder views of the table and the calculator editor"
+  ],
+  "description": "The table editor and the calculator editor as placeholder views with a title and a phrase selector, the table editor also with the related columns of each column tier, so that the steps of docs/table_creation.md can link to them before the editors are done. This file is imported as the last step of the db setup, so that no database id of a tested view or component moves.",
+  "words": [
+    {
+      "name": "column"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "system"
+    }
+  ],
+  "triples": [
+    {
+      "name": "zukunft.com system",
+      "from": "zukunft.com",
+      "verb": "is a",
+      "to": "system"
+    },
+    {
+      "name": "column (system)",
+      "from": "column",
+      "verb": "can be",
+      "to": "zukunft.com system"
+    }
+  ],
+  "components": [
+    {
+      "name": "system title table editor",
+      "description": "show the language specific title of the table editor",
+      "type": "system_title_for_phrase",
+      "code_id": "system_title_table_editor",
+      "ui_msg_code_id": "system_title_table_editor"
+    },
+    {
+      "name": "system title calculation editor",
+      "description": "show the language specific title of the calculation editor",
+      "type": "system_title_for_phrase",
+      "code_id": "system_title_calculation_editor",
+      "ui_msg_code_id": "system_title_calculation_editor"
+    },
+    {
+      "name": "phrase selector",
+      "description": "placeholder to select the word or triple that an editor starts from",
+      "type": "select_phrase",
+      "code_id": "phrase_selector"
+    },
+    {
+      "name": "column tiers",
+      "description": "the columns of each column tier that are related to the phrase of the table",
+      "type": "triple_list",
+      "column": "column (system)"
+    },
+    {
+      "name": "table editor table",
+      "description": "the table of the phrase of the table editor with the columns that the column tiers above define",
+      "type": "table_with_related_columns"
+    },
+    {
+      "name": "button show editor phrase",
+      "description": "the form of the phrase selector that shows the editor again for the selected word or triple",
+      "type": "process_catch_button_refresh",
+      "ui_msg_code_id": "editor_button_show"
+    },
+    {
+      "name": "calculator editor",
+      "description": "the editor of the calculator page of the phrase with its own phrase selector, built by a script from the phrase data of the phrase",
+      "type": "calculator_editor"
+    }
+  ],
+  "views": [
+    {
+      "name": "Table editor",
+      "description": "placeholder to define the columns, the rows and the default sorting of a table starting from a word or triple",
+      "code_id": "table_editor",
+      "type": "editor",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title table editor"
+        },
+        {
+          "position": "2",
+          "name": "phrase selector"
+        },
+        {
+          "position": "3",
+          "name": "button show editor phrase"
+        },
+        {
+          "position": "4",
+          "name": "column tiers"
+        },
+        {
+          "position": "5",
+          "name": "table editor table"
+        }
+      ]
+    },
+    {
+      "name": "Calculator editor",
+      "description": "the editor to define the calculator page of a word or triple",
+      "code_id": "calculator_editor",
+      "type": "editor",
+      "components": [
+        {
+          "position": "1",
+          "name": "calculator editor"
+        }
+      ]
+    },
+    {
+      "name": "Table"
+    }
+  ],
+  "view_relations": [
+    {
+      "parent": "Table",
+      "child": "Table editor",
+      "type": "editor",
+      "description": "the edit menu of the table offers the table editor with the same phrase"
+    }
+  ]
+}

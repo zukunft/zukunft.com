@@ -158,21 +158,21 @@ class expression_write_tests
         //$phr_lst = $exp_sector->phr_verb_lst();
         //$result = $phr_lst->dsp_name();
         $target = '"canton","country","System Test Word Total"';
-        // TODO $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
+        // TODO Prio 1 $t->assert('phr_verb_lst for "' . $exp_sector->ref_text() . '"', $result, $target);
 
         // test getting special phrases
         $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);
         $phr_lst = $exp->terms_following($msg, $trm_lst);
         $result = $phr_lst->dsp_name();
         $target = '"' . formula_names::THIS_NAME . '","' . formula_names::PRIOR . '"';
-        // TODO $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
+        // TODO Prio 1 $t->assert('element_special_following for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         // test getting for special phrases the related formula
         $trm_lst->load_additional_by_id($exp->terms_missing($msg, $trm_lst), $msg);
         $frm_lst = $exp->element_special_following_frm($msg, $trm_lst);
         $result = $frm_lst->name();
         $target = '' . formula_names::THIS_NAME . ',' . formula_names::PRIOR . '';
-        // TODO $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
+        // TODO Prio 1 $t->assert('element_special_following_frm for "'.$exp->dsp_id().'"', $result, $target, $t::TIMEOUT_LIMIT_LONG);
 
         $t->subheader($ts . 'cleanup');
         // TODO Prio 1 check that the user message is always reset before a function is called

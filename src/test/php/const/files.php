@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\test\php\const;
 
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\unit_read\term_read_tests;
 
 class files
 {
@@ -43,6 +44,8 @@ class files
      */
 
     CONST bool AUTO_UPDATE_TEST_FILES = false;
+    CONST bool AUTO_RE_PIN_OBJECT_ID = false;
+    CONST string API_ACTUAL_SUFFIX = '_actual';
 
     /*
      * types and extensions
@@ -51,6 +54,7 @@ class files
     CONST string YAML = '.yaml';
     CONST string JSON = '.json';
     CONST string HTML = '.html';
+    CONST string JS = '.js';
     CONST string SQL = '.sql';
     CONST string TXT = '.txt';
     CONST string MD = '.md';
@@ -64,6 +68,94 @@ class files
      */
 
     CONST string IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
+    // the data that api/phraseData returns at least for the example PV installation
+    CONST string PHRASE_DATA_PV_INSTALL_NAME = 'phrase_data_pv_install';
+    CONST string PHRASE_DATA_PV_INSTALL = test_paths::API_PHRASE_DATA_RES . self::PHRASE_DATA_PV_INSTALL_NAME . self::JSON;
+    // a phraseData answer of the portfolio split page for the test of its pdf report, selected by the names and not by the ids
+    CONST string PHRASE_DATA_PORTFOLIO_SPLIT = test_paths::API_PHRASE_DATA_RES . 'phrase_data_portfolio_split' . self::JSON;
+    // the calculator editor of the example PV installation, next to the hand made calculator_editor_sample.html
+    CONST string CALCULATOR_EDITOR = 'calculator_editor';
+    // the calculator page of the example PV installation that the server renders without javascript (url_var::JAVASCRIPT = 0)
+    CONST string PV_LIFETIME_BALANCE_NO_JS = 'pv_lifetime_balance_no_js';
+    // the calculator page of the example PV installation that the browser builds with javascript, next to pv_lifetime_balance_no_js.html
+    CONST string PV_LIFETIME_BALANCE_JS = 'pv_lifetime_balance_js';
+    // the hand made target layout of the PV calculator page, which no test changes
+    CONST string PV_LIFETIME_BALANCE_SAMPLE = 'pv_lifetime_balance_sample';
+    // the end of the name of a hand made target page next to the page that a use case view renders
+    CONST string SAMPLE_SUFFIX = '_sample';
+    // the differences of pv_lifetime_balance_no_js.html to the sample as a markdown prompt for an llm
+    CONST string PV_LIFETIME_BALANCE_DIFF = 'pv_lifetime_balance_diff';
+    // the input cases that a headless browser types into the sample and into pv_lifetime_balance_js.html, selected
+    // by the case name as the url hash; the differences of a case are written to PV_CASE_DIFF_PREFIX + case name
+    CONST string PV_LIFETIME_BALANCE_CASES = test_paths::JS . 'pv_lifetime_balance_cases' . self::JS;
+    // the script of all use cases that types the CASES of a use case into a page
+    CONST string USE_CASE_CASES = test_paths::JS . 'use_case_cases' . self::JS;
+    CONST string PV_CASE_DIFF_PREFIX = self::PV_LIFETIME_BALANCE_DIFF . '_';
+    CONST string PV_CASE_STANDARD = 'standard';
+    CONST string PV_CASE_HIGH = 'high';
+    CONST string PV_CASE_LOW = 'low';
+    CONST string PV_CASE_MISSING_FIELD = 'missing_field';
+    CONST array PV_CASES = [self::PV_CASE_STANDARD, self::PV_CASE_HIGH, self::PV_CASE_LOW];
+    // the calculator page of the example portfolio split that the server renders without javascript
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_NO_JS = 'portfolio_split_calculator_no_js';
+    // the same page that the browser builds with javascript from the database
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_JS = 'portfolio_split_calculator_js';
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_SAMPLE = 'portfolio_split_calculator_sample';
+    // the differences of the page without javascript to the sample as a markdown prompt for an llm
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_DIFF = 'portfolio_split_calculator_diff';
+    // the input cases of the page that the browser builds, reported in PORTFOLIO_CASE_DIFF_PREFIX + case name
+    CONST string PORTFOLIO_SPLIT_CALCULATOR_CASES = test_paths::JS . 'portfolio_split_calculator_cases' . self::JS;
+    CONST string PORTFOLIO_CASE_DIFF_PREFIX = self::PORTFOLIO_SPLIT_CALCULATOR_DIFF . '_';
+    CONST string PORTFOLIO_CASE_STANDARD = 'standard';
+    CONST string PORTFOLIO_CASE_HIGH = 'high';
+    CONST string PORTFOLIO_CASE_LOW = 'low';
+    CONST string PORTFOLIO_CASE_OVER = 'over';
+    CONST string PORTFOLIO_CASE_DIFFER = 'differ';
+    CONST array PORTFOLIO_CASES = [self::PORTFOLIO_CASE_STANDARD, self::PORTFOLIO_CASE_HIGH, self::PORTFOLIO_CASE_LOW,
+        self::PORTFOLIO_CASE_OVER, self::PORTFOLIO_CASE_DIFFER];
+    // the formula editor of the example PV installation in the use case folder next to the hand made
+    // formula_editor_sample.html, because the view test removes every file below views_by_object that it has not written
+    CONST string FORMULA_EDITOR = 'formula_editor';
+    // the update put messages of the calculator editor save without the database ids, which the test adds
+    CONST string UPDATE_PUT_ADD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_add' . self::JSON;
+    CONST string UPDATE_PUT_UPDATE = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_update' . self::JSON;
+    CONST string UPDATE_PUT_UNDO = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_undo' . self::JSON;
+    CONST string UPDATE_PUT_WITHOUT_WORD = test_paths::API_CALCULATOR_EDITOR_RES . 'update_put_without_word' . self::JSON;
+    // the user actions that a headless browser runs in a copy of the calculator editor snapshot, selected by the
+    // scenario name as the url hash; the update put message that the editor sends after a scenario is compared
+    // with the file UI_PUT_PREFIX + scenario name in test_paths::WEB_CALCULATOR_EDITOR_RES
+    CONST string CALCULATOR_EDITOR_SCENARIOS = test_paths::JS . 'calculator_editor_scenarios' . self::JS;
+    CONST string UI_PUT_PREFIX = 'update_put_';
+    CONST string SCENARIO_AUTARKY_FORMULA = 'autarky_formula';
+    CONST string SCENARIO_AUTARKY_FORMULA_UNCHANGED = 'autarky_formula_unchanged';
+    CONST string SCENARIO_PV_CAPACITY_LABEL = 'pv_capacity_label';
+    CONST string SCENARIO_PV_CAPACITY_LABEL_UNDO = 'pv_capacity_label_undo';
+    CONST string SCENARIO_PV_CAPACITY_LABEL_UNDO_ALL = 'pv_capacity_label_undo_all';
+    CONST string SCENARIO_PV_CAPACITY_RENAME = 'pv_capacity_rename';
+    CONST string SCENARIO_PV_CAPACITY_NUMBER = 'pv_capacity_number';
+    CONST string SCENARIO_PV_CAPACITY_MAXIMUM = 'pv_capacity_maximum';
+    CONST string SCENARIO_PV_CAPACITY_MINIMUM_CLEARED = 'pv_capacity_minimum_cleared';
+    CONST string SCENARIO_ADD_INPUT = 'add_input';
+    CONST string SCENARIO_ADD_INPUT_WITHOUT_PHRASE = 'add_input_without_phrase';
+    CONST string SCENARIO_REMOVE_INPUT = 'remove_input';
+    CONST string SCENARIO_PV_CAPACITY_DOWN = 'pv_capacity_down';
+    CONST string SCENARIO_PV_CAPACITY_UP = 'pv_capacity_up';
+    CONST string SCENARIO_PV_CAPACITY_DOWN_UP = 'pv_capacity_down_up';
+    CONST string SCENARIO_AUTARKY_UP = 'autarky_up';
+    CONST string SCENARIO_EMBODIED_EMISSION_DOWN = 'embodied_emission_down';
+    // the messages of the scenarios that the write test saves and undoes
+    CONST string UPDATE_PUT_PV_CAPACITY_LABEL = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_LABEL . self::JSON;
+    CONST string UPDATE_PUT_AUTARKY_FORMULA = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_FORMULA . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_RENAME = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_RENAME . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_NUMBER = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_NUMBER . self::JSON;
+    CONST string UPDATE_PUT_PV_CAPACITY_MAXIMUM = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_PV_CAPACITY_MAXIMUM . self::JSON;
+    CONST string UPDATE_PUT_ADD_INPUT = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_ADD_INPUT . self::JSON;
+    CONST string UPDATE_PUT_AUTARKY_UP = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_AUTARKY_UP . self::JSON;
+    CONST string UPDATE_PUT_EMBODIED_EMISSION_DOWN = test_paths::WEB_CALCULATOR_EDITOR_RES . self::UI_PUT_PREFIX . self::SCENARIO_EMBODIED_EMISSION_DOWN . self::JSON;
+    // the expected api files whose received json is written next to them e.g. as
+    // phrase_data_pv_install_actual.json, to compare the two with a diff tool; the written
+    // files are never committed (.gitignore) and an api test without its file here writes none
+    CONST array WRITE_API_ACTUAL_FILES = [self::PHRASE_DATA_PV_INSTALL];
 
     // the static forward pages in the docroot by their url path, which the test run rewrites
     // from the view of api::FORWARD_VIEWS (see base_ui_tests)
@@ -75,6 +167,24 @@ class files
         api::FIND_FORWARD => test_paths::DOCROOT . api::FIND_FORWARD,
         api::SETTINGS_REL => test_paths::DOCROOT . api::SETTINGS_REL,
     ];
+    // the folder of the static forward pages of the pinned views of config.yaml, each named by its
+    // url name, which the test run rewrites from the url of config.yaml (see base_ui_tests)
+    CONST string PINNED_PAGE_PATH = test_paths::DOCROOT . DIRECTORY_SEPARATOR;
+    // the static start page with the links to the pinned views, which the test run rewrites
+    CONST string START_PAGE = test_paths::DOCROOT . DIRECTORY_SEPARATOR . 'index' . self::HTML;
+    // the folder of the static pages that the server shows without the php frontend e.g. the reject
+    // page of a blocked ip address (see server_guard)
+    CONST string OPTIONAL_PATH = test_paths::DOCROOT . DIRECTORY_SEPARATOR . 'optional' . DIRECTORY_SEPARATOR;
+    // the static pages without the start page, into which the test run writes the font and the colours
+    CONST array STATIC_PAGES = [
+        self::OPTIONAL_PATH . 'default' . self::HTML,
+        self::OPTIONAL_PATH . 'database_upgrade' . self::HTML,
+        self::OPTIONAL_PATH . 'program_upgrade' . self::HTML,
+        self::OPTIONAL_PATH . 'ip_reject' . self::HTML,
+        self::OPTIONAL_PATH . 'user_reject' . self::HTML,
+    ];
+    // the allow-list of the extensionless forward pages in the docroot
+    CONST string HTACCESS = test_paths::DOCROOT . DIRECTORY_SEPARATOR . '.htaccess';
 
     // the snapshots that no test of a run writes, but that must never be removed by the
     // cleanup of the unused test files e.g. the initial test page created before the
@@ -104,7 +214,11 @@ class files
     CONST string DOCS_NAME_EXCEPTIONS = test_paths::DOCS . 'code_object_name_exceptions' . self::MD;
     CONST string DOCS_MSG_EXCEPTIONS = test_paths::DOCS . 'code_user_message_exceptions' . self::MD;
     CONST string DOCS_TEST_COVERAGE = test_paths::DOCS . 'code_test_coverage' . self::MD;
+    CONST string DOCS_MATH = test_paths::DOCS . 'math' . self::MD;
+    // the javascript evaluators of the math function report, started with node
+    CONST string MATH_FUNCTION_REPORT_JS = test_paths::UTILS . 'math_function_report.js';
     CONST string DOCS_JSON_FINDINGS = test_paths::DOCS . 'json_findings' . self::MD;
+    CONST string DOCS_PINNED_ID_FINDINGS = test_paths::DOCS . 'pinned_id_findings' . self::MD;
 
 
     /*
@@ -175,6 +289,11 @@ class files
     CONST string IMPORT_VERSION_NEWER_TEST = test_paths::IMPORT_INCONSISTENCY . 'version_newer_test' . self::JSON;
     CONST string IMPORT_TRIPLE_LINK_RENAME_1 = test_paths::IMPORT . 'triple_link_rename_1';
     CONST string IMPORT_TRIPLE_LINK_RENAME_2 = test_paths::IMPORT . 'triple_link_rename_2';
+    CONST string IMPORT_TRIPLE_DESCRIPTION_1 = test_paths::IMPORT . 'triple_description_1';
+    CONST string IMPORT_TRIPLE_DESCRIPTION_2 = test_paths::IMPORT . 'triple_description_2';
+    CONST string IMPORT_TRIPLE_DESCRIPTION_3 = test_paths::IMPORT . 'triple_description_3';
+    CONST string IMPORT_TYPES_CACHE_SYMBOL = test_paths::IMPORT . 'types_cache_symbol';
+    CONST string IMPORT_TYPES_CACHE_UNIT = test_paths::IMPORT . 'types_cache_unit';
     CONST string IMPORT_NO_UPDATE = test_paths::IMPORT . 'no_update';
     CONST string IMPORT_NO_UPDATE_CHANGED = test_paths::IMPORT . 'no_update_changed';
     CONST string IMPORT_UPDATE_EXT = '_update';
@@ -238,8 +357,11 @@ class files
     CONST string IMPORT_CBAM_COSTS = test_paths::IMPORT . 'CBAM_costs' . self::JSON;
     CONST string IMPORT_CBAM_PREREQUISITE = test_paths::IMPORT . 'CBAM_ prerequisite' . self::JSON;
     CONST string IMPORT_CBAM_SETUP = test_paths::IMPORT . 'CBAM_setup' . self::JSON;
+    CONST string IMPORT_CH_BANKING_AND_TAX = test_paths::IMPORT . 'ch_banking_and_tax' . self::JSON;
+    CONST string IMPORT_CH_NEWS_ADVERB_MARKET = test_paths::IMPORT . 'ch_news_adverb_market' . self::JSON;
     CONST string IMPORT_CLIMATE_MITIGATION_VS_DAMAGE_COSTS = test_paths::IMPORT . 'climate_mitigation_vs_damage_costs' . self::JSON;
     CONST string IMPORT_CO2_WASTE_KEZO = test_paths::IMPORT . 'co2_waste_kezo' . self::JSON;
+    CONST string IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850 = test_paths::IMPORT . 'cumulative_anthropogenic_co2_since_1850' . self::JSON;
     CONST string IMPORT_DEMOCRATIZATION_OF_INTERNET_ATTENTION = test_paths::IMPORT . 'democratization_of_internet_attention' . self::JSON;
     CONST string IMPORT_EU_BANKING = test_paths::IMPORT . 'eu_banking' . self::JSON;
     CONST string IMPORT_EU_SOFTWARE_SOVEREIGNTY = test_paths::IMPORT . 'eu_software_sovereignty' . self::JSON;
@@ -269,10 +391,26 @@ class files
     CONST string IMPORT_WIKIDATA_TO_IMPORT_Q4917 = test_paths::IMPORT_WIKIDATA_TO_IMPORT . 'import_Q4917' . self::JSON;
 
     // the raw wikidata api responses used by the wikidata converter tests, so not import json
+    CONST string IMPORT_WIKIDATA_P1082 = test_paths::IMPORT_WIKIDATA_CACHE . 'P1082' . self::JSON;
     CONST string IMPORT_WIKIDATA_P2284 = test_paths::IMPORT_WIKIDATA_CACHE . 'P2284' . self::JSON;
+    CONST string IMPORT_WIKIDATA_Q72 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q72' . self::JSON;
     CONST string IMPORT_WIKIDATA_Q167 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q167' . self::JSON;
     CONST string IMPORT_WIKIDATA_Q4916 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q4916' . self::JSON;
     CONST string IMPORT_WIKIDATA_Q4917 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q4917' . self::JSON;
+    // the criteria "population present" and "resident population" of the Zurich population values
+    CONST string IMPORT_WIKIDATA_Q56229478 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q56229478' . self::JSON;
+    CONST string IMPORT_WIKIDATA_Q56229488 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q56229488' . self::JSON;
+    // the hand made wikidata answers of the converter unit tests and their expected import json
+    CONST string IMPORT_WIKIDATA_UNIT_P2284 = test_paths::IMPORT_WIKIDATA_UNIT . 'P2284' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q4917 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q4917' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q4917 = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q4917' . self::JSON;
+    // three real population values of Zurich without a unit: one without a criterion and two of the same year with a criterion each
+    CONST string IMPORT_WIKIDATA_UNIT_P1082 = test_paths::IMPORT_WIKIDATA_UNIT . 'P1082' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'Q72' . self::JSON;
+    CONST string IMPORT_WIKIDATA_UNIT_TARGET_Q72 = test_paths::IMPORT_WIKIDATA_UNIT . 'import_Q72' . self::JSON;
+    // a hand made item without a name used as unit and as criterion in the cache folder, where the
+    // converter reads the units and criteria from; Q0 is no wikidata id, so no live capture overwrites it
+    CONST string IMPORT_WIKIDATA_Q0 = test_paths::IMPORT_WIKIDATA_CACHE . 'Q0' . self::JSON;
 
     // XBRL filesets (zipped instance + taxonomy delivered by an issuer)
     CONST string IMPORT_XBRL_ABB_2013_ZIP = test_paths::IMPORT_XBRL_ZIP . 'abb-2013-xbrl_fileset-20131231' . self::ZIP;
@@ -334,6 +472,8 @@ class files
     CONST string SQL_FORMAT_TEST_COUNT_MYSQL = 'user_list_by_count_changes_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER = 'user_list_by_count_user_rows' . self::SQL;
     CONST string SQL_FORMAT_TEST_COUNT_USER_MYSQL = 'user_list_by_count_user_rows_mysql' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SUM = 'user_log_sum_list_by_server_time' . self::SQL;
+    CONST string SQL_FORMAT_TEST_SUM_MYSQL = 'user_log_sum_list_by_server_time_mysql' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE = 'db_cache_page_create' . self::SQL;
     CONST string SQL_FORMAT_TEST_CREATE_MYSQL = 'db_cache_page_create_mysql' . self::SQL;
     // the create of a table with its user sandbox table and the column comments
@@ -424,6 +564,9 @@ class files
         self::IMPORT_ATTENTION_SCARCITY_VS_FREEDOM_OF_EXPRESSION,
         self::IMPORT_MODERATION_LATENCY_VS_SPREAD,
         self::IMPORT_OSTRACISM,
+        self::IMPORT_CUMULATIVE_ANTHROPOGENIC_CO2_SINCE_1850,
+        self::IMPORT_CH_BANKING_AND_TAX,
+        self::IMPORT_CH_NEWS_ADVERB_MARKET,
     ];
 
 

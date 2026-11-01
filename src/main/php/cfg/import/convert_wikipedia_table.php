@@ -82,7 +82,7 @@ class convert_wikipedia_table
 
     /**
      * convert a wikipedia table to a zukunft.com json string
-     * TODO review and move the parameters to a more general context
+     * TODO Prio 2 review and move the parameters to a more general context
      *
      * @param string $wiki_tbl wth the wikipedia table
      * @param user $usr the user how has initiated the conversion
@@ -169,9 +169,9 @@ class convert_wikipedia_table
     /**
      * convert a wikitable2json to a zukunft.com json
      * based on wikitable2json
-     * TODO use it to compare wikipedia table with wikidata and report the differences
-     * TODO base all assumptions on the given context
-     * TODO add a word splitter to separate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
+     * TODO Prio 2 use it to compare wikipedia table with wikidata and report the differences
+     * TODO Prio 2 base all assumptions on the given context
+     * TODO Prio 2 add a word splitter to separate e.g. "Growth rate (2019–2022)" to "Growth rate", "2019" and "2022"
      *
      * @param string $wiki_json wth the wikipedia table
      * @param user_message $msg with the user how has initiated the conversion
@@ -229,7 +229,7 @@ class convert_wikipedia_table
             $word_lst[] = $context_name;
         }
 
-        // TODO remove: special cases to be deprecated
+        // TODO Prio 2 remove: special cases to be deprecated
         if ($col_name_out == '') {
             $col_name_out = $col_name_wiki;
         }
@@ -346,7 +346,7 @@ class convert_wikipedia_table
                 }
             }
 
-            // TODO remove: special cases to be deprecated
+            // TODO Prio 2 remove: special cases to be deprecated
             if ($col_name_out != '') {
                 $trp = [];
                 $row_key = $wiki_row[$pos_row];
@@ -414,7 +414,7 @@ class convert_wikipedia_table
                             $word[$key] = $word_part_par;
                         }
                     } else {
-                        // TODO base this on the ontology / context
+                        // TODO Prio 2 base this on the ontology / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_part);
                         $word[json_fields::NAME] = $word_name;
                     }
@@ -422,7 +422,7 @@ class convert_wikipedia_table
             } else {
                 if ($word_entry != '') {
                     if (!in_array($word_entry, $words_in_list)) {
-                        // TODO base this on the ontology / context
+                        // TODO Prio 2 base this on the ontology / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_entry);
                         $word[json_fields::NAME] = $word_name;
                     }
@@ -448,7 +448,7 @@ class convert_wikipedia_table
             return false;
         } else {
             // remove percent symbol
-            // TODO base this on the ontology / context
+            // TODO Prio 2 base this on the ontology / context
             $cell_text = str_replace('%', '', $cell_text);
             if (is_numeric($cell_text)) {
                 return true;
@@ -468,7 +468,7 @@ class convert_wikipedia_table
             return null;
         } else {
             // remove percent symbol
-            // TODO base this on the ontology / context
+            // TODO Prio 2 base this on the ontology / context
             if ($cell_text == '%') {
                 $word = [];
                 $word[json_fields::NAME] = '%';
@@ -489,7 +489,7 @@ class convert_wikipedia_table
             return null;
         } else {
             // remove percent symbol
-            // TODO base this on the ontology / context
+            // TODO Prio 2 base this on the ontology / context
             $cell_text = str_replace('%', '', $cell_text);
             if (is_numeric($cell_text)) {
                 return floatval($cell_text);
@@ -613,7 +613,7 @@ class convert_wikipedia_table
         // ignore sort
         if (str_contains($remaining, self::COL_MAKER)
             and str_contains($remaining, self::SORT_MAKER)) {
-            // TODO get sort name
+            // TODO Prio 2 get sort name
             $remaining = $lib->str_right_of($remaining, self::SORT_MAKER);
             $remaining = $lib->str_right_of($remaining, self::COL_MAKER);
             $sort_name = $lib->str_left_of($remaining, self::COL_MAKER);
@@ -641,7 +641,7 @@ class convert_wikipedia_table
         }
         if (str_contains($remaining, self::COL_MAKER)) {
             if (str_starts_with($remaining, self::SORT_MAKER)) {
-                // TODO get sort name
+                // TODO Prio 2 get sort name
                 $remaining = $lib->str_right_of($remaining, self::LINK_MAKER);
             }
         }

@@ -91,7 +91,7 @@ class value_list_read_tests
         $test_name = 'Loading pi and e via value list is the same as single loading';
         $target = $target_lst->dsp_id();
         $result = $val_lst->dsp_id();
-        // TODO check why order may changes
+        // TODO Prio 2 check why order may changes
         if ($target != $result) {
             $target = '2.718281828459 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -'
                 . triple_names::E_NUM_ID . ',,, / -' . triple_names::PI_ID . ',,,) for user 3 (zukunft.com system test)';
@@ -116,10 +116,10 @@ class value_list_read_tests
         $phr_lst = $t_phr->ch_inhabitant_phrase_list();
         $val_lst->load_by_phr_lst($phr_lst, $msg);
         $result = $val_lst->dsp_id();
-        // TODO check why not all years are loaded
-        //$target = values::TV_CH_INHABITANTS_2019_IN_MIO;
         $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert_text_contains($test_name, $result, $target);
+        $test_name = '... with all years, not only the latest';
+        $t->assert_text_contains($test_name, $result, values::CH_INHABITANTS_2019_IN_MIO);
 
         // load values related to any phrase of a list
         // use the phrases that carry the values in the seeded database
@@ -135,6 +135,15 @@ class value_list_read_tests
                 . triple_names::PI_ID . ',,, / -' . triple_names::E_NUM_ID . ',,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
+        // the phrases of all values are loaded with one query for the whole list
+        $test_name = '... and the phrase load of the list names the phrases of each value';
+        $val_lst->load_phrases($msg);
+        $named = [];
+        foreach ($val_lst->lst() as $val) {
+            $phr_lst = $val->grp()->phrase_list();
+            $named[] = (!$phr_lst->is_empty() and $phr_lst->loaded());
+        }
+        $t->assert($test_name, $named, [true, true]);
 
         // load by phrase list
         $phr = new phrase($t->usr1);
@@ -142,7 +151,7 @@ class value_list_read_tests
         $phr_lst = $phr->all_children($msg);
         $val_lst = new value_list($t->usr1);
         // TODO Prio 2 activate
-        // TODO add the word "System configuration" to the list of index word for each pod
+        // TODO Prio 2 add the word "System configuration" to the list of index word for each pod
         //      and for fast value selection and always the word in the group
         //      so that a selection of the complete system configuration can be done with one phrase
         //$val_lst->load_by_phr_lst($phr_lst);

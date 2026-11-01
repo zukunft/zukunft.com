@@ -60,11 +60,11 @@ class view_list_read_tests
 
         // test loading view names
         $test_name = 'loading view names with pattern return the expected view';
-        $pattern = substr(views::TEST_ALL_NAME, 0, -1);
+        $pattern = substr(views::CALCULATOR_NAME, 0, -1);
         $msk_lst = new view_list($t->usr1);
         $msk_lst->load_names($pattern, $msg);
-        $t->assert_contains($test_name, $msk_lst->names(), views::TEST_ALL_NAME);
-        // TODO do not exclude all system views
+        $t->assert_contains($test_name, $msk_lst->names(), views::CALCULATOR_NAME);
+        // TODO Prio 2 do not exclude all system views
         //      e.g. allow the user to select the system default view Word aka TN_READ
         //      but do not allow to select system forms aka TN_FORM
         $test_name = 'system view are not included in the normal view list';
@@ -89,8 +89,20 @@ class view_list_read_tests
         $test_name = 'a view of another type is not in the value view list';
         $t->assert_contains_not($test_name, $msk_typ_lst->ids(), views::WORD_ID);
 
+        // the views tab adds the default view of a phrase and of its parents by the view id
+        $test_name = 'a view is added to the views tab by its id';
+        $msk_tab = new view_list($t->usr1);
+        $added = $msk_tab->add_by_id(views::MATH_CONST_ID, $msg);
+        $t->assert_true($test_name, $added);
+        $test_name = '... but only once, e.g. if two parents have the same view';
+        $added = $msk_tab->add_by_id(views::MATH_CONST_ID, $msg);
+        $t->assert_false($test_name, $added);
+        $test_name = '... and nothing is added for a phrase without a default view';
+        $added = $msk_tab->add_by_id(0, $msg);
+        $t->assert_false($test_name, $added);
+
         $test_name = 'loading the api message creation of the api index file for ';
-        // TODO add this to all db read tests for all API call functions
+        // TODO Prio 2 add this to all db read tests for all API call functions
         $result = json_decode($msk_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(view_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
@@ -104,7 +116,7 @@ class view_list_read_tests
         $t->assert_contains($test_name, $msk_lst->names(), views::START_NAME);
 
         // test load by view list by ids
-        /* TODO activate
+        /* TODO Prio 1 activate
         $test_name = 'load views by ids';
         $wrd_lst = new view_list($t->usr1);
         $wrd_lst->load_by_ids(array(1,3));

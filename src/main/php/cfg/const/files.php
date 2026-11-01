@@ -48,7 +48,8 @@ class files
     const string YAML = '.yaml';
     const string XML = '.xml';
     const string ZIP = '.zip';
-    const string CODE_LINK_TYPE = '.csv';
+    const string CSV = '.csv';
+    const string CODE_LINK_TYPE = self::CSV;
     const string SQL = '.sql';
     const string SEP = '_';
 
@@ -62,6 +63,8 @@ class files
     // the json state file of the sys_log insert throttle, next to the error log
     // because the throttle must work even if the database is broken
     const string SYS_LOG_THROTTLE = ROOT_PATH . 'sys_log_throttle' . self::JSON;
+    // the start of the name of an archived user log file, followed by the archive time and the first session id
+    const string USER_LOG_ARCHIVE = 'user_log' . self::SEP;
 
     const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
@@ -77,7 +80,7 @@ class files
     const string DB_SETUP_PG_PATH = self::DB_SETUP_PATH . 'postgres' . DIRECTORY_SEPARATOR;
     const string DB_SETUP_MYSQL_PATH = self::DB_SETUP_PATH . 'mysql' . DIRECTORY_SEPARATOR;
 
-    // TODO make the csv file list based on the class name
+    // TODO Prio 2 make the csv file list based on the class name
     const string CODE_LINK_PATH = self::RESOURCE_PATH . 'db_code_links' . DIRECTORY_SEPARATOR;
 
 
@@ -98,6 +101,9 @@ class files
 
     // initial configuration of some views that the user can change
     const string BASE_VIEWS_FILE = 'base_views' . self::JSON;
+    // the default views of system phrases, imported after the views, because a phrase can only be
+    // linked to a view that is already in the database e.g. "Mathematical constant" for "mathematical constant"
+    const string ASSIGNED_VIEWS_FILE = 'assigned_views' . self::JSON;
 
 
     /*
@@ -156,6 +162,27 @@ class files
     const string PV_YIELD_SWITZERLAND_FILE = self::USE_CASE_PATH . 'pv_yield_switzerland' . self::JSON;
     // the sun intensity, the photovoltaic yield per kWp and the national electricity prices of the other countries
     const string PV_YIELD_BY_COUNTRY_FILE = self::USE_CASE_PATH . 'pv_yield_by_country' . self::JSON;
+    // the lifetime electricity and CO2-eq balance of a rooftop PV installation with battery in
+    // Switzerland; the name is also the name of the generated page snapshot next to the hand made
+    // sample page (src/test/resources/web/html/use_cases/)
+    const string PV_LIFETIME_BALANCE = 'pv_lifetime_balance';
+    const string PV_LIFETIME_BALANCE_FILE = self::USE_CASE_PATH . self::PV_LIFETIME_BALANCE . self::JSON;
+    // the embedded emission, the CBAM certificates and the CBAM cost of an import into the EU
+    const string CBAM_CALCULATOR_FILE = self::USE_CASE_PATH . 'cbam_calculator' . self::JSON;
+    // the name of the generated page snapshot of the view of cbam_calculator.json next to the
+    // hand made sample page (src/test/resources/web/html/use_cases/)
+    const string CBAM_TREE_CALCULATOR = 'CBAM_tree_calculator';
+    // the inheritance split of a securities depot into the parent portfolio and two child
+    // portfolios; the name is also the name of the generated page snapshot next to the hand made
+    // sample page (src/test/resources/web/html/use_cases/)
+    const string PORTFOLIO_SPLIT_CALCULATOR = 'portfolio_split_calculator';
+    const string PORTFOLIO_SPLIT_CALCULATOR_FILE = self::USE_CASE_PATH . self::PORTFOLIO_SPLIT_CALCULATOR . self::JSON;
+    // the cost calculator for the Swiss vote on lifting the ban on new nuclear power plants
+    const string NPP_CH_VOTE_FILE = self::USE_CASE_PATH . 'npp_ch_vote' . self::JSON;
+    // the cost per household of the Swiss vote on the additional financing of the AHV by an increase of the value added tax
+    const string AHV_VAT_VOTE_FILE = self::USE_CASE_PATH . 'ahv_vat_vote' . self::JSON;
+    // the buy, sell or hold decision on the ABB share from a target price of several valuation methods
+    const string SHARE_BUY_SELL_ABB_FILE = self::USE_CASE_PATH . 'share_buy_sell_abb' . self::JSON;
 
     // one file per problem of the start page ranking with the most relevant number of the problem
     // and the potential solutions, each value with the source it is taken from;
@@ -196,6 +223,18 @@ class files
     // the chart types and the charts of the start page added after solution_prio.json, e.g. the
     // leverage plot of the table with the mayor columns only
     const string START_PAGE_CHARTS_FILE = self::MESSAGE_PATH . 'start_page_charts' . self::JSON;
+    // the placeholder views of the table and the calculation editor (docs/table_creation.md)
+    const string EDITOR_VIEWS_FILE = self::MESSAGE_PATH . 'editor_views' . self::JSON;
+    // the keyword, the properties and the types of an input field of the process catch views,
+    // so that the fields of a question phrase are defined by triples of a use case file
+    const string PROCESS_CATCH_FIELDS_FILE = self::MESSAGE_PATH . 'process_catch_fields' . self::JSON;
+    // the start, main, detail and result page of a process catch with the components of each page
+    const string PROCESS_CATCH_VIEWS_FILE = self::MESSAGE_PATH . 'process_catch_views' . self::JSON;
+    // the keywords of the calculator view: the lists, the texts and the flags of a calculator page,
+    // so that the page of a phrase is defined by triples of a use case file (docs/llm/new_view_sample_pv_balance.md)
+    const string CALCULATOR_KEYWORDS_FILE = self::MESSAGE_PATH . 'calculator_keywords' . self::JSON;
+    // the calculator view with its title, input and result component and the editor relation
+    const string CALCULATOR_VIEWS_FILE = self::MESSAGE_PATH . 'calculator_views' . self::JSON;
 
     // the Fermi estimates and thesis chains of the start page, loaded by the full load
     const string FERMI_INTERNET_PRO_CONTRA_FILE = self::DATA_START_PAGE_PATH . 'fermi_internet_pro_contra' . self::JSON;
@@ -284,6 +323,8 @@ class files
         self::CURRENCIES,
         self::COMPANY,
         self::COMPANIES,
+        // last, because it only links phrases and views of the files above, so no id shifts
+        self::ASSIGNED_VIEWS_FILE,
         // TODO Prio 0 activate
         //self::ZURICH_HTP_IMPACT_FILE,
     ];
@@ -340,9 +381,10 @@ class files
         self::PV_YIELD_FILE,
         self::PV_YIELD_SWITZERLAND_FILE,
         self::PV_YIELD_BY_COUNTRY_FILE,
-        // start page data and no use case, but appended as the last file of the db setup, so
+        // start page data and no use case, but appended after the use cases above, so
         // that it shifts the database id of no phrase that a test pins
         self::PROBLEM_MAIN_REASONS_FILE,
+        self::CBAM_CALCULATOR_FILE,
     ];
 
     // system data with code ids added after the database ids of the tested phrases have been
@@ -350,6 +392,22 @@ class files
     // so that no pinned id moves; a file moves to SYSTEM_DATA_FILES with the next re-baseline
     const array SYSTEM_DATA_APPENDED_FILES = [
         self::START_PAGE_CHARTS_FILE,
+        self::EDITOR_VIEWS_FILE,
+        self::PROCESS_CATCH_FIELDS_FILE,
+        self::PROCESS_CATCH_VIEWS_FILE,
+        self::CALCULATOR_KEYWORDS_FILE,
+        self::CALCULATOR_VIEWS_FILE,
+    ];
+
+    // the use case files that build on the appended system data e.g. the page of a phrase defined
+    // by the calculator keywords, imported after it; a new use case file is always added at the
+    // end of this list, because its phrases get the next free ids
+    const array USE_CASE_FILES_APPENDED = [
+        self::PV_LIFETIME_BALANCE_FILE,
+        self::NPP_CH_VOTE_FILE,
+        self::PORTFOLIO_SPLIT_CALCULATOR_FILE,
+        self::AHV_VAT_VOTE_FILE,
+        self::SHARE_BUY_SELL_ABB_FILE,
     ];
 
     // sample data for the view unit tests, imported in the db setup right after the system config

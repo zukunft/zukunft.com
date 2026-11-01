@@ -16,7 +16,7 @@
     - save:              manage to update the database
     - sql write:         sql statement creation to write to the database
     - sql write fields:  field list for writing to the database
-    - display:           TODO to be move to frontend
+    - display:           TODO Prio 2 to be move to frontend
 
 
     This file is part of zukunft.com - calc with words
@@ -132,7 +132,7 @@ class change extends change_log
     const sql_field_type FLD_NEW_ID_SQL_TYP = sql_field_type::INT;
     const string FLD_OLD_EXT = '_old';
 
-    // TODO move to config
+    // TODO Prio 2 move to config
     const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
 
     // all database field names
@@ -219,7 +219,7 @@ class change extends change_log
             } else {
                 log_warning('Cannot get table id from ' . $fld_tbl->name);
             }
-            // TODO check if not the complete user should be loaded
+            // TODO Prio 3 check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
                 if ($db_row[user_db::FLD_ID] == $usr->id) {
@@ -266,7 +266,7 @@ class change extends change_log
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of the change log
-     * TODO use class name instead of TBL_CHANGE
+     * TODO Prio 2 use class name instead of TBL_CHANGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param string $query_name the name extension to make the query name unique
@@ -543,7 +543,7 @@ class change extends change_log
     /**
      * get a list of all database fields
      * list must be corresponding to the db_values fields
-     * TODO deprecate
+     * TODO Prio 2 deprecate
      *
      * @return array list of the database field names
      */
@@ -627,7 +627,7 @@ class change extends change_log
     }
 
     /**
-     * TODO move to the backend config class
+     * TODO Prio 2 move to the backend config class
      * @return string with the date format as requested by the user
      */
     function date_time_format(): string

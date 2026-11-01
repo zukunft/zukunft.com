@@ -77,6 +77,7 @@ include_once paths::SHARED_ENUM . 'value_types.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_types.php';
 include_once paths::SHARED_TYPES . 'share_types.php';
+//include_once paths::SHARED_TYPES . 'system_time_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST . 'def.php';
@@ -126,6 +127,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\fields\word_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\value_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\group_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\source_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\system_time_type;
 
 class value_list extends sandbox_value_list
 {
@@ -136,7 +138,7 @@ class value_list extends sandbox_value_list
 
     /**
      * fill the value list based on a database records
-     * TODO replace $ext with sql_tbl_typ
+     * TODO Prio 2 replace $ext with sql_tbl_typ
      *
      * @param array $db_rows is an array of an array with the database values
      * @param user_message $msg to enrich with problems and suggested solutions
@@ -191,6 +193,8 @@ class value_list extends sandbox_value_list
      * set the group id of every value of this list based on its phrase list
      * a value without a phrase is an internal inconsistency that the user cannot fix,
      * so it is only logged and this function reports nothing to the user
+     * the given name and the description of the group are kept, because e.g. the import sets
+     * them on the group of the value (see value_base::import_mapper) and the save writes them
      * @return void
      */
     function set_grp_ids(): void
@@ -200,8 +204,25 @@ class value_list extends sandbox_value_list
             if ($phr_lst->is_empty()) {
                 log_err('phrase list is empty for value ' . $val->dsp_id());
             } else {
-                $val->set_grp($phr_lst->get_grp_id(false));
+                $grp = $phr_lst->get_grp_id(false);
+                $this->keep_group_texts($val->grp(), $grp);
+                $val->set_grp($grp);
             }
+        }
+    }
+
+    /**
+     * @param group $old_grp the group of the value e.g. with the name and the description of the import
+     * @param group $grp the group with the id of the phrases, which replaces the old group
+     * @return void
+     */
+    private function keep_group_texts(group $old_grp, group $grp): void
+    {
+        if ($old_grp->name_given() != '') {
+            $grp->set_name($old_grp->name_given());
+        }
+        if ($old_grp->has_description()) {
+            $grp->set_description($old_grp->get_description());
         }
     }
 
@@ -223,7 +244,7 @@ class value_list extends sandbox_value_list
 
     /**
      * get the first value of the list that is related to all given phrase names
-     * TODO use a memory db
+     * TODO Prio 3 use a memory db
      * @param array $names list of phrase names
      * @return value_base|null this first matching value or null if no value is found
      */
@@ -256,8 +277,7 @@ class value_list extends sandbox_value_list
      * load a list of values that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all values related to the two cities are returned
      *
-     *  TODO use order by in query
-     *  TODO use limit and page in query
+     *  TODO Prio 2 use order by in query, because without an order a page can repeat a row
      *
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
      * @param bool $or if true all values are returned that are linked to any phrase of the list
@@ -268,7 +288,7 @@ class value_list extends sandbox_value_list
     function load_by_phr_lst(
         phrase_list  $phr_lst,
         user_message $msg, bool $or = false,
-        int          $limit = sql_db::ROW_LIMIT,
+        int          $limit = sql_db::ROW_MAX,
         int          $page = 0
     ): bool
     {
@@ -279,8 +299,8 @@ class value_list extends sandbox_value_list
      * load a list of values that are related to the given phrase
      * e.g. for "city" all values directly related to the phrase city are returned
      *
-     * TODO use order by in query
-     * TODO use limit and page in query
+     * TODO Prio 2 use order by in query
+     * TODO Prio 2 use limit and page in query
      *
      * @param phrase $phr phrase list to which all related values should be loaded
      * @return bool true if at least one value has been loaded
@@ -423,6 +443,7 @@ class value_list extends sandbox_value_list
     {
 
         global $db_con;
+        global $sys;
         $result = false;
 
         $db_con_used = $db_con_given;
@@ -444,7 +465,9 @@ class value_list extends sandbox_value_list
             if ($db_lst === false) {
                 log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
             } else {
+                $sys->times->switch(system_time_type::DB_MAP);
                 $result = $this->rows_mapper_multi($db_lst, $qp->ext, $msg, $load_all);
+                $sys->times->switch();
             }
         }
         return $result;
@@ -453,8 +476,7 @@ class value_list extends sandbox_value_list
     /**
      * create an SQL statement to retrieve a list of values by a list of phrases from the database
      * return all values that match at least one phrase of the list
-     * TODO add ORDER BY (relevance of value)
-     * TODO use LIMIT and PAGE
+     * TODO Prio 2 add ORDER BY (relevance of value)
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -793,7 +815,7 @@ class value_list extends sandbox_value_list
     }
 
     /**
-     * TODO the second row should be 4, 0 not 0,4
+     * TODO Prio 1 the second row should be 4, 0 not 0,4
      * @param array $ids
      * @return array
      */
@@ -863,7 +885,7 @@ class value_list extends sandbox_value_list
 
     /**
      * create an SQL statement to retrieve a list of values by the id from the database
-     * TODO links and select all phrase ids
+     * TODO Prio 2 links and select all phrase ids
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $ids value ids that should be loaded
@@ -912,7 +934,7 @@ class value_list extends sandbox_value_list
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
-                // TODO move to the calling function
+                // TODO Prio 2 move to the calling function
                 if ($usr_tbl) {
                     $sc_par_lst->add(sql_type::USER);
                 }
@@ -1013,7 +1035,7 @@ class value_list extends sandbox_value_list
 
     /**
      * create an SQL statement to retrieve a list of values by a list of group ids from the database
-     * TODO check if this not the same as the load_sql_by_ids function
+     * TODO Prio 2 check if this not the same as the load_sql_by_ids function
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related values should be loaded
@@ -1036,7 +1058,7 @@ class value_list extends sandbox_value_list
                 $max_row_ids = array_shift($matrix_row);
                 $phr_id_lst = $matrix_row;
 
-                // TODO move to the calling function
+                // TODO Prio 2 move to the calling function
                 if ($usr_tbl) {
                     $sc_par_lst->add(sql_type::USER);
                 }
@@ -1764,7 +1786,7 @@ class value_list extends sandbox_value_list
     /**
      * check the consistency for all values
      * so get the words and triples linked from the word group
-     * TODO split into smaller sections by adding LIMIT to the query and start a loop
+     * TODO Prio 2 split into smaller sections by adding LIMIT to the query and start a loop
      */
     function check_all(): bool
     {
@@ -1845,7 +1867,7 @@ class value_list extends sandbox_value_list
 
             // update the existing values
 
-            // TODO loop over the values and check if all needed functions exist
+            // TODO Prio 2 loop over the values and check if all needed functions exist
             //      create the missing functions
             //      create blocks of update function calls
         }

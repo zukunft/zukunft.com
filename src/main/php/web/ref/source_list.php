@@ -34,12 +34,16 @@ namespace Zukunft\ZukunftCom\main\php\web\ref;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'ListBase.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\sandbox\ListBase;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class source_list extends ListBase
 {
@@ -62,6 +66,22 @@ class source_list extends ListBase
     /*
      * load
      */
+
+    /**
+     * load the sources with the given ids from the backend via api, e.g. the sources of the
+     * values of a page, which carry only the source id
+     *
+     * @param array $ids the ids of the sources to load
+     * @param user_message $msg to report a problem of the api message to the user
+     * @return bool true if at least one source has been loaded
+     */
+    function load_by_ids(array $ids, user_message $msg): bool
+    {
+        $rest = new rest_call();
+        $json_body = $rest->api_get(self::class, [url_var::ID_LST => implode(',', $ids)], $msg);
+        $this->api_mapper($json_body);
+        return !$this->is_empty();
+    }
 
     /**
      * fill the list for a source selector: the sources that match the typed chars, or all sources of the

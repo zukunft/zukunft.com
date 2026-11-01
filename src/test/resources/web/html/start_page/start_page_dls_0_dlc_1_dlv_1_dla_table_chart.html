@@ -1,0 +1,2080 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            test start page - zukunft.com
+        </title>
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <link rel="stylesheet" href="/src/main/resources/style/style_html.css">
+        <style>
+            :root { --font-page: sans-serif; }
+:root { --page-grey: #9ea09e; --page-link: #385eb7; --page-deep: #274b8f; --page-border: #b9c6d6; --page-white: #ffffff; --page-rule: #dee2e6; --page-panel: #f9fafb; --page-input: #ccc; --page-changed: #6b86c2; --page-tab: #f8f9fa; --page-highlight: #dbe4f5; --page-shadow: rgba(0, 0, 0, 0.1); --page-menu: #f0f0f0; --page-faint: #aaa; --page-label: #777; --page-file: #6e706e; --page-negative: #dc3545; --page-hover: #7a9fbf; --page-black: black; --bg: #eef2f8; --surface: #ffffff; --surface-2: #f6f8fc; --ink: #1b2f5c; --ink-2: #4b5d83; --muted: #7b88a3; --line: #d2dbe9; --accent: #385eb7; --accent-deep: #274b8f; --accent-soft: #dbe4f5; --shared: #8a5a07; --shared-soft: #fbf0db; --danger: #c23b30; --danger-soft: #fbe4e1; --ok: #2f7d55; --ok-soft: #dff1e7; --pv-text: #274b8f; --pv-label: #385eb7; --pv-muted: #9ea09e; --pv-panel: #f9fafb; --pv-border: #b9c6d6; --pv-field: #ffffff; --pv-rule: #dee2e6; --pv-sec: #dbe4f5; --pv-assumed: #6b86c2; --pv-neg: #dc3545; color-scheme: light; }
+        </style>
+    </head>
+    <body>
+        <nav  class="navbar site-header fixed-top">
+            <a href="/http/view.php" title="zukunft.com" class="navbar-brand">
+                <img src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" class="logo-nav">
+            </a>
+            <form action="/http/view.php" class="d-flex align-items-center my-2 my-lg-0 flex-grow-1 mx-3">
+                <input type="hidden" name="m" value="107">
+                <label for="kp" class="visually-hidden">
+                    Search
+                </label>
+                <input class="form-control me-2" type="search" name="pattern" id="kp" placeholder="word or formula" style="min-width: 40vw; max-width: 800px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    Get numbers
+                </button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <details class="view-menu">
+                            <summary>
+                                <i class="fas fa-edit">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="?view=more" title="show more views">
+                                        ... more
+                                    </a>
+                                </li>
+                                <li class="menu-header">
+                                    customize
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=85&amp;id=1" title="call the view editor to customize this view">
+                                        change this view
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=84" title="create a new named view editor">
+                                        add view
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="lang-menu">
+                            <summary>
+                                <i class="fas fa-globe">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=en">
+                                        English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=en_us">
+                                        US English
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=de" title="German">
+                                        Deutsch
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=fr" title="French">
+                                        Français
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=es" title="Spanish">
+                                        Español
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=zh" title="Chinese">
+                                        漢語
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=1&amp;q=ar" title="Arabic">
+                                        العربية
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=language_select">
+                                        ... more
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                        <details class="user-menu">
+                            <summary>
+                                <i class="fas fa-user-circle">
+                                </i>
+                            </summary>
+                            <ul>
+                                <li>
+                                    <a href="/http/view.php?m=11">
+                                        Log in
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/http/view.php?m=13">
+                                        Signup
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="/settings">
+                                        Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <main class="main-container">
+            <h4>
+                start_page_dls_0_dlc_1_dlv_1_dla_table_chart
+            </h4>
+            <div class="container text-center">
+                <h4>
+                    <a href="/http/view.php?m=4&amp;id=139">
+                        global problems
+                    </a>
+                </h4>
+            </div>
+            <table class="table">
+                <tr>
+                    <th>
+                        <a href="/http/view.php?m=3&amp;id=220">
+                            problem
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=220.alpha_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=220.alpha_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="/http/view.php?m=4&amp;id=177">
+                            potential loss
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=298">
+                            trillion
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=302">
+                            EUR
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-177.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-177.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=177">
+                            potential loss
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=160">
+                            percent
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=297">
+                            htp
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=177">
+                            potential loss
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=160">
+                            percent
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=304">
+                            GDP
+                        </a>
+                    </th>
+                    <th class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=3&amp;id=392">
+                            reason
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=392.alpha_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=392.alpha_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=277">
+                            potential loss of reason
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=298">
+                            trillion
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=302">
+                            EUR
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-277.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-277.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="/http/view.php?m=3&amp;id=241">
+                            solution
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=241.alpha_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=241.alpha_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="/http/view.php?m=4&amp;id=178">
+                            potential gain
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=159">
+                            billion
+                        </a>
+                        <a href="/http/view.php?m=3&amp;id=297">
+                            htp
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-178.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-178.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=200">
+                            loss reduction
+                        </a>
+                        in
+                        <a href="/http/view.php?m=3&amp;id=160">
+                            percent
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-200.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-200.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                    <th class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=201">
+                            initial effort
+                        </a>
+                        in
+                        <a href="/http/view.php?m=4&amp;id=203">
+                            person year
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-201.numeric_asc" title="sort by this column, the smallest number or the first name on top" class="sort-icon">
+                            <i class="fas fa-sort-up">
+                            </i>
+                        </a>
+                        <a href="/http/view.php?m=1&amp;dls=0&amp;dlc=1&amp;dlv=1&amp;dla=table_chart&amp;dlo=-201.numeric_desc" title="sort by this column, the biggest number or the last name on top" class="sort-icon">
+                            <i class="fas fa-sort-down">
+                            </i>
+                        </a>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=162">
+                            global warming
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006725025005745&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            31.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                        (
+                        <a href="/http/view.php?m=5&amp;id=0l-0W-0J-2e_2i_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            25
+                        </a>
+                        –
+                        <a href="/http/view.php?m=5&amp;id=0l-0W-0I-2e_2i_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            40
+                        </a>
+                        )
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83598757435965617&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            15 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569082272940209&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            30 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=4&amp;id=244">
+                            climate gas emissions
+                        </a>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1o-0l-0W-2e_2i_46_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            31.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=294">
+                            reduce climate gas emissions
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=2a-0m-0W-0T_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            35.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=689352900808&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            35.2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=141435433746635&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            352
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=260" title="a range of political stances that emphasise the idea of the common people and often contrast this group against a privileged elite.">
+                            populism
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722883944625&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            23.8
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599184785080497&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            11.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569509622055089&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            22.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=245">
+                            avoid wrong decisions
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=1p-0m-0T_22_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            34.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1116702015688&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            34.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1118852186315&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            341
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=278" title="the state of having insufficient income or resources to meet basic human needs such as food, shelter and clothing.">
+                            poverty
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722885124273&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            20.4
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599262094491825&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            9.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569586931466417&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            19.4 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=277">
+                            research
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2J_2K_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            34.1
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1194011427016&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            34.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1196161597643&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            341
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=276" title="a state of complete physical, mental and social well-being and not merely the absence of disease or infirmity.">
+                            health
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722884993201&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            13.6
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599253504557233&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            6.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569578341531825&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            13 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=279">
+                            taxes
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2I_2L_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            8.8
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1185421492424&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            8.8 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1187571663051&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            88
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=182">
+                            wealth concentration
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0q-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            11.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0q-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            5.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0q-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            10.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=195">
+                            basic income
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=11-0q-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            16
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482413256&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            16 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280063461294283&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            160
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=280" title="process of teaching and learning">
+                            education
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=85006722885255345&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            9.4
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=83599270684426417&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            4.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=85569595521401009&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            9 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=281">
+                            spending
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=5&amp;id=0m-0T_2M_2N_2d_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            14.3
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1202601361608&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            14.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell">
+                        <a href="/http/view.php?m=5&amp;id=1204751532235&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            143
+                        </a>
+                        <sup>
+                            <span class="grey" title="the source of this number is missing" data-toggle="tooltip">
+                                -
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=3&amp;id=307">
+                            disinformation
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0l-2e_2i_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            8
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0l-0U_2d_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            3.8 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0l-0U_2k_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            7.6 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=193">
+                            platform regulation
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1%2F-0m-0T_2d_2n_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            12
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139860693680328&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            12 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139862843850955&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            120
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=183">
+                            market power
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0r-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            7.3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0r-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            3.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0r-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=247">
+                            market share tax
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1r-0r-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            6
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482478792&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            6 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280067756261579&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            60
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=184">
+                            biased information
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0s-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            6.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0s-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            3.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0s-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            6.2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=194">
+                            Delphi method
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=10-0s-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            9
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482544328&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            9 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280072051228875&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            90
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=243">
+                            black-box AI
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1n-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            4.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1n-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            2.1 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1n-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            4.3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=246">
+                            public AI
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1q-1n-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            7
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231483592947&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280145065804019&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            70
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=186">
+                            citizen participation
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0u-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            3.2
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0u-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            1.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0u-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=198">
+                            fluid democracy
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=14-0u-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            5.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482675400&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            5.5 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280080641163467&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            55
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=187">
+                            GDP mismeasurement
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0v-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            2.5
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0v-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            1.2 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0v-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            2.4 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=248">
+                            gross domestic usage
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=1s-0v-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            4
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482740936&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            4 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280084936130763&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            40
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=188">
+                            proprietary software
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0w-0l-2e_2i_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            1.8
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0w-0l-0U_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            0.9 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=0w-0l-0U_2k_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            1.7 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td class="d-none d-md-table-cell">
+                    </td>
+                    <td>
+                        <a href="/http/view.php?m=4&amp;id=197">
+                            free software
+                        </a>
+                    </td>
+                    <td title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=13-0w-0m-0T_2d_3G_&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            3
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95139231482806472&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            3 %
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                    <td class="d-none d-xl-table-cell" title="assumed">
+                        <a href="/http/view.php?m=5&amp;id=95280089231098059&amp;9m=1&amp;9dls=0&amp;9dlc=1&amp;9dlv=1&amp;9dla=table_chart">
+                            30
+                        </a>
+                        <sup>
+                            <span class="grey" title="assumed: an estimate without a direct observation" data-toggle="tooltip">
+                                a
+                            </span>
+                        </sup>
+                    </td>
+                </tr>
+            </table>
+            <div class="chart-row">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 740 470" width="740" height="470" role="img" aria-label="global problems: potential loss">
+                    <style>
+                        :root { --chart-bg: #fbfaf7; --chart-fg: #1d1d1b; --chart-muted: #77756f; --chart-grid: #e3e0d8; --chart-range: #f0c9a8; --chart-accent: #c4561c; --chart-point: #2d6a8a; --chart-hover: #f4efe6; --chart-point-text: #fff; color-scheme: light; }
+
+        svg { font-family: system-ui, sans-serif; }
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: 18px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: 12px; }
+        .grid { stroke: var(--chart-grid); stroke-width: 1; }
+        .ax { fill: var(--chart-muted); font-size: 12px; }
+        .lbl { fill: var(--chart-fg); font-size: 13.2px; text-anchor: end; dominant-baseline: central; }
+        .val { fill: var(--chart-muted); font-size: 12px; dominant-baseline: central; }
+        .rng { fill: var(--chart-range); }
+        .mid { fill: var(--chart-accent); }
+        .hit { fill: transparent; }
+        .bar:hover .hit { fill: var(--chart-hover); }
+                    </style>
+                    <rect class="bg" width="740" height="470"/>
+                    <text class="h" x="20" y="24">
+                        global problems: potential loss
+                    </text>
+                    <text class="sub" x="20" y="42">
+                        dot = estimate, bar = range · hover for details
+                    </text>
+                    <g class="grid">
+                        <line x1="180" y1="50" x2="180" y2="416"/>
+                        <line x1="284" y1="50" x2="284" y2="416"/>
+                        <line x1="388" y1="50" x2="388" y2="416"/>
+                        <line x1="492" y1="50" x2="492" y2="416"/>
+                        <line x1="596" y1="50" x2="596" y2="416"/>
+                        <line x1="700" y1="50" x2="700" y2="416"/>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            climate gas emissions, reduce climate gas emissions (global warming)
+potential loss: 31.5 trillion EUR (25 – 40)
+potential loss: 15 % percent htp
+potential loss: 30 % percent GDP
+potential loss of reason: 31.5 trillion EUR
+potential gain: 35.2 billion htp
+loss reduction: 35.2 % percent
+initial effort: 352 person year
+reward ratio: 0.03 trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="52" width="740" height="28"/>
+                        <text class="lbl" x="170" y="66">
+                            global warming
+                        </text>
+                        <rect class="rng" x="440" y="61" width="156" height="10" rx="5"/>
+                        <circle class="mid" cx="507.6" cy="66" r="7"/>
+                        <text class="val" x="604" y="66">
+                            31.5
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            avoid wrong decisions (populism)
+potential loss: 23.8 trillion EUR
+potential loss: 11.3 % percent htp
+potential loss: 22.7 % percent GDP
+potential gain: 34.1 billion htp
+loss reduction: 34.1 % percent
+initial effort: 341 person year
+reward ratio: 0.02 trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="80" width="740" height="28"/>
+                        <text class="lbl" x="170" y="94">
+                            populism
+                        </text>
+                        <rect class="rng" x="420.5" y="89" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="427.5" cy="94" r="7"/>
+                        <text class="val" x="442.5" y="94">
+                            23.8
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            research (poverty)
+potential loss: 20.4 trillion EUR
+potential loss: 9.7 % percent htp
+potential loss: 19.4 % percent GDP
+potential gain: 34.1 billion htp
+loss reduction: 34.1 % percent
+initial effort: 341 person year
+reward ratio: 0.02 trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="108" width="740" height="28"/>
+                        <text class="lbl" x="170" y="122">
+                            poverty
+                        </text>
+                        <rect class="rng" x="385.2" y="117" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="392.2" cy="122" r="7"/>
+                        <text class="val" x="407.2" y="122">
+                            20.4
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            taxes (health)
+potential loss: 13.6 trillion EUR
+potential loss: 6.5 % percent htp
+potential loss: 13 % percent GDP
+potential gain: 8.8 billion htp
+loss reduction: 8.8 % percent
+initial effort: 88 person year
+reward ratio: 0.01 trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="136" width="740" height="28"/>
+                        <text class="lbl" x="170" y="150">
+                            health
+                        </text>
+                        <rect class="rng" x="314.4" y="145" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="321.4" cy="150" r="7"/>
+                        <text class="val" x="336.4" y="150">
+                            13.6
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            basic income (wealth concentration)
+potential loss: 11.2a trillion EUR
+potential loss: 5.3 %a percent htp
+potential loss: 10.7 %a percent GDP
+potential gain: 16a billion htp
+loss reduction: 16 %a percent
+initial effort: 160a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="164" width="740" height="28"/>
+                        <text class="lbl" x="170" y="178">
+                            wealth concentration
+                        </text>
+                        <rect class="rng" x="289.5" y="173" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="296.5" cy="178" r="7"/>
+                        <text class="val" x="311.5" y="178">
+                            11.2
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            spending (education)
+potential loss: 9.4 trillion EUR
+potential loss: 4.5 % percent htp
+potential loss: 9 % percent GDP
+potential gain: 14.3 billion htp
+loss reduction: 14.3 % percent
+initial effort: 143 person year
+reward ratio: 0.01 trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="192" width="740" height="28"/>
+                        <text class="lbl" x="170" y="206">
+                            education
+                        </text>
+                        <rect class="rng" x="270.8" y="201" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="277.8" cy="206" r="7"/>
+                        <text class="val" x="292.8" y="206">
+                            9.4
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            platform regulation (disinformation)
+potential loss: 8a trillion EUR
+potential loss: 3.8 %a percent htp
+potential loss: 7.6 %a percent GDP
+potential gain: 12a billion htp
+loss reduction: 12 %a percent
+initial effort: 120a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="220" width="740" height="28"/>
+                        <text class="lbl" x="170" y="234">
+                            disinformation
+                        </text>
+                        <rect class="rng" x="256.2" y="229" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="263.2" cy="234" r="7"/>
+                        <text class="val" x="278.2" y="234">
+                            8
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            market share tax (market power)
+potential loss: 7.3a trillion EUR
+potential loss: 3.5 %a percent htp
+potential loss: 7 %a percent GDP
+potential gain: 6a billion htp
+loss reduction: 6 %a percent
+initial effort: 60a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="248" width="740" height="28"/>
+                        <text class="lbl" x="170" y="262">
+                            market power
+                        </text>
+                        <rect class="rng" x="248.9" y="257" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="255.9" cy="262" r="7"/>
+                        <text class="val" x="270.9" y="262">
+                            7.3
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            Delphi method (biased information)
+potential loss: 6.5a trillion EUR
+potential loss: 3.1 %a percent htp
+potential loss: 6.2 %a percent GDP
+potential gain: 9a billion htp
+loss reduction: 9 %a percent
+initial effort: 90a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="276" width="740" height="28"/>
+                        <text class="lbl" x="170" y="290">
+                            biased information
+                        </text>
+                        <rect class="rng" x="240.6" y="285" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="247.6" cy="290" r="7"/>
+                        <text class="val" x="262.6" y="290">
+                            6.5
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            public AI (black-box AI)
+potential loss: 4.5a trillion EUR
+potential loss: 2.1 %a percent htp
+potential loss: 4.3 %a percent GDP
+potential gain: 7a billion htp
+loss reduction: 7 %a percent
+initial effort: 70a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="304" width="740" height="28"/>
+                        <text class="lbl" x="170" y="318">
+                            black-box AI
+                        </text>
+                        <rect class="rng" x="219.8" y="313" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="226.8" cy="318" r="7"/>
+                        <text class="val" x="241.8" y="318">
+                            4.5
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            fluid democracy (citizen participation)
+potential loss: 3.2a trillion EUR
+potential loss: 1.5 %a percent htp
+potential loss: 3 %a percent GDP
+potential gain: 5.5a billion htp
+loss reduction: 5.5 %a percent
+initial effort: 55a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="332" width="740" height="28"/>
+                        <text class="lbl" x="170" y="346">
+                            citizen participation
+                        </text>
+                        <rect class="rng" x="206.3" y="341" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="213.3" cy="346" r="7"/>
+                        <text class="val" x="228.3" y="346">
+                            3.2
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            gross domestic usage (GDP mismeasurement)
+potential loss: 2.5a trillion EUR
+potential loss: 1.2 %a percent htp
+potential loss: 2.4 %a percent GDP
+potential gain: 4a billion htp
+loss reduction: 4 %a percent
+initial effort: 40a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="360" width="740" height="28"/>
+                        <text class="lbl" x="170" y="374">
+                            GDP mismeasurement
+                        </text>
+                        <rect class="rng" x="199" y="369" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="206" cy="374" r="7"/>
+                        <text class="val" x="221" y="374">
+                            2.5
+                        </text>
+                    </g>
+                    <g class="bar">
+                        <title>
+                            free software (proprietary software)
+potential loss: 1.8a trillion EUR
+potential loss: 0.9 %a percent htp
+potential loss: 1.7 %a percent GDP
+potential gain: 3a billion htp
+loss reduction: 3 %a percent
+initial effort: 30a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <rect class="hit" x="0" y="388" width="740" height="28"/>
+                        <text class="lbl" x="170" y="402">
+                            proprietary software
+                        </text>
+                        <rect class="rng" x="191.7" y="397" width="14" height="10" rx="5"/>
+                        <circle class="mid" cx="198.7" cy="402" r="7"/>
+                        <text class="val" x="213.7" y="402">
+                            1.8
+                        </text>
+                    </g>
+                    <g class="ax" text-anchor="middle">
+                        <text x="180" y="434">
+                            0
+                        </text>
+                        <text x="284" y="434">
+                            10
+                        </text>
+                        <text x="388" y="434">
+                            20
+                        </text>
+                        <text x="492" y="434">
+                            30
+                        </text>
+                        <text x="596" y="434">
+                            40
+                        </text>
+                        <text x="700" y="434">
+                            50
+                        </text>
+                        <text x="440" y="456">
+                            trillion EUR
+                        </text>
+                    </g>
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 590" width="640" height="590" role="img" aria-label="solutions: potential gain vs. initial effort">
+                    <style>
+                        :root { --chart-bg: #fbfaf7; --chart-fg: #1d1d1b; --chart-muted: #77756f; --chart-grid: #e3e0d8; --chart-range: #f0c9a8; --chart-accent: #c4561c; --chart-point: #2d6a8a; --chart-hover: #f4efe6; --chart-point-text: #fff; color-scheme: light; }
+
+        svg { font-family: system-ui, sans-serif; }
+        .bg { fill: var(--chart-bg); }
+        .h { fill: var(--chart-fg); font-size: 18px; font-weight: 600; }
+        .sub { fill: var(--chart-muted); font-size: 12px; }
+        .grid { stroke: var(--chart-grid); stroke-width: 1; }
+        .ax { fill: var(--chart-muted); font-size: 12px; }
+        .pt circle { fill: var(--chart-point); }
+        .pt text { fill: var(--chart-point-text); font-size: 10.8px; font-weight: 600; text-anchor: middle; }
+        .pt:hover circle { fill: var(--chart-accent); }
+        .lg { fill: var(--chart-fg); font-size: 12px; }
+        .lg tspan.p { fill: var(--chart-muted); }
+        .lg tspan.n { font-weight: 600; fill: var(--chart-point); }
+                    </style>
+                    <rect class="bg" width="640" height="590"/>
+                    <text class="h" x="20" y="24">
+                        solutions: potential gain vs. initial effort
+                    </text>
+                    <text class="sub" x="20" y="42">
+                        hover a point for the ranges
+                    </text>
+                    <g class="grid">
+                        <line x1="60" y1="366" x2="620" y2="366"/>
+                        <line x1="60" y1="288.5" x2="620" y2="288.5"/>
+                        <line x1="60" y1="211" x2="620" y2="211"/>
+                        <line x1="60" y1="133.5" x2="620" y2="133.5"/>
+                        <line x1="60" y1="56" x2="620" y2="56"/>
+                        <line x1="60" y1="56" x2="60" y2="366"/>
+                        <line x1="200" y1="56" x2="200" y2="366"/>
+                        <line x1="340" y1="56" x2="340" y2="366"/>
+                        <line x1="480" y1="56" x2="480" y2="366"/>
+                        <line x1="620" y1="56" x2="620" y2="366"/>
+                    </g>
+                    <g class="ax">
+                        <text x="52" y="370" text-anchor="end">
+                            0
+                        </text>
+                        <text x="52" y="292.5" text-anchor="end">
+                            10
+                        </text>
+                        <text x="52" y="215" text-anchor="end">
+                            20
+                        </text>
+                        <text x="52" y="137.5" text-anchor="end">
+                            30
+                        </text>
+                        <text x="52" y="60" text-anchor="end">
+                            40
+                        </text>
+                        <text x="60" y="386" text-anchor="middle">
+                            0
+                        </text>
+                        <text x="200" y="386" text-anchor="middle">
+                            100
+                        </text>
+                        <text x="340" y="386" text-anchor="middle">
+                            200
+                        </text>
+                        <text x="480" y="386" text-anchor="middle">
+                            300
+                        </text>
+                        <text x="620" y="386" text-anchor="middle">
+                            400
+                        </text>
+                        <text x="340" y="406" text-anchor="middle">
+                            initial effort
+                        </text>
+                        <text x="16" y="211" text-anchor="middle" transform="rotate(-90 16 211)">
+                            potential gain
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            1 climate gas emissions, reduce climate gas emissions (global warming)
+potential loss: 31.5 trillion EUR (25 – 40)
+potential loss: 15 % percent htp
+potential loss: 30 % percent GDP
+potential loss of reason: 31.5 trillion EUR
+potential gain: 35.2 billion htp
+loss reduction: 35.2 % percent
+initial effort: 352 person year
+reward ratio: 0.03 trillion EUR
+                        </title>
+                        <circle cx="552.8" cy="93.2" r="11"/>
+                        <text x="552.8" y="97.2">
+                            1
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            2 avoid wrong decisions (populism)
+potential loss: 23.8 trillion EUR
+potential loss: 11.3 % percent htp
+potential loss: 22.7 % percent GDP
+potential gain: 34.1 billion htp
+loss reduction: 34.1 % percent
+initial effort: 341 person year
+reward ratio: 0.02 trillion EUR
+                        </title>
+                        <circle cx="537.4" cy="101.7" r="11"/>
+                        <text x="537.4" y="105.7">
+                            2
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            3 research (poverty)
+potential loss: 20.4 trillion EUR
+potential loss: 9.7 % percent htp
+potential loss: 19.4 % percent GDP
+potential gain: 34.1 billion htp
+loss reduction: 34.1 % percent
+initial effort: 341 person year
+reward ratio: 0.02 trillion EUR
+                        </title>
+                        <circle cx="537.4" cy="101.7" r="11"/>
+                        <text x="537.4" y="105.7">
+                            3
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            4 taxes (health)
+potential loss: 13.6 trillion EUR
+potential loss: 6.5 % percent htp
+potential loss: 13 % percent GDP
+potential gain: 8.8 billion htp
+loss reduction: 8.8 % percent
+initial effort: 88 person year
+reward ratio: 0.01 trillion EUR
+                        </title>
+                        <circle cx="183.2" cy="297.8" r="11"/>
+                        <text x="183.2" y="301.8">
+                            4
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            5 basic income (wealth concentration)
+potential loss: 11.2a trillion EUR
+potential loss: 5.3 %a percent htp
+potential loss: 10.7 %a percent GDP
+potential gain: 16a billion htp
+loss reduction: 16 %a percent
+initial effort: 160a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <circle cx="284" cy="242" r="11"/>
+                        <text x="284" y="246">
+                            5
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            6 spending (education)
+potential loss: 9.4 trillion EUR
+potential loss: 4.5 % percent htp
+potential loss: 9 % percent GDP
+potential gain: 14.3 billion htp
+loss reduction: 14.3 % percent
+initial effort: 143 person year
+reward ratio: 0.01 trillion EUR
+                        </title>
+                        <circle cx="260.2" cy="255.2" r="11"/>
+                        <text x="260.2" y="259.2">
+                            6
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            7 platform regulation (disinformation)
+potential loss: 8a trillion EUR
+potential loss: 3.8 %a percent htp
+potential loss: 7.6 %a percent GDP
+potential gain: 12a billion htp
+loss reduction: 12 %a percent
+initial effort: 120a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <circle cx="228" cy="273" r="11"/>
+                        <text x="228" y="277">
+                            7
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            8 market share tax (market power)
+potential loss: 7.3a trillion EUR
+potential loss: 3.5 %a percent htp
+potential loss: 7 %a percent GDP
+potential gain: 6a billion htp
+loss reduction: 6 %a percent
+initial effort: 60a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <circle cx="144" cy="319.5" r="11"/>
+                        <text x="144" y="323.5">
+                            8
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            9 Delphi method (biased information)
+potential loss: 6.5a trillion EUR
+potential loss: 3.1 %a percent htp
+potential loss: 6.2 %a percent GDP
+potential gain: 9a billion htp
+loss reduction: 9 %a percent
+initial effort: 90a person year
+reward ratio: 0.01a trillion EUR
+                        </title>
+                        <circle cx="186" cy="296.3" r="11"/>
+                        <text x="186" y="300.3">
+                            9
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            10 public AI (black-box AI)
+potential loss: 4.5a trillion EUR
+potential loss: 2.1 %a percent htp
+potential loss: 4.3 %a percent GDP
+potential gain: 7a billion htp
+loss reduction: 7 %a percent
+initial effort: 70a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <circle cx="158" cy="311.8" r="11"/>
+                        <text x="158" y="315.8">
+                            10
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            11 fluid democracy (citizen participation)
+potential loss: 3.2a trillion EUR
+potential loss: 1.5 %a percent htp
+potential loss: 3 %a percent GDP
+potential gain: 5.5a billion htp
+loss reduction: 5.5 %a percent
+initial effort: 55a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <circle cx="137" cy="323.4" r="11"/>
+                        <text x="137" y="327.4">
+                            11
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            12 gross domestic usage (GDP mismeasurement)
+potential loss: 2.5a trillion EUR
+potential loss: 1.2 %a percent htp
+potential loss: 2.4 %a percent GDP
+potential gain: 4a billion htp
+loss reduction: 4 %a percent
+initial effort: 40a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <circle cx="116" cy="335" r="11"/>
+                        <text x="116" y="339">
+                            12
+                        </text>
+                    </g>
+                    <g class="pt">
+                        <title>
+                            13 free software (proprietary software)
+potential loss: 1.8a trillion EUR
+potential loss: 0.9 %a percent htp
+potential loss: 1.7 %a percent GDP
+potential gain: 3a billion htp
+loss reduction: 3 %a percent
+initial effort: 30a person year
+reward ratio: 0a trillion EUR
+                        </title>
+                        <circle cx="102" cy="342.8" r="11"/>
+                        <text x="102" y="346.8">
+                            13
+                        </text>
+                    </g>
+                    <g class="lg">
+                        <text x="40" y="436">
+                            <tspan class="n">
+                                1
+                            </tspan>
+                            reduce climate gas emissions
+                            <tspan class="p">
+                                · global warming
+                            </tspan>
+                        </text>
+                        <text x="40" y="456">
+                            <tspan class="n">
+                                2
+                            </tspan>
+                            avoid wrong decisions
+                            <tspan class="p">
+                                · populism
+                            </tspan>
+                        </text>
+                        <text x="40" y="476">
+                            <tspan class="n">
+                                3
+                            </tspan>
+                            research
+                            <tspan class="p">
+                                · poverty
+                            </tspan>
+                        </text>
+                        <text x="40" y="496">
+                            <tspan class="n">
+                                4
+                            </tspan>
+                            taxes
+                            <tspan class="p">
+                                · health
+                            </tspan>
+                        </text>
+                        <text x="40" y="516">
+                            <tspan class="n">
+                                5
+                            </tspan>
+                            basic income
+                            <tspan class="p">
+                                · wealth concentration
+                            </tspan>
+                        </text>
+                        <text x="40" y="536">
+                            <tspan class="n">
+                                6
+                            </tspan>
+                            spending
+                            <tspan class="p">
+                                · education
+                            </tspan>
+                        </text>
+                        <text x="40" y="556">
+                            <tspan class="n">
+                                7
+                            </tspan>
+                            platform regulation
+                            <tspan class="p">
+                                · disinformation
+                            </tspan>
+                        </text>
+                        <text x="340" y="436">
+                            <tspan class="n">
+                                8
+                            </tspan>
+                            market share tax
+                            <tspan class="p">
+                                · market power
+                            </tspan>
+                        </text>
+                        <text x="340" y="456">
+                            <tspan class="n">
+                                9
+                            </tspan>
+                            Delphi method
+                            <tspan class="p">
+                                · biased information
+                            </tspan>
+                        </text>
+                        <text x="340" y="476">
+                            <tspan class="n">
+                                10
+                            </tspan>
+                            public AI
+                            <tspan class="p">
+                                · black-box AI
+                            </tspan>
+                        </text>
+                        <text x="340" y="496">
+                            <tspan class="n">
+                                11
+                            </tspan>
+                            fluid democracy
+                            <tspan class="p">
+                                · citizen participation
+                            </tspan>
+                        </text>
+                        <text x="340" y="516">
+                            <tspan class="n">
+                                12
+                            </tspan>
+                            gross domestic usage
+                            <tspan class="p">
+                                · GDP mismeasurement
+                            </tspan>
+                        </text>
+                        <text x="340" y="536">
+                            <tspan class="n">
+                                13
+                            </tspan>
+                            free software
+                            <tspan class="p">
+                                · proprietary software
+                            </tspan>
+                        </text>
+                    </g>
+                </svg>
+            </div>
+        </main>
+        <!--usr_msg-->
+        <footer class="site-footer">
+            <p>
+                <a href="/http/about.php">
+                    About
+                </a>
+                &middot;
+                <a href="/http/privacy_policy.html">
+                    Privacy Policy
+                </a>
+                &middot; 
+All structured data is available under the
+                <a href="https://creativecommons.org/publicdomain/zero/1.0/" title="CC0 License">
+                    Creative Commons CC0
+                </a>
+                Licence unless otherwise stated and the
+                <a href="https://github.com/zukunft/zukunft.com">
+                    program code
+                </a>
+                of this version 0.0.3
+under the
+                <a href="https://www.gnu.org/licenses/agpl.html">
+                    AGPL3
+                </a>
+                Licence.
+            </p>
+        </footer>
+    </body>
+</html>

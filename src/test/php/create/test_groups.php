@@ -364,4 +364,12 @@ class test_groups extends test_objects
         return $lst;
     }
 
+    /**
+     * @return group_list without any group e.g. to test the empty debug id
+     */
+    function list_empty(): group_list
+    {
+        return new group_list($this->env->usr1);
+    }
+
 }

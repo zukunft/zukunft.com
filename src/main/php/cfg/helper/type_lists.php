@@ -484,7 +484,7 @@ class type_lists
         }
 
 
-        // TODO move the a separate loader on the data_object level
+        // TODO Prio 2 move the a separate loader on the data_object level
         //$sys_msk_cac = new view_sys_list($usr);
         //$sys_msk_cac->load($db_con);
 
@@ -575,7 +575,7 @@ class type_lists
         if ($result) {
             $result = $this->sys_log_sta->load($db_con, $msg);
         }
-        /* TODO move the user cache
+        /* TODO Prio 2 move the user cache
         if ($result) {
             $this->system_users = new user_list();
             $result = $this->system_users->load_system($db_con);

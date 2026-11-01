@@ -157,7 +157,7 @@ class db_object extends TextIdObject
     }
 
     /**
-     * TODO rename to api mapper (but only for the frontend)
+     * TODO Prio 2 rename to api mapper (but only for the frontend)
      * set the vars of this object bases on the url array
      * public because it is reused e.g. by the phrase group display object
      * @param array $url_array an array based on $_GET from a form submit
@@ -796,7 +796,7 @@ class db_object extends TextIdObject
      * the user has set none the plural is guessed, and only for a language that builds the
      * plural by adding an "s", because in any other language the guess would be wrong more
      * often than right
-     * TODO use a language specific function that can include the exceptions of the language
+     * TODO Prio 2 use a language specific function that can include the exceptions of the language
      *
      * @param string $lan the code of the user interface language e.g. "en"
      * @return string the plural given by the user, the guessed plural or the name
@@ -1204,6 +1204,17 @@ class db_object extends TextIdObject
     public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
     {
         return $this->selector_not_defined('component_link_type_selector');
+    }
+
+    /**
+     * create the html code to select the position type of a component link
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the position type
+     */
+    public function component_pos_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        return $this->selector_not_defined('component_pos_type_selector');
     }
 
     /**

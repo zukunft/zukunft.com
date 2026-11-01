@@ -40,6 +40,7 @@ include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_SYSTEM . 'session.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuum.php';
 include_once paths::SHARED_CONST . 'refs.php';
@@ -80,6 +81,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\session;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_status;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
@@ -135,7 +137,7 @@ class system_tests
     function run(test_cleanup $t): void
     {
 
-        // TODO move system user to a test object vars
+        // TODO Prio 2 move system user to a test object vars
         global $sys;
         global $mtr;
         global $cfg;
@@ -167,7 +169,7 @@ class system_tests
         $t->subheader($ts . 'debug functions');
 
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
-        // TODO check that all objects are included in this list
+        // TODO Prio 2 check that all objects are included in this list
         $t_wrd = new test_words($t);
         $t_vrb = new test_verbs($t);
         $t_trp = new test_triples($t);
@@ -328,6 +330,9 @@ class system_tests
         // check if the sql to load the complete list of all ... types is created as expected
         $sys_log_status = new sys_log_status_list();
         $t->assert_sql_all($sc, $sys_log_status);
+        // the areas of the system times are loaded only to write a slow request
+        $sys_tim_typ_lst = new system_time_type_list();
+        $t->assert_sql_all($sc, $sys_tim_typ_lst);
 
         $t->subheader($ts . 'user message');
 
@@ -364,6 +369,11 @@ class system_tests
         // an info message must never set the message to not ok
         $test_name = 'info messages keep the message ok';
         $t->assert_true($test_name, $two_msg->is_ok());
+
+        $test_name = 'an info without id adds no text';
+        $no_id_msg = new user_message($t->usr1);
+        $no_id_msg->add_info_id(null);
+        $t->assert($test_name, $no_id_msg->all_message_text(), '');
 
 
         $t->subheader($ts . 'system config sql');

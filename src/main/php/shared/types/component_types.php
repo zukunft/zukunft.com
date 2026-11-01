@@ -326,6 +326,12 @@ class component_types
     const int SYSTEM_ADMIN_ERRORS_DELAYED_FIX_ID = 263;
     const string SYSTEM_ADMIN_JOBS_DELAYED = "system_admin_jobs_delayed";
     const int SYSTEM_ADMIN_JOBS_DELAYED_ID = 264;
+    // the admin, the pod and the creation time of the admin dashboard (see system_page::admin_subtitle)
+    const string SYSTEM_ADMIN_SUBTITLE = "system_admin_subtitle";
+    const int SYSTEM_ADMIN_SUBTITLE_ID = 266;
+    // the users with the most server time of the last days (see system_page::admin_user_load)
+    const string SYSTEM_ADMIN_USER_LOAD = "system_admin_user_load";
+    const int SYSTEM_ADMIN_USER_LOAD_ID = 267;
 
     // generic list selector (e.g. languages)
     const string SELECT_LIST = "select_list";
@@ -379,12 +385,15 @@ class component_types
     const int SYSTEM_TITLE_ID = 1;
     const string SYSTEM_TITLE_WITH_OBJECT_NAME = "system_title_with_object_name";
     const int SYSTEM_TITLE_WITH_OBJECT_NAME_ID = 5;
+    const string SYSTEM_TITLE_FOR_PHRASE = "system_title_for_phrase";
+    const int SYSTEM_TITLE_FOR_PHRASE_ID = 268;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
     const int SYSTEM_SUB_TITLE_ID = 3;
     const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
     const int SYSTEM_SUB_TITLE_VAR_ID = 4;
-    // the "..." below the title of a default, detail, range or detail with range view that
-    // opens the menu to show the same object in one of the other three versions
+    // shows nothing, because the edit menu of the navbar offers the default, detail, range and
+    // detail with range view (sandbox::menu_views_ui); kept until the type is retired with the
+    // database, because the system views still use it and retiring it shifts the component ids
     const string RELATED_SYSTEM_VIEW_SELECTOR = "related_system_view_selector";
     const int RELATED_SYSTEM_VIEW_SELECTOR_ID = 12;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
@@ -460,6 +469,9 @@ class component_types
     const int LIST_PARENTS_OF_WORD_ID = 47;
     const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
     const int LIST_CHILDREN_OF_WORD_ID = 46;
+    // only the children that are triples e.g. Swiss franc and US Dollar for currency; the child words are WORDS_DOWN
+    const string LIST_CHILD_TRIPLES = "list_child_triples";
+    const int LIST_CHILD_TRIPLES_ID = 294;
     const string PHRASE_ALIASES = "phrase_aliases";
     const int PHRASE_ALIASES_ID = 42;
     const string PHRASE_ALIASES_COM = "show the phrases that are an alias of the given phrase e.g. 'has aliases: $, U.S. dollar' for 'US dollar'";
@@ -567,6 +579,87 @@ class component_types
     const string TABLE_WITH_RELATED_COLUMNS = "table_with_related_columns";
     const int TABLE_WITH_RELATED_COLUMNS_ID = 55;
     const string TABLE_WITH_RELATED_COLUMNS_COM = "show the values related to a phrase as a table with one column per phrase used most often within the values";
+    // the triples that point to the column phrase of the component and that are related to the
+    // phrase of the page, e.g. the columns of the table editor (see ui_list::triples_of_types)
+    const string TRIPLE_LIST = "triple_list";
+    const int TRIPLE_LIST_ID = 269;
+    // a paragraph with the translated text of the ui message of the component e.g. the explain
+    // text below the title of a process catch page
+    const string SYSTEM_TEXT_EXPLAIN = "system_text_explain";
+    const int SYSTEM_TEXT_EXPLAIN_ID = 270;
+    // the input fields of a process catch page or of one of its tabs, which the fields of the
+    // question phrase define (see triples::FIELD_PROPERTIES); a placeholder until the fields are read
+    const string PROCESS_CATCH_FIELDS = "process_catch_fields";
+    const int PROCESS_CATCH_FIELDS_ID = 271;
+    // one tab of a process catch page as a link to the same page with the tab selected
+    const string PROCESS_CATCH_TAB = "process_catch_tab";
+    const int PROCESS_CATCH_TAB_ID = 272;
+    // the button that opens the next page of a process catch (views::PROCESS_CATCH_NEXT)
+    const string PROCESS_CATCH_BUTTON_NEXT = "process_catch_button_next";
+    const int PROCESS_CATCH_BUTTON_NEXT_ID = 273;
+    // the button that opens the page before of a process catch (views::PROCESS_CATCH_BACK)
+    const string PROCESS_CATCH_BUTTON_BACK = "process_catch_button_back";
+    const int PROCESS_CATCH_BUTTON_BACK_ID = 274;
+    // the button that shows the process catch page again with the changed input e.g. to calculate
+    const string PROCESS_CATCH_BUTTON_REFRESH = "process_catch_button_refresh";
+    const int PROCESS_CATCH_BUTTON_REFRESH_ID = 275;
+    // the input of a place by its name or postal code with the translated label of the component;
+    // the row phrase of the component is the value phrase of the place e.g. place of user
+    const string GEOLOCATOR = "geolocator";
+    const int GEOLOCATOR_ID = 276;
+    // the components of a use case page e.g. the PV lifetime balance (docs/llm/json_views.md)
+    // the name of the view as the page title and the description of the view as the lead text
+    const string VIEW_TITLE = "view_title";
+    const int VIEW_TITLE_ID = 277;
+    // the name of the component as a sub title e.g. a section of a use case page
+    const string NAME_SUB_TITLE = "name_sub_title";
+    const int NAME_SUB_TITLE_ID = 278;
+    // the description of the component as a paragraph e.g. a note of a use case page
+    const string DESCRIPTION_TEXT = "description_text";
+    const int DESCRIPTION_TEXT_ID = 279;
+    // a collapsed block with the name of the component as the summary line, closed by details end
+    const string DETAILS_START = "details_start";
+    const int DETAILS_START_ID = 280;
+    const string DETAILS_END = "details_end";
+    const int DETAILS_END_ID = 281;
+    // the values of the page phrase as number input fields with the other phrases as the label
+    const string VALUE_INPUT_FIELDS = "value_input_fields";
+    const int VALUE_INPUT_FIELDS_ID = 282;
+    // the sources of the values of the page phrase as a list with a link to the source url
+    const string SOURCES_USED = "sources_used";
+    const int SOURCES_USED_ID = 283;
+    // the values that the results of the page use and that the page phrase does not carry as
+    // number input fields with a measured or assumed tag and the source as the hint
+    const string ASSUMPTION_FIELDS = "assumption_fields";
+    const int ASSUMPTION_FIELDS_ID = 284;
+    // the descriptions of the formulas that calculate the results of the page as paragraphs
+    const string FORMULA_NOTES = "formula_notes";
+    const int FORMULA_NOTES_ID = 285;
+    // the table with related columns, but with the column phrases of the component as its own
+    // columns e.g. lifetime and annual, so that no system column tier changes other tables
+    const string TABLE_WITH_OWN_COLUMNS = "table_with_own_columns";
+    const int TABLE_WITH_OWN_COLUMNS_ID = 286;
+    // the three components of the calculator view, filled by the calculator triples of the page
+    // phrase (docs/llm/new_view_sample_pv_balance.md): the title, the inputs and the results
+    const string CALCULATOR_TITLE = "calculator_title";
+    const int CALCULATOR_TITLE_ID = 287;
+    const string CALCULATOR_INPUT = "calculator_input";
+    const int CALCULATOR_INPUT_ID = 288;
+    const string CALCULATION_RESULT = "calculation_result";
+    const int CALCULATION_RESULT_ID = 289;
+    // the calculator editor of the page phrase: the script builds the editor from the phrase data
+    // (docs/llm/new_view_sample_pv_balance.md section 6)
+    const string CALCULATOR_EDITOR = "calculator_editor";
+    const int CALCULATOR_EDITOR_ID = 290;
+    // the formula editor of the formulas of the page phrase: the script builds the expression of the
+    // selected formula from the phrase data; the selector and the result compare are own components,
+    // so that the calculator editor can show the editor and the compare without the selector
+    const string FORMULA_EDITOR = "formula_editor";
+    const int FORMULA_EDITOR_ID = 291;
+    const string FORMULA_SELECTOR = "formula_selector";
+    const int FORMULA_SELECTOR_ID = 292;
+    const string FORMULA_RESULT_COMPARE = "formula_result_compare";
+    const int FORMULA_RESULT_COMPARE_ID = 293;
     const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
     const int FORM_TABLE_LINKED_VIEWS_ID = 189;
 
@@ -847,6 +940,15 @@ class component_types
         self::SYSTEM_ADMIN_ERRORS_UNASSIGNED,
         self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX,
         self::SYSTEM_ADMIN_JOBS_DELAYED,
+        self::SYSTEM_ADMIN_SUBTITLE,
+        self::SYSTEM_ADMIN_USER_LOAD,
+        self::SYSTEM_TEXT_EXPLAIN,
+        self::PROCESS_CATCH_FIELDS,
+        self::PROCESS_CATCH_TAB,
+        self::PROCESS_CATCH_BUTTON_NEXT,
+        self::PROCESS_CATCH_BUTTON_BACK,
+        self::PROCESS_CATCH_BUTTON_REFRESH,
+        self::GEOLOCATOR,
         self::SELECT_LIST,
         self::SHOW_NAME,
         self::SHOW_NAME_BIG,
@@ -908,7 +1010,10 @@ class component_types
         self::ROW_START,
         self::ROW_RIGHT,
         self::ROW_CENTER,
-        self::ROW_END
+        self::ROW_END,
+        // a collapsed block spans several components like a row, so its start and end are not wrapped
+        self::DETAILS_START,
+        self::DETAILS_END
     );
 
     // list of component types that set their own rows: the phrase steps close their form and open a second one,
@@ -920,6 +1025,14 @@ class component_types
         self::FORM_PHRASE_VALUE_LINE
     );
 
+    // the component types that show a value table, whose column and form selection the edit menu
+    // of the navbar offers e.g. "columns and values" and "as table" on the start page
+    const array TABLE_MENU_TYPES = [
+        self::CALC_SHEET,
+        self::TABLE_WITH_RELATED_COLUMNS,
+        self::TABLE_WITH_OWN_COLUMNS,
+    ];
+
     // list of component types that are used to combine lists
     const array LIST_GROUP = array(
         self::SYSTEM_SUB_TITLE,
@@ -928,6 +1041,7 @@ class component_types
         self::VALUES_MOST_RELEVANT,
         self::VALUES_IN_COLUMNS,
         self::TABLE_WITH_RELATED_COLUMNS,
+        self::TABLE_WITH_OWN_COLUMNS,
         self::VALUE_CHART,
         self::VIEW_TAB_BOX,
         self::LIST_REF,
@@ -954,7 +1068,7 @@ class component_types
 
     // list of the component types used for unit testing
     // in order of const definition which should be also the thematic order
-    // TODO align with component_types.csv
+    // TODO Prio 2 align with component_types.csv
     const array TEST_TYPES = array(
         [self::PHRASE_NAME, self::PHRASE_NAME_ID],
         [self::CALC_SHEET, self::CALC_SHEET_ID],
@@ -1062,6 +1176,8 @@ class component_types
         [self::SYSTEM_ADMIN_ERRORS_UNASSIGNED, self::SYSTEM_ADMIN_ERRORS_UNASSIGNED_ID],
         [self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX, self::SYSTEM_ADMIN_ERRORS_DELAYED_FIX_ID],
         [self::SYSTEM_ADMIN_JOBS_DELAYED, self::SYSTEM_ADMIN_JOBS_DELAYED_ID],
+        [self::SYSTEM_ADMIN_SUBTITLE, self::SYSTEM_ADMIN_SUBTITLE_ID],
+        [self::SYSTEM_ADMIN_USER_LOAD, self::SYSTEM_ADMIN_USER_LOAD_ID],
         [self::SELECT_LIST, self::SELECT_LIST_ID],
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
@@ -1070,6 +1186,7 @@ class component_types
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
         [self::SYSTEM_TITLE_WITH_OBJECT_NAME, self::SYSTEM_TITLE_WITH_OBJECT_NAME_ID],
+        [self::SYSTEM_TITLE_FOR_PHRASE, self::SYSTEM_TITLE_FOR_PHRASE_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],
         [self::SYSTEM_SUB_TITLE_VAR, self::SYSTEM_SUB_TITLE_VAR_ID],
         [self::RELATED_SYSTEM_VIEW_SELECTOR, self::RELATED_SYSTEM_VIEW_SELECTOR_ID],
@@ -1097,6 +1214,7 @@ class component_types
         [self::SELECT_VIEW, self::SELECT_VIEW_ID],
         [self::LIST_PARENTS_OF_WORD, self::LIST_PARENTS_OF_WORD_ID],
         [self::LIST_CHILDREN_OF_WORD, self::LIST_CHILDREN_OF_WORD_ID],
+        [self::LIST_CHILD_TRIPLES, self::LIST_CHILD_TRIPLES_ID],
         [self::PHRASE_ALIASES, self::PHRASE_ALIASES_ID],
         [self::PHRASE_SYMBOLS, self::PHRASE_SYMBOLS_ID],
         [self::LIST_PHRASES_RELATED_EX_SYMBOLS, self::LIST_PHRASES_RELATED_EX_SYMBOLS_ID],
@@ -1136,6 +1254,31 @@ class component_types
         [self::VALUES_MOST_RELEVANT, self::VALUES_MOST_RELEVANT_ID],
         [self::VALUES_IN_COLUMNS, self::VALUES_IN_COLUMNS_ID],
         [self::TABLE_WITH_RELATED_COLUMNS, self::TABLE_WITH_RELATED_COLUMNS_ID],
+        [self::TRIPLE_LIST, self::TRIPLE_LIST_ID],
+        [self::SYSTEM_TEXT_EXPLAIN, self::SYSTEM_TEXT_EXPLAIN_ID],
+        [self::PROCESS_CATCH_FIELDS, self::PROCESS_CATCH_FIELDS_ID],
+        [self::PROCESS_CATCH_TAB, self::PROCESS_CATCH_TAB_ID],
+        [self::PROCESS_CATCH_BUTTON_NEXT, self::PROCESS_CATCH_BUTTON_NEXT_ID],
+        [self::PROCESS_CATCH_BUTTON_BACK, self::PROCESS_CATCH_BUTTON_BACK_ID],
+        [self::PROCESS_CATCH_BUTTON_REFRESH, self::PROCESS_CATCH_BUTTON_REFRESH_ID],
+        [self::GEOLOCATOR, self::GEOLOCATOR_ID],
+        [self::VIEW_TITLE, self::VIEW_TITLE_ID],
+        [self::NAME_SUB_TITLE, self::NAME_SUB_TITLE_ID],
+        [self::DESCRIPTION_TEXT, self::DESCRIPTION_TEXT_ID],
+        [self::DETAILS_START, self::DETAILS_START_ID],
+        [self::DETAILS_END, self::DETAILS_END_ID],
+        [self::VALUE_INPUT_FIELDS, self::VALUE_INPUT_FIELDS_ID],
+        [self::SOURCES_USED, self::SOURCES_USED_ID],
+        [self::ASSUMPTION_FIELDS, self::ASSUMPTION_FIELDS_ID],
+        [self::FORMULA_NOTES, self::FORMULA_NOTES_ID],
+        [self::TABLE_WITH_OWN_COLUMNS, self::TABLE_WITH_OWN_COLUMNS_ID],
+        [self::CALCULATOR_TITLE, self::CALCULATOR_TITLE_ID],
+        [self::CALCULATOR_INPUT, self::CALCULATOR_INPUT_ID],
+        [self::CALCULATION_RESULT, self::CALCULATION_RESULT_ID],
+        [self::CALCULATOR_EDITOR, self::CALCULATOR_EDITOR_ID],
+        [self::FORMULA_EDITOR, self::FORMULA_EDITOR_ID],
+        [self::FORMULA_SELECTOR, self::FORMULA_SELECTOR_ID],
+        [self::FORMULA_RESULT_COMPARE, self::FORMULA_RESULT_COMPARE_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_NAME_BIG, self::SHOW_NAME_BIG_ID],
         [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],

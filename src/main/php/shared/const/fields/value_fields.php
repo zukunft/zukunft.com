@@ -44,7 +44,7 @@ class value_fields
     // *_SQL_TYP is the sql data type used for the field
     const string FLD_ID = 'group_id';
     const string FLD_VALUE = 'numeric_value';
-    // TODO move the sandbox value object
+    // TODO Prio 2 move the sandbox value object
     const string FLD_VALUE_TEXT = 'text_value';
     const string FLD_VALUE_TIME = 'time_value';
     const string FLD_VALUE_GEO = 'geo_value';

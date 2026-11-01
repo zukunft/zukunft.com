@@ -42,13 +42,13 @@ class word_fields
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const string FLD_ID = 'word_id'; // TODO change the user_id field comment to 'the user who has changed the standard word'
+    const string FLD_ID = 'word_id'; // TODO Prio 3 change the user_id field comment to 'the user who has changed the standard word'
     const string FLD_NAME_COM = 'the text used for searching';
     const string FLD_NAME = 'word_name';
     const string FLD_DESCRIPTION_COM = 'to be replaced by a language form entry';
     const string FLD_TYPE_COM = 'to link coded functionality to words e.g. to exclude measure words from a percent result';
     const string FLD_PLURAL_COM = 'to be replaced by a language form entry; TODO to be move to language forms';
-    const string FLD_PLURAL = 'plural'; // TODO move to language types
+    const string FLD_PLURAL = 'plural'; // TODO Prio 2 move to language types
 
     // all database field names excluding the id
     // used to identify if there are some user-specific changes

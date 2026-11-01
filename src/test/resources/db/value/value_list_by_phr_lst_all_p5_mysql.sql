@@ -141,4 +141,4 @@ PREPARE value_list_by_phr_lst_all_p5 FROM
             OR   REGEXP_LIKE(s.group_id, ?, 'c')
             OR   REGEXP_LIKE(s.group_id, ?, 'c')
             OR   REGEXP_LIKE(s.group_id, ?, 'c')
-            OR   REGEXP_LIKE(s.group_id, ?, 'c') ) ';
+            OR   REGEXP_LIKE(s.group_id, ?, 'c') )  LIMIT ? OFFSET ?';

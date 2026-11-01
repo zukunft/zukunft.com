@@ -85,7 +85,7 @@ if ($usr->id() > 0) {
     if ($result <> '') {
         echo $result;
     } else {
-        // TODO replace with proper error message
+        // TODO Prio 3 replace with proper error message
         print(json_encode($phrases));
     }
 

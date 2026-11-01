@@ -32,24 +32,29 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_ui;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
+use Zukunft\ZukunftCom\main\php\shared\const\impacts;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
 use Zukunft\ZukunftCom\main\php\shared\enum\languages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\Config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\test\php\const\triple_names;
 use Zukunft\ZukunftCom\test\php\const\word_names;
+use Zukunft\ZukunftCom\test\php\create\test_components;
 use Zukunft\ZukunftCom\test\php\create\test_formulas;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
+use Zukunft\ZukunftCom\test\php\create\test_results;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
 use Zukunft\ZukunftCom\test\php\create\test_values;
 use Zukunft\ZukunftCom\test\php\create\test_words;
@@ -109,6 +114,115 @@ class phrase_ui_tests
                 $trp_problem, $msg, $dto_prio, true, false) . '<br>';
         $t->html_page_test($test_page, 'phrase', 'phrase', $msg);
 
+        $t->subheader($ts . 'api mapper');
+
+        // the class of the api json selects the object, so a triple json fills the phrase with the triple
+        $test_name = 'the api mapper sets the triple of the phrase';
+        $phr_map = new phrase();
+        $phr_map->api_mapper(json_decode($t_trp->triple_pi()->phrase()->api_json(), true), $msg);
+        $t->assert($test_name, $phr_map->name(), triple_names::PI_SYMBOL_NAME);
+        $msg->reset();
+
+        // without the class the mapper cannot know if the phrase is a word or a triple, so it reports it
+        $test_name = 'the api mapper reports a phrase without the class';
+        $phr_map = new phrase();
+        $api_json = [json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH];
+        $t->assert_false($test_name, $phr_map->api_mapper($api_json, $msg));
+        $msg->reset();
+
+        $t->subheader($ts . 'debug id');
+
+        // the phrase uses the combine object debug text, which names the word behind it
+        $test_name = 'shows the name of the word';
+        $phr_dsp = new phrase($t_wrd->word()->phrase()->api_json());
+        $dsp = $phr_dsp->dsp_id();
+        $t->assert_text_contains($test_name, $dsp, word_names::MATH);
+
+        // negative: a phrase without an object has no name to show
+        $test_name = 'shows no name for a phrase without an object';
+        $phr_dsp = new phrase();
+        $phr_dsp->set_obj(null);
+        $dsp = $phr_dsp->dsp_id();
+        $t->assert_text_not_contains($test_name, $dsp, word_names::MATH);
+
+        $t->subheader($ts . 'shown unit');
+        // the calculator editor shows a number with these phrases as its unit (system_page::calculator_editor_types)
+        $unit_lst = $t_phr->list_units_cache_ui();
+        $test_name = 'a measure word is a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::KWH, $msg);
+        $t->assert_true($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        $test_name = 'percent is a shown unit';
+        $phr_unit = $unit_lst->get_by_name(words::PCT, $msg);
+        $t->assert_true($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        $test_name = 'a scaling word is a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::MIO, $msg);
+        $t->assert_true($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        // negative: the hidden scaling word "one" is needed only for the calculation, so "5 one" is never shown
+        $test_name = 'the hidden scaling word is not a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::ONE, $msg);
+        $t->assert_false($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+        $test_name = 'a word without a type is not a shown unit';
+        $phr_unit = $unit_lst->get_by_name(word_names::MATH, $msg);
+        $t->assert_false($test_name, $phr_unit->is_shown_unit($msg));
+        $msg->reset();
+
+        $t->subheader($ts . 'default view');
+        // a phrase with an own view e.g. the calculator of a PV installation is linked to that
+        // view with the phrase id, which is negative for a triple (frontend::dbo_for_url)
+        $trp_msk = $t_trp->triple_pi();
+        $trp_msk->set_view_id(views::CALCULATOR_ID);
+        $phr_msk = new phrase($trp_msk->phrase()->api_json());
+        $test_name = 'a phrase with a default phrase view links to that view';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::CALCULATOR_ID);
+        $test_name = '... with the phrase id';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), 'id=' . $phr_msk->id());
+        $t->assert_true($test_name, $phr_msk->id() < 0);
+        // negative: a default view that is not a phrase view cannot take the phrase id, so the
+        // phrase is linked to the triple view
+        $trp_msk->set_view_id(views::MATH_CONST_ID);
+        $phr_msk = new phrase($trp_msk->phrase()->api_json());
+        $test_name = 'a phrase with a default view that is no phrase view links to the triple view';
+        $t->assert_text_contains($test_name, $phr_msk->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);
+        // negative: a phrase without a default view links to the triple view
+        $test_name = 'a phrase without a default view links to the triple view';
+        $t->assert_text_contains($test_name, $trp->name_link(), url_var::MASK . '=' . views::TRIPLE_ID);
+        // negative: the page of a word is the word view and never the triple view
+        $test_name = 'the page url of a word does not open the triple view';
+        $wrd_page_url = $wrd->phrase_page_url();
+        $t->assert_text_not_contains($test_name, $wrd_page_url, url_var::MASK . '=' . views::TRIPLE_ID);
+
+        $t->subheader($ts . 'all rows style');
+        // the ranking has as many rows as the unit config allows, so the cut is forced with the
+        // list size of the url; a table component cuts the rows with the more link, unless the
+        // component has the style "all rows", which a use case page sets, because the chain of
+        // its results is the page; a list size in the url still wins over the style
+        global $ui_sys;
+        $t_cmp = new test_components($t);
+        $dto_prio->typ_lst_cache = $ui_sys->typ_lst_cache;
+        $cut_rows = 2;
+        $url_cut = [url_var::DISPLAY_LIST_SIZE => $cut_rows];
+        $cmp_tbl = new component_ui($t_cmp->component_table()->api_json());
+        $tbl_cut = $cmp_tbl->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_cut);
+        $test_name = 'a table component cuts the rows to the list size with the more link';
+        $t->assert_text_contains($test_name, $tbl_cut, msg_id::MORE->text());
+        $t->assert($test_name, substr_count($tbl_cut, '<' . html_base::TR . '>'), $cut_rows + 2);
+        $cmp_all = new component_ui($t_cmp->component_table_all_rows()->api_json());
+        $tbl_all = $cmp_all->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true);
+        $test_name = '... and with the all rows style it shows every row without a more row';
+        $t->assert_text_not_contains($test_name, $tbl_all, msg_id::MORE->text());
+        // the style stands for the list size "all" of the url, so both show the same rows
+        $url_all = [url_var::DISPLAY_LIST_SIZE => value_list_ui::LIMIT_ALL];
+        $tbl_url_all = $cmp_tbl->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_all);
+        $t->assert($test_name, substr_count($tbl_all, '<' . html_base::TR . '>'),
+            substr_count($tbl_url_all, '<' . html_base::TR . '>'));
+        $test_name = '... but the list size of the url still cuts the rows';
+        $t->assert_text_contains($test_name,
+            $cmp_all->dsp_entries($trp_problem, $msg, '', 0, $dto_prio, null, '', true, $url_cut), msg_id::MORE->text());
+
         $t->subheader($ts . 'table with related columns');
         $tbl_html = $list->table_with_related_columns($trp_zh_city, $msg, $dto);
         $test_name = 'the values of a triple are shown as a table';
@@ -158,6 +272,14 @@ class phrase_ui_tests
         $test_name = '... in the smaller label size';
         $t->assert_text_contains($test_name,
             $lib->str_left_of($tbl_header, '<table'), '<' . html_base::H5 . '>');
+
+        // a calculated number of the page phrase is shown in the same table as its values; the
+        // cache is offline, so the table shows the result it has and loads none from the api
+        $t_res = new test_results($t);
+        $dto->set_result_list($t_res->result_list_zh_city_ui());
+        $test_name = 'the result of the page phrase is shown as a row named by its other phrase';
+        $t->assert_text_contains($test_name,
+            $list->table_with_related_columns($trp_zh_city, $msg, $dto), '>' . word_names::INHABITANTS . '</a>');
 
         $t->subheader($ts . 'global issues table');
         // the "global problem" phrase is in no value group: the values of "global warming" and
@@ -318,18 +440,17 @@ class phrase_ui_tests
         // reason column has a linked reason and is shown empty between the loss and the solution
         // column; the loss of the reason has no column, because no value of this table carries a
         // reason; so the table shows five columns, the value columns each headed by their unit
-        // behind a translatable "in", the reason and the solution column without a unit
-        // the last header cell opens the menu that selects the columns, which without a page
-        // url is the plain "..." text
+        // behind a translatable "in", the reason and the solution column without a unit;
+        // the columns are selected in the edit menu of the navbar, so the header has no menu cell
         $test_name = 'the header shows the columns in the defined order with their unit';
         $unit_sep = ' ' . msg_id::VALUE_TBL_UNIT->text() . ' ';
-        $t->assert($test_name, $lib->html_to_text($tbl_header_row),
-            word_names::PROBLEM
+        $header_txt = $lib->html_to_text($tbl_header_row);
+        $header_expected = word_names::PROBLEM
             . ' ' . word_names::LOSS . $unit_sep . word_names::TRILLION . ' ' . word_names::EUR
             . ' ' . word_names::REASON
             . ' ' . word_names::SOLUTION
-            . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP
-            . ' ' . msg_id::THREE_POINTS->text());
+            . ' ' . word_names::GAIN . $unit_sep . word_names::BILLION . ' ' . word_names::HTP;
+        $t->assert($test_name, $header_txt, $header_expected);
 
         // negative: a phrase column exists only where a definition names it, so without the
         // definitions the same values show no solution column and the impact ranking alone
@@ -390,12 +511,18 @@ class phrase_ui_tests
         $dto_rsn_sol = new data_object();
         $dto_rsn_sol->online = false;
         $dto_rsn_sol->val_lst = $t_val->value_list_solution_prio_reason_solution_ui();
+        // the solution research has the highest impact, so the impact order puts its reason heat
+        // mortality first; the numbers are no impact, because the loss and the gain have different
+        // units, which the preferred order never compares (docs/llm/frontend.md)
+        // selected by the reason too, because the ranking values name research as the solution of poverty as well
+        $dto_rsn_sol->val_lst->get_by_names([triple_names::HEAT_MORTALITY, word_names::RESEARCH])->phr_lst()
+            ->get_by_name(word_names::RESEARCH, $msg)->obj()->impact = impacts::MAX;
         $dto_rsn_sol->phr_lst = $t_phr->list_global_warming_reasons_ui();
         $tbl_rsn_sol = $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_rsn_sol);
         $t->assert_text_contains($test_name, $tbl_rsn_sol, '>' . word_names::RESEARCH . '</a>');
         $test_name = '... in the solution column';
         $t->assert_text_contains($test_name, $lib->str_left_of($tbl_rsn_sol, '</tr>'), '>' . word_names::SOLUTION . '</a>');
-        // the gain of 50 of the solution of the heat mortality puts that reason first by impact,
+        // the impact of the solution of the heat mortality puts that reason first by impact,
         // but the default sort order of the live page sorts the reasons by the loss they cause
         $test_name = 'the reasons page sorts the reasons by their loss';
         $dto_rsn_sol->add_phrases($t_phr->list_sort_definitions_ui(), $msg);
@@ -438,6 +565,47 @@ class phrase_ui_tests
         $dto_no_reasons->val_lst = $t_val->value_list_solution_prio_reasons_ui();
         $dto_no_reasons->phr_lst = $t_phr->list_global_problems_two_reasons_ui();
         $t->assert($test_name, $list->table_with_related_columns($t_trp->global_warming_reason_ui(), $msg, $dto_no_reasons), '');
+
+        $t->subheader($ts . 'triple list');
+
+        // the table editor lists the columns of each column tier
+        $test_name = 'the columns are listed below their tier';
+        $dto_col = new data_object();
+        // offline, because a unit test has no api to load the tiers and the parents from
+        $dto_col->online = false;
+        $dto_col->add_phrases($t_phr->list_column_tiers_ui(), $msg);
+        $typ_id = $dto_col->phr_lst->get_by_name(triple_names::SYSTEM_COLUMN, $msg)->id();
+        $col_html = $list->triples_of_types($t_trp->populism_solution_ui(), $typ_id, $msg, $dto_col);
+        $t->assert_text_contains($test_name, $col_html, triple_names::COLUMN_PROBLEM);
+        $test_name = '... below the name of the tier';
+        $t->assert_text_contains($test_name, $col_html, triple_names::SYSTEM_COLUMN_MAYOR);
+        $test_name = '... and the columns of the next tier below its name';
+        $t->assert_text_contains($test_name,
+            $lib->str_right_of($col_html, triple_names::SYSTEM_COLUMN_MINOR), triple_names::COLUMN_COST);
+        $test_name = '... but not below the name of the tier before';
+        $t->assert_text_not_contains($test_name,
+            $lib->str_left_of($col_html, triple_names::SYSTEM_COLUMN_MINOR), triple_names::COLUMN_COST);
+        $test_name = 'the columns of one tier are shown behind each other';
+        $col_mayor = $lib->str_left_of($col_html, triple_names::SYSTEM_COLUMN_MINOR);
+        $t->assert_text_order($test_name, $col_mayor,
+            triple_names::COLUMN_PROBLEM, ', ', triple_names::COLUMN_SOLUTION);
+        $test_name = '... each with a delete icon';
+        $del_url = url_var::MASK . '=' . views::TRIPLE_DEL_ID . '&amp;' . url_var::ID . '=';
+        $t->assert_text_contains($test_name, $col_mayor, $del_url . triple_names::COLUMN_PROBLEM_ID);
+        $t->assert_text_contains($test_name, $col_mayor, $del_url . triple_names::COLUMN_SOLUTION_ID);
+        // negative: the delete icon of a column is only shown in the column of its tier
+        $test_name = '... but not for a column of another tier';
+        $t->assert_text_not_contains($test_name, $col_mayor, $del_url . triple_names::COLUMN_COST_ID);
+        $test_name = 'the tier has an add icon for a new column of the tier';
+        $t->assert_text_contains($test_name, $col_mayor,
+            url_var::MASK . '=' . views::TRIPLE_ADD_ID . '&amp;' . url_var::PHRASE_TO . '=' . -triple_names::SYSTEM_COLUMN_MAYOR_ID);
+        // negative: the add icon of the mayor tier does not add a column to the minor tier
+        $test_name = '... but not for a column of another tier';
+        $t->assert_text_not_contains($test_name, $col_mayor,
+            url_var::PHRASE_TO . '=' . -triple_names::SYSTEM_COLUMN_MINOR_ID);
+        $test_name = 'without a phrase nothing is listed';
+        $t->assert($test_name, $list->triples_of_types(null, $typ_id, $msg, $dto_col), '');
+        $t->html_page_test($html->text_h2('Triple list test') . $col_html, 'triples of types', 'triples_of_types', $msg);
 
         // negative: the component type can be assigned to any object by a view, so a class
         // that is not a phrase must say so instead of silently showing nothing

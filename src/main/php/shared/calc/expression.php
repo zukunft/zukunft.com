@@ -517,7 +517,7 @@ class expression
                 log_warning('Word with id ' . $id . ' not found');
             } else {
                 $trm = $wrd->term();
-                // TODO remember the word to avoid double load
+                // TODO Prio 2 remember the word to avoid double load
                 //$trm_lst->add($trm);
             }
         }

@@ -31,6 +31,7 @@ the object structure is:
 ├── element_db - the database const for the element table
 ├── export - create an object to export data - the object can be converted to a json, yaml or XML message
 ├── export_type_list - a list of parameters to configure the export message
+├── phrase_data - $phd - all data of one phrase in the import format with the database ids
 ├── xml_serializer - turning an array or object into XML using PHP
 ├── fig_ids - helper class for figure id lists
 ├── formula_db - the database const for formula tables
@@ -54,10 +55,12 @@ the object structure is:
 ├── import_convert_xbrl - convert an XBRL fileset to a zukunft.com import
 ├── import_file - IMPORT a json in the zukunft.com exchange format
 ├── import_wikidata - retrieve and capture wikidata entity data
+├── update_put - $upd - save the changes of an update put message with the database ids
 ├── change_table_field - helper class to create the database view with the log table and field name
 ├── text_log - object to handle standard io logging
 ├── phr_ids - helper class for phrase id lists
 ├── trm_ids - helper class for term id lists
+├── qlever - import of qlever nt and tsv files
 ├── ref_db - the database const for reference tables
 ├── ref_link_wikidata - link for the reference type wikidata
 ├── source_db - the database const for source tables
@@ -72,8 +75,10 @@ the object structure is:
 ├── job_runner - $job_run - execute the pending non-interactive backend jobs
 ├── log - the simple log interface object
 ├── sys_log_db - the database const for the system log table
-├── system_time_list - a list of system error objects
+├── system_time_list - $sys_tim_lst - a list of system error objects
 ├── user_list - a list of users
+├── user_log_sum - $usr_log_sum - the summed user log sessions of one user e.g. of the last days
+├── user_log_sum_list - $usr_log_sum_lst - the users that have used most server time in the last days
 ├── value_db - the database const for value tables
 ├── value_obj - $val - just to select the best fitting class for a value
 ├── verb_db - the database const for predicate/verb tables
@@ -81,8 +86,11 @@ the object structure is:
 ├── view_relation_db - the database const for view relation tables
 ├── triple_db - the database const for triple tables
 ├── word_db - the database const for word tables
+├── word_rdf - the mapping to the RDF format
 ├── apiShared - constants used for the backend to frontend api of zukunft.com
+├── arithmeticShared - calculate a text with numbers, the four basic operations, the power, brackets and the math functions
 ├── expressionShared - common parts of the formula expressing handling used in front- and backend
+├── prior_operandShared - the operand of a formula that reads the number of the previous row
 ├── charsShared - const symbols used for the formula expressions
 ├── componentsShared - all component code id used in the code and some with name, id and comment used by the system
 ├── defShared - general system definitions used in frontend and backend
@@ -219,8 +227,9 @@ the object structure is:
 │           ├── job_time - to scheduled a job with predefined parameters
 │           ├── session - $ses - to control the user frontend sessions
 │           ├── sys_log - $slg - object to handle a system errors
-│           ├── system_time - object to log and optimize the execution times of the system
-│           └── user_db - a person who uses zukunft.com
+│           ├── system_time - $sys_tim - object to log and optimize the execution times of the system
+│           ├── user_db - a person who uses zukunft.com
+│           └── user_log - $usr_log - one session of a user with the number and the time of the api requests
 ├── ListOfShared
 │   ├── value_type_list - a list of value types e.g. to create the query extension
 │   └── ListOfIdObjectsShared
@@ -255,7 +264,8 @@ the object structure is:
 │       │   │   │           └── config_numbers - $cfg - additional behavior for the system and user config graph value tree
 │       │   │   ├── ip_range_list - a list of internet protocol address ranges
 │       │   │   └── job_list - a list of calculation request
-│       │   └── sys_log_list - a list of system error objects
+│       │   ├── sys_log_list - a list of system error objects
+│       │   └── system_time_slow_list - $slw_lst - the slow api requests of the last days for the admin dashboard
 │       ├── ListOfIdNamedObjectsShared
 │       │   └── ListOfIdNamedCodeObjectsShared
 │       │       └── type_list
@@ -283,6 +293,7 @@ the object structure is:
 │       │           ├── sys_log_function_list - to group the system log entries by function
 │       │           ├── sys_log_level_list - list of the system log types
 │       │           ├── sys_log_status_list - list of the system log statuum
+│       │           ├── system_time_type_list - $sys_tim_typ_lst - the areas of the execution times e.g. a slow api request or one step of it
 │       │           ├── user_profile_list - $usr_pro_lst - a list of possible user profiles with the database id
 │       │           ├── user_status_list - $usr_sta_lst - a list of possible user statuum with the database id
 │       │           ├── user_type_list - $usr_typ_lst - a list of possible user types with the database id
@@ -368,6 +379,7 @@ the object structure is:
 │       │       ├── resultUi - $res - the display extension of the api result object
 │       │       └── valueUi - $val - create the html code to show a value to the user
 │       ├── jobUi - $job - the extension of the batch task API objects to create job base html code
+│       ├── system_timeUi - $sys_tim - one measured request time e.g. a slow url shown on the admin dashboard
 │       └── userUi - $usr - functions to create the HTML code to display the user setup and log information
 ├── TranslatorShared - $mtr - translates a message for the user into the user language
 ├── WorkflowShared - $wrk - defines which view to show next
@@ -395,6 +407,8 @@ the object structure is:
 ├── view_stylesShared - db based ENUM of the view and component styles
 ├── view_typesShared - db based ENUM of the view types
 ├── url_varShared - all names used for the url and the form field names
+├── calculatorUi - read the calculator triples of a page phrase
+├── calculator_reportUi - the pdf report of a calculator page
 ├── ui_baseUi
 │   ├── ui_im_exportUi - html user interface components for im- and export
 │   ├── ui_listUi - create the html for listed related to an object
@@ -408,11 +422,13 @@ the object structure is:
 ├── defUi - general frontend definitions
 ├── iconsUi - the css class strings of the icons used in the frontend
 ├── pathsUi - set the path const for the frontend php scripts
+├── formula_calcUi - repeat the calculation of a result with the values of a page
 ├── frontendUi - $ui - the main html frontend application
 ├── config_nodeUi - $cfn - one key of the read only tree of the system configuration
 ├── config_treeUi - $cft - the tree of the system configuration in config.yaml
 ├── data_objectUi - frontend cache object
 ├── mail_senderUi - send the mails of the pod e.g. the signup confirmation
+├── number_formatUi - the unit and the decimals that a group of numbers is shown with
 ├── url_mapperUi - create human-readable or pod exchangeable urls
 ├── user_requestUi - bundle the context of a frontend user request
 ├── hist_logUi - display the past changes of an object
@@ -422,14 +438,18 @@ the object structure is:
 ├── html_namesUi - HTML language const used for the html zukunft.com frontend
 ├── html_selectorUi - $sel - to select a word (or formula or verb)
 ├── list_sortUi - deprecated placeholder of the fixed start page spreadsheet
+├── pdf_writerUi - a minimal writer for a pdf with text, tables and one jpeg image
 ├── rest_callUi - functions used by the frontend to call the backend api of zukunft.com
 ├── scopesUi - scope constants used for html frontend
 ├── sheetUi - create the html code to display a spreadsheet
 ├── stylesUi - css class constants used for html frontend
 ├── tableUi - $tbl - create the html code to display a spreadsheet
+├── view_menuUi - $mnu - what the page knows for the edit menu of the navbar
 ├── user_log_displayUi - a combined object to display single value changes or changes of links by the user
+├── phrase_dataUi - $phd - the data of one phrase as the phraseData api sends it
 ├── user_sandbox_displayUi - extends the user sandbox superclass for common display functions
 ├── sys_log_listUi - the display extension of the system error log api object
+├── system_time_listUi - $sys_tim_lst - a list of measured request times e.g. the slow urls of the admin dashboard
 ├── type_listUi
 │   ├── change_action_listUi - the preloaded change log actions used for the html frontend
 │   ├── change_field_listUi - the preloaded change log fields used for the html frontend
@@ -438,6 +458,7 @@ the object structure is:
 │   ├── component_type_listUi - the preloaded data component types used for the html frontend
 │   ├── formula_link_type_listUi - the preloaded data formula link types used for the html frontend
 │   ├── formula_type_listUi - the preloaded data formula types used for the html frontend
+│   ├── job_status_listUi - the preloaded job statuum used for the html frontend
 │   ├── job_type_listUi - the preloaded data job types used for the html frontend
 │   ├── language_form_listUi - the preloaded data language_forms used for the html frontend
 │   ├── language_listUi - the preloaded data languages used for the html frontend
@@ -447,6 +468,7 @@ the object structure is:
 │   ├── ref_type_listUi - the preloaded data ref types used for the html frontend
 │   ├── shareUi - the preloaded data share types used for the html frontend
 │   ├── source_type_listUi - the preloaded data source types used for the html frontend
+│   ├── sys_log_level_listUi - the preloaded system log levels used for the html frontend
 │   ├── sys_log_status_listUi - the preloaded system log actions used for the html frontend
 │   ├── user_profileUi - the preloaded user profiles used for the html frontend
 │   ├── verbsUi - the preloaded data verbs used for the html frontend
@@ -460,6 +482,8 @@ the object structure is:
 ├── type_objectUi
 │   ├── languageUi - $lan - the extension of the language API objects to create language base html code
 │   └── ref_typeUi - the child class for reference types which has additional the url
+├── user_log_sumUi - $usr_log_sum - the summed user log sessions of one user for the admin dashboard
+├── user_log_sum_listUi - $usr_log_sum_lst - the users with the most server time for the admin dashboard
 ├── table_chartUi - a value table drawn as an svg chart
 └── table_modelUi - the rows and columns of a value table before they are rendered
 ```

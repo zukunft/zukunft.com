@@ -49,6 +49,9 @@ use Exception;
 class change_log extends sandbox
 {
 
+    // a change log entry has no edit view of its own (see sandbox::HAS_EDIT_VIEW)
+    const bool HAS_EDIT_VIEW = false;
+
 
     /*
      * object vars

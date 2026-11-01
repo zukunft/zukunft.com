@@ -74,7 +74,7 @@ class ListOf
      */
 
     /**
-     * TODO check if a more specific return object can be used
+     * TODO Prio 3 check if a more specific return object can be used
      * get one object of the list by the key
      * TODO Prio 2 maybe rename to get_by_array_key not to confuse it with add_by_key which adds an item with a complex key instead of just a name as unique key
      *
@@ -204,7 +204,7 @@ class ListOf
      * TODO Prio 3 rename to remove
      *
      * unset an object of the list
-     * TODO move to ListOfIdObjects ? And if not, explain in a comment why
+     * TODO Prio 2 move to ListOfIdObjects ? And if not, explain in a comment why
      *
      * @param int|string $key the unique id of the entry
      * @returns bool true if the object has been added

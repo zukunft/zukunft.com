@@ -132,8 +132,7 @@ class result_list extends sandbox_value_list
      * load a list of result that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all calculated values related to the two cities are returned
      *
-     *  TODO use order by in query
-     *  TODO use limit and page in query
+     *  TODO Prio 2 use order by in query, because without an order a page can repeat a row
      *
      * @param phrase_list $phr_lst phrase list to which all related results should be loaded
      * @param bool $or if true all results are returned that are linked to any phrase of the list
@@ -144,7 +143,7 @@ class result_list extends sandbox_value_list
     function load_by_phrase_list(
         phrase_list $phr_lst,
         user_message $msg, bool        $or = false,
-        int         $limit = sql_db::ROW_LIMIT,
+        int         $limit = sql_db::ROW_MAX,
         int         $page = 0
     ): bool
     {
@@ -154,7 +153,7 @@ class result_list extends sandbox_value_list
     /**
      * load a list of results linked to a formula
      * used to detect which results needs to be updated in case of a formula change
-     * TODO check if needed that the standard results can also be searched by formula
+     * TODO Prio 2 check if needed that the standard results can also be searched by formula
      *      advantage is the higher speed in case of a formula update
      *      disadvantage is that it is not possible to use a pure key value table
      *      -> measure it based on real life data
@@ -260,6 +259,7 @@ class result_list extends sandbox_value_list
             if ($db_rows === false) {
                 log_err('loading a ' . self::class . ' failed for the query ' . $qp->name, self::class . '->load');
             } else {
+                $mapped = [];
                 foreach ($db_rows as $db_row) {
                     $res = new result($this->get_user());
                     // the result mapper, because the inherited row_mapper of the key object is
@@ -271,13 +271,28 @@ class result_list extends sandbox_value_list
                         log_err('result db row without a phrase group skipped'
                             . ' (table type "' . $qp->ext . '"): ' . implode(',', $db_row));
                     } else {
-                        $this->add_obj($res);
-                        $result = true;
+                        $mapped[] = $res;
                     }
+                }
+                // the phrases of all results with one query instead of some queries per result,
+                // set before the results are added, because the phrases may complete the group id
+                $this->set_phrases($mapped, $msg, true);
+                foreach ($mapped as $res) {
+                    $this->add_obj($res);
+                    $result = true;
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * @param value_base|result $val a result of the list
+     * @return array the result and the source group, whose phrases are loaded with the list
+     */
+    protected function groups_of(value_base|result $val): array
+    {
+        return [$val->grp(), $val->src_grp];
     }
 
     /**
@@ -289,8 +304,8 @@ class result_list extends sandbox_value_list
      * load a list of results that are related to at least one phrase of the given list
      *  e.g. for "Zurich (city)" and "Geneva (city)" all results related to the two cities are returned
      *
-     *  TODO use order by in query
-     *  TODO use limit and page in query
+     *  TODO Prio 2 use order by in query
+     *  TODO Prio 2 use limit and page in query
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related results should be loaded
@@ -409,9 +424,9 @@ class result_list extends sandbox_value_list
     /**
      * create an SQL statement to retrieve a list of results based one of the given phrases from the database
      * similar to load_sql_by_phr_lst_multi of sandbox_value_list
-     * TODO use a mixed id with a formula id, 2 or 6 phrase ids for the source and result value and 2 for the result only
-     * TODO add ORDER BY (relevance of value)
-     * TODO use LIMIT and PAGE
+     * TODO Prio 2 use a mixed id with a formula id, 2 or 6 phrase ids for the source and result value and 2 for the result only
+     * TODO Prio 2 add ORDER BY (relevance of value)
+     * TODO Prio 2 use LIMIT and PAGE
      *
      * @param sql_creator $sc with the target db_type set
      * @param phrase_list $phr_lst phrase list to which all related results should be loaded
@@ -657,7 +672,7 @@ class result_list extends sandbox_value_list
     {
         $qp = new sql_par(result::class);
         $lib = new library();
-        // TODO shorten the code
+        // TODO Prio 2 shorten the code
         $ext_lst = array();
         foreach (result_db::TBL_EXT_LST as $ext) {
             $ext_lst[] = $ext->extension();
@@ -731,12 +746,12 @@ class result_list extends sandbox_value_list
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
                 } elseif (get_class($obj) == word::class) {
-                    // TODO check if the results are still correct if the user has excluded the word
+                    // TODO Prio 1 check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     // $db_con->set_join_fields(                        array(result_fields::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result_fields::FLD_GRP,                        result_fields::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word_fields::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
-                    // TODO check if the results are still correct if the user has excluded the triple
+                    // TODO Prio 1 check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     //$db_con->set_join_fields( array(result_fields::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result_fields::FLD_GRP,         result_fields::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(triple_fields::FLD_ID));
@@ -923,7 +938,7 @@ class result_list extends sandbox_value_list
      */
 
     /*
-     * TODO check
+     * TODO Prio 2 check
      * add all formula results to the list for ONE formula based on
      * - the word assigned to the formula ($phr_id)
      * - the word that are used in the formula ($frm_phr_ids)
@@ -939,7 +954,7 @@ class result_list extends sandbox_value_list
      *      2. calculate "operating income" for "ABB", "CHF" and "2016"
      *      3. calculate "operating income" for "ABB", "EUR" and "2017"
      *      4. calculate "operating income" for "ABB", "CHF" and "2017"
-     * TODO: check if a value is used in the formula
+     * TODO Prio 2 check if a value is used in the formula
      *       exclude the time word and if needed loop over the time words
      *       if the value has been update, create a calculation request
      * ex zuc_upd_lst_val
@@ -996,7 +1011,7 @@ class result_list extends sandbox_value_list
 
     /**
      * add all formula results to the list that may needs to be updated if a formula is updated for one user
-     * TODO: only request the user-specific calculation if needed
+     * TODO Prio 2 only request the user-specific calculation if needed
      */
     function frm_upd_lst_usr(
         formula $frm,
@@ -1012,13 +1027,13 @@ class result_list extends sandbox_value_list
         $result = new job_list($usr);
         $added = 0;
 
-        // TODO: check if the assigned words are different for the user
+        // TODO Prio 2 check if the assigned words are different for the user
 
-        // TODO: check if the formula words are different for the user
+        // TODO Prio 2 check if the formula words are different for the user
 
-        // TODO: check if the assigned words, formula words OR the user has different values or results
+        // TODO Prio 2 check if the assigned words, formula words OR the user has different values or results
 
-        // TODO: filter the words if just a value has been updated
+        // TODO Prio 2 filter the words if just a value has been updated
         /*    if (!empty($val_wrd_lst)) {
               zu_debug('res_lst->frm_upd_lst_usr -> update related words ('.implode(",",$val_wrd_lst).')');
               $used_word_ids = array_intersect($is_word_ids, array_keys($val_wrd_lst));
@@ -1143,7 +1158,7 @@ class result_list extends sandbox_value_list
 
     /**
      * get the result that needs to be recalculated if one formula has been updated
-     * TODO should returns a job_list with all formula results that may need to be updated if a formula is updated
+     * TODO Prio 2 should returns a job_list with all formula results that may need to be updated if a formula is updated
      * @param formula $frm - the formula that has been updated
      * @param int $trm_id the id of the term from which the update has been triggered; it seeds the
      *                    list of the "following" terms like "prior" or "next" of the formula
@@ -1230,7 +1245,7 @@ class result_list extends sandbox_value_list
 
         // depending on the formula setting (all words or at least one word)
         // create a result list with all needed word combinations
-        // TODO this get all results that
+        // TODO Prio 2 this get all results that
         // 1. have at least one assigned word and one formula word (one of each)
         // 2. remove all assigned words and formula words from the value word list
         // 3. aggregate the word list for all results
@@ -1293,7 +1308,7 @@ class result_list extends sandbox_value_list
      * load all results related to one value, i.e. the results that use the phrases of the value
      * e.g. the results shown in the results column of the value default page
      * (see value::load_results_related)
-     * TODO review: split the backend and frontend part
+     * TODO Prio 2 review: split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
      *
      * @param value_base $val the value whose results should be loaded

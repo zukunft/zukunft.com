@@ -53,7 +53,7 @@ include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
-// TODO avoid include loops
+// TODO Prio 2 avoid include loops
 //include_once paths::EXPORT . 'export_type_list.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
 //include_once paths::MODEL_LOG . 'change.php';
@@ -1013,7 +1013,7 @@ class type_object extends db_object_seq_id
 
     /**
      * create the sql statement to add a new named sandbox object e.g. word to the database
-     * TODO add qp merge
+     * TODO Prio 2 add qp merge
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par $qp

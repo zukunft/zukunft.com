@@ -136,6 +136,9 @@
       "name": "high"
     },
     {
+      "name": "variance"
+    },
+    {
       "name": "world"
     },
     {
@@ -215,6 +218,18 @@
     }
   ],
   "triples": [
+    {
+      "name": "variance low (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "low"
+    },
+    {
+      "name": "variance high (system)",
+      "from": "variance",
+      "verb": "can be",
+      "to": "high"
+    },
     {
       "name": "vaccine hesitancy",
       "from": "hesitancy",
@@ -429,23 +444,23 @@
   ],
   "values": [
     {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent"], "number": "-0.062", "source": "Loomba et al. (2021)", "description": "drop of the intent to definitely take a COVID-19 vaccine after seeing recent online misinformation, relative to factual information, September 2020"},
-    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent", "low"], "number": "-0.085", "source": "Loomba et al. (2021)", "description": "the bigger drop of the 95th percentile interval of 3.9 to 8.5 percentage points"},
-    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent", "high"], "number": "-0.039", "source": "Loomba et al. (2021)", "description": "the smaller drop of the 95th percentile interval of 3.9 to 8.5 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent", "variance low (system)"], "number": "-0.085", "source": "Loomba et al. (2021)", "description": "the bigger drop of the 95th percentile interval of 3.9 to 8.5 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United Kingdom", "2020", "percent", "variance high (system)"], "number": "-0.039", "source": "Loomba et al. (2021)", "description": "the smaller drop of the 95th percentile interval of 3.9 to 8.5 percentage points"},
     {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent"], "number": "-0.064", "source": "Loomba et al. (2021)", "description": "drop of the intent to definitely take a COVID-19 vaccine after seeing recent online misinformation, relative to factual information, September 2020"},
-    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent", "low"], "number": "-0.088", "source": "Loomba et al. (2021)", "description": "the bigger drop of the 95th percentile interval of 4.0 to 8.8 percentage points"},
-    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent", "high"], "number": "-0.04", "source": "Loomba et al. (2021)", "description": "the smaller drop of the 95th percentile interval of 4.0 to 8.8 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent", "variance low (system)"], "number": "-0.088", "source": "Loomba et al. (2021)", "description": "the bigger drop of the 95th percentile interval of 4.0 to 8.8 percentage points"},
+    {"words": ["vaccine hesitancy due to disinformation", "vaccination intent change", "COVID-19", "United States", "2020", "percent", "variance high (system)"], "number": "-0.04", "source": "Loomba et al. (2021)", "description": "the smaller drop of the 95th percentile interval of 4.0 to 8.8 percentage points"},
     {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "Canada", "2021", "million", "person"], "number": "2.35", "source": "CCA (2023) Fault Lines", "description": "people in Canada whose vaccine hesitancy misinformation contributed to between March and November 2021"},
-    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "million", "person", "low"], "number": "2", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "US adults unvaccinated because of misinformation or disinformation in October 2021, if it causes 5 percent of the voluntary nonvaccination"},
-    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "million", "person", "high"], "number": "12", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "US adults unvaccinated because of misinformation or disinformation in October 2021, if it causes 30 percent of the voluntary nonvaccination"},
-    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "share", "percent", "low"], "number": "0.05", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "the assumed lower share of the voluntary nonvaccination caused by misinformation and disinformation, based on the 6 percentage point drop of the vaccination intent of Loomba et al. and the flu shot comparison"},
-    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "share", "percent", "high"], "number": "0.3", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "the assumed upper share of the voluntary nonvaccination caused by misinformation and disinformation"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "million", "person", "variance low (system)"], "number": "2", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "US adults unvaccinated because of misinformation or disinformation in October 2021, if it causes 5 percent of the voluntary nonvaccination"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "million", "person", "variance high (system)"], "number": "12", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "US adults unvaccinated because of misinformation or disinformation in October 2021, if it causes 30 percent of the voluntary nonvaccination"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "share", "percent", "variance low (system)"], "number": "0.05", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "the assumed lower share of the voluntary nonvaccination caused by misinformation and disinformation, based on the 6 percentage point drop of the vaccination intent of Loomba et al. and the flu shot comparison"},
+    {"words": ["vaccine hesitancy due to disinformation", "COVID-19", "United States", "2021", "share", "percent", "variance high (system)"], "number": "0.3", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "the assumed upper share of the voluntary nonvaccination caused by misinformation and disinformation"},
     {"words": ["vaccine hesitancy due to disinformation", "measles vaccination coverage", "United Kingdom", "1997-1998", "percent"], "number": "0.91", "source": "Leask, Booy & McIntyre (2010)", "description": "the MMR vaccination rate in the UK in 1997-98, at the time of the Wakefield et al. paper that was later retracted"},
     {"words": ["vaccine hesitancy due to disinformation", "measles vaccination coverage", "United Kingdom", "2003-2004", "percent"], "number": "0.8", "source": "Leask, Booy & McIntyre (2010)", "description": "the MMR vaccination rate in the UK in 2003-04 after the MMR scare, while the other childhood vaccines held steady"},
     {"words": ["COVID-19 deaths due to disinformation", "Canada", "2021", "person"], "number": "2800", "source": "CCA (2023) Fault Lines", "description": "fewer COVID-19 deaths by the end of November 2021 if the people who believed COVID-19 to be a hoax or exaggerated had not delayed or refused the vaccination; a conservative model estimate for March to November 2021"},
     {"words": ["health cost due to disinformation", "hospitalization", "COVID-19", "Canada", "2021", "person"], "number": "13000", "source": "CCA (2023) Fault Lines", "description": "fewer COVID-19 hospitalizations March to November 2021 without the misinformation driven vaccine hesitancy; together with the ICU patients CAD 299 million of hospital costs"},
     {"words": ["health cost due to disinformation", "ICU patient", "COVID-19", "Canada", "2021", "person"], "number": "3500", "source": "CCA (2023) Fault Lines", "description": "fewer COVID-19 ICU patients March to November 2021 without the misinformation driven vaccine hesitancy"},
-    {"words": ["social cost due to disinformation", "COVID-19", "United States", "2021", "day", "million", "EUR", "low"], "number": "46.24", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "harm per day since May 2021 by the COVID-19 vaccine misinformation and disinformation, mainly the value of the lives lost; 50 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
-    {"words": ["social cost due to disinformation", "COVID-19", "United States", "2021", "day", "million", "EUR", "high"], "number": "277.44", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "harm per day since May 2021 by the COVID-19 vaccine misinformation and disinformation, mainly the value of the lives lost; 300 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to disinformation", "COVID-19", "United States", "2021", "day", "million", "EUR", "variance low (system)"], "number": "46.24", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "harm per day since May 2021 by the COVID-19 vaccine misinformation and disinformation, mainly the value of the lives lost; 50 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
+    {"words": ["social cost due to disinformation", "COVID-19", "United States", "2021", "day", "million", "EUR", "variance high (system)"], "number": "277.44", "source": "Bruns et al. (2021) COVID-19 vaccine misinformation cost", "description": "harm per day since May 2021 by the COVID-19 vaccine misinformation and disinformation, mainly the value of the lives lost; 300 million USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["social cost due to disinformation", "world", "annual", "billion", "EUR"], "number": "72.14", "source": "CHEQ & Cavazos (2019) The economic cost of fake news", "description": "a vendor-commissioned, not peer reviewed sum of heterogeneous items, several of which are not caused by fake news; 78 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["stock market loss due to disinformation", "world", "annual", "billion", "EUR"], "number": "36.07", "source": "CHEQ & Cavazos (2019) The economic cost of fake news", "description": "up to 0.05 percent of the stock market value at risk per year, simulated from past fake news cases; not peer reviewed; 39 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},
     {"words": ["stock market loss due to disinformation", "S&P 500", "United States", "2013", "billion", "EUR"], "number": "126.24", "source": "Reuters (2013) false AP tweet", "description": "market value of the S&P 500 briefly wiped out by the false tweet of the hacked AP account on 23 April 2013 before the markets recovered within minutes; 136.5 billion USD at the ECB 2023 average of 1.0813 USD per EUR"},

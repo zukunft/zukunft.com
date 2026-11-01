@@ -37,12 +37,16 @@ include_once __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'api_c
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\application;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // init api app and open database
@@ -57,29 +61,51 @@ if ($db_con->is_open()) {
     $usr->get($msg);
     $msg->usr = $usr;
 
-    $result = ''; // reset the json message string
-
-    // get the parameters
-    $wrd_id = $_GET[url_var::WORD] ?? 0;
-
-    $wrd_id = 1;
-
-    $result = ''; // reset the json string
-
-    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id > 0) {
-
-        if ($wrd_id != 0) {
-            $wrd = new word($usr);
-            $wrd->load_by_id($wrd_id, $msg);
-            $result = json_encode($wrd->export_json($msg, []));
-        } else {
-            $msg->add_message_text('word id missing');
-        }
-    }
-
     $ctrl = new controller();
-    $ctrl->get_json($result, $msg);
+    $method = $_SERVER[rest_ctrl::REQUEST_METHOD] ?? rest_ctrl::GET;
+
+    if ($method === rest_ctrl::PUT) {
+
+        // import the json of the body with the standard import as the requesting user
+        // e.g. the file of the import button of the calculator editor
+        if ($usr->id > 0) {
+            if ($ctrl->change_permitted($msg)) {
+                $imp = new import();
+                $imp->usr = $usr;
+                // the import writes its progress for the console, which is no part of the api answer
+                ob_start();
+                $imp->put_json($ctrl->request_text(), $msg);
+                ob_end_clean();
+                $ctrl->get_json(json_encode([]), $msg);
+            }
+        } else {
+            $ctrl->not_permitted($msg);
+        }
+    } else {
+
+        $result = ''; // reset the json message string
+
+        // get the parameters
+        $wrd_id = $_GET[url_var::WORD] ?? 0;
+
+        $wrd_id = 1;
+
+        $result = ''; // reset the json string
+
+        // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+        if ($usr->id > 0) {
+
+            if ($wrd_id != 0) {
+                $wrd = new word($usr);
+                $wrd->load_by_id($wrd_id, $msg);
+                $result = json_encode($wrd->export_json($msg, []));
+            } else {
+                $msg->add_message_text('word id missing');
+            }
+        }
+
+        $ctrl->get_json($result, $msg);
+    }
 
 
     $app->end_api($db_con, $msg);

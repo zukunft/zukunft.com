@@ -5,7 +5,7 @@
     shared/enum/table_forms.php - the forms a value table can be shown in
     ---------------------------
 
-    selected by the "as" entries of the "..." menu of a table (url_var::DISPLAY_LIST_AS): the
+    selected by the "as" entries of the edit menu of the navbar (url_var::DISPLAY_LIST_AS): the
     rows as a html table, the default charts of the table beside each other, or both
 
 
@@ -68,6 +68,18 @@ enum table_forms: string
             table_forms::TABLE => messages::TABLE_AS_TABLE,
             table_forms::CHART => messages::TABLE_AS_CHART,
             table_forms::TABLE_AND_CHART => messages::TABLE_AS_TABLE_CHART,
+        };
+    }
+
+    /**
+     * @return messages the message id of the tooltip of the "as" entries of the table menu
+     */
+    public function tip_msg_id(): messages
+    {
+        return match ($this) {
+            table_forms::TABLE => messages::TABLE_AS_TABLE_TIP,
+            table_forms::CHART => messages::TABLE_AS_CHART_TIP,
+            table_forms::TABLE_AND_CHART => messages::TABLE_AS_TABLE_CHART_TIP,
         };
     }
 

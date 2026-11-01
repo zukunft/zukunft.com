@@ -688,7 +688,7 @@ class term_list extends sandbox_list_named
     /**
      * @return array a sorted list of the term names
      * this function is called from dsp_id, so no call of another function is allowed
-     * TODO move to a parent object for phrase list and term list
+     * TODO Prio 2 move to a parent object for phrase list and term list
      */
     function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
@@ -698,7 +698,7 @@ class term_list extends sandbox_list_named
                 $name_lst[] = $trm->name();
             }
         }
-        // TODO allow to fix the order
+        // TODO Prio 3 allow to fix the order
         asort($name_lst);
         return $name_lst;
     }

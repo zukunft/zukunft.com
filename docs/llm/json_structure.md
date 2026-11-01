@@ -59,9 +59,12 @@ Therefore, when the task is to fix one entry:
 - do not add or remove a word, a triple or any other object unless the task
   explicitly asks for it, and prefer the fix that keeps the object count equal
   (rename a key, correct a `verb`, move a description);
-- if the requested fix cannot avoid adding or removing an object, say so in the
-  report together with the id shift it causes, so the developer can plan the
-  re-baseline; never absorb it silently.
+- if the task needs to add or remove an object, put it where it belongs and do not
+  avoid the id shift e.g. by a separate file imported later: name the shift in
+  the report, without asking for a confirmation, because the re-pin process
+  (`test/test_re_pin.php`, `files::AUTO_RE_PIN_OBJECT_ID`, *Phrase id consts are
+  re-baselined …* in `docs/llm/testing.md`) updates the pinned ids and the
+  `list.csv` baselines; never absorb it silently.
 
 A reformat is a task of its own: run the repo's own formatter only when asked
 for it, never as a side effect of another change.
@@ -99,13 +102,18 @@ out of `cfg/const/files.php`:
 2. `SAMPLE_VIEW_DATA_FILES` — the demo files that every database setup needs to
    render the seed views, e.g. `zurich`, `global_warming` and the `problem_*`
    file of each start page ranking row
-3. `USE_CASE_FILES` — the last step of the database setup
-4. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
+3. `USE_CASE_FILES` — the use cases that build on the start page phrases
+4. `SYSTEM_DATA_APPENDED_FILES` — the system data added after the test ids have
+   been pinned, e.g. `process_catch_fields` and `calculator_keywords`
+5. `USE_CASE_FILES_APPENDED` — the use cases that build on the appended system
+   data, e.g. `pv_lifetime_balance` with the calculator keywords; the last step
+   of the database setup
+6. `BASE_DATA_FILES` — `math`, `physics`, `chemistry`, `economics`, … which the
    const block itself labels *"loaded at the end not to change the id of objects
    used by the system tests"*
-5. `BASE_DATA_PATH_FILES` — the per-topic demo files
+7. `BASE_DATA_PATH_FILES` — the per-topic demo files
 
-Only the first three are imported by every setup; the rest is added by
+Only the first five are imported by every setup; the rest is added by
 `test/test_full_load.php`.
 
 Importing more data on every setup is not a cost to avoid: it keeps the
@@ -146,15 +154,15 @@ in a second and `gas of climate` in a third.
 
 ### Use case files never carry a `code_id` and import for a normal user
 
-A use case file (`files::USE_CASE_FILES`, `src/main/resources/messages/use_cases/`,
+A use case file (`files::USE_CASE_FILES` or `files::USE_CASE_FILES_APPENDED`, `src/main/resources/messages/use_cases/`,
 e.g. `pv_switzerland_co2.json`) answers a question with the data — the kind of file
 any user may add. So it is user data, not system data:
 
 - **no `code_id` anywhere** — not on a word, a triple, a formula, a view or a
   component. A `code_id` marks an object the code addresses by a constant, and only
   a system or developer user may set one (`user::can_set_code_id`); a normal user's
-  import of such a file is refused for that object and, through the shared message,
-  drops everything after it.
+  import of such a file is refused as a whole (see *An import with a refused
+  `code_id` is all-or-nothing* below).
 - **a borrowed system triple is repeated without its `code_id`**: the
   `from`/`verb`/`to` and the `name` stay verbatim, so the import merges it by name
   into the existing row, which keeps the code id it already has.
@@ -164,14 +172,29 @@ any user may add. So it is user data, not system data:
   triple of the page, the values — and never by a code id or a database id: the
   code id does not exist, and the database id follows the import order, so it moves
   with every file imported before it. In the tests this means
-  `test_base::assert_view_by_name(views::CALCULATOR_NAME, $usr, new triple(),
+  `test_base::assert_view_by_name(views::COMPARISON_TABLE_NAME, $usr, new triple(),
   triple_names::PV_IN_SWITZERLAND, $cfg)` instead of `assert_view` with an id, a
   `triple_names::PV_IN_SWITZERLAND` name const **without** an `_ID` twin, and a
-  snapshot file named by the names (`calculator_triple_pv_in_switzerland.html`),
+  snapshot file named by the names (`comparison_table_triple_pv_in_switzerland.html`),
   so no re-baseline ever touches a use case test.
 - the unit test that runs the calc-validation of the file imports it as a **normal**
   user (`import_tests`), so a code id in the file fails the test — that is the
   coded form of this rule.
+
+### An import with a refused `code_id` is all-or-nothing
+
+An import file should not contain a `code_id`; only the system data files
+(`files::SYSTEM_DATA_FILES`, `files::SYSTEM_DATA_APPENDED_FILES`) do, and they are
+imported by a system or developer user. If a file with a `code_id` is imported by
+a user who may not set it, the **complete** import is refused, never only the
+object with the code id: the refusal is reported on the shared `$msg`, and every
+import mapper returns `$msg->is_ok()` (e.g. `import::dto_get_triples`), so the
+refused object and every object after it are not added. This is intended — a
+system file that is imported half would leave the code with constants that point
+to missing rows. So never give an import step its own message buffer to "save" the
+rest of the file, and a test of such a refusal asserts only the refusal
+(`assert_false($msg->is_ok())`), never that some other object of the file was
+still imported.
 
 ### Split a large domain into a concept file and a list file
 
@@ -636,7 +659,7 @@ at the moment:
 | `is time jump for` | `time_jump` | the default time period |
 | `is term jump for` | `term_jump` | the default term jump |
 | `is measure type for` | `measure_type` | the default measure type |
-| `is follower of` | `follow` | **time** ordering: sequence / successor (2025 is follower of 2024) |
+| `is follower of` | `follow` | ordering: the successor in time (2025 is follower of 2024) or in a list (the next input of a calculator page) |
 | `is next main column after` | `before` | **table column** ordering: this main column follows the other main column and all columns explaining it |
 | `is explaining column for` | `after` | **table column** ordering: this column explains the other one, so it is shown between its main column and the next main column |
 | `term type needed` | `term_needed` | the formula needs the linked term type |
@@ -849,6 +872,49 @@ the end of the block of related triples.
 `test/json_validation.php` reports a forward reference as *"triple uses a phrase
 that is defined later"*.
 
+### A system keyword with properties and types: define it by triples, not by code
+
+When the code needs a structure that each question or table fills with its own
+data, e.g. the columns of a table or the input fields of a process catch view,
+the structure is a **system keyword** with its **properties** and its **types**,
+each a triple with a `code_id` (the const pair `NAME` / `NAME_CODE_ID` in
+`shared/const/triples.php`). The use case file then only links its own phrases
+to these triples, so a new calculator or table needs a json import and no code.
+
+1. **The keyword**: `<thing> can be zukunft.com system`, named `<thing> (system)`,
+   e.g. `column (system)` or `process catch field (system)`.
+2. **A property**: `<keyword> has a <word>`, named for the property, e.g. `field
+   unit` = `process catch field (system)` `has a` `unit`. A property that fits
+   no verb of *Allowed verbs* gets a verb by *Adding a new verb*, never a free
+   text or a description that the code would have to parse.
+3. **A type**: `<type property> can be <qualifier>`, like the column tiers
+   (`mayor column (system)` = `column (system)` `can be` `mayor`), e.g. `number
+   with limits` = `field type` `can be` `number`, or `<keyword> can be
+   <qualifier>` if the keyword has no type property, e.g. `next button` =
+   `process catch button (system)` `can be` `proceed`.
+4. **A property of a property**: the key `from`/`verb`/`to` is unique, so a second
+   `label` of the field cannot be `<keyword> has a label` again; it gets a
+   sub-keyword with its own properties instead, e.g. `field phrase selector
+   label` = `field phrase selector` `has a` `label`. The same holds for a
+   property that differs per type: each button type has its own tooltip and
+   view, e.g. `button next tooltip` = `next button` `has a` `tooltip` and
+   `button back tooltip` = `back button` `has a` `tooltip`.
+
+A word of a keyword that another file already defines e.g. `type` or `page` is
+re-declared name-only, and a word with another meaning e.g. the physical `field`
+or the time formula `next` is not used, so the system file never overwrites the
+description of a phrase of another domain.
+
+The data of one use case then uses only these triples: a phrase is assigned to a
+type or a tier by `<phrase> can be <type>`, gets a phrase property by a triple to
+the property phrase, and gets a number property (a limit, a step, a suggestion)
+as a value with the property phrase, e.g. the value 100 with `PV installation
+size` and `field limit up`.
+
+The keywords of the process catch pages, fields and buttons are in `process_catch_fields.json`
+(`files::SYSTEM_DATA_APPENDED_FILES`); a use case file repeats a borrowed system
+triple without its `code_id` (see *Use case files never carry a `code_id`*).
+
 ## Formulas
 
 ```json
@@ -974,7 +1040,11 @@ for, so the triples of `verbs::PRELOAD_VERBS` (`is symbol for`, `is alias of`)
 and the phrases they link travel with the **initial cache load**, next to the
 types and the system views (`data_object::load_system_phrases` fills them,
 `api\ui_config` sends them as `system_phrases`). A new symbol triple therefore
-needs no display code and no api change, only the seed entry.
+needs no display code and no api change, only the seed entry. The system phrases
+also hold every word of `phrase_types::PRELOAD_TYPES` (the measure unit, percent
+and scaling types), because a unit without a symbol triple e.g. `kWh` is shown
+behind a number too, and the system formulas are the ones linked to these units
+and scaling words e.g. `scale million to one`.
 
 ### A `percent` value is stored as the decimal ratio, never as the ×100 number
 
@@ -1470,7 +1540,10 @@ or triple itself: a file must not define a `measured value` word, nor a
 `value kind of measured` / `value must be one of measured` triple.
 
 A measured number without a `source` is a smell — either name the source or,
-if it really is an assumption, mark it `assumed`.
+if it really is an assumption, mark it `assumed`. A `modelled` or
+`calculated` value and a `field limit down`, `field limit up` or `field step`
+of an input are no measurement either and need no source; a chosen point of a
+sensitivity grid is an own choice and is marked `assumed`.
 
 ### A calculated value inherits the lowest quality of its inputs
 
@@ -1624,6 +1697,98 @@ file references must be present in that file's import (re-declared name-only
 if a base word), and the mapper fails loudly otherwise. Any DB access —
 loading rows, cross-file lookups, merging — belongs to the **save** step, not
 `import_mapper`.
+
+## Update put message
+
+The message that a client of the pod e.g. the calculator editor posts to
+`/api/updatePut` (`cfg/import/update_put.php`) to save its changes. It
+differs from an import file in three ways:
+
+1. It has the api header: `pod`, `type` (`updatePut`), `user_id`, `user`,
+   `version`, `timestamp` and the changes in `body`. The answer has the same
+   header and the body of the message with the database `id` of each saved
+   object; a slow answer starts with the seconds of its steps (`api_time`).
+2. An object carries its database `id`, which is the prime key if given: a
+   triple with an `id` is renamed instead of added, and a value with an `id`
+   (the id of its phrase group, as text if it is beyond the safe integer of
+   javascript) needs no phrases.
+3. A reference carries its database id instead of its name: `from_id`,
+   `to_id`, `verb_id`, `type_id` and the `phrases` of a new value by `id`; the
+   name (`from`, `to`, `verb`, `type`, `words`) only if the referenced object
+   has no id yet, e.g. a word that the same message adds.
+
+The body holds only the changed objects, each with the fields that the client
+manages; a field that the message does not name keeps its database value.
+`words`, `triples`, `formulas` and `values` are added or changed in this order,
+then each entry of `delete` (`class` and `id`) is removed by the `del()` of the
+object, which decides if it is deleted or only excluded for the user. A formula
+is named by its `id` and changed by its expression in the user format
+(`user_text`, the same text as the `expression` of an import file); it is never
+deleted by a message, so a `delete` entry of a formula is refused
+(`OBJECT_NOT_FOUND`), like the one of any other class except word, triple and value. The session
+decides who saves: a message whose header `user_id` names another user is
+refused (`UPDATE_PUT_OTHER_USER`), and a message without `user_id` is saved for
+the requesting user. The save stops at the first problem and reports the number
+of the changes after it that are not saved (`UPDATE_PUT_SKIPPED`).
+
+```json
+{
+  "pod": "zukunft.com",
+  "type": "updatePut",
+  "version": "0.0.3",
+  "timestamp": "2026-10-24T12:00:00+00:00",
+  "body": {
+    "words": [{"name": "System Test Word To"}],
+    "triples": [{"id": 2846, "name": "System Test Triple", "from_id": 1295, "verb_id": 2, "to": "System Test Word To"}],
+    "formulas": [{"id": 1, "user_text": "\"autarky\" = \"direct use\" / \"household consumption\""}],
+    "values": [
+      {"id": "81495585085949938", "number": 123.456},
+      {"phrases": [{"id": -2846}], "words": ["System Test Word To"], "number": 123456}
+    ],
+    "delete": [{"class": "triple", "id": 2868}]
+  }
+}
+```
+
+The answer is the body of the message with the database `id` of each saved
+object and what the save has done, confirmed by the reload of the saved row
+(`update_put::confirmed`): `action` is `added`, `changed`, `unchanged` or, for
+a `delete` entry, `removed`; an object without `id` is `added` only if the save
+has found no row with the same name, the same linked phrases or, for a value,
+the same phrase group, because otherwise the save changes that row; `changes` lists each changed field of the message
+with its `old_value` and `new_value`; `user_overwrite` is true if the
+requesting user has an own version of the object after the save and false if
+the user sees the shared row, e.g. also after an undo that removes the own
+version. An excluded object is compared with its excluded fields, so that its
+change is confirmed too. An object that the save has not changed is reported with the warning
+`UPDATE_PUT_UNCHANGED`, and the warnings of a done save are the `warnings` of
+the body, because the api sends the messages only for a refused put.
+
+```json
+{
+  "pod": "zukunft.com",
+  "type": "updatePut",
+  "user_id": 11,
+  "user": "heang",
+  "body": {
+    "words": [],
+    "triples": [{"id": 2795, "name": "PV capacity label", "description": "Installation size", "action": "changed",
+      "changes": [{"field": "description", "old_value": "System size", "new_value": "Installation size"}],
+      "user_overwrite": true}],
+    "values": [],
+    "delete": []
+  }
+}
+```
+
+`src/test/resources/api/calculator_editor/` has the add, update and undo
+messages of the write test, which adds the database ids.
+`src/test/resources/web/calculator_editor/` has the messages that the calculator
+editor sends after the user actions of a scenario of
+`src/test/js/calculator_editor_scenarios.js`, with the database ids of the
+calculator editor snapshot and a fixed timestamp. The write test saves the
+messages that add or change rows and their undo, with the database ids of the
+changed objects and the user set by the test.
 
 ## Related
 

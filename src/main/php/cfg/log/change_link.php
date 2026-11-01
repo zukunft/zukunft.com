@@ -223,7 +223,7 @@ class change_link extends change_log
             if (array_key_exists(self::FLD_ROW_ID, $db_row)) {
                 $this->row_id = $db_row[self::FLD_ROW_ID];
             }
-            // TODO check if not the complete user should be loaded
+            // TODO Prio 3 check if not the complete user should be loaded
             $usr = new user();
             $usr->id = $db_row[user_db::FLD_ID];
             $usr->name = $db_row[user_db::FLD_NAME];
@@ -259,8 +259,8 @@ class change_link extends change_log
     }
 
     /**
-     * TODO make sure that always a order is defined to allow page views
-     * TODO use always limit queries to avoid long runners
+     * TODO Prio 2 make sure that always a order is defined to allow page views
+     * TODO Prio 2 use always limit queries to avoid long runners
      * create an SQL statement to retrieve a change long entry for links by the changing user
      *
      * @param sql_creator $sc with the target db_type set
@@ -332,7 +332,7 @@ class change_link extends change_log
 
     /**
      * get the last link changed by a user
-     * TODO check the permission of the view user
+     * TODO Prio 1 check the permission of the view user
      * @param user $usr the user
      * @param user_message $msg
      * @return int

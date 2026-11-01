@@ -54,7 +54,7 @@ class components
     // component default page, because it has a description and a type and is used by a view;
     // the id is the import position, so re-baseline it from unit/component/list.csv after a reset
     const string SOLUTION_PRIO_TITLE_NAME = 'Title solution priority';
-    const int SOLUTION_PRIO_TITLE_ID = 425;
+    const int SOLUTION_PRIO_TITLE_ID = 428;
 
     // text components to test the side or below position types
     // with ids that are far above the component ids used in the database
@@ -84,6 +84,64 @@ class components
     const string FORM_DESCRIPTION = 'form_field_description';
     const string FORM_DESCRIPTION_NAME = 'system form field description';
     const string FORM_DESCRIPTION_COM = 'the description field in a form';
+
+    // the tabs of the process catch detail and result page and the input fields of each tab
+    // (process_catch_views.json); the code id names the tab number, because the ui message of a
+    // component is unique and therefore cannot link a tab to its fields
+    const string PROCESS_CATCH_DETAIL_TAB_ONE = 'process_catch_detail_tab_one';
+    const string PROCESS_CATCH_DETAIL_TAB_TWO = 'process_catch_detail_tab_two';
+    const string PROCESS_CATCH_DETAIL_TAB_THREE = 'process_catch_detail_tab_three';
+    const string PROCESS_CATCH_DETAIL_TAB_FOUR = 'process_catch_detail_tab_four';
+    const string PROCESS_CATCH_DETAIL_TAB_FIVE = 'process_catch_detail_tab_five';
+    const string PROCESS_CATCH_DETAIL_TAB_ONE_FIELDS = 'process_catch_detail_tab_one_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_TWO_FIELDS = 'process_catch_detail_tab_two_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_THREE_FIELDS = 'process_catch_detail_tab_three_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_FOUR_FIELDS = 'process_catch_detail_tab_four_fields';
+    const string PROCESS_CATCH_DETAIL_TAB_FIVE_FIELDS = 'process_catch_detail_tab_five_fields';
+    const string PROCESS_CATCH_RESULT_TAB_ONE = 'process_catch_result_tab_one';
+    const string PROCESS_CATCH_RESULT_TAB_TWO = 'process_catch_result_tab_two';
+    const string PROCESS_CATCH_RESULT_TAB_THREE = 'process_catch_result_tab_three';
+    const string PROCESS_CATCH_RESULT_TAB_FOUR = 'process_catch_result_tab_four';
+    const string PROCESS_CATCH_RESULT_TAB_FIVE = 'process_catch_result_tab_five';
+    const string PROCESS_CATCH_RESULT_TAB_ONE_FIELDS = 'process_catch_result_tab_one_fields';
+    const string PROCESS_CATCH_RESULT_TAB_TWO_FIELDS = 'process_catch_result_tab_two_fields';
+    const string PROCESS_CATCH_RESULT_TAB_THREE_FIELDS = 'process_catch_result_tab_three_fields';
+    const string PROCESS_CATCH_RESULT_TAB_FOUR_FIELDS = 'process_catch_result_tab_four_fields';
+    const string PROCESS_CATCH_RESULT_TAB_FIVE_FIELDS = 'process_catch_result_tab_five_fields';
+    // the tab number of each tab component and of the fields of each tab, starting with 1
+    const array PROCESS_CATCH_TAB_NBR = [
+        self::PROCESS_CATCH_DETAIL_TAB_ONE => 1,
+        self::PROCESS_CATCH_DETAIL_TAB_TWO => 2,
+        self::PROCESS_CATCH_DETAIL_TAB_THREE => 3,
+        self::PROCESS_CATCH_DETAIL_TAB_FOUR => 4,
+        self::PROCESS_CATCH_DETAIL_TAB_FIVE => 5,
+        self::PROCESS_CATCH_DETAIL_TAB_ONE_FIELDS => 1,
+        self::PROCESS_CATCH_DETAIL_TAB_TWO_FIELDS => 2,
+        self::PROCESS_CATCH_DETAIL_TAB_THREE_FIELDS => 3,
+        self::PROCESS_CATCH_DETAIL_TAB_FOUR_FIELDS => 4,
+        self::PROCESS_CATCH_DETAIL_TAB_FIVE_FIELDS => 5,
+        self::PROCESS_CATCH_RESULT_TAB_ONE => 1,
+        self::PROCESS_CATCH_RESULT_TAB_TWO => 2,
+        self::PROCESS_CATCH_RESULT_TAB_THREE => 3,
+        self::PROCESS_CATCH_RESULT_TAB_FOUR => 4,
+        self::PROCESS_CATCH_RESULT_TAB_FIVE => 5,
+        self::PROCESS_CATCH_RESULT_TAB_ONE_FIELDS => 1,
+        self::PROCESS_CATCH_RESULT_TAB_TWO_FIELDS => 2,
+        self::PROCESS_CATCH_RESULT_TAB_THREE_FIELDS => 3,
+        self::PROCESS_CATCH_RESULT_TAB_FOUR_FIELDS => 4,
+        self::PROCESS_CATCH_RESULT_TAB_FIVE_FIELDS => 5,
+    ];
+    // the refresh button of the process catch detail page and the place input of process_catch_views.json
+    const string PROCESS_CATCH_REFRESH_NAME = 'button refresh process catch detail';
+    const string GEOLOCATOR_NAME = 'geolocator place of user';
+    // the three components of the calculator view, which are the same for every calculator page
+    // (calculator_views.json)
+    const string CALCULATOR_TITLE = 'title_calculator';
+    const string CALCULATOR_TITLE_NAME = 'title calculator';
+    const string CALCULATOR_INPUT = 'calculator_input';
+    const string CALCULATOR_INPUT_NAME = 'calculator input';
+    const string CALCULATION_RESULT = 'calculation_result';
+    const string CALCULATION_RESULT_NAME = 'calculation result';
 
     // select object types
     const string FORM_PHRASE_TYPE = 'form_field_phrase_type';
@@ -162,6 +220,23 @@ class components
     const string TEST_RESULTS_NAME = 'System Test View Component Results';
     const string TEST_EXCLUDED_NAME = 'System Test View Component Excluded';
     const string TEST_TABLE_NAME = 'System Test View Component Table';
+    // the components of the use case page test (unit_ui/use_case_ui_tests.php), never saved
+    const string TEST_VIEW_TITLE_NAME = 'System Test View Component View Title';
+    const string TEST_SUB_TITLE_NAME = 'System Test View Component Sub Title';
+    const string TEST_NOTE_NAME = 'System Test View Component Note';
+    const string TEST_DETAILS_START_NAME = 'System Test View Component Details Start';
+    const string TEST_DETAILS_END_NAME = 'System Test View Component Details End';
+    const string TEST_INPUT_FIELDS_NAME = 'System Test View Component Input Fields';
+    const string TEST_SOURCES_NAME = 'System Test View Component Sources';
+    const string TEST_ASSUMPTIONS_NAME = 'System Test View Component Assumptions';
+    const string TEST_NOTES_NAME = 'System Test View Component Notes';
+    const string TEST_CALCULATOR_TITLE_NAME = 'System Test View Component Calculator Title';
+    const string TEST_CALCULATOR_INPUT_NAME = 'System Test View Component Calculator Input';
+    const string TEST_CALCULATION_RESULT_NAME = 'System Test View Component Calculation Result';
+    const string TEST_CALCULATOR_EDITOR_NAME = 'System Test View Component Calculator Editor';
+    const string TEST_FORMULA_EDITOR_NAME = 'System Test View Component Formula Editor';
+    const string TEST_FORMULA_SELECTOR_NAME = 'System Test View Component Formula Selector';
+    const string TEST_FORMULA_RESULT_COMPARE_NAME = 'System Test View Component Formula Result Compare';
 
 
     // array of component names that used for testing and remove them after the test

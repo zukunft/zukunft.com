@@ -37,6 +37,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_group.php';
 include_once paths::MODEL_ELEMENT . 'element_list.php';
 include_once paths::MODEL_FORMULA . 'expression.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -44,6 +45,7 @@ include_once paths::MODEL_FORMULA . 'formula_list.php';
 include_once paths::MODEL_FORMULA . 'formula_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -64,6 +66,7 @@ include_once test_paths::UNIT . 'sys_log_tests.php';
 include_once test_paths::UTILS . 'test_lib.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
@@ -71,6 +74,7 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_ui;
@@ -464,6 +468,14 @@ class test_formulas extends test_objects
         return $lst;
     }
 
+    /**
+     * @return formula_list without any formula e.g. to test that nothing is exported
+     */
+    function list_empty(): formula_list
+    {
+        return new formula_list($this->env->usr1);
+    }
+
     function formula_list(): formula_list
     {
         $lst = new formula_list($this->env->usr1);
@@ -472,6 +484,20 @@ class test_formulas extends test_objects
         $lst->add($this->formula_this());
         $lst->add($this->formula_prior());
         $lst->add($this->formula_city_population());
+        return $lst;
+    }
+
+    /**
+     * @return formula_list_ui the web formula "kg" = "tonne" * 1000 like the preloaded unit conversions
+     */
+    function formula_list_mass_ui(): formula_list_ui
+    {
+        $frm = new formula_ui();
+        $frm->set_id(formula_names::SCALE_TONNE_ID);
+        $frm->set_name(formula_names::SCALE_TONNE);
+        $frm->set_usr_text(formula_names::SCALE_TONNE_EXP);
+        $lst = new formula_list_ui();
+        $lst->add($frm, new user_message_ui()); // a test builder is an entry point, so it creates the message
         return $lst;
     }
 
@@ -501,6 +527,17 @@ class test_formulas extends test_objects
         $t_wrd = new test_words($this->env);
         $lnk = new formula_link($this->env->usr1);
         $lnk->set(2, $this->formula_increase(), $t_wrd->word()->phrase());
+        return $lnk;
+    }
+
+    /**
+     * @return formula_link the increase formula link with the default link type set explicit
+     */
+    function link_default(): formula_link
+    {
+        global $sys;
+        $lnk = $this->formula_link_increase();
+        $lnk->set_predicate_id($sys->typ_lst->frm_lnk_typ->id(formula_link_types::DEFAULT));
         return $lnk;
     }
 
@@ -606,6 +643,36 @@ class test_formulas extends test_objects
         $exp = $frm->expression($msg, $trm_lst);
         $elm_lst = $exp->element_list($msg, $trm_lst);
         return $this->add_seq_number_to_element_list($elm_lst);
+    }
+
+    /**
+     * @return element_group the first element group of the main test formula, which is "minute"
+     */
+    function element_group(): element_group
+    {
+        $t_trm = new test_terms($this->env);
+        $msg = new user_message(); // a test builder is an entry point, so it creates the message the conversion reports into
+        $trm_lst = $t_trm->term_list_time();
+        $exp = $this->formula()->expression($msg, $trm_lst);
+        return $exp->element_grp_lst($msg, $trm_lst)->lst()[0];
+    }
+
+    /**
+     * @return formula_link_type the time period link type that can be used for all formulas
+     */
+    function link_type(): formula_link_type
+    {
+        return new formula_link_type(formula_link_types::TIME_PERIOD);
+    }
+
+    /**
+     * @return formula_link_type the time period link type limited to the main test formula
+     */
+    function link_type_limited(): formula_link_type
+    {
+        $frm_lnk_typ = $this->link_type();
+        $frm_lnk_typ->frm_id = formula_names::SCALE_TO_SEC_ID;
+        return $frm_lnk_typ;
     }
 
     function add_seq_number_to_element_list(element_list $elm_lst): element_list

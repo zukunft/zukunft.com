@@ -52,6 +52,7 @@ include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_db.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once test_paths::UTILS . 'test_base.php';
@@ -68,6 +69,7 @@ use Zukunft\ZukunftCom\main\php\cfg\ref\source;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\system\job_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
@@ -76,7 +78,6 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\api\controller;
 use Zukunft\ZukunftCom\main\php\web\helper\url_mapper;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_ui;
-use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\main\php\web\user\user_message as user_message_ui;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -114,6 +115,8 @@ class test_api extends test_base
     // forward header to simulate the api call of an external visitor (the ip is the
     // documentation example address also used to test server_guard::is_own_pod_call)
     const string HEADER_FORWARDED = 'X-Forwarded-For: 203.0.113.7';
+    // the number of chars shown of the start and of the end of an api response that is no valid json
+    const int API_RESPONSE_SHOW_CHARS = 500;
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -136,7 +139,7 @@ class test_api extends test_base
         // because they are irrelevant for the user and this reduces traffic
         // the "api save" message ($array_to_backend) should contain empty fields
         // to allow the user to remove e.g. a description and less save traffic is expected
-        // TODO add a test that e.g. the description can be removed via api
+        // TODO Prio 2 add a test that e.g. the description can be removed via api
         $array_to_backend = $lib->array_filter_r($array_to_backend, fn($value) => is_null($value) || $value === '');
         $array_to_frontend = json_decode($msg_to_frontend, true);
         $array_to_frontend = $this->json_remove_fields_only_to_ui($array_to_frontend);
@@ -170,9 +173,9 @@ class test_api extends test_base
     ): bool
     {
         $msg = new user_message();
-        // set the requesting user on the message, because e.g. ui_config::api_json reads the
-        // user for the api message header from $msg->usr (see docs/llm/state-and-messages.md);
-        // without it the header lacks the user name and the compare with the expected json fails
+        // set the requesting user on the message, because an api message may read the requesting
+        // user from $msg->usr (see docs/llm/state-and-messages.md); the shared types message of
+        // ui_config::api_json on purpose names no user in its header
         $msg->usr = $this->usr1;
         // check and norm the parameters
         if (is_array($typ_lst)) {
@@ -286,8 +289,7 @@ class test_api extends test_base
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data_string = json_encode($data);
-        $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::PUT, $url . '/', $data), true);
+        $actual = json_decode($this->api_call_timed(rest_ctrl::PUT, $url . '/', $data), true);
         $actual_text = json_encode($actual);
         $expected_raw_text = $this->file('api/' . $class . '/' . $class . '_put_response.json');
         $expected = json_decode($expected_raw_text, true);
@@ -342,8 +344,7 @@ class test_api extends test_base
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array("id" => $id);
-        $ctrl = new rest_call();
-        $actual = json_decode($ctrl->api_call(rest_ctrl::DELETE, $url, $data), true);
+        $actual = json_decode($this->api_call_timed(rest_ctrl::DELETE, $url, $data), true);
         if ($actual == null) {
             return false;
         } else {
@@ -464,7 +465,6 @@ class test_api extends test_base
     {
         // naming exception (to be removed?)
         $lib = new library();
-        $ctrl = new rest_call();
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         if ($levels > 0) {
@@ -473,15 +473,15 @@ class test_api extends test_base
         }
         // Check if backend is reading the id
         $data = array(url_var::ID => $id);
-        // TODO move this exception to the api_par_lst
+        // TODO Prio 2 move this exception to the api_par_lst
         if ($class == value::class) {
             $data[url_var::WITH_PHRASES] = url_var::TRUE;
         }
-        // TODO check why for formula a double call is needed
+        // TODO Prio 2 check why for formula a double call is needed
         if ($class == formula::class) {
-            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+            $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         }
-        // TODO simulate other users
+        // TODO Prio 2 simulate other users
         if ($class == user::class) {
             // the user read endpoint returns the json only to an admin or the user
             // himself, so authenticate as the admin user before the request; an
@@ -510,7 +510,7 @@ class test_api extends test_base
                 return true;
             }
         } else {
-            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+            $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         }
         if ($actual == null) {
             log_err('GET api call for ' . $class_api . ' returned an empty result');
@@ -572,8 +572,7 @@ class test_api extends test_base
                 return true;
             }
         } else {
-            $ctrl = new rest_call();
-            $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
+            $actual = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true);
         }
         return $this->assert_api_compare($class, $actual, null, $filename);
     }
@@ -598,12 +597,11 @@ class test_api extends test_base
     {
         $url = $this->class_to_url(user::class);
         $data = array($field => $value);
-        $ctrl = new rest_call();
 
         // the anonymous call of the own pod gets the core data for the user page title
         // but never the personal fields like the email
         // the response comes from a real http REST call, so a REST timeout is used to avoid a false timeout
-        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $response = $this->api_call_timed(rest_ctrl::GET, $url, $data);
         $test_name = 'anonymous own pod api/user by ' . $field . ' returns the user name';
         $core = $this->assert_text_contains($test_name, $response, $name, self::TIMEOUT_LIMIT_REST);
         $test_name = 'anonymous own pod api/user by ' . $field . ' does not leak the email';
@@ -611,7 +609,7 @@ class test_api extends test_base
 
         // the same call of a user that does not match the session user and does not come
         // from the own pod (marked by the forward header) is rejected with 'not permitted'
-        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data, [self::HEADER_FORWARDED]);
+        $response = $this->api_call_timed(rest_ctrl::GET, $url, $data, [self::HEADER_FORWARDED]);
         $test_name = 'external anonymous api/user by ' . $field . ' is rejected with not permitted';
         $rejected = $this->assert_text_contains($test_name, $response, self::USER_NOT_PERMITTED_MSG, self::TIMEOUT_LIMIT_REST);
         $test_name = 'external anonymous api/user by ' . $field . ' does not leak the user name';
@@ -619,6 +617,43 @@ class test_api extends test_base
 
         $result = false;
         if ($core and $no_leak and $rejected and $no_name) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * check that the own html frontend, which calls the api server-to-server without the browser
+     * session, gets the system log for an admin it has validated and only the reason for a normal user
+     * (see api/sysLogList and server_guard::from_own_pod); a forwarded external call can never use the
+     * data user parameter, which is checked by the data_user unit test in unit/user_tests.php
+     *
+     * @return bool true if the admin gets the log and the normal user gets the reason
+     */
+    function assert_api_sys_log_list_admin_only(): bool
+    {
+        global $mtr;
+        $url = $this->class_to_url(sys_log_list::class);
+        $only_admin = $mtr->txt(msg_id::SYS_LOG_LIST_ONLY_ADMIN);
+
+        // the answer is the log list in the body of the api message header (see controller::check_api_msg)
+        // or only the message why the log is not sent
+        $data = [url_var::USER => users::SYSTEM_TEST_ADMIN_ID, url_var::LOG_SIZE => 1];
+        $answer = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true) ?? [];
+        $test_name = 'the own frontend gets the system log for an admin';
+        $adm_body = $this->assert_true($test_name, array_key_exists(json_fields::BODY, $answer));
+        $test_name = '... without the reason why only an admin can see it';
+        $adm_no_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', '');
+
+        $data = [url_var::USER => users::SYSTEM_TEST_NORMAL_ID, url_var::LOG_SIZE => 1];
+        $answer = json_decode($this->api_call_timed(rest_ctrl::GET, $url, $data), true) ?? [];
+        $test_name = 'the own frontend gets for a normal user only the reason why only an admin can see the system log';
+        $usr_msg = $this->assert($test_name, $answer[json_fields::MSG] ?? '', $only_admin);
+        $test_name = '... and no system log entry';
+        $usr_no_body = $this->assert_false($test_name, array_key_exists(json_fields::BODY, $answer));
+
+        $result = false;
+        if ($adm_body and $adm_no_msg and $usr_msg and $usr_no_body) {
             $result = true;
         }
         return $result;
@@ -700,17 +735,20 @@ class test_api extends test_base
             $data = array($id_fld => $ids);
         }
         $data = array_merge($data, $url_par);
-        $ctrl = new rest_call();
-        $response = $ctrl->api_call(rest_ctrl::GET, $url, $data);
+        $response = $this->api_call_timed(rest_ctrl::GET, $url, $data);
         $actual = json_decode($response, true);
         // the local deployment must be updated by an external script before the
         // api tests run; if it is unreachable or returns an http error the
         // response is not valid json, so report it readably and return null,
         // which assert_api_compare turns into a single failed test instead of a
         // TypeError that aborts the whole test suite
+        // the start and the end of the response are shown, because an error text echoed behind
+        // the json (e.g. by an error at the end of the request) is only visible at the end
         if ($actual === null) {
-            log_err('api list call to ' . $url . ' returned no valid json: '
-                . substr($response, 0, 200));
+            log_err('api list call to ' . $url . ' with ' . http_build_query($data)
+                . ' returned no valid json (' . json_last_error_msg() . ', ' . strlen($response) . ' chars): '
+                . substr($response, 0, self::API_RESPONSE_SHOW_CHARS)
+                . ' ... ' . substr($response, -self::API_RESPONSE_SHOW_CHARS));
         }
         return $actual;
     }
@@ -1139,6 +1177,7 @@ class test_api extends test_base
         }
         $path = test_paths::RESOURCE . self::API_PATH . DIRECTORY_SEPARATOR . $class_for_file
             . DIRECTORY_SEPARATOR . $file . self::JSON_EXT;
+        $this->write_api_actual_file($path, $actual);
 
         if ($expected === null) {
             // an expected file that does not exist yet is created from the api answer if the auto
@@ -1151,7 +1190,7 @@ class test_api extends test_base
                 . ' for ' . $class_for_file . ' exists', false);
         } else {
 
-            // TODO remove, for faster debugging only
+            // TODO Prio 2 remove, for faster debugging only
             $json_actual = json_encode($actual);
             $json_expected = json_encode($expected);
             if ($contains) {

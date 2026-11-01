@@ -82,7 +82,7 @@ class formula_db
     const string FLD_VIEW_COM = 'the default mask for this formula';
 
     // list of fields that MUST be set by one user
-    // TODO add foreign key for share and protection type?
+    // TODO Prio 2 add foreign key for share and protection type?
     const array FLD_LST_MUST_BE_IN_STD = array(
         [formula_fields::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::UNIQUE, '', formula_fields::FLD_NAME_COM],
         [formula_fields::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQL_TYP, sql_field_default::NULL, '', '', formula_fields::FLD_FORMULA_TEXT_COM],
@@ -108,7 +108,7 @@ class formula_db
 
     // all database field names excluding the id
     // actually empty because all formula fields are user-specific
-    // TODO check if last_update must be user-specific
+    // TODO Prio 2 check if last_update must be user-specific
     const array FLD_NAMES = array();
     // the user-specific name field alone, e.g. to join the formula name to a formula link
     const array FLD_NAMES_USR_NAME = array(

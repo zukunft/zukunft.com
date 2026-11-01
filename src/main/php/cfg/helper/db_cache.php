@@ -45,7 +45,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
 use DateTime;
 use DateTimeInterface;
-use Exception;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
@@ -54,8 +53,6 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
-include_once paths::DB . 'sql_par_type.php';
-include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
@@ -64,6 +61,7 @@ include_once paths::MODEL_HELPER . 'db_cache_db.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'db_cache_statuum.php';
+include_once paths::SHARED_TYPES . 'db_cache_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED_CONST_FIELDS . 'fields.php';
@@ -74,8 +72,6 @@ use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
@@ -83,6 +79,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\db_cache_statuum;
+use Zukunft\ZukunftCom\main\php\shared\types\db_cache_types;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\fields\fields;
@@ -228,13 +225,7 @@ class db_cache extends db_object_seq_id_user
         $result = true;
         if ($this->data !== null and $this->last_update !== null) {
             $lib = new library();
-            $cut_time = new DateTime();
-            try {
-                $cut_time->modify($lib->unquote(CACHE_MAX_AGE));
-                $result = $this->last_update < $cut_time;
-            } catch (Exception $e) {
-                log_err('cannot apply the max cache age ' . CACHE_MAX_AGE . ': ' . $e->getMessage());
-            }
+            $result = $lib->is_older_than_cache_max_age($this->last_update);
         }
         return $result;
     }
@@ -380,6 +371,22 @@ class db_cache extends db_object_seq_id_user
     }
 
     /**
+     * remove the cached types api message, so that the next types api call rebuilds it from the
+     * database; needed after a change of the types or of the system phrases e.g. an imported symbol
+     * triple, because is_outdated checks only the age and a frontend would miss the change until the
+     * age limit; by the fixed id, because it can be called before the cache types are loaded
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return void
+     */
+    function del_types(user_message $msg): void
+    {
+        if ($this->load_by_type_id(db_cache_types::TYPES_ID, $msg) > 0) {
+            $this->del($msg);
+        }
+    }
+
+    /**
      * remove the cache entries of the given types of all users, because e.g. a default changed by an admin is
      * part of the cached config of every user, but not of the other caches e.g. of the types;
      * derived data that the next request creates again (see del_by_user)
@@ -396,6 +403,32 @@ class db_cache extends db_object_seq_id_user
         $ids = array_map(fn(string $code_id) => $sys->typ_lst->cac_typ->id($code_id), $code_ids);
         $qp = $this->del_sql_by_type_ids($db_con->sql_creator(), $ids);
         return $db_con->delete($qp, 'cache entries of the types ' . implode(',', $code_ids), $msg);
+    }
+
+    /**
+     * remove every cache entry of all types and users e.g. when an admin clears the cache on the
+     * settings page; derived data that the next request creates again (see del_by_user)
+     *
+     * @param user_message $msg to report a problem of the delete
+     * @return bool true if the cache entries have been removed
+     */
+    function del_all(user_message $msg): bool
+    {
+        global $db_con;
+
+        $qp = $this->del_sql_all($db_con->sql_creator());
+        return $db_con->delete($qp, 'all cache entries', $msg);
+    }
+
+    /**
+     * create the sql statement to delete every cache entry of all types and users
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the sql statement to delete all cache entries
+     */
+    function del_sql_all(sql_creator $sc): sql_par
+    {
+        return $sc->del_sql_all(self::class);
     }
 
     /**
@@ -419,15 +452,7 @@ class db_cache extends db_object_seq_id_user
      */
     function del_sql_by_user(sql_creator $sc, int $usr_id): sql_par
     {
-        $qp = new sql_par(self::class, new sql_type_list([sql_type::DELETE]));
-        $sc->set_class(self::class);
-        $sc->add_where(user_db::FLD_ID, $usr_id);
-        $sql = sql::DELETE . ' ' . $sc->name_sql_esc($sc->get_table()) . ' ';
-        $sql .= sql::WHERE . ' ' . user_db::FLD_ID . ' = ' . $sc->par_name(1);
-        $qp->name .= '_by_user';
-        $qp->sql = $sc->prepare_sql($sql, $qp->name, [sql_par_type::INT]);
-        $qp->par = $sc->get_par();
-        return $qp;
+        return $sc->del_sql_by_user_without_log(self::class, $usr_id);
     }
 
 

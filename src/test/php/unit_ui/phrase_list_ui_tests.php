@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\create\test_phrases;
 use Zukunft\ZukunftCom\test\php\create\test_triples;
@@ -69,6 +70,20 @@ class phrase_list_ui_tests
         $lst = new phrase_list($db_lst->api_json());
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
 
+        $t->subheader($ts . 'api mapper');
+
+        // each phrase of the api json is added to the list
+        $test_name = 'the api mapper adds the phrases of the api json';
+        $phr_lst_map = new phrase_list();
+        $phr_lst_map->api_mapper(json_decode($db_lst->api_json(), true));
+        $t->assert($test_name, $phr_lst_map->names(), $db_lst->names());
+
+        // without the class the mapper cannot know if a phrase is a word or a triple, so it reports it
+        $test_name = 'the api mapper reports a phrase without the class';
+        $phr_lst_map = new phrase_list();
+        $api_json = [[json_fields::ID => word_names::MATH_ID, json_fields::NAME => word_names::MATH]];
+        $t->assert_false($test_name, $phr_lst_map->api_mapper($api_json)->is_ok());
+
         // create the phrase list test set
         $form = 'phrase_list_ui_test';
         $lst = new phrase_list();
@@ -96,8 +111,42 @@ class phrase_list_ui_tests
 
         $t->html_page_test($test_page, 'phrase_list', 'phrase_list', $msg);
 
+        // the phrase list uses the add function of sandbox_list_named
+        $t->subheader($ts . 'add');
+
+        // a phrase that is not yet in the list is added
+        $test_name = 'a new phrase is added';
+        $add_lst = new phrase_list();
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_true($test_name, $added);
+        $msg->reset();
+
+        // negative: a phrase that is already in the list is not added again
+        $test_name = 'a phrase that is already in the list is not added again';
+        $add_lst = new phrase_list();
+        $add_lst->add($phr_city_ui, $msg);
+        $added = $add_lst->add($phr_city_ui, $msg);
+        $t->assert_false($test_name, $added);
+        $msg->reset();
+
+        // the related words and triples of a page split a phrase list by the class of the phrase
+        $t->subheader($ts . 'filter');
+        $test_name = 'the words of the currency list include the word Euro';
+        $wrd_names = $t_phr->list_currency_ui()->only_words($msg)->names();
+        $t->assert_contains($test_name, $wrd_names, word_names::EURO);
+        $test_name = '... but not the triple Swiss franc';
+        $wrd_names = $t_phr->list_currency_ui()->only_words($msg)->names();
+        $t->assert_contains_not($test_name, $wrd_names, triple_names::SWISS_FRANC);
+        $test_name = 'the triples of the currency list include the triple Swiss franc';
+        $trp_names = $t_phr->list_currency_ui()->only_triples($msg)->names();
+        $t->assert_contains($test_name, $trp_names, triple_names::SWISS_FRANC);
+        $test_name = '... but not the word Euro';
+        $trp_names = $t_phr->list_currency_ui()->only_triples($msg)->names();
+        $t->assert_contains_not($test_name, $trp_names, word_names::EURO);
+        $msg->reset();
+
         /*
-         * TODO add a phrase selector if the phrase list is short and add an test
+         * TODO Prio 3 add a phrase selector if the phrase list is short and add an test
         // test the phrase selector
         $form_name = 'test_phrase_selector';
         $pos = 1;
